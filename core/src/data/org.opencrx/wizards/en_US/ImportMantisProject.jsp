@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ImportMantisProject.jsp,v 1.17 2008/08/13 14:07:03 cmu Exp $
+ * Name:        $Id: ImportMantisProject.jsp,v 1.18 2009/01/06 13:16:55 wfro Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2008/08/13 14:07:03 $
+ * Date:        $Date: 2009/01/06 13:16:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,8 +66,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
+org.openmdx.base.naming.*,
 org.openmdx.application.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*

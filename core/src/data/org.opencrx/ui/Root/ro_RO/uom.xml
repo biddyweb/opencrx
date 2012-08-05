@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:uom1:Uom:uomSchedule" _operation="create">
                     <_object>
                       <label>
-                        <_item>Program UDM</_item>
+                        <_item>Program Unitate de Măsură</_item>
                       </label>
                       <toolTip>
-                        <_item>Program UDM</_item>
+                        <_item>Program Unitate de Măsură</_item>
                       </toolTip>
                     </_object>
                     <_content/>

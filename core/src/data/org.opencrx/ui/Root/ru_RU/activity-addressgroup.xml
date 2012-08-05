@@ -55,6 +55,21 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:member" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <toolTip>
+                              <_item>Члены(блокир.)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:name" _operation="create">
                     <_object>
                       <label>
@@ -95,6 +110,17 @@
                       </label>
                       <toolTip>
                         <_item>Адрес</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:disabledReason" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Блокированная причина</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Блокированная причина</_item>
                       </toolTip>
                     </_object>
                     <_content/>

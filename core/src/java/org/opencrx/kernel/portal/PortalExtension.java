@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.54 2008/12/17 13:43:03 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.66 2009/03/08 17:04:54 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.54 $
+ * Revision:    $Revision: 1.66 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/17 13:43:03 $
+ * Date:        $Date: 2009/03/08 17:04:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,6 +56,7 @@
 package org.opencrx.kernel.portal;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -88,18 +89,18 @@ import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
 import org.opencrx.kernel.utils.Utils;
+import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.accessor.jmi.spi.RefMetaObject_1;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
-import org.openmdx.model1.accessor.basic.cci.Model_1_0;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.Autocompleter_1_0;
@@ -151,12 +152,13 @@ public class PortalExtension
             Model_1_0 model = application.getModel();
             ModelElement_1_0 parentDef = ((RefMetaObject_1)context.refMetaObject()).getElementDef();                
             ModelElement_1_0 referenceDef = 
-                (ModelElement_1_0)((Map)parentDef.values("reference").get(0)).get(referenceName);
+                (ModelElement_1_0)((Map)parentDef.objGetValue("reference")).get(referenceName);
             if(referenceDef != null) {
-                ModelElement_1_0 referencedType = model.getElement(referenceDef.values("type").get(0));                
+                ModelElement_1_0 referencedType = model.getElement(referenceDef.objGetValue("type"));                
                 excludeDisabled = model.getAttributeDefs(referencedType, true, false).containsKey("disabled");
             }
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         if(excludeDisabled) {
             baseFilter.add(
                 new FilterProperty(
@@ -228,25 +230,29 @@ public class PortalExtension
           }
           else if(refObj instanceof org.opencrx.kernel.account1.jmi1.Account) {
               org.opencrx.kernel.account1.jmi1.Account obj = (org.opencrx.kernel.account1.jmi1.Account)refObj;
-              return toS(obj.getFullName());
+              return this.toNbspS(obj.getFullName());
           }
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.ProductBasePrice) {
               org.opencrx.kernel.product1.jmi1.ProductBasePrice obj = (org.opencrx.kernel.product1.jmi1.ProductBasePrice)refObj;
               Map currencyTexts = codes.getLongText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", locale, true, true);
               try {
-                  return toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
+                  return this.toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
               }
               catch(Exception e) {
-                  return toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " N/A";                  
+                  return this.toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " N/A";                  
               }
           }          
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.PriceListEntry) {
               org.opencrx.kernel.product1.jmi1.PriceListEntry obj = (org.opencrx.kernel.product1.jmi1.PriceListEntry)refObj;
-              return toS(obj.getProductName());
+              return this.toS(obj.getProductName());
           }          
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
               org.opencrx.kernel.activity1.jmi1.Activity obj = (org.opencrx.kernel.activity1.jmi1.Activity)refObj;
-              return toS(obj.getActivityNumber()).trim() + ": " + toS(obj.getName());
+              return this.toS(obj.getActivityNumber()).trim() + ": " + this.toS(obj.getName());
+          }
+          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityProcessState) {
+              org.opencrx.kernel.activity1.jmi1.ActivityProcessState obj = (org.opencrx.kernel.activity1.jmi1.ActivityProcessState)refObj;
+              return this.toNbspS(obj.getName());
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp) {
               org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)refObj;
@@ -257,10 +263,11 @@ public class PortalExtension
                       followUp.refGetPath().getParent().getParent()
                   );
                   activity.getName();
-              } catch(Exception e) {}
+              } 
+              catch(Exception e) {}
               return 
                   (activity == null ? "" : this.getTitle(activity, locale, localeAsString, application) + ": ") + 
-                  toS(followUp.getTitle());
+                  this.toS(followUp.getTitle());
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment) {
               org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment obj = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)refObj;
@@ -287,13 +294,28 @@ public class PortalExtension
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AbstractActivityParty) {
               RefObject_1_0 party = null;
               if(
-                  (refObj instanceof org.opencrx.kernel.activity1.jmi1.EmailRecipient) ||
+                  (refObj instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipient) ||
                   (refObj instanceof org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient)
               ) {
                   org.opencrx.kernel.account1.jmi1.AccountAddress address = null;
-                  if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EmailRecipient) {
-                      org.opencrx.kernel.activity1.jmi1.EmailRecipient recipient = (org.opencrx.kernel.activity1.jmi1.EmailRecipient)refObj;
+                  if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipient) {
+                      org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient = (org.opencrx.kernel.activity1.jmi1.EMailRecipient)refObj;
                       address = recipient.getParty();
+                      if(address instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
+                          org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)application.getPmData().getObjectById(
+                              recipient.refGetPath().getParent().getParent()
+                          );
+                          String messageSubject = URLEncoder.encode(email.getMessageSubject(), "UTF-8").replace("+", "%20");
+                          String messageBody = URLEncoder.encode(email.getMessageBody(), "UTF-8").replace("+", "%20");
+                          // Browser limit
+                          if(messageBody.length() > 1500) {
+                              messageBody = messageBody.substring(0, 1500);
+                          }
+                          return 
+                              this.getTitle(address, locale, localeAsString, application) + 
+                              "?subject=" + messageSubject +
+                              "&body=" + messageBody;
+                      }
                   }
                   else {
                       org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient recipient = (org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient)refObj;
@@ -312,8 +334,8 @@ public class PortalExtension
                           this.getTitle(address, locale, localeAsString, application);                
                   }                  
               }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EmailRecipientGroup) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.EmailRecipientGroup)refObj).getParty();
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup)refObj).getParty();
               }
               else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.IncidentParty) {
                   party = ((org.opencrx.kernel.activity1.jmi1.IncidentParty)refObj).getParty();
@@ -342,23 +364,23 @@ public class PortalExtension
                  "Untitled" : 
                  this.getTitle((RefObject_1_0)refObj.refGetValue("address"), locale, localeAsString, application);
           }
-          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.EmailAddressable) {
-              return "* " + toS(refObj.refGetValue("emailAddress"));
+          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.EMailAddressable) {
+              return "* " + this.toS(refObj.refGetValue("emailAddress"));
           }
           else if(refObj instanceof org.opencrx.kernel.contract1.jmi1.ContractPosition) {
-              return toS(refObj.refGetValue("lineItemNumber"));
+              return this.toS(refObj.refGetValue("lineItemNumber"));
           }
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.AbstractProduct) {
               org.opencrx.kernel.product1.jmi1.AbstractProduct obj = (org.opencrx.kernel.product1.jmi1.AbstractProduct)refObj;
               return obj.getProductNumber() == null || obj.getProductNumber().length() == 0 ? 
-                  toS(obj.getName()) : 
-                  toS(obj.getName() + " / " + obj.getProductNumber()); 
+            	  this.toS(obj.getName()) : 
+            		  this.toS(obj.getName() + " / " + obj.getProductNumber()); 
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PostalAddressable) {
               String address = "";
               int nLines = 0;
               for(Iterator i = ((List)refObj.refGetValue("postalAddressLine")).iterator(); i.hasNext(); ) {
-                  String line = toS(i.next());
+                  String line = this.toS(i.next());
                   if(line.length() > 0) {
                       if(nLines > 0) address += "<br />";
                       address += line;
@@ -366,7 +388,7 @@ public class PortalExtension
                   }
               }
               for(Iterator i = ((List)refObj.refGetValue("postalStreet")).iterator(); i.hasNext(); ) {
-                  String street = toS(i.next());
+                  String street = this.toS(i.next());
                   if(street.length() > 0) {
                       if(nLines > 0) address += "<br />";
                       address += street;
@@ -378,52 +400,52 @@ public class PortalExtension
                   ? ""
                   : codes == null
                       ? "" + postalCountry
-                      : toS(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", locale, true, true).get(postalCountry));
-              return address + "<br />" + toS(refObj.refGetValue("postalCode")) + " " + toS(refObj.refGetValue("postalCity")) + "<br />" + postalCountryS;
+                      : this.toS(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", locale, true, true).get(postalCountry));
+              return address + "<br />" + this.toS(refObj.refGetValue("postalCode")) + " " + this.toS(refObj.refGetValue("postalCity")) + "<br />" + postalCountryS;
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PhoneNumberAddressable) {
-              return toS(refObj.refGetValue("phoneNumberFull"));
+              return "* " + this.toS(refObj.refGetValue("phoneNumberFull"));
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.RoomAddressable) {
               RoomAddressable obj = (RoomAddressable)refObj;
               if(refObj instanceof Addressable) {              
                   AbstractBuildingUnit building = ((Addressable)refObj).getBuilding();
                   if(building == null) {
-                      return toS(obj.getRoomNumber());                  
+                      return this.toS(obj.getRoomNumber());                  
                   }
                   else {
-                      return this.getTitle(building, locale, localeAsString, application) + " " +  toS(obj.getRoomNumber());
+                      return this.getTitle(building, locale, localeAsString, application) + " " +  this.toS(obj.getRoomNumber());
                   }
               }
               else {
-                  return toS(obj.getRoomNumber());
+                  return this.toS(obj.getRoomNumber());
               }
           }
           else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Rating) {
-              return toS(refObj.refGetValue("ratingLevel"));
+              return this.toS(refObj.refGetValue("ratingLevel"));
           }
           else if(refObj instanceof org.opencrx.kernel.account1.jmi1.RevenueReport) {
-              return toS(refObj.refGetValue("reportNumber"));
+              return this.toS(refObj.refGetValue("reportNumber"));
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.WebAddressable) {
-              return "* " + toS(refObj.refGetValue("webUrl"));
+              return "* " + this.toS(refObj.refGetValue("webUrl"));
           }
           else if(refObj instanceof org.opencrx.kernel.code1.jmi1.CodeValueEntry) {
-              return toS(refObj.refGetValue("shortText"));
+              return this.toS(refObj.refGetValue("shortText"));
           }
           else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Description) {
-              return toS(refObj.refGetValue("language"));
+              return this.toS(refObj.refGetValue("language"));
           }
           else if(refObj instanceof org.opencrx.kernel.document1.jmi1.Document) {
               org.opencrx.kernel.document1.jmi1.Document document = (org.opencrx.kernel.document1.jmi1.Document)refObj;
               if(document.getQualifiedName() != null) {
-                  return toS(document.getQualifiedName());
+                  return this.toS(document.getQualifiedName());
               }
               else if(document.getName() != null) {
-                  return toS(document.getName());                  
+                  return this.toS(document.getName());                  
               }
               else {
-                  return toS(document.getDocumentNumber());
+                  return this.toS(document.getDocumentNumber());
               }
           }
           else if(refObj instanceof org.opencrx.kernel.account1.jmi1.Member) {
@@ -433,29 +455,41 @@ public class PortalExtension
               return (refObj.refGetValue("toContact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("toContact"), locale, localeAsString, application));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-              return (refObj.refGetValue("contact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("contact"), locale, localeAsString, application));
+              org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)refObj;
+              if(userHome == null) {
+                  return "Untitled"; 
+              }
+              else {
+                  String providerName = userHome.refGetPath().get(2);
+                  String segmentName = userHome.refGetPath().get(4);
+                  String link = 
+                      "<link rel='alternate' type='application/rss+xml' " +
+                      " href='/opencrx-news-" + providerName + "/news?id=" + providerName + "/" + segmentName + "&type=rss' " + 
+                      "title='" + userHome.refGetPath().getBase() + "@" + providerName + ":" + segmentName + "' />";
+                  return  link + this.getTitle(userHome.getContact(), locale, localeAsString, application);
+              }
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
               return (refObj.refGetValue("reference") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), locale, localeAsString, application));
           }
-          else if(refObj instanceof org.opencrx.kernel.home1.jmi1.EmailAccount) {
-              return toS(refObj.refGetValue("eMailAddress"));
+          else if(refObj instanceof org.opencrx.kernel.home1.jmi1.EMailAccount) {
+              return this.toS(refObj.refGetValue("eMailAddress"));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.WfProcessInstance) {
-              return (refObj.refGetValue("process") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("process"), locale, localeAsString, application) + " " + toS(refObj.refGetValue("startedOn")));
+              return (refObj.refGetValue("process") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("process"), locale, localeAsString, application) + " " + this.toS(refObj.refGetValue("startedOn")));
           }      
           else if(refObj instanceof org.opencrx.kernel.base.jmi1.AuditEntry) {
               Object createdAt = refObj.refGetValue(SystemAttributes.CREATED_AT);
               return (refObj.refGetValue(SystemAttributes.CREATED_AT) == null) ? "Untitled" : dateFormat.format(createdAt) + " " + timeFormat.format(createdAt);
           }
           else if(refObj instanceof org.opencrx.kernel.base.jmi1.Note) {
-              return toS(refObj.refGetValue("title"));
+              return this.toS(refObj.refGetValue("title"));
           }
           else if(refObj instanceof org.opencrx.kernel.base.jmi1.Chart) {
-              return toS(refObj.refGetValue("description"));
+              return this.toS(refObj.refGetValue("description"));
           }
           else if(refObj instanceof org.opencrx.kernel.model1.jmi1.Element) {
-              String title = toS(refObj.refGetValue("qualifiedName"));              
+              String title = this.toS(refObj.refGetValue("qualifiedName"));              
               if(title.indexOf(":") > 0) {
                   int pos = title.lastIndexOf(":");
                   title = title.substring(pos + 1) + " (" + title.substring(0, pos) + ")";
@@ -464,25 +498,25 @@ public class PortalExtension
           }
           else if(refObj instanceof DepotEntity) {
               DepotEntity obj = (DepotEntity)refObj;
-              return obj.getDepotEntityNumber() == null ? toS(obj.getName()) : toS(obj.getDepotEntityNumber());
+              return obj.getDepotEntityNumber() == null ? this.toS(obj.getName()) : this.toS(obj.getDepotEntityNumber());
           }
           else if(refObj instanceof DepotContract) {
               DepotContract obj = (DepotContract)refObj;
-              return obj.getDepotHolderNumber() == null ? toS(obj.getName()) : toS(obj.getDepotHolderNumber());
+              return obj.getDepotHolderNumber() == null ? this.toS(obj.getName()) : this.toS(obj.getDepotHolderNumber());
           }
           else if(refObj instanceof Depot) {
               Depot obj = (Depot)refObj;
-              return obj.getDepotNumber() == null ? toS(obj.getName()) : toS(obj.getDepotNumber());          
+              return obj.getDepotNumber() == null ? this.toS(obj.getName()) : this.toS(obj.getDepotNumber());          
           }
           else if(refObj instanceof DepotPosition) {
               DepotPosition obj = (DepotPosition)refObj;
               String depotTitle = this.getTitle(obj.getDepot(), locale, localeAsString, application);
-              return depotTitle + " / " + toS(obj.getName());                    
+              return depotTitle + " / " + this.toS(obj.getName());                    
           }
           else if(refObj instanceof DepotReport) {
               DepotReport obj = (DepotReport)refObj;
               String depotTitle = this.getTitle(obj.getDepot(), locale, localeAsString, application);
-              return depotTitle + " / " + toS(obj.getName());                    
+              return depotTitle + " / " + this.toS(obj.getName());                    
           }
           else if(refObj instanceof DepotReportItemPosition) {
               DepotReportItemPosition obj = (DepotReportItemPosition)refObj;
@@ -490,11 +524,11 @@ public class PortalExtension
           }
           else if(refObj instanceof SimpleEntry) {
               SimpleEntry obj = (SimpleEntry)refObj;
-              return toS(obj.getEntryValue());
+              return this.toS(obj.getEntryValue());
           }
           else if(refObj instanceof Media) {
               Media obj = (Media)refObj;
-              return toS(obj.getContentName());
+              return this.toS(obj.getContentName());
           }
           else if(refObj instanceof ContractRole) {
               ContractRole contractRole = (ContractRole)refObj;
@@ -609,6 +643,9 @@ public class PortalExtension
         else if("org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedReferenceName)) {            
             return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
+        else if("org:opencrx:kernel:activity1:AddressGroupMember:address".equals(qualifiedReferenceName)) {       
+            return "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a WHERE v.address = a.object_id AND (UPPER(a.postal_address_line_0) LIKE UPPER(?s0) OR UPPER(a.postal_address_line_1) LIKE UPPER(?s0) OR UPPER(a.postal_address_line_2) LIKE UPPER(?s0) OR UPPER(a.postal_street_0) LIKE UPPER(?s0) OR UPPER(a.postal_street_1) LIKE UPPER(?s0) OR UPPER(a.postal_street_2) LIKE UPPER(?s0) OR UPPER(a.phone_number_full) LIKE UPPER(?s0) OR UPPER(a.email_address) LIKE UPPER(?s0)))";  
+        }
         else {
             return super.getIdentityQueryFilterClause(qualifiedReferenceName);
         }
@@ -643,8 +680,8 @@ public class PortalExtension
     @Override
     public boolean isLookupType(
         ModelElement_1_0 classDef
-    ) {
-        String qualifiedName = (String)classDef.values("qualifiedName").get(0);
+    ) throws ServiceException {
+        String qualifiedName = (String)classDef.objGetValue("qualifiedName");
         return 
             !"org:opencrx:kernel:generic:CrxObject".equals(qualifiedName) &&
             super.isLookupType(classDef);
@@ -797,7 +834,8 @@ public class PortalExtension
                             );
                         }
                     }
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
             return selectableValues == null
                 ? null
@@ -844,7 +882,8 @@ public class PortalExtension
                             }
                         }
                     }
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
                 // Collect shared export profiles from segment admin
                 try {
                     if(!currentPrincipal.equals(adminPrincipal)) {
@@ -903,7 +942,8 @@ public class PortalExtension
             org.opencrx.kernel.account1.jmi1.Account customer = null;
             try {
                 customer = contract.getCustomer();
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
             if(
                 (customer != null) &&
                 model.isSubtypeOf("org:opencrx:kernel:account1:AccountAddress", lookupType)
@@ -969,15 +1009,8 @@ public class PortalExtension
         String value
     ) throws ServiceException {
         ApplicationContext application = p.getApplicationContext();
-        // Format phone number
-        if(this.isPhoneNumber(value)) {
-            super.renderTextValue(
-                p,
-                "<a href=\"tel:" + value + "\">" + value + "</a>"
-            );            
-        }
         // Process Tag activity:#
-        else if(
+        if(
             (p.getView() instanceof ObjectView) && 
             (value.indexOf("activity:") >= 0)
         ) {

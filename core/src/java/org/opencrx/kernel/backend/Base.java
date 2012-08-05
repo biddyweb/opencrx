@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.17 2008/10/15 11:28:02 wfro Exp $
+ * Name:        $Id: Base.java,v 1.22 2009/03/02 11:47:36 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/15 11:28:02 $
+ * Date:        $Date: 2009/03/02 11:47:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,20 +67,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Orders;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Orders;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 
 public class Base {
 
@@ -213,10 +213,12 @@ public class Base {
                         )
                     );
                     alert.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Alert");
-                    alert.values("alertState").add(new Short((short)1));
-                    if(name != null) {
-                        alert.values("name").add(name);
-                    }
+                    alert.values("alertState").add(new Short((short)1));                    
+                    alert.values("name").add(
+                        name == null || name.length() == 0 ?
+                            "--" : // name is mandatory
+                            name
+                    );
                     if(description != null) {
                         alert.values("description").add(description);
                     }

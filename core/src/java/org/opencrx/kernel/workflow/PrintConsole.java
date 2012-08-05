@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PrintConsole.java,v 1.12 2008/04/01 12:33:02 wfro Exp $
+ * Name:        $Id: PrintConsole.java,v 1.14 2009/01/06 13:00:22 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/01 12:33:02 $
+ * Date:        $Date: 2009/01/06 13:00:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,8 +59,8 @@ import java.util.Map;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.backend.SynchWorkflow_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.base.naming.Path;
 
 public class PrintConsole 
     implements SynchWorkflow_1_0 {

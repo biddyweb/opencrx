@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:Pane:Op:Tab:createSalesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Crează comanda de vânzare</_item>
+                        <_item>Crează Comanda de vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Crează comanda de vânzare</_item>
+                        <_item>Crează Comanda de vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

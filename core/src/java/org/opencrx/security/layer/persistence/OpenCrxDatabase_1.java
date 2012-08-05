@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: OpenCrxDatabase_1.java,v 1.1 2008/02/23 15:37:38 wfro Exp $
+ * Name:        $Id: OpenCrxDatabase_1.java,v 1.3 2008/12/26 22:07:34 wfro Exp $
  * Description: openCRX persistence plugin for security provider
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/23 15:37:38 $
+ * Date:        $Date: 2008/12/26 22:07:34 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -806,17 +806,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:10:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Détails complémentaires</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Informations complémentaires sur le produit</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:currentConfig" _operation="create">
                     <_object>
                       <label>

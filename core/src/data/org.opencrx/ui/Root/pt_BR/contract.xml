@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ligado a</_item>
+                        <_item>Associado a</_item>
                       </label>
                       <toolTip>
-                        <_item>Ligado a</_item>
+                        <_item>Associado a</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -498,10 +498,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo:linkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contrato Ligado</_item>
+                        <_item>Contrato Associado</_item>
                       </label>
                       <toolTip>
-                        <_item>Contrato Ligado</_item>
+                        <_item>Contrato Associado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -656,6 +656,17 @@
                       </label>
                       <toolTip>
                         <_item>Unidade de Medida (preço)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:ignoreProductConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ignorar configuração do produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ignorar configuração do produto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -878,10 +889,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getPositionAmounts" _operation="create">
                     <_object>
                       <label>
-                        <_item>Obtem posição de quantidade</_item>
+                        <_item>Obtém posição de quantidade</_item>
                       </label>
                       <toolTip>
-                        <_item>Obtem posição de quantidade</_item>
+                        <_item>Obtém posição de quantidade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -988,10 +999,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getContractAmounts" _operation="create">
                     <_object>
                       <label>
-                        <_item>Obtem quantidade de contrato</_item>
+                        <_item>Obtém quantidade de contrato</_item>
                       </label>
                       <toolTip>
-                        <_item>Obtem quantidade de contrato</_item>
+                        <_item>Obtém quantidade de contrato</_item>
                       </toolTip>
                     </_object>
                     <_content/>

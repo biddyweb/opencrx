@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.27 2008/10/11 22:56:54 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.34 2009/03/08 17:04:52 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/11 22:56:54 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,10 +81,10 @@ import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.model1.accessor.basic.cci.Model_1_3;
 
 /**
  * The WorkflowHandlerServlet scans for non-executed 
@@ -101,7 +101,7 @@ public class WorkflowHandlerServlet
     ) throws ServletException {
 
         super.init(config);
-        this.model = Utils.createModel();
+        this.model = Utils.getModel();
         // data connection
         try {
             this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
@@ -153,7 +153,8 @@ public class WorkflowHandlerServlet
                     AppLog.warning(e.getMessage(), e.getCause());
                     try {
                         pm.currentTransaction().rollback();
-                    } catch(Exception e0) {}
+                    } 
+                    catch(Exception e0) {}
                     return false;
                 }                
             }            
@@ -243,7 +244,7 @@ public class WorkflowHandlerServlet
     
             WfProcessInstanceQuery query = userHomePackage.createWfProcessInstanceQuery();
             query.identity().like(
-                Utils.xriAsIdentityPattern(userHomeSegment.refMofId() + "/userHome/:*/wfProcessInstance/:*")
+                userHomeSegment.refGetPath().getDescendant("userHome", ":*", "wfProcessInstance", ":*").toResourcePattern()
             );
             query.startedOn().isNull();
             query.orderByStepCounter().ascending();
@@ -284,7 +285,8 @@ public class WorkflowHandlerServlet
                             AppLog.info(e.getMessage(), e.getCause());
                             try {
                                 pm.currentTransaction().rollback();
-                            } catch(Exception e0) {}
+                            } 
+                            catch(Exception e0) {}
                         }
                     }
                     else {
@@ -300,7 +302,8 @@ public class WorkflowHandlerServlet
                             AppLog.info(e.getMessage(), e.getCause());
                             try {
                                 pm.currentTransaction().rollback();
-                            } catch(Exception e0) {}
+                            } 
+                            catch(Exception e0) {}
                         }
                     }
                 }
@@ -316,7 +319,8 @@ public class WorkflowHandlerServlet
                         AppLog.info(e.getMessage(), e.getCause());
                         try {
                             pm.currentTransaction().rollback();
-                        } catch(Exception e0) {}                        
+                        } 
+                        catch(Exception e0) {}                        
                     }
                 }
                 // Wait
@@ -326,9 +330,11 @@ public class WorkflowHandlerServlet
             }
             try {
                 pm.close();
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
         }
         catch(Exception e) {
+            ServiceException e0 = new ServiceException(e);
             System.out.println("Exception occured " + e.getMessage() + ". Continuing");
             AppLog.warning("Exception occured " + e.getMessage() + ". Continuing");
             AppLog.warning(e.getMessage(), e.getCause());

@@ -3,11 +3,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.openmdx.org/
- * Name:        $Id: MonthlyWorkReport.jsp,v 1.2 2008/11/04 14:35:57 cmu Exp $
+ * Name:        $Id: MonthlyWorkReport.jsp,v 1.3 2009/01/06 13:16:55 wfro Exp $
  * Description: MonthlyReport
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2008/11/04 14:35:57 $
+ * Date:        $Date: 2009/01/06 13:16:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,9 +69,8 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
-org.openmdx.compatibility.base.query.*,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.application.log.*,
 org.openmdx.kernel.id.*,
 org.openmdx.uses.org.apache.commons.collections.*,

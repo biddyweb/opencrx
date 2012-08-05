@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:numberOfEmployeesCategory" _operation="create">
                     <_object>
                       <label>
-                        <_item># de empregados (código)</_item>
+                        <_item>Nº de empregados (código)</_item>
                       </label>
                       <toolTip>
-                        <_item>Número de empregados (categoria)</_item>
+                        <_item>Nº de empregados (categoria)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:numberOfEmployees" _operation="create">
                     <_object>
                       <label>
-                        <_item># de empregados</_item>
+                        <_item>Nº de empregados</_item>
                       </label>
                       <toolTip>
-                        <_item>Número de empregados</_item>
+                        <_item>Nº de empregados</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:address!webUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Web Page Trabalho</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Web Page Trabalho</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:reportNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número do relatório</_item>
+                        <_item>Nº do relatório</_item>
                       </label>
                       <toolTip>
-                        <_item>Número do relatório</_item>
+                        <_item>Nº do relatório</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -102,6 +102,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:basePrice" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Base de Preços Ativos</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Base de Preços Ativos</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:priceUom" _operation="create">
                     <_object>
                       <label>
@@ -140,9 +158,6 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>&amp;nbsp;</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -182,13 +197,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:productNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número do Produto</_item>
+                        <_item>Nº do Produto</_item>
                       </label>
                       <shortLabel>
                         <_item>Produto</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Número do Produto</_item>
+                        <_item>Nº do Produto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -817,14 +832,11 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:10:Group:20" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:0:Group:15" _operation="create">
                     <_object>
                       <label>
-                        <_item>Detalhes adicionais do Produto</_item>
+                        <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>Detalhes adicionais do Produto</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

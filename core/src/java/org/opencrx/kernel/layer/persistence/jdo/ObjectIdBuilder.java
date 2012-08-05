@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ObjectIdBuilder.java,v 1.25 2008/10/06 17:04:53 wfro Exp $
+ * Name:        $Id: ObjectIdBuilder.java,v 1.32 2009/03/08 17:04:53 wfro Exp $
  * Description: ObjectIdBuilder
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 17:04:53 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,14 +62,76 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.openmdx.base.exception.RuntimeServiceException;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.naming.jdo2.AbstractObjectIdBuilder;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 
-public class ObjectIdBuilder
-    extends AbstractObjectIdBuilder {
+public class ObjectIdBuilder {
 
-    public static class ObjectIdParser extends AbstractObjectIdBuilder.AbstractObjectIdParser {
+    /**
+     * Abstract Object Id Parser
+     */
+    public abstract static class AbstractObjectIdParser {
+
+        /**
+         * Constructor 
+         *
+         * @param path
+         */
+        protected AbstractObjectIdParser(
+            final Path path
+        ) {
+            this.path = path;
+            if(path.size() % 2 != 1) throw new RuntimeServiceException(           
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.BAD_PARAMETER,
+                "An object id requires an odd number of path components",
+                new BasicException.Parameter("ObjectIdParser", this.getClass().getName()),
+                new BasicException.Parameter("path", (Object[])path.getSuffix(0))
+            );
+        }
+
+        /**
+         * 
+         */
+        protected final Path path;
+
+        /* (non-Javadoc)
+         * @see org.oasisopen.spi2.ObjectId#getQualifier(java.lang.Class, int)
+         */
+        @SuppressWarnings("unchecked")
+        public <E> E getQualifier(
+            Class<E> qualifierClass, 
+            int index
+        ) {
+            String message = qualifierClass != String.class ?
+                "This object id builder expects the qualifier being of type String" :
+                    index != 0 ?
+                        "This object id builder expects a single qualifier" :
+                            null;
+            if(message != null) throw new RuntimeServiceException(           
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.BAD_PARAMETER,
+                message,
+                new BasicException.Parameter("ObjectIdParser", this.getClass().getName()),
+                new BasicException.Parameter("qualifierClass", qualifierClass),
+                new BasicException.Parameter("index", index)
+            );
+            String value = this.path.getBase();
+            return (E) (
+                    value.startsWith("!") ? value.substring(1) : value
+            );
+        }
+
+        /* (non-Javadoc)
+         * @see org.oasisopen.spi2.ObjectId#isQualifierPersistent(int)
+         */
+        public boolean isQualifierPersistent(int index) {
+            return this.path.getBase().startsWith("!");
+        }
+
+    }
+    
+    public static class ObjectIdParser extends ObjectIdBuilder.AbstractObjectIdParser {
                 
         protected ObjectIdParser(
             final Path path
@@ -89,10 +151,8 @@ public class ObjectIdBuilder
                 throw new RuntimeServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.ASSERTION_FAILURE, 
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("objectId", parentObjectId)
-                    },
-                    "No components found for object id" 
+                    "No components found for object id",
+                    new BasicException.Parameter("objectId", parentObjectId)
                 );          
             }
             for(int i = 0; i < TYPE_NAMES.length; i++) {
@@ -103,18 +163,15 @@ public class ObjectIdBuilder
             throw new RuntimeServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.ASSERTION_FAILURE, 
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("objectId", parentObjectId)
-                },
-                "No class found for object id" 
+                "No class found for object id",
+                new BasicException.Parameter("objectId", parentObjectId)
             );          
         }
                 
     }
     
     //-----------------------------------------------------------------------
-    @Override
-    protected String fromPath(
+    public String fromPath(
         Path path
     ) {
         String objectId = null;
@@ -140,18 +197,15 @@ public class ObjectIdBuilder
             throw new RuntimeServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.ASSERTION_FAILURE, 
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("path", path)
-                },
-                "No type found for path" 
+                "No type found for path", 
+                new BasicException.Parameter("path", path)
             );          
         }
         return objectId;
     }
 
     //-----------------------------------------------------------------------
-    @Override
-    protected Path toPath(
+    public Path toPath(
         String objectId
     ) {
       List<String> components = new ArrayList<String>();
@@ -163,10 +217,8 @@ public class ObjectIdBuilder
           throw new RuntimeServiceException(
               BasicException.Code.DEFAULT_DOMAIN,
               BasicException.Code.ASSERTION_FAILURE, 
-              new BasicException.Parameter[]{
-                  new BasicException.Parameter("objectId", objectId)
-              },
-              "No components found for object id" 
+              "No components found for object id",
+              new BasicException.Parameter("objectId", objectId)
           );          
       }
       Path type = null;
@@ -180,10 +232,8 @@ public class ObjectIdBuilder
           throw new RuntimeServiceException(
               BasicException.Code.DEFAULT_DOMAIN,
               BasicException.Code.ASSERTION_FAILURE, 
-              new BasicException.Parameter[]{
-                  new BasicException.Parameter("objectId", objectId)
-              },
-              "No type found for object id" 
+              "No type found for object id", 
+              new BasicException.Parameter("objectId", objectId)
           );                    
       }
       String[] objectIdComponents = new String[type.size()];
@@ -194,11 +244,9 @@ public class ObjectIdBuilder
                   throw new RuntimeServiceException(
                       BasicException.Code.DEFAULT_DOMAIN,
                       BasicException.Code.ASSERTION_FAILURE, 
-                      new BasicException.Parameter[]{
-                          new BasicException.Parameter("objectId", objectId),
-                          new BasicException.Parameter("type", type)
-                      },
-                      "object id not valid for type" 
+                      "object id not valid for type", 
+                      new BasicException.Parameter("objectId", objectId),
+                      new BasicException.Parameter("type", type)
                   );                            
               }
               objectIdComponents[i] = components.get(pos);
@@ -213,10 +261,8 @@ public class ObjectIdBuilder
           throw new RuntimeServiceException(
               BasicException.Code.DEFAULT_DOMAIN,
               BasicException.Code.ASSERTION_FAILURE, 
-              new BasicException.Parameter[]{
-                  new BasicException.Parameter("path", path)
-              },
-              "path size must be odd number" 
+              "path size must be odd number",
+               new BasicException.Parameter("path", path)
           );                              
       }
       return path;
@@ -504,271 +550,271 @@ public class ObjectIdBuilder
     };
 
     public static final List[] CLASS_NAMES = {
-        org.opencrx.kernel.account1.jdo2.Organization.CLASS,
-        org.opencrx.security.identity1.jdo2.Segment.CLASS,
-        org.openmdx.security.realm1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.uom1.jdo2.UomSchedule.CLASS,
-        org.opencrx.kernel.uom1.jdo2.Uom.CLASS,
-        org.openmdx.security.realm1.jdo2.Principal.CLASS,
-        org.openmdx.security.authorization1.jdo2.Policy.CLASS,
+        org.opencrx.kernel.account1.jpa3.Organization.CLASS,
+        org.opencrx.security.identity1.jpa3.Segment.CLASS,
+        org.openmdx.security.realm1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.uom1.jpa3.UomSchedule.CLASS,
+        org.opencrx.kernel.uom1.jpa3.Uom.CLASS,
+        org.openmdx.security.realm1.jpa3.Principal.CLASS,
+        org.openmdx.security.authorization1.jpa3.Policy.CLASS,
         (List<String>)null,
-        org.opencrx.kernel.contract1.jdo2.Lead.CLASS,
-        org.openmdx.security.realm1.jdo2.Role.CLASS,
-        org.openmdx.security.realm1.jdo2.Permission.CLASS,
-        org.opencrx.kernel.workflow1.jdo2.AbstractTask.CLASS,
-        org.opencrx.kernel.product1.jdo2.Product.CLASS,
-        org.openmdx.security.authorization1.jdo2.Privilege.CLASS,
-        org.opencrx.security.identity1.jdo2.Subject.CLASS,
-        org.openmdx.security.authentication1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.document1.jdo2.Segment.CLASS,
-        org.openmdx.security.authentication1.jdo2.Credential.CLASS,
-        org.openmdx.security.authentication1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.account1.jdo2.RevenueReport.CLASS,
-        org.opencrx.kernel.home1.jdo2.Subscription.CLASS,
-        org.openmdx.security.realm1.jdo2.Segment.CLASS,
-        org.openmdx.security.authorization1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Activity.CLASS,
-        org.opencrx.kernel.workflow1.jdo2.Topic.CLASS,
-        org.opencrx.kernel.activity1.jdo2.AbstractEmailRecipient.CLASS,
-        org.opencrx.kernel.activity1.jdo2.AbstractMailingRecipient.CLASS,
-        org.opencrx.kernel.code1.jdo2.AbstractEntry.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductBasePrice.CLASS,
-        org.opencrx.kernel.code1.jdo2.CodeValueContainer.CLASS,
-        org.opencrx.kernel.activity1.jdo2.MeetingParty.CLASS,
-        org.opencrx.kernel.document1.jdo2.Document.CLASS,
-        org.opencrx.kernel.home1.jdo2.EmailAccount.CLASS,
-        org.opencrx.kernel.account1.jdo2.ContactRelationship.CLASS,
-        org.opencrx.kernel.activity1.jdo2.AbstractPhoneCallRecipient.CLASS,
-        org.opencrx.kernel.activity1.jdo2.MeetingParty.CLASS,
-        org.opencrx.kernel.building1.jdo2.Building.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Activity.CLASS,
-        org.opencrx.kernel.product1.jdo2.SalesTaxType.CLASS,
-        org.opencrx.kernel.product1.jdo2.AccountAssignment.CLASS,
-        org.opencrx.kernel.product1.jdo2.PriceLevel.CLASS,
-        org.opencrx.kernel.account1.jdo2.Competitor.CLASS,
-        org.opencrx.kernel.building1.jdo2.BuildingUnit.CLASS,
-        org.opencrx.kernel.activity1.jdo2.AddressGroupMember.CLASS,
-        org.opencrx.kernel.activity1.jdo2.TaskParty.CLASS,
-        org.opencrx.kernel.activity1.jdo2.IncidentParty.CLASS,
-        org.opencrx.kernel.product1.jdo2.PriceModifier.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Activity.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityTracker.CLASS,
-        org.opencrx.kernel.building1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.account1.jdo2.OrganizationalUnitRelationship.CLASS,
-        org.opencrx.kernel.forecast1.jdo2.Budget.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityFollowUp.CLASS,
-        org.opencrx.kernel.activity1.jdo2.AddressGroup.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ResourceAssignment.CLASS,
-        org.opencrx.kernel.code1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.product1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.admin1.jdo2.Segment.CLASS,
+        org.opencrx.kernel.contract1.jpa3.Lead.CLASS,
+        org.openmdx.security.realm1.jpa3.Role.CLASS,
+        org.openmdx.security.realm1.jpa3.Permission.CLASS,
+        org.opencrx.kernel.workflow1.jpa3.AbstractTask.CLASS,
+        org.opencrx.kernel.product1.jpa3.Product.CLASS,
+        org.openmdx.security.authorization1.jpa3.Privilege.CLASS,
+        org.opencrx.security.identity1.jpa3.Subject.CLASS,
+        org.openmdx.security.authentication1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.document1.jpa3.Segment.CLASS,
+        org.openmdx.security.authentication1.jpa3.Credential.CLASS,
+        org.openmdx.security.authentication1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.account1.jpa3.RevenueReport.CLASS,
+        org.opencrx.kernel.home1.jpa3.Subscription.CLASS,
+        org.openmdx.security.realm1.jpa3.Segment.CLASS,
+        org.openmdx.security.authorization1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
+        org.opencrx.kernel.workflow1.jpa3.Topic.CLASS,
+        org.opencrx.kernel.activity1.jpa3.AbstractEMailRecipient.CLASS,
+        org.opencrx.kernel.activity1.jpa3.AbstractMailingRecipient.CLASS,
+        org.opencrx.kernel.code1.jpa3.AbstractEntry.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductBasePrice.CLASS,
+        org.opencrx.kernel.code1.jpa3.CodeValueContainer.CLASS,
+        org.opencrx.kernel.activity1.jpa3.MeetingParty.CLASS,
+        org.opencrx.kernel.document1.jpa3.Document.CLASS,
+        org.opencrx.kernel.home1.jpa3.EMailAccount.CLASS,
+        org.opencrx.kernel.account1.jpa3.ContactRelationship.CLASS,
+        org.opencrx.kernel.activity1.jpa3.AbstractPhoneCallRecipient.CLASS,
+        org.opencrx.kernel.activity1.jpa3.MeetingParty.CLASS,
+        org.opencrx.kernel.building1.jpa3.Building.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
+        org.opencrx.kernel.product1.jpa3.SalesTaxType.CLASS,
+        org.opencrx.kernel.product1.jpa3.AccountAssignment.CLASS,
+        org.opencrx.kernel.product1.jpa3.PriceLevel.CLASS,
+        org.opencrx.kernel.account1.jpa3.Competitor.CLASS,
+        org.opencrx.kernel.building1.jpa3.BuildingUnit.CLASS,
+        org.opencrx.kernel.activity1.jpa3.AddressGroupMember.CLASS,
+        org.opencrx.kernel.activity1.jpa3.TaskParty.CLASS,
+        org.opencrx.kernel.activity1.jpa3.IncidentParty.CLASS,
+        org.opencrx.kernel.product1.jpa3.PriceModifier.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityTracker.CLASS,
+        org.opencrx.kernel.building1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.account1.jpa3.OrganizationalUnitRelationship.CLASS,
+        org.opencrx.kernel.forecast1.jpa3.Budget.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityFollowUp.CLASS,
+        org.opencrx.kernel.activity1.jpa3.AddressGroup.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ResourceAssignment.CLASS,
+        org.opencrx.kernel.code1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.product1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.admin1.jpa3.Segment.CLASS,
         (List<String>)null,
-        org.opencrx.kernel.account1.jdo2.SearchIndexEntry.CLASS,
-        org.opencrx.kernel.product1.jdo2.PriceListEntry.CLASS,
-        org.opencrx.kernel.home1.jdo2.WfActionLogEntry.CLASS,
-        org.opencrx.kernel.reservation1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.building1.jdo2.BuildingComplex.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityCategory.CLASS,
+        org.opencrx.kernel.account1.jpa3.SearchIndexEntry.CLASS,
+        org.opencrx.kernel.product1.jpa3.PriceListEntry.CLASS,
+        org.opencrx.kernel.home1.jpa3.WfActionLogEntry.CLASS,
+        org.opencrx.kernel.reservation1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.building1.jpa3.BuildingComplex.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityCategory.CLASS,
         (List<String>)null,
-        org.opencrx.kernel.account1.jdo2.Account.CLASS,
-        org.opencrx.kernel.home1.jdo2.WfProcessInstance.CLASS,
-        org.opencrx.kernel.account1.jdo2.OrganizationalUnit.CLASS,
-        org.opencrx.kernel.activity1.jdo2.EffortEstimate.CLASS,
-        org.opencrx.kernel.contract1.jdo2.ProductApplication.CLASS,
-        org.opencrx.kernel.account1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.model1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.depot1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityWorkRecord.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityVote.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Activity.CLASS,
-        org.opencrx.kernel.generic.jdo2.AdditionalExternalLink.CLASS,
-        org.opencrx.kernel.generic.jdo2.AdditionalExternalLink.CLASS,
-        org.opencrx.kernel.generic.jdo2.AdditionalExternalLink.CLASS,
-        org.opencrx.kernel.generic.jdo2.AdditionalExternalLink.CLASS,
-        org.opencrx.kernel.account1.jdo2.AccountFilterGlobal.CLASS,
-        org.opencrx.kernel.account1.jdo2.AccountFilterProperty.CLASS,
-        org.opencrx.kernel.forecast1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.account1.jdo2.ContactMembership.CLASS,
-        org.opencrx.kernel.account1.jdo2.ContactMembership.CLASS,
+        org.opencrx.kernel.account1.jpa3.Account.CLASS,
+        org.opencrx.kernel.home1.jpa3.WfProcessInstance.CLASS,
+        org.opencrx.kernel.account1.jpa3.OrganizationalUnit.CLASS,
+        org.opencrx.kernel.activity1.jpa3.EffortEstimate.CLASS,
+        org.opencrx.kernel.contract1.jpa3.ProductApplication.CLASS,
+        org.opencrx.kernel.account1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.model1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.depot1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityWorkRecord.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityVote.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
+        org.opencrx.kernel.generic.jpa3.AdditionalExternalLink.CLASS,
+        org.opencrx.kernel.generic.jpa3.AdditionalExternalLink.CLASS,
+        org.opencrx.kernel.generic.jpa3.AdditionalExternalLink.CLASS,
+        org.opencrx.kernel.generic.jpa3.AdditionalExternalLink.CLASS,
+        org.opencrx.kernel.account1.jpa3.AccountFilterGlobal.CLASS,
+        org.opencrx.kernel.account1.jpa3.AccountFilterProperty.CLASS,
+        org.opencrx.kernel.forecast1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.account1.jpa3.ContactMembership.CLASS,
+        org.opencrx.kernel.account1.jpa3.ContactMembership.CLASS,
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
         (List<String>)null,
-        org.opencrx.kernel.workflow1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.uom1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.home1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.contract1.jdo2.Segment.CLASS,
+        org.opencrx.kernel.workflow1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.uom1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.home1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.contract1.jpa3.Segment.CLASS,
         (List<String>)null,
-        org.openmdx.security.realm1.jdo2.Segment.CLASS,
-        org.opencrx.security.identity1.jdo2.Segment.CLASS,
-        org.openmdx.security.authorization1.jdo2.Segment.CLASS,
-        org.opencrx.kernel.contract1.jdo2.DeliveryInformation.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityCreator.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityFilterGlobal.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityFilterProperty.CLASS,
-        org.opencrx.kernel.generic.jdo2.DocumentAttachment.CLASS,
-        org.opencrx.kernel.generic.jdo2.DocumentAttachment.CLASS,
-        org.opencrx.kernel.generic.jdo2.DocumentAttachment.CLASS,
-        org.opencrx.kernel.generic.jdo2.DocumentAttachment.CLASS,
-        org.opencrx.kernel.generic.jdo2.Rating.CLASS,
-        org.opencrx.kernel.generic.jdo2.Rating.CLASS,
-        org.opencrx.kernel.generic.jdo2.Rating.CLASS,
-        org.opencrx.kernel.generic.jdo2.Rating.CLASS,
-        org.opencrx.kernel.generic.jdo2.Note.CLASS,
-        org.opencrx.kernel.generic.jdo2.Note.CLASS,
-        org.opencrx.kernel.generic.jdo2.Note.CLASS,
-        org.opencrx.kernel.generic.jdo2.Note.CLASS,
-        org.opencrx.kernel.contract1.jdo2.DeliveryRequest.CLASS,
-        org.opencrx.kernel.contract1.jdo2.DeliveryRequest.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractOpportunityPosition.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityProcess.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityProcessState.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityProcessTransition.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityProcessAction.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityMilestone.CLASS,
-        org.opencrx.kernel.account1.jdo2.CreditLimit.CLASS,
-        org.opencrx.kernel.account1.jdo2.CreditLimit.CLASS,
-        org.opencrx.kernel.generic.jdo2.Description.CLASS,
-        org.opencrx.kernel.generic.jdo2.Description.CLASS,
-        org.opencrx.kernel.generic.jdo2.Description.CLASS,
-        org.opencrx.kernel.account1.jdo2.Member.CLASS,
-        org.opencrx.kernel.generic.jdo2.Media.CLASS,
-        org.opencrx.kernel.generic.jdo2.Media.CLASS,
-        org.opencrx.kernel.generic.jdo2.Media.CLASS,
-        org.opencrx.kernel.generic.jdo2.Media.CLASS,
-        org.opencrx.kernel.home1.jdo2.UserHome.CLASS,
-        org.opencrx.kernel.home1.jdo2.Alert.CLASS,
-        org.opencrx.kernel.home1.jdo2.QuickAccess.CLASS,
-        org.opencrx.kernel.home1.jdo2.AccessHistory.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityType.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Calendar.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Resource.CLASS,
+        org.openmdx.security.realm1.jpa3.Segment.CLASS,
+        org.opencrx.security.identity1.jpa3.Segment.CLASS,
+        org.openmdx.security.authorization1.jpa3.Segment.CLASS,
+        org.opencrx.kernel.contract1.jpa3.DeliveryInformation.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityCreator.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityFilterGlobal.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityFilterProperty.CLASS,
+        org.opencrx.kernel.generic.jpa3.DocumentAttachment.CLASS,
+        org.opencrx.kernel.generic.jpa3.DocumentAttachment.CLASS,
+        org.opencrx.kernel.generic.jpa3.DocumentAttachment.CLASS,
+        org.opencrx.kernel.generic.jpa3.DocumentAttachment.CLASS,
+        org.opencrx.kernel.generic.jpa3.Rating.CLASS,
+        org.opencrx.kernel.generic.jpa3.Rating.CLASS,
+        org.opencrx.kernel.generic.jpa3.Rating.CLASS,
+        org.opencrx.kernel.generic.jpa3.Rating.CLASS,
+        org.opencrx.kernel.generic.jpa3.Note.CLASS,
+        org.opencrx.kernel.generic.jpa3.Note.CLASS,
+        org.opencrx.kernel.generic.jpa3.Note.CLASS,
+        org.opencrx.kernel.generic.jpa3.Note.CLASS,
+        org.opencrx.kernel.contract1.jpa3.DeliveryRequest.CLASS,
+        org.opencrx.kernel.contract1.jpa3.DeliveryRequest.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractOpportunityPosition.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityProcess.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityProcessState.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityProcessTransition.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityProcessAction.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityMilestone.CLASS,
+        org.opencrx.kernel.account1.jpa3.CreditLimit.CLASS,
+        org.opencrx.kernel.account1.jpa3.CreditLimit.CLASS,
+        org.opencrx.kernel.generic.jpa3.Description.CLASS,
+        org.opencrx.kernel.generic.jpa3.Description.CLASS,
+        org.opencrx.kernel.generic.jpa3.Description.CLASS,
+        org.opencrx.kernel.account1.jpa3.Member.CLASS,
+        org.opencrx.kernel.generic.jpa3.Media.CLASS,
+        org.opencrx.kernel.generic.jpa3.Media.CLASS,
+        org.opencrx.kernel.generic.jpa3.Media.CLASS,
+        org.opencrx.kernel.generic.jpa3.Media.CLASS,
+        org.opencrx.kernel.home1.jpa3.UserHome.CLASS,
+        org.opencrx.kernel.home1.jpa3.Alert.CLASS,
+        org.opencrx.kernel.home1.jpa3.QuickAccess.CLASS,
+        org.opencrx.kernel.home1.jpa3.AccessHistory.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityType.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Calendar.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Resource.CLASS,
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "contract1", "AbstractContract")),
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "contract1", "AbstractContract")),
-        org.opencrx.kernel.activity1.jdo2.WorkReportEntry.CLASS,
-        org.opencrx.kernel.activity1.jdo2.Activity.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractQuotePosition.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityFilterGroup.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityFilterProperty.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ProductReference.CLASS,
-        org.opencrx.kernel.base.jdo2.Property.CLASS,
-        org.opencrx.kernel.base.jdo2.AuditEntry.CLASS,
-        org.opencrx.kernel.product1.jdo2.Product.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityGroupAssignment.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityLinkTo.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityLinkFrom.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractSalesOrderPosition.CLASS,
-        org.opencrx.kernel.activity1.jdo2.ActivityFollowUp.CLASS,
-        org.opencrx.kernel.activity1.jdo2.WeekDay.CLASS,
-        org.opencrx.kernel.activity1.jdo2.CalendarDay.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractInvoicePosition.CLASS,
-        org.opencrx.kernel.model1.jdo2.Element.CLASS,
-        org.opencrx.kernel.depot1.jdo2.BookingText.CLASS,
-        org.opencrx.kernel.ras1.jdo2.Profile.CLASS,
-        org.opencrx.kernel.product1.jdo2.RelatedProduct.CLASS,
-        org.opencrx.kernel.ras1.jdo2.ClassificationElement.CLASS,
-        org.opencrx.kernel.ras1.jdo2.Descriptor.CLASS,
-        org.opencrx.kernel.ras1.jdo2.SolutionPart.CLASS,
-        org.opencrx.kernel.ras1.jdo2.ArtifactDependency.CLASS,
-        org.opencrx.kernel.ras1.jdo2.ArtifactContext.CLASS,
-        org.opencrx.kernel.ras1.jdo2.VariabilityPoint.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotEntity.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotEntityRelationship.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotType.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotGroup.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotHolder.CLASS,
-        org.opencrx.kernel.depot1.jdo2.CompoundBooking.CLASS,
-        org.opencrx.kernel.depot1.jdo2.BookingPeriod.CLASS,
-        org.opencrx.kernel.depot1.jdo2.SingleBooking.CLASS,
-        org.opencrx.kernel.depot1.jdo2.SimpleBooking.CLASS,
-        org.opencrx.kernel.depot1.jdo2.Depot.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotPosition.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductConfiguration.CLASS,
-        org.opencrx.kernel.base.jdo2.Property.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotReport.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotReportItemPosition.CLASS,
-        org.opencrx.kernel.contract1.jdo2.Opportunity.CLASS,
-        org.opencrx.kernel.generic.jdo2.Description.CLASS,
-        org.opencrx.kernel.generic.jdo2.Description.CLASS,
-        org.opencrx.kernel.account1.jdo2.AccountFilterProperty.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductFilterProperty.CLASS,
-        org.opencrx.kernel.document1.jdo2.DocumentFolder.CLASS,
-        org.opencrx.kernel.document1.jdo2.DocumentRevision.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductConfiguration.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductConfiguration.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductBasePrice.CLASS,
-        org.opencrx.kernel.contract1.jdo2.Quote.CLASS,
-        org.opencrx.kernel.contract1.jdo2.SalesOrder.CLASS,
-        org.opencrx.kernel.base.jdo2.Property.CLASS,
-        org.opencrx.kernel.contract1.jdo2.Invoice.CLASS,
-        org.opencrx.kernel.product1.jdo2.PricingRule.CLASS,
-        org.opencrx.kernel.contract1.jdo2.CalculationRule.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotReference.CLASS,
-        org.opencrx.kernel.depot1.jdo2.DepotReference.CLASS,
-        org.opencrx.kernel.generic.jdo2.PropertySet.CLASS,
-        org.opencrx.kernel.generic.jdo2.PropertySet.CLASS,
-        org.opencrx.kernel.generic.jdo2.PropertySet.CLASS,
-        org.opencrx.kernel.generic.jdo2.PropertySet.CLASS,
-        org.opencrx.kernel.contract1.jdo2.ProductApplication.CLASS,
-        org.opencrx.kernel.contract1.jdo2.DeliveryInformation.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductConfigurationTypeSet.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductConfigurationType.CLASS,
-        org.opencrx.kernel.activity1.jdo2.WorkReportEntry.CLASS,
-        org.opencrx.kernel.contract1.jdo2.ContractRole.CLASS,
-        org.opencrx.kernel.contract1.jdo2.ContractRole.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractRemovedPosition.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractRemovedPosition.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractRemovedPosition.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractRemovedPosition.CLASS,
-        org.opencrx.kernel.contract1.jdo2.AbstractRemovedPosition.CLASS,
-        org.opencrx.kernel.contract1.jdo2.PositionModification.CLASS,
-        org.opencrx.kernel.contract1.jdo2.PositionModification.CLASS,
-        org.opencrx.kernel.contract1.jdo2.PositionModification.CLASS,
-        org.opencrx.kernel.contract1.jdo2.PositionModification.CLASS,
-        org.opencrx.kernel.contract1.jdo2.PositionModification.CLASS,
-        org.openmdx.security.realm1.jdo2.Realm.CLASS,
-        org.openmdx.security.realm1.jdo2.Principal.CLASS,
-        org.openmdx.security.authorization1.jdo2.Policy.CLASS,
-        org.openmdx.security.realm1.jdo2.Role.CLASS,
-        org.openmdx.security.realm1.jdo2.Permission.CLASS,
-        org.openmdx.security.authorization1.jdo2.Privilege.CLASS,
-        org.opencrx.security.identity1.jdo2.Subject.CLASS,
-        org.openmdx.security.authentication1.jdo2.Credential.CLASS,
+        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
+        org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractQuotePosition.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityFilterGroup.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityFilterProperty.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ProductReference.CLASS,
+        org.opencrx.kernel.base.jpa3.Property.CLASS,
+        org.opencrx.kernel.base.jpa3.AuditEntry.CLASS,
+        org.opencrx.kernel.product1.jpa3.Product.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityGroupAssignment.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityLinkTo.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityLinkFrom.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractSalesOrderPosition.CLASS,
+        org.opencrx.kernel.activity1.jpa3.ActivityFollowUp.CLASS,
+        org.opencrx.kernel.activity1.jpa3.WeekDay.CLASS,
+        org.opencrx.kernel.activity1.jpa3.CalendarDay.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractInvoicePosition.CLASS,
+        org.opencrx.kernel.model1.jpa3.Element.CLASS,
+        org.opencrx.kernel.depot1.jpa3.BookingText.CLASS,
+        org.opencrx.kernel.ras1.jpa3.Profile.CLASS,
+        org.opencrx.kernel.product1.jpa3.RelatedProduct.CLASS,
+        org.opencrx.kernel.ras1.jpa3.ClassificationElement.CLASS,
+        org.opencrx.kernel.ras1.jpa3.Descriptor.CLASS,
+        org.opencrx.kernel.ras1.jpa3.SolutionPart.CLASS,
+        org.opencrx.kernel.ras1.jpa3.ArtifactDependency.CLASS,
+        org.opencrx.kernel.ras1.jpa3.ArtifactContext.CLASS,
+        org.opencrx.kernel.ras1.jpa3.VariabilityPoint.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotEntity.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotEntityRelationship.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotType.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotGroup.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotHolder.CLASS,
+        org.opencrx.kernel.depot1.jpa3.CompoundBooking.CLASS,
+        org.opencrx.kernel.depot1.jpa3.BookingPeriod.CLASS,
+        org.opencrx.kernel.depot1.jpa3.SingleBooking.CLASS,
+        org.opencrx.kernel.depot1.jpa3.SimpleBooking.CLASS,
+        org.opencrx.kernel.depot1.jpa3.Depot.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotPosition.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductConfiguration.CLASS,
+        org.opencrx.kernel.base.jpa3.Property.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotReport.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotReportItemPosition.CLASS,
+        org.opencrx.kernel.contract1.jpa3.Opportunity.CLASS,
+        org.opencrx.kernel.generic.jpa3.Description.CLASS,
+        org.opencrx.kernel.generic.jpa3.Description.CLASS,
+        org.opencrx.kernel.account1.jpa3.AccountFilterProperty.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductFilterProperty.CLASS,
+        org.opencrx.kernel.document1.jpa3.DocumentFolder.CLASS,
+        org.opencrx.kernel.document1.jpa3.DocumentRevision.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductConfiguration.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductConfiguration.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductBasePrice.CLASS,
+        org.opencrx.kernel.contract1.jpa3.Quote.CLASS,
+        org.opencrx.kernel.contract1.jpa3.SalesOrder.CLASS,
+        org.opencrx.kernel.base.jpa3.Property.CLASS,
+        org.opencrx.kernel.contract1.jpa3.Invoice.CLASS,
+        org.opencrx.kernel.product1.jpa3.PricingRule.CLASS,
+        org.opencrx.kernel.contract1.jpa3.CalculationRule.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotReference.CLASS,
+        org.opencrx.kernel.depot1.jpa3.DepotReference.CLASS,
+        org.opencrx.kernel.generic.jpa3.PropertySet.CLASS,
+        org.opencrx.kernel.generic.jpa3.PropertySet.CLASS,
+        org.opencrx.kernel.generic.jpa3.PropertySet.CLASS,
+        org.opencrx.kernel.generic.jpa3.PropertySet.CLASS,
+        org.opencrx.kernel.contract1.jpa3.ProductApplication.CLASS,
+        org.opencrx.kernel.contract1.jpa3.DeliveryInformation.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductConfigurationTypeSet.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductConfigurationType.CLASS,
+        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
+        org.opencrx.kernel.contract1.jpa3.ContractRole.CLASS,
+        org.opencrx.kernel.contract1.jpa3.ContractRole.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractRemovedPosition.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractRemovedPosition.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractRemovedPosition.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractRemovedPosition.CLASS,
+        org.opencrx.kernel.contract1.jpa3.AbstractRemovedPosition.CLASS,
+        org.opencrx.kernel.contract1.jpa3.PositionModification.CLASS,
+        org.opencrx.kernel.contract1.jpa3.PositionModification.CLASS,
+        org.opencrx.kernel.contract1.jpa3.PositionModification.CLASS,
+        org.opencrx.kernel.contract1.jpa3.PositionModification.CLASS,
+        org.opencrx.kernel.contract1.jpa3.PositionModification.CLASS,
+        org.openmdx.security.realm1.jpa3.Realm.CLASS,
+        org.openmdx.security.realm1.jpa3.Principal.CLASS,
+        org.openmdx.security.authorization1.jpa3.Policy.CLASS,
+        org.openmdx.security.realm1.jpa3.Role.CLASS,
+        org.openmdx.security.realm1.jpa3.Permission.CLASS,
+        org.openmdx.security.authorization1.jpa3.Privilege.CLASS,
+        org.opencrx.security.identity1.jpa3.Subject.CLASS,
+        org.openmdx.security.authentication1.jpa3.Credential.CLASS,
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
-        org.opencrx.kernel.admin1.jdo2.ComponentConfiguration.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductClassification.CLASS,
-        org.opencrx.kernel.product1.jdo2.ProductClassificationRelationship.CLASS,
-        org.opencrx.kernel.account1.jdo2.AccountMembership.CLASS,
-        org.opencrx.kernel.activity1.jdo2.WorkReportEntry.CLASS,
-        org.opencrx.kernel.activity1.jdo2.WorkReportEntry.CLASS,
-        org.opencrx.kernel.base.jdo2.IndexEntry.CLASS,
-        org.opencrx.kernel.generic.jdo2.PropertySetEntry.CLASS,
-        org.opencrx.kernel.generic.jdo2.PropertySetEntry.CLASS,
+        org.opencrx.kernel.admin1.jpa3.ComponentConfiguration.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductClassification.CLASS,
+        org.opencrx.kernel.product1.jpa3.ProductClassificationRelationship.CLASS,
+        org.opencrx.kernel.account1.jpa3.AccountMembership.CLASS,
+        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
+        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
+        org.opencrx.kernel.base.jpa3.IndexEntry.CLASS,
+        org.opencrx.kernel.generic.jpa3.PropertySetEntry.CLASS,
+        org.opencrx.kernel.generic.jpa3.PropertySetEntry.CLASS,
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
-        org.opencrx.kernel.building1.jdo2.Facility.CLASS,
-        org.opencrx.kernel.building1.jdo2.Facility.CLASS,
-        org.opencrx.kernel.building1.jdo2.Facility.CLASS,
-        org.opencrx.kernel.building1.jdo2.Facility.CLASS,
+        org.opencrx.kernel.building1.jpa3.Facility.CLASS,
+        org.opencrx.kernel.building1.jpa3.Facility.CLASS,
+        org.opencrx.kernel.building1.jpa3.Facility.CLASS,
+        org.opencrx.kernel.building1.jpa3.Facility.CLASS,
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "building1", "AbstractBuildingUnit")),
-        org.opencrx.kernel.building1.jdo2.InventoryItem.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkTo.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkTo.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkTo.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkTo.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkFrom.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkFrom.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkFrom.CLASS,
-        org.opencrx.kernel.building1.jdo2.LinkableItemLinkFrom.CLASS,
-        org.opencrx.kernel.product1.jdo2.AccountAssignmentProduct.CLASS,
-        org.opencrx.kernel.depot1.jdo2.SingleBooking.CLASS,
-        org.opencrx.kernel.account1.jdo2.AddressFilterGlobal.CLASS,
-        org.opencrx.kernel.account1.jdo2.AddressFilterProperty.CLASS,
-        org.opencrx.kernel.document1.jdo2.DocumentLink.CLASS,
-        org.opencrx.kernel.document1.jdo2.DocumentLock.CLASS,
-        org.opencrx.kernel.document1.jdo2.DocumentAttachment.CLASS,
-        org.opencrx.kernel.home1.jdo2.ObjectFinder.CLASS,
-        org.opencrx.kernel.activity1.jdo2.InvolvedObject.CLASS        
+        org.opencrx.kernel.building1.jpa3.InventoryItem.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkTo.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkTo.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkTo.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkTo.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkFrom.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkFrom.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkFrom.CLASS,
+        org.opencrx.kernel.building1.jpa3.LinkableItemLinkFrom.CLASS,
+        org.opencrx.kernel.product1.jpa3.AccountAssignmentProduct.CLASS,
+        org.opencrx.kernel.depot1.jpa3.SingleBooking.CLASS,
+        org.opencrx.kernel.account1.jpa3.AddressFilterGlobal.CLASS,
+        org.opencrx.kernel.account1.jpa3.AddressFilterProperty.CLASS,
+        org.opencrx.kernel.document1.jpa3.DocumentLink.CLASS,
+        org.opencrx.kernel.document1.jpa3.DocumentLock.CLASS,
+        org.opencrx.kernel.document1.jpa3.DocumentAttachment.CLASS,
+        org.opencrx.kernel.home1.jpa3.ObjectFinder.CLASS,
+        org.opencrx.kernel.activity1.jpa3.InvolvedObject.CLASS        
     };
     
     public static final String[] TYPE_NAMES = {

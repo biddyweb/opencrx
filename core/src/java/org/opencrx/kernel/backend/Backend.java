@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Backend.java,v 1.23 2008/10/06 17:12:53 wfro Exp $
+ * Name:        $Id: Backend.java,v 1.29 2009/02/20 21:44:46 wfro Exp $
  * Description: Backend
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 17:12:53 $
+ * Date:        $Date: 2009/02/20 21:44:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,29 +65,29 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
-import org.openmdx.model1.accessor.basic.cci.Model_1_3;
 
 public class Backend {
 
@@ -554,13 +554,13 @@ public class Backend {
     }
     
     //-------------------------------------------------------------------------
-    public RefPackage_1_3 getLocalPkg(
+    public RefPackage_1_0 getLocalPkg(
     ) {
         return this.context.localPkg;
     }
     
     //-------------------------------------------------------------------------
-    public RefPackage_1_3 getDelegatingPkg(
+    public RefPackage_1_0 getDelegatingPkg(
     ) {
         return this.context.delegatingPkg;
     }
@@ -696,10 +696,8 @@ public class Backend {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DUPLICATE_OBJECT,
-                new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", object.path().getBase())
-                },
-                "Duplicate object. Object with qualifier already exists."
+                "Duplicate object. Object with qualifier already exists.",
+                new BasicException.Parameter("param0", object.path().getBase())
             );
         }
     }
@@ -820,10 +818,8 @@ public class Backend {
                             e,
                             OpenCrxException.DOMAIN,
                             OpenCrxException.MEDIA_ACCESS_FAILURE,
-                            new BasicException.Parameter[]{
-                                new BasicException.Parameter("param0", DateFormat.getInstance().format(e.getCause().getTimestamp()))        
-                            },
-                            e.getCause().getDescription()
+                            e.getCause().getDescription(),
+                            new BasicException.Parameter("param0", DateFormat.getInstance().format(e.getCause().getTimestamp()))        
                         );
                     }
                     else {
@@ -847,7 +843,6 @@ public class Backend {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.ASSERTION_FAILURE,
-                    new BasicException.Parameter[]{},
                     "maximum limit of pre-store count exceeded. Possible reason: update recursion in preStore()"
                 );                
             }
@@ -900,10 +895,8 @@ public class Backend {
                         throw new ServiceException(
                             OpenCrxException.DOMAIN,
                             OpenCrxException.OBJECT_TYPE_IS_READONLY,
-                            new BasicException.Parameter[]{
-                                new BasicException.Parameter("param0", objectClass)
-                            },
-                            "Object type is readonly. Can not modify object."
+                            "Object type is readonly. Can not modify object.",
+                            new BasicException.Parameter("param0", objectClass)
                         );
                     }
                 }
@@ -994,12 +987,10 @@ public class Backend {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.ASSERTION_FAILURE, 
-                    new BasicException.Parameter[]{
-                            new BasicException.Parameter("contact", object),
-                            new BasicException.Parameter("param0", "lastName"),
-                            new BasicException.Parameter("param1", lastName)
-                    },
-                    "A contact's last name must not be '##demo for user defined error##'"
+                    "A contact's last name must not be '##demo for user defined error##'",
+                    new BasicException.Parameter("contact", object),
+                    new BasicException.Parameter("param0", "lastName"),
+                    new BasicException.Parameter("param1", lastName)
                 );
             }
         }

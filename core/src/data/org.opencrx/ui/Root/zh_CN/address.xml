@@ -565,6 +565,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalStreetNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>街道号(可选)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>街道号(可选)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalFreightTerms" _operation="create">
                     <_object>
                       <label>
@@ -852,6 +863,9 @@
                       <label>
                         <_item>主要地址</_item>
                       </label>
+                      <shortLabel>
+                        <_item>主要地址</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>检查是否为主要地址</_item>
                       </toolTip>

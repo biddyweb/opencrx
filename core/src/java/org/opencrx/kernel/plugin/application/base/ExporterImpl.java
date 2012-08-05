@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExporterImpl.java,v 1.5 2008/06/16 14:48:47 wfro Exp $
+ * Name:        $Id: ExporterImpl.java,v 1.6 2009/01/09 18:11:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/16 14:48:47 $
+ * Date:        $Date: 2009/01/09 18:11:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,7 @@ import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.Exporter;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 
 public class ExporterImpl {
@@ -77,7 +77,7 @@ public class ExporterImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
     
     //-----------------------------------------------------------------------

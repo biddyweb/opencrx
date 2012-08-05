@@ -20,7 +20,7 @@ public class IMAPServlet extends HttpServlet {
     ) throws ServletException {
         super.init();        
         try {
-            Utils.createModel();
+            Utils.getModel();
             PersistenceManagerFactory persistenceManagerFactory = Utils.getPersistenceManagerFactory();
             String providerName = config.getInitParameter("provider");
             providerName = providerName == null 
@@ -46,7 +46,8 @@ public class IMAPServlet extends HttpServlet {
             );
             try {
                 pm.close();
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
         }
         catch(Exception e) {
             new ServiceException(e).log();

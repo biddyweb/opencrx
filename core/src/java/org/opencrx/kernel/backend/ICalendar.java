@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.33 2008/12/05 00:45:17 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.43 2009/03/09 15:43:50 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.33 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/05 00:45:17 $
+ * Date:        $Date: 2009/03/09 15:43:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -77,19 +77,22 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import javax.jdo.JDOHelper;
+
+import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.collection.SparseList;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.collection.SparseList;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -170,7 +173,7 @@ public class ICalendar {
             }
             if("org:opencrx:kernel:account1:EMailAddress".equals(addressClass)) {
                 List adr = address.values("emailAddress");
-                if((emailAddress == null) && (adr.size() > 0)) {
+                if((emailAddress == null) && !adr.isEmpty()) {
                     emailAddress = (String)adr.get(0);
                 }
                 if((adr.size() > 0) && (usage.contains(USAGE_EMAIL_PRIMARY))) {
@@ -264,7 +267,44 @@ public class ICalendar {
         String location = activity.values("location").isEmpty() ? 
             "" : 
             (String)activity.values("location").get(0);
-        // attendees
+        // STATUS
+        String status = null;
+        // VTODO
+        if(icalType == ICAL_TYPE_VTODO) {
+            Number percentComplete = (Number)activity.values("percentComplete").get(0);
+            Boolean isDisabled = (Boolean)activity.values("disabled").get(0);
+            if(isDisabled != null && isDisabled.booleanValue()) {
+                status = "CANCELLED";
+            }
+            else {
+                if(percentComplete == null || percentComplete.intValue() == 0) {
+                    status = "NEEDS-ACTION";
+                }
+                else if(percentComplete != null && percentComplete.intValue() >= 100) {
+                    status = "COMPLETED";
+                }
+                else {
+                    status = "IN-PROCESS";
+                }
+            }
+        }
+        // VEVENT
+        else {
+            Number percentComplete = (Number)activity.values("percentComplete").get(0);
+            Boolean isDisabled = (Boolean)activity.values("disabled").get(0);
+            if(isDisabled != null && isDisabled.booleanValue()) {
+                status = "CANCELLED";
+            }
+            else {
+                if(percentComplete == null || percentComplete.intValue() == 0) {
+                    status = "TENTATIVE";
+                }
+                else {
+                    status = "CONFIRMED";
+                }
+            }
+        }
+        // Attendees
         List<String> attendees = new ArrayList<String>();
         String activityClass = (String)activity.values(SystemAttributes.OBJECT_CLASS).get(0);
         String[] partyMetadata = this.partyMetadata.get(activityClass);
@@ -362,6 +402,7 @@ public class ICalendar {
                 "SUMMARY:\n" +
                 "DESCRIPTION:\n" +
                 "PRIORITY:\n" +
+                "STATUS:\n" +
                 "ATTENDEE:\n" +
                 "CLASS:PUBLIC\n" +
                 (icalType == ICalendar.ICAL_TYPE_VTODO ? "END:VTODO\n" : "END:VEVENT\n") +
@@ -490,6 +531,10 @@ public class ICalendar {
                         }
                         targetIcal.println("PRIORITY:" + icalPriority);
                     }
+                    // STATUS
+                    if(status != null) {
+                        targetIcal.println("STATUS:" + status);
+                    }
                     // ATTENDEE
                     for(int i = 0; i < attendees.size(); i++) {
                         targetIcal.println("ATTENDEE" + attendees.get(i));
@@ -537,6 +582,8 @@ public class ICalendar {
                         tagStart.toUpperCase().startsWith("SUMMARY");
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("PRIORITY");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("STATUS");
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("ATTENDEE");
                     isUpdatableTag |=
@@ -726,7 +773,7 @@ public class ICalendar {
             InputStream is = new ByteArrayInputStream(item);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             StringBuilder ical = new StringBuilder();
-            Map<String,String> icalFields = parseICal(
+            Map<String,String> icalFields = ICalendar.parseICal(
                 reader,
                 ical
             );
@@ -819,12 +866,11 @@ public class ICalendar {
         List<String> errors,
         List<String> report
     ) throws ServiceException {
-
         // Prepare attendees
         VCard vcards = new VCard(
             this.backend
         );
-        List<DataproviderObject_1_0> attendees = new ArrayList<DataproviderObject_1_0>();
+        List<EMailAddress> attendees = new ArrayList<EMailAddress>();
         List<Short> attendeeRoles = new ArrayList<Short>();
         int count = 0;
         while(fields.get("ATTENDEE[" + count + "]") != null) {
@@ -841,16 +887,25 @@ public class ICalendar {
                     report
                 );
                 if(attendee != null) {
-                    attendees.add(
-                        this.backend.retrieveObject(
-                            attendee.refGetPath()
-                        )
-                    );
-                    attendeeRoles.add(
-                        (attendeeAsString.indexOf("ROLE=OPT-PARTICIPANT") >= 0) || (attendeeAsString.indexOf("role=opt-participant") >= 0)
-                            ? new Short((short)PARTY_TYPE_OPTIONAL)
-                            : new Short((short)PARTY_TYPE_REQUIRED)
-                    );
+                	int pos = attendeeAsString.indexOf("MAILTO:");
+                    String emailPrefInternet = attendeeAsString.substring(pos + 7);                	
+                	List<EMailAddress> emailAddresses = this.backend.getAccounts().lookupEmailAddress(
+                		JDOHelper.getPersistenceManager(attendee), 
+                		activityIdentity.get(2), 
+                		activityIdentity.get(4), 
+                		emailPrefInternet, 
+                		true
+                	);
+                	if(!emailAddresses.isEmpty()) {
+                		attendees.add(
+                			emailAddresses.iterator().next()
+                		);
+                        attendeeRoles.add(
+                            (attendeeAsString.indexOf("ROLE=OPT-PARTICIPANT") >= 0) || (attendeeAsString.indexOf("role=opt-participant") >= 0) ? 
+                            	new Short((short)PARTY_TYPE_OPTIONAL) : 
+                            	new Short((short)PARTY_TYPE_REQUIRED)
+                        );
+                	}
                 }
             }
             count++;
@@ -859,7 +914,6 @@ public class ICalendar {
             return null;
         }
         AppLog.trace("attendees=", attendees);
-
         // Timezone and date/time formatter
         String tzid = fields.get("TZID");
         TimeZone tz = TimeZone.getDefault();
@@ -874,8 +928,7 @@ public class ICalendar {
         }
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(DATETIME_FORMAT);
         dateTimeFormatter.setLenient(false);
-        dateTimeFormatter.setTimeZone(tz);
-        
+        dateTimeFormatter.setTimeZone(tz);        
         // Retrieve activity for modification
         DataproviderObject activity = this.backend.retrieveObjectForModification(
             activityIdentity
@@ -883,9 +936,9 @@ public class ICalendar {
         // externalLink
         boolean hasIcalUid = false;
         SparseList<Object> externalLinks = activity.values("externalLink");
-        String icalUid = fields.get("UID") == null
-            ? activity.path().getBase()
-            : fields.get("UID");
+        String icalUid = fields.get("UID") == null ? 
+        	activity.path().getBase() : 
+        	fields.get("UID");
         for(int i = 0; i < externalLinks.size(); i++) {
             if(((String)externalLinks.get(i)).startsWith(ICAL_SCHEMA)) {
                 externalLinks.set(
@@ -911,7 +964,8 @@ public class ICalendar {
                         dateTimeFormatter
                     )
                 );
-            } catch(Exception e) {
+            } 
+            catch(Exception e) {
                 errors.add("DTSTART (" + s + ")");
             }
         }
@@ -924,7 +978,8 @@ public class ICalendar {
                         dateTimeFormatter
                     )
                 );
-            } catch(Exception e) {
+            } 
+            catch(Exception e) {
                 errors.add("DTEND (" + s + ")");
             }
         }
@@ -937,7 +992,8 @@ public class ICalendar {
                         dateTimeFormatter
                     )
                 );
-            } catch(Exception e) {
+            } 
+            catch(Exception e) {
                 errors.add("DUE (" + s + ")");
             }
         }
@@ -950,7 +1006,8 @@ public class ICalendar {
                         dateTimeFormatter
                     )
                 );
-            } catch(Exception e) {
+            } 
+            catch(Exception e) {
                 errors.add("COMPLETED (" + s + ")");
             }
         }
@@ -973,19 +1030,23 @@ public class ICalendar {
                     case 9: priority = 1; break; // low
                 }
                 activity.clearValues("priority").add(new Integer(priority));
-            } catch(Exception e) {
+            } 
+            catch(Exception e) {
                 errors.add("PRIORITY (" + s + ")");
             }
         }
         s = fields.get("SUMMARY");
         if((s != null) && (s.length() > 0)) {
             int posComment = s.indexOf(LINE_COMMENT_INDICATOR);
-            String name =  posComment > 0 
-                ? s.substring(0, posComment) 
-                : s;
-            activity.clearValues("name").add(
-                this.fromICalString(name)
-            );
+            String name =  posComment > 0 ? 
+                s.substring(0, posComment) : 
+                s;
+            name = this.fromICalString(name);
+            // Limit name to 1000 chars
+            if(name.length() > 1000) {
+                name = name.substring(0, 1000);
+            }
+            activity.clearValues("name").add(name);
         }
         s = fields.get("DESCRIPTION");
         if((s != null) && (s.length() > 0)) {
@@ -997,10 +1058,13 @@ public class ICalendar {
                 s = s.substring(pos + 2);
             }
             temp += temp.length() == 0 ? "" : "\n";
-            temp += s;            
-            activity.clearValues("description").add(
-               this.fromICalString(temp)
-           );
+            temp += s;
+            // Limit description to 1000 chars
+            String description = this.fromICalString(temp);
+            if(description.length() > 1000) {
+                description = description.substring(0, 1000);
+            }
+            activity.clearValues("description").add(description);
         }
         s = fields.get("LOCATION");
         if((s != null) && (s.length() > 0)) {
@@ -1032,7 +1096,6 @@ public class ICalendar {
             return null;
         }        
         report.add("Update activity");
-
         // Update parties
         String activityClass = (String)activity.values(SystemAttributes.OBJECT_CLASS).get(0);
         String[] partyMetadata = this.partyMetadata.get(activityClass);
@@ -1045,16 +1108,22 @@ public class ICalendar {
                 Integer.MAX_VALUE,
                 Directions.ASCENDING      
             );
-            List<Object> existingParties = new ArrayList<Object>();
+            List<Path> existingParties = new ArrayList<Path>();
             for(DataproviderObject_1_0 party : parties) {
-                existingParties.addAll(
-                    party.values("party")
-                );
+            	if(!party.values("party").isEmpty()) {
+	                existingParties.add(
+	                    (Path)party.values("party").get(0)
+	                );
+            	}
             }
+            boolean isEMailActivity = "org:opencrx:kernel:activity1:EMail".equals(activityClass);
             // Create new parties
             for(int i = 0; i < attendees.size(); i++) {
-                DataproviderObject_1_0 attendee = attendees.get(i);
-                if(!existingParties.contains(attendee.path())) {
+                EMailAddress attendee = attendees.get(i);
+                Path attendeeIdentity = isEMailActivity ? 
+                	attendee.refGetPath() : 
+                	attendee.refGetPath().getParent().getParent();
+                if(!existingParties.contains(attendeeIdentity)) {
                     DataproviderObject party = new DataproviderObject(
                         activity.path().getDescendant(new String[]{partyMetadata[1], this.backend.getUidAsString()})
                     );
@@ -1072,7 +1141,7 @@ public class ICalendar {
                             new Short((short)PARTY_TYPE_NA)
                         );
                     }
-                    party.clearValues("party").add(attendee.path());
+                    party.clearValues("party").add(attendeeIdentity);
                     this.backend.getDelegatingRequests().addCreateRequest(
                         party
                     );
@@ -1080,9 +1149,9 @@ public class ICalendar {
                 }
             }
         }
-        return activity == null
-            ? null
-            : (Activity)this.backend.getDelegatingPkg().refObject(activity.path().toXri());
+        return activity == null ? 
+            null : 
+            (Activity)this.backend.getDelegatingPkg().refObject(activity.path().toXri());
     }
 
     //-------------------------------------------------------------------------

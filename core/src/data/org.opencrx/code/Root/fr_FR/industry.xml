@@ -29,7 +29,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>MA</_item>
+                              <_item>Machine</_item>
                             </shortText>
                             <longText>
                               <_item>Fabrication de machines et équipements</_item>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>IF</_item>
+                              <_item>Banque</_item>
                             </shortText>
                             <longText>
-                              <_item>Institutions financières</_item>
+                              <_item>Banque</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,7 +51,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>CO</_item>
+                              <_item>Construction</_item>
                             </shortText>
                             <longText>
                               <_item>Construction</_item>
@@ -62,7 +62,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>HA</_item>
+                              <_item>Habillement</_item>
                             </shortText>
                             <longText>
                               <_item>Habillement</_item>
@@ -73,7 +73,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>CE</_item>
+                              <_item>Conseil aux entreprises</_item>
                             </shortText>
                             <longText>
                               <_item>Conseil aux entreprises</_item>
@@ -84,7 +84,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>BT</_item>
+                              <_item>Biotechnologie</_item>
                             </shortText>
                             <longText>
                               <_item>Biotechnologie</_item>
@@ -95,7 +95,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>IC</_item>
+                              <_item>Industrie chimique</_item>
                             </shortText>
                             <longText>
                               <_item>Industrie chimique</_item>
@@ -106,7 +106,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>CD</_item>
+                              <_item>Commerce de détail</_item>
                             </shortText>
                             <longText>
                               <_item>Commerce de détail</_item>
@@ -117,7 +117,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>EL</_item>
+                              <_item>Electronique</_item>
                             </shortText>
                             <longText>
                               <_item>Electronique</_item>
@@ -128,7 +128,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>IA</_item>
+                              <_item>Industries alimentaires</_item>
                             </shortText>
                             <longText>
                               <_item>Industries alimentaires</_item>
@@ -139,7 +139,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="11" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>EN</_item>
+                              <_item>Energie</_item>
                             </shortText>
                             <longText>
                               <_item>Energie</_item>
@@ -150,7 +150,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AR</_item>
+                              <_item>Activités récréatives</_item>
                             </shortText>
                             <longText>
                               <_item>Activités récréatives, culturelles et sportives</_item>
@@ -161,7 +161,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="13" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>IM</_item>
+                              <_item>Manufacture</_item>
                             </shortText>
                             <longText>
                               <_item>Industrie manufacturière</_item>
@@ -172,7 +172,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="14" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>FI</_item>
+                              <_item>Finance</_item>
                             </shortText>
                             <longText>
                               <_item>Finance</_item>
@@ -183,10 +183,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="15" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AH</_item>
+                              <_item>Hébergement</_item>
                             </shortText>
                             <longText>
-                              <_item>Activités hospitalières</_item>
+                              <_item>Hébergement</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -194,7 +194,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="16" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AN</_item>
+                              <_item>Activités non lucratives</_item>
                             </shortText>
                             <longText>
                               <_item>Activités non lucratives</_item>
@@ -205,7 +205,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="17" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>SA</_item>
+                              <_item>Santé</_item>
                             </shortText>
                             <longText>
                               <_item>Santé</_item>
@@ -216,7 +216,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="18" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>CM</_item>
+                              <_item>Communication</_item>
                             </shortText>
                             <longText>
                               <_item>Communication</_item>
@@ -227,7 +227,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="19" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AG</_item>
+                              <_item>Agriculture</_item>
                             </shortText>
                             <longText>
                               <_item>Agriculture</_item>
@@ -238,7 +238,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ME</_item>
+                              <_item>Media</_item>
                             </shortText>
                             <longText>
                               <_item>Media</_item>
@@ -249,7 +249,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>SP</_item>
+                              <_item>Services personnels</_item>
                             </shortText>
                             <longText>
                               <_item>Services personnels</_item>
@@ -260,7 +260,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AD</_item>
+                              <_item>Administration</_item>
                             </shortText>
                             <longText>
                               <_item>Administration</_item>
@@ -271,7 +271,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="23" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ED</_item>
+                              <_item>Education</_item>
                             </shortText>
                             <longText>
                               <_item>Education</_item>
@@ -282,7 +282,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="24" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>IG</_item>
+                              <_item>Ingéniérie</_item>
                             </shortText>
                             <longText>
                               <_item>Ingéniérie</_item>
@@ -293,7 +293,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>TE</_item>
+                              <_item>Technologie</_item>
                             </shortText>
                             <longText>
                               <_item>Technologie</_item>
@@ -304,7 +304,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="26" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>TC</_item>
+                              <_item>Télécommunications</_item>
                             </shortText>
                             <longText>
                               <_item>Télécommunications</_item>
@@ -315,7 +315,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="27" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>EV</_item>
+                              <_item>Environnement</_item>
                             </shortText>
                             <longText>
                               <_item>Environnement</_item>
@@ -326,7 +326,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="28" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>LO</_item>
+                              <_item>Loisirs</_item>
                             </shortText>
                             <longText>
                               <_item>Loisirs</_item>
@@ -337,7 +337,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="29" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>TR</_item>
+                              <_item>Transports</_item>
                             </shortText>
                             <longText>
                               <_item>Transports</_item>
@@ -348,7 +348,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AS</_item>
+                              <_item>Assurance</_item>
                             </shortText>
                             <longText>
                               <_item>Assurance</_item>
@@ -359,7 +359,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="31" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AU</_item>
+                              <_item>Autres</_item>
                             </shortText>
                             <longText>
                               <_item>Autres</_item>
@@ -370,7 +370,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="32" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>RE</_item>
+                              <_item>Restauration</_item>
                             </shortText>
                             <longText>
                               <_item>Restauration</_item>
@@ -381,7 +381,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="33" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>BI</_item>
+                              <_item>Banque d&apos;investissement</_item>
                             </shortText>
                             <longText>
                               <_item>Banque d&apos;investissement</_item>
@@ -392,7 +392,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="34" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>BC</_item>
+                              <_item>Banque commerciale</_item>
                             </shortText>
                             <longText>
                               <_item>Banque commerciale</_item>
@@ -403,7 +403,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="35" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>BD</_item>
+                              <_item>Banque de détail</_item>
                             </shortText>
                             <longText>
                               <_item>Banque de détail</_item>
@@ -414,7 +414,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="36" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>CT</_item>
+                              <_item>Courtage</_item>
                             </shortText>
                             <longText>
                               <_item>Courtage</_item>
@@ -425,7 +425,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="37" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AT</_item>
+                              <_item>Automobile</_item>
                             </shortText>
                             <longText>
                               <_item>Automobile</_item>
@@ -436,7 +436,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="38" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>TI</_item>
+                              <_item>Technologies de l&apos;information</_item>
                             </shortText>
                             <longText>
                               <_item>Technologies de l&apos;information</_item>
@@ -447,10 +447,32 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="39" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>PH</_item>
+                              <_item>Pharmacie</_item>
                             </shortText>
                             <longText>
                               <_item>Pharmacie</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Gros</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Gros</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Transport</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Transport</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: BookmarkNotFoundException.java,v 1.1 2008/12/10 15:14:00 wfro Exp $
+ * Name:        $Id: BookmarkNotFoundException.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
  * Description: BookmarkNotFoundException
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/10 15:14:00 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,17 +55,14 @@
  */
 package org.opencrx.kernel.utils.rtf;
 
-public class BookmarkNotFoundException extends Exception
-{
+public class BookmarkNotFoundException extends Exception {
 
-    public BookmarkNotFoundException(String name, String text)
-    {
+    public BookmarkNotFoundException(String name, String text) {
         super(text);
         this.name = name;
     }
 
-    public String getBookmarkname()
-    {
+    public String getBookmarkname() {
         return name;
     }
 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.20 2008/09/29 09:19:08 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.27 2009/02/10 16:34:26 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/29 09:19:08 $
+ * Date:        $Date: 2009/02/10 16:34:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,8 +68,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipInputStream;
 
-import javax.servlet.ServletException;
-
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.layer.persistence.jdo.ObjectIdBuilder;
 import org.opencrx.kernel.text.ExcelToText;
@@ -77,100 +75,94 @@ import org.opencrx.kernel.text.OpenOfficeToText;
 import org.opencrx.kernel.text.PDFToText;
 import org.opencrx.kernel.text.RTFToText;
 import org.opencrx.kernel.text.WordToText;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.configuration.Configuration;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.DataproviderReply;
+import org.openmdx.application.dataprovider.cci.DataproviderReplyContexts;
+import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.application.configuration.Configuration;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderReply;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderReplyContexts;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.text.StringBuilders;
 
 /**
  * This plugin creates audit entries for modified objects.
  */
-public class Indexed_1 
-    extends Database_1 {
+public class Indexed_1 extends Database_1 {
 
     //-------------------------------------------------------------------------
     public void activate(
         short id, 
         Configuration configuration,
         Layer_1_0 delegation
-    ) throws Exception, ServiceException {
+    ) throws ServiceException {
         super.activate(
             id, 
             configuration, 
             delegation
         );
-        
         // Types to be indexed
-        this.indexableTypes = new TreeSet<Path>(); 
-        try {
-            for(int i = 0; i < ObjectIdBuilder.TYPES.length; i++) {
-                Path type = ObjectIdBuilder.TYPES[i];
-                boolean hasWildcardReferences = false;
-                for(int j = 1; !hasWildcardReferences && (j < type.size()); j+=2) {
-                    hasWildcardReferences = ":*".equals(type.get(j));
-                }
-                if(!hasWildcardReferences) {
-                    List<String> className = ObjectIdBuilder.CLASS_NAMES[i]; 
-                    if(
-                        (className != null) && 
-                        this.model.isSubtypeOf(className, "org:opencrx:kernel:base:Indexed") &&
-                        !this.model.isSubtypeOf(className, "org:openmdx:base:Segment")
-                    ) {
-                        this.indexableTypes.add(type);
-                    }
+        this.indexableTypes = new TreeSet<Path>();
+        Model_1_0 model = this.getModel();
+        for(int i = 0; i < ObjectIdBuilder.TYPES.length; i++) {
+            Path type = ObjectIdBuilder.TYPES[i];
+            boolean hasWildcardReferences = false;
+            for(int j = 1; !hasWildcardReferences && (j < type.size()); j+=2) {
+                hasWildcardReferences = ":*".equals(type.get(j));
+            }
+            if(!hasWildcardReferences) {
+                List<String> className = ObjectIdBuilder.CLASS_NAMES[i]; 
+                if(
+                    (className != null) && 
+                    model.isSubtypeOf(className, "org:opencrx:kernel:base:Indexed") &&
+                    !model.isSubtypeOf(className, "org:openmdx:base:Segment")
+                ) {
+                    this.indexableTypes.add(type);
                 }
             }
-            // Manually add some more
-            this.indexableTypes.addAll(
-                Arrays.asList(
-                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityTracker/:*/followUp/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityMilestone/:*/followUp/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityCategory/:*/followUp/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/address/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/address/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*/address/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/address/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*/address/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/address/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/note/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/note/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*/note/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/note/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*/note/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/note/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/media/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/media/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/media/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*/media/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/media/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*/media/:*"),
-                    new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/media/:*")
-                )
-            );
-            
         }
-        catch(ServiceException e) {
-            throw new ServletException("Can not get types to be indexed", e);
-        }
-        
+        // Manually add some more
+        this.indexableTypes.addAll(
+            Arrays.asList(
+                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityTracker/:*/followUp/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityMilestone/:*/followUp/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityCategory/:*/followUp/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/address/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/address/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*/address/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/address/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*/address/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/address/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/note/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/note/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*/note/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/note/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*/note/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/note/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/media/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/media/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/media/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*/media/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/media/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*/media/:*"),
+                new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/media/:*")
+            )
+        );            
     }
     
     //-------------------------------------------------------------------------
@@ -362,7 +354,7 @@ public class Indexed_1
         DataproviderObject_1_0 object
     ) throws ServiceException {
         String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        return this.model.isSubtypeOf(
+        return this.getModel().isSubtypeOf(
             objectClass,
             "org:opencrx:kernel:account1:AccountAddress"
         );

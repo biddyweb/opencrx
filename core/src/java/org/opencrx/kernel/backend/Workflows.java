@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.10 2008/07/25 11:18:22 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.15 2009/03/08 17:04:51 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/25 11:18:22 $
+ * Date:        $Date: 2009/03/08 17:04:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,17 +72,17 @@ import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Orders;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Orders;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -156,7 +156,8 @@ public class Workflows {
         org.opencrx.kernel.workflow1.jmi1.Topic topic = null;
         try {
             topic = workflowSegment.getTopic(id);
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         if(topic == null) {
             pm.currentTransaction().begin();
             topic = workflowPackage.getTopic().createTopic();
@@ -236,13 +237,13 @@ public class Workflows {
         String segmentName
     ) throws ServiceException {
         Workflow1Package workflowPackage = Utils.getWorkflowPackage(pm);
-        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = getWorkflowSegment(
+        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getWorkflowSegment(
             pm, 
             providerName, 
             segmentName
         );
         // ExportMailWorkflow 
-        initWorkflow(
+        Workflows.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -253,7 +254,7 @@ public class Workflows {
             null
         );        
         // SendMailWorkflow
-        initWorkflow(
+        Workflows.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -264,7 +265,7 @@ public class Workflows {
             null
         );        
         // SendMailNotificationWorkflow
-        WfProcess sendMailNotificationWorkflow = initWorkflow(
+        WfProcess sendMailNotificationWorkflow = Workflows.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -275,7 +276,7 @@ public class Workflows {
             null
         );        
         // SendAlert
-        WfProcess sendAlertWorkflow = initWorkflow(
+        WfProcess sendAlertWorkflow = Workflows.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -286,7 +287,7 @@ public class Workflows {
             null
         );        
         // PrintConsole
-        initWorkflow(
+        Workflows.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -302,7 +303,7 @@ public class Workflows {
         WfProcess[] sendMailNotificationsActions = new WfProcess[]{
             sendMailNotificationWorkflow
         };
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -312,7 +313,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -322,7 +323,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/followUp/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -332,7 +333,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -342,7 +343,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/booking/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -352,7 +353,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/competitor/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -362,7 +363,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/cb/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -372,7 +373,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -382,7 +383,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -392,7 +393,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -402,7 +403,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -412,7 +413,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/product/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -422,7 +423,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -432,7 +433,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*",
             sendAlertActions
         );
-        initTopic(
+        Workflows.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -491,7 +492,6 @@ public class Workflows {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_MISSING_WORKFLOW,
-                null,
                 "Missing workflow"
             );                                                                
         }
@@ -510,7 +510,6 @@ public class Workflows {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_MISSING_TARGET,
-                null,
                 "Missing target object"
             );                                                                
         }
@@ -553,11 +552,9 @@ public class Workflows {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_CAN_NOT_CREATE_PROCESS_INSTANCE,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", workflowName),
-                    new BasicException.Parameter("param1", e.getMessage())
-                },
-                "Can not get or create process instance"
+                "Can not get or create process instance",
+                new BasicException.Parameter("param0", workflowName),
+                new BasicException.Parameter("param1", e.getMessage())
             );
         }        
         // Add parameters of executeWorkflow() operation to property set of WfProcessInstance
@@ -609,11 +606,9 @@ public class Workflows {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_NO_IMPLEMENTATION,
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", workflowName),
-                        new BasicException.Parameter("param1", e.getMessage())
-                    },
-                    "implementation not found"
+                    "implementation not found",
+                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
             // Look up constructor
@@ -626,11 +621,9 @@ public class Workflows {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_MISSING_CONSTRUCTOR,
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", workflowName),
-                        new BasicException.Parameter("param1", e.getMessage())
-                    },
-                    "missing constructor"
+                    "missing constructor",
+                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
             // Instantiate workflow
@@ -642,11 +635,9 @@ public class Workflows {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_CAN_NOT_INSTANTIATE,
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", workflowName),
-                        new BasicException.Parameter("param1", e.getMessage())
-                    },
-                    "can not instantiate"
+                    "can not instantiate",
+                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
             catch(IllegalAccessException e) {
@@ -654,11 +645,9 @@ public class Workflows {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_ILLEGAL_ACCESS,
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", workflowName),
-                        new BasicException.Parameter("param1", e.getMessage())
-                    },
-                    "illegal access"
+                    "illegal access",
+                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param1", e.getMessage())
                 );                                                                            
             }
             catch(IllegalArgumentException e) {
@@ -666,22 +655,18 @@ public class Workflows {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_ILLEGAL_ARGUMENT,
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", workflowName),
-                        new BasicException.Parameter("param1", e.getMessage())
-                    },
-                    "illegal argument"
+                    "illegal argument",
+                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
             catch(InvocationTargetException e) {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_CAN_NOT_INVOKE,
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", workflowName),
-                        new BasicException.Parameter("param1", e.getTargetException().getMessage())
-                    },
-                    "can not invoke"
+                    "can not invoke",
+                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param1", e.getTargetException().getMessage())
                 );                                                                                        
             }
             // Get workflow parameters
@@ -694,7 +679,7 @@ public class Workflows {
                 Integer.MAX_VALUE,
                 Orders.ASCENDING            
             );
-            Map params = new HashMap();
+            Map<String,Object> params = new HashMap<String,Object>();
             // Add parameters of executeWorkflow operation to params
             if(triggeredBySubscription != null) {
                 params.put("triggeredBySubscription", triggeredBySubscription);
@@ -703,10 +688,10 @@ public class Workflows {
                 params.put("triggeredByEventType", triggeredByEventType);            
             }
             for(
-                Iterator i = parameters.iterator(); 
+                Iterator<DataproviderObject_1_0> i = parameters.iterator(); 
                 i.hasNext(); 
             ) {
-                DataproviderObject_1_0 parameter = (DataproviderObject_1_0)i.next();
+                DataproviderObject_1_0 parameter = i.next();
                 String parameterType = (String)parameter.values(SystemAttributes.OBJECT_CLASS).get(0);
                 Object val = null;
                 if("org:opencrx:kernel:base:BooleanProperty".equals(parameterType)) {
@@ -725,7 +710,7 @@ public class Workflows {
                     val = parameter.values("stringValue");
                 }
                 params.put(
-                    parameter.values("name").get(0),
+                    (String)parameter.values("name").get(0),
                     val
                 );
             }

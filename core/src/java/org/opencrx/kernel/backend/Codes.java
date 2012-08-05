@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Codes.java,v 1.3 2007/12/21 12:49:51 wfro Exp $
+ * Name:        $Id: Codes.java,v 1.7 2009/03/08 17:04:48 wfro Exp $
  * Description: Codes
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/21 12:49:51 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,12 +63,12 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.log.SysLog;
 
 public class Codes
@@ -105,7 +105,8 @@ public class Codes
                 AttributeSelectors.ALL_ATTRIBUTES,
                 null
             );
-        } catch(ServiceException e) {}
+        } 
+        catch(ServiceException e) {}
         // Only refresh if the code segment exists and if it was modified since last refresh
         if(this.cacheIsDirty && (codeSegment != null)) {
             this.codeValueContainers.clear();
@@ -199,7 +200,7 @@ public class Codes
   }
   
   //-------------------------------------------------------------------------
-  public SortedMap getShortText(
+  public SortedMap<String,Short> getShortText(
     String name,
     short locale,
     boolean codeAsKey
@@ -213,7 +214,8 @@ public class Codes
         Short code = new Short((short)0);
         try {
           code = new Short(entry.path().getBase());
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         Object text = ((List)entry.values("shortText")).size() > locale
           ? ((List)entry.values("shortText")).get(locale)
           : ((List)entry.values("shortText")).get(0);          
@@ -247,7 +249,8 @@ public class Codes
         Short code = new Short((short)0);
         try {
           code = new Short(entry.path().getBase());
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         Object text = 
           ((List)entry.values("longText")).size() > locale
             ? ((List)entry.values("longText")).get(locale)

@@ -165,6 +165,116 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Домашний телефон</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Домашний телефон</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Эл. почта дом.</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Эл. почта дом.</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!webUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Домашняя веб страница</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Домашняя веб страница</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Почтовый адрес дом/бизнес</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Почтовый адрес дом/бизнес</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalAddressLine" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Строка(и) адреса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Строка(и) адреса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalStreet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Улица/Аб. ящик</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Улица/Аб. ящик</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Штат/Область</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Штат/Область</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Почтовый индекс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Почтовый индекс</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Город</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Город</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCountry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Страна/Область</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Страна/Область</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
                     <_object>
                       <label>
@@ -483,24 +593,6 @@
                       </toolTip>
                     </_object>
                     <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="null">
-                    <_object/>
-                    <_content>
-                      <alternateElementDefinition>
-                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>Изображение</_item>
-                            </label>
-                            <toolTip>
-                              <_item>Изображение</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AlternateElementDefinition>
-                      </alternateElementDefinition>
-                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
                     <_object>

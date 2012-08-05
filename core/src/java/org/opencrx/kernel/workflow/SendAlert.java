@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendAlert.java,v 1.20 2008/04/01 12:33:02 wfro Exp $
+ * Name:        $Id: SendAlert.java,v 1.23 2009/03/08 17:04:52 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/01 12:33:02 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,9 +61,9 @@ import java.util.Map.Entry;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.backend.SynchWorkflow_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 
 public class SendAlert 
     implements SynchWorkflow_1_0 {
@@ -88,7 +88,8 @@ public class SendAlert
                 if(targetObject.getValues("name") != null) {
                     name = (String)targetObject.values("name").get(0);
                 }
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
         }
         String description = "";
         for(

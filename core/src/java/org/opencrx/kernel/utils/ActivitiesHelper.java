@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivitiesHelper.java,v 1.3 2008/10/15 13:49:49 wfro Exp $
+ * Name:        $Id: ActivitiesHelper.java,v 1.5 2009/03/08 17:04:48 wfro Exp $
  * Description: ActivitiesHelper
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/15 13:49:49 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,8 +55,6 @@
  */
 package org.opencrx.kernel.utils;
 
-import java.net.URI;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -96,7 +94,7 @@ public class ActivitiesHelper {
     public int parseFilteredActivitiesUri(
        String uri
     ) throws IllegalArgumentException  {
-        List<String> l = splitUri(uri);
+        List<String> l = ActivitiesHelper.splitUri(uri);
         if(l.size() >= 3) {
             // URL pattern is
             // ./provider.name/segment.name/tracker|milestone|category|home/calendar.name[/filter/filter.name]
@@ -136,7 +134,7 @@ public class ActivitiesHelper {
                 "category".equals(calendarType) ||
                 "tracker".equals(calendarType)
             ) {
-                List<? extends ActivityGroup> activityGroups = Collections.EMPTY_LIST;
+                List<? extends ActivityGroup> activityGroups = Collections.emptyList();
                 if("milestone".equals(calendarType)) {
                     ActivityMilestoneQuery query = this.activityPackage.createActivityMilestoneQuery();
                     query.name().equalTo(this.calendarName);

@@ -462,10 +462,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
 													<_object>
 														<shortText>
-															<_item>Retail</_item>
+															<_item>Consignment Sales</_item>
 														</shortText>
 														<longText>
-															<_item>Retail</_item>
+															<_item>Consignment Sales</_item>
 														</longText>
 													</_object>
 													<_content/>

@@ -28,7 +28,7 @@
                         <_item>Detalhes</_item>
                       </label>
                       <toolTip>
-                        <_item>Esta aba contém campos de detalhe</_item>
+                        <_item>Esta aba contém campos de detalhes</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Usuário</_item>
                       </label>
                       <toolTip>
-                        <_item>Campos Definido pelo Usuário</_item>
+                        <_item>Campos Definidos pelo Usuário</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -77,182 +77,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Promozione</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Promozione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Promozione</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Promozione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Promozione</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Promozione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Promozione</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Promozione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto composito associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga prodotto composito associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga prodotto composito associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga prodotto composito associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto composito associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto composito associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto composito associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto composito associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Associazione Prodotti </_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Associazione Prodotti</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto Associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto Associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto Associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto Associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto Associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto Associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto Associato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto Associato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionModification" _operation="create">
                     <_object>
                       <label>
@@ -261,6 +85,38 @@
                       <toolTip>
                         <_item>Modifiche Riga</_item>
                       </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderPosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoicePosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -311,7 +167,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:lineItemNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>N. Pos</_item>
+                        <_item>N. Riga</_item>
                       </label>
                       <toolTip>
                         <_item>Numero Riga elemento</_item>
@@ -322,7 +178,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome-Pos</_item>
+                        <_item>Nome-Riga</_item>
                       </label>
                       <toolTip>
                         <_item>Nome della Riga</_item>
@@ -333,7 +189,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Testo-Pos</_item>
+                        <_item>Testo-Riga</_item>
                       </label>
                       <toolTip>
                         <_item>Descrizione</_item>
@@ -355,7 +211,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>N. Riferimento-Pos</_item>
+                        <_item>N. Riferimento-Riga</_item>
                       </label>
                       <toolTip>
                         <_item>Numero Riferimento Riga</_item>
@@ -1149,50 +1005,6 @@
                       </label>
                       <toolTip>
                         <_item>Riga Rimossa</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto Associato Rimossa</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Prodotto Associato Rimossa</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Promozione Rimossa</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga con Promozione Rimossa</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Prodotto Composito Associato Rimossa</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga di Prodotto Composito Associato Rimossa</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga Associazione prodotto Rimossa</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga Associazione prodotto Rimossa</_item>
                       </toolTip>
                     </_object>
                     <_content/>

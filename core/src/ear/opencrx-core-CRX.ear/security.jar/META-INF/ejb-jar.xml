@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN" "http://java.sun.com/dtd/ejb-jar_2_0.dtd">
-<ejb-jar id="ejb-jar_ID">
+<ejb-jar id="opencrx_core_CRX_security">
 	<enterprise-beans>
-		<session id="security_mandatory">
+		<session id="opencrx_core_CRX_security_mandatory">
 			<ejb-name>opencrx_core_CRX_security_mandatory</ejb-name>
-			<local-home>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-			<local>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-			<ejb-class>org.openmdx.compatibility.application.dataprovider.transport.ejb.server.Dataprovider_1Bean</ejb-class>
+			<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
+			<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
+			<ejb-class>org.openmdx.application.dataprovider.transport.ejb.server.Dataprovider_1Bean</ejb-class>
 			<session-type>Stateless</session-type>
 			<transaction-type>Container</transaction-type>
 			<!-- KERNEL -->
 			<env-entry>
 				<env-entry-name>KERNEL/namespaceId</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>OOCSE1</env-entry-value>
+				<env-entry-value>OOMSE2</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/persistenceManagerBinding</env-entry-name>
@@ -66,95 +66,16 @@
 				<env-entry-value>org.opencrx.security.layer.persistence.OpenCrxDatabase_1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[0]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:w3c</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[1]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:base</env-entry-value>
-			</env-entry>
-			<env-entry>				
-				<env-entry-name>KERNEL/modelPackage[2]</env-entry-name>				
-				<env-entry-type>java.lang.String</env-entry-type>				
-				<env-entry-value>org:openmdx:compatibility:state1</env-entry-value>			
-			</env-entry>			
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[3]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:security:realm1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[4]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:security:authorization1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[5]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:security:authentication1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[6]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:security:identity1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[7]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:security:realm1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[8]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:base</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[9]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:account1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[10]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:generic</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[11]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:address1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[12]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:building1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[13]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:document1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[14]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[15]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[16]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:security</env-entry-value>
-			</env-entry>
-			<env-entry>
 				<env-entry-name>INTERCEPTION/propagateSet</env-entry-name>
 				<env-entry-type>java.lang.Boolean</env-entry-type>
 				<env-entry-value>false</env-entry-value>
 			</env-entry>
+			<!-- TYPE -->
+			<env-entry>
+				<env-entry-name>TYPE/verifyReply</env-entry-name>
+				<env-entry-type>java.lang.Boolean</env-entry-type>
+				<env-entry-value>false</env-entry-value>
+			</env-entry>			
 			<!-- APPLICATION -->
 			<env-entry>
 				<env-entry-name>APPLICATION/batchSize</env-entry-name>
@@ -259,7 +180,7 @@
 				<env-entry-value>STANDARD</env-entry-value>
 			</env-entry>
 			<!-- resource-ref -->
-			<resource-ref id="jdbc_datasource_0">
+			<resource-ref id="opencrx_core_CRX_security_datasource_0">
 				<res-ref-name>jdbc/datasource[0]</res-ref-name>
 				<res-type>javax.sql.DataSource</res-type>
 				<res-auth>Container</res-auth>

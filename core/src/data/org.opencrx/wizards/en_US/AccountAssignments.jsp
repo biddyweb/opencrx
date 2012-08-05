@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.8 2008/12/14 11:25:01 cmu Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.10 2009/01/17 23:06:55 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/14 11:25:01 $
+ * Date:        $Date: 2009/01/17 23:06:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -71,9 +71,8 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.query.*,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.application.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
@@ -278,7 +277,7 @@ org.openmdx.application.log.*
         }
         // else all accounts
         accountAssignmentInventoryItemQuery.identity().like(
-          new Path(buildingSegment.refMofId()).getDescendant(new String[]{"inventoryItem", ":*", "assignedAccount", ":*"}).toString()
+          buildingSegment.refGetPath().getDescendant(new String[]{"inventoryItem", ":*", "assignedAccount", ":*"}).toResourcePattern()
         );
         accountAssignmentInventoryItemQuery.orderByModifiedAt().descending();
 

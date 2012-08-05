@@ -746,6 +746,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文件夹</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文件夹</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
@@ -900,6 +911,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文件夹分配</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文件夹分配</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名字</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名字</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media" _operation="create">
                     <_object>
                       <label>
@@ -937,6 +981,17 @@
                       </label>
                       <toolTip>
                         <_item>内容长度</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media:contentMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME类型</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1645,6 +1700,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:mimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template" _operation="create">
                     <_object>
                       <label>
@@ -1894,6 +1960,17 @@
                       </label>
                       <toolTip>
                         <_item>引用过滤器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME类型</_item>
                       </toolTip>
                     </_object>
                     <_content/>

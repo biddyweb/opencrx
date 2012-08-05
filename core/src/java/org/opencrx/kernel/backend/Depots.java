@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.18 2008/10/13 12:32:24 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.22 2009/02/20 21:44:45 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/13 12:32:24 $
+ * Date:        $Date: 2009/02/20 21:44:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,19 +66,19 @@ import org.opencrx.kernel.depot1.jmi1.Depot;
 import org.opencrx.kernel.depot1.jmi1.DepotPosition;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.product1.jmi1.Product;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.Orders;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.Orders;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 
 public class Depots {
@@ -131,11 +131,9 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_IS_LOCKED,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", depotNumber),
-                    new BasicException.Parameter("param1", positionName)
-                },
-                "Depot position is locked"
+                "Depot position is locked",
+                new BasicException.Parameter("param0", depotNumber),
+                new BasicException.Parameter("param1", positionName)
             );
         }
         // Check for closing date of depot position
@@ -146,12 +144,10 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_IS_CLOSED,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", depotNumber),
-                    new BasicException.Parameter("param1", positionName),
-                    new BasicException.Parameter("param2", depotPosition.values("closingDate").get(0))
-                },
-                "Depot position is closed"
+                "Depot position is closed",
+                new BasicException.Parameter("param0", depotNumber),
+                new BasicException.Parameter("param1", positionName),
+                new BasicException.Parameter("param2", depotPosition.values("closingDate").get(0))
             );
         }
         // Check for opening date of depot position
@@ -162,12 +158,10 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_IS_NOT_OPEN,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", depotNumber),
-                    new BasicException.Parameter("param1", positionName),
-                    new BasicException.Parameter("param2", depotPosition.values("openingDate").get(0))
-                },
-                "Depot position is not open"
+                "Depot position is not open",
+                new BasicException.Parameter("param0", depotNumber),
+                new BasicException.Parameter("param1", positionName),
+                new BasicException.Parameter("param2", depotPosition.values("openingDate").get(0))
             );
         }
         
@@ -179,10 +173,8 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_IS_LOCKED,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", depotNumber)
-                },
-                "Depot is locked"
+                "Depot is locked",
+                new BasicException.Parameter("param0", depotNumber)
             );
         }
         // Check for closing date of depot
@@ -193,11 +185,9 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_IS_CLOSED_CAN_NOT_BOOK,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", depotNumber),
-                    new BasicException.Parameter("param1", depot.values("closingDate").get(0))
-                },
-                "Depot is closed"
+                "Depot is closed",
+                new BasicException.Parameter("param0", depotNumber),
+                new BasicException.Parameter("param1", depot.values("closingDate").get(0))
             );
         }
         // Check for opening date of depot
@@ -208,11 +198,9 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_IS_NOT_OPEN,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", depotNumber),
-                    new BasicException.Parameter("param1", depot.values("openingDate").get(0))
-                },
-                "Depot is not open"
+                "Depot is not open",
+                new BasicException.Parameter("param0", depotNumber),
+                new BasicException.Parameter("param1", depot.values("openingDate").get(0))                
             );
         }
         // Find booking period matching value date
@@ -236,10 +224,8 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_BOOKING_PERIOD_NOT_FOUND,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", valueDate),
-                },
-                "No booking period found for value date"
+                "No booking period found for value date",
+                new BasicException.Parameter("param0", valueDate)
             );
         }
         String bookingPeriodName = (String)bookingPeriod.values("name").get(0);        
@@ -251,10 +237,8 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_BOOKING_PERIOD_IS_FINAL,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", bookingPeriodName)
-                },
-                "Booking period is final"
+                "Booking period is final",
+                new BasicException.Parameter("param0", bookingPeriodName)
             );
         }               
         // Check for non-closed booking period
@@ -267,11 +251,9 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_BOOKING_PERIOD_IS_CLOSED,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", bookingPeriodName),
-                    new BasicException.Parameter("param1", bookingPeriod.values("closingBookingTypeThreshold").get(0))
-                },
-                "Booking period is closed"
+                "Booking period is closed",
+                new BasicException.Parameter("param0", bookingPeriodName),
+                new BasicException.Parameter("param1", bookingPeriod.values("closingBookingTypeThreshold").get(0))
             );
         }
     }
@@ -316,11 +298,9 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_REVERSAL_BALANCE_MISMATCH,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", compoundBalance),
-                    new BasicException.Parameter("param1", balance)
-                },
-                "Balance mismatch"
+                "Balance mismatch",
+                new BasicException.Parameter("param0", compoundBalance),
+                new BasicException.Parameter("param1", balance)
             );            
         }
     }
@@ -395,7 +375,6 @@ public class Depots {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.DEPOT_MISSING_QUANTITY,
-                    null,
                     "Missing quantity"
                 );
             }
@@ -440,7 +419,6 @@ public class Depots {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_MISSING_BOOKING_TEXT,
-                   null,
                    "Missing booking text"
                );
             }
@@ -457,7 +435,6 @@ public class Depots {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_MISSING_POSITION_CREDIT,
-                   null,
                    "Missing credit position"
                );            
             }
@@ -474,7 +451,6 @@ public class Depots {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_MISSING_POSITION_DEBIT,
-                   null,
                    "Missing debit position"
                );            
             }
@@ -489,11 +465,9 @@ public class Depots {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_POSITION_NAME_MISMATCH,
-                   new BasicException.Parameter[]{
-                       new BasicException.Parameter("param0", creditPositions[i].values("name").get(0)),
-                       new BasicException.Parameter("param1", debitPositions[i].values("name").get(0))
-                   },               
-                   "position names debit/credit do not match"
+                   "position names debit/credit do not match",
+                   new BasicException.Parameter("param0", creditPositions[i].values("name").get(0)),
+                   new BasicException.Parameter("param1", debitPositions[i].values("name").get(0))
                );                            
             }
         }
@@ -666,7 +640,6 @@ public class Depots {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_MISSING_DEPOT_NUMBER,
-                   null,
                    "Missing depot number"
                );                                        
             }
@@ -698,10 +671,8 @@ public class Depots {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_DEPOT_NOT_FOUND,
-                   new BasicException.Parameter[]{
-                       new BasicException.Parameter("param0", depotNumber)
-                   },
-                   "Depot not found"
+                   "Depot not found",
+                   new BasicException.Parameter("param0", depotNumber)
                );                                        
             }
         }
@@ -805,7 +776,6 @@ public class Depots {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.DEPOT_MISSING_PRODUCT,
-               null,
                "Missing product"
            );                                    
         }
@@ -824,7 +794,6 @@ public class Depots {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.DEPOT_INVALID_POSITION_CREDIT,
-               null,
                "Can not get/create credit depot position"
            );                                                
         }
@@ -840,7 +809,6 @@ public class Depots {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.DEPOT_INVALID_POSITION_DEBIT,
-               null,
                "Can not get/create debit depot position"
            );                                                
         }
@@ -891,7 +859,6 @@ public class Depots {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.DEPOT_INVALID_POSITION_CREDIT,
-               null,
                "Can not get/create credit depot position"
            );                                                
         }
@@ -907,7 +874,6 @@ public class Depots {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.DEPOT_INVALID_POSITION_DEBIT,
-               null,
                "Can not get/create debit depot position"
            );                                                
         }
@@ -1179,7 +1145,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PROCESSED,
-                null,
                 "Booking status must be processed. Cancel is not allowed."
             );                                                
         }
@@ -1191,7 +1156,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_CAN_NOT_CANCEL_REVERSAL_BOOKING,
-                null,
                 "Can not cancel reversal booking"
             );                        
         }
@@ -1216,10 +1180,8 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_ALREADY_HAS_REVERSAL_BOOKING,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", reversal.values("name").get(0) + " / " + reversal.values("bookingDate").get(0))
-                },
-                "Compound booking already cancelled"
+                "Compound booking already cancelled",
+                new BasicException.Parameter("param0", reversal.values("name").get(0) + " / " + reversal.values("bookingDate").get(0))
             );                                    
         }
 
@@ -1311,7 +1273,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
-                null,
                 "Booking status must be pending. Accept is not allowed."
             );                                                
         }
@@ -1331,7 +1292,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
-                null,
                 "Booking status must be pending. Finalize is not allowed."
             );                                                
         }
@@ -1386,7 +1346,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
-                null,
                 "Booking status is not pending. Delete is not allowed."
             );                                                
         }
@@ -1398,7 +1357,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_IS_LOCKED_CAN_NOT_DELETE,
-                null,
                 "Compound booking is locked. Delete is not allowed."
             );                                                
         }
@@ -1451,7 +1409,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
-                null,
                 "Booking status is not pending. Delete is not allowed."
             );                                                
         }
@@ -1466,7 +1423,6 @@ public class Depots {
         throw new ServiceException(
             OpenCrxException.DOMAIN,
             OpenCrxException.DEPOT_CAN_NOT_REMOVE_BOOKING,
-            null,
             "Can not delete bookings"
         );                                                
     }
@@ -1537,7 +1493,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_ENTITY_HAS_BOOKINGS,
-                null,
                 "Depot entity has bookings."
             );                                                                        
         }
@@ -1554,7 +1509,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_CONTRACT_HAS_BOOKINGS,
-                null,
                 "Depot entity has bookings."
             );                                                                        
         }
@@ -1571,7 +1525,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_HAS_BOOKINGS,
-                null,
                 "Depot entity has bookings."
             );                                                                        
         }
@@ -1588,7 +1541,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_HAS_BOOKINGS,
-                null,
                 "Depot entity has bookings."
             );                                                                        
         }
@@ -1612,7 +1564,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_DEPOT_NUMBER_REQUIRED,
-                null,
                 "Depot number is required."
             );                                                            
         }
@@ -1662,7 +1613,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_DEPOT_IS_CLOSED_CAN_NOT_CLOSE,
-                null,
                 "Depot is closed. Can not close."
             );                                                                        
         }
@@ -1954,7 +1904,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_DEPOT_POSITION_IS_CLOSED_CAN_NOT_CLOSE,
-                null,
                 "Depot position is closed. Can not close."
             );                                                                        
         }
@@ -1979,7 +1928,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
-                null,
                 "Booking status is not pending. Locking is not allowed."
             );                                                
         }
@@ -2004,7 +1952,6 @@ public class Depots {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
-                null,
                 "Booking status is not pending. Unlocking is not allowed."
             );                                                
         }

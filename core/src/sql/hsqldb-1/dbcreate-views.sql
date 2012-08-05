@@ -1,7 +1,7 @@
 -- This software is published under the BSD license
 -- as listed below.
 --
--- Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+-- Copyright (c) 2004-2009, CRIXP Corp., Switzerland
 -- All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -92,8 +92,8 @@ DROP VIEW OOCKE1_JOIN_IITEMHASBOOKING ;
 DROP VIEW OOCKE1_JOIN_RESHASASSIGNEDACT ;
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSADR ;
 DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY ;
-DROP VIEW OOCSE1_TOBJ_USERS ;
-DROP VIEW OOCSE1_TOBJ_ROLES ;
+DROP VIEW OOMSE2_TOBJ_USERS ;
+DROP VIEW OOMSE2_TOBJ_ROLES ;
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK ;
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASSBK ;
 DROP VIEW OOCKE1_JOIN_FILTERINCLDESCONTR ;
@@ -822,15 +822,9 @@ SELECT
     d.owner_,
     d.name AS name,
     d.description AS description,
-
-
-
-
-
-    NULL AS valid_from,
-    NULL AS valid_to,
-    NULL AS disabled,
-
+    d.active_on AS valid_from,
+    d.active_until AS valid_to,
+    d.disabled AS disabled,
     d.object_id AS document,
     d.object_id AS based_on
 FROM
@@ -1964,25 +1958,25 @@ SELECT
     dtype
 FROM
     OOCKE1_WORKRECORD_ ;
-CREATE VIEW OOCSE1_TOBJ_USERS AS
+CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
     p.name AS principal_name,
     c.passwd
 FROM
-    OOCSE1_PRINCIPAL p
+    OOMSE2_PRINCIPAL p
 INNER JOIN
-    OOCSE1_CREDENTIAL c
+    OOMSE2_CREDENTIAL c
 ON
     p.credential = c.object_id ;
-CREATE VIEW OOCSE1_TOBJ_ROLES AS
+CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
     p.name AS principal_name,
     r.name AS role_name
 FROM
-    OOCSE1_PRINCIPAL_ pg,
-    OOCSE1_PRINCIPAL p,
-    OOCSE1_PRINCIPAL_ pn,
-    OOCSE1_ROLE r
+    OOMSE2_PRINCIPAL_ pg,
+    OOMSE2_PRINCIPAL p,
+    OOMSE2_PRINCIPAL_ pn,
+    OOMSE2_ROLE r
 WHERE
     (p.object_id = pn.object_id) AND
     (pn.is_member_of = pg.object_id) AND

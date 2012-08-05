@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EmailAddressDataBinding.java,v 1.1 2008/12/12 10:42:26 wfro Exp $
+ * Name:        $Id: EmailAddressDataBinding.java,v 1.2 2009/02/03 23:45:24 wfro Exp $
  * Description: EmailAddressDataBinding
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/12 10:42:26 $
+ * Date:        $Date: 2009/02/03 23:45:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,7 +76,7 @@ public class EmailAddressDataBinding extends CompositeObjectDataBinding {
         // Disable object in case the attribute emailAddress of an EmailAddressable is
         // set to null or empty string
         if(
-            (object instanceof org.opencrx.kernel.address1.jmi1.EmailAddressable) &&
+            (object instanceof org.opencrx.kernel.address1.jmi1.EMailAddressable) &&
             (object instanceof org.opencrx.kernel.generic.jmi1.CrxObject) &&
             "emailAddress".equals(attributeName) &&
             ((newValue == null) || (newValue.toString().length() == 0))

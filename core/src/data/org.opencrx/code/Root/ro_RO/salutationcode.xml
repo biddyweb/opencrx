@@ -32,7 +32,7 @@
                               <_item>Dl.</_item>
                             </shortText>
                             <longText>
-                              <_item>Dl.</_item>
+                              <_item>Domnul</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -43,7 +43,7 @@
                               <_item>Dna.</_item>
                             </shortText>
                             <longText>
-                              <_item>Dna.</_item>
+                              <_item>Doamna</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -54,7 +54,7 @@
                               <_item>Dra.</_item>
                             </shortText>
                             <longText>
-                              <_item>Dra.</_item>
+                              <_item>Domnişoara</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -65,7 +65,7 @@
                               <_item>Dl. şi Dna.</_item>
                             </shortText>
                             <longText>
-                              <_item>Dl. şi Dna.</_item>
+                              <_item>Domnul şi Doamna</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -98,7 +98,7 @@
                               <_item>Prof.</_item>
                             </shortText>
                             <longText>
-                              <_item>Prof.</_item>
+                              <_item>Profesor</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -109,7 +109,7 @@
                               <_item>Dr.</_item>
                             </shortText>
                             <longText>
-                              <_item>Dr.</_item>
+                              <_item>Doctor</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -117,7 +117,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="009" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Familia</_item>
+                              <_item>Fam.</_item>
                             </shortText>
                             <longText>
                               <_item>Familia</_item>

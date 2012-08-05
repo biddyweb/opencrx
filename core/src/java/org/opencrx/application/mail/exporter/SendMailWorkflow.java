@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendMailWorkflow.java,v 1.1 2008/08/28 15:13:31 wfro Exp $
+ * Name:        $Id: SendMailWorkflow.java,v 1.4 2009/03/05 17:26:34 wfro Exp $
  * Description: SendMailWorkflow
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:13:31 $
+ * Date:        $Date: 2009/03/05 17:26:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,55 +65,29 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
 
-import org.opencrx.application.mail.exporter.MailWorkflow;
 import org.opencrx.kernel.backend.Activities;
-import org.opencrx.kernel.home1.jmi1.EmailAccount;
+import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 
 public class SendMailWorkflow 
     extends MailWorkflow {
 
     //-----------------------------------------------------------------------
     @Override
-    protected String getSubject(
-        PersistenceManager pm,
-        Path targetIdentity,
-        UserHome userHome,  
-        Map params
-    ) throws ServiceException {
-        String subject = null;
-        try {
-            RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
-            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
-                org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
-                    (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
-                subject = emailActivity.getMessageSubject();
-            }
-        }
-        catch(Exception e) {
-            throw new ServiceException(e);
-        }
-        return subject == null
-            ? ""
-            : subject;
-    }
-    
-    //-----------------------------------------------------------------------
-    @Override
     protected Address[] setRecipients(
         Message message,
         PersistenceManager pm,
         Path targetIdentity,
-        EmailAccount eMailAccount
+        EMailAccount eMailAccount
     ) throws ServiceException {
         List<Address> recipients = new ArrayList<Address>();
         try {
             RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
-            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
-                org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
-                    (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
+            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
+                org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
+                    (org.opencrx.kernel.activity1.jmi1.EMail)targetObject;
                 recipients = Activities.mapMessageRecipients(
                     emailActivity, 
                     message
@@ -140,9 +114,9 @@ public class SendMailWorkflow
         String text = null;
         try {
             RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
-            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
-                org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
-                    (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
+            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
+                org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
+                    (org.opencrx.kernel.activity1.jmi1.EMail)targetObject;
                 Activities.mapMessageContent(
                     emailActivity,
                     message

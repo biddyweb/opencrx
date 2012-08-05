@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:member" _operation="create">
                     <_object>
                       <label>
-                        <_item>Membrii</_item>
+                        <_item>Membri</_item>
                       </label>
                       <toolTip>
-                        <_item>Membrii</_item>
+                        <_item>Membri</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -62,10 +62,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>Membrii (dezactivat)</_item>
+                              <_item>Membri (dezactivat)</_item>
                             </label>
                             <toolTip>
-                              <_item>Membrii (dezactivat)</_item>
+                              <_item>Membri (dezactivat)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -95,6 +95,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:address" _operation="create">
                     <_object>
                       <label>
@@ -106,13 +117,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:identity" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:disabledReason" _operation="create">
                     <_object>
                       <label>
-                        <_item>Adresa</_item>
+                        <_item>Motiv Dezactivat</_item>
                       </label>
                       <toolTip>
-                        <_item>Adresa</_item>
+                        <_item>Motiv Dezactivat</_item>
                       </toolTip>
                     </_object>
                     <_content/>

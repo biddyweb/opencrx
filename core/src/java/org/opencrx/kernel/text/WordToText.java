@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WordToText.java,v 1.4 2008/05/08 15:50:13 wfro Exp $
+ * Name:        $Id: WordToText.java,v 1.5 2009/03/08 17:04:53 wfro Exp $
  * Description: WordToText
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/08 15:50:13 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -98,7 +98,7 @@ public class WordToText {
             // Something's up with turning the text pieces into paragraphs
             // Fall back to ripping out the text pieces
             ret = new String[1];
-            ret[0] = getTextFromPieces(doc);
+            ret[0] = this.getTextFromPieces(doc);
         }        
         return ret;
     }

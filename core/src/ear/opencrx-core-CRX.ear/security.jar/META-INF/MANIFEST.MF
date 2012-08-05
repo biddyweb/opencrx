@@ -1,2 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: APP-INF/lib/openmdx-application.jar APP-INF/lib/openmdx-base.jar APP-INF/lib/opencrx-security.jar APP-INF/lib/openmdx-security.jar APP-INF/lib/opencrx-kernel.jar APP-INF/lib/application-resources.jar

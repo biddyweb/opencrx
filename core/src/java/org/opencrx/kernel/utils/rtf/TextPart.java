@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TextPart.java,v 1.1 2008/12/10 15:32:35 wfro Exp $
+ * Name:        $Id: TextPart.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
  * Description: TextPart
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/10 15:32:35 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,11 +59,9 @@ package org.opencrx.kernel.utils.rtf;
 import java.awt.Font;
 
 public class TextPart
-    implements Text
-{
+    implements Text {
 
-    public TextPart(String text)
-    {
+    public TextPart(String text) {
         rawrtf = false;
         bold = false;
         italic = false;
@@ -76,8 +74,7 @@ public class TextPart
         content = text;
     }
 
-    protected TextPart(String rawtext, boolean raw)
-    {
+    protected TextPart(String rawtext, boolean raw) {
         rawrtf = false;
         bold = false;
         italic = false;
@@ -87,126 +84,105 @@ public class TextPart
         shadow = false;
         animtext = 0;
         fontsize = 0;
-        if(raw)
-        {
+        if(raw) {
             content = rawtext;
             rawrtf = true;
-        } else
-        {
+        } 
+        else {
             content = rawtext;
         }
     }
 
-    public TextPart(int format, String text)
-    {
+    public TextPart(int format, String text) {
         this(text);
         if((format & 1) == 1)
-            setBold(true);
+            this.setBold(true);
         if((format & 2) == 2)
-            setItalic(true);
+            this.setItalic(true);
         if((format & 4) == 4)
-            setUnderline(true);
+            this.setUnderline(true);
         if((format & 8) == 8)
-            setCapitals(true);
+            this.setCapitals(true);
         if((format & 0x10) == 16)
-            setOutline(true);
+            this.setOutline(true);
         if((format & 0x20) == 32)
-            setShadow(true);
+            this.setShadow(true);
     }
 
-    public TextPart(int format, int fontsize, Font font, String text)
-    {
+    public TextPart(int format, int fontsize, Font font, String text) {
         this(format, text);
         this.fontsize = fontsize;
     }
 
-    public void setItalic(boolean value)
-    {
+    public void setItalic(boolean value) {
         italic = value;
     }
 
-    public boolean isItalic()
-    {
+    public boolean isItalic() {
         return italic;
     }
 
-    public void setBold(boolean value)
-    {
+    public void setBold(boolean value) {
         bold = value;
     }
 
-    public boolean isBold()
-    {
+    public boolean isBold() {
         return bold;
     }
 
-    public void setUnderline(boolean value)
-    {
+    public void setUnderline(boolean value) {
         underline = value;
     }
 
-    public boolean isUnderline()
-    {
+    public boolean isUnderline() {
         return underline;
     }
 
-    public void setCapitals(boolean value)
-    {
+    public void setCapitals(boolean value) {
         capitals = value;
     }
 
-    public boolean isCapitals()
-    {
+    public boolean isCapitals() {
         return capitals;
     }
 
-    public void setOutline(boolean value)
-    {
+    public void setOutline(boolean value) {
         outline = value;
     }
 
-    public boolean isOutline()
-    {
+    public boolean isOutline() {
         return outline;
     }
 
-    public void setShadow(boolean value)
-    {
+    public void setShadow(boolean value) {
         shadow = value;
     }
 
-    public boolean isShadow()
-    {
+    public boolean isShadow() {
         return shadow;
     }
 
-    public void setAnimtext(int animtext)
-    {
+    public void setAnimtext(int animtext) {
         this.animtext = animtext;
     }
 
-    public int getFontsize()
-    {
+    public int getFontsize() {
         return fontsize;
     }
 
-    public void setFontsize(int size)
-    {
+    public void setFontsize(int size) {
         fontsize = size;
     }
 
-    public int getAnimtext()
-    {
+    public int getAnimtext() {
         return animtext;
     }
 
-    public void setContent(String value)
-    {
+    public void setContent(String value) {
         content = value;
     }
 
-    public String getRtfContent()
-    {
+    public String getRtfContent() {
         String format = (bold ? "\\b" : "") + (italic ? "\\i" : "") + (underline ? "\\ul" : "") + (capitals ? "\\caps" : "") + (outline ? "\\outl" : "") + (shadow ? "\\shad" : "") + (animtext <= 0 ? "" : "\\animtext" + animtext)  + (fontsize <= 0 ? "" : "\\fs" + fontsize * 2);
         return "{" + (format.length() <= 0 ? "" : format + " ") + (rawrtf ? content : RtfUtil.getRTFString(content)) + "}";
     }

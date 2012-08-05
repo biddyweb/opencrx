@@ -121,7 +121,8 @@ public class IMAPSessionImpl implements Runnable {
                             if(this.pm != null) {
                                 try {
                                     this.pm.close();
-                                } catch(Exception e) {}
+                                } 
+                                catch(Exception e) {}
                             }
                             return;
                         }
@@ -141,7 +142,8 @@ public class IMAPSessionImpl implements Runnable {
                     // Make sure to close connection when thread terminates. 
                     // Otherwise we may have open connections with no listening threads.
                     this.client.close();
-                } catch(Exception e) {}                
+                } 
+                catch(Exception e) {}                
             }
         }
     }
@@ -296,7 +298,7 @@ public class IMAPSessionImpl implements Runnable {
 						this.state = SELECTED_STATE;
 					}
                     else {
-						println(tag + " NO STATUS failed, no mailbox with that name");
+						this.println(tag + " NO STATUS failed, no mailbox with that name");
 					}
 				}
 				else if(command.equals("EXAMINE")) {
@@ -1176,7 +1178,7 @@ public class IMAPSessionImpl implements Runnable {
         }
         if(nested && values.length > 1) this.print("(");
         for(int i = 0; i < values.length; i++) {
-            if(i > 0) print(" ");
+            if(i > 0) this.print(" ");
             try {
                 if(values[i].startsWith("\"")) {
                     this.print(MimeUtility.encodeText(values[i], "UTF-8", null));
@@ -1184,7 +1186,8 @@ public class IMAPSessionImpl implements Runnable {
                 else {
                     this.print("\"" + MimeUtility.encodeText(values[i].trim(), "UTF-8", null) + "\"");                
                 }
-            } catch(UnsupportedEncodingException e) {}
+            } 
+            catch(UnsupportedEncodingException e) {}
         }
         if(nested && values.length > 1) this.print(")");
     }
@@ -1207,7 +1210,8 @@ public class IMAPSessionImpl implements Runnable {
                     String[] contentType = new String[0];
                     try {
                         message.getHeader("Content-Type")[0].split(";");
-                    } catch(Exception e) { /* don't care if something is wrong when fetching the content type */ }
+                    } 
+                    catch(Exception e) { /* don't care if something is wrong when fetching the content type */ }
                     this.print(" \"mixed\"");
                     if(contentType.length > 1) {
                         this.print(" ");

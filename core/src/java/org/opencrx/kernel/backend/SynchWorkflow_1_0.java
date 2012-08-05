@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SynchWorkflow_1_0.java,v 1.2 2007/12/21 01:33:21 wfro Exp $
+ * Name:        $Id: SynchWorkflow_1_0.java,v 1.5 2009/01/26 17:22:18 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/21 01:33:21 $
+ * Date:        $Date: 2009/01/26 17:22:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,9 +57,9 @@ package org.opencrx.kernel.backend;
 
 import java.util.Map;
 
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 
 public interface SynchWorkflow_1_0 {
     
@@ -78,7 +78,7 @@ public interface SynchWorkflow_1_0 {
     public void execute(
         DataproviderObject_1_0 userHome,
         Path targetObjectIdentity,
-        Map params,
+        Map<String,Object> params,
         Path wfProcessInstance,
         Backend backend
     ) throws ServiceException;

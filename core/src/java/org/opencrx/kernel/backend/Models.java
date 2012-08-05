@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Models.java,v 1.8 2008/11/06 18:45:48 wfro Exp $
+ * Name:        $Id: Models.java,v 1.12 2009/03/08 17:04:48 wfro Exp $
  * Description: Models
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/06 18:45:48 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,18 +60,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.Orders;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.Orders;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 
 public class Models {
 
@@ -124,7 +124,8 @@ public class Models {
                 type = this.backend.retrieveObjectFromDelegation(
                     (Path)parameter.values("type").get(0)
                 );
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
             if(ii > 0) signature += ",";
             signature += "\n  ";
             String typeName = type == null

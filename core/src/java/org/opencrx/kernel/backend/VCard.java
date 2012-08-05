@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.24 2008/11/17 18:05:43 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.32 2009/03/08 17:04:49 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/17 18:05:43 $
+ * Date:        $Date: 2009/03/08 17:04:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,21 +79,21 @@ import java.util.Map.Entry;
 
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.collection.SparseList;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.collection.SparseList;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -146,6 +146,34 @@ public class VCard {
     }
     
     //-------------------------------------------------------------------------
+    private String mapToSalutationText(
+        short salutationCode
+    ) throws ServiceException {
+        return (String)this.backend.getCodes().getLongText(
+            "org:opencrx:kernel:account1:Contact:salutationCode", 
+            (short)0, 
+            true
+        ).get(Short.valueOf(salutationCode));        
+    }
+    
+    //-------------------------------------------------------------------------
+    private short mapToSalutationCode(
+        String salutation
+    ) throws ServiceException {
+        for(int locale = 0; locale < 32; locale++) {
+            Number salutationCode = (Number)this.backend.getCodes().getLongText(
+                "org:opencrx:kernel:account1:Contact:salutationCode", 
+                (short)locale, 
+                false
+            ).get(salutation);
+            if(salutationCode != null) {
+                return salutationCode.shortValue();
+            }
+        }
+        return (short)0;
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * Update sourceVcard with account values and return merged vcard. 
      */
@@ -162,10 +190,11 @@ public class VCard {
                 String lastName = (String)account.values("lastName").get(0);
                 String firstName = account.values("firstName").isEmpty() ? "" : (String)account.values("firstName").get(0);
                 String middleName = account.values("middleName").isEmpty() ? "" : (String)account.values("middleName").get(0);
+                Short salutationCode = account.values("salutationCode").isEmpty() ? null : ((Number)account.values("salutationCode").get(0)).shortValue();
                 String salutation = account.values("salutation").isEmpty() ?
-                    account.values("salutationCode").isEmpty() || ((Number)account.values("salutationCode").get(0)).intValue() == 0 ?
+                    (salutationCode == null) || (salutationCode.shortValue() == 0) ?
                         null :
-                        (String)this.backend.getCodes().getLongText("org:opencrx:kernel:account1:Contact:salutationCode", (short)0, true).get(Short.valueOf(((Number)account.values("salutationCode").get(0)).shortValue())) :
+                        this.mapToSalutationText(salutationCode) :
                     (String)account.values("salutation").get(0);
                 String suffix = account.values("suffix").isEmpty() ? "" : (String)account.values("suffix").get(0);
                 n = lastName + ";" + firstName + ";"+ middleName + ";" + (salutation == null ? "" : salutation) + ";" + suffix;
@@ -189,6 +218,11 @@ public class VCard {
         else {
             String fullName = account.values("fullName").isEmpty() ? "" : (String)account.values("fullName").get(0);
             fn = fullName;            
+        }
+        // NICKNAME
+        String nickName = null;
+        if(isContact) {
+            nickName = account.values("nickName").isEmpty() ? "" : (String)account.values("nickName").get(0);            
         }
         // REV
         String rev = DateFormat.getInstance().format(new Date());        
@@ -264,14 +298,19 @@ public class VCard {
             }
             // postalCity
             adr.append(
-                postalAddress.getValues("postalCity") == null ? 
+                (postalAddress.getValues("postalCity") == null) || postalAddress.getValues("postalCity").isEmpty() ? 
                     ";" : 
                     ";" + this.encodeString((String)postalAddress.getValues("postalCity").get(0))
             );
-            // postalCode
-            adr.append(";");
+            // postalState
             adr.append(
-                postalAddress.getValues("postalCode") == null ? 
+                (postalAddress.getValues("postalState") == null) || postalAddress.getValues("postalState").isEmpty() ? 
+                    ";" : 
+                    ";" + this.encodeString((String)postalAddress.getValues("postalState").get(0))
+            );            
+            // postalCode
+            adr.append(
+                (postalAddress.getValues("postalCode") == null) || postalAddress.getValues("postalCode").isEmpty() ? 
                     ";" : 
                     ";" + this.encodeString((String)postalAddress.getValues("postalCode").get(0))
             );
@@ -306,14 +345,19 @@ public class VCard {
             }
             // postalCity
             adr.append(
-                postalAddress.getValues("postalCity") == null ? 
+                (postalAddress.getValues("postalCity") == null) || postalAddress.getValues("postalCity").isEmpty() ? 
                     ";" : 
                     ";" + this.encodeString((String)postalAddress.getValues("postalCity").get(0))
             );
-            // postalCode
-            adr.append(";");
+            // postalState
             adr.append(
-                postalAddress.getValues("postalCode") == null ? 
+                (postalAddress.getValues("postalState") == null) || postalAddress.getValues("postalState").isEmpty() ? 
+                    ";" : 
+                    ";" + this.encodeString((String)postalAddress.getValues("postalState").get(0))
+            );
+            // postalCode
+            adr.append(
+                (postalAddress.getValues("postalCode") == null) || postalAddress.getValues("postalCode").isEmpty() ? 
                     ";" : 
                     ";" + this.encodeString((String)postalAddress.getValues("postalCode").get(0))
             );
@@ -365,6 +409,7 @@ public class VCard {
                 "REV:" + rev.substring(0, 15) + "Z\n" +
                 "N:\n" +
                 "FN:\n" + 
+                "NICKNAME:\n" +
                 "ORG:\n" +
                 "TITLE:\n" +
                 "TEL;WORK;VOICE:\n" +
@@ -413,6 +458,10 @@ public class VCard {
                     // FN
                     if((fn != null) && (fn.length() > 0)) {
                         targetVcard.println("FN:" + fn);
+                    }
+                    // NICKNAME
+                    if((nickName != null) && (nickName.length() > 0)) {
+                        targetVcard.println("NICKNAME:" + nickName);
                     }
                     // ORG
                     if((org != null) && (org.length() > 0)) {
@@ -480,6 +529,8 @@ public class VCard {
                         tagStart.toUpperCase().startsWith("N");
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("FN");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("NICKNAME");
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("ORG");
                     isUpdatableTag |= 
@@ -681,7 +732,7 @@ public class VCard {
             BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, "UTF-8")
             );
-            Map<String,String> vcard = parseVCard(reader);
+            Map<String,String> vcard = VCard.parseVCard(reader);
             AppLog.trace("parsed vcard", vcard);
             return this.importItem(
                 vcard,
@@ -739,12 +790,31 @@ public class VCard {
                 }
                 // salutation
                 if(nameTokens[3].length() > 0) {
-                    account.clearValues("salutation").add(nameTokens[3]);
+                    String salutation = nameTokens[3];
+                    short salutationCode = this.mapToSalutationCode(salutation);
+                    if(
+                        (account.getValues("salutation") != null) && 
+                        !account.getValues("salutation").isEmpty() &&
+                        (((String)account.getValues("salutation").get(0)).length() > 0)
+                    ) {
+                        account.clearValues("salutation").add(salutation);
+                    }
+                    else if(salutationCode != 0) {
+                        account.clearValues("salutationCode").add(salutationCode);
+                    }
+                    else {
+                        account.clearValues("salutation").add(salutation);                        
+                    }                    
                 }
                 // suffix
                 if(nameTokens[4].length() > 0) {
                     account.clearValues("suffix").add(nameTokens[4]);
                 }
+            }
+            // nickName
+            String nickName = vcard.get("NICKNAME");
+            if((nickName != null) && (nickName.length() > 0)) {
+                account.clearValues("nickName").add(nickName);
             }
             // jobTitle
             String jobTitle = vcard.get("TITLE");
@@ -766,7 +836,8 @@ public class VCard {
                             dateTimeFormatter
                         )
                     );
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
             this.backend.getAccounts().updateFullName(
                 account, 
@@ -942,6 +1013,7 @@ public class VCard {
                 DataproviderObject adrHome = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 adrHome.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PostalAddress");
                 adrHome.values("usage").add(Addresses.USAGE_HOME);
+                adrHome.values("isMain").add(Boolean.TRUE);
                 this.updatePostalAddress(adrHome, s, locale);
                 this.backend.getDelegatingRequests().addCreateRequest(adrHome);
                 report.add("Create postal address");
@@ -961,6 +1033,7 @@ public class VCard {
                 DataproviderObject adrWork = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 adrWork.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PostalAddress");
                 adrWork.values("usage").add(Addresses.USAGE_BUSINESS);
+                adrWork.values("isMain").add(Boolean.TRUE);
                 this.updatePostalAddress(adrWork, s, locale);
                 this.backend.getDelegatingRequests().addCreateRequest(adrWork);
                 report.add("Create postal address");
@@ -979,6 +1052,7 @@ public class VCard {
                 DataproviderObject telHomeVoice = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 telHomeVoice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
                 telHomeVoice.values("usage").add(Addresses.USAGE_HOME);
+                telHomeVoice.values("isMain").add(Boolean.TRUE);
                 this.updatePhoneNumber(telHomeVoice, s);
                 this.backend.getDelegatingRequests().addCreateRequest(telHomeVoice);
                 report.add("Create phone number");
@@ -997,6 +1071,7 @@ public class VCard {
                 DataproviderObject telWorkVoice = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 telWorkVoice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
                 telWorkVoice.values("usage").add(Addresses.USAGE_BUSINESS);
+                telWorkVoice.values("isMain").add(Boolean.TRUE);
                 this.updatePhoneNumber(telWorkVoice, s);
                 this.backend.getDelegatingRequests().addCreateRequest(telWorkVoice);
                 report.add("Create phone number");
@@ -1014,6 +1089,7 @@ public class VCard {
                 DataproviderObject telHomeFax = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 telHomeFax.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
                 telHomeFax.values("usage").add(Addresses.USAGE_HOME_FAX);
+                telHomeFax.values("isMain").add(Boolean.TRUE);
                 this.updatePhoneNumber(telHomeFax, s);
                 this.backend.getDelegatingRequests().addCreateRequest(telHomeFax);
                 report.add("Create phone number");
@@ -1032,6 +1108,7 @@ public class VCard {
                 DataproviderObject telFax = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 telFax.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
                 telFax.values("usage").add(Addresses.USAGE_BUSINESS_FAX);
+                telFax.values("isMain").add(Boolean.TRUE);
                 this.updatePhoneNumber(telFax, s);
                 this.backend.getDelegatingRequests().addCreateRequest(telFax);
                 report.add("Create phone number");
@@ -1050,6 +1127,7 @@ public class VCard {
                 DataproviderObject telCellVoice = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 telCellVoice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
                 telCellVoice.values("usage").add(Addresses.USAGE_MOBILE);
+                telCellVoice.values("isMain").add(Boolean.TRUE);
                 this.updatePhoneNumber(telCellVoice, s);
                 this.backend.getDelegatingRequests().addCreateRequest(telCellVoice);
                 report.add("Create phone number");
@@ -1067,6 +1145,7 @@ public class VCard {
                 DataproviderObject urlHome = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 urlHome.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:WebAddress");
                 urlHome.values("usage").add(Addresses.USAGE_HOME);
+                urlHome.values("isMain").add(Boolean.TRUE);
                 this.updateWebAddress(urlHome, s);
                 this.backend.getDelegatingRequests().addCreateRequest(urlHome);
                 report.add("Create web address");
@@ -1084,6 +1163,7 @@ public class VCard {
                 DataproviderObject urlWork = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 urlWork.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:WebAddress");
                 urlWork.values("usage").add(Addresses.USAGE_BUSINESS);
+                urlWork.values("isMain").add(Boolean.TRUE);
                 this.updateWebAddress(urlWork, s);
                 this.backend.getDelegatingRequests().addCreateRequest(urlWork);
                 report.add("Create web address");
@@ -1102,6 +1182,7 @@ public class VCard {
                 DataproviderObject emailPrefInternet = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 emailPrefInternet.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:EMailAddress");
                 emailPrefInternet.values("usage").add(Addresses.USAGE_BUSINESS);
+                emailPrefInternet.values("isMain").add(Boolean.TRUE);
                 this.updateEMailAddress(emailPrefInternet, s);
                 this.backend.getDelegatingRequests().addCreateRequest(emailPrefInternet);
                 report.add("Create email address");
@@ -1120,6 +1201,7 @@ public class VCard {
                 DataproviderObject emailInternet = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
                 emailInternet.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:EMailAddress");
                 emailInternet.values("usage").add(Addresses.USAGE_HOME);
+                emailInternet.values("isMain").add(Boolean.TRUE);
                 this.updateEMailAddress(emailInternet, s);
                 this.backend.getDelegatingRequests().addCreateRequest(emailInternet);
                 report.add("Create email address");

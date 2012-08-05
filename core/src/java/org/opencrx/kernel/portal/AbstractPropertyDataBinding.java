@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractPropertyDataBinding.java,v 1.7 2008/11/21 00:34:46 wfro Exp $
+ * Name:        $Id: AbstractPropertyDataBinding.java,v 1.8 2009/03/08 17:04:54 wfro Exp $
  * Description: AbstractPropertyDataBinding
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/21 00:34:46 $
+ * Date:        $Date: 2009/03/08 17:04:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -94,7 +94,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
     ) {
         // ProductConfigurationTypeSet
         if(
-            (this.type == PropertySetHolderType.ProductConfigurationTypeSet) &&
+            (this.type == AbstractPropertyDataBinding.PropertySetHolderType.ProductConfigurationTypeSet) &&
             (object instanceof ProductConfigurationTypeSet) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -116,7 +116,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
         }  
         // ProductConfigurationTypeSet
         else if(
-            (this.type == PropertySetHolderType.ProductConfigurationSet) &&
+            (this.type == AbstractPropertyDataBinding.PropertySetHolderType.ProductConfigurationSet) &&
             (object instanceof ProductConfigurationSet) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -138,7 +138,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
         }  
         // CrxObject
         else if(
-            (this.type == PropertySetHolderType.CrxObject) &&
+            (this.type == AbstractPropertyDataBinding.PropertySetHolderType.CrxObject) &&
             (object instanceof CrxObject) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -169,7 +169,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
     ) {
         // ProductConfigurationTypeSet
         if(
-            (this.type == PropertySetHolderType.ProductConfigurationTypeSet) &&
+            (this.type == AbstractPropertyDataBinding.PropertySetHolderType.ProductConfigurationTypeSet) &&
             (object instanceof ProductConfigurationTypeSet) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -208,7 +208,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
         }          
         // ProductConfigurationTypeSet
         else if(
-            (this.type == PropertySetHolderType.ProductConfigurationSet) &&
+            (this.type == AbstractPropertyDataBinding.PropertySetHolderType.ProductConfigurationSet) &&
             (object instanceof ProductConfigurationSet) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -247,7 +247,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
         }          
         // CrxObject
         else if(
-            (this.type == PropertySetHolderType.CrxObject) &&
+            (this.type == AbstractPropertyDataBinding.PropertySetHolderType.CrxObject) &&
             (object instanceof CrxObject) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {

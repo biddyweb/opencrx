@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractImpl.java,v 1.8 2008/11/21 10:07:01 wfro Exp $
+ * Name:        $Id: AbstractContractImpl.java,v 1.9 2009/01/09 18:11:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/21 10:07:01 $
+ * Date:        $Date: 2009/01/09 18:11:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,7 @@ import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.ContractPosition;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -78,7 +78,7 @@ public class AbstractContractImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
     
     //-----------------------------------------------------------------------

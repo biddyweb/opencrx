@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProjectImporter.java,v 1.13 2008/09/05 10:10:47 wfro Exp $
+ * Name:        $Id: ProjectImporter.java,v 1.17 2009/03/08 17:04:54 wfro Exp $
  * Description: openCRX Mantis Importer
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/05 10:10:47 $
+ * Date:        $Date: 2009/03/08 17:04:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,6 +74,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
 
@@ -90,11 +91,10 @@ import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.utils.Utils;
+import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.text.pattern.StringExpression;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 
 public class ProjectImporter {
@@ -120,12 +120,12 @@ public class ProjectImporter {
     private String decodeMantisText(
         String s
     ) {
-        String t = StringExpression.compile("\\&quot;").matcher(s).replaceAll("\"");
-        t = StringExpression.compile("\\'").matcher(t).replaceAll("\'");
-        t = StringExpression.compile("\\\\").matcher(t).replaceAll("\\");
-        t = StringExpression.compile("&lt;").matcher(t).replaceAll("<");
-        t = StringExpression.compile("&gt;").matcher(t).replaceAll(">");
-        t = StringExpression.compile("&amp;").matcher(t).replaceAll("&");
+        String t = Pattern.compile("\\&quot;").matcher(s).replaceAll("\"");
+        t = Pattern.compile("\\'").matcher(t).replaceAll("\'");
+        t = Pattern.compile("\\\\").matcher(t).replaceAll("\\");
+        t = Pattern.compile("&lt;").matcher(t).replaceAll("<");
+        t = Pattern.compile("&gt;").matcher(t).replaceAll(">");
+        t = Pattern.compile("&amp;").matcher(t).replaceAll("&");
         return t;
     }
     
@@ -327,7 +327,7 @@ public class ProjectImporter {
                     String bugPlatform = rs.getString("platform");
                     String bugVersion = rs.getString("version");
 //                    String bugBuild = rs.getString("build");
-                    String bugSummary = decodeMantisText(new String(rs.getBytes("summary"), "8859_1"));
+                    String bugSummary = this.decodeMantisText(new String(rs.getBytes("summary"), "8859_1"));
                     String bugDescription = "";
 //                    String bugStepsToReproduce = "";
                     String bugAdditionalInformation = "";
@@ -338,10 +338,10 @@ public class ProjectImporter {
                     psBugTexts.executeQuery();
                     ResultSet rsBugTexts = psBugTexts.getResultSet();
                     if(rsBugTexts.next()) {
-                        bugDescription = decodeMantisText(new String(rsBugTexts.getBytes("description"), "8859_1"));
+                        bugDescription = this.decodeMantisText(new String(rsBugTexts.getBytes("description"), "8859_1"));
                         bugDescription = bugDescription.replaceAll("\r\n", "<br />");
                         bugDescription = bugDescription.replaceAll("\n", "<br />");                        
-                        bugAdditionalInformation = decodeMantisText(new String(rsBugTexts.getBytes("additional_information"), "8859_1"));
+                        bugAdditionalInformation = this.decodeMantisText(new String(rsBugTexts.getBytes("additional_information"), "8859_1"));
                         bugAdditionalInformation = bugAdditionalInformation.replaceAll("\r\n", "<br />");
                         bugAdditionalInformation = bugAdditionalInformation.replaceAll("\n", "<br />");                                                
                     }
@@ -454,9 +454,9 @@ public class ProjectImporter {
                         ResultSet rsBugFile = psBugFile.getResultSet();
                         while(rsBugFile.next()) {
                             int fileId = rsBugFile.getInt("id");
-                            File fileDiskfile = new File(decodeMantisText(new String(rsBugFile.getBytes("diskfile"), "8859_1")));
-                            String fileName = decodeMantisText(new String(rsBugFile.getBytes("filename"), "8859_1"));
-                            String fileDescription = decodeMantisText(new String(rsBugFile.getBytes("description"), "8859_1"));
+                            File fileDiskfile = new File(this.decodeMantisText(new String(rsBugFile.getBytes("diskfile"), "8859_1")));
+                            String fileName = this.decodeMantisText(new String(rsBugFile.getBytes("filename"), "8859_1"));
+                            String fileDescription = this.decodeMantisText(new String(rsBugFile.getBytes("description"), "8859_1"));
                             String fileType = rsBugFile.getString("file_type");                            
                             File file = new File(new File(fileBaseDir, fileDiskfile.getParentFile().getName()), fileDiskfile.getName());                            
                             try {
@@ -485,13 +485,15 @@ public class ProjectImporter {
                             catch(FileNotFoundException e) {
                                 try {
                                     pm.currentTransaction().rollback();
-                                } catch(Exception e0) {}
+                                } 
+                                catch(Exception e0) {}
                                 System.out.println("can not find file " + file);
                             }
                             catch(IOException e) {
                                 try {
                                     pm.currentTransaction().rollback();
-                                } catch(Exception e0) {}
+                                } 
+                                catch(Exception e0) {}
                                 System.out.println("can not read file " + file);
                             }
                         }
@@ -513,7 +515,7 @@ public class ProjectImporter {
                             psBugNoteText.executeQuery();
                             ResultSet rsBugTextNote = psBugNoteText.getResultSet();
                             if(rsBugTextNote.next()) {
-                                note = decodeMantisText(new String(rsBugTextNote.getBytes("note"), "8859_1"));
+                                note = this.decodeMantisText(new String(rsBugTextNote.getBytes("note"), "8859_1"));
                                 if(note != null) {
                                     note = note.replaceAll("\r\n", "<br />");
                                     note = note.replaceAll("\n", "<br />");     

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.2 2008/08/28 22:18:42 wfro Exp $
+ * Name:        $Id: ComponentConfigHelper.java,v 1.3 2009/01/06 13:00:22 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 22:18:42 $
+ * Date:        $Date: 2009/01/06 13:00:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,7 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 

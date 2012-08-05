@@ -17,9 +17,6 @@
                       <entry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
-                            <shortText>
-                              <_item>ND</_item>
-                            </shortText>
                             <longText>
                               <_item> N/D</_item>
                             </longText>
@@ -28,9 +25,6 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
-                            <shortText>
-                              <_item>Bassa</_item>
-                            </shortText>
                             <longText>
                               <_item>[1] Bassa</_item>
                             </longText>
@@ -39,9 +33,6 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
-                            <shortText>
-                              <_item>Norm.</_item>
-                            </shortText>
                             <longText>
                               <_item>[2] Normale</_item>
                             </longText>
@@ -50,9 +41,6 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
-                            <shortText>
-                              <_item>Elev.</_item>
-                            </shortText>
                             <longText>
                               <_item>[3] Elevata</_item>
                             </longText>
@@ -61,9 +49,6 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
-                            <shortText>
-                              <_item>Urg.</_item>
-                            </shortText>
                             <longText>
                               <_item>[4] Urgente</_item>
                             </longText>
@@ -72,9 +57,6 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
-                            <shortText>
-                              <_item>Immediatamente</_item>
-                            </shortText>
                             <longText>
                               <_item>[5] Immediatamente</_item>
                             </longText>

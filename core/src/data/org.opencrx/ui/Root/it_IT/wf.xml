@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:property" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametri</_item>
+                        <_item>Proprieta&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametri</_item>
+                        <_item>Proprieta&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:BooleanProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Booleano</_item>
+                        <_item>Proprieta&apos; Booleano</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Booleano</_item>
+                        <_item>Proprieta&apos; Booleano</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -234,10 +234,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:BooleanProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Booleano</_item>
+                        <_item>Proprieta&apos; Booleano</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Booleano</_item>
+                        <_item>Proprieta&apos; Booleano</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IntegerProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Intero</_item>
+                        <_item>Proprieta&apos; Intero</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Intero</_item>
+                        <_item>Proprieta&apos; Intero</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IntegerProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Intero</_item>
+                        <_item>Proprieta&apos; Intero</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Intero</_item>
+                        <_item>Proprieta&apos; Intero</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DecimalProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Decimale</_item>
+                        <_item>Proprieta&apos; Decimale</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Decimale</_item>
+                        <_item>Proprieta&apos; Decimale</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DecimalProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Decimale</_item>
+                        <_item>Proprieta&apos; Decimale</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Decimale</_item>
+                        <_item>Proprieta&apos; Decimale</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:StringProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Stringa</_item>
+                        <_item>Proprieta&apos; Stringa</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Stringa</_item>
+                        <_item>Proprieta&apos; Stringa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -333,10 +333,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:StringProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Stringa</_item>
+                        <_item>Proprieta&apos; Stringa</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Stringa</_item>
+                        <_item>Proprieta&apos; Stringa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -355,10 +355,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Data</_item>
+                        <_item>Proprieta&apos; Data</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Data</_item>
+                        <_item>Proprieta&apos; Data</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -366,10 +366,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Data</_item>
+                        <_item>Proprieta&apos; Data</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Data</_item>
+                        <_item>Proprieta&apos; Data</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -388,10 +388,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Data/Ora</_item>
+                        <_item>Proprieta&apos; Data/Ora</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Data/Ora</_item>
+                        <_item>Proprieta&apos; Data/Ora</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Data/Ora</_item>
+                        <_item>Proprieta&apos; Data/Ora</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Data/Ora</_item>
+                        <_item>Proprieta&apos; Data/Ora</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:UriProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro URI</_item>
+                        <_item>Proprieta&apos; URI</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro URI</_item>
+                        <_item>Proprieta&apos; URI</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -432,10 +432,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:UriProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro URI</_item>
+                        <_item>Proprieta&apos; URI</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro URI</_item>
+                        <_item>Proprieta&apos; URI</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -454,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ReferenceProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Riferimento</_item>
+                        <_item>Proprieta&apos; Riferimento</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Riferimento</_item>
+                        <_item>Proprieta&apos; Riferimento</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -465,10 +465,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ReferenceProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Riferimento</_item>
+                        <_item>Proprieta&apos; Riferimento</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Riferimento</_item>
+                        <_item>Proprieta&apos; Riferimento</_item>
                       </toolTip>
                     </_object>
                     <_content/>

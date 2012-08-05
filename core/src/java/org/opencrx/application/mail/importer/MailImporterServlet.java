@@ -1,11 +1,11 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.3 2008/09/05 10:10:47 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.8 2009/03/08 17:04:54 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.3 $
+   * Revision:    $Revision: 1.8 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2008/09/05 10:10:47 $
+   * Date:        $Date: 2009/03/08 17:04:54 $
    * ====================================================================
    *
    * This software is published under the BSD license
@@ -73,14 +73,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opencrx.kernel.account1.jmi1.EmailAddress;
+import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
-import org.opencrx.kernel.activity1.jmi1.Email;
+import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.backend.Accounts;
@@ -94,10 +94,10 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.openmdx.model1.accessor.basic.spi.Model_1;
 
 /**
  * The EMailImporterServlet imports E-Mails from a configured Mail server
@@ -116,24 +116,14 @@ public class MailImporterServlet
         ServletConfig config
     ) throws ServletException {
 
-        super.init(config);
-        
+        super.init(config);        
         // initialize model repository
-        int i = 0;
-        List modelPackages = new ArrayList(); 
-        while(getInitParameter("modelPackage[" + i + "]") != null) {
-            modelPackages.add(
-              getInitParameter("modelPackage[" + i + "]")
-            );
-            i++;
-        }
         try {
-            new Model_1().addModels(modelPackages);
+            Model_1Factory.getModel();
         }
         catch(Exception e) {
             AppLog.warning("Can not initialize model repository", e);
         }
-
         // data connection
         try {
             this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
@@ -175,7 +165,8 @@ public class MailImporterServlet
             catch(Exception e) {
                 try {
                     pm.currentTransaction().rollback();                    
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
             }
         }
         catch(Exception e) {
@@ -192,7 +183,7 @@ public class MailImporterServlet
     private void addMedia(
         SimpleMimeMessage mimeMsg,
         PersistenceManager pm,
-        Email emailActivity
+        EMail emailActivity
     ) throws MessagingException {
         // add attachments to email
         // if the email already contains attachments as media, only
@@ -309,7 +300,7 @@ public class MailImporterServlet
                 pm.currentTransaction().commit();
       
                 // Update EMail activity
-                Email emailActivity = (Email)pm.getObjectById(newActivityResult.getActivity().refGetPath());
+                EMail emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
                 pm.currentTransaction().begin();
                 String subject = mimeMessage.getSubject();                
                 emailActivity.setMessageSubject(
@@ -337,13 +328,14 @@ public class MailImporterServlet
                     fromAddress,
                     caseInsensitiveAddressLookup
                 );
-                EmailAddress from = null;
+                EMailAddress from = null;
                 if (addresses.size() == 1) {
-                    from = (EmailAddress) addresses.iterator().next();
+                    from = (EMailAddress) addresses.iterator().next();
                     pm.currentTransaction().begin();
                     emailActivity.setSender(from);
                     pm.currentTransaction().commit();
-                } else {
+                } 
+                else {
                     AppLog.trace("lookup " + fromAddress + " finds "
                         + addresses.size() + " addresses");
                 }
@@ -488,7 +480,8 @@ public class MailImporterServlet
         String messageId = "NA";
         try {
             messageId = message.getMessageID();
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         if(message.containsNestedMessage()) {
             boolean successful = true;
             for(

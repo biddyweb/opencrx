@@ -257,6 +257,39 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>西班牙</_item>
+                            </shortText>
+                            <longText>
+                              <_item>西班牙</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="23" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>斯洛伐克</_item>
+                            </shortText>
+                            <longText>
+                              <_item>斯洛伐克</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="24" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>罗马尼亚</_item>
+                            </shortText>
+                            <longText>
+                              <_item>罗马尼亚</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PDFToText.java,v 1.2 2007/10/25 12:00:51 wfro Exp $
+ * Name:        $Id: PDFToText.java,v 1.3 2009/03/08 17:04:53 wfro Exp $
  * Description: PDFToText
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/10/25 12:00:51 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,11 +64,11 @@ import java.io.StringWriter;
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PDFToText.java,v 1.2 2007/10/25 12:00:51 wfro Exp $
+ * Name:        $Id: PDFToText.java,v 1.3 2009/03/08 17:04:53 wfro Exp $
  * Description: ExcelToText
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/10/25 12:00:51 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -147,7 +147,8 @@ public class PDFToText {
             if( pdfDocument != null ) {
                 try {
                     pdfDocument.close();
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }            
     }

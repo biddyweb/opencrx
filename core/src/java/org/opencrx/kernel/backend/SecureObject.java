@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.11 2008/08/29 14:34:09 wfro Exp $
+ * Name:        $Id: SecureObject.java,v 1.17 2009/03/08 17:04:51 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/29 14:34:09 $
+ * Date:        $Date: 2009/03/08 17:04:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,18 +65,18 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.application.mof.cci.AggregationKind;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.marshalling.Marshaller;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
-import org.openmdx.model1.code.AggregationKind;
+import org.openmdx.base.marshalling.Marshaller;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.naming.Path;
 
 public class SecureObject {
 
@@ -156,7 +156,7 @@ public class SecureObject {
             segmentName
         );
         PrincipalGroup principalGroup = null;
-        if((principalGroup = (PrincipalGroup)findPrincipal(groupName, realm, pm)) != null) {
+        if((principalGroup = (PrincipalGroup)SecureObject.findPrincipal(groupName, realm, pm)) != null) {
             return principalGroup;            
         }        
         pm.currentTransaction().begin();
@@ -234,21 +234,21 @@ public class SecureObject {
                 // apply acls to object's content
                 Map references = (Map)this.backend.getModel().getElement(
                     obj.values(SystemAttributes.OBJECT_CLASS).get(0)
-                ).values("reference").get(0);
+                ).objGetValue("reference");
                 for(
                     Iterator i = references.values().iterator();
                     i.hasNext();
                 ) {
                     ModelElement_1_0 featureDef = (ModelElement_1_0)i.next();
                     ModelElement_1_0 referencedEnd = this.backend.getModel().getElement(
-                        featureDef.values("referencedEnd").get(0)
+                        featureDef.objGetValue("referencedEnd")
                     );
                     if(
                         this.backend.getModel().isReferenceType(featureDef) &&
-                        AggregationKind.COMPOSITE.equals(referencedEnd.values("aggregation").get(0)) &&
-                        ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue()
+                        AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
+                        ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue()
                     ) {
-                        String reference = (String)featureDef.values("name").get(0);
+                        String reference = (String)featureDef.objGetValue("name");
                         Path referencePath = obj.path().getChild(reference);
                         List content = this.backend.getDelegatingRequests().addFindRequest(
                             referencePath,

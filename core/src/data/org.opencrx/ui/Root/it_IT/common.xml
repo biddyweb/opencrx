@@ -1549,10 +1549,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AttributeFilterProperty:filterOperator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Operatore Selezione</_item>
+                        <_item>Operatore Filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>Operatore della selezione</_item>
+                        <_item>Operatore del Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1560,10 +1560,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AttributeFilterProperty:filterQuantor" _operation="create">
                     <_object>
                       <label>
-                        <_item>Quantificatore Selezione</_item>
+                        <_item>Enumeratore Filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>Quantificatore della Selezione</_item>
+                        <_item>Enumeratore del Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>

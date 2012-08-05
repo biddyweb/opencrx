@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Timeline.jsp,v 1.12 2008/11/07 15:01:57 cmu Exp $
+ * Name:        $Id: Timeline.jsp,v 1.14 2009/01/09 14:11:22 wfro Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/07 15:01:57 $
+ * Date:        $Date: 2009/01/09 14:11:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,10 +59,8 @@ java.util.*,
 java.io.*,
 java.net.*,
 java.text.*,
-org.openmdx.compatibility.base.dataprovider.cci.Orders,
-org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes,
-org.openmdx.compatibility.base.naming.Path,
-org.openmdx.compatibility.base.query.FilterOperators,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
@@ -72,8 +70,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
+org.openmdx.base.naming.*,
 org.openmdx.application.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");

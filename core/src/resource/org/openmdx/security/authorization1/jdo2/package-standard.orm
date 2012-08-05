@@ -34,7 +34,7 @@
         <column name="NAME" allows-null="true"/>
       </field>
     </class>
-    <class name="Policy$Slice" table="OOCSE1_POLICY_">
+    <class name="PolicySlice" table="OOCSE1_POLICY_">
       <inheritance>
         <discriminator strategy="value-map" column="DTYPE" value="Policy"/>
       </inheritance>
@@ -54,7 +54,7 @@
     <class name="Segment" table="OOCSE1_SEGMENT">
       <inheritance strategy="new-table"/>    
     </class>
-    <class name="Segment$Slice" table="OOCSE1_SEGMENT_">
+    <class name="SegmentSlice" table="OOCSE1_SEGMENT_">
       <inheritance strategy="new-table">
         <discriminator strategy="value-map" column="DTYPE" value="org:openmdx:security:authorization1:Segment"/>
       </inheritance>

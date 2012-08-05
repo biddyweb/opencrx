@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedNoteDataBinding.java,v 1.5 2008/11/13 09:55:15 wfro Exp $
+ * Name:        $Id: FormattedNoteDataBinding.java,v 1.7 2009/03/08 15:05:44 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/13 09:55:15 $
+ * Date:        $Date: 2009/03/08 15:05:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -95,9 +95,12 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
                 }
                 titleLength = Math.min(140, titleLength);
                 StringBuilder formattedNote = new StringBuilder("<b>");
-                formattedNote.append(title);
+                formattedNote.append(title.replace(" ", "&nbsp;"));
+                boolean isFirst = true;
                 for(int i = title.length(); i < titleLength; i++) {
+                	if(isFirst) formattedNote.append(" "); // separator in case title is an URL
                     formattedNote.append("&nbsp;");
+                    isFirst = false;
                 }
                 formattedNote
                     .append("</b><br />")

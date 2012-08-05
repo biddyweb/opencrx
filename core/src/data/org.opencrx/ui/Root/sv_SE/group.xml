@@ -153,6 +153,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefon arbete</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefon arbete</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefon mobil</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefon mobil</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership" _operation="create">
                     <_object>
                       <label>
@@ -292,6 +314,28 @@
                       </label>
                       <toolTip>
                         <_item>Distans</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefon arbete [från]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefon arbete</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefon mobil [från]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefon mobil</_item>
                       </toolTip>
                     </_object>
                     <_content/>

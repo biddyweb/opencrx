@@ -28,11 +28,30 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<iconKey>PriceLevel</iconKey>
                       <showMaxMember>11</showMaxMember>
                       <maxMember>25</maxMember>
 										</_object>
 										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Active Price Levels</_item>
+														</toolTip>
+														<label>
+															<_item>Active Price Levels</_item>
+														</label>
+														<order>
+															<_item>10</_item>
+															<_item>0</_item>
+															<_item>5</_item>
+														</order>
+														<showMaxMember>11</showMaxMember>
+														<maxMember>25</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
 <!--
 											<additionalElementDefinition>
 												<org.openmdx.ui1.AdditionalElementDefinition id="10001" _operation="create">

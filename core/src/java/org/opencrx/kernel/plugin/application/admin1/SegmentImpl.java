@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.3 2008/04/03 12:24:09 wfro Exp $
+ * Name:        $Id: SegmentImpl.java,v 1.4 2009/01/09 18:11:24 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/03 12:24:09 $
+ * Date:        $Date: 2009/01/09 18:11:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,7 @@ import java.util.List;
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.backend.Backend;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 
 public class SegmentImpl {
@@ -78,7 +78,7 @@ public class SegmentImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
         
     //-----------------------------------------------------------------------

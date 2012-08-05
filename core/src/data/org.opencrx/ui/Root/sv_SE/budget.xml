@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedBudget" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Budgetar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budgetar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
                     <_object>
                       <label>
@@ -44,24 +55,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Organisationsenhet</_item>
+                        <_item>Namn</_item>
                       </label>
                       <toolTip>
-                        <_item>Att uppfyllas av organisationsenhet</_item>
+                        <_item>Namn</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kund</_item>
+                        <_item>Kort beskrivning</_item>
                       </label>
                       <toolTip>
-                        <_item>Att uppfyllas av kund</_item>
+                        <_item>Kort beskrivning</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -99,24 +110,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Namn</_item>
+                        <_item>Kund</_item>
                       </label>
                       <toolTip>
-                        <_item>Namn</_item>
+                        <_item>Att uppfyllas av kund</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kort beskrivning</_item>
+                        <_item>Organisationsenhet</_item>
                       </label>
                       <toolTip>
-                        <_item>Kort beskrivning</_item>
+                        <_item>Att uppfyllas av organisationsenhet</_item>
                       </toolTip>
                     </_object>
                     <_content/>

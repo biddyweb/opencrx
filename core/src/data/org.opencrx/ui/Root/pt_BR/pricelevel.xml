@@ -22,6 +22,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceLevel" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Níveis de preços ativos</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Níveis de preços ativos</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceListEntry" _operation="create">
                     <_object>
                       <label>
@@ -32,6 +50,24 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Lista de Preço (produtos inativos)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Lista de Preço (produtos inativos</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:pricingRule" _operation="create">
                     <_object>
@@ -65,6 +101,24 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Lista de preço (produtos inativos)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Lista de preço (produtos inativos</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:assignedAccount" _operation="create">
                     <_object>
@@ -562,6 +616,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:productDisabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produto Inativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produto Inativo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:product" _operation="create">
                     <_object>
                       <label>
@@ -642,10 +707,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductPrice:uom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOMs</_item>
+                        <_item>Unidade de Medida</_item>
                       </label>
                       <toolTip>
-                        <_item>UOMs</_item>
+                        <_item>Unidade de Medida</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -862,10 +927,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProcessPricesResult:numberProcessed" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número processado</_item>
+                        <_item>Nº processado</_item>
                       </label>
                       <toolTip>
-                        <_item>Número processado</_item>
+                        <_item>Nº processado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1082,10 +1147,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:nameReplacementValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valor de substuição de nome</_item>
+                        <_item>Valor de substituição de nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Valor de substuição de nome</_item>
+                        <_item>Valor de substituição de nome</_item>
                       </toolTip>
                     </_object>
                     <_content/>

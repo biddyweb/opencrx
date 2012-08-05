@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Maps.jsp,v 1.18 2008/10/06 11:11:49 cmu Exp $
+ * Name:        $Id: Maps.jsp,v 1.19 2009/01/06 13:16:55 wfro Exp $
  * Description: prepare calls to mapping services like GoogleMaps
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 11:11:49 $
+ * Date:        $Date: 2009/01/06 13:16:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,10 +58,8 @@
 java.util.*,
 java.io.*,
 java.text.*,
-org.openmdx.compatibility.base.dataprovider.cci.Orders,
-org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes,
-org.openmdx.compatibility.base.naming.Path,
-org.openmdx.compatibility.base.query.FilterOperators,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
@@ -71,8 +69,6 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");

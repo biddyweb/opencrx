@@ -39,7 +39,7 @@
                         <_item>Título</_item>
                       </label>
                       <toolTip>
-                        <_item>Título da nota</_item>
+                        <_item>Título</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -66,28 +66,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Título / Texto</_item>
-											</toolTip>
-											<label>
-												<_item>Título / Texto</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
-										<_object>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
+                    <_object>
                       <label>
-                        <_item>Criado em</_item>
+                        <_item>Título / Texto</_item>
                       </label>
                       <toolTip>
-                        <_item>Data e Hora que o objeto foi criado (nunca modificado)</_item>
+                        <_item>Título / Texto</_item>
                       </toolTip>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:modifiedAt" _operation="create">
                     <_object>
                       <label>
@@ -95,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>Data e Hora em que o objeto foi modificado pela última vez</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Criado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Data e Hora que o objeto foi criado (nunca modificado)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

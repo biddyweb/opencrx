@@ -26,7 +26,7 @@ public class MimeMessageImpl extends MimeMessage {
                     allHeaders.nextElement().getName()
                 );
             }
-            return getHeadersAsRFC822(
+            return MimeMessageImpl.getHeadersAsRFC822(
                 part,
                 headerNames.toArray(new String[headerNames.size()])
             );

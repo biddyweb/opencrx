@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailStore.java,v 1.1 2008/08/28 15:04:22 wfro Exp $
+ * Name:        $Id: MailStore.java,v 1.2 2009/03/08 17:04:54 wfro Exp $
  * Description: MailStore
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:04:22 $
+ * Date:        $Date: 2009/03/08 17:04:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -139,7 +139,8 @@ public class MailStore {
       if(this.folder != null) {
           try {
               this.folder.close(true);              
-          } catch(Exception e) {}
+          } 
+          catch(Exception e) {}
       }
     }
   

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxKernel_1.java,v 1.270 2008/11/07 19:30:25 wfro Exp $
+ * Name:        $Id: OpenCrxKernel_1.java,v 1.287 2009/03/04 19:17:30 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.270 $
+ * Revision:    $Revision: 1.287 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/07 19:30:25 $
+ * Date:        $Date: 2009/03/04 19:17:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -78,35 +78,31 @@ import org.opencrx.kernel.plugin.application.contract1.AbstractContractImpl;
 import org.opencrx.kernel.plugin.application.depot1.DepotImpl;
 import org.opencrx.kernel.plugin.application.home1.UserHomeImpl;
 import org.opencrx.kernel.plugin.application.product1.ProductImpl;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.configuration.Configuration;
+import org.openmdx.application.dataprovider.accessor.Connection_1;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.DataproviderReply;
+import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.QualityOfService;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
+import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.generic.cci.ObjectFactory_1_0;
-import org.openmdx.base.accessor.generic.view.Manager_1;
-import org.openmdx.base.accessor.jmi.cci.RefObjectFactory_1;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.cci.PersistenceManager_1_0;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_2;
+import org.openmdx.base.accessor.jmi.spi.RefObjectFactory_1;
 import org.openmdx.base.accessor.jmi.spi.RefRootPackage_1;
+import org.openmdx.base.accessor.view.Manager_1;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.application.configuration.Configuration;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderReply;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest;
-import org.openmdx.compatibility.base.dataprovider.cci.QualityOfService;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SharedConfigurationEntries;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
-import org.openmdx.compatibility.base.dataprovider.transport.adapter.Provider_1;
-import org.openmdx.compatibility.base.dataprovider.transport.cci.Provider_1_0;
-import org.openmdx.compatibility.base.dataprovider.transport.delegation.Connection_1;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.naming.Path;
 import org.openmdx.compatibility.base.dataprovider.transport.dispatching.OperationAwarePlugin_1;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
-import org.openmdx.model1.accessor.basic.cci.Model_1_0;
-import org.openmdx.model1.mapping.Names;
 
 /**
  * openCRX application plugin. This plugin implements the openCRX 
@@ -133,64 +129,61 @@ public class OpenCrxKernel_1
         short id, 
         Configuration configuration,
         Layer_1_0 delegation
-    ) throws ServiceException, Exception {
-
+    ) throws ServiceException {        
         super.activate(
             id,
             configuration,
             delegation
         );
-
-        // Realm identity
-        if(!configuration.values(ConfigurationKeys.REALM_IDENTITY).isEmpty()) {
-            this.loginRealmIdentity = new Path((String)configuration.values(ConfigurationKeys.REALM_IDENTITY).get(0));
-        }
-        else {
-            throw new ServiceException(
-                BasicException.Code.DEFAULT_DOMAIN,
-                BasicException.Code.INVALID_CONFIGURATION, 
-                null,
-                "A realm identity must be configured with option 'realmIdentity'"
-            );
-        } 
-
-        // Password encoding algorithm
-        this.passwordEncodingAlgorithm = "MD5";
-        if(configuration.values(ConfigurationKeys.PASSWORD_ENCODING_ALGORITHM).size() > 0) {
-            this.passwordEncodingAlgorithm = (String)configuration.values(ConfigurationKeys.PASSWORD_ENCODING_ALGORITHM).get(0);
-        }
-
-        // Lookup code segment
-        List exposedPaths = configuration.values(SharedConfigurationEntries.EXPOSED_PATH);
-        this.codeSegment = null;
-        for(int i = 0; i < exposedPaths.size(); i++) {
-            Path exposedPath = (Path)exposedPaths.get(i);
-            if(
-                "org:opencrx:kernel:code1".equals(exposedPath.get(0)) &&
-                (exposedPath.size() == 5)
-            ) {
-                this.codeSegment = exposedPath;
-                break;
+        try {
+            // Realm identity
+            if(!configuration.values(ConfigurationKeys.REALM_IDENTITY).isEmpty()) {
+                this.loginRealmIdentity = new Path((String)configuration.values(ConfigurationKeys.REALM_IDENTITY).get(0));
             }
+            else {
+                throw new ServiceException(
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.INVALID_CONFIGURATION, 
+                    "A realm identity must be configured with option 'realmIdentity'"
+                );
+            } 
+    
+            // Password encoding algorithm
+            this.passwordEncodingAlgorithm = "MD5";
+            if(configuration.values(ConfigurationKeys.PASSWORD_ENCODING_ALGORITHM).size() > 0) {
+                this.passwordEncodingAlgorithm = (String)configuration.values(ConfigurationKeys.PASSWORD_ENCODING_ALGORITHM).get(0);
+            }
+    
+            // Lookup code segment
+            List exposedPaths = configuration.values(SharedConfigurationEntries.EXPOSED_PATH);
+            this.codeSegment = null;
+            for(int i = 0; i < exposedPaths.size(); i++) {
+                Path exposedPath = (Path)exposedPaths.get(i);
+                if(
+                    "org:opencrx:kernel:code1".equals(exposedPath.get(0)) &&
+                    (exposedPath.size() == 5)
+                ) {
+                    this.codeSegment = exposedPath;
+                    break;
+                }
+            }
+            if(this.codeSegment == null) {
+                throw new ServiceException(
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.INVALID_CONFIGURATION,
+                    "provider must expose a code segment, i.e. a path of the form xri:@openmdx:org.opencrx.kernel.code1/provider/<id>/segment/<id>",
+                    new BasicException.Parameter("exposed paths",  exposedPaths)
+                );
+            }
+    
+            // Readonly object types
+            this.readOnlyTypes = configuration.values("readOnlyObjectType");
+            this.datatypes = DatatypeFactory.newInstance();
+            this.backend = this.getBackend();
         }
-        if(this.codeSegment == null) {
-            throw new ServiceException(
-                BasicException.Code.DEFAULT_DOMAIN,
-                BasicException.Code.INVALID_CONFIGURATION,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter(
-                        "exposed paths",  exposedPaths
-                    )
-                },
-                "provider must expose a code segment, i.e. a path of the form xri:@openmdx:org.opencrx.kernel.code1/provider/<id>/segment/<id>"
-            );
-        }
-
-        // Readonly object types
-        this.readOnlyTypes = configuration.values("readOnlyObjectType");
-        this.datatypes = DatatypeFactory.newInstance();
-        this.backend = this.getBackend();
-        
+        catch(Exception e) {
+            throw new ServiceException(e);
+        }        
     }
 
     //-------------------------------------------------------------------------
@@ -206,9 +199,10 @@ public class OpenCrxKernel_1
     protected Map getPackageImpls(
     ) {
         // Get configured package impls
-        Map packageImpls = new HashMap(
-            super.getPackageImpls()
-        );
+        Map packageImpls = new HashMap();
+        if(super.getPackageImpls() != null) {
+            packageImpls.putAll(super.getPackageImpls());
+        }
         packageImpls.put(
             "org:opencrx:kernel:base",             
             AlertSenderImpl.class.getPackage().getName() // any impl from base package
@@ -245,7 +239,7 @@ public class OpenCrxKernel_1
     }
 
     //---------------------------------------------------------------------------
-    protected ObjectFactory_1_0 getObjectFactory(
+    protected PersistenceManager_1_0 getObjectFactory(
     ) throws ServiceException {
         ServiceHeader header = this.header;
         // Local manager
@@ -258,35 +252,28 @@ public class OpenCrxKernel_1
             header.getRequestedAt(),
             header.getRequestedFor()                
         );        
-        Provider_1_0 localProvider = new Provider_1(
+        Connection_1 localConnection = new Connection_1(
             new RequestCollection(
                 localHeader,
                 this
             ),
-            false
+            false, // transactionPolicyIsNew
+            true // containerManagedUnitOfWork
         );
-        Connection_1 localConnection = new Connection_1(
-            localProvider,
-            true
-        );
-        localConnection.setModel(this.model);
-        ObjectFactory_1_0 localObjectFactory = new Manager_1(localConnection);
+        PersistenceManager_1_0 localObjectFactory = new Manager_1(localConnection);
         this.localPkg = new RefRootPackage_1(
             localObjectFactory,
             null, // impls
-            this.backend, // OpenCrxKernel_1 plugin as context
-            Names.JMI1_PACKAGE_SUFFIX // bindingPackageSuffix
+            this.backend // OpenCrxKernel_1 plugin as context
         );
         // Delegating manager
         this.delegatingPkg = new RefRootPackage_1(
             this.getManager(),
             this.getPackageImpls(),
-            this.backend, // OpenCrxKernel_1 plugin as context
-            Names.JMI1_PACKAGE_SUFFIX // bindingPackageSuffix
+            this.backend // OpenCrxKernel_1 plugin as context
         );
         return new RefObjectFactory_1(
-            (RefRootPackage_1)this.delegatingPkg,
-            this.getDirectAccessPaths()
+            (RefRootPackage_1)this.delegatingPkg
         );
     }
 
@@ -296,7 +283,7 @@ public class OpenCrxKernel_1
         List pendingModifications
     ) throws ServiceException {
         return new BackendContext(
-            this.model,
+            this.getModel(),
             header,
             pendingModifications,
             this.delegation,
@@ -330,12 +317,6 @@ public class OpenCrxKernel_1
     }
     
     //-------------------------------------------------------------------------
-    public Model_1_0 getModel(
-    ) {
-        return this.model;
-    }
-
-    //-------------------------------------------------------------------------
     public String getUidAsString(
     ) {
         return super.uidAsString();
@@ -348,22 +329,20 @@ public class OpenCrxKernel_1
         // Reference must be changeable
         ModelElement_1_0 reference = null;
         try {
-            reference = this.model.getReferenceType(referencePath);
+            reference = this.getModel().getReferenceType(referencePath);
         }
         catch(ServiceException e) {
             AppLog.warning("Reference not found in model", referencePath);
         }           
         if(
             (reference != null) &&
-            !((Boolean)reference.values("isChangeable").get(0)).booleanValue()
+            !((Boolean)reference.objGetValue("isChangeable")).booleanValue()
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.REFERENCE_IS_READONLY,
-                new BasicException.Parameter[]{
-                        new BasicException.Parameter("param0", referencePath)
-                },
-                "Reference is readonly. Can not add/remove objects."
+                "Reference is readonly. Can not add/remove objects.",
+                new BasicException.Parameter("param0", referencePath)
             );                                                                
         }
     }
@@ -828,8 +807,8 @@ public class OpenCrxKernel_1
     public String localCorrelationId = null;
     
     // Request-level
-    public RefPackage_1_3 localPkg = null;
-    public RefPackage_1_3 delegatingPkg = null; 
+    public RefPackage_1_2 localPkg = null;
+    public RefPackage_1_2 delegatingPkg = null; 
 
     // Backend
     public Backend backend = null;

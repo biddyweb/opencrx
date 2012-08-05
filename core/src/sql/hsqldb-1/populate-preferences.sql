@@ -13999,28 +13999,28 @@ VALUES(
 INSERT INTO prefs_Preference
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:columnNameFrom', 000, 'org:openmdx:preferences1:StringPreference', 'columnNameFrom', NULL, 'PERSISTENCE/columnNameFrom', 'PERSISTENCE', 'password'
+    'preference/OOMSE2', 'PERSISTENCE:columnNameFrom', 000, 'org:openmdx:preferences1:StringPreference', 'columnNameFrom', NULL, 'PERSISTENCE/columnNameFrom', 'PERSISTENCE', 'password'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:columnNameTo', 000, 'org:openmdx:preferences1:StringPreference', 'columnNameTo', NULL, 'PERSISTENCE/columnNameTo', 'PERSISTENCE', 'passwd'
+    'preference/OOMSE2', 'PERSISTENCE:columnNameTo', 000, 'org:openmdx:preferences1:StringPreference', 'columnNameTo', NULL, 'PERSISTENCE/columnNameTo', 'PERSISTENCE', 'passwd'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:columnNameFrom', 001, 'object__class'
+    'preference/OOMSE2', 'PERSISTENCE:columnNameFrom', 001, 'object__class'
 ) ;
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:columnNameTo', 001, 'dtype'
+    'preference/OOMSE2', 'PERSISTENCE:columnNameTo', 001, 'dtype'
 ) ; 
 
 
@@ -14028,84 +14028,84 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 000, 'org:openmdx:preferences1:StringPreference', 'type', NULL, 'PERSISTENCE/type', 'PERSISTENCE', 'xri:@openmdx:org:opencrx:security:identity1/provider/:*/segment/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 000, 'org:openmdx:preferences1:StringPreference', 'type', NULL, 'PERSISTENCE/type', 'PERSISTENCE', 'xri:@openmdx:org:opencrx:security:identity1/provider/:*/segment/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 001, 'xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 001, 'xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 002, 'xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/principal/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 002, 'xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/principal/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 003, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 003, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value)
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 004, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*/role/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 004, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*/role/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1',  'PERSISTENCE:type', 005, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*/role/:*/permission/:*'
+    'preference/OOMSE2',  'PERSISTENCE:type', 005, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*/role/:*/permission/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 006, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*/privilege/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 006, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*/policy/:*/privilege/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 007, 'xri:@openmdx:org.opencrx.security.identity1/provider/:*/segment/:*/subject/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 007, 'xri:@openmdx:org.opencrx.security.identity1/provider/:*/segment/:*/subject/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 008, 'xri:@openmdx:org.openmdx.security.authentication1/provider/:*/segment/:*/credential/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 008, 'xri:@openmdx:org.openmdx.security.authentication1/provider/:*/segment/:*/credential/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 009, 'xri:@openmdx:org:openmdx:security:authentication1/provider/:*/segment/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 009, 'xri:@openmdx:org:openmdx:security:authentication1/provider/:*/segment/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 010, 'xri:@openmdx:org:openmdx:security:realm1/provider/:*/segment/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 010, 'xri:@openmdx:org:openmdx:security:realm1/provider/:*/segment/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:type', 011, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*'
+    'preference/OOMSE2', 'PERSISTENCE:type', 011, 'xri:@openmdx:org.openmdx.security.authorization1/provider/:*/segment/:*'
 ) ; 
 
 
@@ -14114,84 +14114,84 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 000, 'org:openmdx:preferences1:StringPreference', 'typeName', NULL, 'PERSISTENCE/typeName', 'PERSISTENCE', 'identities'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 000, 'org:openmdx:preferences1:StringPreference', 'typeName', NULL, 'PERSISTENCE/typeName', 'PERSISTENCE', 'identities'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 001, 'realm'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 001, 'realm'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 002, 'principal'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 002, 'principal'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 003, 'policy'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 003, 'policy'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value)
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 004, 'role'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 004, 'role'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1',  'PERSISTENCE:typeName', 005, 'permission'
+    'preference/OOMSE2',  'PERSISTENCE:typeName', 005, 'permission'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 006, 'privilege'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 006, 'privilege'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 007, 'subject'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 007, 'subject'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 008, 'credential'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 008, 'credential'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 009, 'authentications'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 009, 'authentications'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 010, 'realms'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 010, 'realms'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:typeName', 011, 'authorizations'
+    'preference/OOMSE2', 'PERSISTENCE:typeName', 011, 'authorizations'
 ) ; 
 
 
@@ -14200,147 +14200,147 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 000, 'org:openmdx:preferences1:StringPreference', 'dbObject', NULL, 'PERSISTENCE/dbObject', 'PERSISTENCE', 'OOCSE1_SEGMENT'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 000, 'org:openmdx:preferences1:StringPreference', 'dbObject', NULL, 'PERSISTENCE/dbObject', 'PERSISTENCE', 'OOMSE2_SEGMENT'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 000, 'org:openmdx:preferences1:StringPreference', 'dbObject2', NULL, 'PERSISTENCE/dbObject2', 'PERSISTENCE', ''
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 000, 'org:openmdx:preferences1:StringPreference', 'dbObject2', NULL, 'PERSISTENCE/dbObject2', 'PERSISTENCE', ''
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1','PERSISTENCE:dbObject', 001, 'OOCSE1_REALM'
+    'preference/OOMSE2','PERSISTENCE:dbObject', 001, 'OOMSE2_REALM'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1','PERSISTENCE:dbObject2', 001, 'OOCSE1_REALM_'
+    'preference/OOMSE2','PERSISTENCE:dbObject2', 001, 'OOMSE2_REALM_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 002, 'OOCSE1_PRINCIPAL'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 002, 'OOMSE2_PRINCIPAL'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 002, 'OOCSE1_PRINCIPAL_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 002, 'OOMSE2_PRINCIPAL_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 003, 'OOCSE1_POLICY'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 003, 'OOMSE2_POLICY'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 003, 'OOCSE1_POLICY_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 003, 'OOMSE2_POLICY_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 004, 'OOCSE1_ROLE'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 004, 'OOMSE2_ROLE'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 004, 'OOCSE1_ROLE_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 004, 'OOMSE2_ROLE_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 005, 'OOCSE1_PERMISSION'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 005, 'OOMSE2_PERMISSION'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 005, 'OOCSE1_PERMISSION_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 005, 'OOMSE2_PERMISSION_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 006, 'OOCSE1_PRIVILEGE'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 006, 'OOMSE2_PRIVILEGE'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 006, 'OOCSE1_PRIVILEGE_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 006, 'OOMSE2_PRIVILEGE_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 007, 'OOCSE1_SUBJECT'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 007, 'OOMSE2_SUBJECT'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 007, 'OOCSE1_SUBJECT_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 007, 'OOMSE2_SUBJECT_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 008, 'OOCSE1_CREDENTIAL'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 008, 'OOMSE2_CREDENTIAL'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject2', 008, 'OOCSE1_CREDENTIAL_'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject2', 008, 'OOMSE2_CREDENTIAL_'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 009, 'OOCSE1_SEGMENT'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 009, 'OOMSE2_SEGMENT'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 010, 'OOCSE1_SEGMENT'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 010, 'OOMSE2_SEGMENT'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObject', 011, 'OOCSE1_SEGMENT'
+    'preference/OOMSE2', 'PERSISTENCE:dbObject', 011, 'OOMSE2_SEGMENT'
 ) ; 
 
 
@@ -14348,84 +14348,84 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 000, 'org:openmdx:preferences1:IntegerPreference', 'pathNormalizeLevel', NULL, 'PERSISTENCE/pathNormalizeLevel', 'PERSISTENCE', 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 000, 'org:openmdx:preferences1:IntegerPreference', 'pathNormalizeLevel', NULL, 'PERSISTENCE/pathNormalizeLevel', 'PERSISTENCE', 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 001, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 001, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 002, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 002, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 003, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 003, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 004, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 004, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 005, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 005, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 006, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 006, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:pathNormalizeLevel', 007, 2
+    'preference/OOMSE2', 'PERSISTENCE:pathNormalizeLevel', 007, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1',  'PERSISTENCE:pathNormalizeLevel', 008, 2
+    'preference/OOMSE2',  'PERSISTENCE:pathNormalizeLevel', 008, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1',  'PERSISTENCE:pathNormalizeLevel', 009, 2
+    'preference/OOMSE2',  'PERSISTENCE:pathNormalizeLevel', 009, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1',  'PERSISTENCE:pathNormalizeLevel', 010, 2
+    'preference/OOMSE2',  'PERSISTENCE:pathNormalizeLevel', 010, 2
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, integer_value) 
 VALUES(
-    'preference/OOCSE1',  'PERSISTENCE:pathNormalizeLevel', 011, 2
+    'preference/OOMSE2',  'PERSISTENCE:pathNormalizeLevel', 011, 2
 ) ; 
 
 
@@ -14434,83 +14434,83 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 000, 'org:openmdx:preferences1:StringPreference', 'dbObjectFormat', NULL, 'PERSISTENCE/dbObjectFormat', 'PERSISTENCE', 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 000, 'org:openmdx:preferences1:StringPreference', 'dbObjectFormat', NULL, 'PERSISTENCE/dbObjectFormat', 'PERSISTENCE', 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 001, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 001, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 002, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 002, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 003, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 003, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 004, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 004, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 005, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 005, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 006, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 006, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 007, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 007, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 008, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 008, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 009, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 009, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 010, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 010, 'slicedWithIdAsKey'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCSE1', 'PERSISTENCE:dbObjectFormat', 011, 'slicedWithIdAsKey'
+    'preference/OOMSE2', 'PERSISTENCE:dbObjectFormat', 011, 'slicedWithIdAsKey'
 ) ; 
 

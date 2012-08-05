@@ -98,6 +98,71 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Correlazioni</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Correlazioni</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="20" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Appartenenze</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Appartenenze</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="30" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Appartenenze Dirette/Indirette</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Appartenenze Dirette/Indirette</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Appartenenze (disattivati)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Appartenenze (disattivati)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
@@ -152,6 +217,138 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefono ufficio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefono ufficio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cellulare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cellulare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Altro Telefono</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Altro Telefono</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-mail lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-mail lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Other!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Altra E-mail</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Altra E-mail</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indirizzo Postale ufficio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indirizzo Postale ufficio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalAddressLine" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Linea(e) Indirizzo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Linea(e) Indirizzo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalStreet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Via / Casella Postale</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Via / Casella Postale</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Provincia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Provincia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CAP/Codice Postale</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CAP/Codice Postale</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Citta&apos;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Citta&apos;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCountry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nazione/Regione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nazione/Regione</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

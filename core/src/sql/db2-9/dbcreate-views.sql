@@ -1,7 +1,7 @@
 -- This software is published under the BSD license
 -- as listed below.
 --
--- Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+-- Copyright (c) 2004-2009, CRIXP Corp., Switzerland
 -- All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -92,8 +92,8 @@ DROP VIEW OOCKE1_JOIN_IITEMHASBOOKING ;
 DROP VIEW OOCKE1_JOIN_RESHASASSIGNEDACT ;
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSADR ;
 DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY ;
-DROP VIEW OOCSE1_TOBJ_USERS ;
-DROP VIEW OOCSE1_TOBJ_ROLES ;
+DROP VIEW OOMSE2_TOBJ_USERS ;
+DROP VIEW OOMSE2_TOBJ_ROLES ;
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK ;
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASSBK ;
 DROP VIEW OOCKE1_JOIN_FILTERINCLDESCONTR ;
@@ -600,11 +600,11 @@ ON
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
 SELECT
 
-    CAST(
+
 
     REPLACE(a.object_id, 'activity/', 'activityLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     a.object_id AS p$$parent,
@@ -641,7 +641,7 @@ FROM
 CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM AS
 SELECT
 
-    CAST(
+
 
     CASE
         WHEN c.object_id LIKE 'lead/%' THEN REPLACE(c.object_id, 'lead/', 'linkFromLead/')
@@ -651,7 +651,7 @@ SELECT
         WHEN c.object_id LIKE 'invoice/%' THEN REPLACE(c.object_id, 'invoice/', 'linkFromInvoice/')
     END || '/' || REPLACE(l.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     c.object_id AS p$$parent,
@@ -690,11 +690,11 @@ FROM
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE AS
 SELECT
 
-    CAST(
+
 
     REPLACE(c.p$$parent, 'contracts/', 'contractRole/') || '/' || REPLACE(dhn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     c.p$$parent AS p$$parent,
@@ -725,11 +725,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(c.p$$parent, 'contracts/', 'contractRole/') || '/' || REPLACE(dgn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     c.p$$parent AS p$$parent,
@@ -760,11 +760,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(c.p$$parent, 'contracts/', 'contractRole/') || '/' || REPLACE(dn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     c.p$$parent AS p$$parent,
@@ -803,11 +803,11 @@ FROM
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY AS
 SELECT
 
-    CAST(
+
 
     REPLACE(d_.folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(d.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     d_.folder AS p$$parent,
@@ -822,15 +822,9 @@ SELECT
     d.owner_,
     d.name AS name,
     d.description AS description,
-
-    CAST(NULL AS CHAR) AS valid_from,
-    CAST(NULL AS CHAR) AS valid_to,
-    CAST(NULL AS CHAR) AS disabled,
-
-
-
-
-
+    d.active_on AS valid_from,
+    d.active_until AS valid_to,
+    d.disabled AS disabled,
     d.object_id AS document,
     d.object_id AS based_on
 FROM
@@ -844,11 +838,11 @@ UNION
 
 SELECT
 
-    CAST(
+
 
     REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(dfa.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     dfa.document_folder AS p$$parent,
@@ -975,11 +969,11 @@ ON
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
 
-    CAST(
+
 
     ass0.p$$parent || '*' || ass0.object_id || '*1'
 
-    AS varchar(250))
+
 
     AS object_id,
     ass0.p$$parent AS p$$parent,
@@ -1019,11 +1013,11 @@ UNION ALL
 
 SELECT DISTINCT
 
-    CAST(
+
 
     ass0.account || '*' || ass0.object_id || '*-1'
 
-    AS varchar(250))
+
 
     AS object_id,
     ass0.account AS p$$parent,
@@ -1061,11 +1055,11 @@ WHERE
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
 SELECT DISTINCT
 
-    CAST(
+
 
     ass0.p$$parent || '*' || ass0.object_id || '*1'
 
-    AS varchar(250))
+
 
     AS object_id,
     ass0.p$$parent AS p$$parent,
@@ -1105,11 +1099,11 @@ UNION ALL
 
 SELECT DISTINCT
 
-    CAST(
+
 
     ass0.account || '*' || ass0.object_id || '*-1'
 
-    AS varchar(250))
+
 
     AS object_id,
     ass0.account AS p$$parent,
@@ -1149,11 +1143,11 @@ UNION ALL
 
 SELECT DISTINCT
 
-    CAST(
+
 
     ass.p$$parent || '*' || ass0.object_id || '*2'
 
-    AS varchar(250))
+
 
     AS object_id,
     ass.p$$parent AS p$$parent,
@@ -1198,11 +1192,11 @@ UNION ALL
 
 SELECT DISTINCT
 
-    CAST(
+
 
     ass.p$$parent || '*' || ass0.object_id || '*-2'
 
-    AS varchar(250))
+
 
     AS object_id,
     ass.p$$parent AS p$$parent,
@@ -1242,6 +1236,108 @@ ON
     ass0.account = ass.account
 WHERE
     ass0.dtype = 'org:opencrx:kernel:account1:Member'
+
+
+
+
+UNION ALL
+
+SELECT DISTINCT
+
+
+
+    ass.p$$parent || '*' || ass0.object_id || '*3'
+
+
+
+    AS object_id,
+    ass.p$$parent AS p$$parent,
+    ass0.p$$parent AS account_from,
+    ass0.p$$parent AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership' AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    3 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
+ON
+    ass0.account = ass.p$$parent OR
+    ass0.p$$parent = ass.p$$parent
+WHERE
+    ass0.dtype = 'org:opencrx:kernel:account1:Member'
+
+UNION ALL
+
+SELECT DISTINCT
+
+
+
+    ass.p$$parent || '*' || ass0.object_id || '*-3'
+
+
+
+    AS object_id,
+    ass.p$$parent AS p$$parent,
+    ass0.p$$parent AS account_from,
+    ass0.p$$parent AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership' AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    -3 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
+ON
+    ass0.p$$parent = ass.account OR
+    ass0.account = ass.account
+WHERE
+    ass0.dtype = 'org:opencrx:kernel:account1:Member'
+
 ;
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ AS
 SELECT
@@ -1262,11 +1358,11 @@ ON
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM AS
 SELECT
 
-    CAST(
+
 
     REPLACE(l.link_to, 'facility/', 'itemLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     l.link_to AS p$$parent,
@@ -1297,11 +1393,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(l.link_to, 'facility1/', 'itemLinkFrom1/') || '/' || REPLACE(l.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     l.link_to AS p$$parent,
@@ -1332,11 +1428,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(l.link_to, 'facility2/', 'itemLinkFrom2/') || '/' || REPLACE(l.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     l.link_to AS p$$parent,
@@ -1367,11 +1463,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(l.link_to, 'inventoryItem/', 'itemLinkFrom3/') || '/' || REPLACE(l.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     l.link_to AS p$$parent,
@@ -1462,11 +1558,11 @@ ON
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY AS
 SELECT
 
-    CAST(
+
 
     REPLACE(p.object_id, 'p2/', 'propertySetEntry1/')
 
-    AS varchar(250))
+
 
     AS object_id,
     ps.p$$parent AS p$$parent,
@@ -1475,11 +1571,11 @@ SELECT
     p.modified_at,
     p.modified_by_,
 
-    CAST(
+
 
     REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
 
-    AS varchar(250))
+
 
     AS dtype,
     p.access_level_browse,
@@ -1510,11 +1606,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(p.object_id, 'p3/', 'propertySetEntry2/')
 
-    AS varchar(250))
+
 
     AS object_id,
     ps.p$$parent AS p$$parent,
@@ -1523,11 +1619,11 @@ SELECT
     p.modified_at,
     p.modified_by_,
 
-    CAST(
+
 
     REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
 
-    AS varchar(250))
+
 
     AS dtype,
     p.access_level_browse,
@@ -1566,11 +1662,11 @@ FROM
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY AS
 SELECT
 
-    CAST(
+
 
     REPLACE(act.p$$parent, 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(act.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     act.p$$parent AS p$$parent,
@@ -1594,11 +1690,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(act.p$$parent, 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(adr.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     act.p$$parent AS p$$parent,
@@ -1639,11 +1735,11 @@ FROM
 CREATE VIEW OOCKE1_TOBJ_WORKREPORTENTRY AS
 SELECT
 
-    CAST(
+
 
     REPLACE(a.p$$parent, 'activities/', 'workReportEntry1/') || '/' || REPLACE(w.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     a.p$$parent AS p$$parent,
@@ -1690,11 +1786,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry2/'), 'activityCategory/', 'workReportEntry2/'), 'activityMilestone/', 'workReportEntry2/') || '/' || REPLACE(w.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     ga.activity_group AS p$$parent,
@@ -1746,11 +1842,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry3/'), 'activityCategory/', 'workReportEntry3/'), 'activityMilestone/', 'workReportEntry3/') || '/' || REPLACE(w.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     ga.activity_group AS p$$parent,
@@ -1802,11 +1898,11 @@ UNION ALL
 
 SELECT
 
-    CAST(
+
 
     REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry4/'), 'activityCategory/', 'workReportEntry4/'), 'activityMilestone/', 'workReportEntry4/') || '/' || REPLACE(w.object_id, '/', ':')
 
-    AS varchar(250))
+
 
     AS object_id,
     ga.activity_group AS p$$parent,
@@ -1862,25 +1958,25 @@ SELECT
     dtype
 FROM
     OOCKE1_WORKRECORD_ ;
-CREATE VIEW OOCSE1_TOBJ_USERS AS
+CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
     p.name AS principal_name,
     c.passwd
 FROM
-    OOCSE1_PRINCIPAL p
+    OOMSE2_PRINCIPAL p
 INNER JOIN
-    OOCSE1_CREDENTIAL c
+    OOMSE2_CREDENTIAL c
 ON
     p.credential = c.object_id ;
-CREATE VIEW OOCSE1_TOBJ_ROLES AS
+CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
     p.name AS principal_name,
     r.name AS role_name
 FROM
-    OOCSE1_PRINCIPAL_ pg,
-    OOCSE1_PRINCIPAL p,
-    OOCSE1_PRINCIPAL_ pn,
-    OOCSE1_ROLE r
+    OOMSE2_PRINCIPAL_ pg,
+    OOMSE2_PRINCIPAL p,
+    OOMSE2_PRINCIPAL_ pn,
+    OOMSE2_ROLE r
 WHERE
     (p.object_id = pn.object_id) AND
     (pn.is_member_of = pg.object_id) AND

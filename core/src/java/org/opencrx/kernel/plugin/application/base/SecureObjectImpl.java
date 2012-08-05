@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObjectImpl.java,v 1.5 2008/08/29 14:11:44 wfro Exp $
+ * Name:        $Id: SecureObjectImpl.java,v 1.7 2009/01/09 18:11:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/29 14:11:44 $
+ * Date:        $Date: 2009/01/09 18:11:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,9 +64,9 @@ import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 
 public class SecureObjectImpl {
 
@@ -82,7 +82,7 @@ public class SecureObjectImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
     
     //-----------------------------------------------------------------------

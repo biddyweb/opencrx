@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.50 2008/12/15 09:53:53 wfro Exp $
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.54 2009/01/17 20:54:08 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.50 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/15 09:53:53 $
+ * Date:        $Date: 2009/01/17 20:54:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,14 +81,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
-import org.opencrx.kernel.workflow1.jmi1.WfProcess;
-import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.openmdx.model1.accessor.basic.cci.Model_1_3;
 
 /**
  * The WorkflowControllerServlet periodically pings the configured URLs 
@@ -264,7 +262,7 @@ public class WorkflowControllerServlet
     ) throws ServletException {
 
         super.init(config);
-        this.model = Utils.createModel();
+        this.model = Utils.getModel();
         String providerName = new Path(this.getInitParameter("realmSegment")).get(2);
         PersistenceManager pm = null;
         try {

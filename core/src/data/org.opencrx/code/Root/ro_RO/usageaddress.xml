@@ -513,10 +513,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10100" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ofetă</_item>
+                              <_item>Ofertă</_item>
                             </shortText>
                             <longText>
-                              <_item>Ofetă</_item>
+                              <_item>Ofertă</_item>
                             </longText>
                           </_object>
                           <_content/>

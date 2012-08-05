@@ -415,7 +415,7 @@
                         <_item>%</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>% завершенности</_item>
+                        <_item>% завершено</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -581,6 +581,17 @@
                       </label>
                       <toolTip>
                         <_item>Последний примененный Создатель деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип iCal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -827,17 +838,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Импорт iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Импорт iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -871,29 +871,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Импорт iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Импорт iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Импорт iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Импорт iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
                         <_item>Импорт iCal</_item>
@@ -1476,6 +1454,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description" _operation="create">
                     <_object>
                       <label>
@@ -1645,17 +1634,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Подлежит</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Подлежит</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority" _operation="create">
                     <_object>
                       <label>
@@ -1667,6 +1645,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Подлежит</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Подлежит</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact" _operation="create">
                     <_object>
                       <label>
@@ -1674,39 +1674,6 @@
                       </label>
                       <toolTip>
                         <_item>Отчетный контакт</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Группа Деятельности</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Группа Деятельности</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ресурс</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ресурс</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Роль Ресурса</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Роль Ресурса</_item>
                       </toolTip>
                     </_object>
                     <_content/>

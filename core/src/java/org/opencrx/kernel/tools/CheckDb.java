@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: CheckDb.java,v 1.23 2008/10/06 17:04:53 wfro Exp $
+ * Name:        $Id: CheckDb.java,v 1.26 2009/03/08 17:04:48 wfro Exp $
  * Description: Convert database RID columns from numeric to string format
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 17:04:53 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,9 +76,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 
 public class CheckDb {
@@ -122,11 +122,9 @@ public class CheckDb {
               ex, 
               BasicException.Code.DEFAULT_DOMAIN,
               BasicException.Code.MEDIA_ACCESS_FAILURE, 
-              new BasicException.Parameter[]{
-                new BasicException.Parameter("reference", reference),
-                new BasicException.Parameter("statement", statement)
-              },
-              null
+              null,
+              new BasicException.Parameter("reference", reference),
+              new BasicException.Parameter("statement", statement)
             );
         }
         catch(Exception ex) {
@@ -134,17 +132,18 @@ public class CheckDb {
               ex, 
               BasicException.Code.DEFAULT_DOMAIN,
               BasicException.Code.GENERIC, 
-              null, 
               ex.toString()
             );
         }
         finally {
             try {
               if(rs != null) rs.close();
-            } catch(Throwable ex) {}
+            } 
+            catch(Throwable ex) {}
             try {
               if(ps != null) ps.close();
-            } catch(Throwable ex) {}
+            } 
+            catch(Throwable ex) {}
         }          
         return reference;    
     }
@@ -187,7 +186,7 @@ public class CheckDb {
     ) throws ServiceException {
         String namespace = dbObject.substring(0, dbObject.indexOf("_"));
         String refTableName = namespace + "_REF";
-        Path reference = getReference(
+        Path reference = CheckDb.getReference(
             conn, 
             Long.parseLong(rid), 
             refTableName
@@ -212,7 +211,7 @@ public class CheckDb {
                         l++
                     ) {
                         if(!reference.get(l).equals(type.get(l))) {
-                            convertedRid += "/" + convertPathComponent(reference.get(l));
+                            convertedRid += "/" + CheckDb.convertPathComponent(reference.get(l));
                         }
                     }
                     break;
@@ -461,14 +460,16 @@ public class CheckDb {
                                     catch(Exception e) {
                                         try {
                                             conn.rollback();
-                                        } catch(Exception e0) {}
+                                        } 
+                                        catch(Exception e0) {}
                                         System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
                                         hasErrors = true;
                                     }
                                     finally {
                                         try {
                                             conn.setAutoCommit(true);
-                                        } catch(Exception e) {}
+                                        } 
+                                        catch(Exception e) {}
                                     }
                                 }
                                 else if("SAP DB".equals(databaseProductName)) {
@@ -491,10 +492,8 @@ public class CheckDb {
                                     throw new ServiceException(
                                         BasicException.Code.DEFAULT_DOMAIN,
                                         BasicException.Code.NOT_SUPPORTED, 
-                                        new BasicException.Parameter[]{
-                                          new BasicException.Parameter("database product name", databaseProductName)
-                                        },
-                                        "Database not supported"
+                                        "Database not supported",
+                                        new BasicException.Parameter("database product name", databaseProductName)
                                       );
                                 }
                             }
@@ -548,7 +547,7 @@ public class CheckDb {
                                 // Update columns object_rid, object_oid
                                 if("object_rid".equals(columnName)) {
                                     if((objectRid != null) && (objectRid.indexOf("/") < 0)) {
-                                        String newRid = convertRid(conn, dbObject, columnName, objectRid, types, typeNames, referencesInError);
+                                        String newRid = CheckDb.convertRid(conn, dbObject, columnName, objectRid, types, typeNames, referencesInError);
                                         if(newRid != null) {
                                             statement += hasClause ? ", " : "";
                                             statement += "object_rid = ?, object_oid = ?";
@@ -556,7 +555,7 @@ public class CheckDb {
                                                 newRid
                                             );
                                             statementParameters.add(
-                                                convertPathComponent(objectOid)
+                                            	CheckDb.convertPathComponent(objectOid)
                                             );
                                             hasClause = true;
                                         }
@@ -570,7 +569,7 @@ public class CheckDb {
                                     String rid = (String)frs.getObject(columnNameRid);
                                     String oid = (String)frs.getObject(columnNameOid);
                                     if((rid != null) && (rid.indexOf("/") < 0)) {
-                                        String newRid = convertRid(conn, dbObject, columnName, rid, types, typeNames, referencesInError);
+                                        String newRid = CheckDb.convertRid(conn, dbObject, columnName, rid, types, typeNames, referencesInError);
                                         if(newRid != null) {
                                             statement += hasClause ? ", " : "";
                                             statement += columnNameRid + " = ?, " + columnNameOid + " = ?";
@@ -578,7 +577,7 @@ public class CheckDb {
                                                 newRid
                                             );
                                             statementParameters.add(
-                                                convertPathComponent(oid)
+                                            	CheckDb.convertPathComponent(oid)
                                             );
                                             hasClause = true;
                                         }
@@ -604,18 +603,18 @@ public class CheckDb {
                                             ((Set)referencesInError.get(dbObject)).add(columnNameReference);
                                         }
                                         else {
-                                            String newRid = convertRid(conn, dbObject, columnName, rid, types, typeNames, referencesInError);
+                                            String newRid = CheckDb.convertRid(conn, dbObject, columnName, rid, types, typeNames, referencesInError);
                                             if(newRid != null) {
                                                 statement += hasClause ? ", " : "";
                                                 statement += columnNameReference + " = ?, " + columnNameRid + " = ?, " + columnNameOid + " = ?";
                                                 statementParameters.add(
-                                                    newRid + "/" + convertPathComponent(oid) 
+                                                    newRid + "/" + CheckDb.convertPathComponent(oid) 
                                                 );
                                                 statementParameters.add(
                                                     newRid
                                                 );
                                                 statementParameters.add(
-                                                    convertPathComponent(oid)
+                                                	CheckDb.convertPathComponent(oid)
                                                 );
                                                 hasClause = true;
                                             }
@@ -755,7 +754,8 @@ public class CheckDb {
         finally {
             try {
                 s0.close();
-            } catch(Exception e0) {}
+            } 
+            catch(Exception e0) {}
         }                       
     }
     
@@ -785,13 +785,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not add column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("MySQL".equals(databaseProductName)) {
@@ -806,13 +808,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not add column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("Microsoft SQL Server".equals(databaseProductName)) {
@@ -827,13 +831,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not add column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if(databaseProductName.startsWith("DB2/")) {
@@ -851,14 +857,16 @@ public class CheckDb {
                 try {
                     s0.close();
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not add column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     s0.close();
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("Oracle".equals(databaseProductName)) {
@@ -873,13 +881,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not add column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("SAP DB".equals(databaseProductName)) {
@@ -894,24 +904,24 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not add column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
-              );
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
+            );
         }        
     }
     
@@ -957,13 +967,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("MySQL".equals(databaseProductName)) {
@@ -978,13 +990,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("Microsoft SQL Server".equals(databaseProductName)) {
@@ -999,13 +1013,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if(databaseProductName.startsWith("DB2/")) {
@@ -1023,14 +1039,16 @@ public class CheckDb {
                 try {
                     conn.rollback();
                     s0.close();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
                     s0.close();
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("Oracle".equals(databaseProductName)) {
@@ -1046,14 +1064,16 @@ public class CheckDb {
                 try {
                     conn.rollback();
                     s0.close();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
                     s0.close();
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("SAP DB".equals(databaseProductName)) {
@@ -1069,25 +1089,25 @@ public class CheckDb {
                 try {
                     conn.rollback();
                     s0.close();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not alter column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
                     s0.close();
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
-              );
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
+            );
         }        
     }
     
@@ -1111,13 +1131,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not drop column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("MySQL".equals(databaseProductName)) {
@@ -1132,13 +1154,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not drop column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("Microsoft SQL Server".equals(databaseProductName)) {
@@ -1153,13 +1177,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not drop column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if(databaseProductName.startsWith("DB2/")) {
@@ -1176,13 +1202,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not drop column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("Oracle".equals(databaseProductName)) {
@@ -1197,13 +1225,15 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not drop column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else if("SAP DB".equals(databaseProductName)) {
@@ -1218,23 +1248,23 @@ public class CheckDb {
             catch(Exception e) {
                 try {
                     conn.rollback();
-                } catch(Exception e0) {}
+                } 
+                catch(Exception e0) {}
                 System.out.println("ERROR: Can not drop column " + columnName + " (Reason: " + e.getMessage() + ")");
             }
             finally {
                 try {
                     conn.setAutoCommit(true);
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
             }
         }
         else {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
     }
@@ -1266,10 +1296,8 @@ public class CheckDb {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
     }
@@ -1301,10 +1329,8 @@ public class CheckDb {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
     }
@@ -1336,10 +1362,8 @@ public class CheckDb {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
     }
@@ -1373,10 +1397,8 @@ public class CheckDb {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
     }
@@ -1408,10 +1430,8 @@ public class CheckDb {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
     }
@@ -1488,10 +1508,8 @@ public class CheckDb {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.NOT_SUPPORTED, 
-                new BasicException.Parameter[]{
-                  new BasicException.Parameter("database product name", databaseProductName)
-                },
-                "Database not supported"
+                "Database not supported",
+                new BasicException.Parameter("database product name", databaseProductName)
             );
         }        
         // Drop primary key constraint
@@ -1511,7 +1529,8 @@ public class CheckDb {
         }
         finally {
             if(s0 != null) {
-                try { s0.close(); } catch(Exception e) {}
+                try { s0.close(); } 
+                catch(Exception e) {}
             }
         }
         return pkName;
@@ -1549,7 +1568,8 @@ public class CheckDb {
         }
         finally {
             if(s0 != null) {
-                try { s0.close(); } catch(Exception e) {}
+                try { s0.close(); } 
+                catch(Exception e) {}
             }
         }
     }            
@@ -1614,7 +1634,7 @@ public class CheckDb {
                             CheckDb.addColumnVARCHAR(conn, dbObject, "object_id", 250, true);
                             try {
                                 PreparedStatement s0 = conn.prepareStatement(
-                                    currentStatement = "UPDATE " + dbObject + " SET object_id = " + STRCAT_PREFIX(conn) + " object_rid " + STRCAT_INFIX(conn) + " '/' " + STRCAT_INFIX(conn) + " object_oid " + STRCAT_SUFFIX(conn)
+                                    currentStatement = "UPDATE " + dbObject + " SET object_id = " + CheckDb.STRCAT_PREFIX(conn) + " object_rid " + CheckDb.STRCAT_INFIX(conn) + " '/' " + CheckDb.STRCAT_INFIX(conn) + " object_oid " + CheckDb.STRCAT_SUFFIX(conn)
                                 );
                                 System.out.println("  " + currentStatement);
                                 s0.executeUpdate();
@@ -1656,7 +1676,7 @@ public class CheckDb {
                             CheckDb.addColumnVARCHAR(conn, dbObject, "p$$type_name", 50, true);
                             try {
                                 PreparedStatement s0 = conn.prepareStatement(
-                                    currentStatement = "UPDATE " + dbObject + " SET p$$type_name = " + SUBSTR(conn) + "(object_id, 1, " + STRPOS(conn, "object_id", "'/'") + " - 1)"
+                                    currentStatement = "UPDATE " + dbObject + " SET p$$type_name = " + CheckDb.SUBSTR(conn) + "(object_id, 1, " + CheckDb.STRPOS(conn, "object_id", "'/'") + " - 1)"
                                 );
                                 System.out.println("  " + currentStatement);
                                 s0.executeUpdate();
@@ -1669,12 +1689,12 @@ public class CheckDb {
                         }
                         // Convert (p$$object_parent__rid, p$$object_parent__oid) to object_id
                         if(frs.getColumnNames().contains("p$$object_parent__oid")) {
-                            addColumnVARCHAR(conn, dbObject, "p$$parent", 250, true);
+                        	CheckDb.addColumnVARCHAR(conn, dbObject, "p$$parent", 250, true);
                             try {
                                 PreparedStatement s0 = conn.prepareStatement(
                                     databaseProductName.equals("MySQL")                                    
-                                        ? (currentStatement = "UPDATE " + dbObject + " SET p$$parent = (SELECT * FROM (SELECT " + STRCAT_PREFIX(conn) + " t.p$$object_parent__rid " + STRCAT_INFIX(conn) + " '/' " + STRCAT_INFIX(conn) + " t.p$$object_parent__oid " + STRCAT_SUFFIX(conn) + " FROM " + dbObject + " t WHERE t.object_id = " + "object_id AND t.object_idx = 0) x )")
-                                        : (currentStatement = "UPDATE " + dbObject + " SET p$$parent = (SELECT " + STRCAT_PREFIX(conn) + " t.p$$object_parent__rid " + STRCAT_INFIX(conn) + " '/' " + STRCAT_INFIX(conn) + " t.p$$object_parent__oid " + STRCAT_SUFFIX(conn) + " FROM " + dbObject + " t WHERE t.object_id = " + dbObject + ".object_id AND t.object_idx = 0)")
+                                        ? (currentStatement = "UPDATE " + dbObject + " SET p$$parent = (SELECT * FROM (SELECT " + CheckDb.STRCAT_PREFIX(conn) + " t.p$$object_parent__rid " + CheckDb.STRCAT_INFIX(conn) + " '/' " + CheckDb.STRCAT_INFIX(conn) + " t.p$$object_parent__oid " + CheckDb.STRCAT_SUFFIX(conn) + " FROM " + dbObject + " t WHERE t.object_id = " + "object_id AND t.object_idx = 0) x )")
+                                        : (currentStatement = "UPDATE " + dbObject + " SET p$$parent = (SELECT " + CheckDb.STRCAT_PREFIX(conn) + " t.p$$object_parent__rid " + CheckDb.STRCAT_INFIX(conn) + " '/' " + CheckDb.STRCAT_INFIX(conn) + " t.p$$object_parent__oid " + CheckDb.STRCAT_SUFFIX(conn) + " FROM " + dbObject + " t WHERE t.object_id = " + dbObject + ".object_id AND t.object_idx = 0)")
                                 );
                                 System.out.println("  " + currentStatement);
                                 s0.executeUpdate();
@@ -1724,10 +1744,12 @@ public class CheckDb {
                         processedDbObjects.add(dbObject);
                         try {
                             rs.close();
-                        } catch(Exception e) {}
+                        } 
+                        catch(Exception e) {}
                         try {
                             s.close();
-                        } catch(Exception e) {}
+                        } 
+                        catch(Exception e) {}
                     }
                 }            
                 if(hasErrors) {
@@ -1959,7 +1981,7 @@ public class CheckDb {
             
             // convert-from-181-to-191
             if("convert-from-1_8_1-to-1_9_1".equals(command)) {
-                convertFrom1_8_1To1_9_1(
+            	CheckDb.convertFrom1_8_1To1_9_1(
                     conn, 
                     "kernel", 
                     ((Boolean)componentEnvironment.lookup("fixErrors")).booleanValue(),
@@ -1970,7 +1992,7 @@ public class CheckDb {
                     (Number)componentEnvironment.lookup("endWithTable"),
                     (Number)componentEnvironment.lookup("startWithPhase")
                 );
-                convertFrom1_8_1To1_9_1(
+            	CheckDb.convertFrom1_8_1To1_9_1(
                     conn, 
                     "security", 
                     ((Boolean)componentEnvironment.lookup("fixErrors")).booleanValue(),
@@ -1984,7 +2006,7 @@ public class CheckDb {
             }
             // convert-from-1_9_1-to-1_10_0
             else if("convert-from-1_9_1-to-1_10_0".equals(command)) {
-                convertFrom1_9_1To1_10_0(
+            	CheckDb.convertFrom1_9_1To1_10_0(
                     conn, 
                     "kernel", 
                     KERNEL_DBOBJECTS_1_9_1,
@@ -1994,7 +2016,7 @@ public class CheckDb {
                     (Number)componentEnvironment.lookup("endWithTable"),
                     (Number)componentEnvironment.lookup("startWithPhase")
                 );
-                convertFrom1_9_1To1_10_0(
+            	CheckDb.convertFrom1_9_1To1_10_0(
                     conn, 
                     "security", 
                     SECURITY_DBOBJECTS_1_9_1,
@@ -2007,7 +2029,7 @@ public class CheckDb {
             }
             // update-size-columns-1_11_0
             else if("update-size-columns-1_11_0".equals(command)) {
-                updateSizeColumns1_11_0(
+            	CheckDb.updateSizeColumns1_11_0(
                     conn, 
                     "kernel", 
                     KERNEL_DBOBJECTS_1_11_0,
@@ -2015,7 +2037,7 @@ public class CheckDb {
                     (Number)componentEnvironment.lookup("endWithTable"),
                     (Number)componentEnvironment.lookup("startWithPhase")
                 );
-                updateSizeColumns1_11_0(
+            	CheckDb.updateSizeColumns1_11_0(
                     conn, 
                     "security", 
                     SECURITY_DBOBJECTS_1_11_0,

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.37 2008/10/16 16:37:48 wfro Exp $
+ * Name:        $Id: Products.java,v 1.47 2009/03/08 17:04:51 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.47 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/16 16:37:48 $
+ * Date:        $Date: 2009/03/08 17:04:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,24 +80,24 @@ import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.product1.jmi1.PricingRule;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.utils.Utils;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.marshalling.Marshaller;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.compatibility.base.marshalling.Marshaller;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.w3c.cci2.Datatypes;
+import org.w3c.spi2.Datatypes;
 
 public class Products {
 
@@ -272,7 +272,7 @@ public class Products {
             segmentName
         );
         PricingRule pricingRule = null;
-        if((pricingRule = findPricingRule(pricingRuleName, productSegment, pm)) != null) {
+        if((pricingRule = Products.findPricingRule(pricingRuleName, productSegment, pm)) != null) {
             return pricingRule;            
         }                
         pm.currentTransaction().begin();
@@ -800,7 +800,7 @@ public class Products {
             (processingMode == PROCESSING_MODE_CLONE_PRICELEVEL_NO_PRICES) ||
             (processingMode == PROCESSING_MODE_CLONE_PRICELEVEL_INCLUDE_PRICES)
         ) {
-            // Mapping <source pricel level identity, cloned price level identity>
+            // Mapping <source price level identity, cloned price level identity>
             Map clonedIdentities = new HashMap();
             // Clone price level
             DataproviderObject_1_0 clonedPriceLevel = this.backend.getCloneable().cloneAndUpdateReferences(
@@ -1054,8 +1054,8 @@ public class Products {
             quantityToModifier = quantityToModifier == null ? quantityToPrice : quantityToModifier;
             // Apply modifier if quantity range is larger than the price quantity range
             if(
-                ((quantityFromModifier == null) || (quantityFromModifier.compareTo(quantityFromPrice) <= 0)) &&
-                ((quantityToModifier == null) || (quantityToModifier.compareTo(quantityToPrice) >= 0))
+                ((quantityFromModifier == null) || (quantityFromPrice == null) || (quantityFromModifier.compareTo(quantityFromPrice) <= 0)) &&
+                ((quantityToModifier == null) || (quantityToPrice == null) || (quantityToModifier.compareTo(quantityToPrice) >= 0))
             ) {
                 String modifierType = (String)priceModifier.values(SystemAttributes.OBJECT_CLASS).get(0);
                 if("org:opencrx:kernel:product1:DiscountPriceModifier".equals(modifierType)) {
@@ -1109,10 +1109,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevel.path())
-                },
-                "Operation is not allowed for final price level."
+                "Operation is not allowed for final price level.",
+                new BasicException.Parameter("param0", priceLevel.path())
             );                                                                
         }
         // No calculation required for base price levels
@@ -1262,10 +1260,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevelIdentity)
-                },
-                "Operation is not allowed for final price level."
+                "Operation is not allowed for final price level.",
+                new BasicException.Parameter("param0", priceLevelIdentity)
             );                                                                
         }
         List priceListEntries = this.getPriceListEntries(
@@ -1433,10 +1429,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevel.path())
-                },
-                "Operation is not allowed for final price level."
+                "Operation is not allowed for final price level.",
+                new BasicException.Parameter("param0", priceLevel.path())
             );                                                                
         }
         // Price level must have price currency
@@ -1444,10 +1438,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_PRICE_LEVEL_MUST_HAVE_CURRENCY,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevel.path())
-                },
-                "Price level must have price uom and price currency."
+                "Price level must have price uom and price currency.",
+                new BasicException.Parameter("param0", priceLevel.path())
             );                                                                
         }
         // Get price modifiers
@@ -1669,10 +1661,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_BASEDON_PRICE_LEVEL,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevelIdentity)
-                },
-                "Can not delete price level. Other price levels are based on this price level."
+                "Can not delete price level. Other price levels are based on this price level.",
+                new BasicException.Parameter("param0", priceLevelIdentity)
             );                                                                            
         }
         // Check for prices which are assigned to price level
@@ -1692,10 +1682,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_PRICE_LEVEL_HAVING_PRICES,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevelIdentity)
-                },
-                "Can not delete price level. Price level has assigned prices."
+                "Can not delete price level. Price level has assigned prices.",
+                new BasicException.Parameter("param0", priceLevelIdentity)
             );                                                                                        
         }
         DataproviderObject_1_0 priceLevel = this.backend.retrieveObjectFromDelegation(priceLevelIdentity);
@@ -1706,10 +1694,8 @@ public class Products {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("param0", priceLevel.path())
-                },
-                "Can not delete final price level."
+                "Can not delete final price level.",
+                new BasicException.Parameter("param0", priceLevel.path())
             );                                                                                                    
         }
         this.backend.removeObject(
@@ -1771,10 +1757,12 @@ public class Products {
             try {
               org.opencrx.kernel.product1.jmi1.Segment productSegment = 
                   (org.opencrx.kernel.product1.jmi1.Segment)rootPkg.refObject(
-                      new org.openmdx.compatibility.base.naming.Path(pricingRule.refMofId()).getParent().getParent().toXri()
+                      new org.openmdx.base.naming.Path(pricingRule.refMofId()).getParent().getParent().toXri()
                   );
-              for(java.util.Iterator i = productSegment.getPriceLevel().iterator(); i.hasNext(); ) {
-                  org.opencrx.kernel.product1.jmi1.AbstractPriceLevel candidate = (org.opencrx.kernel.product1.jmi1.AbstractPriceLevel)i.next();
+              org.opencrx.kernel.product1.cci2.PriceLevelQuery priceLevelFilter = productPkg.createPriceLevelQuery();
+              priceLevelFilter.forAllDisabled().isFalse();           
+              List<org.opencrx.kernel.product1.jmi1.AbstractPriceLevel> priceLevels = productSegment.getPriceLevel(priceLevelFilter);
+              for(org.opencrx.kernel.product1.jmi1.AbstractPriceLevel candidate: priceLevels) {
                   boolean candidateMatches = false;
                   if(candidate instanceof org.opencrx.kernel.product1.jmi1.PriceLevel) {
                       org.opencrx.kernel.product1.jmi1.PriceLevel l = (org.opencrx.kernel.product1.jmi1.PriceLevel)candidate;
@@ -1831,7 +1819,8 @@ public class Products {
                                           discountCustomer = customer;
                                           break;
                                         }
-                                      } catch (Exception e) {}
+                                      } 
+                                      catch (Exception e) {}
                                   }
                               }
                           }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: IMAPServer.java,v 1.4 2008/09/02 16:52:58 wfro Exp $
+ * Name:        $Id: IMAPServer.java,v 1.5 2009/03/08 17:04:52 wfro Exp $
  * Description: IMAPServer
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/02 16:52:58 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -114,7 +114,7 @@ public class IMAPServer implements Runnable {
 	public static void main(
 	    String[] args
 	) {
-	    startServer(
+		IMAPServer.startServer(
 	        null,
 	        "CRX",
 	        143,

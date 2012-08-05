@@ -29,10 +29,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>Utenti ( disabilitati)</_item>
+                              <_item>Utenti (disabilitati)</_item>
                             </label>
                             <toolTip>
-                              <_item>Utenti ( disabilitati)</_item>
+                              <_item>Utenti (disabilitati)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -149,6 +149,28 @@
                       </label>
                       <toolTip>
                         <_item>Ruolo utente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefono Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefono Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cellulare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cellulare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -292,6 +314,28 @@
                       </label>
                       <toolTip>
                         <_item>Distanza</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefono Lavoro [da]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefono Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cellulare [da]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cellulare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

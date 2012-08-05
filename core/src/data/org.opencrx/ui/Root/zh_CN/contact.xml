@@ -121,6 +121,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:middleName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>中间名</_item>
+                      </label>
+                      <toolTip>
+                        <_item>中间名</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:lastName" _operation="create">
                     <_object>
                       <label>
@@ -150,6 +161,116 @@
                       </label>
                       <toolTip>
                         <_item>个人昵称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>家庭电话</_item>
+                      </label>
+                      <toolTip>
+                        <_item>家庭电话</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>家庭电邮</_item>
+                      </label>
+                      <toolTip>
+                        <_item>家庭电邮</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!webUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>网站首页</_item>
+                      </label>
+                      <toolTip>
+                        <_item>网站首页</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>家庭/商务邮政地址</_item>
+                      </label>
+                      <toolTip>
+                        <_item>家庭/商务邮政地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalAddressLine" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>地址</_item>
+                      </label>
+                      <toolTip>
+                        <_item>地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalStreet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>街道/邮箱</_item>
+                      </label>
+                      <toolTip>
+                        <_item>街道/邮箱</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>州/省</_item>
+                      </label>
+                      <toolTip>
+                        <_item>州/省</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>邮编</_item>
+                      </label>
+                      <toolTip>
+                        <_item>邮编</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>城市</_item>
+                      </label>
+                      <toolTip>
+                        <_item>城市</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCountry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>国家/地区</_item>
+                      </label>
+                      <toolTip>
+                        <_item>国家/地区</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -461,24 +582,6 @@
                       </toolTip>
                     </_object>
                     <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="null">
-                    <_object/>
-                    <_content>
-                      <alternateElementDefinition>
-                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>图片</_item>
-                            </label>
-                            <toolTip>
-                              <_item>图片</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AlternateElementDefinition>
-                      </alternateElementDefinition>
-                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
                     <_object>

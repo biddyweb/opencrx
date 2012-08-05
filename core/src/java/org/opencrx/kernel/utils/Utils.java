@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.19 2008/12/17 11:35:41 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.28 2009/03/08 17:04:48 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/17 11:35:41 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,9 +58,7 @@ package org.opencrx.kernel.utils;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jdo.JDOHelper;
@@ -83,24 +81,24 @@ import org.opencrx.kernel.home1.jmi1.Home1Package;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
-import org.openmdx.base.accessor.jmi.spi.PersistenceManagerFactory_1;
+import org.openmdx.application.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
+import org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
+import org.openmdx.application.dataprovider.transport.ejb.cci.Jmi1AccessorFactory_1;
+import org.openmdx.application.dataprovider.transport.ejb.cci.Jmi1AccessorFactory_2;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
-import org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
-import org.openmdx.compatibility.base.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
+import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
-import org.openmdx.model1.accessor.basic.cci.Model_1_3;
-import org.openmdx.model1.accessor.basic.spi.Model_1;
 
 public class Utils {
 
     //-----------------------------------------------------------------------
-    public static Model_1_3 createModel(
+    public static Model_1_3 getModel(
     ) {
         Model_1_3 model = null;
         try {
-            model = new Model_1();
-            model.addModels(MODEL_PACKAGES);
+            model = Model_1Factory.getModel();
         }
         catch(Exception e) {
             System.out.println("Can not initialize model repository " + e.getMessage());
@@ -119,7 +117,7 @@ public class Utils {
         );
         properties.put(
             ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(), 
-            "org.openmdx.base.accessor.jmi1.AccessorFactory_2"
+            Jmi1AccessorFactory_2.class.getName()
         );
         return JDOHelper.getPersistenceManagerFactory(properties);
     }
@@ -137,13 +135,13 @@ public class Utils {
     ) {
         org.opencrx.kernel.workflow1.jmi1.Workflow1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:workflow1");            
+            pkg = (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:workflow1");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)((Authority)pm.getObjectById(
+            pkg = (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)pm.getObjectById(
                 Authority.class,
                 org.opencrx.kernel.workflow1.jmi1.Workflow1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -154,13 +152,13 @@ public class Utils {
     ) {
         org.opencrx.kernel.code1.jmi1.Code1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.code1.jmi1.Code1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:code1");
+            pkg = (org.opencrx.kernel.code1.jmi1.Code1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:code1");
         }
         catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.code1.jmi1.Code1Package)((Authority)pm.getObjectById(
+            pkg = (org.opencrx.kernel.code1.jmi1.Code1Package)pm.getObjectById(
                 Authority.class,
                 org.opencrx.kernel.code1.jmi1.Code1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -171,13 +169,13 @@ public class Utils {
     ) {
         org.opencrx.kernel.document1.jmi1.Document1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.document1.jmi1.Document1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:document1");
+            pkg = (org.opencrx.kernel.document1.jmi1.Document1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:document1");
         }
         catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.document1.jmi1.Document1Package)((Authority)pm.getObjectById(
+            pkg = (org.opencrx.kernel.document1.jmi1.Document1Package)pm.getObjectById(
                 Authority.class,
                 org.opencrx.kernel.document1.jmi1.Document1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;            
     }
@@ -188,13 +186,13 @@ public class Utils {
     ) {
         Admin1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.admin1.jmi1.Admin1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:admin1"); 
+            pkg = (org.opencrx.kernel.admin1.jmi1.Admin1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:admin1"); 
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Admin1Package)((Authority)pm.getObjectById(
+            pkg = (Admin1Package)pm.getObjectById(
                 Authority.class,
                 Admin1Package.AUTHORITY_XRI
-            )).refImmediatePackage();            
+            ).refImmediatePackage();            
         }
         return pkg;
     }
@@ -205,13 +203,13 @@ public class Utils {
     ) {
         org.openmdx.base.jmi1.BasePackage pkg = null;
         try {
-            pkg = (org.openmdx.base.jmi1.BasePackage)getOutermostPackage(pm).refPackage("org:openmdx:base"); 
+            pkg = (org.openmdx.base.jmi1.BasePackage)Utils.getOutermostPackage(pm).refPackage("org:openmdx:base"); 
         }
         catch(UnsupportedOperationException e) {
-            pkg = (org.openmdx.base.jmi1.BasePackage )((Authority)pm.getObjectById(
+            pkg = (org.openmdx.base.jmi1.BasePackage )pm.getObjectById(
                 Authority.class,
                 org.openmdx.base.jmi1.BasePackage .AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -222,13 +220,13 @@ public class Utils {
     ) {
         Home1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.home1.jmi1.Home1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:home1"); 
+            pkg = (org.opencrx.kernel.home1.jmi1.Home1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:home1"); 
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Home1Package)((Authority)pm.getObjectById(
+            pkg = (Home1Package)pm.getObjectById(
                 Authority.class,
                 Home1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;            
     }
@@ -239,13 +237,13 @@ public class Utils {
     ) {
         Contract1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.contract1.jmi1.Contract1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:contract1"); 
+            pkg = (org.opencrx.kernel.contract1.jmi1.Contract1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:contract1"); 
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Contract1Package)((Authority)pm.getObjectById(
+            pkg = (Contract1Package)pm.getObjectById(
                 Authority.class,
                 Contract1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;            
     }
@@ -256,13 +254,13 @@ public class Utils {
     ) {
         Depot1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.depot1.jmi1.Depot1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:depot1"); 
+            pkg = (org.opencrx.kernel.depot1.jmi1.Depot1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:depot1"); 
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Depot1Package)((Authority)pm.getObjectById(
+            pkg = (Depot1Package)pm.getObjectById(
                 Authority.class,
                 Depot1Package.AUTHORITY_XRI
-            )).refImmediatePackage();            
+            ).refImmediatePackage();            
         }
         return pkg;
     }
@@ -273,13 +271,13 @@ public class Utils {
     ) {
         org.openmdx.compatibility.datastore1.jmi1.Datastore1Package pkg = null;
         try {
-            pkg = (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)getOutermostPackage(pm).refPackage("org:openmdx:compatibility:datastore1");
+            pkg = (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)Utils.getOutermostPackage(pm).refPackage("org:openmdx:compatibility:datastore1");
         }
         catch(UnsupportedOperationException e) {
-            pkg = (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)((Authority)pm.getObjectById(
+            pkg = (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)pm.getObjectById(
                 Authority.class,
                 org.openmdx.compatibility.datastore1.jmi1.Datastore1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;                    
     }
@@ -290,13 +288,13 @@ public class Utils {
     ) {
         Building1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.building1.jmi1.Building1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:building1");            
+            pkg = (org.opencrx.kernel.building1.jmi1.Building1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:building1");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Building1Package)((Authority)pm.getObjectById(
+            pkg = (Building1Package)pm.getObjectById(
                 Authority.class,
                 Building1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -307,13 +305,13 @@ public class Utils {
     ) {
         Product1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.product1.jmi1.Product1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:product1");            
+            pkg = (org.opencrx.kernel.product1.jmi1.Product1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:product1");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Product1Package)((Authority)pm.getObjectById(
+            pkg = (Product1Package)pm.getObjectById(
                 Authority.class,
                 Product1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -324,13 +322,13 @@ public class Utils {
     ) {
         Uom1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.uom1.jmi1.Uom1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:uom1");            
+            pkg = (org.opencrx.kernel.uom1.jmi1.Uom1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:uom1");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Uom1Package)((Authority)pm.getObjectById(
+            pkg = (Uom1Package)pm.getObjectById(
                 Authority.class,
                 Uom1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -341,13 +339,13 @@ public class Utils {
     ) {
         Realm1Package pkg = null;
         try {
-            pkg = (org.opencrx.security.realm1.jmi1.Realm1Package)getOutermostPackage(pm).refPackage("org:opencrx:security:realm1");           
+            pkg = (org.opencrx.security.realm1.jmi1.Realm1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:security:realm1");           
         }
         catch(UnsupportedOperationException e) {
-            pkg =(Realm1Package)((Authority)pm.getObjectById(
+            pkg =(Realm1Package)pm.getObjectById(
                 Authority.class,
                 Realm1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -358,13 +356,13 @@ public class Utils {
     ) {
         org.opencrx.kernel.base.jmi1.BasePackage pkg = null;
         try {
-            pkg = (org.opencrx.kernel.base.jmi1.BasePackage)getOutermostPackage(pm).refPackage("org:opencrx:kernel:base");            
+            pkg = (org.opencrx.kernel.base.jmi1.BasePackage)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:base");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.base.jmi1.BasePackage)((Authority)pm.getObjectById(
+            pkg = (org.opencrx.kernel.base.jmi1.BasePackage)pm.getObjectById(
                 Authority.class,
                 org.opencrx.kernel.base.jmi1.BasePackage.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -375,13 +373,13 @@ public class Utils {
     ) {
         Activity1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.activity1.jmi1.Activity1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:activity1");            
+            pkg = (org.opencrx.kernel.activity1.jmi1.Activity1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:activity1");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Activity1Package)((Authority)pm.getObjectById(
+            pkg = (Activity1Package)pm.getObjectById(
                 Authority.class,
                 Activity1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -392,13 +390,13 @@ public class Utils {
     ) {
         Account1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.account1.jmi1.Account1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:account1");            
+            pkg = (org.opencrx.kernel.account1.jmi1.Account1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:account1");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (Account1Package)((Authority)pm.getObjectById(
+            pkg = (Account1Package)pm.getObjectById(
                 Authority.class,
                 Account1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -409,13 +407,13 @@ public class Utils {
     ) {
         Forecast1Package pkg = null;
         try {
-            pkg = (org.opencrx.kernel.forecast1.jmi1.Forecast1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:forecast1");            
+            pkg = (org.opencrx.kernel.forecast1.jmi1.Forecast1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:forecast1");            
         }
         catch(Exception e) {
-            pkg = (Forecast1Package)((Authority)pm.getObjectById(
+            pkg = (Forecast1Package)pm.getObjectById(
                 Authority.class,
                 Forecast1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
     }
@@ -426,24 +424,15 @@ public class Utils {
     ) {
         GenericPackage pkg = null;
         try {
-            pkg = (org.opencrx.kernel.generic.jmi1.GenericPackage)getOutermostPackage(pm).refPackage("org:opencrx:kernel:generic");            
+            pkg = (org.opencrx.kernel.generic.jmi1.GenericPackage)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:generic");            
         }
         catch(UnsupportedOperationException e) {
-            pkg = (GenericPackage)((Authority)pm.getObjectById(
+            pkg = (GenericPackage)pm.getObjectById(
                 Authority.class,
                 GenericPackage.AUTHORITY_XRI
-            )).refImmediatePackage();
+            ).refImmediatePackage();
         }
         return pkg;
-    }
-
-    //-----------------------------------------------------------------------
-    public static String xriAsIdentityPattern(
-        String xri
-    ) {
-        xri = xri.replace(".", "\\.");
-        xri = xri.replace("**", ".*");            
-        return xri;
     }
 
     //-------------------------------------------------------------------------
@@ -469,6 +458,7 @@ public class Utils {
         s = s.replace('\'', '-');
         s = s.replace('&', '-');
         s = s.replace('.', '-');
+        s = s.replace('#', '-');
         s = s.replace("-", "");
         if(s.length() > 50) {
             s = s.substring(0, 44) + s.substring(s.length()-5);
@@ -476,47 +466,6 @@ public class Utils {
         return s;
     }
         
-    //-----------------------------------------------------------------------
-    private static List<String> MODEL_PACKAGES = Arrays.asList(
-        new String[]{
-            "org:w3c",
-            "org:openmdx:base",
-            "org:opencrx",
-            "org:opencrx:kernel:base",
-            "org:opencrx:kernel:generic",
-            "org:opencrx:kernel:document1",
-            "org:opencrx:kernel:workflow1",
-            "org:opencrx:kernel:building1",
-            "org:opencrx:kernel:address1",
-            "org:opencrx:kernel:account1",
-            "org:opencrx:kernel:product1",
-            "org:opencrx:kernel:contract1",
-            "org:opencrx:kernel:activity1",
-            "org:opencrx:kernel:forecast1",
-            "org:opencrx:kernel:code1",
-            "org:opencrx:kernel:uom1",
-            "org:oasis_open",
-            "org:openmdx:generic1",
-            "org:openmdx:state2",
-            "org:opencrx:kernel:home1",
-            "org:openmdx:security:realm1",
-            "org:openmdx:security:authorization1",
-            "org:openmdx:security:authentication1",
-            "org:opencrx:security:identity1",
-            "org:opencrx:security:realm1",
-            "org:opencrx:kernel:reservation1",
-            "org:opencrx:kernel:admin1",
-            "org:openmdx:compatibility:document1",
-            "org:openmdx:compatibility:datastore1",
-            "org:opencrx:kernel:model1",
-            "org:opencrx:kernel:ras1",
-            "org:opencrx:kernel:depot1",
-            "org:openmdx:compatibility:state1",            
-            "org:opencrx:kernel",
-            "org:opencrx:security"
-        }
-    );
-
     //-----------------------------------------------------------------------
     public static String getPasswordDigest(
         String password,
@@ -549,7 +498,7 @@ public class Utils {
         );
         configuration.put(
             ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-            PersistenceManagerFactory_1.class.getName()
+            Jmi1AccessorFactory_1.class.getName()
         );
         configuration.put(
             ConfigurableProperty.Optimistic.qualifiedName(),

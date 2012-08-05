@@ -29,6 +29,72 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
+                              <_item>私人网络</_item>
+                            </shortText>
+                            <longText>
+                              <_item>私人网络</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>商务网络</_item>
+                            </shortText>
+                            <longText>
+                              <_item>商务网络</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>朋友 &amp; 家庭</_item>
+                            </shortText>
+                            <longText>
+                              <_item>朋友 &amp; 家庭</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>家庭</_item>
+                            </shortText>
+                            <longText>
+                              <_item>家庭</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>父母/子女</_item>
+                            </shortText>
+                            <longText>
+                              <_item>父母/子女</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>配偶</_item>
+                            </shortText>
+                            <longText>
+                              <_item>配偶</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
+                          <_object>
+                            <shortText>
                               <_item>其他</_item>
                             </shortText>
                             <longText>
@@ -37,35 +103,101 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>客户</_item>
+                              <_item>兄弟姐妹</_item>
                             </shortText>
                             <longText>
-                              <_item>客户</_item>
+                              <_item>兄弟姐妹</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>客户经理</_item>
+                              <_item>亲戚</_item>
                             </shortText>
                             <longText>
-                              <_item>客户经理</_item>
+                              <_item>亲戚</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="201" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>销售代表</_item>
+                              <_item>股东</_item>
                             </shortText>
                             <longText>
-                              <_item>销售代表</_item>
+                              <_item>股东</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="11" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>雇员</_item>
+                            </shortText>
+                            <longText>
+                              <_item>雇员</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>发起人</_item>
+                            </shortText>
+                            <longText>
+                              <_item>发起人</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="13" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>拥有者</_item>
+                            </shortText>
+                            <longText>
+                              <_item>拥有者</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="14" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>投资人</_item>
+                            </shortText>
+                            <longText>
+                              <_item>投资人</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="15" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>董事会</_item>
+                            </shortText>
+                            <longText>
+                              <_item>董事会</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="16" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>执行董事</_item>
+                            </shortText>
+                            <longText>
+                              <_item>执行董事</_item>
                             </longText>
                           </_object>
                           <_content/>

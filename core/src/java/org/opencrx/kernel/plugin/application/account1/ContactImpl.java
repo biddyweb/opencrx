@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ContactImpl.java,v 1.8 2008/11/05 15:44:49 wfro Exp $
+ * Name:        $Id: ContactImpl.java,v 1.9 2009/01/09 18:11:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/05 15:44:49 $
+ * Date:        $Date: 2009/01/09 18:11:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,7 +56,7 @@
 package org.opencrx.kernel.plugin.application.account1;
 
 import org.opencrx.kernel.backend.Backend;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 
 public class ContactImpl {
 
@@ -72,7 +72,7 @@ public class ContactImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
             
     //-----------------------------------------------------------------------

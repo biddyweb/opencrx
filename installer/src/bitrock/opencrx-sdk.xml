@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxSdk</shortName>
     <fullName>openCRX SDK</fullName>
-    <version>2.3.0</version>
+    <version>2.4.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-sdk/README</readmeFile>
     <licenseFile>../../image/opencrx-sdk/LICENSE</licenseFile>
@@ -25,7 +25,7 @@
                     <platforms>all</platforms>
                     <actionList>
                         <substitute>
-                            <files>*/*.bat</files>
+                            <files>*/*.bat; */*.sh; */*.xml</files>
                             <type>regexp</type>
                             <substitutionList>
                                 <substitution>
@@ -46,33 +46,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.3.0</value>
-                                </substitution>
-                            </substitutionList>
-                        </substitute>
-                        <substitute>
-                            <files>*/*.sh</files>
-                            <type>regexp</type>
-                            <substitutionList>
-                                <substitution>
-                                    <pattern>@@INSTALLDIR@@</pattern>
-                                    <value>${installdir}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>@@JAVA_HOME@@</pattern>
-                                    <value>${java_home}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>@@ANT_HOME@@</pattern>
-                                    <value>${ant_home}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>@@OPENCRX_VERSION@@</pattern>
-                                    <value>${product_version}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.3.0</value>
+                                    <value>2.4.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -203,7 +177,7 @@
         </directoryParameter>
         <directoryParameter>
             <name>ant_home</name>
-            <description>Ant 1.7 home directory</description>
+            <description>Ant 1.7.0 home directory</description>
             <explanation>Select home directory of an existing Ant 1.7.0 installation, e.g. C:\pgm\apache-ant-1.7.0 on Windows or /opt/apache-ant-1.7.0 on Linux platforms.</explanation>
             <value></value>
             <default>/opt/apache-ant-1.7.0</default>

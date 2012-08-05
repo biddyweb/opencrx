@@ -1,0 +1,41 @@
+<project 
+	name="opencrx-sdk-postinstaller" 
+	xmlns:antcontrib="antlib:net.sf.antcontrib"
+>
+	<target name="expand-tar">
+		<untar src="@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-core.jre-1.5.tar" dest="@@INSTALLDIR@@"/>
+		<untar src="@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-apps.jre-1.5.tar" dest="@@INSTALLDIR@@"/>
+
+		<mkdir dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+
+		<untar src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-core.jre-1.5.tar" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+		<untar src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-portal.jre-1.5.tar" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+		<untar src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-security.jre-1.5.tar" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+		<untar src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-log.jre-1.5.tar" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+	</target>
+	<target name="expand-zip">
+		<unzip src="@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-core.jre-1.5.zip" dest="@@INSTALLDIR@@"/>
+		<unzip src="@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-apps.jre-1.5.zip" dest="@@INSTALLDIR@@"/>
+
+		<mkdir dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+
+		<unzip src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-core.jre-1.5.zip" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+		<unzip src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-portal.jre-1.5.zip" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+		<unzip src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-security.jre-1.5.zip" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+		<unzip src="@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-log.jre-1.5.zip" dest="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"/>
+	</target>
+	<target name="postinstall">
+		<antcall inheritAll="true" target="${expand.target}"/>
+		<delete>
+			<fileset dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt" includes="**/CVS"/>
+		</delete>
+		<!-- openCRX/Core -->
+		<ant inheritAll="false" dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/core" target="install-src"/>
+		<ant inheritAll="false" dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/core" target="deliverables"/>
+		<ant inheritAll="false" dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/core" target="assemble"/>
+		<!-- openCRX/Apps -->
+		<ant inheritAll="false" dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/apps" target="install-src"/>
+		<ant inheritAll="false" dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/apps" target="deliverables"/>
+		<ant inheritAll="false" dir="@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/apps" target="assemble"/>
+	</target>
+</project>

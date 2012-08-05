@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.11 2008/04/13 13:43:11 wfro Exp $
+ * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.13 2009/02/09 09:14:40 wfro Exp $
  * Description: openCRX Contacts Report
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/13 13:43:11 $
+ * Date:        $Date: 2009/02/09 09:14:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,9 +68,8 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
-org.openmdx.compatibility.base.query.*,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.application.log.*,
 org.apache.poi.hssf.usermodel.*,
 org.apache.poi.hssf.util.*
@@ -210,9 +209,9 @@ org.apache.poi.hssf.util.*
 			  	cell.setCellValue(phoneNumber.getPhoneExtension());
 		  	}
 		  	// EMailAddress
-		  	else if(address instanceof org.opencrx.kernel.account1.jmi1.EmailAddress) {
-		  		org.opencrx.kernel.account1.jmi1.EmailAddress email = 
-		  			(org.opencrx.kernel.account1.jmi1.EmailAddress)address;
+		  	else if(address instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
+		  		org.opencrx.kernel.account1.jmi1.EMailAddress email = 
+		  			(org.opencrx.kernel.account1.jmi1.EMailAddress)address;
 		  		// EMail address
 			 	cell = addressRow.createCell((short)2);
 			  	cell.setCellValue(email.getEmailAddress());

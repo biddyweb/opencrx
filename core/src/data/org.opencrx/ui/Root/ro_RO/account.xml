@@ -98,6 +98,71 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relaţii</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relaţii</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="20" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Apartenenţa</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Apartenenţa</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="30" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Apartenenţa (detaliat)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Apartenenţa (detaliat)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Apartenenţa (blocat)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Apartenenţa (blocat)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
@@ -152,6 +217,138 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefon Profesional</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefon Profesional</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mobil</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mobil</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefon altul</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefon altul</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-Mail Profesional</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-Mail Profesional</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Other!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-Mail altul</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-Mail altul</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresa Poştală Profesională</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresa Poştală Profesională</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalAddressLine" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Linie de adresă</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Linie de adresă</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalStreet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Strada / Casuţa poştală</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Strada / Casuţa poştală</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Judeţ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Judeţ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cod poştal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cod poştal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Localitatea</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Localitatea</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCountry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ţara</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ţara</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -246,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:master" _operation="create">
                     <_object>
                       <label>
-                        <_item>Master</_item>
+                        <_item>Principal</_item>
                       </label>
                       <toolTip>
-                        <_item>Master</_item>
+                        <_item>Principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -268,10 +465,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Alocarea contului</_item>
+                        <_item>Alocarea Contului</_item>
                       </label>
                       <toolTip>
-                        <_item>Alocarea contului</_item>
+                        <_item>Alocarea Contului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -312,10 +509,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createLead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creează Indiciu</_item>
+                        <_item>Crează Indiciu</_item>
                       </label>
                       <toolTip>
-                        <_item>Creează Indiciu</_item>
+                        <_item>Crează Indiciu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -400,10 +597,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createOpportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creează Oportunitate</_item>
+                        <_item>Crează Oportunitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Creează Oportunitate</_item>
+                        <_item>Crează Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -477,10 +674,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createQuote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creează Ofertă</_item>
+                        <_item>Crează Ofertă</_item>
                       </label>
                       <toolTip>
-                        <_item>Creează Ofertă</_item>
+                        <_item>Crează Ofertă</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -543,10 +740,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateQuoteResult:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ofetă</_item>
+                        <_item>Ofertă</_item>
                       </label>
                       <toolTip>
-                        <_item>Ofetă</_item>
+                        <_item>Ofertă</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -554,10 +751,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createSalesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creează comanda de vânzare</_item>
+                        <_item>Crează Comandă de vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Creează comanda de vânzare</_item>
+                        <_item>Crează Comandă de vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -620,10 +817,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateSalesOrderResult:salesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Comanda de vânzare</_item>
+                        <_item>Comandă de vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Comanda de vânzare</_item>
+                        <_item>Comandă de vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -631,10 +828,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createInvoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creează factura</_item>
+                        <_item>Crează factura</_item>
                       </label>
                       <toolTip>
-                        <_item>Creează factura</_item>
+                        <_item>Crează factura</_item>
                       </toolTip>
                     </_object>
                     <_content/>

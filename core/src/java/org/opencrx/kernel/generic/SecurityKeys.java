@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityKeys.java,v 1.14 2008/05/30 23:38:54 wfro Exp $
+ * Name:        $Id: SecurityKeys.java,v 1.15 2009/03/08 17:04:52 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/30 23:38:54 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,7 +80,7 @@ public class SecurityKeys {
     // System Properties
     public static final String ENABLE_SECURITY_PROPERTY = "org.opencrx.kernel.layer.model.SecurityContext.enable";
     public static final String ID_SEPARATOR_PROPERTY = "org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR";
-    public static final String ID_SEPARATOR = System.getProperty(ID_SEPARATOR_PROPERTY) == null ? "-" : System.getProperty(ID_SEPARATOR_PROPERTY);
+    public static final String ID_SEPARATOR = System.getProperty(ID_SEPARATOR_PROPERTY) == null ? "-" : System.getProperty(SecurityKeys.ID_SEPARATOR_PROPERTY);
     
     // Encodings
     public static final String PASSWORD_ENCODING_SCHEME = "Base64:";

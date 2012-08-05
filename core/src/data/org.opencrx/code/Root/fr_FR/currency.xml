@@ -15,8 +15,22 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item> N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="036" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AUD</_item>
+                            </shortText>
                             <longText>
                               <_item>AUD [Dollar Australien]</_item>
                             </longText>
@@ -25,22 +39,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="124" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CAD</_item>
+                            </shortText>
                             <longText>
                               <_item>CAD [Dollar Canadien]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="978" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="156" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CNY</_item>
+                            </shortText>
                             <longText>
-                              <_item>EUR [Euro]</_item>
+                              <_item>CNY [Yuan]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="203" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CZK</_item>
+                            </shortText>
                             <longText>
                               <_item>CZK [Couronne Tchèque]</_item>
                             </longText>
@@ -49,6 +72,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="392" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>JPY</_item>
+                            </shortText>
                             <longText>
                               <_item>JPY [Yen]</_item>
                             </longText>
@@ -57,6 +83,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="756" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CHF</_item>
+                            </shortText>
                             <longText>
                               <_item>CHF [Franc Suisse]</_item>
                             </longText>
@@ -65,6 +94,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="826" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GBP</_item>
+                            </shortText>
                             <longText>
                               <_item>GBP [Livre sterling]</_item>
                             </longText>
@@ -73,14 +105,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="840" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>USD</_item>
+                            </shortText>
                             <longText>
                               <_item>USD [Dollar US]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="946" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>RON</_item>
+                            </shortText>
+                            <longText>
+                              <_item>RON [Leu]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="978" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>EUR</_item>
+                            </shortText>
+                            <longText>
+                              <_item>EUR [Euro]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="986" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BRL</_item>
+                            </shortText>
                             <longText>
                               <_item>BRL [Real Brésilien]</_item>
                             </longText>

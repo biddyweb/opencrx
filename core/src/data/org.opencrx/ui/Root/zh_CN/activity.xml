@@ -563,6 +563,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastAppliedCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>活动创建器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>活动创建器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo" _operation="create">
                     <_object>
                       <label>
@@ -794,17 +827,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>导入 iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>导入 iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -838,29 +860,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>导入 iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>导入 iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>导入 iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>导入 iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
                         <_item>导入 iCal</_item>
@@ -1443,6 +1443,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description" _operation="create">
                     <_object>
                       <label>
@@ -1492,6 +1503,9 @@
                       <label>
                         <_item>预计结束时间</_item>
                       </label>
+                      <shortLabel>
+                        <_item>预计结束时间</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>预计结束时间</_item>
                       </toolTip>
@@ -1503,6 +1517,9 @@
                       <label>
                         <_item>预计结束时间(最初的)</_item>
                       </label>
+                      <shortLabel>
+                        <_item>预计结束时间(最初的)</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>预计结束时间(最初的)</_item>
                       </toolTip>
@@ -1580,6 +1597,9 @@
                       <label>
                         <_item>预计开始时间</_item>
                       </label>
+                      <shortLabel>
+                        <_item>预计开始时间</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>预计开始时间</_item>
                       </toolTip>
@@ -1600,17 +1620,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>截止时间</_item>
-                      </label>
-                      <toolTip>
-                        <_item>截止时间</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority" _operation="create">
                     <_object>
                       <label>
@@ -1622,6 +1631,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>截止时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>截止时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact" _operation="create">
                     <_object>
                       <label>
@@ -1629,39 +1660,6 @@
                       </label>
                       <toolTip>
                         <_item>汇报联系人</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>活动组</_item>
-                      </label>
-                      <toolTip>
-                        <_item>活动组</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>资源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>资源</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>资源角色</_item>
-                      </label>
-                      <toolTip>
-                        <_item>资源角色</_item>
                       </toolTip>
                     </_object>
                     <_content/>

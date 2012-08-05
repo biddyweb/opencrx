@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractFilterAddressImpl.java,v 1.4 2008/04/05 22:53:38 wfro Exp $
+ * Name:        $Id: AbstractFilterAddressImpl.java,v 1.5 2009/01/09 18:11:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/05 22:53:38 $
+ * Date:        $Date: 2009/01/09 18:11:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,7 +58,7 @@ package org.opencrx.kernel.plugin.application.account1;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 
 public class AbstractFilterAddressImpl {
@@ -75,7 +75,7 @@ public class AbstractFilterAddressImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
         
     //-----------------------------------------------------------------------

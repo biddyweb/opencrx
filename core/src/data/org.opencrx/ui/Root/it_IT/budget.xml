@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedBudget" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preventivi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preventivi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
                     <_object>
                       <label>
@@ -44,24 +55,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Unita&apos; Operativa</_item>
+                        <_item>Nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Da compilarsi dall&apos;unita&apos; operativa</_item>
+                        <_item>Nome</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetto</_item>
+                        <_item>Descrizione Breve</_item>
                       </label>
                       <toolTip>
-                        <_item>Da compilare dal Soggetto</_item>
+                        <_item>Descrizione Breve</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -99,24 +110,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome</_item>
+                        <_item>Soggetto</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome</_item>
+                        <_item>Da compilare dal Soggetto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Descrizione Breve</_item>
+                        <_item>Unita&apos; Operativa</_item>
                       </label>
                       <toolTip>
-                        <_item>Descrizione Breve</_item>
+                        <_item>Da compilarsi dall&apos;unita&apos; operativa</_item>
                       </toolTip>
                     </_object>
                     <_content/>

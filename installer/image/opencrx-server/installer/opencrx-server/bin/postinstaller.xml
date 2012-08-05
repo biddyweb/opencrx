@@ -1,0 +1,40 @@
+<project 
+	name="opencrx-server-postinstaller" 
+	xmlns:antcontrib="antlib:net.sf.antcontrib"
+>
+	<target name="postinstall">
+		<replace 
+			file="@@INSTALLDIR@@/apache-tomcat-6/conf/openejb.xml" 
+			token="&lt;!-- @@OPENCRX_JDBC@@ --&gt;"
+			value="&lt;Resource id=&quot;jdbc_opencrx_CRX&quot; type=&quot;DataSource&quot;&gt;&#xD;&#xA;
+JdbcDriver org.hsqldb.jdbcDriver&#xD;&#xA;
+JdbcUrl jdbc:hsqldb:hsql://127.0.0.1:@@HSQLDB_PORT@@/CRX_2_4&#xD;&#xA;
+UserName sa&#xD;&#xA;
+Password manager99&#xD;&#xA;
+JtaManaged true&#xD;&#xA;
+&lt;/Resource&gt;&#xD;&#xA;"/>
+
+		<replace 
+			file="@@INSTALLDIR@@/apache-tomcat-6/conf/openejb.xml" 
+			token="&lt;!-- @@OPENCRX_MAIL@@ --&gt;"
+			value="&lt;Resource id=&quot;mail/provider/CRX&quot; type=&quot;javax.mail.Session&quot;&gt;&#xD;&#xA;
+mail.debug true&#xD;&#xA;
+mail.transport.protocol smtp&#xD;&#xA;
+mail.smtp.user myusername&#xD;&#xA;
+mail.smtp.password mypassword&#xD;&#xA;
+mail.smtp.starttls.enable true&#xD;&#xA;
+mail.smtp.auth true&#xD;&#xA;
+mail.smtp.host myhost&#xD;&#xA;
+mail.smtp.port 25&#xD;&#xA;
+mail.smtp.user myuseruname&#xD;&#xA;
+mail.from mymailfrom&#xD;&#xA;
+mail.store.protocol pop3s&#xD;&#xA;
+mail.pop3s.host myhost&#xD;&#xA;
+mail.pop3s.port 995&#xD;&#xA;
+mail.pop3s.auth true&#xD;&#xA;
+mail.pop3s.user myusername&#xD;&#xA;
+mail.pop3s.password mypassword&#xD;&#xA;
+&lt;/Resource&gt;&#xD;&#xA;"/>
+
+	</target>
+</project>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.15 2008/10/07 07:02:02 cmu Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.16 2009/01/06 13:16:55 wfro Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/07 07:02:02 $
+ * Date:        $Date: 2009/01/06 13:16:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,8 +67,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
+org.openmdx.base.naming.*,
 org.openmdx.application.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*

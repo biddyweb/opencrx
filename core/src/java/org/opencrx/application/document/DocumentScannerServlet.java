@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.8 2008/09/03 16:53:36 wfro Exp $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.10 2009/03/08 17:04:53 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/03 16:53:36 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,8 +86,8 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
@@ -426,7 +426,6 @@ public class DocumentScannerServlet
                     );
                     rootPm.currentTransaction().commit();
                     scanDir = (org.opencrx.kernel.base.jmi1.StringProperty)rootPm.getObjectById(scanDir.refGetPath());
-                    Date runAt = scanDir.getModifiedAt();
                     if(
                         (scanDir.getStringValue() != null) && 
                         (scanDir.getStringValue().length() > 0)                

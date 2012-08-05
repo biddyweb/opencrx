@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.11 2008/03/18 20:09:14 wfro Exp $
+ * Name:        $Id: ProjectExporter.java,v 1.13 2009/03/08 17:04:54 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/03/18 20:09:14 $
+ * Date:        $Date: 2009/03/08 17:04:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,10 +82,9 @@ import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.exception.RuntimeServiceException;
+import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.exception.BasicException.Parameter;
 import org.openmdx.portal.servlet.Action;
 
 
@@ -351,10 +350,9 @@ public class ProjectExporter {
    * </table>
    */
   public void export(
-  ) {
+  ) throws ServiceException {
     AppLog.info("export begin", activityGroup.refMofId());
     this.preExport();
-    //this.weba("Project", "xmlns=\"http://schemas.microsoft.com/project\"");
     this.w("<?xml version=\"1.0\"  encoding=\"UTF-8\"?>");
     this.weba("Project", "xmlns=\"http://schemas.microsoft.com/project\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://schemas.microsoft.com/project mspdi.xsd\"");
     
@@ -385,14 +383,15 @@ public class ProjectExporter {
     //  <StartDate>2004-01-01T08:00:00</StartDate>
     //  <FinishDate>2004-05-13T15:00:00</FinishDate>
     //----
-    wee("Project");
-    postExport();
+    this.wee("Project");
+    this.postExport();
     AppLog.info("export end", activityGroup.getName());
   }
 
   //-----------------------------------------------------------------------
-  private void preExport() {
-    clear();
+  private void preExport(
+  ) throws ServiceException {
+    this.clear();
     //Fill activityMappers
     //get all Activities
     for (Iterator i=activityGroup.getFilteredActivity().iterator(); i.hasNext(); ) {
@@ -405,13 +404,13 @@ public class ProjectExporter {
     }
     //get all links of interest
     for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
-      setActivityLinks((ActivityMapper)i.next());
+      this.setActivityLinks((ActivityMapper)i.next());
     }
     //set uid used during export
     for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
      ActivityMapper am = (ActivityMapper)i.next();
      if (am.isRootActivity()) {
-       setActivityMapperUid(am, 0);
+       this.setActivityMapperUid(am, 0);
      }
     }
     
@@ -434,12 +433,12 @@ public class ProjectExporter {
   private void setActivityMapperUid (
       ActivityMapper am, 
       int deep
-  ) {
+  ) throws ServiceException {
     if (deep >= MAX_ACTIVITY_LINKS) {
-      throw new RuntimeServiceException(
+      throw new ServiceException(
           BasicException.Code.DEFAULT_DOMAIN,
           BasicException.Code.GENERIC,
-          new Parameter[0], "Activities seems to be linked recursively!"
+          "Activities seems to be linked recursively!"
       );
     }
     am.setUid(nextUid);
@@ -496,14 +495,14 @@ public class ProjectExporter {
   //-----------------------------------------------------------------------
   private void postExport(
   ) {
-    clear();
+    this.clear();
     pw.flush();
   }
 
   //-----------------------------------------------------------------------
   private void clear(
   ) {
-    initIndent();
+    this.initIndent();
     this.nextUid = 1;
     this.activityMappers.clear();
     this.resourceMappers.clear();
@@ -660,7 +659,7 @@ public class ProjectExporter {
     String name = 
         "#" + a.getActivityNumber() + ": " +         
         (a.getName() == null ? "" : a.getName());
-    String outlineNo = outlineNumberToString(outlineNumber);
+    String outlineNo = ProjectExporter.outlineNumberToString(outlineNumber);
     int outlineLevel = outlineNumber.size();
     short priority = a.getPriority();
     Date createDate = a.getCreatedAt();
@@ -697,7 +696,7 @@ public class ProjectExporter {
     }
     this.we("Type", Short.toString(mspTaskType));
     if (createDate != null) {
-        this.we("CreateDate", toMsProjectDate(createDate));
+        this.we("CreateDate", this.toMsProjectDate(createDate));
     }
     if (outlineNo != null) {
         this.we("OutlineNumber",outlineNo);
@@ -710,7 +709,7 @@ public class ProjectExporter {
     if (finish != null) {
         this.we("Finish", this.toFormatedEndDate(finish));
     }
-    we("DurationFormat", durationFormat);
+    this.we("DurationFormat", durationFormat);
     this.we("EffortDriven", Integer.toString(effortDriven));
     //we("Milestone", "0");
     //we("Summary",(am.getPartActivityMappers().size()>0 ? "1" : "0")); //wird offenbar anhand von outline berechnet.
@@ -726,7 +725,7 @@ public class ProjectExporter {
     if (lateFinish != null) {
         this.we("LateFinish", this.toFormatedEndDate(lateFinish));
     }
-    we("FixedCostAccrual", "3"); //if not present msproject displays an import error that the value is not valid.
+    this.we("FixedCostAccrual", "3"); //if not present msproject displays an import error that the value is not valid.
     if (actualStart != null) {
         this.we("ActualStart", this.toFormatedStartDate(actualStart));
     }
@@ -742,7 +741,7 @@ public class ProjectExporter {
         (actualDurationMinutes * workingMinutesDuringScheduledPeriod) / 
         (mainEstimateMinutes == 0 ? 1 : mainEstimateMinutes);
     normalizedActualDurationMinutes = Math.abs(normalizedActualDurationMinutes);
-    this.we("ActualDuration", toMSProjectDuration(normalizedActualDurationMinutes / 60, normalizedActualDurationMinutes % 60));
+    this.we("ActualDuration", ProjectExporter.toMSProjectDuration(normalizedActualDurationMinutes / 60, normalizedActualDurationMinutes % 60));
     
     this.we("CalendarUID", Integer.toString(this.mspCalendar.getUID()));
     this.exportHyperlink(a.getIdentity());
@@ -780,7 +779,7 @@ public class ProjectExporter {
     this.web("Resources");
     this.exportResource0();
     //order list using uid starting with 1;
-    ResourceMapper[] resourceMappersArr = new ResourceMapper[resourceMappers.size()];
+    ResourceMapper[] resourceMappersArr = new ResourceMapper[this.resourceMappers.size()];
     for (Iterator i=resourceMappers.values().iterator(); i.hasNext(); ) {
       ResourceMapper rm = (ResourceMapper)i.next();
       resourceMappersArr[rm.getUid()-1] = rm; 
@@ -890,9 +889,9 @@ public class ProjectExporter {
     this.we("UID", Integer.toString(assignment.getUid()));
     this.we("TaskUID", Integer.toString(assignment.getTaskUid()));
     this.we("ResourceUID", Integer.toString(assignment.getResourceUid()));
-    this.we("ActualWork", toMSProjectDuration(assignment.getActualWorkHours(),0)); //used if task type = fixed units
+    this.we("ActualWork", ProjectExporter.toMSProjectDuration(assignment.getActualWorkHours(),0)); //used if task type = fixed units
     if (assignment.getFinish() != null) {
-        this.we("Finish", toMsProjectDate(assignment.getFinish()));
+        this.we("Finish", this.toMsProjectDate(assignment.getFinish()));
     }
     this.exportHyperlink(assignment.getResourceAssignment().getIdentity());
     this.we("Units", Double.toString((1.0 * assignment.getWorkDurationPercentage()) / 100.0));
@@ -901,13 +900,13 @@ public class ProjectExporter {
     this.we("Type", "2"); //2=assignment actual work, 1=assignment remaining work
     this.we("UID", "2"); //it's allowed here to always export same number.
     if (assignment.getStart() != null) {
-        this.we("Start", toMsProjectDate(assignment.getStart()));
+        this.we("Start", this.toMsProjectDate(assignment.getStart()));
     }
     if (assignment.getFinish() != null) {
-        this.we("Finish", toMsProjectDate(assignment.getFinish()));
+        this.we("Finish", this.toMsProjectDate(assignment.getFinish()));
     }
     this.we("Unit", "2"); //The time unit of the timephased data period. Values are: 0=m, 1=h, 2=d, 3=w, 5=mo, 8=y
-    this.we("Value", toMSProjectDuration(assignment.getActualWorkHours(),0));
+    this.we("Value", ProjectExporter.toMSProjectDuration(assignment.getActualWorkHours(),0));
     this.wee("TimephasedData");
 
     this.wee("Assignment");
@@ -1024,7 +1023,7 @@ public class ProjectExporter {
     this.pw.print("<");
     this.pw.print(element);
     this.pw.println(">");
-    incrementIndent();
+    this.incrementIndent();
   }
 
   //-----------------------------------------------------------------------
@@ -1041,7 +1040,7 @@ public class ProjectExporter {
     this.pw.print(" ");
     this.pw.print(attributes);
     this.pw.println(">");
-    incrementIndent();
+    this.incrementIndent();
   }
 
   //-----------------------------------------------------------------------
@@ -1051,7 +1050,7 @@ public class ProjectExporter {
   private void wee(
       String element
   ) {
-    decrementIndent();
+    this.decrementIndent();
     this.pw.print(leadingSpaces);
     this.pw.print("</");
     this.pw.print(element);

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.47 2008/11/21 10:06:48 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.55 2009/03/08 17:04:49 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.47 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/21 10:06:48 $
+ * Date:        $Date: 2009/03/08 17:04:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -97,29 +97,29 @@ import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.utils.Utils;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.Orders;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.marshalling.Marshaller;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.Orders;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.compatibility.base.marshalling.Marshaller;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
-import org.w3c.cci2.Datatypes;
+import org.w3c.spi2.Datatypes;
 
 public class Contracts {
 
@@ -181,7 +181,7 @@ public class Contracts {
             segmentName
         );
         CalculationRule calculationRule = null;
-        if((calculationRule = findCalculationRule(calculationRuleName, contractSegment, pm)) != null) {
+        if((calculationRule = Contracts.findCalculationRule(calculationRuleName, contractSegment, pm)) != null) {
             return calculationRule;            
         }                
         pm.currentTransaction().begin();
@@ -227,7 +227,8 @@ public class Contracts {
         String fullName = "";
         try {
             fullName = userHome.getContact().getFullName();
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
 
         String chartTitle = null;
 
@@ -330,7 +331,8 @@ public class Contracts {
         try {
             pw.flush();
             os.close();
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         charts[0].setContent(BinaryLargeObjects.valueOf(os.toByteArray()));
         charts[0].setContentMimeType("application/vnd.openmdx-chart");
         charts[0].setContentName(Utils.toFilename(chartTitle) + ".txt");
@@ -340,7 +342,7 @@ public class Contracts {
          */
         chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Contracts Age Distribution (" + createdAt + ")";
         if(charts[1] == null) {
-            charts[1] = (org.opencrx.kernel.home1.jmi1.Media)pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
+            charts[1] = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
             charts[1].refInitialize(false, false);
             userHome.addChart(
                 false, 
@@ -392,7 +394,8 @@ public class Contracts {
         try {
             pw.flush();
             os.close();
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         charts[1].setContent(BinaryLargeObjects.valueOf(os.toByteArray()));
         charts[1].setContentMimeType("application/vnd.openmdx-chart");
         charts[1].setContentName(Utils.toFilename(chartTitle) + ".txt");
@@ -632,7 +635,8 @@ public class Contracts {
         short minMaxQuantityHandling = MIN_MAX_QUANTITY_HANDLING_NA;
         try {
             minMaxQuantityHandling = position.getMinMaxQuantityHandling(); 
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         if(minMaxQuantityHandling == MIN_MAX_QUANTITY_HANDLING_LIMIT) {
             // Adjust min/max handling when quantity is negative
             if(quantity.compareTo(new BigDecimal(0.0)) < 0) {
@@ -1904,12 +1908,12 @@ public class Contracts {
                 boolean quantityFromMatches =
                     (current.values("quantityFrom").isEmpty()) || 
                     (quantity == null) || 
-                    ((BigDecimal)current.values("quantityFrom").get(0)).compareTo(quantity) >= 0;
+                    ((BigDecimal)current.values("quantityFrom").get(0)).compareTo(quantity) <= 0;
                 AppLog.trace("Quantity from matches", new Boolean(quantityFromMatches));
                 boolean quantityToMatches = 
                     (current.values("quantityTo").isEmpty()) || 
                     (quantity == null) || 
-                    ((BigDecimal)current.values("quantityTo").get(0)).compareTo(quantity) < 0;
+                    ((BigDecimal)current.values("quantityTo").get(0)).compareTo(quantity) >= 0;
                 AppLog.trace("Quantity to matches", new Boolean(quantityToMatches));
                 if(quantityFromMatches && quantityToMatches) {
                     listPrice = current;
@@ -2670,11 +2674,9 @@ public class Contracts {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.CONTRACT_MIN_POSITIONS_REACHED,
-                    new BasicException.Parameter[]{
-                         new BasicException.Parameter("param0", productRole.values("minPositions").get(0)),   
-                         new BasicException.Parameter("param1", position.values("name").get(0))   
-                    },
-                    "Removal not allowed. Min positions reached."
+                    "Removal not allowed. Min positions reached.",
+                    new BasicException.Parameter("param0", productRole.values("minPositions").get(0)),   
+                    new BasicException.Parameter("param1", position.values("name").get(0))   
                 );                                                                            
             }
             // Remove all contained positions
@@ -2929,10 +2931,8 @@ public class Contracts {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.CONTRACT_MISSING_DEPOT_GOODS_DELIVERY,
-                new BasicException.Parameter[]{
-                     new BasicException.Parameter("param0", contractIdentity),   
-                },
-                "Missing goods delivery depot."
+                "Missing goods delivery depot.",
+                new BasicException.Parameter("param0", contractIdentity)
             );                                                                            
         }
 
@@ -3018,10 +3018,8 @@ public class Contracts {
                     throw new ServiceException(
                         OpenCrxException.DOMAIN,
                         OpenCrxException.CONTRACT_MISSING_DEPOT_GOODS_ISSUE,
-                        new BasicException.Parameter[]{
-                             new BasicException.Parameter("param0", position.values("lineItemNumber").get(0)),   
-                        },
-                        "Missing goods issue depot."
+                        "Missing goods issue depot.",
+                        new BasicException.Parameter("param0", position.values("lineItemNumber").get(0))  
                     );
                 }
             }
@@ -3036,10 +3034,8 @@ public class Contracts {
                     throw new ServiceException(
                         OpenCrxException.DOMAIN,
                         OpenCrxException.CONTRACT_MISSING_DEPOT_GOODS_RETURN,
-                        new BasicException.Parameter[]{
-                             new BasicException.Parameter("param0", position.values("lineItemNumber").get(0)),   
-                        },
-                        "Missing goods return depot."
+                        "Missing goods return depot.",
+                        new BasicException.Parameter("param0", position.values("lineItemNumber").get(0))   
                     );
                 }
             }

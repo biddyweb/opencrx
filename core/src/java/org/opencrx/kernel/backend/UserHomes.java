@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.22 2008/11/06 12:23:54 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.27 2009/03/08 17:04:50 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/06 12:23:54 $
+ * Date:        $Date: 2009/03/08 17:04:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,36 +68,44 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.jmi1.ObjectFinder;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.Utils;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.WebKeys;
 import org.w3c.cci2.BinaryLargeObjects;
 
 public class UserHomes {
@@ -772,7 +780,8 @@ public class UserHomes {
                             SecurityKeys.PASSWORD_ENCODING_SCHEME + Base64.encode(password.getBytes("UTF-8"))                    
                         );
                     }
-                } catch(UnsupportedEncodingException e) {}                
+                } 
+                catch(UnsupportedEncodingException e) {}                
             }
             if(object.getValues("outgoingPassword") != null) {
                 try {
@@ -782,7 +791,8 @@ public class UserHomes {
                             SecurityKeys.PASSWORD_ENCODING_SCHEME + Base64.encode(password.getBytes("UTF-8"))                    
                         );
                     }
-                } catch(UnsupportedEncodingException e) {}                
+                } 
+                catch(UnsupportedEncodingException e) {}                
             }
         }
     }
@@ -828,7 +838,8 @@ public class UserHomes {
                                     0L, 
                                     content
                                 );
-                            } catch(Exception e) {}
+                            } 
+                            catch(Exception e) {}
                             userHome.values("favoriteChart" + i).add(
                                 content.toByteArray()
                             );
@@ -975,7 +986,17 @@ public class UserHomes {
         );
         return objectFinder;
     }
-    
+
+    //-----------------------------------------------------------------------
+    public static String getWebAccessUrl(
+        UserHome userHome
+    ) {
+        Path userHomeIdentity = userHome.refGetPath();
+        return userHome.getWebAccessUrl() == null ? 
+            "http://localhost/opencrx-core-" + userHomeIdentity.get(2) + "/" + WebKeys.SERVLET_NAME : 
+            userHome.getWebAccessUrl() + "/" + WebKeys.SERVLET_NAME;        
+    }
+        
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

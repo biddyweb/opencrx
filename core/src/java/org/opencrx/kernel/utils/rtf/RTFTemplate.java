@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RTFTemplate.java,v 1.5 2008/12/11 14:27:38 wfro Exp $
+ * Name:        $Id: RTFTemplate.java,v 1.9 2009/03/08 17:04:53 wfro Exp $
  * Description: RTFTemplate
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/11 14:27:38 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -154,26 +154,26 @@ public class RTFTemplate {
 
     //-----------------------------------------------------------------------
     public void appendTableRow(
-        String bookmarkTableEnd,
-        int nColumnCount
+        String bookmarkTableEnd
     ) throws BookmarkNotFoundException {
-        Bookmark bmTableEnd = searchBookmark(bookmarkTableEnd);
-        int posBeginRow = bmTableEnd.getContentBegin();
-        // Search backward starting from bookmark the row start tag \intbl
-        while(posBeginRow >= 0) { 
-            if(this.content.substring(posBeginRow).startsWith("\\intbl")) {
-                nColumnCount--;
-                if(nColumnCount == 0) break;
+        Bookmark bmTableEnd = this.searchBookmark(bookmarkTableEnd);
+        int pos = bmTableEnd.getContentBegin();
+        // Search backward starting from bookmark the row start tag \row
+        int nRowCount = 2;
+        int[] posRow = new int[2];
+        while(pos >= 0) { 
+            if(this.content.substring(pos).startsWith("\\row ")) {
+                nRowCount--;
+                posRow[nRowCount] = pos;
+                if(nRowCount == 0) break;
             }
-            posBeginRow--;
+            pos--;
         }
         // find tag \row starting from bmRowStart
-        if(posBeginRow >= 0) {
-            int posEndRow = this.content.indexOf("\\row", posBeginRow);
-            int posEndPar = this.content.indexOf("\\pard", posEndRow);
-            if((posBeginRow > 0) && (posEndPar > posBeginRow)) {
-                String rowContent = this.content.substring(posBeginRow, posEndPar+5) + " ";
-                this.content.insert(posBeginRow, rowContent);
+        if(pos >= 0) {
+            if((posRow[0] > 0) && (posRow[1] > posRow[0])) {
+                String rowContent = this.content.substring(posRow[0], posRow[1]) + " ";
+                this.content.insert(pos, rowContent);
             }
         }
     }

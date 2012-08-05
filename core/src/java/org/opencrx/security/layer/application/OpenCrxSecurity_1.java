@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.22 2008/09/29 09:18:41 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.29 2009/02/20 21:44:49 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/29 09:18:41 $
+ * Date:        $Date: 2009/02/20 21:44:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,29 +59,29 @@ import java.util.Set;
 
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.configuration.Configuration;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.DataproviderReply;
+import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
+import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.Base64;
-import org.openmdx.compatibility.base.application.configuration.Configuration;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderReply;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SharedConfigurationEntries;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.dataprovider.layer.application.ProvidingUid_1;
-import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.model1.accessor.basic.cci.Model_1_0;
 
 /**
  * This plugin implements the models org:openmdx:security:realm1,
@@ -107,7 +107,7 @@ public class OpenCrxSecurity_1
       short id, 
       Configuration configuration,
       Layer_1_0 delegation
-    ) throws ServiceException, Exception {
+    ) throws ServiceException {
       super.activate(
         id,
         configuration,
@@ -122,7 +122,6 @@ public class OpenCrxSecurity_1
         throw new ServiceException(
           BasicException.Code.DEFAULT_DOMAIN,
           BasicException.Code.INVALID_CONFIGURATION, 
-          null,
           "A model must be configured with options 'modelPackage' and 'packageImpl'"
         );
       }
@@ -135,7 +134,6 @@ public class OpenCrxSecurity_1
           throw new ServiceException(
               BasicException.Code.DEFAULT_DOMAIN,
               BasicException.Code.INVALID_CONFIGURATION, 
-              null,
               "A realm identity must be configured with option 'realmIdentity'"
           );
       } 
@@ -181,16 +179,16 @@ public class OpenCrxSecurity_1
         DataproviderObject obj
     ) throws ServiceException {
         if(
-            this.model.isSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
-            this.model.isSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
-            this.model.isSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
-            this.model.isSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
-            this.model.isSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
+            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
+            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
+            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
+            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
+            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
         ) {
             obj.clearValues("name").add(obj.path().getBase());            
         }
         else if(
-            this.model.isSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
+            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
         ) {
            obj.clearValues("id").add(obj.path().getBase());            
         }
@@ -274,10 +272,8 @@ public class OpenCrxSecurity_1
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.ASSERTION_FAILURE, 
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("credential", passwordCredential)
-                },
-                "old password verification mismatch"
+                "old password verification mismatch",
+                new BasicException.Parameter("credential", passwordCredential)
             );
         }
         DataproviderObject changedPasswordCredential = new DataproviderObject(
@@ -317,11 +313,9 @@ public class OpenCrxSecurity_1
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.AUTHORIZATION_FAILURE_UPDATE, 
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("object", request.path()),
-                    new BasicException.Parameter("param0", request.path())
-                },
-                "No permission for " + DataproviderOperations.toString(operation) + " on object"
+                "No permission for " + DataproviderOperations.toString(operation) + " on object",
+                new BasicException.Parameter("object", request.path()),
+                new BasicException.Parameter("param0", request.path())
             );
         }        
     }

@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Finală</_item>
+                              <_item>Finalizat</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] Finală</_item>
+                              <_item>[2] Finalizat</_item>
                             </longText>
                           </_object>
                           <_content/>

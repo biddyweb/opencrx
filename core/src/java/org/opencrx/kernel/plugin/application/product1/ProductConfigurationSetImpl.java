@@ -2,7 +2,7 @@ package org.opencrx.kernel.plugin.application.product1;
 
 import org.opencrx.kernel.backend.Backend;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -20,9 +20,8 @@ public class ProductConfigurationSetImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
-    
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void unsetConfigurationType(

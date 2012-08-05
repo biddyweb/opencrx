@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.27 2008/12/01 01:43:35 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.28 2009/02/25 16:42:59 wfro Exp $
  * = Description: openCRX/sql build.xml
- * = Revision:    $Revision: 1.27 $
- * = Date:        $Date: 2008/12/01 01:43:35 $
- * = Copyright:   (c) 2003-2008 CRIXP AG
+ * = Revision:    $Revision: 1.28 $
+ * = Date:        $Date: 2009/02/25 16:42:59 $
+ * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,18 +52,18 @@
 -->
 <project name="opencrx-generate-sql-scripts">
 	<target name="generate" description="generate SQL scripts">
-	  <!-- POSTGRESQL_7 -->	
+	  <!-- POSTGRESQL_8 -->	
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/dbcreate-views.sql dbcreate-views.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/migrate-from-2.3.0-to-2.4.0.sql migrate-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/drop-from-2.3.0-to-2.4.0.sql drop-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/delete-segment.sql delete-segment.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/delete-segment.sql delete-segment.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="postgresql-8/populate-preferences.sql">
 			<filterchain>
@@ -75,16 +75,16 @@
 		</copy>
 	  <!-- SQL_SERVER_2005 -->	
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/dbcreate-views.sql dbcreate-views.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/migrate-from-2.3.0-to-2.4.0.sql migrate-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/drop-from-2.3.0-to-2.4.0.sql drop-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/delete-segment.sql delete-segment.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/delete-segment.sql delete-segment.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="sql-server-2005/populate-preferences.sql">
 			<filterchain>
@@ -99,10 +99,10 @@
 		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.3.0-to-2.4.0.sql migrate-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.3.0-to-2.4.0.sql drop-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/delete-segment.sql delete-segment.tsql"/>
@@ -115,20 +115,20 @@
 				</tokenfilter>			
 			</filterchain>
 		</copy>
-	  <!-- ORACLE_8 -->	
+	  <!-- ORACLE_10 -->	
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/dbcreate-views.sql dbcreate-views.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/migrate-from-2.3.0-to-2.4.0.sql migrate-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/drop-from-2.3.0-to-2.4.0.sql drop-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/delete-segment.sql delete-segment.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/delete-segment.sql delete-segment.tsql"/>
 		</exec>
-		<copy file="populate-preferences.tsql" tofile="oracle-8/populate-preferences.sql">
+		<copy file="populate-preferences.tsql" tofile="oracle-10/populate-preferences.sql">
 			<filterchain>
 				<tokenfilter>
 					<replacestring from="COMMAND_TERMINATOR" to=";"/>
@@ -138,16 +138,16 @@
 		</copy>
 	  <!-- DB2_8 -->	
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/dbcreate-views.sql dbcreate-views.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/migrate-from-2.3.0-to-2.4.0.sql migrate-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/drop-from-2.3.0-to-2.4.0.sql drop-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/delete-segment.sql delete-segment.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/delete-segment.sql delete-segment.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="db2-9/populate-preferences.sql">
 			<filterchain>
@@ -162,10 +162,10 @@
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/migrate-from-2.3.0-to-2.4.0.sql migrate-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.3.0-to-2.4.0.sql drop-from-2.3.0-to-2.4.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/delete-segment.sql delete-segment.tsql"/>

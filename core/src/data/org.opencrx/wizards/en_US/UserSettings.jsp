@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.37 2008/10/01 14:24:31 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.41 2009/02/23 15:52:42 cmu Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 14:24:31 $
+ * Date:        $Date: 2009/02/23 15:52:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,8 +67,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
+org.openmdx.base.naming.*,
 org.openmdx.application.log.*,
 org.opencrx.kernel.backend.*,
 org.opencrx.kernel.layer.application.*,
@@ -294,6 +293,35 @@ org.openmdx.base.exception.*
     <div id="content-wrap">
     	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 <%
+		boolean currentUserIsAdmin =
+			app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
+
+    if (false) {
+    //if (!currentUserIsAdmin) {
+      Action nextAction = new ObjectReference(
+        (RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+        app
+      ).getSelectObjectAction();
+%>
+      <br />
+      <br />
+      <span style="color:red;"><b><u>Warning:</u> no permission to change user settings!</b></span>
+      <br />
+      <br />
+      <INPUT type="Submit" name="Continue.Button" tabindex="1" value="Continue" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
+      <br />
+      <br />
+      <hr>
+            </div> <!-- content -->
+          </div> <!-- content-wrap -->
+      	<div> <!-- wrap -->
+      </div> <!-- container -->
+  	</body>
+  	</html>
+<%
+      return;
+    }
+
 		// Account details
 		if(true) {
 			short locale =  app.getCurrentLocaleAsIndex();
@@ -301,8 +329,6 @@ org.openmdx.base.exception.*
 			org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(objectXri));
 			boolean currentUserOwnsHome =
 				app.getCurrentUserRole().equals(userHome.refGetPath().getBase() + "@" + segmentName);
-			boolean currentUserIsAdmin =
-				app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
 			Properties userSettings =  new Properties();
 			if(currentUserOwnsHome) {
 				userSettings = app.getSettings();
@@ -336,9 +362,9 @@ org.openmdx.base.exception.*
 					userHome.setWebAccessUrl(fWebAccessUrl);
 					userHome.setSendMailSubjectPrefix(fSendmailSubjectPrefix);
 					// Email account
-					org.opencrx.kernel.home1.jmi1.EmailAccount defaultEmailAccount = null;
-					for(Iterator i = userHome.getEmailAccount().iterator(); i.hasNext(); ) {
-						org.opencrx.kernel.home1.jmi1.EmailAccount emailAccount = (org.opencrx.kernel.home1.jmi1.EmailAccount)i.next();
+					org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = null;
+					for(Iterator i = userHome.getEMailAccount().iterator(); i.hasNext(); ) {
+						org.opencrx.kernel.home1.jmi1.EMailAccount emailAccount = (org.opencrx.kernel.home1.jmi1.EMailAccount)i.next();
 						if((emailAccount.isDefault() != null) && emailAccount.isDefault().booleanValue()) {
 							defaultEmailAccount = emailAccount;
 							break;
@@ -349,11 +375,11 @@ org.openmdx.base.exception.*
 						(fEmailAccount != null) &&
 						(fEmailAccount.length() > 0)
 					) {
-						defaultEmailAccount = homePkg.getEmailAccount().createEmailAccount();
+						defaultEmailAccount = homePkg.getEMailAccount().createEMailAccount();
 						defaultEmailAccount.refInitialize(false, false);
 						defaultEmailAccount.setDefault(Boolean.TRUE);
-						defaultEmailAccount.setEmailAddress(fEmailAccount);
-						userHome.addEmailAccount(
+						defaultEmailAccount.setEMailAddress(fEmailAccount);
+						userHome.addEMailAccount(
 							false,
 							uuids.next().toString(),
 							defaultEmailAccount
@@ -367,7 +393,7 @@ org.openmdx.base.exception.*
 						defaultEmailAccount.refDelete();
 					}
 					else if(defaultEmailAccount != null) {
-						defaultEmailAccount.setEmailAddress(fEmailAccount);
+						defaultEmailAccount.setEMailAddress(fEmailAccount);
 					}
 					// Root objects
 					for(int i = 1; i < 20; i++) {
@@ -377,7 +403,7 @@ org.openmdx.base.exception.*
 							state == null ? "0" : "1"
 						);
 					}
-					// Show max items in top navigation					
+					// Show max items in top navigation
 					String topNavigationShowMax = request.getParameter("topNavigationShowMax");
 					userSettings.setProperty(
 						"TopNavigation.ShowMax",
@@ -587,7 +613,7 @@ org.openmdx.base.exception.*
 					    );
 						resource.setOwningUser(
 						    setOwningUserParams
-						);					    
+						);
 					    pm.currentTransaction().commit();
 					}
    					if(currentUserOwnsHome) {
@@ -648,9 +674,9 @@ org.openmdx.base.exception.*
 						<tr><td><label for="storeSettingsOnLogoff">Store settings on logoff:</label></td>
 						<td><input type="checkbox" <%= userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "checked" : "" %> id="storeSettingsOnLogoff" name="storeSettingsOnLogoff"/></td></tr>
 <%
-						org.opencrx.kernel.home1.jmi1.EmailAccount defaultEmailAccount = null;
-						for(Iterator i = userHome.getEmailAccount().iterator(); i.hasNext(); ) {
-							org.opencrx.kernel.home1.jmi1.EmailAccount emailAccount = (org.opencrx.kernel.home1.jmi1.EmailAccount)i.next();
+						org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = null;
+						for(Iterator i = userHome.getEMailAccount().iterator(); i.hasNext(); ) {
+							org.opencrx.kernel.home1.jmi1.EMailAccount emailAccount = (org.opencrx.kernel.home1.jmi1.EMailAccount)i.next();
 							if((emailAccount.isDefault() != null) && emailAccount.isDefault().booleanValue()) {
 								defaultEmailAccount = emailAccount;
 								 break;
@@ -658,7 +684,7 @@ org.openmdx.base.exception.*
 						}
 %>
 						<tr><td><label for="emailAccount">Email:</label></td>
-						<td><input type="text" id="emailAccount" name="emailAccount"  value="<%= defaultEmailAccount == null || defaultEmailAccount.getEmailAddress() == null ? "" :  defaultEmailAccount.getEmailAddress() %>"/></td></tr>
+						<td><input type="text" id="emailAccount" name="emailAccount"  value="<%= defaultEmailAccount == null || defaultEmailAccount.getEMailAddress() == null ? "" :  defaultEmailAccount.getEMailAddress() %>"/></td></tr>
 						<tr><td><label for="sendmailSubjectPrefix">Sendmail subject prefix:</label></td>
 						<td><input type="text" id="sendmailSubjectPrefix" name="sendmailSubjectPrefix"  value="<%= userHome.getSendMailSubjectPrefix() == null ? "[" + providerName + ":" + segmentName + "]" : userHome.getSendMailSubjectPrefix() %>"/>
 						<tr><td><label for="webAccessUrl">Web access URL:</label></td>

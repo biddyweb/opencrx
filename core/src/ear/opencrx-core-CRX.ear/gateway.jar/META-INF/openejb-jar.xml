@@ -1,4 +1,5 @@
-<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar" xmlns:naming="http://geronimo.apache.org/xml/ns/naming" xmlns:sys="http://geronimo.apache.org/xml/ns/deployment" inverseClassloading="false" configId="gateway_jar" parentId="opencrx-core-CRX-App_ear">
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.2">
 	<enterprise-beans>
 		<session>
 			<ejb-name>opencrx_core_CRX_EntityManagerFactory</ejb-name>

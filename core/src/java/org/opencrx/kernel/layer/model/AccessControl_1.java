@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.77 2008/10/07 14:58:34 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.87 2009/03/08 17:04:52 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.77 $
+ * Revision:    $Revision: 1.87 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/07 14:58:34 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,33 +69,33 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.configuration.Configuration;
+import org.openmdx.application.dataprovider.accessor.Switch_1;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.DataproviderReply;
+import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.Dataprovider_1_0;
+import org.openmdx.application.dataprovider.cci.QualityOfService;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
+import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.collection.SparseList;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.application.configuration.Configuration;
-import org.openmdx.compatibility.base.collection.SparseList;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderReply;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest;
-import org.openmdx.compatibility.base.dataprovider.cci.Dataprovider_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.QualityOfService;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.cci.SharedConfigurationEntries;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.compatibility.base.dataprovider.layer.model.Standard_1;
-import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
-import org.openmdx.compatibility.base.dataprovider.transport.adapter.Switch_1;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
-import org.openmdx.model1.accessor.basic.cci.Model_1_0;
 
 /**
  * openCRX access control plugin. Implements the openCRX access control logic.
@@ -363,7 +363,7 @@ public class AccessControl_1
         short id, 
         Configuration configuration,
         Layer_1_0 delegation
-    ) throws Exception {
+    ) throws ServiceException {
         super.activate(id, configuration, delegation);
 
         // model
@@ -374,7 +374,6 @@ public class AccessControl_1
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.INVALID_CONFIGURATION, 
-                null,
                 "A model must be configured with options 'modelPackage' and 'packageImpl'"
             );
         } 
@@ -387,7 +386,6 @@ public class AccessControl_1
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.INVALID_CONFIGURATION, 
-                null,
                 "A realm identity must be configured with option 'realmIdentity'"
             );
         }         
@@ -406,7 +404,6 @@ public class AccessControl_1
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.INVALID_CONFIGURATION,
-                    new BasicException.Parameter[]{},
                     "The org:openmdx:compatibility:runtime1 model allowing to explore other dataproviders is deprecated." +
                     " Specifying " + SharedConfigurationEntries.DATAPROVIDER_CONNECTION +
                     " entries without their corresponding " + SharedConfigurationEntries.DELEGATION_PATH +
@@ -427,12 +424,10 @@ public class AccessControl_1
                     throw new ServiceException(
                         BasicException.Code.DEFAULT_DOMAIN,
                         BasicException.Code.INVALID_CONFIGURATION,
-                        new BasicException.Parameter[]{
-                            new BasicException.Parameter(SharedConfigurationEntries.DELEGATION_PATH, delegationPathSource),
-                            new BasicException.Parameter("index", i),
-                            new BasicException.Parameter(SharedConfigurationEntries.DATAPROVIDER_CONNECTION, dataproviderSource)
-                        },
-                        "The delegation path at the given index has no corresponding dataprovider counterpart"
+                        "The delegation path at the given index has no corresponding dataprovider counterpart",
+                        new BasicException.Parameter(SharedConfigurationEntries.DELEGATION_PATH, delegationPathSource),
+                        new BasicException.Parameter("index", i),
+                        new BasicException.Parameter(SharedConfigurationEntries.DATAPROVIDER_CONNECTION, dataproviderSource)
                     );
                 }
                 delegationPathTarget.add(
@@ -487,12 +482,10 @@ public class AccessControl_1
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.AUTHORIZATION_FAILURE_MISSING_PRINCIPAL, 
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("principal", header.getPrincipalChain()),
-                    new BasicException.Parameter("param0", header.getPrincipalChain()),
-                    new BasicException.Parameter("param1", this.realmIdentity)
-                },
-                "Requested principal not found."
+                "Requested principal not found.",
+                new BasicException.Parameter("principal", header.getPrincipalChain()),
+                new BasicException.Parameter("param0", header.getPrincipalChain()),
+                new BasicException.Parameter("param1", this.realmIdentity)
             );            
         }
         AppLog.detail("requesting principal", this.requestingPrincipal.path());
@@ -579,7 +572,8 @@ public class AccessControl_1
                         }
                     }
                 }
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
         }
     }
 
@@ -641,12 +635,10 @@ public class AccessControl_1
 		                throw new ServiceException(
 		                    OpenCrxException.DOMAIN,
 		                    OpenCrxException.AUTHORIZATION_FAILURE_CREATE, 
-		                    new BasicException.Parameter[]{
-		                        new BasicException.Parameter("object", request.path()),
-		                        new BasicException.Parameter("param0", request.path()),
-                                new BasicException.Parameter("param1", this.requestingPrincipal.path())                                
-		                    },
-		                    "No permission to create object."
+		                    "No permission to create object.",
+                            new BasicException.Parameter("object", request.path()),
+                            new BasicException.Parameter("param0", request.path()),
+                            new BasicException.Parameter("param1", this.requestingPrincipal.path())                                
 		                );
 		            }
 	            }
@@ -770,10 +762,8 @@ public class AccessControl_1
                         throw new ServiceException(
                             BasicException.Code.DEFAULT_DOMAIN,
                             BasicException.Code.NOT_SUPPORTED, 
-                            new BasicException.Parameter[]{
-                                new BasicException.Parameter("filter", filter)
-                            },
-                            "at most one value allowed for filter property 'identity'"
+                            "at most one value allowed for filter property 'identity'",
+                            new BasicException.Parameter("filter", (Object[])filter)
                         );                        
                     }
                     isExtent = true;
@@ -784,10 +774,8 @@ public class AccessControl_1
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.NOT_SUPPORTED, 
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("filter", filter)
-                    },
-                    "extent lookups require at least a filter value for property 'identity'"
+                    "extent lookups require at least a filter value for property 'identity'",
+                    new BasicException.Parameter("filter", (Object[])filter)
                 );            
             }
         }
@@ -915,12 +903,10 @@ public class AccessControl_1
 		                throw new ServiceException(
 		                    BasicException.Code.DEFAULT_DOMAIN,
 		                    BasicException.Code.AUTHORIZATION_FAILURE, 
-		                    new BasicException.Parameter[]{
-		                        new BasicException.Parameter("path", request.path()),
-                                new BasicException.Parameter("param0", request.path()),                                
-                                new BasicException.Parameter("param1", this.requestingPrincipal.path()) 
-		                    },
-		                    "no permission to access requested object."
+		                    "no permission to access requested object.",
+                            new BasicException.Parameter("path", request.path()),
+                            new BasicException.Parameter("param0", request.path()),                                
+                            new BasicException.Parameter("param1", this.requestingPrincipal.path()) 
 		                );              
 		            }
 	            }
@@ -977,12 +963,10 @@ public class AccessControl_1
 	                throw new ServiceException(
 	                    OpenCrxException.DOMAIN,
 	                    OpenCrxException.AUTHORIZATION_FAILURE_DELETE, 
-	                    new BasicException.Parameter[]{
-	                        new BasicException.Parameter("object", request.path()),
-	                        new BasicException.Parameter("param0", request.path()),
-                            new BasicException.Parameter("param1", this.requestingPrincipal.path())                            
-	                    },
-	                    "No permission to delete requested object."
+	                    "No permission to delete requested object.",
+                        new BasicException.Parameter("object", request.path()),
+                        new BasicException.Parameter("param0", request.path()),
+                        new BasicException.Parameter("param1", this.requestingPrincipal.path())                            
 	                );
 	            }
             }
@@ -1034,12 +1018,10 @@ public class AccessControl_1
 	                throw new ServiceException(
 	                    OpenCrxException.DOMAIN,
 	                    OpenCrxException.AUTHORIZATION_FAILURE_UPDATE, 
-	                    new BasicException.Parameter[]{
-	                        new BasicException.Parameter("object", request.path()),
-	                        new BasicException.Parameter("param0", request.path()),
-                            new BasicException.Parameter("param1", this.requestingPrincipal.path()) 
-	                    },
-	                    "No permission to update requested object."
+	                    "No permission to update requested object.",
+                        new BasicException.Parameter("object", request.path()),
+                        new BasicException.Parameter("param0", request.path()),
+                        new BasicException.Parameter("param1", this.requestingPrincipal.path()) 
 	                );
 	            }
             }
@@ -1122,12 +1104,10 @@ public class AccessControl_1
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.AUTHORIZATION_FAILURE_MISSING_PRINCIPAL, 
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("principal", principalName),
-                        new BasicException.Parameter("param0", principalName),
-                        new BasicException.Parameter("param1", this.realmIdentity)
-                    },
-                    "Requested principal not found."
+                    "Requested principal not found.",
+                    new BasicException.Parameter("principal", principalName),
+                    new BasicException.Parameter("param0", principalName),
+                    new BasicException.Parameter("param1", this.realmIdentity)
                 );            
             }
             Path objectIdentity = request.path().getParent().getParent();

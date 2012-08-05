@@ -88,6 +88,38 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderPosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoicePosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
@@ -135,10 +167,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:lineItemNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pos-Nr.</_item>
+                        <_item>Pos-Nº</_item>
                       </label>
                       <toolTip>
-                        <_item>Número do item de linha</_item>
+                        <_item>Nº do item de linha</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +211,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item># Pos-Referência</_item>
+                        <_item>Nº Pos-Referência</_item>
                       </label>
                       <toolTip>
-                        <_item>Número de referência da posição</_item>
+                        <_item>Nº de referência da posição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -574,10 +606,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:offsetQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Quantidade de offset</_item>
+                        <_item>Quantidade de compensação</_item>
                       </label>
                       <toolTip>
-                        <_item>Quantidade de offset</_item>
+                        <_item>Quantidade de compensação</_item>
                       </toolTip>
                     </_object>
                     <_content/>

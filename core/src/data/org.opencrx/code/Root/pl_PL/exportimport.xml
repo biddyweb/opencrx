@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>CVS</_item>
+                              <_item>CSV</_item>
                             </shortText>
                             <longText>
-                              <_item>CVS</_item>
+                              <_item>CSV</_item>
                             </longText>
                           </_object>
                           <_content/>

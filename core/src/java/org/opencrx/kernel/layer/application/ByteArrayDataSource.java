@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ByteArrayDataSource.java,v 1.1 2007/11/13 17:34:43 wfro Exp $
+ * Name:        $Id: ByteArrayDataSource.java,v 1.2 2009/03/08 17:04:52 wfro Exp $
  * Description: ByteArrayDataSource
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/11/13 17:34:43 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,14 +73,14 @@ public class ByteArrayDataSource implements DataSource {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             int ch;
 
-            while ((ch = is.read()) != -1)
+            while ((ch = is.read()) != -1) {
                 // XXX - must be made more efficient by
                 // doing buffered reads, rather than one byte reads
                 os.write(ch);
+            }
             data = os.toByteArray();
-
-        } catch (IOException ioex) {
-        }
+        } 
+        catch (IOException ioex) {}
     }
 
     /* Create a DataSource from a byte array */
@@ -96,8 +96,8 @@ public class ByteArrayDataSource implements DataSource {
             // characters! Otherwise just pass a charset into this
             // constructor and use it in getBytes()
             this.data = data.getBytes("iso-8859-1");
-        } catch (UnsupportedEncodingException uex) {
-        }
+        } 
+        catch (UnsupportedEncodingException uex) {}
         this.type = type;
     }
 

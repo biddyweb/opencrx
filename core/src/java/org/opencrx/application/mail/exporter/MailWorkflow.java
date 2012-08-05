@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.1 2008/08/28 15:13:31 wfro Exp $
+ * Name:        $Id: MailWorkflow.java,v 1.7 2009/03/08 17:04:47 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:13:31 $
+ * Date:        $Date: 2009/03/08 17:04:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,7 +63,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.jdo.PersistenceManager;
-import javax.jmi.reflect.RefObject;
 import javax.mail.Address;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.Message;
@@ -77,274 +76,27 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.opencrx.kernel.backend.Notifications;
 import org.opencrx.kernel.base.jmi1.BooleanProperty;
 import org.opencrx.kernel.base.jmi1.IntegerProperty;
 import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.base.jmi1.UriProperty;
-import org.opencrx.kernel.home1.jmi1.EmailAccount;
+import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.jmi1.ContextCapable;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.portal.servlet.Action;
-import org.openmdx.portal.servlet.WebKeys;
 
 public abstract class MailWorkflow 
     implements ASynchWorkflow_1_0 {
     
-    //-----------------------------------------------------------------------
-    protected String getWebAccessUrl(
-        UserHome userHome
-    ) {
-        Path userHomeIdentity = userHome.refGetPath();
-        return userHome.getWebAccessUrl() == null
-            ? "http://localhost/opencrx-core-" + userHomeIdentity.get(2) + "/" + WebKeys.SERVLET_NAME
-            : userHome.getWebAccessUrl() + "/" + WebKeys.SERVLET_NAME;        
-    }
-    
-    //-----------------------------------------------------------------------
-    protected String getText(
-        Message message,
-        PersistenceManager pm,
-        Path targetIdentity,
-        RefObject targetObject,
-        Path wfProcessInstanceIdentity,
-        UserHome userHome,
-        Map params
-    ) throws ServiceException {
-        String text = "#ERR";
-        try {
-            String webAccessUrl = this.getWebAccessUrl(userHome);
-            Action selectTargetAction = 
-                new Action(
-                    Action.EVENT_SELECT_OBJECT, 
-                    new Action.Parameter[]{
-                        new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXri())
-                    },
-                    "",
-                    true
-                );
-            String subscriptionId = 
-                (params.get("triggeredBySubscription") == null ? "N/A" : ((Path)params.get("triggeredBySubscription")).getBase());            
-            Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null
-                ? null
-                : new Action(
-                    Action.EVENT_SELECT_OBJECT, 
-                    new Action.Parameter[]{
-                        new Action.Parameter(Action.PARAMETER_OBJECTXRI, wfProcessInstanceIdentity.toXri())    
-                    },
-                    "",
-                    true
-                );
-            Action selectTriggeredBySubscriptionAction =  params.get("triggeredBySubscription") == null
-                ? null
-                : new Action(
-                    Action.EVENT_SELECT_OBJECT,
-                    new Action.Parameter[]{
-                        new Action.Parameter(Action.PARAMETER_OBJECTXRI, ((Path)params.get("triggeredBySubscription")).toXri())
-                    },
-                    "",
-                    true
-                );
-            // Alert specific text
-            if(targetObject instanceof org.opencrx.kernel.home1.jmi1.Alert) {
-                org.opencrx.kernel.home1.jmi1.Alert alert = (org.opencrx.kernel.home1.jmi1.Alert)targetObject;
-                text = "Alert:\n";
-                text += "=======================================================================\n";
-                text += "\"" + webAccessUrl + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTargetAction.getParameter() + "\"\n";
-                text += "=======================================================================\n";
-                RefObject_1_0 referencedObject = null;
-                try {
-                    referencedObject = alert.getReference();
-                } catch(Exception e) {}
-                if(referencedObject != null) {
-                    text += "\nAdditional information:\n";
-                    text += this.getText(
-                        message, 
-                        pm, 
-                        referencedObject.refGetPath(),
-                        referencedObject, 
-                        null, 
-                        userHome, 
-                        params
-                    );
-                }
-                else {
-                    text += "Event:           " + (params.get("triggeredByEventType") == null ? "N/A" : DataproviderOperations.toString(((Number)params.get("triggeredByEventType")).intValue())) + "\n";
-                    text += "Subscription Id: " + subscriptionId + "\n";
-                    text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectWfProcessInstanceAction.getParameter() + "\"") + "\n";
-                    text += "Subscription:    " + (selectTriggeredBySubscriptionAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTriggeredBySubscriptionAction.getParameter() + "\"") + "\n";
-                    text += "=======================================================================\n";                    
-                }    
-            }
-            // Activity specific text
-            else if(
-                (targetObject instanceof org.opencrx.kernel.activity1.jmi1.Activity) ||
-                (targetObject instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)
-            ) {
-                org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
-                org.opencrx.kernel.activity1.jmi1.Activity activity = targetObject instanceof org.opencrx.kernel.activity1.jmi1.Activity
-                    ? (org.opencrx.kernel.activity1.jmi1.Activity)targetObject
-                    : (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(targetObject.refMofId()).getParent().getParent());
-                org.opencrx.kernel.account1.jmi1.Contact reportingContact = activity.getReportingContact();
-                org.opencrx.kernel.account1.jmi1.Account reportingAccount = activity.getReportingAccount();
-                org.opencrx.kernel.account1.jmi1.Contact assignedTo = activity.getAssignedTo();                
-                org.opencrx.kernel.activity1.jmi1.ActivityProcessState activityState = activity.getProcessState();                
-                org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition lastTransition = activity.getLastTransition();                
-                text = "";
-                text += "=======================================================================\n";
-                text += "\"" + webAccessUrl + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTargetAction.getParameter() + "\"\n";
-                text += "=======================================================================\n";
-                text += "Reporting Contact:          " + (reportingContact == null ? "N/A" : reportingContact.getFullName()) + "\n";
-                text += "Reporting Account:          " + (reportingAccount == null ? "N/A" : reportingAccount.getFullName()) + "\n";
-                text += "Handler:                    " + (assignedTo == null ? "N/A" : assignedTo.getFullName()) + "\n";
-                text += "=======================================================================\n";
-                int ii = 0;
-                Collection<org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment> assignedGroups = activity.getAssignedGroup();
-                for(org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignedGroup: assignedGroups) {
-                    org.opencrx.kernel.activity1.jmi1.ActivityGroup group = assignedGroup.getActivityGroup();
-                    if(group != null) {
-                        if(ii == 0) {
-                            text += "Activity Group:             " + group.getName() + "\n";
-                        }
-                        else {
-                            text += "                            " + group.getName() + "\n";                        
-                        }
-                    }
-                }
-                text += "Activity#:                  " + activity.getActivityNumber() + "\n";
-                if(activity instanceof org.opencrx.kernel.activity1.jmi1.Incident) {
-                    org.opencrx.kernel.activity1.jmi1.Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)activity;
-                    try {
-                        text += "Category:                   " + incident.getCategory() + "\n";
-                    } catch(Exception e) {}
-                    try {
-                        text += "Reproducibility:            " + incident.getReproducibility() + "\n";
-                    } catch(Exception e) {}
-                    try {
-                        text += "Severity:                   " + incident.getSeverity() + "\n";
-                    } catch(Exception e) {}
-                }
-                text += "Priority:                   " + activity.getPriority() + "\n";
-                text += "Status:                     " + (activityState == null ? "N/A" : activityState.getName()) + "\n";
-                text += "Last transition:            " + (lastTransition == null ? "N/A" : lastTransition.getName()) + "\n";
-                text += "=======================================================================\n";
-                text += "Date Submitted:             " + activity.getCreatedAt() + "\n";
-                text += "Last Modified:              " + activity.getModifiedAt() + "\n";
-                text += "=======================================================================\n";
-                String activityName = activity.getName();
-                String activityDescription = activity.getDescription();
-                String activityDetailedDescription = activity.getDetailedDescription();
-                String messageBody = activity instanceof org.opencrx.kernel.activity1.jmi1.Email
-                    ? ((org.opencrx.kernel.activity1.jmi1.Email)activity).getMessageBody()
-                    : null;
-                text += "Summary:\n";
-                text += (activityName == null ? "N/A" : activityName) + "\n\n";
-                text += "Description:\n";
-                text += (activityDescription == null ? "N/A" : activityDescription) + "\n\n"; 
-                text += "Details:\n";
-                text += (activityDetailedDescription == null ? "N/A" : activityDetailedDescription) + "\n\n";
-                if(messageBody != null) {
-                    text += "Message Body:\n";
-                    text += messageBody + "\n\n";                     
-                }
-                text += "=======================================================================\n";
-                text += "\n";
-                org.opencrx.kernel.activity1.cci2.ActivityFollowUpQuery filter = activityPkg.createActivityFollowUpQuery();
-                filter.orderByCreatedAt().ascending();
-                Collection<org.opencrx.kernel.activity1.jmi1.ActivityFollowUp> followUps = activity.getFollowUp(filter);
-                for(org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp: followUps) {
-                    org.opencrx.kernel.account1.jmi1.Contact followUpAssignedTo = followUp.getAssignedTo();
-                    org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition followUpTransition = followUp.getTransition();                
-                    text += "-----------------------------------------------------------------------\n";
-                    text += "Submitted by: " + (followUpAssignedTo == null ? "N/A" : followUpAssignedTo.getFullName()) + "\n";
-                    text += "Submitted at: " + followUp.getCreatedAt() + "\n";
-                    text += "Transition  : " + (followUpTransition == null ? "N/A" : followUpTransition.getName()) + "\n";
-                    text += "Title       : " + ((followUp == null) || (followUp.getTitle() == null) ? "N/A" : followUp.getTitle()) + "\n";
-                    text += "-----------------------------------------------------------------------\n";
-                    String followUpText = followUp.getText();
-                    text += (followUpText == null ? "N/A" : followUpText) + "\n\n\n";
-                }
-            }
-            // Generic text
-            else {
-                text = "";
-                text = 
-                    text += "=======================================================================\n";
-                    text += "Event:           " + (params.get("triggeredByEventType") == null ? "N/A" : DataproviderOperations.toString(((Number)params.get("triggeredByEventType")).intValue())) + "\n";
-                    text += "Subscription Id: " + subscriptionId + "\n";
-                    text += "Object Invoked:  " + ("\"" + webAccessUrl + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTargetAction.getParameter() + "\"\n");
-                    text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectWfProcessInstanceAction.getParameter()) + "\"\n";
-                    text += "Subscription:    " + (selectTriggeredBySubscriptionAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTriggeredBySubscriptionAction.getParameter()) + "\"\n";
-                    text += "=======================================================================\n";
-            }
-            message.setText(text);
-        }
-        catch(MessagingException e) {
-            throw new ServiceException(e);
-        }
-        return text;
-    }
-    
-    //-----------------------------------------------------------------------
-    protected String getSubject(
-        PersistenceManager pm,
-        Path targetIdentity,
-        UserHome userHome,  
-        Map params
-    ) throws ServiceException {
-        Path userHomeIdentity = userHome.refGetPath();
-        String subject = null;
-        String subscriptionId = (params.get("triggeredBySubscription") == null ? "N/A" : ((Path)params.get("triggeredBySubscription")).getBase());
-        String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null
-            ? "openCRX SendMail"
-            : userHome.getSendMailSubjectPrefix();
-        String webAccessUrl = this.getWebAccessUrl(userHome);
-        if((params.get("confidential") == null) || !((Boolean)params.get("confidential")).booleanValue()) {
-            try {
-                RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
-                if(subject == null) {
-                    try {
-                        if(targetObject.refGetValue("name") != null) {
-                            subject = sendMailSubjectPrefix + ": " + targetObject.refGetValue("name");
-                        }
-                    } catch(Exception e) {}
-                }
-                if(subject == null) {
-                    try {
-                        if(targetObject.refGetValue("title") != null) {
-                            subject = sendMailSubjectPrefix + ": " + targetObject.refGetValue("title");
-                        }
-                    } catch(Exception e) {}
-                }
-                if(subject == null) {
-                    try {
-                        if(targetObject.refGetValue("fullName") != null) {
-                            subject = sendMailSubjectPrefix + ": " + targetObject.refGetValue("fullName");
-                        }
-                    } catch(Exception e) {}
-                }
-            }
-            catch(Exception e) {}
-        }
-        if(subject == null) {
-            subject = 
-                sendMailSubjectPrefix + ": " + 
-                "from=" + userHomeIdentity.get(2) + "/" + userHomeIdentity.get(4)+ "/" + userHomeIdentity.get(6) + "; " + 
-                "trigger=" + subscriptionId + "; " +
-                "access=" + webAccessUrl;                
-        }   
-        return subject;
-    }
-        
     //-----------------------------------------------------------------------
     protected String setContent(
         Message message,
@@ -355,16 +107,15 @@ public abstract class MailWorkflow
         UserHome userHome,
         Map params
     ) throws ServiceException {
-        RefObject targetObject = null;
+        ContextCapable targetObject = null;
         try {
-            targetObject = (RefObject)pm.getObjectById(targetIdentity);
-        } catch(Exception e) {}
+            targetObject = (ContextCapable)pm.getObjectById(targetIdentity);
+        } 
+        catch(Exception e) {}
         String text = null;
         try {
-            text = this.getText(
-                message,
+            text = Notifications.getNotificationText(
                 pm,
-                targetIdentity,
                 targetObject,
                 wfProcessInstanceIdentity,
                 userHome,
@@ -383,23 +134,23 @@ public abstract class MailWorkflow
         Message message,
         PersistenceManager pm,
         Path targetIdentity,
-        EmailAccount eMailAccount
+        EMailAccount eMailAccount
     ) throws ServiceException {
         Address[] recipients = null;
         try {
             // from
             message.setFrom(
                 new InternetAddress(
-                    eMailAccount.getReplyEmailAddress() == null
+                    eMailAccount.getReplyEMailAddress() == null
                         ? "noreply@localhost"
-                        :  eMailAccount.getReplyEmailAddress()
+                        :  eMailAccount.getReplyEMailAddress()
                 )
             );
             // recipients
             recipients = InternetAddress.parse(
-                eMailAccount.getEmailAddress() == null
+                eMailAccount.getEMailAddress() == null
                     ? "noreply@localhost"
-                    : eMailAccount.getEmailAddress()
+                    : eMailAccount.getEMailAddress()
             );
             message.setRecipients(
                 Message.RecipientType.TO,
@@ -493,15 +244,19 @@ public abstract class MailWorkflow
             
             // Target object
             Path targetIdentity = new Path(wfProcessInstance.getTargetObject());            
+            ContextCapable target = null;
+            try {
+                target = (ContextCapable)pm.getObjectById(targetIdentity);
+            } catch(Exception e) {}
             
             // Find default email account
-            Collection eMailAccounts = userHome.getEmailAccount();
-            EmailAccount eMailAccountUser = null;
+            Collection eMailAccounts = userHome.getEMailAccount();
+            EMailAccount eMailAccountUser = null;
             for(
                 Iterator i = eMailAccounts.iterator();
                 i.hasNext();
             ) {
-                EmailAccount obj = (EmailAccount)i.next();
+                EMailAccount obj = (EMailAccount)i.next();
                 if((obj.isDefault() != null) && obj.isDefault().booleanValue()) {
                    eMailAccountUser = obj;
                    break;
@@ -512,9 +267,9 @@ public abstract class MailWorkflow
             
             // can not send
             if(eMailAccountUser == null) {
-                subject = "ERROR: " + this.getSubject(
+                subject = "ERROR: " + Notifications.getNotificationSubject(
                     pm,
-                    targetIdentity,
+                    target,
                     userHome,
                     params
                 );
@@ -577,9 +332,9 @@ public abstract class MailWorkflow
                     if(recipients.length > 0) {
                         // subject
                         message.setSubject(
-                            subject = this.getSubject(
+                            subject = Notifications.getNotificationSubject(
                                 pm,
-                                targetIdentity,
+                                target,
                                 userHome,
                                 params
                             )                

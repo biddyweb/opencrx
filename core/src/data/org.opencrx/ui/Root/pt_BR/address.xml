@@ -197,7 +197,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Web</_item>
+                        <_item>Web [A]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço Web</_item>
@@ -208,7 +208,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>E-mail</_item>
+                        <_item>E-mail [D]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço de E-Mail</_item>
@@ -219,7 +219,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefone</_item>
+                        <_item>Telefone [D]</_item>
                       </label>
                       <toolTip>
                         <_item>Números do Telefone</_item>
@@ -230,7 +230,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Room" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sala</_item>
+                        <_item>Sala [D]</_item>
                       </label>
                       <toolTip>
                         <_item>Sala</_item>
@@ -241,7 +241,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>CEP</_item>
+                        <_item>CEP [D]</_item>
                       </label>
                       <toolTip>
                         <_item>CEP</_item>
@@ -252,7 +252,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Web</_item>
+                        <_item>Web [D]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço Web</_item>
@@ -263,7 +263,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Endereço</_item>
+                        <_item>Endereço [C]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço</_item>
@@ -274,7 +274,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>E-mail</_item>
+                        <_item>E-mail [C]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço de E-Mail</_item>
@@ -285,7 +285,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefone</_item>
+                        <_item>Telefone [C]</_item>
                       </label>
                       <toolTip>
                         <_item>Telefone</_item>
@@ -296,7 +296,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>CEP</_item>
+                        <_item>CEP [C]</_item>
                       </label>
                       <toolTip>
                         <_item>CEP</_item>
@@ -307,7 +307,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Web</_item>
+                        <_item>Web [C]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço Web</_item>
@@ -318,7 +318,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>E-mail</_item>
+                        <_item>E-mail [P]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço de E-Mail</_item>
@@ -329,7 +329,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefone</_item>
+                        <_item>Telefone [P]</_item>
                       </label>
                       <toolTip>
                         <_item>Números do Telefone</_item>
@@ -340,7 +340,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Room" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sala</_item>
+                        <_item>Sala [P]</_item>
                       </label>
                       <toolTip>
                         <_item>Sala</_item>
@@ -351,7 +351,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>CEP</_item>
+                        <_item>CEP [P]</_item>
                       </label>
                       <toolTip>
                         <_item>CEP</_item>
@@ -362,7 +362,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Web</_item>
+                        <_item>Web [P]</_item>
                       </label>
                       <toolTip>
                         <_item>Endereço Web</_item>
@@ -469,7 +469,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PhoneNumberAddressable:automaticParsing" _operation="create">
                     <_object>
                       <label>
-                        <_item>Validação do nr.</_item>
+                        <_item>Validação do n°</_item>
                       </label>
                       <toolTip>
                         <_item>Verificação automática do número</_item>
@@ -480,10 +480,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:RoomAddressable:roomNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>nr. da Sala</_item>
+                        <_item>n° da Sala</_item>
                       </label>
                       <toolTip>
-                        <_item>nr. da Sala</_item>
+                        <_item>n° da Sala</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -568,10 +568,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalStreetNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Núm. da rua (opt)</_item>
+                        <_item>N° da rua (opt)</_item>
                       </label>
                       <toolTip>
-                        <_item>Núm. da rua (opt)</_item>
+                        <_item>N° da rua (opt)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Bookmark.java,v 1.2 2008/12/11 01:03:58 wfro Exp $
+ * Name:        $Id: Bookmark.java,v 1.3 2009/03/08 17:04:53 wfro Exp $
  * Description: Bookmark
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/11 01:03:58 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -87,25 +87,22 @@ public class Bookmark {
         return this.end;
     }
     
-    public int getContentBegin()
-    {
+    public int getContentBegin(
+    ) {
         return contentbegin;
     }
 
-    public int getContentEnd()
-    {
+    public int getContentEnd() {
         return contentend;
     }
 
-    public boolean isField()
-    {
+    public boolean isField() {
         return field;
     }
 
-    public boolean isFieldReadOnly()
-    {
+    public boolean isFieldReadOnly() {
         boolean result = false;
-        if(isField())
+        if(this.isField())
             if(rawcontent != null && rawcontent.indexOf("\\fldlock") >= 0)
                 result = true;
             else
@@ -116,11 +113,9 @@ public class Bookmark {
         return result;
     }
 
-    public int getFieldMaxLength()
-    {
+    public int getFieldMaxLength() {
         int result = -1;
-        if(isField() && rawcontent != null)
-        {
+        if(this.isField() && rawcontent != null) {
             int pos = rawcontent.indexOf("\\ffmaxlen");
             if(pos >= 0)
                 result = RtfUtil.getIntegerFromText(rawcontent, pos + 9);
@@ -128,15 +123,12 @@ public class Bookmark {
         return result;
     }
 
-    public int getFieldtype()
-    {
+    public int getFieldtype() {
         int result = -1;
-        if(field)
-        {
+        if(this.field) {
             int posfd = rawcontent.indexOf("\\fftype");
             if(posfd >= 0)
-                switch(rawcontent.charAt(posfd + 7))
-                {
+                switch(rawcontent.charAt(posfd + 7)) {
                 case 48: // '0'
                     result = 0;
                     break;
@@ -162,8 +154,7 @@ public class Bookmark {
         return this.name;
     }
     
-    public String getRawContent()
-    {
+    public String getRawContent() {
         return rawcontent;
     }
 
@@ -178,6 +169,5 @@ public class Bookmark {
     private int contentend;
     private boolean field;
     private String rawcontent;
-
 
 }

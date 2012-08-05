@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExcelToText.java,v 1.1 2007/10/25 10:37:05 wfro Exp $
+ * Name:        $Id: ExcelToText.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
  * Description: ExcelToText
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/10/25 10:37:05 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -140,8 +140,8 @@ public class ExcelToText implements HSSFListener {
                         this.text.append(value + " ");
                     }
                 }
-            } catch (Exception ex) {
-            }
+            } 
+            catch (Exception ex) {}
         }
         switch (record.getSid()) {
             case BoundSheetRecord.sid:

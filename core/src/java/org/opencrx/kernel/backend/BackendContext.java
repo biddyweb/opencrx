@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: BackendContext.java,v 1.7 2008/05/24 23:09:07 wfro Exp $
+ * Name:        $Id: BackendContext.java,v 1.13 2009/02/10 16:34:26 wfro Exp $
  * Description: BackendContext
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/24 23:09:07 $
+ * Date:        $Date: 2009/02/10 16:34:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,14 +59,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.Dataprovider_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
-import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.model1.accessor.basic.cci.Model_1_3;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.Dataprovider_1_0;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.spi.Layer_1_0;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
+import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.naming.Path;
 
 public class BackendContext {
 
@@ -76,10 +76,10 @@ public class BackendContext {
         ServiceHeader header,
         List<DataproviderObject> pendingModifications,
         RequestCollection delegatingRequests,
-        RefPackage_1_3 delegatingPkg,
+        RefPackage_1_0 delegatingPkg,
         Layer_1_0 delegatingLayer,
         RequestCollection delegationAsRoot,
-        RefPackage_1_3 localPkg,
+        RefPackage_1_0 localPkg,
         RequestCollection localRequests,
         Dataprovider_1_0 router,
         String passwordEncodingAlgorithm,
@@ -111,10 +111,10 @@ public class BackendContext {
     public final List<DataproviderObject> pendingModifications;
     public final Map<Path,DataproviderObject> modifiedObjects = new HashMap<Path,DataproviderObject>();    
     public final RequestCollection delegatingRequests;
-    public final RefPackage_1_3 delegatingPkg;
+    public final RefPackage_1_0 delegatingPkg;
     public final Layer_1_0 delegatingLayer;
     public final RequestCollection delegationAsRoot;
-    public final RefPackage_1_3 localPkg;
+    public final RefPackage_1_0 localPkg;
     public final RequestCollection localRequests;
     public final Dataprovider_1_0 router;
     public final String passwordEncodingAlgorithm;

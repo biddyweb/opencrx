@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru de conturi</_item>
+                        <_item>Filtru de Conturi</_item>
                       </label>
                       <toolTip>
                         <_item>Toate filtrele de conturi</_item>

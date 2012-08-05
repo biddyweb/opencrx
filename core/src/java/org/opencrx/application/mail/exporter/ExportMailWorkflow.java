@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExportMailWorkflow.java,v 1.1 2008/08/28 15:13:31 wfro Exp $
+ * Name:        $Id: ExportMailWorkflow.java,v 1.6 2009/03/08 17:04:47 wfro Exp $
  * Description: ExportMailWorkflow
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:13:31 $
+ * Date:        $Date: 2009/03/08 17:04:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.jdo.PersistenceManager;
-import javax.jmi.reflect.RefObject;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -72,13 +71,14 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.opencrx.application.mail.exporter.MailWorkflow;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Notifications;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.layer.application.ByteArrayDataSource;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.jmi1.ContextCapable;
+import org.openmdx.base.naming.Path;
 
 public class ExportMailWorkflow 
     extends MailWorkflow {
@@ -96,19 +96,19 @@ public class ExportMailWorkflow
     ) throws ServiceException {
         String text = null;
         try {
-            RefObject targetObject = null;
+            ContextCapable target = null;
             try {
-                targetObject = (RefObject)pm.getObjectById(targetIdentity);
-            } catch(Exception e) {}
-            text = this.getText(
-                message,
+                target = (ContextCapable)pm.getObjectById(targetIdentity);
+            } 
+            catch(Exception e) {}
+            text = Notifications.getNotificationText(
                 pm,
-                targetIdentity,
-                targetObject,
+                target,
                 wfProcessInstanceIdentity,
                 userHome,
                 params
             );
+            message.setText(text);
             // message text
             Multipart multipart = new MimeMultipart();
             BodyPart bodyPart = new MimeBodyPart();
@@ -116,9 +116,9 @@ public class ExportMailWorkflow
             multipart.addBodyPart(bodyPart);            
 
             // Add EMail activity as nested message
-            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
-                org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
-                    (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
+            if(target instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
+                org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
+                    (org.opencrx.kernel.activity1.jmi1.EMail)target;
                 bodyPart = new MimeBodyPart();
                 bodyPart.setFileName(
                     emailActivity.getMessageSubject() + ".msg"

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ChartValue.java,v 1.3 2008/10/01 00:28:28 wfro Exp $
+ * Name:        $Id: ChartValue.java,v 1.4 2009/01/14 00:03:29 wfro Exp $
  * Description: ChartValue class
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:28 $
+ * Date:        $Date: 2009/01/14 00:03:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -84,7 +84,7 @@ public class ChartValue
         Object object, 
         FieldDef fieldDef,
         ApplicationContext application
-    ) {
+    ) throws ServiceException {
         super(
             object, 
             fieldDef,

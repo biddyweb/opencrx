@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.22 2008/12/09 09:25:03 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.23 2009/03/08 17:04:47 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/09 09:25:03 $
+ * Date:        $Date: 2009/03/08 17:04:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -430,7 +430,8 @@ public class ICalServlet extends FreeBusyServlet {
         }
         try {
             pm.close();
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
     }
     
     //-----------------------------------------------------------------------
@@ -566,7 +567,8 @@ public class ICalServlet extends FreeBusyServlet {
                                 catch(Exception e) {
                                     try {
                                         pm.currentTransaction().rollback();
-                                    } catch(Exception e0) {}                                    
+                                    } 
+                                    catch(Exception e0) {}                                    
                                 }
                             }
                             // Create new activity
@@ -663,7 +665,8 @@ public class ICalServlet extends FreeBusyServlet {
                                             new ServiceException(e).log();
                                             try {
                                                 pm.currentTransaction().rollback();
-                                            } catch(Exception e0) {}
+                                            } 
+                                            catch(Exception e0) {}
                                         }
                                     }
                                     catch(Exception e) {
@@ -671,7 +674,8 @@ public class ICalServlet extends FreeBusyServlet {
                                         new ServiceException(e).log();
                                         try {
                                             pm.currentTransaction().rollback();
-                                        } catch(Exception e0) {}
+                                        } 
+                                        catch(Exception e0) {}
                                     }
                                 }
                                 else {
@@ -702,7 +706,8 @@ public class ICalServlet extends FreeBusyServlet {
         }
         try {
             pm.close();            
-        } catch(Exception e) {}        
+        } 
+        catch(Exception e) {}        
     }
 
     //-----------------------------------------------------------------------

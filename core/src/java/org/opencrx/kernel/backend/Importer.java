@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.2 2008/10/06 17:12:53 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.7 2009/03/08 17:04:49 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 17:12:53 $
+ * Date:        $Date: 2009/03/08 17:04:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,16 +64,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.mof.cci.Multiplicities;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.naming.Path;
 import org.openmdx.compatibility.base.dataprovider.importer.xml.XmlImporter;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
-import org.openmdx.model1.code.Multiplicities;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -145,11 +145,11 @@ public class Importer {
             
             if (featureDef != null) {
                 isDerived = 
-                  (featureDef.values("isDerived").size() > 0) && 
-                  ((Boolean)featureDef.values("isDerived").get(0)).booleanValue();
+                  (!featureDef.objGetList("isDerived").isEmpty()) && 
+                  ((Boolean)featureDef.objGetValue("isDerived")).booleanValue();
                 isChangeable = 
-                  (featureDef.values("isChangeable").size() > 0) && 
-                  ((Boolean)featureDef.values("isChangeable").get(0)).booleanValue();          
+                  (!featureDef.objGetList("isChangeable").isEmpty()) && 
+                  ((Boolean)featureDef.objGetValue("isChangeable")).booleanValue();          
                 isForeign = false;
             }
             boolean isSystemAttribute = 
@@ -270,7 +270,7 @@ public class Importer {
                             if(value instanceof Path) {
                                 Path p = (Path)value;
                                 // Fix realm for owning groups and users
-                                if(p.getPrefix(REALM_PATTERN.size()).isLike(REALM_PATTERN)) {
+                                if(p.getPrefix(Importer.REALM_PATTERN.size()).isLike(Importer.REALM_PATTERN)) {
                                     p.setTo(
                                         p.getPrefix(6).getChild(this.targetSegment).getDescendant(p.getSuffix(7))
                                     );                                   
@@ -311,7 +311,8 @@ public class Importer {
                             object,
                             true
                         );
-                    } catch(Exception e) {
+                    } 
+                    catch(Exception e) {
                         Importer.this.backend.getModel().verifyObject(
                             object,
                             object.values(SystemAttributes.OBJECT_CLASS).get(0),

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.33 2008/10/06 17:04:53 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.38 2009/03/08 17:04:48 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.33 $
+ * Revision:    $Revision: 1.38 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 17:04:53 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,12 +77,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.openmdx.application.configuration.Configuration;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.application.configuration.Configuration;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1Jdbc2;
+import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.LayerConfigurationEntries;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.model1.accessor.basic.spi.Model_1;
 
 public class CopyDb {
 
@@ -165,10 +165,8 @@ public class CopyDb {
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.NOT_SUPPORTED, 
-                    new BasicException.Parameter[]{
-                      new BasicException.Parameter("database product name", databaseProductName)
-                    },
-                    "Database not supported"
+                    "Database not supported",
+                    new BasicException.Parameter("database product name", databaseProductName)
                 );
             }
         }
@@ -189,19 +187,20 @@ public class CopyDb {
 
         String currentStatement = null;
                     
-        Database_1Jdbc2 db = new Database_1Jdbc2();
+        Database_1 db = new Database_1();
         try {
             Configuration configuration = new Configuration();
             configuration.values(LayerConfigurationEntries.BOOLEAN_TYPE).add(LayerConfigurationEntries.BOOLEAN_TYPE_STANDARD);
             configuration.values(LayerConfigurationEntries.XML_DATATYPES).add(Boolean.TRUE);
-            configuration.values(LayerConfigurationEntries.MODEL).add(new Model_1());
+            configuration.values(LayerConfigurationEntries.MODEL).add(Model_1Factory.getModel());
             configuration.values(LayerConfigurationEntries.DATABASE_CONNECTION_FACTORY );           
             db.activate(
                 (short)0,
                 configuration,
                 null
             );
-        } catch(Exception e) {
+        } 
+        catch(Exception e) {
             System.out.println("Can not activate database plugin: " + e.getMessage());
         }
         try {
@@ -234,7 +233,7 @@ public class CopyDb {
                 ) {
                     String columnName = rsm.getColumnName(j+1);                    
                     if(frs.getObject(columnName) != null) {
-                        String mappedColumnName = mapColumnName(
+                        String mappedColumnName = CopyDb.mapColumnName(
                             connTarget,
                             dbObject, 
                             columnName 
@@ -245,7 +244,7 @@ public class CopyDb {
                             if(frs.getObject(columnName) instanceof java.sql.Clob) {
                                 try {
                                     statementParameters.add(
-                                        getStringFromClob((java.sql.Clob)frs.getObject(columnName))
+                                    	CopyDb.getStringFromClob((java.sql.Clob)frs.getObject(columnName))
                                     );
                                 }
                                 catch(Exception e) {
@@ -257,7 +256,7 @@ public class CopyDb {
                             else if(frs.getObject(columnName) instanceof java.sql.Blob) {
                                 try {
                                     statementParameters.add(
-                                        getBytesFromBlob((java.sql.Blob)frs.getObject(columnName))
+                                    	CopyDb.getBytesFromBlob((java.sql.Blob)frs.getObject(columnName))
                                     );
                                 }
                                 catch(Exception e) {
@@ -268,7 +267,7 @@ public class CopyDb {
                             }
                             else {
                                 statementParameters.add(
-                                    mapColumnValue(
+                                	CopyDb.mapColumnValue(
                                         connSource,
                                         dbObject,
                                         columnName,
@@ -372,7 +371,7 @@ public class CopyDb {
                 if((dbObject != null) && (dbObject.length() > 0) && !processedDbObjects.contains(dbObject)) {
                     if(i >= startFromDbObject) {
                         System.out.println("Copying table " + i + " (" + dbObject + ")");
-                        copyDbObject(
+                        CopyDb.copyDbObject(
                             namespaceSource,
                             namespaceTarget,
                             dbObject,
@@ -380,7 +379,7 @@ public class CopyDb {
                             connSource,
                             connTarget
                         );
-                        copyDbObject(
+                        CopyDb.copyDbObject(
                             namespaceSource,
                             namespaceTarget,
                             dbObject,
@@ -443,7 +442,7 @@ public class CopyDb {
                 (securityStartFromDbObject != null) &&
                 (securityStartFromDbObject.intValue() == 0)
             ) {               
-                copyDbObject(
+            	CopyDb.copyDbObject(
                     new String[]{"prefs", ""},
                     new String[]{"prefs", ""},
                     "Preference",
@@ -454,7 +453,7 @@ public class CopyDb {
             }
             // Namespace kernel
             Number endWithDbObject = (Number)componentEnvironment.lookup("kernel.endWithDbObject");
-            copyNamespace(
+            CopyDb.copyNamespace(
                 connSource,
                 connTarget,
                 new String[]{"OOCKE1", "_"},
@@ -465,7 +464,7 @@ public class CopyDb {
             );
             // Namespace security
             endWithDbObject = (Number)componentEnvironment.lookup("security.endWithDbObject");
-            copyNamespace(
+            CopyDb.copyNamespace(
                 connSource,
                 connTarget,
                 new String[]{"OOCSE1", "_"},

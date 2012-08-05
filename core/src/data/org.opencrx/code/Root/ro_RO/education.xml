@@ -95,10 +95,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Master (MSc., MBA)</_item>
+                              <_item>Master (MSc., M.B.A.)</_item>
                             </shortText>
                             <longText>
-                              <_item>Master (MSc., MBA)</_item>
+                              <_item>Master (MSc., M.B.A.)</_item>
                             </longText>
                           </_object>
                           <_content/>

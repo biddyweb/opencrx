@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserHomeImpl.java,v 1.7 2008/11/06 01:14:13 wfro Exp $
+ * Name:        $Id: UserHomeImpl.java,v 1.8 2009/01/09 18:11:24 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/06 01:14:13 $
+ * Date:        $Date: 2009/01/09 18:11:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,7 +57,7 @@ package org.opencrx.kernel.plugin.application.home1;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 
 
 public class UserHomeImpl {
@@ -74,7 +74,7 @@ public class UserHomeImpl {
     //-----------------------------------------------------------------------
     public Backend getBackend(
     ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
+        return (Backend)((RefPackage_1_0)this.current.refOutermostPackage()).refUserContext();
     }
         
     //-----------------------------------------------------------------------

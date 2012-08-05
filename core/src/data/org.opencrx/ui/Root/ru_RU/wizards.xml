@@ -11,13 +11,332 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportToOutlook" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:Pane:Op:Tab:renderRtf?template=Opportunity%20with%20Positions%20(RTF)" _operation="create">
                     <_object>
                       <label>
-                        <_item>Экспортировать контакты в  MS Outlook (требует IE)</_item>
+                        <_item>Сохранить возможность в RTF</_item>
                       </label>
                       <toolTip>
-                        <_item>Экспортировать контакты в  MS Outlook (требует IE)</_item>
+                        <_item>Сохранить возможность в RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:Pane:Op:Tab:renderRtf?template=Quote%20with%20Positions%20(RTF)" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить котировку в RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить котировку в RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:renderRtf?template=Sales%20Order%20with%20Positions%20(RTF)" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить запрос на закупку в RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить запрос на закупку в RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Invoice:Pane:Op:Tab:renderRtf?template=Invoice%20with%20Positions%20(RTF)" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить счет-фактуру в RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить счет-фактуру в RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createContact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый контакт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый контакт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая деятельность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createAgenda" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая повестка дня</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая повестка дня</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createBugTracker" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый Bug Tracker</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый Bug Tracker</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createCampaign" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая компания</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая компания</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createProject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый проект</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый проект</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createLead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая инициатива</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая инициатива</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createOpportunity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая возможность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая возможность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createQuote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая котировка</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая котировка</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createSalesOrder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый запрос на продажу</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый запрос на продажу</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createInvoice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая счет-фактура</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая счет-фактура</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:createProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый продукт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый продукт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить членов как vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить членов как vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить как vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить как vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить как vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить как vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить как vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить как vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить отфильтрованные учетные записи как vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить отфильтрованные учетные записи как vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCategory:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить отфильтрованные деятельности как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить назначенные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить назначенные деятельности как iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Сохранить назначенные деятельности как iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Сохранить назначенные деятельности как iCal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -38,6 +357,9 @@
                       <label>
                         <_item>Слияние почты --&gt; RTF документ</_item>
                       </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -74,6 +396,83 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressFilterGlobal:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mailing:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:scheduleEvent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Событие расписания/Создать опрос</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Событие расписания/Создать опрос</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Op:Tab:scheduleEvent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Управление запланированными событиями/Опросами</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Управление запланированными событиями/Опросами </_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
@@ -86,17 +485,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Загрузить медиаданные</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Загрузить медиаданные</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
                         <_item>Загрузить медиаданные</_item>

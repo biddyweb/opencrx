@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailImporterConfig.java,v 1.1 2008/08/28 15:04:23 wfro Exp $
+ * Name:        $Id: MailImporterConfig.java,v 1.2 2009/01/06 13:00:22 wfro Exp $
  * Description: MailImporterConfig
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:04:23 $
+ * Date:        $Date: 2009/01/06 13:00:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,7 +63,7 @@ import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 

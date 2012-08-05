@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MultiTextParts.java,v 1.1 2008/12/10 15:32:35 wfro Exp $
+ * Name:        $Id: MultiTextParts.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
  * Description: MultiTextParts
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/10 15:32:35 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,27 +60,22 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class MultiTextParts
-    implements Text
-{
+    implements Text {
 
-    public MultiTextParts()
-    {
+    public MultiTextParts() {
         content = new ArrayList<TextPart>();
     }
 
-    public MultiTextParts(TextPart content)
-    {
+    public MultiTextParts(TextPart content) {
         this();
-        addText(content);
+        this.addText(content);
     }
 
-    public void addText(TextPart part)
-    {
+    public void addText(TextPart part) {
         content.add(part);
     }
 
-    public String getRtfContent()
-    {
+    public String getRtfContent() {
         StringBuffer sb = new StringBuffer();
         for(
             ListIterator<TextPart> it = content.listIterator(); 

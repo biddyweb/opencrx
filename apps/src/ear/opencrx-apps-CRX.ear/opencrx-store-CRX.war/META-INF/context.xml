@@ -1,0 +1,12 @@
+<Context 
+	path="/opencrx-store-CRX" 
+	docBase="${catalina.home}/apps/opencrx-apps-CRX/opencrx-store-CRX.war"
+>
+	<Ejb 
+		name="ejb/data" 
+		type="Session"
+		home="org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1Home" 
+		remote="org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Remote"
+		deploymentid="opencrx_core_CRX_Gateway"
+	/>	
+</Context>

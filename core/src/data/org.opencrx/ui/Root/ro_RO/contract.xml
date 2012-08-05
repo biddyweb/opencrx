@@ -490,7 +490,7 @@
                         <_item>Legătură de ieşire contract</_item>
                       </label>
                       <toolTip>
-                        <_item>Legătură de ieţire contract</_item>
+                        <_item>Legătură de ieşire contract</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -545,7 +545,7 @@
                         <_item>Alocare Cont</_item>
                       </label>
                       <toolTip>
-                        <_item>Alocat la cont</_item>
+                        <_item>Alocat la Cont</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -656,6 +656,17 @@
                       </label>
                       <toolTip>
                         <_item>Unitate de Măsură (preţ)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:ignoreProductConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ignoră configurarea  produsului</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ignoră configurarea  produsului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -977,10 +988,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetPositionAmountsResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Statut mesaj</_item>
+                        <_item>Mesaj Statut</_item>
                       </label>
                       <toolTip>
-                        <_item>Statut mesaj</_item>
+                        <_item>Mesaj Statut</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1186,10 +1197,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Statut mesaj</_item>
+                        <_item>Mesaj Statut</_item>
                       </label>
                       <toolTip>
-                        <_item>Statut mesaj</_item>
+                        <_item>Mesaj Statut</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -17,7 +17,7 @@
                         <_item>Organizaţii</_item>
                       </label>
                       <toolTip>
-                        <_item>toate Organizaţiile</_item>
+                        <_item>toate organizaţiile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:contactMembership" _operation="create">
                     <_object>
                       <label>
-                        <_item>Membrii</_item>
+                        <_item>Membri</_item>
                       </label>
                       <toolTip>
-                        <_item>Membrii</_item>
+                        <_item>Membri</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:creditLimit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limita de credit</_item>
+                        <_item>Limită de credit</_item>
                       </label>
                       <toolTip>
-                        <_item>Limita de credit</_item>
+                        <_item>Limită de credit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -94,7 +94,7 @@
                         <_item>Statut</_item>
                       </label>
                       <toolTip>
-                        <_item>Statut Organizatie</_item>
+                        <_item>Statut Organizaţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:OrganizationalUnitRelationship:relationshipType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip relaţie</_item>
+                        <_item>Tip Relaţie</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip relaţie</_item>
+                        <_item>Tip Relaţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:ouMembership" _operation="create">
                     <_object>
                       <label>
-                        <_item>Membrii Unitate Organizaţională</_item>
+                        <_item>Membri Unitate Organizaţională</_item>
                       </label>
                       <toolTip>
-                        <_item>Membrii Unitate Organizaţională</_item>
+                        <_item>Membri Unitate Organizaţională</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreditLimit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limita de credit</_item>
+                        <_item>Limită de credit</_item>
                       </label>
                       <toolTip>
-                        <_item>Limita de credit</_item>
+                        <_item>Limită de credit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreditLimit:creditLimitAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limita valorică</_item>
+                        <_item>Limită valorică</_item>
                       </label>
                       <toolTip>
-                        <_item>Limita valorică</_item>
+                        <_item>Limită valorică</_item>
                       </toolTip>
                     </_object>
                     <_content/>

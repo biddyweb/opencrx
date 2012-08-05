@@ -115,6 +115,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractGroup:name">
 										<_object>
 											<active>true</active>
+											<mandatory>true</mandatory>
 											<toolTip>
 												<_item>Group name</_item>
 											</toolTip>

@@ -110,6 +110,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:address!webUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sito Web Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sito Web Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>

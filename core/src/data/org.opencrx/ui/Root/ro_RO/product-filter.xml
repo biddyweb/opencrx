@@ -11,6 +11,50 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtre de Produse</_item>
+                      </label>
+                      <toolTip>
+                        <_item>toate filtrele de produse</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtru de Produse</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtru de Produse</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nume</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nume</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descriere</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descriere</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:filteredProduct" _operation="create">
                     <_object>
                       <label>
@@ -113,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceUomFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>UDM (Preţ) proprietăţi filtrare</_item>
+                        <_item>Unităţi de Măsură  (Preţ) proprietăţi filtrare</_item>
                       </label>
                       <toolTip>
-                        <_item>UDM (Preţ) proprietăţi filtrare</_item>
+                        <_item>Unităţi de Măsură  (Preţ) proprietăţi filtrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceUomFilterProperty:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UDM (Preţ)</_item>
+                        <_item>Unităţi de Măsură (Preţ)</_item>
                       </label>
                       <toolTip>
-                        <_item>UDM (Preţ)</_item>
+                        <_item>Unităţi de Măsură (Preţ)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

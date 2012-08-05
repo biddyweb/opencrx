@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.22 2008/10/16 16:38:28 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.27 2009/02/20 21:44:49 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/16 16:38:28 $
+ * Date:        $Date: 2009/02/20 21:44:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,18 +63,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Orders;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Orders;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 
 /**
@@ -179,7 +179,7 @@ public class SecurityContext {
                         Quantors.THERE_EXISTS,
                         SystemAttributes.OBJECT_CLASS,
                         FilterOperators.IS_IN,
-                        new String[]{"org:opencrx:security:realm1:PrincipalGroup"}                    
+                        new Object[]{"org:opencrx:security:realm1:PrincipalGroup"}                    
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -251,11 +251,9 @@ public class SecurityContext {
     	        throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.NOT_FOUND, 
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("realm", this.realmIdentity),
-                        new BasicException.Parameter("principal", principalName)
-                    },
-                    "principal not found"
+                    "principal not found",
+                    new BasicException.Parameter("realm", this.realmIdentity),
+                    new BasicException.Parameter("principal", principalName)
     	        );
             }
 	    }
@@ -321,7 +319,7 @@ public class SecurityContext {
                         Quantors.THERE_EXISTS,
                         SystemAttributes.OBJECT_CLASS,
                         FilterOperators.IS_IN,
-                        new String[]{
+                        new Object[]{
                             "org:opencrx:security:realm1:User"
                         }
                     )
@@ -335,10 +333,8 @@ public class SecurityContext {
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.NOT_FOUND, 
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("principal", principal.path())
-                    },
-                    "Undefined user for principal"
+                    "Undefined user for principal",
+                    new BasicException.Parameter("principal", principal.path())
                 );                    
             }
             group = (DataproviderObject_1_0)owningGroups.iterator().next();

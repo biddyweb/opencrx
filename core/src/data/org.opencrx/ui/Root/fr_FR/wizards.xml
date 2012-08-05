@@ -11,13 +11,332 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportToOutlook" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:Pane:Op:Tab:renderRtf?template=Opportunity%20with%20Positions%20(RTF)" _operation="create">
                     <_object>
                       <label>
-                        <_item>Exporter contact vers MS Outlook</_item>
+                        <_item>Générer un RTF</_item>
                       </label>
                       <toolTip>
-                        <_item>Exporter contact vers MS Outlook</_item>
+                        <_item>Générer un RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:Pane:Op:Tab:renderRtf?template=Quote%20with%20Positions%20(RTF)" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Générer un RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Générer un RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:renderRtf?template=Sales%20Order%20with%20Positions%20(RTF)" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Générer un RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Générer un RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Invoice:Pane:Op:Tab:renderRtf?template=Invoice%20with%20Positions%20(RTF)" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Générer un RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Générer un RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createContact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouveau contact</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouveau contact</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouveau contact</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouveau contact</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvelle activité</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvelle activité</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createAgenda" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvel agenda</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvel agenda</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createBugTracker" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouveau Bug Tracker</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouveau Bug Tracker</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createCampaign" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvelle campagne</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvelle campagne</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createProject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouveau projet</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouveau projet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createLead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvelle piste</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvelle piste</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createOpportunity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvelle opportunité</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvelle opportunité</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createQuote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouveau devis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouveau devis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createSalesOrder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvelle commande</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvelle commande</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createInvoice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouvelle facture</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouvelle facture</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:createProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nouveau produit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nouveau produit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregister les membres en tant que vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregister les membres en tant que vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregister en tant que vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregister en tant que vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregister en tant que vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregister en tant que vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregister en tant que vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregister en tant que vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregister comptes filtrés en tant que vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregister comptes filtrés en tant que vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCategory:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités filtrées en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités affectées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités affectées en tant que iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enregistrer activités affectées en tant que iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enregistrer activités affectées en tant que iCal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,6 +396,83 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressFilterGlobal:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mailing:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fusion mail --&gt; Document RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:scheduleEvent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Planifier un évènement / Créer un sondage</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Planifier un évènement / Créer un sondage</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Op:Tab:scheduleEvent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Gérer évènement / sondage planifiés</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Gérer évènement / sondage planifiés</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
@@ -89,17 +485,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Télécharger</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Télécharger</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
                         <_item>Télécharger</_item>

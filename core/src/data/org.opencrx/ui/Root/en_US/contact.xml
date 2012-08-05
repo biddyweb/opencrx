@@ -293,6 +293,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:lastName">
 										<_object>
 											<active>true</active>
+											<mandatory>true</mandatory>
 											<toolTip>
 												<_item>Person's last name</_item>
 											</toolTip>

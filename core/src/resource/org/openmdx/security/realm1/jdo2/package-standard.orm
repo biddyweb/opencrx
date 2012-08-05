@@ -31,7 +31,7 @@
         <column name="NAME"/>
       </field>
     </class>
-    <class name="Realm$Slice" table="OOCSE1_REALM_">
+    <class name="RealmSlice" table="OOCSE1_REALM_">
       <inheritance>
         <discriminator strategy="value-map" column="DTYPE" value="Realm"/>
       </inheritance>
@@ -80,7 +80,7 @@
         <column name="DISABLED" allows-null="true"/>
       </field>
     </class>
-    <class name="Role$Slice" table="OOCSE1_ROLE_">
+    <class name="RoleSlice" table="OOCSE1_ROLE_">
       <inheritance>
         <discriminator strategy="value-map" column="DTYPE" value="Role"/>
       </inheritance>
@@ -143,7 +143,7 @@
         <column name="DISABLED" allows-null="true"/>
       </field>
     </class>
-    <class name="Principal$Slice" table="OOCSE1_PRINCIPAL_">
+    <class name="PrincipalSlice" table="OOCSE1_PRINCIPAL_">
       <inheritance>
         <discriminator strategy="value-map" column="DTYPE" value="org:openmdx:security:realm1:Principal"/>
       </inheritance>
@@ -201,7 +201,7 @@
         <column name="ACTION_" default-value="-1"/>
       </field>
     </class>
-    <class name="Permission$Slice" table="OOCSE1_PERMISSION_">
+    <class name="PermissionSlice" table="OOCSE1_PERMISSION_">
       <inheritance>
         <discriminator strategy="value-map" column="DTYPE" value="Permission"/>
       </inheritance>
@@ -253,7 +253,7 @@
         <column name="ACTION_" default-value="-1"/>
       </field>
     </class>
-    <class name="Privilege$Slice" table="OOCSE1_PRIVILEGE_">
+    <class name="PrivilegeSlice" table="OOCSE1_PRIVILEGE_">
       <inheritance>
         <discriminator strategy="value-map" column="DTYPE" value="Privilege"/>
       </inheritance>
@@ -276,7 +276,7 @@
     <class name="Segment" table="OOCSE1_SEGMENT">
       <inheritance strategy="new-table"/>    
     </class>
-    <class name="Segment$Slice" table="OOCSE1_SEGMENT_">
+    <class name="SegmentSlice" table="OOCSE1_SEGMENT_">
       <inheritance strategy="new-table">
         <discriminator strategy="value-map" column="DTYPE" value="org:openmdx:security:realm1:Segment"/>
       </inheritance>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: BookmarkIsNotCheckboxException.java,v 1.1 2008/12/10 15:14:00 wfro Exp $
+ * Name:        $Id: BookmarkIsNotCheckboxException.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
  * Description: BookmarkIsNotCheckboxException
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/10 15:14:00 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,17 +56,14 @@
 package org.opencrx.kernel.utils.rtf;
 
 
-public class BookmarkIsNotCheckboxException extends Exception
-{
+public class BookmarkIsNotCheckboxException extends Exception {
 
-    public BookmarkIsNotCheckboxException(String name)
-    {
+    public BookmarkIsNotCheckboxException(String name) {
         super("Bookmark '" + name + "' isn't a checkbox!");
         this.name = name;
     }
 
-    public String getBookmarkname()
-    {
+    public String getBookmarkname() {
         return name;
     }
 

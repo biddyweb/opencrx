@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.25 2008/10/08 14:12:17 wfro Exp $
+ * Name:        $Id: IndexerServlet.java,v 1.27 2009/03/08 17:04:52 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/08 14:12:17 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,7 +72,7 @@ import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.UpdateIndexResult;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -174,7 +174,8 @@ public class IndexerServlet
             }
             try {
                 pm.close();
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
         }
         catch(Exception e) {
             new ServiceException(e).log();
@@ -204,7 +205,8 @@ public class IndexerServlet
                         req,
                         res
                     );
-                } catch(Exception e) {
+                } 
+                catch(Exception e) {
                     new ServiceException(e).log();
                 }
                 finally {

@@ -586,10 +586,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:endedAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sfîrşit la</_item>
+                        <_item>Sfârşit la</_item>
                       </label>
                       <toolTip>
-                        <_item>Sfîrşit la</_item>
+                        <_item>Sfârşit la</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -795,10 +795,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:endedAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sfîrşit la</_item>
+                        <_item>Sfârşit la</_item>
                       </label>
                       <toolTip>
-                        <_item>Sfîrşit la</_item>
+                        <_item>Sfârşit la</_item>
                       </toolTip>
                     </_object>
                     <_content/>

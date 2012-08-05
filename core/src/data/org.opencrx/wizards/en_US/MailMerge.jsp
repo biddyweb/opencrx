@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MailMerge.jsp,v 1.19 2008/12/15 14:58:22 cmu Exp $
+ * Name:        $Id: MailMerge.jsp,v 1.23 2009/02/09 13:29:07 wfro Exp $
  * Description: mail merge addresses of group's members --> RTF document
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/15 14:58:22 $
+ * Date:        $Date: 2009/02/09 13:29:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,6 @@ java.text.*,
 java.math.*,
 java.net.*,
 java.sql.*,
-org.openmdx.base.accessor.generic.cci.Object_1_0,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.kernel.id.*,
@@ -73,9 +72,8 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
-org.openmdx.compatibility.base.query.*,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.application.log.*
 " %>
 
@@ -129,6 +127,7 @@ org.openmdx.application.log.*
   <meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal">
   <meta name="forClass" content="org:opencrx:kernel:account1:PostalAddress">
   <meta name="forClass" content="org:opencrx:kernel:account1:AddressFilterGlobal">
+  <meta name="forClass" content="org:opencrx:kernel:activity1:Mailing">
   <meta name="forClass" content="org:opencrx:kernel:activity1:AddressGroup">
   <meta name="order" content="org:opencrx:kernel:account1:Group:mailMerge">
   <meta name="order" content="org:opencrx:kernel:account1:Contact:mailMerge">
@@ -137,6 +136,7 @@ org.openmdx.application.log.*
   <meta name="order" content="org:opencrx:kernel:account1:AccountFilterGlobal:mailMerge">
   <meta name="order" content="org:opencrx:kernel:account1:PostalAddress:mailMerge">
   <meta name="order" content="org:opencrx:kernel:account1:AddressFilterGlobal:mailMerge">
+  <meta name="order" content="org:opencrx:kernel:activity1:Mailing:mailMerge">
   <meta name="order" content="org:opencrx:kernel:activity1:AddressGroup:mailMerge">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
@@ -319,6 +319,7 @@ org.openmdx.application.log.*
    // Get template
    org.opencrx.kernel.document1.jmi1.MediaContent mediaContent =
       (org.opencrx.kernel.document1.jmi1.MediaContent)pm.getObjectById(new Path(templateXri));
+   mediaContent.refRefresh();
    InputStream content = mediaContent.getContent().getContent();
    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
    int b;
@@ -339,6 +340,7 @@ org.openmdx.application.log.*
     boolean isAddressFilterGlobal = false;
     boolean isAddressGroupMember = false;
     boolean isAccountFilterGlobal = false;
+    boolean isMailingActivityRecipient = false;
     Iterator i = null;
     if (obj instanceof org.opencrx.kernel.account1.jmi1.Group) {
       i = ((org.opencrx.kernel.account1.jmi1.Group)obj).getMember().iterator();
@@ -359,6 +361,11 @@ org.openmdx.application.log.*
       // prepare zip file to be sent to browser
       isAddressGroupMember = true;
     }
+    if (obj instanceof org.opencrx.kernel.activity1.jmi1.Mailing) {
+      i = ((org.opencrx.kernel.activity1.jmi1.Mailing)obj).getMailingRecipient().iterator();
+      // prepare zip file to be sent to browser
+      isMailingActivityRecipient = true;
+    }
     if (
         (obj instanceof org.opencrx.kernel.account1.jmi1.Contact) ||
         (obj instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) ||
@@ -376,11 +383,11 @@ org.openmdx.application.log.*
       (isAccount && (account != null))
     ) {
       if (isAddressFilterGlobal) {
-         org.opencrx.kernel.account1.jmi1.AccountAddress accountAddress =
-              (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
-          if (accountAddress instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
-            postalAddressesXri.add(accountAddress.refMofId());
-          }
+        org.opencrx.kernel.account1.jmi1.AccountAddress accountAddress =
+            (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
+        if (accountAddress instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
+          postalAddressesXri.add(accountAddress.refMofId());
+        }
       }
       else {
         if (isAddressGroupMember) {
@@ -391,44 +398,77 @@ org.openmdx.application.log.*
           }
         }
         else {
-          if (!isAccount) {
-            if (isAccountFilterGlobal) {
-              account = (org.opencrx.kernel.account1.jmi1.Account)i.next();
+          if (isMailingActivityRecipient) {
+            org.opencrx.kernel.activity1.jmi1.AbstractMailingRecipient abstractMailingRecipient =
+                (org.opencrx.kernel.activity1.jmi1.AbstractMailingRecipient)i.next();
+            if (abstractMailingRecipient instanceof org.opencrx.kernel.activity1.jmi1.MailingRecipient) {
+              org.opencrx.kernel.activity1.jmi1.MailingRecipient mailingRecipient =
+                  (org.opencrx.kernel.activity1.jmi1.MailingRecipient)abstractMailingRecipient;
+              if ((mailingRecipient.getParty() != null) && (mailingRecipient.getParty() instanceof org.opencrx.kernel.account1.jmi1.PostalAddress)) {
+                postalAddressesXri.add(mailingRecipient.getParty().refMofId());
+              }
             } else {
-              org.opencrx.kernel.account1.jmi1.Member member =
-                 (org.opencrx.kernel.account1.jmi1.Member)i.next();
-              if ((member.isDisabled() != null) && (member.isDisabled().booleanValue())) {
-                // skip disabled members
-                continue;
-              }
-              else {
-                account = member.getAccount();
-              }
-              if ((account != null) && (account.isDisabled() != null) && (account.isDisabled().booleanValue())) {
-                // skip disabled accounts
-                continue;
+              if (abstractMailingRecipient instanceof org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup) {
+                org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup mailingRecipientGroup =
+                    (org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup)abstractMailingRecipient;
+                if ((mailingRecipientGroup.getParty() != null) && (mailingRecipientGroup.getParty() instanceof org.opencrx.kernel.activity1.jmi1.AddressGroup)) {
+                  org.opencrx.kernel.activity1.jmi1.AddressGroup addressGroup =
+                    (org.opencrx.kernel.activity1.jmi1.AddressGroup)mailingRecipientGroup.getParty();
+                  for(
+                      Iterator j = addressGroup.getMember().iterator();
+                      j.hasNext();
+                  ) {
+                    org.opencrx.kernel.activity1.jmi1.AddressGroupMember addressGroupMember =
+                       (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)j.next();
+                    if ((addressGroupMember.getAddress() != null) && (addressGroupMember.getAddress() instanceof org.opencrx.kernel.account1.jmi1.PostalAddress)) {
+                        postalAddressesXri.add(addressGroupMember.getAddress().refMofId());
+                    }
+                  }
+                }
               }
             }
           }
-          if(account != null) {
-          org.opencrx.kernel.account1.jmi1.PostalAddress mailingAddress = null;
-            boolean searchingMainMailingAddress = true;
-            for(
-                Iterator addr = account.getAddress().iterator();
-                addr.hasNext() && searchingMainMailingAddress;
-            ) {
-              org.opencrx.kernel.account1.jmi1.AccountAddress address =
-                (org.opencrx.kernel.account1.jmi1.AccountAddress)addr.next();
-               if (!(address instanceof org.opencrx.kernel.account1.jmi1.PostalAddress)) {continue;}
-               mailingAddress = (org.opencrx.kernel.account1.jmi1.PostalAddress)address;
-               searchingMainMailingAddress = !mailingAddress.isMain();
+          else {
+            if (!isAccount) {
+              if (isAccountFilterGlobal) {
+                account = (org.opencrx.kernel.account1.jmi1.Account)i.next();
+              } else {
+                org.opencrx.kernel.account1.jmi1.Member member =
+                   (org.opencrx.kernel.account1.jmi1.Member)i.next();
+                if ((member.isDisabled() != null) && (member.isDisabled().booleanValue())) {
+                  // skip disabled members
+                  continue;
+                }
+                else {
+                  account = member.getAccount();
+                }
+                if ((account != null) && (account.isDisabled() != null) && (account.isDisabled().booleanValue())) {
+                  // skip disabled accounts
+                  continue;
+                }
               }
-              if (mailingAddress != null) {
-                postalAddressesXri.add(mailingAddress.refMofId());
-              }
+            }
+            if(account != null) {
+            org.opencrx.kernel.account1.jmi1.PostalAddress mailingAddress = null;
+              boolean searchingMainMailingAddress = true;
+              for(
+                  Iterator addr = account.getAddress().iterator();
+                  addr.hasNext() && searchingMainMailingAddress;
+              ) {
+                org.opencrx.kernel.account1.jmi1.AccountAddress address =
+                  (org.opencrx.kernel.account1.jmi1.AccountAddress)addr.next();
+                 if (!(address instanceof org.opencrx.kernel.account1.jmi1.PostalAddress)) {continue;}
+                 mailingAddress = (org.opencrx.kernel.account1.jmi1.PostalAddress)address;
+                 searchingMainMailingAddress = !mailingAddress.isMain();
+                }
+                if (mailingAddress != null) {
+                  postalAddressesXri.add(mailingAddress.refMofId());
+                }
+            }
+            account = null; /* ensure termination if isAccount==true !!! */
           }
-          account = null; /* ensure termination if isAccount==true !!! */
         }
+
       }
     } /* while */
 
@@ -439,9 +479,13 @@ org.openmdx.application.log.*
     try {
        bmTemplateRow = document.searchBookmark("TemplateRow");
     } catch(Exception e) {}
+    String layoutDefinition = bmTemplateRow.getRawContent();
+    if(layoutDefinition.indexOf(" ") > 0) {
+        layoutDefinition = layoutDefinition.substring(layoutDefinition.lastIndexOf(" ")).trim();
+    }
     String[] templateRowLayout = bmTemplateRow == null ?
        null :
-       bmTemplateRow.getRawContent().split(";");
+       layoutDefinition.split(";");
     int nColumns = (templateRowLayout == null) || (templateRowLayout.length < 1) ?
        1 :
        Integer.valueOf(templateRowLayout[0]).intValue();
@@ -460,7 +504,7 @@ org.openmdx.application.log.*
          (org.opencrx.kernel.account1.jmi1.PostalAddress)pm.getObjectById(new Path((String)a.next()));
       if(bmTemplateRow != null) {
           if((recordIndex == -1) || (recordIndex == nRecordsPerRow)) {
-             document.appendTableRow("TemplateRow", nColumns);
+             document.appendTableRow("TemplateRow");
              recordIndex = 0;
           }
       }

@@ -273,6 +273,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Creatable:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Creat la</_item>
+                      </label>
+                      <toolTip>
+                        <_item>data şi ora creării obiectului (niciodată modificat)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Creatable:createdBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Creat de</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Utilizatorul care a creat obiectul (niciodată modificat)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:disabledReason" _operation="create">
                     <_object>
                       <label>
@@ -280,6 +302,28 @@
                       </label>
                       <toolTip>
                         <_item>motiv pentru dezactivare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modificat de</_item>
+                      </label>
+                      <toolTip>
+                        <_item>data şi ora ultimei modificări a obiectului</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modificat pentru</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Utilizatorul care a modificat obiectul</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -749,10 +793,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări de proprietăţi</_item>
+                        <_item>Configurări de proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări de proprietăţi</_item>
+                        <_item>Configurări de proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -760,10 +804,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări de proprietăţi introduse</_item>
+                        <_item>Configurări de proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări de proprietăţi introduse</_item>
+                        <_item>Configurări de proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1032,10 +1076,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări de proprietăţi</_item>
+                        <_item>Configurări de proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări de proprietăţi</_item>
+                        <_item>Configurări de proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1065,10 +1109,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări de proprietăţi introduse</_item>
+                        <_item>Configurări de proprietăţi introduse</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări de proprietăţi introduse</_item>
+                        <_item>Configurări de proprietăţi introduse</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1076,10 +1120,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:propertySetName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nume setări proprietăţi</_item>
+                        <_item>Nume configurări proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Nume setări proprietăţi</_item>
+                        <_item>Nume configurări proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1087,10 +1131,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:propertySetDescription" _operation="create">
                     <_object>
                       <label>
-                        <_item>Descriere setări proprietăţi</_item>
+                        <_item>Descriere configurări proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Descriere setări proprietăţi</_item>
+                        <_item>Descriere configurări proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2099,10 +2143,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowResult:workflowInstance" _operation="create">
                     <_object>
                       <label>
-                        <_item>Instanţă flux de lucru</_item>
+                        <_item>Instanţă Flux de lucru</_item>
                       </label>
                       <toolTip>
-                        <_item>Instanţă flux de lucru</_item>
+                        <_item>Instanţă Flux de lucru</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2198,10 +2242,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AlertSender:Pane:Op:Tab:sendAlert" _operation="create">
                     <_object>
                       <label>
-                        <_item>Trimite alertă</_item>
+                        <_item>Trimite Alertă</_item>
                       </label>
                       <toolTip>
-                        <_item>Trimite alertă</_item>
+                        <_item>Trimite Alertă</_item>
                       </toolTip>
                     </_object>
                     <_content/>

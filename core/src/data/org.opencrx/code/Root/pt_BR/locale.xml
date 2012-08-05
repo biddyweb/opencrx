@@ -279,6 +279,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="24" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>ro_RO</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Romeno (ro_RO)</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

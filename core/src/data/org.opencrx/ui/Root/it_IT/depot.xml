@@ -883,10 +883,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:allowPositionAutoCreate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Consenti generazione automatica Posizioni</_item>
+                        <_item>Consenti generazione automatica Righe</_item>
                       </label>
                       <toolTip>
-                        <_item>Consenti Posizioni generate automaticamente</_item>
+                        <_item>Consenti di generare righe automaticamente</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -22,6 +22,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceLevel" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Livelli Tariffari Attivi</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Livelli Tariffari Attivi</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceListEntry" _operation="create">
                     <_object>
                       <label>
@@ -320,7 +338,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetti (filtratii)</_item>
+                        <_item>Soggetti (filtrati)</_item>
                       </label>
                       <toolTip>
                         <_item>tutti i Soggetti (filtrati)</_item>
@@ -353,7 +371,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prodotti (filtratii)</_item>
+                        <_item>Prodotti (filtrati)</_item>
                       </label>
                       <toolTip>
                         <_item>tutti i prodotti filtrati</_item>
@@ -417,10 +435,10 @@
                         <_item>Formato valido al in hh</_item>
                       </label>
                       <shortLabel>
-                        <_item>A (hh)</_item>
+                        <_item>Al (hh)</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Formato valido a in hh</_item>
+                        <_item>Formato valido al in hh</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -909,10 +927,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProcessPricesResult:numberProcessed" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numero Elaborato</_item>
+                        <_item>Numero Processati</_item>
                       </label>
                       <toolTip>
-                        <_item>Numero Elaborato</_item>
+                        <_item>Numero Processati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1118,10 +1136,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:nameReplacementRegex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Espressione di Sostituzione nome</_item>
+                        <_item>Espr. reg. di Sostituzione nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Espressione di Sostituzione del nome</_item>
+                        <_item>Espressione Regolare di Sostituzione del nome</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1195,10 +1213,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementRegex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Espressione di sostituzione del nome</_item>
+                        <_item>Espr. Reg. di sostituzione del nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Espressione di sostituzione del nome</_item>
+                        <_item>Espressione Regolare di sostituzione del nome</_item>
                       </toolTip>
                     </_object>
                     <_content/>

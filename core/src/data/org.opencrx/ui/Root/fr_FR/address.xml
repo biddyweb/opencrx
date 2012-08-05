@@ -524,10 +524,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ville</_item>
+                        <_item>Commune</_item>
                       </label>
                       <toolTip>
-                        <_item>Ville</_item>
+                        <_item>Commune</_item>
                       </toolTip>
                     </_object>
                     <_content/>

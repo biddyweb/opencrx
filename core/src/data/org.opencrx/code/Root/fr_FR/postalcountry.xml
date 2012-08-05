@@ -15,8 +15,33 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="004" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>AF</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Afganistan [AF]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="008" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AL</_item>
+                            </shortText>
                             <longText>
                               <_item>Albanie  [AL]</_item>
                             </longText>
@@ -25,6 +50,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="012" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>DZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Algérie [DZ]</_item>
                             </longText>
@@ -33,6 +61,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="016" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AS</_item>
+                            </shortText>
                             <longText>
                               <_item>Samoa américaines  [AS]</_item>
                             </longText>
@@ -41,14 +72,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="020" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AD</_item>
+                            </shortText>
                             <longText>
                               <_item>Andorre [AD]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="024" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>AO</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Angola [AO]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="660" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>AI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Anguilla [AI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="010" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AQ</_item>
+                            </shortText>
                             <longText>
                               <_item>Antarctique  [AQ]</_item>
                             </longText>
@@ -57,6 +116,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="028" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AG</_item>
+                            </shortText>
                             <longText>
                               <_item>Antigua-et-Barbuda [AG]</_item>
                             </longText>
@@ -65,6 +127,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="032" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AR</_item>
+                            </shortText>
                             <longText>
                               <_item>Argentine  [AR]</_item>
                             </longText>
@@ -73,14 +138,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="051" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AM</_item>
+                            </shortText>
                             <longText>
                               <_item>Arménie  [AM]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="533" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>AW</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Aruba [AW]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="036" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AU</_item>
+                            </shortText>
                             <longText>
                               <_item>Australie  [AU]</_item>
                             </longText>
@@ -89,6 +171,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="040" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AT</_item>
+                            </shortText>
                             <longText>
                               <_item>Autriche  [AT]</_item>
                             </longText>
@@ -97,22 +182,53 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="031" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Azerbaïdjan [AZ]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="044" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>BS</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Bahamas [BS]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="048" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BH</_item>
+                            </shortText>
                             <longText>
                               <_item>Bahreïn  [BH]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="050" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>BD</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Banlgadesh [BD]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="052" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BB</_item>
+                            </shortText>
                             <longText>
                               <_item>Barbade [BB]</_item>
                             </longText>
@@ -121,6 +237,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="112" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BY</_item>
+                            </shortText>
                             <longText>
                               <_item>Bélarus [BY]</_item>
                             </longText>
@@ -129,14 +248,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="056" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BE</_item>
+                            </shortText>
                             <longText>
                               <_item>Belgique [BE]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="084" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>BZ</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Belice [BZ]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="204" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BJ</_item>
+                            </shortText>
                             <longText>
                               <_item>Bénin [BJ]</_item>
                             </longText>
@@ -145,6 +281,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="060" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BM</_item>
+                            </shortText>
                             <longText>
                               <_item>Bermudes [BM]</_item>
                             </longText>
@@ -153,6 +292,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="064" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BT</_item>
+                            </shortText>
                             <longText>
                               <_item>Bhoutan [BT]</_item>
                             </longText>
@@ -161,6 +303,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="068" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BO</_item>
+                            </shortText>
                             <longText>
                               <_item>Bolivie [BO]</_item>
                             </longText>
@@ -169,14 +314,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="070" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BA</_item>
+                            </shortText>
                             <longText>
                               <_item>Bosnie-Herzégovine [BA]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="072" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>BW</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Botswana [BW]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="074" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BV</_item>
+                            </shortText>
                             <longText>
                               <_item>Bouvet, Ile [BV]</_item>
                             </longText>
@@ -185,6 +347,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="076" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BR</_item>
+                            </shortText>
                             <longText>
                               <_item>Brésil [BR]</_item>
                             </longText>
@@ -193,6 +358,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="086" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IO</_item>
+                            </shortText>
                             <longText>
                               <_item>Océan indien, Territoire britannique de l&apos; [IO]</_item>
                             </longText>
@@ -201,6 +369,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="096" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BN</_item>
+                            </shortText>
                             <longText>
                               <_item>Brunéi Darussalam [BN]</_item>
                             </longText>
@@ -209,14 +380,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>BG</_item>
+                            </shortText>
                             <longText>
                               <_item>Bulgarie  [BG]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="854" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>BF</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Burkina Faso [BF]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="108" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>BI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Burundi [BI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="116" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KH</_item>
+                            </shortText>
                             <longText>
                               <_item>Cambodge [KH]</_item>
                             </longText>
@@ -225,14 +424,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CM</_item>
+                            </shortText>
                             <longText>
                               <_item>Cameroun [CM]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="124" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>CA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Canada [CA]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="132" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CV</_item>
+                            </shortText>
                             <longText>
                               <_item>Cap-Vert, Iles du [CV]</_item>
                             </longText>
@@ -241,6 +457,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="136" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KY</_item>
+                            </shortText>
                             <longText>
                               <_item>Caïman, Iles [KY]</_item>
                             </longText>
@@ -249,6 +468,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CF</_item>
+                            </shortText>
                             <longText>
                               <_item>Centrafrique [CF]</_item>
                             </longText>
@@ -257,6 +479,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="148" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TD</_item>
+                            </shortText>
                             <longText>
                               <_item>Tchad [TD]</_item>
                             </longText>
@@ -265,6 +490,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="152" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CL</_item>
+                            </shortText>
                             <longText>
                               <_item>Chili [CL]</_item>
                             </longText>
@@ -273,6 +501,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="156" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CN</_item>
+                            </shortText>
                             <longText>
                               <_item>Chine [CN]</_item>
                             </longText>
@@ -281,6 +512,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="162" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CX</_item>
+                            </shortText>
                             <longText>
                               <_item>Christmas, Ile [CX]</_item>
                             </longText>
@@ -289,6 +523,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="166" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CC</_item>
+                            </shortText>
                             <longText>
                               <_item>Cocos (Keeling), Iles des [CC]</_item>
                             </longText>
@@ -297,6 +534,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="170" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CO</_item>
+                            </shortText>
                             <longText>
                               <_item>Colombie [CO]</_item>
                             </longText>
@@ -305,14 +545,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="174" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KM</_item>
+                            </shortText>
                             <longText>
                               <_item>Comores [KM]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="178" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>CG</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Congo [CG]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="180" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CD</_item>
+                            </shortText>
                             <longText>
                               <_item>Congo, République démocratique du [CD]</_item>
                             </longText>
@@ -321,22 +578,64 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="184" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CK</_item>
+                            </shortText>
                             <longText>
                               <_item>Cook, Iles [CI]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="188" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>CR</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Costa Rica [CR]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="384" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>CI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Côte d&apos;Ivoire [CI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="191" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>HR</_item>
+                            </shortText>
                             <longText>
                               <_item>Croatie [HR]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="192" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>CU</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Cuba [CU]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="196" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CY</_item>
+                            </shortText>
                             <longText>
                               <_item>Chypre [CY]</_item>
                             </longText>
@@ -345,6 +644,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="203" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Tchèque, République [CZ]</_item>
                             </longText>
@@ -353,6 +655,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="208" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>DK</_item>
+                            </shortText>
                             <longText>
                               <_item>Danemark [DK]</_item>
                             </longText>
@@ -361,6 +666,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="262" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>DJ</_item>
+                            </shortText>
                             <longText>
                               <_item>Djibouti [DJ]</_item>
                             </longText>
@@ -369,6 +677,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="212" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>DM</_item>
+                            </shortText>
                             <longText>
                               <_item>Dominique [DM]</_item>
                             </longText>
@@ -377,6 +688,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="214" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>DO</_item>
+                            </shortText>
                             <longText>
                               <_item>Dominicaine, République [DO]</_item>
                             </longText>
@@ -385,6 +699,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="626" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TP</_item>
+                            </shortText>
                             <longText>
                               <_item>Timor oriental [TP]</_item>
                             </longText>
@@ -393,6 +710,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="218" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>EC</_item>
+                            </shortText>
                             <longText>
                               <_item>Équateur [EC]</_item>
                             </longText>
@@ -401,14 +721,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="818" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>EG</_item>
+                            </shortText>
                             <longText>
                               <_item>Egypte [EG]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="222" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>SV</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Salvador [SV]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="226" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GQ</_item>
+                            </shortText>
                             <longText>
                               <_item>Guinée équatoriale [GQ]</_item>
                             </longText>
@@ -417,6 +754,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="232" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ER</_item>
+                            </shortText>
                             <longText>
                               <_item>Érythrée [ER]</_item>
                             </longText>
@@ -425,6 +765,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="233" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>EE</_item>
+                            </shortText>
                             <longText>
                               <_item>Estonie [EE]</_item>
                             </longText>
@@ -433,6 +776,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="231" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ET</_item>
+                            </shortText>
                             <longText>
                               <_item>Éthiopie [ET]</_item>
                             </longText>
@@ -441,6 +787,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="238" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>FK</_item>
+                            </shortText>
                             <longText>
                               <_item>Falkland, Iles (Malouines) [FK]</_item>
                             </longText>
@@ -449,6 +798,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="234" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>FO</_item>
+                            </shortText>
                             <longText>
                               <_item>Féroé, Iles [FO]</_item>
                             </longText>
@@ -457,6 +809,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="242" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>FJ</_item>
+                            </shortText>
                             <longText>
                               <_item>Fidji [FJ]</_item>
                             </longText>
@@ -465,30 +820,75 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="246" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>FI</_item>
+                            </shortText>
                             <longText>
                               <_item>Finlande [FI]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="249" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>FR</_item>
+                            </shortText>
+                            <longText>
+                              <_item>France [FR]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="254" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GF</_item>
+                            </shortText>
                             <longText>
-                              <_item>Guyane française [GF]</_item>
+                              <_item>Guyane Française [GF]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="258" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PF</_item>
+                            </shortText>
                             <longText>
-                              <_item>Polynésie française [PF]</_item>
+                              <_item>Polynésie Française [PF]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>TF</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Territoires Français du Sud [TF]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="266" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>GA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Gabon [GA]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GM</_item>
+                            </shortText>
                             <longText>
                               <_item>Gambie [GM]</_item>
                             </longText>
@@ -497,6 +897,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="268" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GE</_item>
+                            </shortText>
                             <longText>
                               <_item>Géorgie [GE]</_item>
                             </longText>
@@ -505,14 +908,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="276" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>DE</_item>
+                            </shortText>
                             <longText>
                               <_item>Allemagne [DE]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="288" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>GH</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Ghana [GH]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="292" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>GI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Gibraltar [GI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GR</_item>
+                            </shortText>
                             <longText>
                               <_item>Grèce [GR]</_item>
                             </longText>
@@ -521,6 +952,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="304" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GL</_item>
+                            </shortText>
                             <longText>
                               <_item>Groenland [GL]</_item>
                             </longText>
@@ -529,6 +963,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="308" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GD</_item>
+                            </shortText>
                             <longText>
                               <_item>Grenade [GD]</_item>
                             </longText>
@@ -537,14 +974,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="312" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GP</_item>
+                            </shortText>
                             <longText>
                               <_item>Guadeloupe [GP]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="316" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>GU</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Guam [GU]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GT</_item>
+                            </shortText>
                             <longText>
                               <_item>Guatemala [GT]</_item>
                             </longText>
@@ -553,6 +1007,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="324" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GN</_item>
+                            </shortText>
                             <longText>
                               <_item>Guinée [GN]</_item>
                             </longText>
@@ -561,6 +1018,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="624" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GW</_item>
+                            </shortText>
                             <longText>
                               <_item>Guinée-bissau [GW]</_item>
                             </longText>
@@ -569,6 +1029,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="328" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GY</_item>
+                            </shortText>
                             <longText>
                               <_item>Guyane [GY]</_item>
                             </longText>
@@ -577,6 +1040,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="332" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>HT</_item>
+                            </shortText>
                             <longText>
                               <_item>Haïti [HT]</_item>
                             </longText>
@@ -585,6 +1051,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="334" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>HM</_item>
+                            </shortText>
                             <longText>
                               <_item>Heard, Ile et McDonald, Iles [HM]</_item>
                             </longText>
@@ -593,14 +1062,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="336" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>VA</_item>
+                            </shortText>
                             <longText>
                               <_item>Saint-Siège (état de la cité du Vatican)  [VA]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="340" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>HN</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Honduras [HN]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="344" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>HK</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Hong Kong [HK]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="348" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>HU</_item>
+                            </shortText>
                             <longText>
                               <_item>Hongrie [HU]</_item>
                             </longText>
@@ -609,6 +1106,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="352" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IS</_item>
+                            </shortText>
                             <longText>
                               <_item>Islande [IS]</_item>
                             </longText>
@@ -617,6 +1117,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="356" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IN</_item>
+                            </shortText>
                             <longText>
                               <_item>Inde [IN]</_item>
                             </longText>
@@ -625,6 +1128,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="360" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ID</_item>
+                            </shortText>
                             <longText>
                               <_item>Indonésie [ID]</_item>
                             </longText>
@@ -633,14 +1139,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="364" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IR</_item>
+                            </shortText>
                             <longText>
                               <_item>Iran, République islamique d&apos; [IR]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="368" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>IQ</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Irak [IQ]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="372" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IE</_item>
+                            </shortText>
                             <longText>
                               <_item>Irlande [IE]</_item>
                             </longText>
@@ -649,6 +1172,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="376" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IL</_item>
+                            </shortText>
                             <longText>
                               <_item>Israël [IL]</_item>
                             </longText>
@@ -657,6 +1183,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="380" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>IT</_item>
+                            </shortText>
                             <longText>
                               <_item>Italie [IT]</_item>
                             </longText>
@@ -665,6 +1194,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="388" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>JM</_item>
+                            </shortText>
                             <longText>
                               <_item>Jamaïque [JM]</_item>
                             </longText>
@@ -673,6 +1205,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="392" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>JP</_item>
+                            </shortText>
                             <longText>
                               <_item>Japon [JP]</_item>
                             </longText>
@@ -681,22 +1216,53 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>JO</_item>
+                            </shortText>
                             <longText>
                               <_item>Jordanie [JO]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="398" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>KZ</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Kazakstan [KZ]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="404" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KE</_item>
+                            </shortText>
                             <longText>
                               <_item>Kenya [KE]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="296" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>KI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Kiribati [KI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="408" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KP</_item>
+                            </shortText>
                             <longText>
                               <_item>Corée, République populaire démocratique de [KP]</_item>
                             </longText>
@@ -705,6 +1271,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KR</_item>
+                            </shortText>
                             <longText>
                               <_item>Corée, République de []</_item>
                             </longText>
@@ -713,6 +1282,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="414" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KW</_item>
+                            </shortText>
                             <longText>
                               <_item>Koweït [KW]</_item>
                             </longText>
@@ -721,6 +1293,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="417" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KG</_item>
+                            </shortText>
                             <longText>
                               <_item>Kirghizistan [KG]</_item>
                             </longText>
@@ -729,6 +1304,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="418" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>LA</_item>
+                            </shortText>
                             <longText>
                               <_item>Lao, République démocratique populaire [LA]</_item>
                             </longText>
@@ -737,6 +1315,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="428" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>LV</_item>
+                            </shortText>
                             <longText>
                               <_item>Lettonie [LV]</_item>
                             </longText>
@@ -745,30 +1326,86 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="422" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>LB</_item>
+                            </shortText>
                             <longText>
                               <_item>Liban [LB]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="426" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>LS</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Lesoto [LS]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>LR</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Liberia [LR]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="434" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>LY</_item>
+                            </shortText>
                             <longText>
                               <_item>Libye, Jamahiriya arabe de [LY]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="438" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>LI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Liechtenstein [LI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>LT</_item>
+                            </shortText>
                             <longText>
                               <_item>Lituanie [LT]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="442" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>LU</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Luxembourg [LU]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="446" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MO</_item>
+                            </shortText>
                             <longText>
                               <_item>Macao [MO]</_item>
                             </longText>
@@ -777,22 +1414,75 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="807" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MK</_item>
+                            </shortText>
                             <longText>
                               <_item>Macédoine, Ex-république yougoslave de [MK]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>MG</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Madagascar [MG]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="454" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>MW</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Malawi [MW]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="458" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MY</_item>
+                            </shortText>
                             <longText>
                               <_item>Malaisie [MY]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="462" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>MV</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Maldives [MV]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="466" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>ML</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Mali [ML]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="470" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MT</_item>
+                            </shortText>
                             <longText>
                               <_item>Malte [MT]</_item>
                             </longText>
@@ -801,6 +1491,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="584" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MH</_item>
+                            </shortText>
                             <longText>
                               <_item>Marshall, Iles [MH]</_item>
                             </longText>
@@ -809,6 +1502,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="474" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MQ</_item>
+                            </shortText>
                             <longText>
                               <_item>Martinique [MQ]</_item>
                             </longText>
@@ -817,6 +1513,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="478" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MR</_item>
+                            </shortText>
                             <longText>
                               <_item>Mauritanie [MR]</_item>
                             </longText>
@@ -825,14 +1524,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="480" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MU</_item>
+                            </shortText>
                             <longText>
                               <_item>Maurice [MU]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="175" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>YT</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Mayotte [YT]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="484" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MX</_item>
+                            </shortText>
                             <longText>
                               <_item>Mexique [MX]</_item>
                             </longText>
@@ -841,6 +1557,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="583" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>FM</_item>
+                            </shortText>
                             <longText>
                               <_item>Micronésie, États fédérés de [FM]</_item>
                             </longText>
@@ -849,14 +1568,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="498" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MD</_item>
+                            </shortText>
                             <longText>
                               <_item>Moldova, République de [MD]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="492" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>MC</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Monaco [MC]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="496" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MN</_item>
+                            </shortText>
                             <longText>
                               <_item>Mongolie [MN]</_item>
                             </longText>
@@ -865,6 +1601,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MS</_item>
+                            </shortText>
                             <longText>
                               <_item>Montserrat [MS]</_item>
                             </longText>
@@ -873,14 +1612,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="504" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MA</_item>
+                            </shortText>
                             <longText>
                               <_item>Maroc [MA]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="508" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>MZ</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Mozambique [MZ]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="104" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MM</_item>
+                            </shortText>
                             <longText>
                               <_item>Myanmar (Birmanie) [MM]</_item>
                             </longText>
@@ -889,14 +1645,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="516" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
                             <longText>
                               <_item>Namibie [NA]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NR</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Nauru [NR]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="524" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NP</_item>
+                            </shortText>
                             <longText>
                               <_item>Népal [NP]</_item>
                             </longText>
@@ -905,6 +1678,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="528" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NL</_item>
+                            </shortText>
                             <longText>
                               <_item>Pays-Bas [NL]</_item>
                             </longText>
@@ -913,6 +1689,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AN</_item>
+                            </shortText>
                             <longText>
                               <_item>Antilles néerlandaises  [AN]</_item>
                             </longText>
@@ -921,6 +1700,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="540" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NC</_item>
+                            </shortText>
                             <longText>
                               <_item>Nouvelle-Calédonie [NC]</_item>
                             </longText>
@@ -929,22 +1711,64 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="554" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Nouvelle-Zélande [NZ]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="558" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NI</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Nicaragua [NI]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="562" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NE</_item>
+                            </shortText>
                             <longText>
                               <_item>Niger [NE]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="566" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NG</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Nigeria [NG]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="570" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NU</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Niue [NU]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="574" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NF</_item>
+                            </shortText>
                             <longText>
                               <_item>Norfolk, Ile [NF]</_item>
                             </longText>
@@ -953,6 +1777,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="580" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>MP</_item>
+                            </shortText>
                             <longText>
                               <_item>Mariannes du nord, Iles [MP]</_item>
                             </longText>
@@ -961,14 +1788,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="578" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>NO</_item>
+                            </shortText>
                             <longText>
                               <_item>Norvège [NO]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="512" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>OM</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Oman [OM]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="586" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>PK</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Pakistan [PK]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="585" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PW</_item>
+                            </shortText>
                             <longText>
                               <_item>Palaos [PW]</_item>
                             </longText>
@@ -977,46 +1832,130 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="275" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PS</_item>
+                            </shortText>
                             <longText>
                               <_item>Palestinien occupé, Territoire [PS]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="591" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>PA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Panama [PA]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="598" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PG</_item>
+                            </shortText>
                             <longText>
                               <_item>Papouasie-Nouvelle-Guinée [PG]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="600" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>PY</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Paraguay [PY]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="604" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PE</_item>
+                            </shortText>
                             <longText>
                               <_item>Pérou [PE]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="608" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>PH</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Philippines [PH]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="612" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>PN</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Pitcairn [PN]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="616" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PL</_item>
+                            </shortText>
                             <longText>
                               <_item>Pologne [PL]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>PT</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Portugal [PT]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="630" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PR</_item>
+                            </shortText>
                             <longText>
                               <_item>Porto Rico [PR]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="634" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>QA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Qatar [QA]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="638" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>RE</_item>
+                            </shortText>
                             <longText>
                               <_item>Réunion [RE]</_item>
                             </longText>
@@ -1025,6 +1964,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="642" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>RO</_item>
+                            </shortText>
                             <longText>
                               <_item>Roumanie [RO]</_item>
                             </longText>
@@ -1033,14 +1975,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="643" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>RU</_item>
+                            </shortText>
                             <longText>
                               <_item>Russie, Fédération de [RU]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="646" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>RW</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Ruanda [RW]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="654" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SH</_item>
+                            </shortText>
                             <longText>
                               <_item>Sainte-Hélène [SH]</_item>
                             </longText>
@@ -1049,6 +2008,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="659" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>KN</_item>
+                            </shortText>
                             <longText>
                               <_item>Saint-Kitts-et-Nevis [KN]</_item>
                             </longText>
@@ -1057,6 +2019,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="662" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>LC</_item>
+                            </shortText>
                             <longText>
                               <_item>Sainte-Lucie [LC]</_item>
                             </longText>
@@ -1065,6 +2030,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="666" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>PM</_item>
+                            </shortText>
                             <longText>
                               <_item>Saint-Pierre-et-Miquelon [PM]</_item>
                             </longText>
@@ -1073,14 +2041,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="670" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>VC</_item>
+                            </shortText>
                             <longText>
                               <_item>Saint-Vincent-et-les Grenadines [VC]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="882" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>WS</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Samoa [WS]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="674" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SM</_item>
+                            </shortText>
                             <longText>
                               <_item>Saint-Marin [SM]</_item>
                             </longText>
@@ -1089,6 +2074,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="678" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ST</_item>
+                            </shortText>
                             <longText>
                               <_item>Sao Tomé-et-Principe [ST]</_item>
                             </longText>
@@ -1097,6 +2085,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="682" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SA</_item>
+                            </shortText>
                             <longText>
                               <_item>Arabie Saoudite [SA]</_item>
                             </longText>
@@ -1105,14 +2096,53 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="686" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SN</_item>
+                            </shortText>
                             <longText>
                               <_item>Sénégal [SN]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="688" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>RS</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Serbie [RS]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="690" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>SC</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Seychelles [SC]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="694" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>SL</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Sierra Leone [SL]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="702" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SG</_item>
+                            </shortText>
                             <longText>
                               <_item>Singapour [SG]</_item>
                             </longText>
@@ -1121,6 +2151,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="703" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SK</_item>
+                            </shortText>
                             <longText>
                               <_item>Slovaquie [SK]</_item>
                             </longText>
@@ -1129,6 +2162,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="705" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SI</_item>
+                            </shortText>
                             <longText>
                               <_item>Slovénie [SI]</_item>
                             </longText>
@@ -1137,6 +2173,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="090" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SB</_item>
+                            </shortText>
                             <longText>
                               <_item>Salomon, Iles [SB]</_item>
                             </longText>
@@ -1145,6 +2184,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="706" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SO</_item>
+                            </shortText>
                             <longText>
                               <_item>Somalie [SO]</_item>
                             </longText>
@@ -1153,6 +2195,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="710" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ZA</_item>
+                            </shortText>
                             <longText>
                               <_item>Afrique du Sud [ZA]</_item>
                             </longText>
@@ -1161,6 +2206,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="239" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GS</_item>
+                            </shortText>
                             <longText>
                               <_item>Géorgie du Sud et les îles Sandwich du Sud [GS]</_item>
                             </longText>
@@ -1169,14 +2217,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="724" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ES</_item>
+                            </shortText>
                             <longText>
                               <_item>Espagne [ES]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="144" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>LK</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Sri Lanka [LK]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="736" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SD</_item>
+                            </shortText>
                             <longText>
                               <_item>Soudan [SD]</_item>
                             </longText>
@@ -1185,6 +2250,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="740" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SR</_item>
+                            </shortText>
                             <longText>
                               <_item>Suriname [SR]</_item>
                             </longText>
@@ -1193,6 +2261,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="744" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SJ</_item>
+                            </shortText>
                             <longText>
                               <_item>Svalbard et île Jan Mayen [SJ]</_item>
                             </longText>
@@ -1201,6 +2272,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="748" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Swaziland [SZ]</_item>
                             </longText>
@@ -1209,6 +2283,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="752" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SE</_item>
+                            </shortText>
                             <longText>
                               <_item>Suède [SE]</_item>
                             </longText>
@@ -1217,6 +2294,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="756" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>CH</_item>
+                            </shortText>
                             <longText>
                               <_item>Suisse (Confédération Helvétique) [CH]</_item>
                             </longText>
@@ -1225,6 +2305,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="760" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>SY</_item>
+                            </shortText>
                             <longText>
                               <_item>Syrie, République arabe de [SY]</_item>
                             </longText>
@@ -1233,6 +2316,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="158" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TW</_item>
+                            </shortText>
                             <longText>
                               <_item>Taïwan, Province de chine [TW]</_item>
                             </longText>
@@ -1241,6 +2327,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="762" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TJ</_item>
+                            </shortText>
                             <longText>
                               <_item>Tadjikistan [TJ]</_item>
                             </longText>
@@ -1249,6 +2338,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="834" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Tanzanie, République-unie de [TZ]</_item>
                             </longText>
@@ -1257,14 +2349,53 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="764" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TH</_item>
+                            </shortText>
                             <longText>
                               <_item>Thaïlande [TH]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="768" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>TG</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Togo [TG]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="772" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>TK</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Tokelau [TK]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="776" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>TO</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Tonga [TO]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="780" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TT</_item>
+                            </shortText>
                             <longText>
                               <_item>Trinité-et-Tobago [TT]</_item>
                             </longText>
@@ -1273,6 +2404,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="788" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TN</_item>
+                            </shortText>
                             <longText>
                               <_item>Tunisie [TN]</_item>
                             </longText>
@@ -1281,6 +2415,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="792" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TR</_item>
+                            </shortText>
                             <longText>
                               <_item>Turquie [TR]</_item>
                             </longText>
@@ -1289,6 +2426,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="795" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TM</_item>
+                            </shortText>
                             <longText>
                               <_item>Turkménistan [TM]</_item>
                             </longText>
@@ -1297,6 +2437,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="796" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TC</_item>
+                            </shortText>
                             <longText>
                               <_item>Turks and Caïques, Iles [TC]</_item>
                             </longText>
@@ -1305,6 +2448,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="798" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>TV</_item>
+                            </shortText>
                             <longText>
                               <_item>Tuvalu [TV]</_item>
                             </longText>
@@ -1313,14 +2459,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>UG</_item>
+                            </shortText>
                             <longText>
                               <_item>Ouganda [UG]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="804" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>UA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Ukraine [UA]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="784" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>AE</_item>
+                            </shortText>
                             <longText>
                               <_item>Émirats arabes unis [AE]</_item>
                             </longText>
@@ -1329,6 +2492,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="826" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>GB</_item>
+                            </shortText>
                             <longText>
                               <_item>Royaume-Uni de Grande-Bretagne et d&apos;Irlande  du Nord [GB]</_item>
                             </longText>
@@ -1337,6 +2503,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="840" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>US</_item>
+                            </shortText>
                             <longText>
                               <_item>Etats Unis d&apos;Amérique [US]</_item>
                             </longText>
@@ -1345,14 +2514,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="581" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>UM</_item>
+                            </shortText>
                             <longText>
                               <_item>Iles Mineures Éloignées des États-Unis [UM]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="858" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>UY</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Uruguay [UY]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="860" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>UZ</_item>
+                            </shortText>
                             <longText>
                               <_item>Ouzbékistan [UZ]</_item>
                             </longText>
@@ -1361,14 +2547,42 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="548" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>VU</_item>
+                            </shortText>
                             <longText>
                               <_item>Vanuatu [VU]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="862" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>VE</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Venezuela [VE]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="704" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>VN</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Vietnam [VN]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="850" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>VI</_item>
+                            </shortText>
                             <longText>
                               <_item>Vierges (États-Unis), Iles [VI]</_item>
                             </longText>
@@ -1377,14 +2591,31 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="092" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>VG</_item>
+                            </shortText>
                             <longText>
                               <_item>Vierges (britanniques), Iles [VG]</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="876" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>WF</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Wallis et Futuna [WF]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="732" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>EH</_item>
+                            </shortText>
                             <longText>
                               <_item>Sahara occidental [EH]</_item>
                             </longText>
@@ -1393,6 +2624,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="887" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>YE</_item>
+                            </shortText>
                             <longText>
                               <_item>Yémen [YE]</_item>
                             </longText>
@@ -1401,6 +2635,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="891" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>YU</_item>
+                            </shortText>
                             <longText>
                               <_item>Yougoslavie [YU]</_item>
                             </longText>
@@ -1409,8 +2646,22 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="894" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>ZM</_item>
+                            </shortText>
                             <longText>
                               <_item>Zambie [ZM]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="716" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>ZW</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Zimbabwe [ZW]</_item>
                             </longText>
                           </_object>
                           <_content/>

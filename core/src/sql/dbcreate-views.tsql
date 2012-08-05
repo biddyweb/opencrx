@@ -102,9 +102,9 @@ DROP VIEW OOCKE1_JOIN_SEGCONTAINSADR COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
-DROP VIEW OOCSE1_TOBJ_USERS COMMAND_TERMINATOR 
+DROP VIEW OOMSE2_TOBJ_USERS COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
-DROP VIEW OOCSE1_TOBJ_ROLES COMMAND_TERMINATOR 
+DROP VIEW OOMSE2_TOBJ_ROLES COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -909,15 +909,9 @@ SELECT
     d.owner_,
     d.name AS name,
     d.description AS description,
-#if defined(DB2_8)
-    NULL_CHAR AS valid_from,
-    NULL_CHAR AS valid_to,
-    NULL_CHAR AS disabled,
-#else
-    NULL AS valid_from,
-    NULL AS valid_to,
-    NULL AS disabled,
-#endif
+    d.active_on AS valid_from,
+    d.active_until AS valid_to,
+    d.disabled AS disabled,
     d.object_id AS document,
     d.object_id AS based_on
 FROM
@@ -2089,27 +2083,27 @@ FROM
     OOCKE1_WORKRECORD_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCSE1_TOBJ_USERS AS
+CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT 
     p.name AS principal_name, 
     c.passwd
 FROM
-    OOCSE1_PRINCIPAL p
+    OOMSE2_PRINCIPAL p
 INNER JOIN
-    OOCSE1_CREDENTIAL c
+    OOMSE2_CREDENTIAL c
 ON
     p.credential = c.object_id COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCSE1_TOBJ_ROLES AS
+CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
     p.name AS principal_name,
     r.name AS role_name
 FROM 
-    OOCSE1_PRINCIPAL_ pg, 
-    OOCSE1_PRINCIPAL p, 
-    OOCSE1_PRINCIPAL_ pn, 
-    OOCSE1_ROLE r 
+    OOMSE2_PRINCIPAL_ pg, 
+    OOMSE2_PRINCIPAL p, 
+    OOMSE2_PRINCIPAL_ pn, 
+    OOMSE2_ROLE r 
 WHERE  
     (p.object_id = pn.object_id) AND 
     (pn.is_member_of = pg.object_id) AND 

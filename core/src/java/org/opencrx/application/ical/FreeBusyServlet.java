@@ -1,11 +1,11 @@
 /*
  * ====================================================================
- * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.7 2008/10/30 15:20:04 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: FreeBusyServlet.java,v 1.10 2009/03/08 17:04:47 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/30 15:20:04 $
+ * Date:        $Date: 2009/03/08 17:04:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -135,7 +135,7 @@ public class FreeBusyServlet extends HttpServlet {
         super.init();        
         if(this.persistenceManagerFactory == null) {                    
             try {
-                Utils.createModel();
+                Utils.getModel();
                 this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
                 this.rootPm = this.persistenceManagerFactory.getPersistenceManager(
                     SecurityKeys.ROOT_PRINCIPAL,
@@ -300,7 +300,8 @@ public class FreeBusyServlet extends HttpServlet {
         }
         try {
             pm.close();            
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
     }
     
     //-----------------------------------------------------------------------

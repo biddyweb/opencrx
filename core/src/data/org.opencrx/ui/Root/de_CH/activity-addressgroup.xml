@@ -94,10 +94,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:identity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Adresse</_item>
+                        <_item>Titel</_item>
                       </label>
                       <toolTip>
-                        <_item>Adresse</_item>
+                        <_item>Titel</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -109,6 +109,17 @@
                       </label>
                       <toolTip>
                         <_item>Adresse</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:disabledReason">
+                    <_object>
+                      <label>
+                        <_item>Begründung</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Begründung</_item>
                       </toolTip>
                     </_object>
                     <_content/>

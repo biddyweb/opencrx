@@ -300,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SetAccessLevelParams:accessLevelDelete" _operation="create">
                     <_object>
                       <label>
-                        <_item>Deletar Nível de Acesso</_item>
+                        <_item>Apagar Nível de Acesso</_item>
                       </label>
                       <toolTip>
-                        <_item>Deletar Nível de Acesso</_item>
+                        <_item>Apagar Nível de Acesso</_item>
                       </toolTip>
                     </_object>
                     <_content/>

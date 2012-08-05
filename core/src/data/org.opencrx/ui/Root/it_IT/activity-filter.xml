@@ -143,7 +143,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort" _operation="create">
                     <_object>
                       <label>
@@ -177,7 +176,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty" _operation="create">
                     <_object>
                       <label>
@@ -269,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selezione per Tipo attivita&apos;</_item>
+                        <_item>Filtro Tipo attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selezione per Tipo d&apos;attivita&apos;</_item>
+                        <_item>Filtro per Tipo d&apos;attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -291,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selezione per Assegnazione</_item>
+                        <_item>Filtro Assegnatario</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selezione per Assegnazione</_item>
+                        <_item>Filtro per Assegnatario</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -313,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selezione per Data Termine Prevista</_item>
+                        <_item>Filtro Data Termine Prevista</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selezione per Data Termine Prevista</_item>
+                        <_item>Filtro per Data Termine Prevista</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -346,10 +344,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selezione per Inizio previsto</_item>
+                        <_item>Filtro Inizio previsto</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selezione per Inizio previsto</_item>
+                        <_item>Filtro per Inizio previsto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -379,10 +377,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityQueryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selezione per Interrogazione</_item>
+                        <_item>Filtro Interrogazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selezione per Interrogazione</_item>
+                        <_item>Filtro per Interrogazione</_item>
                       </toolTip>
                     </_object>
                     <_content/>

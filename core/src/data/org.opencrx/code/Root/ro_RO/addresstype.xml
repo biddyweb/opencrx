@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Camera</_item>
+                              <_item>Sala</_item>
                             </shortText>
                             <longText>
-                              <_item>Camera</_item>
+                              <_item>Sala</_item>
                             </longText>
                           </_object>
                           <_content/>

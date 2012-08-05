@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE orion-web-app PUBLIC "-//ORACLE//DTD OC4J Web Application 9.04//EN" "http://xmlns.oracle.com/ias/dtds/orion-web-9_04.dtd">
-<orion-web-app internationalize-resources="false" default-mime-type="application/octet-stream">
-	<!-- Uncomment this element to control web application class loader behavior.
-		<web-app-class-loader search-local-classes-first="true"  include-war-manifest-class-path="true" />
-	-->
-	<ejb-ref-mapping location="org/opencrx/core/CRX/Gateway" name="ejb/data"/>
-</orion-web-app>

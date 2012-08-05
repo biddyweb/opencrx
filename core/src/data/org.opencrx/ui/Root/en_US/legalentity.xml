@@ -68,6 +68,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:name">
 										<_object>
 											<active>true</active>
+											<mandatory>true</mandatory>
 											<toolTip>
 												<_item>Legal entity's name</_item>
 											</toolTip>

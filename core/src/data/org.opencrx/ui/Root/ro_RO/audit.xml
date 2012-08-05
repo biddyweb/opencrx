@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry:createdAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ştampilă timp</_item>
+                        <_item>Data / Ora</_item>
                       </label>
                       <toolTip>
-                        <_item>Ştampilă timp</_item>
+                        <_item>Data / Ora</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry:Pane:Op:Tab:testAndSetVisitedBy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Testat şi Setat vizitat de</_item>
+                        <_item>Testat şi Configurat vizitat de</_item>
                       </label>
                       <toolTip>
-                        <_item>Testat şi Setat vizitat de</_item>
+                        <_item>Testat şi Configurat vizitat de</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -6,12 +6,6 @@
 			<ejb-name>opencrx_core_CRX_kernel_mandatory</ejb-name>
 			<jndi-name>org/opencrx/core/CRX/mandatory/kernel</jndi-name>
 			<local-jndi-name>org/opencrx/core/CRX/local/mandatory/kernel</local-jndi-name>
-			<!-- EXTERNAL_PROVIDER_ENABLE_BEGIN
-	    <ejb-ref>
-		    <ejb-ref-name>ejb/dataprovider[4]</ejb-ref-name>
-		    <jndi-name>EXTERNAL_PROVIDER_JNDI_NAME_FORMAT2</jndi-name>
-	    </ejb-ref>
-	    EXTERNAL_PROVIDER_ENABLE_END -->
 			<resource-ref>
 				<res-ref-name>jdbc/datasource[0]</res-ref-name>
 				<jndi-name>jdbc/jdbc_opencrx_CRX</jndi-name>

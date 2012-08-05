@@ -17,6 +17,9 @@
                       <entry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>N/A</_item>
+                            </shortText>
                             <longText>
                               <_item> Indisponibil</_item>
                             </longText>
@@ -25,6 +28,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>Deschis</_item>
+                            </shortText>
                             <longText>
                               <_item>Deschis</_item>
                             </longText>
@@ -33,6 +39,9 @@
                         </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
                           <_object>
+                            <shortText>
+                              <_item>Închis</_item>
+                            </shortText>
                             <longText>
                               <_item>Închis</_item>
                             </longText>

@@ -87,10 +87,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări proprietăţi</_item>
+                        <_item>Configurări proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări proprietăţi</_item>
+                        <_item>Configurări proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -163,7 +163,7 @@
                         <_item>Dezactivat</_item>
                       </label>
                       <toolTip>
-                        <_item>Obiectul e dezactivat</_item>
+                        <_item>Obiect dezactivat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -251,7 +251,7 @@
                         <_item>Dezactivat</_item>
                       </label>
                       <toolTip>
-                        <_item>Obiectul dezactivat</_item>
+                        <_item>Obiect dezactivat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -303,10 +303,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări proprietăţi</_item>
+                        <_item>Configurări proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări proprietăţi</_item>
+                        <_item>Configurări proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -336,10 +336,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:attachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Suport de stocare</_item>
+                        <_item>Conţinut media</_item>
                       </label>
                       <toolTip>
-                        <_item>Suport de stocare ataşat</_item>
+                        <_item>Conţinut media anexat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -537,7 +537,7 @@
                         <_item>Autor</_item>
                       </label>
                       <toolTip>
-                        <_item>autor document</_item>
+                        <_item>Autor document</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -548,7 +548,7 @@
                         <_item>Titlu</_item>
                       </label>
                       <toolTip>
-                        <_item>titlu document</_item>
+                        <_item>Titlu document</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -633,10 +633,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsMeta" _operation="create">
                     <_object>
                       <label>
-                        <_item>Meta CMS</_item>
+                        <_item>Metadate CMS</_item>
                       </label>
                       <toolTip>
-                        <_item>Meta CMS</_item>
+                        <_item>Metadate CMS</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -721,10 +721,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Suport stocare</_item>
+                        <_item>Conţinut media</_item>
                       </label>
                       <toolTip>
-                        <_item>Suport media</_item>
+                        <_item>Conţinut media</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -831,10 +831,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări proprietăţi</_item>
+                        <_item>Configurări proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări proprietăţi</_item>
+                        <_item>Configurări proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -963,10 +963,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Suport de stocare</_item>
+                        <_item>Conţinut media</_item>
                       </label>
                       <toolTip>
-                        <_item>Suport de stocare</_item>
+                        <_item>Conţinut media</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.16 2008/09/02 12:27:56 wfro Exp $
+ * Name:        $Id: Cloneable.java,v 1.22 2009/03/08 17:04:50 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/02 12:27:56 $
+ * Date:        $Date: 2009/03/08 17:04:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,19 +66,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.mof.cci.AggregationKind;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.marshalling.Marshaller;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
-import org.openmdx.compatibility.base.marshalling.Marshaller;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
-import org.openmdx.model1.code.AggregationKind;
 
 public class Cloneable {
 
@@ -180,7 +180,7 @@ public class Cloneable {
     ) throws ServiceException {
         Map<String,ModelElement_1_0> references = (Map)this.backend.getModel().getElement(
             object.values(SystemAttributes.OBJECT_CLASS).get(0)
-        ).values("reference").get(0);        
+        ).objGetValue("reference");        
         for(
             Iterator<String> i = object.attributeNames().iterator(); 
             i.hasNext(); 
@@ -194,7 +194,7 @@ public class Cloneable {
                     if(!matches) {
                         ModelElement_1_0 featureDef = references.get(featureName);
                         if(featureDef != null) {
-                            String qualifiedFeatureName = (String)featureDef.values("qualifiedName").get(0);
+                            String qualifiedFeatureName = (String)featureDef.objGetValue("qualifiedName");
                             matches = 
                                 referenceFilter.contains(featureName) ||
                                 referenceFilter.contains(qualifiedFeatureName);
@@ -282,16 +282,17 @@ public class Cloneable {
                 ModelElement_1_0 featureDef = this.backend.getModel().getFeatureDef(classDef, featureName, false);
                 String qualifiedFeatureName = featureDef == null
                     ? null
-                    : (String)featureDef.values("qualifiedName").get(0);
+                    : (String)featureDef.objGetValue("qualifiedName");
                 if(
                     !(SystemAttributes.OBJECT_CLASS.equals(featureName) || CLONEABLE_READONLY_FEATURES.contains(qualifiedFeatureName)) &&
                     ((featureDef == null) || 
-                    !((Boolean)featureDef.values("isChangeable").get(0)).booleanValue())
+                    !((Boolean)featureDef.objGetValue("isChangeable")).booleanValue())
                 ) {
                     i.remove();                    
                 }                
             }            
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         
         // Either replace existing object with clone or create clone as new object 
         if(replaceExisting) {
@@ -319,31 +320,31 @@ public class Cloneable {
         // Clone content (shared and composite)
         Map<String,ModelElement_1_0> references = (Map)this.backend.getModel().getElement(
             original.values(SystemAttributes.OBJECT_CLASS).get(0)
-        ).values("reference").get(0);
+        ).objGetValue("reference");
         for(
             Iterator<ModelElement_1_0> i = references.values().iterator();
             i.hasNext();
         ) {
             ModelElement_1_0 featureDef = i.next();
             ModelElement_1_0 referencedEnd = this.backend.getModel().getElement(
-                featureDef.values("referencedEnd").get(0)
+                featureDef.objGetValue("referencedEnd")
             );
             boolean referenceIsCompositeAndChangeable = 
                 this.backend.getModel().isReferenceType(featureDef) &&
-                AggregationKind.COMPOSITE.equals(referencedEnd.values("aggregation").get(0)) &&
-                ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue();
+                AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
+                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();
             boolean referenceIsSharedAndChangeable = 
                 this.backend.getModel().isReferenceType(featureDef) &&
-                AggregationKind.SHARED.equals(referencedEnd.values("aggregation").get(0)) &&
-                ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue();
+                AggregationKind.SHARED.equals(referencedEnd.objGetValue("aggregation")) &&
+                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();
             
             // Only navigate changeable references which are either 'composite' or 'shared'
             // Do not navigate references with aggregation 'none'.
             if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
-                String referenceName = (String)featureDef.values("name").get(0);
+                String referenceName = (String)featureDef.objGetValue("name");
                 boolean matches = referenceFilter == null;
                 if(!matches) {
-                    String qualifiedReferenceName = (String)featureDef.values("qualifiedReferenceName").get(0);
+                    String qualifiedReferenceName = (String)featureDef.objGetValue("qualifiedReferenceName");
                     matches =
                         referenceFilter.contains(referenceName) ||
                         referenceFilter.contains(qualifiedReferenceName);
@@ -407,7 +408,8 @@ public class Cloneable {
         DataproviderObject_1_0 object = null;
         try {
             object = this.backend.retrieveObject(objectIdentity);
-        } catch(Exception e) {}
+        } 
+        catch(Exception e) {}
         if(object == null) return 0;
         
         if(isChangeable) {
@@ -523,30 +525,30 @@ public class Cloneable {
         // Apply replacements to composite objects
         Map references = (Map)this.backend.getModel().getElement(
             object.values(SystemAttributes.OBJECT_CLASS).get(0)
-        ).values("reference").get(0);
+        ).objGetValue("reference");
         for(
             Iterator i = references.values().iterator();
             i.hasNext();
         ) {
             ModelElement_1_0 featureDef = (ModelElement_1_0)i.next();
             ModelElement_1_0 referencedEnd = this.backend.getModel().getElement(
-                featureDef.values("referencedEnd").get(0)
+                featureDef.objGetValue("referencedEnd")
             );            
             boolean referenceIsCompositeAndChangeable = 
                 this.backend.getModel().isReferenceType(featureDef) &&
-                AggregationKind.COMPOSITE.equals(referencedEnd.values("aggregation").get(0)) &&
-                ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue();
+                AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
+                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();
             boolean referenceIsSharedAndChangeable = 
                 this.backend.getModel().isReferenceType(featureDef) &&
-                AggregationKind.SHARED.equals(referencedEnd.values("aggregation").get(0)) &&
-                ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue();                
+                AggregationKind.SHARED.equals(referencedEnd.objGetValue("aggregation")) &&
+                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();                
             // Only navigate changeable references which are either 'composite' or 'shared'
             // Do not navigate references with aggregation 'none'.
             if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
-                String featureName = (String)featureDef.values("name").get(0);
+                String featureName = (String)featureDef.objGetValue("name");
                 boolean matches = referenceFilter == null;
                 if(!matches) {
-                    String qualifiedFeatureName = (String)featureDef.values("qualifiedName").get(0);
+                    String qualifiedFeatureName = (String)featureDef.objGetValue("qualifiedName");
                     matches =
                         referenceFilter.contains(featureName) ||
                         referenceFilter.contains(qualifiedFeatureName);
@@ -567,7 +569,7 @@ public class Cloneable {
                         DataproviderObject_1_0 composite = j.next();
                         numberOfReplacements += this.applyReplacements(
                             composite.path(),
-                            ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue(),
+                            ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue(),
                             replacements,
                             referenceFilter
                         );

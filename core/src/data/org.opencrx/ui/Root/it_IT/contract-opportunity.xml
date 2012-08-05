@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:position" _operation="create">
                     <_object>
                       <label>
-                        <_item>Posizioni</_item>
+                        <_item>Righe</_item>
                       </label>
                       <toolTip>
-                        <_item>Posizioni Opportunita&apos;</_item>
+                        <_item>Righe Opportunita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>

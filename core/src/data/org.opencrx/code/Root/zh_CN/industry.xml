@@ -304,10 +304,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="26" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>电信行业</_item>
+                              <_item>通讯行业</_item>
                             </shortText>
                             <longText>
-                              <_item>电信行业</_item>
+                              <_item>通讯行业</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -439,7 +439,7 @@
                               <_item>IT</_item>
                             </shortText>
                             <longText>
-                              <_item>IT</_item>
+                              <_item>信息技术</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -451,6 +451,28 @@
                             </shortText>
                             <longText>
                               <_item>医药</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>批发</_item>
+                            </shortText>
+                            <longText>
+                              <_item>批发</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>海运</_item>
+                            </shortText>
+                            <longText>
+                              <_item>海运</_item>
                             </longText>
                           </_object>
                           <_content/>

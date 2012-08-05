@@ -39,6 +39,9 @@
                       <additionalElementDefinition>
                         <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
                           <_object>
+                            <label>
+                              <_item>产品</_item>
+                            </label>
                             <toolTip>
                               <_item>产品</_item>
                             </toolTip>
@@ -98,6 +101,24 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:basePrice" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>有效基础价格</_item>
+                            </label>
+                            <toolTip>
+                              <_item>有效基础价格</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:priceUom" _operation="create">
                     <_object>
@@ -170,6 +191,9 @@
                       <label>
                         <_item>产品编号</_item>
                       </label>
+                      <shortLabel>
+                        <_item>产品编号</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>产品编号</_item>
                       </toolTip>
@@ -769,6 +793,9 @@
                       <label>
                         <_item>配置类型</_item>
                       </label>
+                      <shortLabel>
+                        <_item>配置类型</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>配置类型</_item>
                       </toolTip>
@@ -794,22 +821,14 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:10:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>其他详细资料</_item>
-                      </label>
-                      <toolTip>
-                        <_item>其他详细资料</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:currentConfig" _operation="create">
                     <_object>
                       <label>
                         <_item>当前配置</_item>
                       </label>
+                      <shortLabel>
+                        <_item>当前配置</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>当前配置</_item>
                       </toolTip>

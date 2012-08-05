@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.25 2008/10/16 16:37:48 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.36 2009/03/15 11:18:17 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/16 16:37:48 $
+ * Date:        $Date: 2009/03/15 11:18:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,10 +62,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.opencrx.kernel.account1.jmi1.EmailAddress;
+import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
@@ -76,20 +77,20 @@ import org.opencrx.kernel.contract1.jmi1.Opportunity;
 import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.utils.Utils;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.DataproviderObject;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.Directions;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterOperators;
+import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.Directions;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.compatibility.base.query.FilterOperators;
-import org.openmdx.compatibility.base.query.FilterProperty;
-import org.openmdx.compatibility.base.query.Quantors;
-import org.w3c.cci2.Datatypes;
+import org.w3c.spi2.Datatypes;
 
 public class Accounts {
 
@@ -110,7 +111,8 @@ public class Accounts {
         try {
             // find on ContactMembership extent
             List ouMemberships = new ArrayList();
-            
+            String providerName = contact.path().get(2);
+            String segmentName = contact.path().get(4);
             // organization memberships
             ouMemberships.addAll(
                 this.backend.getDelegatingRequests().addFindRequest(
@@ -120,7 +122,7 @@ public class Accounts {
 				            Quantors.THERE_EXISTS,
 				            "identity",
 				            FilterOperators.IS_LIKE,
-				            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*/contactMembership/:*"
+				            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(providerName, "segment", segmentName, "organization", ":*", "contactMembership", ":*").toResourcePattern()
 				        ),
 		                new FilterProperty(
 				            Quantors.THERE_EXISTS,
@@ -141,7 +143,7 @@ public class Accounts {
 				            Quantors.THERE_EXISTS,
 				            "identity",
 				            FilterOperators.IS_LIKE,
-				            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*/organizationalUnit/:*/contactMembership/:*"
+				            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(providerName, "segment", segmentName, "organization", ":*", "organizationalUnit", ":*", "contactMembership", ":*").toResourcePattern()
 				        ),
 		                new FilterProperty(
 				            Quantors.THERE_EXISTS,
@@ -670,15 +672,15 @@ public class Accounts {
      * @param emailAddress     The email address
      * @return                 A List of accounts containing the email address
      */
-    public static List<org.opencrx.kernel.account1.jmi1.EmailAddress> lookupEmailAddress(
+    public static List<org.opencrx.kernel.account1.jmi1.EMailAddress> lookupEmailAddress(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         String emailAddress,
         boolean caseInsensitiveAddressLookup
     ) {
-        org.opencrx.kernel.account1.cci2.EmailAddressQuery query = 
-            Utils.getAccountPackage(pm).createEmailAddressQuery();
+        org.opencrx.kernel.account1.cci2.EMailAddressQuery query = 
+            Utils.getAccountPackage(pm).createEMailAddressQuery();
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
             Accounts.getAccountSegment(
                 pm,
@@ -686,24 +688,26 @@ public class Accounts {
                 segmentName
             );
         query.identity().like(
-            Utils.xriAsIdentityPattern(accountSegment.refMofId() + "/account/:*/address/:*")  
+            accountSegment.refGetPath().getDescendant("account", ":*", "address", ":*").toResourcePattern()  
         );
         query.thereExistsEmailAddress().like(
-           caseInsensitiveAddressLookup
-               ? "\\(\\?i\\)" + emailAddress
-               : emailAddress
+           caseInsensitiveAddressLookup ? 
+               "(?i)" + emailAddress : 
+               emailAddress
         );
         return accountSegment.getExtent(query);        
     }
         
     //-------------------------------------------------------------------------
     private static List<org.opencrx.kernel.account1.jmi1.AccountAddress> getAccountAddresses(
+    	PersistenceManager pm,
         org.opencrx.kernel.account1.jmi1.Account account,
         short usage
     ) {
         org.opencrx.kernel.account1.cci2.AccountAddressQuery query = 
-            ((org.opencrx.kernel.account1.jmi1.Account1Package)account.refImmediatePackage()).createAccountAddressQuery();
+        	(org.opencrx.kernel.account1.cci2.AccountAddressQuery)pm.newQuery( org.opencrx.kernel.account1.jmi1.AccountAddress.class); 
         query.thereExistsUsage().equalTo(usage);
+        query.forAllDisabled().isFalse();
         return account.getAddress(query); 
     }
     
@@ -730,10 +734,12 @@ public class Accounts {
         int currentOrderMobile = 0;
         int currentOrderOtherPhone = 0;
         
+        PersistenceManager pm = JDOHelper.getPersistenceManager(account);
         org.opencrx.kernel.account1.jmi1.AccountAddress[] mainAddresses = 
             new org.opencrx.kernel.account1.jmi1.AccountAddress[12];
         // HOME
-        List<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = getAccountAddresses(
+        List<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = Accounts.getAccountAddresses(
+        	pm,
             account,
             Addresses.USAGE_HOME
         );
@@ -751,7 +757,8 @@ public class Accounts {
                 boolean isMain = false;
                 try {
                     isMain = phoneNumber.isMain();
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
                 int orderHomePhone = isMain ? 3 : 1;
                 if(orderHomePhone > currentOrderHomePhone) {
                     mainAddresses[PHONE_HOME] = phoneNumber;
@@ -766,9 +773,9 @@ public class Accounts {
                     currentOrderHomePostal = orderHomePostal;
                 }
             }
-            else if(address instanceof EmailAddress) {
+            else if(address instanceof EMailAddress) {
                 int orderHomeMail = 1;
-                EmailAddress mailAddress = (EmailAddress)address;
+                EMailAddress mailAddress = (EMailAddress)address;
                 if(orderHomeMail > currentOrderHomeMail) {
                     mainAddresses[MAIL_HOME] = mailAddress;
                     currentOrderHomeMail = orderHomeMail;
@@ -776,7 +783,8 @@ public class Accounts {
             }
         }    
         // BUSINESS
-        addresses = getAccountAddresses(
+        addresses = Accounts.getAccountAddresses(
+        	pm,
             account,
             Addresses.USAGE_BUSINESS
         );
@@ -794,7 +802,8 @@ public class Accounts {
                 boolean isMain = false;
                 try {
                     isMain = phoneNumber.isMain();
-                } catch(Exception e) {}
+                } 
+                catch(Exception e) {}
                 int orderBusinessPhone = isMain ? 3 : 1;
                 if(orderBusinessPhone > currentOrderBusinessPhone) {
                     mainAddresses[PHONE_BUSINESS] = phoneNumber;
@@ -809,8 +818,8 @@ public class Accounts {
                     currentOrderBusinessPostal = orderBusinessPostal;
                 }
             }
-            else if(address instanceof EmailAddress) {
-                EmailAddress mailAddress = (EmailAddress)address;
+            else if(address instanceof EMailAddress) {
+                EMailAddress mailAddress = (EMailAddress)address;
                 int orderBusinessMail = 1;
                 if(orderBusinessMail > currentOrderBusinessMail) {
                     mainAddresses[MAIL_BUSINESS] = mailAddress;
@@ -819,7 +828,8 @@ public class Accounts {
             }
         }    
         // OTHER
-        addresses = getAccountAddresses(
+        addresses = Accounts.getAccountAddresses(
+        	pm,
             account,
             Addresses.USAGE_OTHER
         );
@@ -834,7 +844,8 @@ public class Accounts {
             }
         }    
         // HOME_FAX
-        addresses = getAccountAddresses(
+        addresses = Accounts.getAccountAddresses(
+        	pm,
             account,
             Addresses.USAGE_HOME_FAX
         );
@@ -849,7 +860,8 @@ public class Accounts {
             }
         }    
         // BUSINESS_FAX
-        addresses = getAccountAddresses(
+        addresses = Accounts.getAccountAddresses(
+        	pm,
             account,
             Addresses.USAGE_BUSINESS_FAX
         );
@@ -864,7 +876,8 @@ public class Accounts {
             }
         }    
         // MOBILE
-        addresses = getAccountAddresses(
+        addresses = Accounts.getAccountAddresses(
+        	pm,
             account,
             Addresses.USAGE_MOBILE
         );
@@ -896,7 +909,8 @@ public class Accounts {
         byte[] item = null;
         try {
             item = vcard.getBytes("UTF-8");
-        } catch(Exception e) {
+        } 
+        catch(Exception e) {
             item = vcard.getBytes();    
         }
         this.vcards.importItem(

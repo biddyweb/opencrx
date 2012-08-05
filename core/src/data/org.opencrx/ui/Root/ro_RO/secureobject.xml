@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ModifySecureObjectResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Statut mesaj</_item>
+                        <_item>Mesaj Statut</_item>
                       </label>
                       <toolTip>
-                        <_item>Statut mesaj</_item>
+                        <_item>Mesaj Statut</_item>
                       </toolTip>
                     </_object>
                     <_content/>

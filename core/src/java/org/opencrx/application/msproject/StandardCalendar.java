@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: StandardCalendar.java,v 1.1 2006/11/24 01:07:02 wfro Exp $
+ * Name:        $Id: StandardCalendar.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2006/11/24 01:07:02 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -108,7 +108,7 @@ class StandardCalendar {
     ) {
         return
           "  <Calendar>\n" +
-          "    <UID>" + Integer.toString(getUID()) + "</UID>\n" +
+          "    <UID>" + Integer.toString(this.getUID()) + "</UID>\n" +
           "    <Name>Standard</Name>\n" +
           "    <IsBaseCalendar>1</IsBaseCalendar>\n" +
           "    <BaseCalendarUID>-1</BaseCalendarUID>\n" +

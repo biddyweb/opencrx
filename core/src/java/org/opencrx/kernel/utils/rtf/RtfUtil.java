@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RtfUtil.java,v 1.2 2008/12/11 01:03:58 wfro Exp $
+ * Name:        $Id: RtfUtil.java,v 1.3 2009/03/08 17:04:53 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/11 01:03:58 $
+ * Date:        $Date: 2009/03/08 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,27 +58,21 @@ package org.opencrx.kernel.utils.rtf;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RtfUtil
-{
+public class RtfUtil {
 
-    public RtfUtil()
-    {
+    public RtfUtil() {
     }
 
-    public static String convertDateToRTFString(Date datum)
-    {
+    public static String convertDateToRTFString(Date datum) {
         SimpleDateFormat formater = new SimpleDateFormat("'\\yr'yyyy'\\mo'MM'\\dy'dd'\\hr'HH'\\min'mm'\\sec'ss");
         return formater.format(datum);
     }
 
-    public static String getRTFString(String text)
-    {
+    public static String getRTFString(String text) {
         StringBuffer workstr = new StringBuffer();
-        for(int i = 0; i < text.length(); i++)
-        {
+        for(int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
-            switch(ch)
-            {
+            switch(ch) {
             case 92: // '\\'
                 workstr.append("\\\\");
                 break;
@@ -111,13 +105,11 @@ public class RtfUtil
         return workstr.toString();
     }
 
-    public static int getTwipFromMillimeter(double mm)
-    {
+    public static int getTwipFromMillimeter(double mm) {
         return (int)((mm / 25.399999999999999D) * 1440D + 0.5D);
     }
 
-    public static double getMillimeterFromTwip(int twips)
-    {
+    public static double getMillimeterFromTwip(int twips) {
         return (twips * 25.399999999999999D) / 1440D;
     }
 
@@ -128,12 +120,10 @@ public class RtfUtil
         int result = -1;
         int len;
         for(len = 0; Character.isDigit(buf.charAt(startpos + len)); len++) {}
-        try
-        {
+        try {
             result = Integer.parseInt(buf.substring(startpos, startpos + len));
         }
-        catch(NumberFormatException e)
-        {
+        catch(NumberFormatException e) {
             result = -1;
         }
         return result;

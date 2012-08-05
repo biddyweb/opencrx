@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.44 2008/09/06 20:09:32 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.51 2009/03/08 17:04:52 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.44 $
+ * Revision:    $Revision: 1.51 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/06 20:09:32 $
+ * Date:        $Date: 2009/03/08 17:04:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,13 +91,13 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
+import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.model1.accessor.basic.cci.Model_1_3;
 
 /**
  * The SubscriptionHandlerServlet 'listens' for object modifications on incoming
@@ -114,7 +114,7 @@ public class SubscriptionHandlerServlet
     ) throws ServletException {
 
         super.init(config);
-        this.model = Utils.createModel();
+        this.model = Utils.getModel();
         // data connection
         try {
             this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
@@ -363,7 +363,7 @@ public class SubscriptionHandlerServlet
             for(Topic topic: matchingTopics) {                
                 org.opencrx.kernel.home1.cci2.SubscriptionQuery query = homePkg.createSubscriptionQuery();
                 query.identity().like(
-                    Utils.xriAsIdentityPattern("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/:*/subscription/:*")  
+                    new Path("xri:@openmdx:org.opencrx.kernel.home1/provider").getDescendant(providerName, "segment", segmentName, "userHome", ":*", "subscription", ":*").toResourcePattern()  
                 );
                 query.thereExistsTopic().equalTo(topic);                
                 Collection<Subscription> subscriptions = userHomeSegment.getExtent(query);
@@ -438,7 +438,8 @@ public class SubscriptionHandlerServlet
                             // Invalid NULLs on the DB may throw a NullPointer. Ignore.
                             try {
                                 userIsDisabled = user.isDisabled();
-                            } catch(Exception e) {}
+                            } 
+                            catch(Exception e) {}
                             // Execute all actions attached to the topic if owning user of user home is not disabled
                             if(!userIsDisabled) {
                                 Collection<WfProcess> actions = subscription.getTopic().getPerformAction();
@@ -471,7 +472,8 @@ public class SubscriptionHandlerServlet
                                             AppLog.warning(e.getMessage(), e.getCause());
                                             try {
                                                 pm.currentTransaction().rollback();
-                                            } catch(Exception e0) {}
+                                            } 
+                                            catch(Exception e0) {}
                                         }
                                     }
                                     catch(NoSuchAlgorithmException e) {
@@ -584,7 +586,8 @@ public class SubscriptionHandlerServlet
             }
             try {
                 pm.close();
-            } catch(Exception e) {}
+            } 
+            catch(Exception e) {}
         }
         catch(Exception e) {
             new ServiceException(e).log();
@@ -615,7 +618,8 @@ public class SubscriptionHandlerServlet
                         req,
                         res
                     );
-                } catch(Exception e) {
+                } 
+                catch(Exception e) {
                     new ServiceException(e).log();
                 }
                 finally {

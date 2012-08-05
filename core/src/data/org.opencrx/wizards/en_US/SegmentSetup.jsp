@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.41 2008/12/11 14:27:48 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.55 2009/03/05 13:45:02 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/11 14:27:48 $
+ * Date:        $Date: 2009/03/05 13:45:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,8 +67,8 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
+org.openmdx.base.naming.*,
+org.openmdx.base.query.*,
 org.openmdx.application.log.*,
 org.opencrx.kernel.backend.*,
 org.openmdx.kernel.id.cci.*,
@@ -84,11 +84,27 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.account1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery query = org.opencrx.kernel.utils.Utils.getAccountPackage(pm).createAccountFilterGlobalQuery();
+		org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery query = 
+		    (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
 		query.name().equalTo(accountFilterName);
 		Collection accountFilters = segment.getAccountFilter(query);
 		if(!accountFilters.isEmpty()) {
 			return (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)accountFilters.iterator().next();
+		}
+		return null;
+	}
+
+	public org.opencrx.kernel.account1.jmi1.AddressFilterGlobal findAddressFilter(
+		String accountFilterName,
+		org.opencrx.kernel.account1.jmi1.Segment segment,
+		javax.jdo.PersistenceManager pm
+	) {
+		org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery query = 
+		    (org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AddressFilterGlobal.class);
+		query.name().equalTo(accountFilterName);
+		Collection addressFilters = segment.getAddressFilter(query);
+		if(!addressFilters.isEmpty()) {
+			return (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)addressFilters.iterator().next();
 		}
 		return null;
 	}
@@ -98,7 +114,8 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.contract1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.contract1.cci2.ContractFilterGlobalQuery query = org.opencrx.kernel.utils.Utils.getContractPackage(pm).createContractFilterGlobalQuery();
+		org.opencrx.kernel.contract1.cci2.ContractFilterGlobalQuery query = 
+		    (org.opencrx.kernel.contract1.cci2.ContractFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.contract1.jmi1.ContractFilterGlobal.class);
 		query.name().equalTo(contractFilterName);
 		Collection contractFilters = segment.getContractFilter(query);
 		if(!contractFilters.isEmpty()) {
@@ -112,7 +129,8 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.activity1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery query = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityFilterGlobalQuery();
+		org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery query = 
+		    (org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal.class);
 		query.name().equalTo(activityFilterName);
 		Collection activityFilters = segment.getActivityFilter(query);
 		if(!activityFilters.isEmpty()) {
@@ -126,7 +144,8 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.home1.jmi1.UserHome userHome,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.home1.cci2.ExportProfileQuery query = org.opencrx.kernel.utils.Utils.getHomePackage(pm).createExportProfileQuery();
+		org.opencrx.kernel.home1.cci2.ExportProfileQuery query = 
+		    (org.opencrx.kernel.home1.cci2.ExportProfileQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.ExportProfile.class);
 		query.name().equalTo(exportProfileName);
 		Collection exportProfiles = userHome.getExportProfile(query);
 		if(!exportProfiles.isEmpty()) {
@@ -140,7 +159,8 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.document1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.document1.cci2.DocumentQuery query = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm).createDocumentQuery();
+		org.opencrx.kernel.document1.cci2.DocumentQuery query = 
+		    (org.opencrx.kernel.document1.cci2.DocumentQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.Document.class);
 		query.name().equalTo(documentName);
 		Collection documents = segment.getDocument(query);
 		if(!documents.isEmpty()) {
@@ -149,12 +169,27 @@ org.openmdx.base.text.conversion.*
 		return null;
 	}
 
+	public org.opencrx.kernel.home1.jmi1.QuickAccess findFavorite(
+	   String favoriteName,
+	   org.opencrx.kernel.home1.jmi1.UserHome userHome,
+	   javax.jdo.PersistenceManager pm
+	) {
+		org.opencrx.kernel.home1.cci2.QuickAccessQuery query = (org.opencrx.kernel.home1.cci2.QuickAccessQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.QuickAccess.class);
+		query.thereExistsName().equalTo(favoriteName);
+		Collection favorites = userHome.getQuickAccess(query);
+		if(!favorites.isEmpty()) {
+			return (org.opencrx.kernel.home1.jmi1.QuickAccess)favorites.iterator().next();
+		}
+		return null;	    
+	}
+	
 	public org.opencrx.kernel.document1.jmi1.DocumentFolder findDocumentFolder(
 		String documentFolderName,
 		org.opencrx.kernel.document1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.document1.cci2.DocumentFolderQuery query = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm).createDocumentFolderQuery();
+		org.opencrx.kernel.document1.cci2.DocumentFolderQuery query = 
+		    (org.opencrx.kernel.document1.cci2.DocumentFolderQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
 		query.name().equalTo(documentFolderName);
 		Collection documentFolders = segment.getFolder(query);
 		if(!documentFolders.isEmpty()) {
@@ -177,10 +212,9 @@ org.openmdx.base.text.conversion.*
 		);
 		if(accountFilter != null) return accountFilter;
 		UUIDGenerator uuids = UUIDs.getGenerator();
-		org.opencrx.kernel.account1.jmi1.Account1Package accountPackage = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 		try {
 			pm.currentTransaction().begin();
-			accountFilter = accountPackage.getAccountFilterGlobal().createAccountFilterGlobal();
+			accountFilter = pm.newInstance(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
 			accountFilter.refInitialize(false, false);
 			accountFilter.setName(filterName);
 			accountFilter.getOwningGroup().addAll(allUsers);
@@ -208,6 +242,50 @@ org.openmdx.base.text.conversion.*
 		return accountFilter;
 	}
 
+	public org.opencrx.kernel.account1.jmi1.AddressFilterGlobal initAddressFilter(
+		String filterName,
+		org.opencrx.kernel.account1.jmi1.AddressFilterProperty[] filterProperties,
+		javax.jdo.PersistenceManager pm,
+		org.opencrx.kernel.account1.jmi1.Segment segment,
+		List allUsers
+	) {
+		org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter = findAddressFilter(
+			filterName,
+			segment,
+			pm
+		);
+		if(addressFilter != null) return addressFilter;
+		UUIDGenerator uuids = UUIDs.getGenerator();
+		try {
+			pm.currentTransaction().begin();
+			addressFilter = pm.newInstance(org.opencrx.kernel.account1.jmi1.AddressFilterGlobal.class);
+			addressFilter.refInitialize(false, false);
+			addressFilter.setName(filterName);
+			addressFilter.getOwningGroup().addAll(allUsers);
+			segment.addAddressFilter(
+				false,
+				UUIDConversion.toUID(uuids.next()),
+				addressFilter
+			);
+			for(int i = 0; i < filterProperties.length; i++) {
+				filterProperties[i].getOwningGroup().addAll(allUsers);
+				addressFilter.addAddressFilterProperty(
+					false,
+					UUIDConversion.toUID(uuids.next()),
+					filterProperties[i]
+				);
+			}
+			pm.currentTransaction().commit();
+		}
+		catch(Exception e) {
+			new ServiceException(e).log();
+			try {
+				pm.currentTransaction().rollback();
+			} catch(Exception e0) {}
+		}
+		return addressFilter;
+	}
+
 	public org.opencrx.kernel.contract1.jmi1.ContractFilterGlobal initContractFilter(
 		String filterName,
 		org.opencrx.kernel.contract1.jmi1.ContractFilterProperty[] filterProperties,
@@ -222,10 +300,9 @@ org.openmdx.base.text.conversion.*
 		);
 		if(contractFilter != null) return contractFilter;
 		UUIDGenerator uuids = UUIDs.getGenerator();
-		org.opencrx.kernel.contract1.jmi1.Contract1Package contractPackage = org.opencrx.kernel.utils.Utils.getContractPackage(pm);
 		try {
 			pm.currentTransaction().begin();
-			contractFilter = contractPackage.getContractFilterGlobal().createContractFilterGlobal();
+			contractFilter = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractFilterGlobal.class);
 			contractFilter.refInitialize(false, false);
 			contractFilter.setName(filterName);
 			contractFilter.getOwningGroup().addAll(allUsers);
@@ -267,10 +344,9 @@ org.openmdx.base.text.conversion.*
 		);
 		if(activityFilter != null) return activityFilter;
 		UUIDGenerator uuids = UUIDs.getGenerator();
-		org.opencrx.kernel.activity1.jmi1.Activity1Package activityPackage = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 		try {
 			pm.currentTransaction().begin();
-			activityFilter = activityPackage.getActivityFilterGlobal().createActivityFilterGlobal();
+			activityFilter = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal.class);
 			activityFilter.refInitialize(false, false);
 			activityFilter.setName(filterName);
 			activityFilter.getOwningGroup().addAll(allUsers);
@@ -311,18 +387,17 @@ org.openmdx.base.text.conversion.*
 		);
 		if(documentFolder != null) return documentFolder;
 		UUIDGenerator uuids = UUIDs.getGenerator();
-		org.opencrx.kernel.document1.jmi1.Document1Package documentPackage = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm);
 		try {
 			pm.currentTransaction().begin();
-  		documentFolder = documentPackage.getDocumentFolder().createDocumentFolder();
-  		documentFolder.refInitialize(false, false);
-  		documentFolder.setName(documentFolderName);
-  		documentFolder.getOwningGroup().addAll(allUsers);
-  		segment.addFolder(
-  			false,
-  			UUIDConversion.toUID(uuids.next()),
-  			documentFolder
-  		);
+	  		documentFolder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
+	  		documentFolder.refInitialize(false, false);
+	  		documentFolder.setName(documentFolderName);
+	  		documentFolder.getOwningGroup().addAll(allUsers);
+	  		segment.addFolder(
+	  			false,
+	  			UUIDConversion.toUID(uuids.next()),
+	  			documentFolder
+	  		);
 			pm.currentTransaction().commit();
 		}
 		catch(Exception e) {
@@ -350,10 +425,9 @@ org.openmdx.base.text.conversion.*
 		);
 		if(document != null) return document;
 		UUIDGenerator uuids = UUIDs.getGenerator();
-		org.opencrx.kernel.document1.jmi1.Document1Package documentPackage = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm);
 		try {
 			pm.currentTransaction().begin();
-			document = documentPackage.getDocument().createDocument();
+			document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
 			document.refInitialize(false, false);
 			document.setName(documentName);
 			document.setTitle(documentName);
@@ -363,7 +437,7 @@ org.openmdx.base.text.conversion.*
 				UUIDConversion.toUID(uuids.next()),
 				document
 			);
-			org.opencrx.kernel.document1.jmi1.MediaContent documentRevision = documentPackage.getMediaContent().createMediaContent();
+			org.opencrx.kernel.document1.jmi1.MediaContent documentRevision = pm.newInstance(org.opencrx.kernel.document1.jmi1.MediaContent.class);
 			documentRevision.refInitialize(false, false);
 			documentRevision.setContentName(documentFileName);
 			documentRevision.setContentMimeType(documentMimeType);
@@ -409,10 +483,9 @@ org.openmdx.base.text.conversion.*
 		);
 		if(exportProfile != null) return exportProfile;
 		UUIDGenerator uuids = UUIDs.getGenerator();
-		org.opencrx.kernel.home1.jmi1.Home1Package homePackage = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
 		try {
 			pm.currentTransaction().begin();
-			exportProfile = homePackage.getExportProfile().createExportProfile();
+			exportProfile = pm.newInstance(org.opencrx.kernel.home1.jmi1.ExportProfile.class);
 			exportProfile.refInitialize(false, false);
 			exportProfile.setName(exportProfileName);
 			exportProfile.getForClass().addAll(
@@ -439,6 +512,101 @@ org.openmdx.base.text.conversion.*
 		return exportProfile;
 	}
 
+	public org.opencrx.kernel.home1.jmi1.QuickAccess initFavorite(
+		String favoriteName,
+		org.openmdx.base.jmi1.ContextCapable reference,
+		String iconKey,
+		String action,
+		javax.jdo.PersistenceManager pm,
+		org.opencrx.kernel.home1.jmi1.UserHome userHome
+	) {
+		org.opencrx.kernel.home1.jmi1.QuickAccess favorite = findFavorite(
+		    favoriteName,
+			userHome,
+			pm
+		);
+		if(favorite != null) return favorite;
+		UUIDGenerator uuids = UUIDs.getGenerator();
+		try {
+			pm.currentTransaction().begin();
+			favorite = pm.newInstance(org.opencrx.kernel.home1.jmi1.QuickAccess.class);
+			favorite.refInitialize(false, false);
+			favorite.setName(favoriteName);
+			favorite.setReference(reference);
+			favorite.setDescription(favoriteName);
+			favorite.setIconKey(iconKey);
+			favorite.setActionType((short)1); // Javascript
+			favorite.setActionName(action);
+			favorite.getOwningGroup().addAll(
+				userHome.getOwningGroup()
+			);
+			userHome.addQuickAccess(
+				false,
+				UUIDConversion.toUID(uuids.next()),
+				favorite
+			);
+			pm.currentTransaction().commit();
+		}
+		catch(Exception e) {
+			try {
+				pm.currentTransaction().rollback();
+			} catch(Exception e0) {}
+		}
+		return favorite;
+	}
+	
+	public org.opencrx.kernel.product1.jmi1.SalesTaxType findSalesTaxType(
+		String name,
+		org.opencrx.kernel.product1.jmi1.Segment segment,
+		javax.jdo.PersistenceManager pm
+	) {
+		org.opencrx.kernel.product1.cci2.SalesTaxTypeQuery query = 
+		    (org.opencrx.kernel.product1.cci2.SalesTaxTypeQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.SalesTaxType.class);
+		query.name().equalTo(name);
+		Collection salesTaxTypes = segment.getSalesTaxType(query);
+		if(!salesTaxTypes.isEmpty()) {
+			return (org.opencrx.kernel.product1.jmi1.SalesTaxType)salesTaxTypes.iterator().next();
+		}
+		return null;
+	}
+	
+	public org.opencrx.kernel.product1.jmi1.SalesTaxType initSalesTaxType(
+		String name,
+		java.math.BigDecimal rate,
+		org.opencrx.kernel.product1.jmi1.Segment segment,
+		javax.jdo.PersistenceManager pm
+	) {
+		org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = findSalesTaxType(
+		    name,
+			segment,
+			pm
+		);
+		if(salesTaxType != null) return salesTaxType;
+		UUIDGenerator uuids = UUIDs.getGenerator();
+		try {
+			pm.currentTransaction().begin();
+			salesTaxType = pm.newInstance(org.opencrx.kernel.product1.jmi1.SalesTaxType.class);
+			salesTaxType.refInitialize(false, false);
+			salesTaxType.setName(name);
+			salesTaxType.setRate(rate);
+			salesTaxType.getOwningGroup().addAll(
+				segment.getOwningGroup()
+			);
+			segment.addSalesTaxType(
+				false,
+				UUIDConversion.toUID(uuids.next()),
+				salesTaxType
+			);
+			pm.currentTransaction().commit();
+		}
+		catch(Exception e) {
+			try {
+				pm.currentTransaction().rollback();
+			} catch(Exception e0) {}
+		}
+		return salesTaxType;
+	}
+	
 %>
 
 <%
@@ -448,6 +616,7 @@ org.openmdx.base.text.conversion.*
 	final String MISSING = "<img src='../../images/cancel.gif' />";
 
 	final String ACCOUNT_FILTER_NAME_ALL = "All Accounts";
+	final String ADDRESS_FILTER_NAME_ALL = "All Addresses";
 
 	final String CONTRACT_FILTER_NAME_LEAD_FORECAST = "Lead Forecast";
 	final String CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST = "Opportunity Forecast";
@@ -472,6 +641,17 @@ org.openmdx.base.text.conversion.*
 	final String MAILMERGE_TEMPLATE_NAME_LETTER = "Letter Template";
 	final String MAILMERGE_TEMPLATE_NAME_LABEL = "Label Template";
 
+	final String CONTRACT_TEMPLATE_FOLDER_NAME_OPPORTUNITY = "Opportunity Templates";
+	final String CONTRACT_TEMPLATE_OPPORTUNITY = "Opportunity with Positions (RTF)";
+	final String CONTRACT_TEMPLATE_FOLDER_NAME_QUOTE = "Quote Templates";
+	final String CONTRACT_TEMPLATE_QUOTE = "Quote with Positions (RTF)";
+	final String CONTRACT_TEMPLATE_FOLDER_NAME_SALESORDER = "Sales Order Templates";
+	final String CONTRACT_TEMPLATE_SALESORDER = "Sales Order with Positions (RTF)";
+	final String CONTRACT_TEMPLATE_FOLDER_NAME_INVOICE = "Invoice Templates";
+	final String CONTRACT_TEMPLATE_INVOICE = "Invoice with Positions (RTF)";
+
+	final String SALES_TAX_TYPE_NAME_8_5 = "Sales Tax 8.5%";
+	
 	final String REPORT_TEMPLATE_FOLDER_NAME = "Report Templates";
 	final String REPORT_TEMPLATE_NAME_CONTRACT_LIST = "Contract Report Template";
 	final String REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST = "Contract with Positions Report Template";
@@ -480,6 +660,12 @@ org.openmdx.base.text.conversion.*
 	final String REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST = "Account Members Report Template";
 	final String REPORT_TEMPLATE_NAME_ACCOUNT_LIST = "Account Report Template";
 
+	final String FAVORITE_NAME_CREATE_ACTIVITY = "Create Activity";
+	final String FAVORITE_NAME_CREATE_CONTACT = "Create Contact";
+	final String FAVORITE_NAME_CREATE_CONTRACT = "Create Contract";
+	final String FAVORITE_NAME_CREATE_LEAD = "Create Lead";
+	final String FAVORITE_NAME_SCHEDULE_EVENT = "Schedule Event";
+	
 	// Init
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
@@ -547,10 +733,6 @@ org.openmdx.base.text.conversion.*
 		"setup".equalsIgnoreCase(command)
 	) {
 		try {
-
-			org.opencrx.kernel.contract1.jmi1.Contract1Package contractPackage = org.opencrx.kernel.utils.Utils.getContractPackage(pm);
-			org.opencrx.kernel.activity1.jmi1.Activity1Package activityPackage = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-
 			pm.currentTransaction().begin();
 			activitySegment.setAccessLevelBrowse((short)3);
 			pm.currentTransaction().commit();
@@ -695,6 +877,22 @@ org.openmdx.base.text.conversion.*
 					providerName,
 					segmentName
 				);
+			org.opencrx.kernel.activity1.jmi1.ActivityTracker pollsTracker =
+				org.opencrx.kernel.backend.Activities.initActivityTracker(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS,
+					allUsers,
+					pm,
+					providerName,
+					segmentName
+				);
+			org.opencrx.kernel.activity1.jmi1.ActivityTracker meetingRoomsTracker =
+				org.opencrx.kernel.backend.Activities.initActivityTracker(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS,
+					allUsers,
+					pm,
+					providerName,
+					segmentName
+				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker meetingsTracker =
 				org.opencrx.kernel.backend.Activities.initActivityTracker(
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS,
@@ -742,6 +940,24 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS,
 				tasksType,
 				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{tasksTracker}),
+				allUsers,
+				pm,
+				providerName,
+				segmentName
+			);
+			org.opencrx.kernel.backend.Activities.initActivityCreator(
+				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS,
+				emailsType,
+				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{pollsTracker}),
+				allUsers,
+				pm,
+				providerName,
+				segmentName
+			);
+			org.opencrx.kernel.backend.Activities.initActivityCreator(
+				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS,
+				emailsType,
+				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{meetingRoomsTracker}),
 				allUsers,
 				pm,
 				providerName,
@@ -810,6 +1026,13 @@ org.openmdx.base.text.conversion.*
 				providerName,
 				segmentName
 			);
+			// SalesTaxType
+			initSalesTaxType(
+			    SALES_TAX_TYPE_NAME_8_5,
+			    new java.math.BigDecimal(8.5),
+			    productSegment,
+			    pm
+			);
 			// CalculationRule
 			org.opencrx.kernel.backend.Contracts.initCalculationRule(
 				org.opencrx.kernel.backend.Contracts.CALCULATION_RULE_NAME_DEFAULT,
@@ -832,17 +1055,26 @@ org.openmdx.base.text.conversion.*
 				allUsers
 			);
 
+			// ADDRESS_FILTER_NAME_ALL
+			initAddressFilter(
+				ADDRESS_FILTER_NAME_ALL,
+				new org.opencrx.kernel.account1.jmi1.AddressFilterProperty[]{},
+				pm,
+				accountSegment,
+				allUsers
+			);
+			
 			// ContractFilter
 
 			// CONTRACT_FILTER_NAME_LEAD_FORECAST
-			org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty contractTypeFilterProperty = contractPackage.getContractTypeFilterProperty().createContractTypeFilterProperty();
+			org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty contractTypeFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty.class);
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Lead");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Lead");
-			org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty contractQueryFilterProperty = contractPackage.getContractQueryFilterProperty().createContractQueryFilterProperty();
+			org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty contractQueryFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty .class);
 			contractQueryFilterProperty.refInitialize(false, false);
 			contractQueryFilterProperty.setName("Estimated close date >= Today");
 			contractQueryFilterProperty.setActive(new Boolean (true));
@@ -859,19 +1091,19 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// CONTRACT_FILTER_NAME_WON_LEADS
-			contractTypeFilterProperty = contractPackage.getContractTypeFilterProperty().createContractTypeFilterProperty();
+			contractTypeFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty .class);
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Lead");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Lead");
-			org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty contractStateFilterProperty = contractPackage.getContractStateFilterProperty().createContractStateFilterProperty();
+			org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty contractStateFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty.class);
 			contractStateFilterProperty.refInitialize(false, false);
 			contractStateFilterProperty.setName("Won");
 			contractStateFilterProperty.setActive(new Boolean (true));
-			contractStateFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractStateFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractStateFilterProperty.getContractState().add(new Short((short)1110));
 			initContractFilter(
 				CONTRACT_FILTER_NAME_WON_LEADS,
@@ -885,14 +1117,14 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST
-			contractTypeFilterProperty = contractPackage.getContractTypeFilterProperty().createContractTypeFilterProperty();
+			contractTypeFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty .class);
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Opportunity");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Opportunity");
-			contractQueryFilterProperty = contractPackage.getContractQueryFilterProperty().createContractQueryFilterProperty();
+			contractQueryFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty .class);
 			contractQueryFilterProperty.refInitialize(false, false);
 			contractQueryFilterProperty.setName("Estimated close date >= Today");
 			contractQueryFilterProperty.setActive(new Boolean (true));
@@ -909,19 +1141,19 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// CONTRACT_FILTER_NAME_WON_OPPORTUNITIES
-			contractTypeFilterProperty = contractPackage.getContractTypeFilterProperty().createContractTypeFilterProperty();
+			contractTypeFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty .class);
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Opportunity");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Opportunity");
-			contractStateFilterProperty = contractPackage.getContractStateFilterProperty().createContractStateFilterProperty();
+			contractStateFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty.class);
 			contractStateFilterProperty.refInitialize(false, false);
 			contractStateFilterProperty.setName("Won");
 			contractStateFilterProperty.setActive(new Boolean (true));
-			contractStateFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractStateFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractStateFilterProperty.getContractState().add(new Short((short)1210));
 			initContractFilter(
 				CONTRACT_FILTER_NAME_WON_OPPORTUNITIES,
@@ -935,14 +1167,14 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// CONTRACT_FILTER_NAME_QUOTE_FORECAST
-			contractTypeFilterProperty = contractPackage.getContractTypeFilterProperty().createContractTypeFilterProperty();
+			contractTypeFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty .class);
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Quote");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Quote");
-			contractQueryFilterProperty = contractPackage.getContractQueryFilterProperty().createContractQueryFilterProperty();
+			contractQueryFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty .class);
 			contractQueryFilterProperty.refInitialize(false, false);
 			contractQueryFilterProperty.setName("Estimated close date >= Today");
 			contractQueryFilterProperty.setActive(new Boolean (true));
@@ -959,19 +1191,19 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// CONTRACT_FILTER_NAME_WON_QUOTES
-			contractTypeFilterProperty = contractPackage.getContractTypeFilterProperty().createContractTypeFilterProperty();
+			contractTypeFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty .class);
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Quote");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Quote");
-			contractStateFilterProperty = contractPackage.getContractStateFilterProperty().createContractStateFilterProperty();
+			contractStateFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty.class);
 			contractStateFilterProperty.refInitialize(false, false);
 			contractStateFilterProperty.setName("Won");
 			contractStateFilterProperty.setActive(new Boolean (true));
-			contractStateFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			contractStateFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			contractStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			contractStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			contractStateFilterProperty.getContractState().add(new Short((short)1310));
 			initContractFilter(
 				CONTRACT_FILTER_NAME_WON_QUOTES,
@@ -987,12 +1219,12 @@ org.openmdx.base.text.conversion.*
 			// ActivityFilter
 
 			// ACTIVITY_FILTER_NAME_PHONE_CALLS
-			org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty activityTypeFilterProperty = activityPackage.getActivityTypeFilterProperty().createActivityTypeFilterProperty();
+			org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty activityTypeFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty.class);
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("Phone Calls");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			activityTypeFilterProperty.getActivityType().add(phoneCallsType);
 			initActivityFilter(
 				ACTIVITY_FILTER_NAME_PHONE_CALLS,
@@ -1005,12 +1237,12 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// ACTIVITY_FILTER_NAME_MEETINGS
-			activityTypeFilterProperty = activityPackage.getActivityTypeFilterProperty().createActivityTypeFilterProperty();
+			activityTypeFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty.class);
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("Meetings");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			activityTypeFilterProperty.getActivityType().add(meetingsType);
 			initActivityFilter(
 				ACTIVITY_FILTER_NAME_MEETINGS,
@@ -1023,20 +1255,20 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// ACTIVITY_FILTER_NAME_NEW_ACTIVITIES
-			activityTypeFilterProperty = activityPackage.getActivityTypeFilterProperty().createActivityTypeFilterProperty();
+			activityTypeFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty.class);
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("All Types");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			activityTypeFilterProperty.getActivityType().add(bugsAndFeaturesType);
 			activityTypeFilterProperty.getActivityType().add(meetingsType);
 			activityTypeFilterProperty.getActivityType().add(emailsType);
 			activityTypeFilterProperty.getActivityType().add(phoneCallsType);
-			org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty activityProcessStateFilterProperty = activityPackage.getActivityProcessStateFilterProperty().createActivityProcessStateFilterProperty();
+			org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty activityProcessStateFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty.class);
 			activityProcessStateFilterProperty.refInitialize(false, false);
-			activityProcessStateFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			activityProcessStateFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			activityProcessStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			activityProcessStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			activityProcessStateFilterProperty.getProcessState().add(bugAndFeatureTrackingProcessStateNew);
 			activityProcessStateFilterProperty.getProcessState().add(emailProcessStateNew);
 			initActivityFilter(
@@ -1051,22 +1283,22 @@ org.openmdx.base.text.conversion.*
 			);
 
 			// ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES
-			activityTypeFilterProperty = activityPackage.getActivityTypeFilterProperty().createActivityTypeFilterProperty();
+			activityTypeFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty.class);
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("All Types");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			activityTypeFilterProperty.getActivityType().add(bugsAndFeaturesType);
 			activityTypeFilterProperty.getActivityType().add(meetingsType);
 			activityTypeFilterProperty.getActivityType().add(emailsType);
 			activityTypeFilterProperty.getActivityType().add(phoneCallsType);
-			activityProcessStateFilterProperty = activityPackage.getActivityProcessStateFilterProperty().createActivityProcessStateFilterProperty();
+			activityProcessStateFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty.class);
 			activityProcessStateFilterProperty.refInitialize(false, false);
 			activityProcessStateFilterProperty.setName("Open");
 			activityProcessStateFilterProperty.setActive(new Boolean (true));
-			activityProcessStateFilterProperty.setFilterQuantor(org.openmdx.compatibility.base.query.Quantors.THERE_EXISTS);
-			activityProcessStateFilterProperty.setFilterOperator(org.openmdx.compatibility.base.query.FilterOperators.IS_IN);
+			activityProcessStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+			activityProcessStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
 			activityProcessStateFilterProperty.getProcessState().add(bugAndFeatureTrackingProcessStateInProgress);
 			activityProcessStateFilterProperty.getProcessState().add(emailProcessStateOpen);
 			initActivityFilter(
@@ -1090,7 +1322,7 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.document1.jmi1.Document templateMailMergeLetter = initDocument(
 				MAILMERGE_TEMPLATE_NAME_LETTER,
 				"Template_MailMergeLetter.rtf",
-				"application/rtf",
+				"text/rtf",
 				templateFolder,
 				pm,
 				documentSegment,
@@ -1099,13 +1331,75 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.document1.jmi1.Document templateMailMergeEtiquette = initDocument(
 				MAILMERGE_TEMPLATE_NAME_LABEL,
 				"Template_MailMergeLabel.rtf",
-				"application/rtf",
+				"text/rtf",
 				templateFolder,
 				pm,
 				documentSegment,
 				allUsers
 			);
 
+			// Contract Templates
+			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderOpportunity = initDocumentFolder(
+				CONTRACT_TEMPLATE_FOLDER_NAME_OPPORTUNITY,
+				pm,
+				documentSegment,
+				allUsers
+			);
+			initDocument(
+				CONTRACT_TEMPLATE_OPPORTUNITY,
+				"Template_Opportunity.rtf",
+				"text/rtf",
+				templateFolderOpportunity,
+				pm,
+				documentSegment,
+				allUsers
+			);			
+			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderQuote = initDocumentFolder(
+				CONTRACT_TEMPLATE_FOLDER_NAME_QUOTE,
+				pm,
+				documentSegment,
+				allUsers
+			);
+			initDocument(
+				CONTRACT_TEMPLATE_QUOTE,
+				"Template_Quote.rtf",
+				"text/rtf",
+				templateFolderQuote,
+				pm,
+				documentSegment,
+				allUsers
+			);			
+			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderSalesOrder = initDocumentFolder(
+				CONTRACT_TEMPLATE_FOLDER_NAME_SALESORDER,
+				pm,
+				documentSegment,
+				allUsers
+			);
+			initDocument(
+				CONTRACT_TEMPLATE_SALESORDER,
+				"Template_SalesOrder.rtf",
+				"text/rtf",
+				templateFolderSalesOrder,
+				pm,
+				documentSegment,
+				allUsers
+			);			
+			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderInvoice = initDocumentFolder(
+				CONTRACT_TEMPLATE_FOLDER_NAME_INVOICE,
+				pm,
+				documentSegment,
+				allUsers
+			);
+			initDocument(
+				CONTRACT_TEMPLATE_INVOICE,
+				"Template_Invoice.rtf",
+				"text/rtf",
+				templateFolderInvoice,
+				pm,
+				documentSegment,
+				allUsers
+			);			
+			
 			// Report Templates
 			templateFolder = initDocumentFolder(
 				REPORT_TEMPLATE_FOLDER_NAME,
@@ -1278,6 +1572,47 @@ org.openmdx.base.text.conversion.*
 				userHome
 			);
 
+			// Favorites
+			initFavorite(
+			    FAVORITE_NAME_CREATE_ACTIVITY,
+			    activitySegment,
+			    "ActivityManagement.gif",				
+			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateActivityWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+				pm,
+				userHome
+			);
+			initFavorite(
+			    FAVORITE_NAME_CREATE_CONTACT,
+			    accountSegment,
+			    "Account.gif",				
+			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateContactWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+				pm,
+				userHome
+			);
+			initFavorite(
+			    FAVORITE_NAME_CREATE_CONTRACT,
+			    contractSegment,
+			    "SalesOrder.gif",				
+			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateContractWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+				pm,
+				userHome
+			);			        
+			initFavorite(
+			    FAVORITE_NAME_CREATE_LEAD,
+			    contractSegment,
+			    "Lead.gif",				
+			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateLeadWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+				pm,
+				userHome
+			);
+			initFavorite(
+			    FAVORITE_NAME_SCHEDULE_EVENT,
+			    activitySegment,
+			    "Meeting.gif",				
+			    "window.location.href='./wizards/en_US/ScheduleEventWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "';",
+				pm,
+				userHome
+			);
 		}
 		catch(Exception e) {
 			try {
@@ -1406,6 +1741,14 @@ org.openmdx.base.text.conversion.*
 					<td><%= org.opencrx.kernel.backend.Activities.findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
+					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS, activitySegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS, activitySegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS %></td>
 					<td><%= org.opencrx.kernel.backend.Activities.findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
 				</tr>
@@ -1431,6 +1774,14 @@ org.openmdx.base.text.conversion.*
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS %></td>
 					<td><%= org.opencrx.kernel.backend.Activities.findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS, activitySegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, activitySegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS %></td>
@@ -1558,6 +1909,15 @@ org.openmdx.base.text.conversion.*
 					<td><%= org.opencrx.kernel.backend.Products.findPricingRule(org.opencrx.kernel.backend.Products.PRICING_RULE_NAME_LOWEST_PRICE, productSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 			</table>
+			<table>
+				<tr>
+					<td colspan="2"><h2>Sales Tax Types</h2></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= SALES_TAX_TYPE_NAME_8_5 %></td>
+					<td><%= findSalesTaxType(SALES_TAX_TYPE_NAME_8_5, productSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+			</table>
 		</fieldset>
 		<fieldset>
 			<legend>Contracts</legend>
@@ -1580,6 +1940,10 @@ org.openmdx.base.text.conversion.*
 				<tr>
 					<td width="400px"><%= ACCOUNT_FILTER_NAME_ALL %></td>
 					<td><%= findAccountFilter(ACCOUNT_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= ADDRESS_FILTER_NAME_ALL %></td>
+					<td><%= findAddressFilter(ADDRESS_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td colspan="2"><h2>Contract Filters</h2></td>
@@ -1666,6 +2030,25 @@ org.openmdx.base.text.conversion.*
 					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LABEL, documentSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
+					<td colspan="2"><h2>Contract Templates</h2></td>
+				</tr>
+				<tr>
+					<td><%= CONTRACT_TEMPLATE_OPPORTUNITY %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_OPPORTUNITY, documentSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= CONTRACT_TEMPLATE_QUOTE %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_QUOTE, documentSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= CONTRACT_TEMPLATE_SALESORDER %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_SALESORDER, documentSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= CONTRACT_TEMPLATE_INVOICE %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_INVOICE, documentSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
 					<td colspan="2"><h2>Report Templates</h2></td>
 				</tr>
 				<tr>
@@ -1691,6 +2074,34 @@ org.openmdx.base.text.conversion.*
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_LIST %></td>
 					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>Menues</legend>
+			<table>
+				<tr>
+					<td colspan="2"><h2>Favorites</h2></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= FAVORITE_NAME_CREATE_ACTIVITY %></td>
+					<td><%= findFavorite(FAVORITE_NAME_CREATE_ACTIVITY, userHome, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= FAVORITE_NAME_CREATE_CONTACT %></td>
+					<td><%= findFavorite(FAVORITE_NAME_CREATE_CONTACT, userHome, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= FAVORITE_NAME_CREATE_CONTRACT %></td>
+					<td><%= findFavorite(FAVORITE_NAME_CREATE_CONTRACT, userHome, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= FAVORITE_NAME_CREATE_LEAD %></td>
+					<td><%= findFavorite(FAVORITE_NAME_CREATE_LEAD, userHome, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td width="400px"><%= FAVORITE_NAME_SCHEDULE_EVENT %></td>
+					<td><%= findFavorite(FAVORITE_NAME_SCHEDULE_EVENT, userHome, pm) == null ? MISSING : OK %></td>
 				</tr>
 			</table>
 		</fieldset>

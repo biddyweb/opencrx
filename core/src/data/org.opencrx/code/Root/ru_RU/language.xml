@@ -169,6 +169,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="325" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Рум</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Румынский</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="328" _operation="create">
                           <_object>
                             <shortText>
@@ -176,6 +187,17 @@
                             </shortText>
                             <longText>
                               <_item>Русский [ru/rus]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="352" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Сло</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Словацкий</_item>
                             </longText>
                           </_object>
                           <_content/>

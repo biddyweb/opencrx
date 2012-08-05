@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SimpleMimeMessage.java,v 1.1 2008/08/28 15:04:22 wfro Exp $
+ * Name:        $Id: SimpleMimeMessage.java,v 1.2 2009/03/08 17:04:54 wfro Exp $
  * Description: SimpleMimeMessage
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:04:22 $
+ * Date:        $Date: 2009/03/08 17:04:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -252,7 +252,8 @@ public class SimpleMimeMessage {
                       msgSubject.append(
                           MimeUtility.decodeText(subjects[i])
                       );
-                  } catch(UnsupportedEncodingException e) {
+                  } 
+                  catch(UnsupportedEncodingException e) {
                       msgSubject.append(
                           subjects[i]
                       );            
@@ -288,7 +289,7 @@ public class SimpleMimeMessage {
       if(this.from == null) {
           // Get FROM EMailAddress
           Address[] headerFromAddresses = this.mimeMsg.getFrom();
-          this.from = getAddresses(headerFromAddresses);
+          this.from = this.getAddresses(headerFromAddresses);
       }
       return this.from;
   }
@@ -318,19 +319,19 @@ public class SimpleMimeMessage {
   ) throws MessagingException {
       if(Message.RecipientType.TO.toString().equalsIgnoreCase(type.toString())) {
           if(this.to == null) {
-              this.to = getRecipientsByType(type);
+              this.to = this.getRecipientsByType(type);
           }
           return this.to;
       }
       else if (Message.RecipientType.CC.toString().equalsIgnoreCase(type.toString())) {
           if (this.cc == null) {
-              this.cc = getRecipientsByType(type);
+              this.cc = this.getRecipientsByType(type);
           }
           return this.cc;
       }
       else if (Message.RecipientType.BCC.toString().equalsIgnoreCase(type.toString())) {
           if(this.bcc == null) {
-              this.bcc = getRecipientsByType(type);
+              this.bcc = this.getRecipientsByType(type);
           }
           return this.bcc;
       }
@@ -464,11 +465,13 @@ public class SimpleMimeMessage {
       StringBuffer buffer = new StringBuffer();
       try {
           buffer.append("send date='").append(this.getDate());
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       buffer.append("', from={'");
       try { 
           this.getFrom();
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       if(this.from != null) {
           for (int i = 0; i < this.from.length; i++) {
               buffer.append(this.from[i]).append("',");
@@ -480,7 +483,8 @@ public class SimpleMimeMessage {
       buffer.append("}, to={'");
       try {
           this.getRecipients(Message.RecipientType.TO);
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       if(this.to != null) {
           for (int i = 0; i < this.to.length; i++) {
               buffer.append(this.to[i]).append("',");
@@ -492,7 +496,8 @@ public class SimpleMimeMessage {
       buffer.append("}, cc={'");
       try {
           this.getRecipients(Message.RecipientType.CC);
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       if(this.cc != null) {
           for (int i = 0; i < this.cc.length; i++) {
               buffer.append(this.cc[i]).append("',");
@@ -501,7 +506,8 @@ public class SimpleMimeMessage {
       buffer.append("}, bcc={'");
       try {
           this.getRecipients(Message.RecipientType.BCC);
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       if(this.bcc != null) {
           for (int i = 0; i < this.bcc.length; i++) {
               buffer.append(this.bcc[i]).append("',");
@@ -512,16 +518,20 @@ public class SimpleMimeMessage {
       }
       try {
           buffer.append("}', messageId='").append(this.getMessageID());
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       try {
           buffer.append("', subject='").append(this.getSubject());
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       try {
           buffer.append("', priority='").append(this.getPriority());
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       try {
           buffer.append("', body='").append(this.getBody() == null ? "" : this.getBody()).append("'");
-      } catch(Exception e) {}
+      } 
+      catch(Exception e) {}
       if(this.containsAttachments()) {
           Iterator contents = this.content.iterator();
           while(contents.hasNext()) {
@@ -546,12 +556,14 @@ public class SimpleMimeMessage {
           for (int i = 0; i < headerAddresses.length; i++) {
               if (headerAddresses[0] instanceof InternetAddress) {
                   addresses[i] = ((InternetAddress)headerAddresses[i]).getAddress();
-              } else {
+              } 
+              else {
                   InternetAddress temp = new InternetAddress(headerAddresses[i].toString());
                   addresses[i] = temp.getAddress();
               }
           }
-      } else {
+      } 
+      else {
           addresses = new String[]{UNSPECIFIED_ADDRESS};
       }
       return addresses;

@@ -25,7 +25,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creatori de activităţi</_item>
+                        <_item>Creatori de Activităţi</_item>
                       </label>
                       <toolTip>
                         <_item>toţi creatorii de activităţi</_item>
@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipuri de activităţi</_item>
+                        <_item>Tipuri de Activităţi</_item>
                       </label>
                       <toolTip>
                         <_item>toate tipurile de activităţi</_item>
@@ -204,7 +204,7 @@
                         <_item>Nume</_item>
                       </label>
                       <toolTip>
-                        <_item>Numele activităţii</_item>
+                        <_item>Numele Activităţii</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -448,7 +448,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cont de rapotare</_item>
+                        <_item>Cont de raportare</_item>
                       </label>
                       <toolTip>
                         <_item>Cont de raportare</_item>
@@ -580,10 +580,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastAppliedCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ultimul creator aplicat</_item>
+                        <_item>Creator de Activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Ultimul creator aplicat</_item>
+                        <_item>Creator de Activitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -613,10 +613,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Legătură activitate de ieşire</_item>
+                        <_item>Legătură Activitate de ieşire</_item>
                       </label>
                       <toolTip>
-                        <_item>Legătură activitate de ieşire</_item>
+                        <_item>Legătură Activitate de ieşire</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -841,17 +841,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importă iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importă iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -885,29 +874,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importă iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importă iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importă iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importă iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
                         <_item>Importă iCal</_item>
@@ -956,6 +923,9 @@
                       <label>
                         <_item>Tranziţie</_item>
                       </label>
+                      <toolTip>
+                        <_item>Tranziţie</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -1017,10 +987,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Re-aplică creatorul de activitate</_item>
+                        <_item>Re-aplică Creatorul de activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Re-aplică creatorul de activitate</_item>
+                        <_item>Re-aplică Creatorul de activitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1039,10 +1009,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creator de activitate</_item>
+                        <_item>Creator de Activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Creator de activitate</_item>
+                        <_item>Creator de Activitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1160,10 +1130,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
                     <_object>
                       <label>
-                        <_item>Adaugă înregistrare de muncă</_item>
+                        <_item>Adaugă Înregistrare de muncă</_item>
                       </label>
                       <toolTip>
-                        <_item>Adaugă înregistrare de muncă</_item>
+                        <_item>Adaugă Înregistrare de muncă</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1325,10 +1295,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Alocarea Grupului de activităţi</_item>
+                        <_item>Alocarea Grupului de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Alocarea Grupului de activităţi</_item>
+                        <_item>Alocarea Grupului de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1347,10 +1317,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment:activityGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grup de activităţi</_item>
+                        <_item>Grup de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Grup de activităţi</_item>
+                        <_item>Grup de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1358,10 +1328,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip de activităţi</_item>
+                        <_item>Tip de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip de activităţi</_item>
+                        <_item>Tip de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1391,10 +1361,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:activityClass" _operation="create">
                     <_object>
                       <label>
-                        <_item>Clasă de activităţi</_item>
+                        <_item>Clasă de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Clasă de activităţi</_item>
+                        <_item>Clasă de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1402,10 +1372,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:activityClassName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numele clasei de activităţi</_item>
+                        <_item>Numele Clasei de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Numele clasei de activităţi</_item>
+                        <_item>Numele Clasei de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1435,10 +1405,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creator de activităţi</_item>
+                        <_item>Creator de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Creator de activităţi</_item>
+                        <_item>Creator de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1446,7 +1416,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grup de activităţi</_item>
+                        <_item>Grup de Activităţi</_item>
                       </label>
                       <toolTip>
                         <_item>toate grupurile de activităţi</_item>
@@ -1479,10 +1449,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip de activitate</_item>
+                        <_item>Tip de Activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip de activitate</_item>
+                        <_item>Tip de Activitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>

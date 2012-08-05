@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VCardServlet.java,v 1.8 2008/10/30 15:20:04 wfro Exp $
+ * Name:        $Id: VCardServlet.java,v 1.11 2009/03/08 17:04:47 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/30 15:20:04 $
+ * Date:        $Date: 2009/03/08 17:04:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -95,7 +95,7 @@ public class VCardServlet extends HttpServlet {
         super.init();        
         if(this.persistenceManagerFactory == null) {                    
             try {
-                Utils.createModel();
+                Utils.getModel();
                 this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
                 this.rootPm = this.persistenceManagerFactory.getPersistenceManager(
                     SecurityKeys.ROOT_PRINCIPAL,
@@ -307,7 +307,7 @@ public class VCardServlet extends HttpServlet {
                             uid = l.substring(4);
                         }
                         else if(l.startsWith("REV:")) {
-                            rev = l.substring(14);
+                            rev = l.substring(4);
                         }
                         else if(l.startsWith("END:VCARD")) {
                             break;
@@ -341,7 +341,8 @@ public class VCardServlet extends HttpServlet {
                             catch(Exception e) {
                                 try {
                                     pm.currentTransaction().rollback();
-                                } catch(Exception e0) {}                                    
+                                } 
+                                catch(Exception e0) {}                                    
                             }
                         }
                         else {
@@ -367,7 +368,8 @@ public class VCardServlet extends HttpServlet {
         }
         try {
             pm.close();            
-        } catch(Exception e) {}        
+        } 
+        catch(Exception e) {}        
     }
 
     //-----------------------------------------------------------------------

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.8 2008/12/14 11:29:28 cmu Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.9 2009/01/06 13:16:55 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/14 11:29:28 $
+ * Date:        $Date: 2009/01/06 13:16:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,8 +77,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.dataprovider.cci.*,
-org.openmdx.compatibility.base.naming.*,
+org.openmdx.base.naming.*,
 org.openmdx.application.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");

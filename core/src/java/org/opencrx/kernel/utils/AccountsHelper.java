@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: AccountsHelper.java,v 1.2 2008/10/27 14:32:39 wfro Exp $
+ * Name:        $Id: AccountsHelper.java,v 1.4 2009/03/08 17:04:48 wfro Exp $
  * Description: ActivitiesHelper
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/27 14:32:39 $
+ * Date:        $Date: 2009/03/08 17:04:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,8 +55,6 @@
  */
 package org.opencrx.kernel.utils;
 
-import java.net.URI;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,7 +84,7 @@ public class AccountsHelper {
     public int parseFilteredAccountsUri(
        String uri
     ) throws IllegalArgumentException  {
-        List<String> l = splitUri(uri);
+        List<String> l = AccountsHelper.splitUri(uri);
         if(l.size() >= 3) {
             // URL pattern is
             // ./provider.name/segment.name/filter/filter.name

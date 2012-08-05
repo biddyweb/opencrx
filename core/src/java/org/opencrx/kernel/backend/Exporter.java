@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.17 2008/09/26 07:52:11 wfro Exp $
+ * Name:        $Id: Exporter.java,v 1.23 2009/03/08 17:04:51 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/26 07:52:11 $
+ * Date:        $Date: 2009/03/08 17:04:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,20 +86,20 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.opencrx.kernel.backend.Importer.NullOutputStream;
 import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
+import org.openmdx.application.cci.SystemAttributes;
+import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.query.Filter;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.text.conversion.Base64;
-import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
-import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.dataprovider.exporter.ProviderTraverser;
 import org.openmdx.compatibility.base.dataprovider.exporter.TraversalHandler;
 import org.openmdx.compatibility.base.dataprovider.exporter.Traverser;
 import org.openmdx.compatibility.base.dataprovider.exporter.XMLExportHandler;
 import org.openmdx.compatibility.base.dataprovider.exporter.XmlContentHandler;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.model1.accessor.basic.cci.Model_1_0;
 import org.w3c.cci2.BinaryLargeObject;
 
 public class Exporter {
@@ -440,7 +440,7 @@ public class Exporter {
             String schemaString
         ) throws ServiceException {
             TraversalHandler traversalHandler = null;
-            if(MIME_TYPE_XML.equals(Exporter.this.exportMimeType)) {
+            if(Exporter.MIME_TYPE_XML.equals(Exporter.this.exportMimeType)) {
                 XmlContentHandler contentHandler = new NonClosingXmlContentHandler(this.out);        
                 contentHandler.setAutoCollation(true);
                 contentHandler.setEncoding("UTF-8");
@@ -456,7 +456,7 @@ public class Exporter {
                 );
                 traversalHandler = taggingXmlTraversalHandler;
             }
-            else if(MIME_TYPE_EXCEL.equals(Exporter.this.exportMimeType)) {
+            else if(Exporter.MIME_TYPE_EXCEL.equals(Exporter.this.exportMimeType)) {
                 traversalHandler = new ExcelTraversalHandler(
                     this.context
                 );
@@ -465,10 +465,8 @@ public class Exporter {
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.ASSERTION_FAILURE, 
-                    new BasicException.Parameter[]{
-                        new BasicException.Parameter("mimetype", Exporter.this.exportMimeType)
-                    },
-                    "Unsupported mime type. Unable to export item."
+                    "Unsupported mime type. Unable to export item.",
+                    new BasicException.Parameter("mimetype", Exporter.this.exportMimeType)
                 );
             }
             return traversalHandler;
@@ -478,7 +476,7 @@ public class Exporter {
         public void export(
             List<Path> startPoints,
             Set<String> referenceFilters,
-            Map<String,Filter> attributeFilters,
+            Map<String,FilterProperty[]> attributeFilters,
             String schemaString,
             int maxObjects
         ) throws ServiceException {
@@ -633,8 +631,8 @@ public class Exporter {
                     (object.getValues(SystemAttributes.OBJECT_CLASS) != null) && 
                     (object.path().size() > 5)
                 ) {
-                    ExportHandler.this.updateReferencedObjects(object);
-                    ExportHandler.this.exportedObjects.add(object.path());
+                    Exporter.ExportHandler.this.updateReferencedObjects(object);
+                    Exporter.ExportHandler.this.exportedObjects.add(object.path());
                     String sheetName = reference.getBase();
                     if(sheetName.length() > 0) {
                         sheetName = Character.toUpperCase(sheetName.charAt(0)) + sheetName.substring(1);
@@ -648,7 +646,8 @@ public class Exporter {
                             HSSFName namedCell = this.wb.createName();
                             namedCell.setNameName(cellName);
                             namedCell.setReference(sheetName + "!$A$2:$CY$65536");
-                        } catch(Exception e) {}
+                        } 
+                        catch(Exception e) {}
                         // Create named groups for COLUMN
                         try {
                             HSSFName namedCell = this.wb.createName();
@@ -696,7 +695,8 @@ public class Exporter {
                                             while((b = ((InputStream)value).read()) != -1) {
                                                 bytes.write(b);
                                             }
-                                        } catch(IOException e) {}
+                                        } 
+                                        catch(IOException e) {}
                                         String encodedBytes = Base64.encode(bytes.toByteArray());
                                         if(encodedBytes.length() < Short.MAX_VALUE) {
                                             cell.setCellValue(new HSSFRichTextString(encodedBytes));
@@ -830,10 +830,10 @@ public class Exporter {
                 Path reference,
                 DataproviderObject_1_0 object
             ) throws ServiceException {
-                ExportHandler.this.updateReferencedObjects(object);
+                Exporter.ExportHandler.this.updateReferencedObjects(object);
                 // skip dummy and segment-level objects
                 if((object.getValues(SystemAttributes.OBJECT_CLASS) != null) && (object.path().size() > 5)) {
-                    ExportHandler.this.exportedObjects.add(object.path());
+                    Exporter.ExportHandler.this.exportedObjects.add(object.path());
                 }
                 return super.featureComplete(
                     reference,
