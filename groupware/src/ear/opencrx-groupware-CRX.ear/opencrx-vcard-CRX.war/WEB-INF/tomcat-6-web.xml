@@ -1,7 +1,0 @@
-   <Resource
-       name="ejb/data"
-       auth="Container"
-      type="org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1Home"
-       factory="org.openmdx.kernel.naming.tomcat.LinkingObjectFactory"
-       linkName="org/opencrx/core/CRX/noOrNew/gateway"
-   />

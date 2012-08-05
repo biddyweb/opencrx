@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<webappbnd:WebAppBinding xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:webappbnd="webappbnd.xmi" xmlns:webapplication="webapplication.xmi" xmlns:commonbnd="commonbnd.xmi" xmlns:common="common.xmi" xmi:id="WebAppBinding_1" virtualHostName="default_host">
-	<webapp href="WEB-INF/web.xml#webapp"/>
-	<ejbRefBindings xmi:id="EjbRefBinding_1" jndiName="org/opencrx/core/CRX/noOrNew/gateway">
-		<bindingEjbRef xmi:type="common:EJBLocalRef" href="WEB-INF/web.xml#ejb_data"/>
-	</ejbRefBindings>
-</webappbnd:WebAppBinding>

@@ -32,7 +32,7 @@
 		<config-property>
 			<config-property-name>ConnectionURL</config-property-name>
 			<config-property-type>java.lang.String</config-property-type>
-			<config-property-value>jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX_2_1;selectMethod=cursor</config-property-value>
+			<config-property-value>jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX_2_2;selectMethod=cursor</config-property-value>
 		</config-property>
 		<authentication-mechanism>
 			<authentication-mechanism-type>BasicPassword</authentication-mechanism-type>

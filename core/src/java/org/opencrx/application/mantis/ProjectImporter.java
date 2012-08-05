@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProjectImporter.java,v 1.11 2008/04/12 20:21:50 wfro Exp $
+ * Name:        $Id: ProjectImporter.java,v 1.13 2008/09/05 10:10:47 wfro Exp $
  * Description: openCRX Mantis Importer
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/12 20:21:50 $
+ * Date:        $Date: 2008/09/05 10:10:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -87,6 +87,7 @@ import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.activity1.jmi1.ReapplyActivityCreatorParams;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
+import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
@@ -357,14 +358,15 @@ public class ProjectImporter {
                         System.out.println("Creating incident " + activityId);
                         this.pm.currentTransaction().begin();
                         NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
-                            null, 
-                            null, 
-                            null, 
-                            bugSummary, 
-                            (short)(bugPriority / 10 - 1), 
-                            null, 
-                            null, 
-                            bugDateSubmitted
+                            null, // description
+                            null, // detailedDescription
+                            null, // dueBy
+                            ICalendar.ICAL_TYPE_NA, // icalType
+                            bugSummary, // name
+                            (short)(bugPriority / 10 - 1), // priority
+                            null, // reportingContact
+                            null, // scheduledEnd
+                            bugDateSubmitted // scheduledStart
                         );
                         NewActivityResult res = activityCreator.newActivity(newActivityParams);
                         this.pm.currentTransaction().commit();

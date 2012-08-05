@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.67 2008/04/03 14:26:39 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.72 2008/08/31 21:30:53 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.67 $
+ * Revision:    $Revision: 1.72 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/03 14:26:39 $
+ * Date:        $Date: 2008/08/31 21:30:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -96,7 +97,6 @@ import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
 import org.openmdx.model1.accessor.basic.cci.Model_1_0;
-import org.openmdx.uses.org.apache.commons.collections.map.LRUMap;
 
 /**
  * openCRX access control plugin. Implements the openCRX access control logic.
@@ -256,9 +256,12 @@ public class AccessControl_1
             (object.getValues(SystemAttributes.OBJECT_CLASS) != null) &&
             (object.values(SystemAttributes.OBJECT_CLASS).size() > 0)
         ) {
-            this.cachedParents.put(
+            cachedParents.put(
                 object.path(),
-                new DataproviderObject(object)
+                new Object[]{
+                    new DataproviderObject(object),
+                    new Long(System.currentTimeMillis() + TTL_CACHED_PARENTS)
+                }
             );
         }
         else {
@@ -501,7 +504,8 @@ public class AccessControl_1
      */
     private DataproviderObject_1_0 getCachedParent(
         ServiceHeader header,
-        Path path
+        Path path,
+        boolean forceRefresh
     ) throws ServiceException {
         Path reference = path;
         if(reference.size() % 2 == 1) {
@@ -527,13 +531,17 @@ public class AccessControl_1
         }
         // Get parent from cache or retrieve
         Path parentPath = reference.getParent();
-        DataproviderObject_1_0 parent = (DataproviderObject_1_0)this.cachedParents.get(parentPath);
-        if(parent == null) {        
+        Object[] entry = cachedParents.get(parentPath);
+        DataproviderObject_1_0 parent = null;
+        if(forceRefresh || (entry == null)) {        
             parent = this.retrieveObjectFromLocal(
                 header, 
                 parentPath
             );
             this.addToParentsCache(parent);
+        }
+        else {
+            parent = (DataproviderObject_1_0)entry[0];
         }
         return parent;
     }
@@ -552,7 +560,24 @@ public class AccessControl_1
             this.router == null
                 ? this.getDelegation()
                 : this.router
-          );        
+        );
+        // Remove cached parents if expired
+        for(Iterator<Map.Entry<Path,Object[]>> i = cachedParents.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<Path,Object[]> entry = i.next();
+            try {
+                if(entry != null) {
+                    if(entry.getValue() == null) {
+                        i.remove();
+                    }
+                    else {
+                        Long expiresAt = (Long)entry.getValue()[1];
+                        if((expiresAt == null) || (expiresAt < System.currentTimeMillis())) {
+                            i.remove();
+                        }
+                    }
+                }
+            } catch(Exception e) {}
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -591,7 +616,8 @@ public class AccessControl_1
         if(request.path().size() >= 7) {
 	        parent = this.getCachedParent(
                 header, 
-                request.path()
+                request.path(),
+                true
             );
 	        if(this.isSecureObject(parent)) {
 	            Set<String> memberships = new HashSet<String>();
@@ -794,7 +820,8 @@ public class AccessControl_1
         );
         DataproviderObject_1_0 parent = this.getCachedParent(
             header,
-            request.path()
+            request.path(),
+            false
         );
         if(request.operation() != DataproviderOperations.ITERATION_CONTINUATION) {
             ModelElement_1_0 referencedType = this.getReferencedType(
@@ -853,7 +880,8 @@ public class AccessControl_1
         if(request.path().size() >= 7) {
 	        parent = this.getCachedParent(
                 header,
-                request.path()
+                request.path(),
+                false
             );
 	        ModelElement_1_0 referencedType = this.model.getTypes(request.path())[2];
 	        if(this.isSecureObject(referencedType) && this.isSecureObject(parent)) {
@@ -920,7 +948,8 @@ public class AccessControl_1
         if(this.isSecureObject(existingObject)) {            
             parent = this.getCachedParent(
                 header,
-                request.path()
+                request.path(),
+                true
             );            
             // assert that requesting user is allowed to update object
             Set<String> memberships = new HashSet<String>();
@@ -951,7 +980,7 @@ public class AccessControl_1
 	            }
             }
         }
-        this.cachedParents.remove(
+        cachedParents.remove(
             request.path()
         );
         return this.completeReply(
@@ -1052,8 +1081,7 @@ public class AccessControl_1
 	        replacement.clearValues("owningUser");
 	        replacement.clearValues("owningGroup");
         }
-        
-        this.cachedParents.remove(request.path());
+        cachedParents.remove(request.path());
         return this.completeReply(
             header,
             super.replace(header, request),
@@ -1098,7 +1126,8 @@ public class AccessControl_1
             DataproviderObject_1_0 user = this.currentSecurityContext.getGroup(principal);
             DataproviderObject_1_0 parent = this.getCachedParent(
                 header,
-                objectIdentity
+                objectIdentity,
+                true
             );            
             DataproviderObject_1_0 object = this.retrieveObjectFromLocal(            
                 header,
@@ -1206,9 +1235,11 @@ public class AccessControl_1
     // Group principal of requesting user
     private DataproviderObject_1_0 requestingUser = null;
     
-    // Cached parents (cleared on epilog)
-    private static final int MAX_CACHED_PARENTS = 1000;
-    private Map cachedParents = new LRUMap(MAX_CACHED_PARENTS);
+    // Cached parents
+    private static final long TTL_CACHED_PARENTS = 2000L;
+    // Entry contains DataproviderObject and expiration date
+    private static final Map<Path,Object[]> cachedParents = 
+        new ConcurrentHashMap<Path,Object[]>();
     
 }
 

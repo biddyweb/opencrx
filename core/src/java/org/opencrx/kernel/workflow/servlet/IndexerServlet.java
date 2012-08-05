@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.22 2008/05/29 23:12:38 wfro Exp $
+ * Name:        $Id: IndexerServlet.java,v 1.24 2008/09/02 15:41:59 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/29 23:12:38 $
+ * Date:        $Date: 2008/09/02 15:41:59 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -158,6 +158,9 @@ public class IndexerServlet
                     System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (#" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
                 }
             }
+            try {
+                pm.close();
+            } catch(Exception e) {}
         }
         catch(Exception e) {
             new ServiceException(e).log();
@@ -170,7 +173,7 @@ public class IndexerServlet
         HttpServletRequest req, 
         HttpServletResponse res
     ) throws ServletException, IOException {
-        if(System.currentTimeMillis() > this.startedAt + 180000L) {
+        if(System.currentTimeMillis() > this.startedAt + STARTUP_DELAY) {
             String segmentName = req.getParameter("segment");
             String providerName = req.getParameter("provider");
             String id = providerName + "/" + segmentName;
@@ -230,6 +233,7 @@ public class IndexerServlet
 
     private static final String COMMAND_EXECUTE = "/execute";
     private static final String WORKFLOW_NAME = "Indexer";
+    private static final long STARTUP_DELAY = 180000L;
     
     private PersistenceManagerFactory persistenceManagerFactory = null;
     private final List<String> runningSegments = new ArrayList<String>();

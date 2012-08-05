@@ -180,6 +180,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="352" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>slo</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Slovaque [sk/slo]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="361" _operation="create">
                           <_object>
                             <shortText>

@@ -4,9 +4,10 @@
 	<ejb-module remote="false" path="kernel.jar"/>
 	<ejb-module remote="false" path="gateway.jar"/>
 	<ejb-module remote="false" path="security.jar"/>
-	<web-module id="opencrx-core-CRX-Web" path="opencrx-core-CRX-Web.war"/>
-	<web-module id="client-gateway" path="client-gateway.war"/>
-	<web-module id="server-gateway" path="server-gateway.war"/>
+	<web-module id="opencrx-core-CRX" path="opencrx-core-CRX.war"/>
+	<web-module id="opencrx-ical-CRX" path="opencrx-ical-CRX.war"/>
+	<web-module id="opencrx-imap-CRX" path="opencrx-imap-CRX.war"/>
+	<web-module id="opencrx-vcard-CRX" path="opencrx-vcard-CRX.war"/>	
 	<security-role-mapping name="OpenCrxUser">
 		<group name="OpenCrxUser"/>
 	</security-role-mapping>

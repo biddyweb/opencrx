@@ -53,7 +53,6 @@ DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEP ;
 DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEPG ;
 DROP VIEW OOCKE1_JOIN_DEPPOSHASSBK ;
 DROP VIEW OOCKE1_JOIN_DEPPOSHASBK ;
-DROP VIEW OOCKE1_JOIN_FLDCONTAINSDOC ;
 DROP VIEW OOCKE1_JOIN_ENTITYCONTAINSDEP ;
 DROP VIEW OOCKE1_JOIN_FLDCONTAINSFLD ;
 DROP VIEW OOCKE1_JOIN_HOMEHASASSACT ;
@@ -63,12 +62,16 @@ DROP VIEW OOCKE1_JOIN_SEGCONTAINSFAC ;
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE_ ;
+DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY ;
+DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY_ ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ ;
+DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM ;
+DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM_ ;
 DROP VIEW OOCKE1_TOBJ_LNKITEMLNKFROM ;
 DROP VIEW OOCKE1_TOBJ_LNKITEMLNKFROM_ ;
 DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY ;
@@ -81,6 +84,7 @@ DROP VIEW OOCKE1_TOBJ_WORKREPORTENTRY ;
 DROP VIEW OOCKE1_TOBJ_WORKREPORTENTRY_ ;
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR ;
 DROP VIEW OOCKE1_JOIN_ACCTHASASSCONTR ;
+DROP VIEW OOCKE1_JOIN_ACCTHASASSBUDGET ;
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSBU ;
 DROP VIEW OOCKE1_JOIN_BUHASADR ;
 DROP VIEW OOCKE1_JOIN_IITEMHASBOOKING ;
@@ -266,16 +270,6 @@ INNER JOIN
     OOCKE1_DEPOTHOLDER dh
 ON
     d.p$$parent = dh.object_id ;
-CREATE VIEW OOCKE1_JOIN_FLDCONTAINSDOC AS
-SELECT
-    d_.object_id AS document,
-    f.object_id AS folder
-FROM
-    OOCKE1_DOCUMENT_ d_
-INNER JOIN
-    OOCKE1_DOCUMENTFOLDER f
-ON
-    d_.folder = f.object_id ;
 CREATE VIEW OOCKE1_JOIN_FLDCONTAINSFLD AS
 SELECT
     f.object_id AS folder,
@@ -474,6 +468,16 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     c.supplier = a.object_id ;
+CREATE VIEW OOCKE1_JOIN_ACCTHASASSBUDGET AS
+SELECT
+    b.object_id AS assigned_budget,
+    a.object_id AS account
+FROM
+    OOCKE1_BUDGET b
+INNER JOIN
+    OOCKE1_ACCOUNT a
+ON
+    b.account = a.object_id ;
 CREATE VIEW OOCKE1_JOIN_BUHASADR AS
 SELECT
     adr.object_id AS assigned_address,
@@ -605,6 +609,55 @@ SELECT
     dtype
 FROM
     OOCKE1_ACTIVITYLINK_ ;
+CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM AS
+SELECT
+
+
+
+    CASE
+        WHEN c.object_id LIKE 'lead/%' THEN REPLACE(c.object_id, 'lead/', 'linkFromLead/')
+        WHEN c.object_id LIKE 'opportunity/%' THEN REPLACE(c.object_id, 'opportunity/', 'linkFromOpportunity/')
+        WHEN c.object_id LIKE 'quote/%' THEN REPLACE(c.object_id, 'quote/', 'linkFromQuote/')
+        WHEN c.object_id LIKE 'salesOrder/%' THEN REPLACE(c.object_id, 'salesOrder/', 'linkFromSalesOrder/')
+        WHEN c.object_id LIKE 'invoice/%' THEN REPLACE(c.object_id, 'invoice/', 'linkFromInvoice/')
+    END || '/' || REPLACE(l.object_id, '/', ':')
+
+
+
+    AS object_id,
+    c.object_id AS p$$parent,
+    'org:opencrx:kernel:contract1:ContractLinkFrom' AS dtype,
+    l.modified_at,
+    l.created_at,
+    l.created_by_,
+    l.modified_by_,
+    l.access_level_browse,
+    l.access_level_update,
+    l.access_level_delete,
+    l.owner_,
+    100-l.link_type AS link_type,
+    l.name,
+    l.description,
+    l.valid_from AS valid_from,
+    l.valid_to AS valid_to,
+    l.p$$parent AS link_from,
+    l.object_id AS link_to
+FROM
+    OOCKE1_CONTRACT c,
+    OOCKE1_CONTRACTLINK l
+WHERE
+    l.link_to = c.object_id AND
+    l.object_id = l.object_id ;
+CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM_ AS
+SELECT
+    object_id,
+    idx,
+    created_by,
+    modified_by,
+    owner,
+    dtype
+FROM
+    OOCKE1_CONTRACTLINK_ ;
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE AS
 SELECT
 
@@ -718,6 +771,98 @@ SELECT
     'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype
 FROM
     OOCKE1_CONTRACT_ ;
+CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY AS
+SELECT
+
+
+
+    REPLACE(d_.folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(d.object_id, '/', ':')
+
+
+
+    AS object_id,
+    d_.folder AS p$$parent,
+    'org:opencrx:kernel:document1:DocumentFolderEntry' AS dtype,
+    d.modified_at,
+    d.modified_by_,
+    d.created_at,
+    d.created_by_,
+    d.access_level_browse,
+    d.access_level_update,
+    d.access_level_delete,
+    d.owner_,
+    d.name AS name,
+    d.description AS description,
+
+
+
+
+
+    NULL AS valid_from,
+    NULL AS valid_to,
+    NULL AS disabled,
+
+    d.object_id AS document,
+    d.object_id AS based_on
+FROM
+    OOCKE1_DOCUMENT_ d_
+INNER JOIN
+    OOCKE1_DOCUMENT d
+ON
+    d_.object_id = d.object_id
+
+UNION
+
+SELECT
+
+
+
+    REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(dfa.object_id, '/', ':')
+
+
+
+    AS object_id,
+    dfa.document_folder AS p$$parent,
+    'org:opencrx:kernel:document1:DocumentFolderEntry' AS dtype,
+    dfa.modified_at,
+    dfa.modified_by_,
+    dfa.created_at,
+    dfa.created_by_,
+    dfa.access_level_browse,
+    dfa.access_level_update,
+    dfa.access_level_delete,
+    dfa.owner_,
+    dfa.name AS name,
+    dfa.description AS description,
+    dfa.valid_from AS valid_from,
+    dfa.valid_to AS valid_to,
+    dfa.disabled AS disabled,
+    dfa.p$$parent AS document,
+    dfa.object_id AS based_on
+FROM
+    OOCKE1_DOCUMENTFOLDERASS dfa ;
+CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY_ AS
+SELECT
+    object_id,
+    idx,
+    created_by,
+    modified_by,
+    owner,
+    'org:opencrx:kernel:document1:DocumentFolderEntry' AS dtype
+FROM
+    OOCKE1_DOCUMENT_ d_
+
+UNION
+
+SELECT
+    object_id,
+    idx,
+    created_by,
+    modified_by,
+    owner,
+    'org:opencrx:kernel:document1:DocumentFolderEntry' AS dtype
+FROM
+    OOCKE1_DOCUMENTFOLDERASS_ dfa_ ;
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 AS
 SELECT
     ass.account AS account,

@@ -206,6 +206,28 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+													<_object>
+														<shortText>
+															<_item>Service Point</_item>
+														</shortText>
+														<longText>
+															<_item>Service Point</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+													<_object>
+														<shortText>
+															<_item>Manufacturer</_item>
+														</shortText>
+														<longText>
+															<_item>Manufacturer</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
 											</entry>
 										</_content>
 									</org.opencrx.kernel.code1.CodeValueContainer>

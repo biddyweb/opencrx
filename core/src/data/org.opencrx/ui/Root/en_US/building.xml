@@ -922,7 +922,7 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<iconKey>AccountAssignmentProduct</iconKey>
+											<iconKey>AccountAssignmentInventoryItem</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

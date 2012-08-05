@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.9 2008/05/30 17:38:38 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: SecureObject.java,v 1.11 2008/08/29 14:34:09 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/30 17:38:38 $
+ * Date:        $Date: 2008/08/29 14:34:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,6 +55,7 @@
  */
 package org.opencrx.kernel.backend;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class SecureObject {
         this(
             backend,
             (Path)args.values("user").get(0),
-            (Path)args.values("group").get(0),
+            Arrays.asList((Path)args.values("group").get(0)),
             ((Number)args.values("group").get(0)).shortValue(),
             ((Number)args.values("accessLevelBrowse").get(0)).shortValue(),
             ((Number)args.values("accessLevelUpdate").get(0)).shortValue(),
@@ -99,7 +100,7 @@ public class SecureObject {
     public SecureObject(
         Backend backend,
         Path paramUserIdentity,
-        Path paramGroupIdentity,
+        List<Path> paramGroupIdentity,
         Short paramMode,
         Short paramAccessLevelBrowse,
         Short paramAccessLevelUpdate,
@@ -107,7 +108,7 @@ public class SecureObject {
     ) {
         this.backend = backend;
         this.paramUserIdentity = paramUserIdentity;
-        this.paramGroupIdentity = paramGroupIdentity;
+        this.paramGroupsIdentity = paramGroupIdentity;
         this.paramMode = paramMode;
         this.paramAccessLevelBrowse = paramAccessLevelBrowse;
         this.paramAccessLevelUpdate = paramAccessLevelUpdate;
@@ -160,6 +161,7 @@ public class SecureObject {
         }        
         pm.currentTransaction().begin();
         principalGroup = realmPkg.getPrincipalGroup().createPrincipalGroup();
+        principalGroup.refInitialize(false, false);
         principalGroup.setDescription(segmentName + "\\\\" + groupName);
         realm.addPrincipal(                
             false,
@@ -216,7 +218,7 @@ public class SecureObject {
         Marshaller marshaller,
         Short mode,
         String reportText,
-        List report
+        List<String> report
     ) {
         try {
             // apply acls to obj
@@ -294,7 +296,7 @@ public class SecureObject {
     //-----------------------------------------------------------------------
     public void setOwningUser(
         DataproviderObject_1_0 obj,
-        List report
+        List<String> report
     ) throws ServiceException {        
         this.applyAcls(
             obj,
@@ -302,8 +304,8 @@ public class SecureObject {
                 public Object marshal(Object s) throws ServiceException {
                     if(s instanceof DataproviderObject) {
                         DataproviderObject obj = (DataproviderObject)s;
-                        Path userIdentity = (Path)SecureObject.this.paramUserIdentity;
-                        if((userIdentity == null) && (obj.values(SystemAttributes.CREATED_BY).size() > 0)) {
+                        Path userIdentity = SecureObject.this.paramUserIdentity;
+                        if((userIdentity == null) && !obj.values(SystemAttributes.CREATED_BY).isEmpty()) {
                             DataproviderObject_1_0 user = SecureObject.this.getUser((String)obj.values(SystemAttributes.CREATED_BY).get(0));
                             if(user != null) {
                                 userIdentity = user.path();                
@@ -330,7 +332,7 @@ public class SecureObject {
         Path secureObjectIdentity,
         List<String> report
     ) throws ServiceException {
-        this.addOwningGroup(
+        this.addOwningGroups(
             this.backend.retrieveObject(
                 secureObjectIdentity
             ), 
@@ -339,7 +341,7 @@ public class SecureObject {
     }
     
     //-----------------------------------------------------------------------
-    public void addOwningGroup(
+    public void addOwningGroups(
         DataproviderObject_1_0 obj,
         List<String> report
     ) throws ServiceException {        
@@ -348,13 +350,14 @@ public class SecureObject {
             new Marshaller() {
                 public Object marshal(Object s) throws ServiceException {
                     if(s instanceof DataproviderObject) {
-                        Path owningGroupIdentity = (Path)SecureObject.this.paramGroupIdentity;
-                        if(owningGroupIdentity != null) {
-                            List groups = ((DataproviderObject)s).values("owningGroup");
-                            if(!groups.contains(owningGroupIdentity)) {
-                                ((DataproviderObject)s).values("owningGroup").add(
-                                    owningGroupIdentity
-                                );
+                        List<Object> groups = ((DataproviderObject)s).values("owningGroup");
+                        for(Path owningGroupIdentity: SecureObject.this.paramGroupsIdentity) {
+                            if(owningGroupIdentity != null) {
+                                if(!groups.contains(owningGroupIdentity)) {
+                                    ((DataproviderObject)s).values("owningGroup").add(
+                                        owningGroupIdentity
+                                    );
+                                }
                             }
                         }
                     }
@@ -366,6 +369,53 @@ public class SecureObject {
             },
             this.paramMode,
             "addOwningGroup",
+            report
+        );
+    }
+            
+    //-----------------------------------------------------------------------
+    public void replaceOwningGroups(
+        Path secureObjectIdentity,
+        List<String> report
+    ) throws ServiceException {
+        this.replaceOwningGroups(
+            this.backend.retrieveObject(
+                secureObjectIdentity
+            ), 
+            report
+        );
+    }
+        
+    //-----------------------------------------------------------------------
+    public void replaceOwningGroups(
+        DataproviderObject_1_0 obj,
+        List<String> report
+    ) throws ServiceException {        
+        this.applyAcls(
+            obj,
+            new Marshaller() {
+                public Object marshal(Object s) throws ServiceException {
+                    if(s instanceof DataproviderObject) {
+                        List<Object> groups = ((DataproviderObject)s).values("owningGroup");
+                        groups.clear();
+                        for(Path owningGroupIdentity: SecureObject.this.paramGroupsIdentity) {
+                            if(owningGroupIdentity != null) {
+                                if(!groups.contains(owningGroupIdentity)) {
+                                    ((DataproviderObject)s).values("owningGroup").add(
+                                        owningGroupIdentity
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    return s;
+                }
+                public Object unmarshal(Object s) {
+                  throw new UnsupportedOperationException();
+                }
+            },
+            this.paramMode,
+            "replaceOwningGroup",
             report
         );
     }
@@ -393,11 +443,12 @@ public class SecureObject {
             new Marshaller() {
                 public Object marshal(Object s) throws ServiceException {
                     if(s instanceof DataproviderObject) {
-                        Path owningGroupIdentity = (Path)SecureObject.this.paramGroupIdentity;
-                        if(owningGroupIdentity != null) {
-                            ((DataproviderObject)s).values("owningGroup").remove(
-                                owningGroupIdentity
-                            );
+                        for(Path owningGroupIdentity: SecureObject.this.paramGroupsIdentity) {
+                            if(owningGroupIdentity != null) {
+                                ((DataproviderObject)s).values("owningGroup").remove(
+                                    owningGroupIdentity
+                                );
+                            }
                         }
                     }
                     return s;
@@ -465,7 +516,7 @@ public class SecureObject {
     //-----------------------------------------------------------------------
     public void setAccessLevel(
         DataproviderObject_1_0 obj,
-        List report
+        List<String> report
     ) throws ServiceException {        
         this.applyAcls(
             obj,
@@ -509,7 +560,7 @@ public class SecureObject {
     
     private final Backend backend;
     private final Path paramUserIdentity;
-    private final Path paramGroupIdentity;
+    private final List<Path> paramGroupsIdentity;
     private final Short paramAccessLevelBrowse;
     private final Short paramAccessLevelUpdate;
     private final Short paramAccessLevelDelete;

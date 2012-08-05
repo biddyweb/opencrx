@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>相关机会</_item>
+                        <_item>»相关机会</_item>
                       </label>
                       <toolTip>
                         <_item>相关机会</_item>

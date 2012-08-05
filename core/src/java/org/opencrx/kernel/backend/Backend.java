@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Backend.java,v 1.21 2008/05/25 22:02:36 wfro Exp $
+ * Name:        $Id: Backend.java,v 1.22 2008/07/10 22:31:40 wfro Exp $
  * Description: Backend
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/25 22:02:36 $
+ * Date:        $Date: 2008/07/10 22:31:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -661,12 +661,13 @@ public class Backend {
         ServiceHeader header,
         DataproviderObject object
     ) throws ServiceException {
-        if(!object.path().get(0).startsWith("org:opencrx:kernel")) {
+        if(!USE_OPTIMIZED_REPLACE || !object.path().get(0).startsWith("org:opencrx:kernel")) {
             this.getDelegatingRequests().addReplaceRequest(
                 object
             );
         }
         else {
+            // WARNING: here we skip the prolog of the SystemAttributes_1 plugin 
             this.context.delegatingLayer.replace(
                 header,
                 new DataproviderRequest(
@@ -1030,6 +1031,8 @@ public class Backend {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
+    private final static boolean USE_OPTIMIZED_REPLACE = false;
+    
     private final UUIDGenerator uuids;
    
     private Codes codes = null;

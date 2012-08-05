@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.20 2008/05/22 15:38:31 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.27 2008/09/16 09:25:16 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/22 15:38:31 $
+ * Date:        $Date: 2008/09/16 09:25:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -207,6 +207,7 @@ public class ICalendar {
         String sourceIcal,
         List<String> statusMessage
     ) throws ServiceException {
+        short icalType = ((Number)activity.values("icalType").get(0)).shortValue();
         // DTSTART
         String dtStart = null;
         if(!activity.values("scheduledStart").isEmpty()) {
@@ -236,21 +237,20 @@ public class ICalendar {
             priority = (Number)activity.values("priority").get(0);
         }
         // SUMMARY (append activity number)
-        String summary = activity.values("name").isEmpty() 
-            ? "" 
-            : (String)activity.values("name").get(0);
-        summary += activity.values("activityNumber").isEmpty()
-            ? ""
-            : LINE_COMMENT_INDICATOR + " #" + activity.values("activityNumber").get(0);            
+        String summary = activity.values("name").isEmpty() ? 
+            "" : 
+            (String)activity.values("name").get(0);
+        summary += activity.values("activityNumber").isEmpty() ? 
+            "" : 
+            LINE_COMMENT_INDICATOR + " #" + activity.values("activityNumber").get(0);            
         // DESCRIPTION
-        String description = activity.values("description").isEmpty() 
-            ? "" 
-            : (String)activity.values("description").get(0);
+        String description = activity.values("description").isEmpty() ? 
+            "" : 
+            (String)activity.values("description").get(0);
         // LOCATION
-        String location = activity.values("location").isEmpty() 
-            ? "" 
-            : (String)activity.values("location").get(0);
-
+        String location = activity.values("location").isEmpty() ? 
+            "" : 
+            (String)activity.values("location").get(0);
         // attendees
         List<String> attendees = new ArrayList<String>();
         String activityClass = (String)activity.values(SystemAttributes.OBJECT_CLASS).get(0);
@@ -320,14 +320,12 @@ public class ICalendar {
                 (Path)activity.values("assignedTo").get(0)
             );
         }
-
-        // return if data is missing
+        // Return if data is missing
         if(!statusMessage.isEmpty()) {
             return null;
-        }
-        
+        }        
         if((sourceIcal == null) || (sourceIcal.length() == 0)) {
-            // Template
+            // Empty template
             UUID uid = null;
             try {
                 uid = UUIDConversion.fromString(activity.path().getBase());
@@ -339,7 +337,7 @@ public class ICalendar {
                 "BEGIN:VCALENDAR\n" +
                 "PRODID:" + PROD_ID + "\n" +
                 "VERSION:2.0\n" +
-                "BEGIN:VEVENT\n" +
+                (icalType == ICalendar.ICAL_TYPE_VTODO ? "BEGIN:VTODO\n" : "BEGIN:VEVENT\n") +
                 "UID:" + uid.toString() + "\n" +
                 "LAST-MODIFIED:" + lastModified.substring(0, 15) + "Z\n" +
                 "DTSTART:\n" +
@@ -352,69 +350,65 @@ public class ICalendar {
                 "PRIORITY:\n" +
                 "ATTENDEE:\n" +
                 "CLASS:PUBLIC\n" +
-                "END:VEVENT\n" +
+                (icalType == ICalendar.ICAL_TYPE_VTODO ? "END:VTODO\n" : "END:VEVENT\n") +
                 "END:VCALENDAR";            
         }
         try {
             ByteArrayOutputStream targetIcalBos = new ByteArrayOutputStream();
             PrintWriter targetIcal = new PrintWriter(new OutputStreamWriter(targetIcalBos, "UTF-8"));
-            String line = null;
+            String lSourceIcal = null;
             BufferedReader readerSourceIcal = new BufferedReader(new StringReader(sourceIcal));
-            boolean isEvent = false;
+            boolean isEventOrTodo = false;
             boolean isAlarm = false;
             boolean isTimezone = false;
             String tagStart = null;
             int nEvents = 0;
-            while((line = readerSourceIcal.readLine()) != null) {
-                if(!line.startsWith(" ")) {
-                    tagStart = line;
+            while((lSourceIcal = readerSourceIcal.readLine()) != null) {
+                if(!lSourceIcal.startsWith(" ")) {
+                    tagStart = lSourceIcal;
                 }
                 // PRODID
-                if(line.startsWith("PRODID") || line.startsWith("prodid")) {                
+                if(lSourceIcal.startsWith("PRODID") || lSourceIcal.startsWith("prodid")) {                
                     targetIcal.println("PRODID:" + PROD_ID);
                 }                
-                else if(line.startsWith("TZID") || line.startsWith("tzid")) {                
+                else if(lSourceIcal.startsWith("TZID") || lSourceIcal.startsWith("tzid")) {                
                 }                
                 else if(
-                    line.toUpperCase().startsWith("BEGIN:VTIMEZONE") 
+                    lSourceIcal.toUpperCase().startsWith("BEGIN:VTIMEZONE") 
                 ) {
                     isTimezone = true;
                 }
                 else if(
-                    line.toUpperCase().startsWith("END:VTIMEZONE")
+                    lSourceIcal.toUpperCase().startsWith("END:VTIMEZONE")
                 ) {
                     isTimezone = false;
                 }
                 else if(
-                    line.toUpperCase().startsWith("BEGIN:VALARM")
+                    lSourceIcal.toUpperCase().startsWith("BEGIN:VALARM")
                 ) {
                     targetIcal.println("BEGIN:VALARM");                    
                     isAlarm = true;
                 }
                 else if(
-                    line.toUpperCase().startsWith("END:VALARM")
+                    lSourceIcal.toUpperCase().startsWith("END:VALARM")
                 ) {           
                     targetIcal.println("END:VALARM");                    
                     isAlarm = false;                    
                 }
                 else if(
-                    line.toUpperCase().startsWith("BEGIN:VEVENT")
+                    lSourceIcal.toUpperCase().startsWith("BEGIN:VEVENT") ||
+                    lSourceIcal.toUpperCase().startsWith("BEGIN:VTODO") 
                 ) {
-                    targetIcal.println("BEGIN:VEVENT");                    
-                    isEvent = true;
-                }
-                else if(
-                    line.startsWith("BEGIN:VTODO") || 
-                    line.startsWith("begin:vtodo") 
-                ) {
-                    targetIcal.println("BEGIN:VTODO");                    
-                    isEvent = true;
+                    targetIcal.println(
+                        icalType == ICAL_TYPE_VTODO ? "BEGIN:VTODO" : "BEGIN:VEVENT"
+                    );
+                    isEventOrTodo = true;
                 }
                 // Dump updated event fields only for first event
                 else if(
                     (nEvents == 0) &&
-                    line.toUpperCase().startsWith("END:VEVENT") || 
-                    line.toUpperCase().startsWith("END:VTODO")
+                    lSourceIcal.toUpperCase().startsWith("END:VEVENT") || 
+                    lSourceIcal.toUpperCase().startsWith("END:VTODO")
                 ) {                    
                     // DTSTART
                     if(dtStart != null) {
@@ -482,22 +476,21 @@ public class ICalendar {
                         targetIcal.println("ORGANIZER:MAILTO:" + organizerEmailAddress);
                     }
                     if(
-                        line.toUpperCase().startsWith("END:VEVENT")
-                    ) {                        
-                        targetIcal.println("END:VEVENT");                    
-                        
+                        lSourceIcal.toUpperCase().startsWith("END:VEVENT") ||
+                        lSourceIcal.toUpperCase().startsWith("END:VTODO")
+                    ) {
+                        targetIcal.println(
+                            icalType == ICAL_TYPE_VTODO ? "END:VTODO" : "END:VEVENT"
+                        );                                            
                     }
-                    else {                        
-                        targetIcal.println("END:VTODO");                                            
-                    }
-                    isEvent = false;
+                    isEventOrTodo = false;
                     nEvents++;
                 }
                 else if(isTimezone) {
                     // Skip all timezone fields. All datetime fields are converted to UTC
                 }
                 else if(
-                    isEvent && 
+                    isEventOrTodo && 
                     !isAlarm && 
                     (nEvents == 0)
                 ) {
@@ -524,11 +517,11 @@ public class ICalendar {
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("ORGANIZER");
                     if(!isUpdatableTag) {
-                        targetIcal.println(line);
+                        targetIcal.println(lSourceIcal);
                     }
                 }
                 else {
-                    targetIcal.println(line);                    
+                    targetIcal.println(lSourceIcal);                    
                 }
             }
             targetIcal.flush();
@@ -729,6 +722,7 @@ public class ICalendar {
         String t = s.replace("\\\\", "\\");
         t = t.replace("\\;", ";");
         t = t.replace("\\,", ",");
+        t = t.replace("\\\"", "\"");
         return t;
     }
     
@@ -849,6 +843,19 @@ public class ICalendar {
                 );
             } catch(Exception e) {
                 errors.add("DTEND (" + s + ")");
+            }
+        }
+        s = fields.get("DUE");
+        if((s != null) && (s.length() > 0)) {
+            try {
+                activity.clearValues("dueBy").add(
+                    this.getUtcDateTime(
+                        s, 
+                        dateTimeFormatter
+                    )
+                );
+            } catch(Exception e) {
+                errors.add("DUE (" + s + ")");
             }
         }
         s = fields.get("PRIORITY");
@@ -993,9 +1000,14 @@ public class ICalendar {
     public static final int PARTY_TYPE_NA = 0;
     public static final int PARTY_TYPE_REQUIRED = 410;
     public static final int PARTY_TYPE_OPTIONAL = 420;
-    
+
+    public static final short ICAL_TYPE_VTODO = 2;
+    public static final short ICAL_TYPE_VEVENT = 1;
+    public static final short ICAL_TYPE_NA = 0;
+
     protected final Backend backend;
     protected final Map<String, String[]> partyMetadata;
+    
 }
 
 //--- End of File -----------------------------------------------------------

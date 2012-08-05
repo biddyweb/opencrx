@@ -17,7 +17,7 @@
                         <_item>Recursos</_item>
                       </label>
                       <toolTip>
-                        <_item>Todos os recursos</_item>
+                        <_item>Todos os Recursos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Calendários</_item>
                       </label>
                       <toolTip>
-                        <_item>Todos os calendários</_item>
+                        <_item>Todos os Calendários</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:standardRate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valor Padrao</_item>
+                        <_item>Valor Padrão</_item>
                       </label>
                       <toolTip>
-                        <_item>Valor Padrao</_item>
+                        <_item>Valor Padrão</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:calendarDay" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dias do calendário</_item>
+                        <_item>Dias do Calendário</_item>
                       </label>
                       <toolTip>
-                        <_item>Dias do calendário</_item>
+                        <_item>Dias do Calendário</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:baseCalendar" _operation="create">
                     <_object>
                       <label>
-                        <_item>calendário base</_item>
+                        <_item>Calendário Base</_item>
                       </label>
                       <toolTip>
-                        <_item>Calendário base</_item>
+                        <_item>Calendário Base</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -476,10 +476,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:resourceRole" _operation="create">
                     <_object>
                       <label>
-                        <_item>Regra de Recurso</_item>
+                        <_item>Regra do Recurso</_item>
                       </label>
                       <toolTip>
-                        <_item>Regra de Recurso</_item>
+                        <_item>Regra do Recurso</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -619,10 +619,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:rateType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipo do valor</_item>
+                        <_item>Tipo de Tarifa</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipo do valor</_item>
+                        <_item>Tipo de Tarifa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -663,10 +663,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:isBillable" _operation="create">
                     <_object>
                       <label>
-                        <_item>Faturar</_item>
+                        <_item>Faturável</_item>
                       </label>
                       <toolTip>
-                        <_item>Faturar</_item>
+                        <_item>Faturável</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -916,10 +916,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
                     <_object>
                       <label>
-                        <_item>Adiciona Registro de Trabalho (duração do trabalho)</_item>
+                        <_item>Adicionar Registro de Trabalho</_item>
                       </label>
                       <toolTip>
-                        <_item>Adiciona Registro de Trabalho (duração do trabalho)</_item>
+                        <_item>Adicionar Registro de Trabalho</_item>
                       </toolTip>
                     </_object>
                     <_content/>

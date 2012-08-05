@@ -11,6 +11,17 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prévisions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toutes les prévisions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
                     <_object>
                       <label>
@@ -18,17 +29,6 @@
                       </label>
                       <toolTip>
                         <_item>Tous les budgets</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetMilestone" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Jalon de budget</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Jalon de budget</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -44,35 +44,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Unité d&apos;organisation</_item>
+                        <_item>Nom</_item>
                       </label>
                       <toolTip>
-                        <_item>A réaliser par l&apos;unité d&apos;organisation</_item>
+                        <_item>Nom</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Compte</_item>
+                        <_item>Description courte</_item>
                       </label>
                       <toolTip>
-                        <_item>A réaliser par le compte</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:underlying" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Sous-jacent</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Sous-jacent</_item>
+                        <_item>Description courte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -110,57 +99,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:targetValue" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valeur cible</_item>
+                        <_item>Compte</_item>
                       </label>
                       <toolTip>
-                        <_item>Valeur cible</_item>
+                        <_item>A réaliser par le compte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:actualValue" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valeur réelle</_item>
+                        <_item>Unité d&apos;organisation</_item>
                       </label>
                       <toolTip>
-                        <_item>Valeur réelle</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Jalon</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Jalon de budget</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:targetValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Valeur cible</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Valeur cible</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:actualValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Valeur réelle</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Valeur réelle</_item>
+                        <_item>A réaliser par l&apos;unité d&apos;organisation</_item>
                       </toolTip>
                     </_object>
                     <_content/>

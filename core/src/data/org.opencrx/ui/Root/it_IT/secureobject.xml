@@ -242,6 +242,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:replaceOwningGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sostituisci Gruppi Proprietario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sostituisci Gruppi Proprietario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setAccessLevel" _operation="create">
                     <_object>
                       <label>
@@ -267,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SetAccessLevelParams:accessLevelBrowse" _operation="create">
                     <_object>
                       <label>
-                        <_item>Permesso di Navigazione</_item>
+                        <_item>Permesso di Esplorazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Permesso di Navigazione</_item>
+                        <_item>Permesso di Esplorazione</_item>
                       </toolTip>
                     </_object>
                     <_content/>

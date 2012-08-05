@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.10 2008/07/08 08:22:24 cmu Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.14 2008/08/12 15:09:33 cmu Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/08 08:22:24 $
+ * Date:        $Date: 2008/08/12 15:09:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,60 +82,86 @@ org.openmdx.kernel.id.*
     );
     return;
   }
+  boolean uploadFailed = false;
 	Map parameterMap = request.getParameterMap();
   if(FileUpload.isMultipartContent(request)) {
 		parameterMap = new HashMap();
-    	DiskFileUpload upload = new DiskFileUpload();
-    	upload.setHeaderEncoding("UTF-8");
+  	DiskFileUpload upload = new DiskFileUpload();
+  	upload.setHeaderEncoding("UTF-8");
+  	List items = null;
+    try {
+      items = upload.parseRequest(
+        request,
+        15000000, // request size threshold [memory limit]
+        15000000, // max request size [overall limit]
+        app.getTempDirectory().getPath()
+      );
+		}
+		catch(FileUploadException e) {
+		  uploadFailed = true;
+			AppLog.warning("cannot upload file", e.getMessage());
+%>
+      <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
+        <table>
+          <tr>
+            <td style="padding:5px;"><b>ERROR</b>:</td>
+            <td>cannot upload file - <%= e.getMessage() %></td>
+          </tr>
+        </table>
+      </div>
+<%
+		}
 		try {
-        List items = upload.parseRequest(
+      if (uploadFailed) {
+        items = upload.parseRequest(
           request,
-          100000, // request size threshold
-          4000000, // max request size
+          40000000, // request size threshold [memory limit]
+          40000000, // max request size [overall limit]
           app.getTempDirectory().getPath()
         );
-        for(Iterator i = items.iterator(); i.hasNext(); ) {
-          FileItem item = (FileItem)i.next();
-          if(item.isFormField()) {
+      }
+      for(Iterator i = items.iterator(); i.hasNext(); ) {
+        FileItem item = (FileItem)i.next();
+        if(item.isFormField()) {
+          parameterMap.put(
+            item.getFieldName(),
+            new String[]{item.getString("UTF-8")}
+          );
+        }
+        else {
+          // reset binary
+          if("#NULL".equals(item.getName())) {
             parameterMap.put(
               item.getFieldName(),
-              new String[]{item.getString("UTF-8")}
+              new String[]{item.getName()}
             );
           }
-          else {
-            // reset binary
-            if("#NULL".equals(item.getName())) {
-              parameterMap.put(
-                item.getFieldName(),
-                new String[]{item.getName()}
-              );
-            }
-            // add to parameter map if file received
-            else if(item.getSize() > 0) {
-              parameterMap.put(
-                item.getFieldName(),
-                new String[]{item.getName()}
-              );
-              String location = app.getTempFileName(item.getFieldName(), "");
+          // add to parameter map if file received
+          else if(item.getSize() > 0) {
+            parameterMap.put(
+              item.getFieldName(),
+              new String[]{item.getName()}
+            );
+            String location = app.getTempFileName(item.getFieldName(), "");
 
-              // bytes
-              File outFile = new File(location);
-              item.write(outFile);
+            // bytes
+            File outFile = new File(location);
+            item.write(outFile);
 
-              // type
-              PrintWriter pw = new PrintWriter(
-                new FileOutputStream(location + ".INFO")
-              );
-              pw.println(item.getContentType());
-              int sep = item.getName().lastIndexOf("/");
-              if(sep < 0) {
-                sep = item.getName().lastIndexOf("\\");
-              }
-              pw.println(item.getName().substring(sep + 1));
-              pw.close();
+            // type
+            PrintWriter pw = new PrintWriter(
+              new FileOutputStream(location + ".INFO")
+            );
+            pw.println(item.getContentType());
+            int sep = item.getName().lastIndexOf("/");
+            if(sep < 0) {
+              sep = item.getName().lastIndexOf("\\");
             }
+            pw.println(item.getName().substring(sep + 1));
+            pw.close();
           }
         }
+      }
 		}
 		catch(FileUploadException e) {
 			AppLog.warning("cannot upload file", e.getMessage());
@@ -157,7 +183,14 @@ org.openmdx.kernel.id.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String[] objectXris = (String[])parameterMap.get("xri");
 	String objectXri = (objectXris == null) || (objectXris.length == 0) ? null : objectXris[0];
+	if (objectXri == null) {
+    System.out.println("xri=null - reading again");
+	  objectXri = request.getParameter("xri");
+	}
 	if(app==null || objectXri==null || viewsCache.getViews().isEmpty()) {
+    System.out.println("app=" + app);
+    System.out.println("xri=" + objectXri);
+    System.out.println("viewsCache=" + (viewsCache.getViews().isEmpty() ? "empty" : "not empty"));
     response.sendRedirect(
        request.getContextPath() + "/" + WebKeys.SERVLET_NAME
     );
@@ -168,7 +201,6 @@ org.openmdx.kernel.id.*
   UUIDGenerator uuids = UUIDs.getGenerator();
 
 %>
-<!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
@@ -205,22 +237,29 @@ org.openmdx.kernel.id.*
   <link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 <body>
-  <%@ include file="../../show-header.html" %>
-  <div id="header" style="padding:10px 0px 10px 0px;">
-    <table id="headerlayout" style="position:relative;">
-      <tr id="headRow">
-        <td id="head" colspan="2">
-          <table id="info">
-            <tr>
-              <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-              <td id="headerCellMiddle"></td>
-              <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </div>
+<div id="container">
+	<div id="wrap">
+		<div id="eheader">
+      <div id="logoTable">
+        <table id="headerlayout">
+          <tr id="headRow">
+            <td id="head" colspan="2">
+              <table id="info">
+                <tr>
+                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+                  <td id="headerCellSpacerLeft"></td>
+                  <td id="headerCellMiddle">&nbsp;</td>
+                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="content-wrap">
+    	<div id="econtent">
 
 <%
 		final String DOCUMENT_CLASS = "org:opencrx:kernel:document1:Document";
@@ -305,7 +344,7 @@ org.openmdx.kernel.id.*
 				);
 			}
 			else if(
-				actionOk &&
+				actionOk && (!uploadFailed) &&
 				(
 				  !enforceRequiredFields ||
 				  (
@@ -462,7 +501,7 @@ org.openmdx.kernel.id.*
   				} catch(Exception e0) {}
 					AppLog.warning("cannot upload file", e.getMessage());
 %>
-          <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
+          <div style="margin:0;padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
             <table>
               <tr>
                 <td style="padding:5px;"><b>ERROR</b>:</td>
@@ -473,7 +512,7 @@ org.openmdx.kernel.id.*
 <%
   			}
   		}
-      if (!successfullyCreated) {
+      if (!successfullyCreated || uploadFailed) {
           boolean invalidTitle = actionOk && enforceRequiredFields && ((title == null) || (title.length() == 0));
           boolean invalidDocumentNumber  = actionOk && enforceRequiredFields && ((documentNumber == null) || (documentNumber.length() == 0));
           String styleModifier = isNewRevision
@@ -498,19 +537,11 @@ org.openmdx.kernel.id.*
           <a href="../../helpJsCookie.html" target="_blank"><img class="popUpButton" src="../../images/help.gif" width="16" height="16" border="0" onclick="javascript:void(window.open('helpJsCookie.html', 'Help', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes,directories=no,location=no,width=400'));" alt="" /></a> <%= texts.getPageRequiresScriptText() %>
         </div>
       </noscript>
-      <table class="objectTitle">
-        <tr>
-          <td>
-            <div style="padding-left:5px; padding-bottom: 3px;">
-              <%= isNewRevision ? userView.getFieldLabel(DOCUMENT_CLASS, "headRevision", app.getCurrentLocaleAsIndex()) : app.getLabel(DOCUMENT_CLASS) %>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <br />
+      <div id="etitle" style="height:20px;">
+         <%= isNewRevision ? userView.getFieldLabel(DOCUMENT_CLASS, "headRevision", app.getCurrentLocaleAsIndex()) : app.getLabel(DOCUMENT_CLASS) %>
+      </div>
 
-      <div class="panel" id="panelObj0" style="display: block">
-       <div class="fieldGroupName">&nbsp;</div>
+      <fieldset>
 	      <table class="fieldGroup">
 	        <tr <%= styleModifier %>>
 	          <td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
@@ -672,7 +703,7 @@ org.openmdx.kernel.id.*
             <td class="addon"></td>
           </tr>
 	        <tr>
-	          <td class="label" colspan="3">
+	          <td colspan="3" >
 	            <br>
 	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
       				<INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
@@ -680,7 +711,7 @@ org.openmdx.kernel.id.*
 	          <td colspan="3"></td>
 	        </tr>
 	      </table>
-      </div>
+      </fieldset>
   	</td>
   </tr>
 </table>
@@ -708,5 +739,9 @@ org.openmdx.kernel.id.*
 	    out.println("</pre>");
     }
 %>
+      </div> <!-- content -->
+    </div> <!-- content-wrap -->
+	<div> <!-- wrap -->
+</div> <!-- container -->
 </body>
 </html>

@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета-фактуры</_item>
+                        <_item>»Счета-фактуры</_item>
                       </label>
                       <toolTip>
                         <_item>Счета-фактуры</_item>

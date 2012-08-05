@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Propriedade Filtro estado do processo da Atividade</_item>
+                        <_item>Propriedade Filtro Estado do Processo da Atividade</_item>
                       </label>
                       <toolTip>
-                        <_item>Propriedade Filtro estado do processo da Atividade</_item>
+                        <_item>Propriedade Filtro Estado do Processo da Atividade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityNumberFilterProperty:activityNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Números de Atividades</_item>
+                        <_item>Nºs de Atividades</_item>
                       </label>
                       <toolTip>
-                        <_item>Números de Atividades</_item>
+                        <_item>Nºs de Atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Associado a propriedade de filtro</_item>
+                        <_item>Associado à propriedade de filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>Associado a propriedade de filtro</_item>
+                        <_item>Associado à propriedade de filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Propriedade de Filtro de Inicio de Agendamento</_item>
+                        <_item>Propriedade de Filtro de Início de Agendamento</_item>
                       </label>
                       <toolTip>
-                        <_item>Propriedade de filtro de inicio de agendamento</_item>
+                        <_item>Propriedade de filtro de início de agendamento</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty:scheduledStart" _operation="create">
                     <_object>
                       <label>
-                        <_item>Agendamento inicia</_item>
+                        <_item>Início Programado</_item>
                       </label>
                       <toolTip>
-                        <_item>Agendamento inicia</_item>
+                        <_item>Início Programado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -3,7 +3,7 @@
 <jboss-web>
 	<ejb-ref>
 		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
+		<jndi-name>org.opencrx.core.CRX.Gateway</jndi-name>
 	</ejb-ref>
 	<security-domain>java:/jaas/opencrx-core-CRX</security-domain>	
 </jboss-web>

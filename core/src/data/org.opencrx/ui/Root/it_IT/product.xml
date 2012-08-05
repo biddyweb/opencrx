@@ -240,7 +240,7 @@
                         <_item>UdM</_item>
                       </label>
                       <toolTip>
-                        <_item>Unita&apos; di misura (predefinita)</_item>
+                        <_item>Unita&apos; di misura</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -424,10 +424,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valida al</_item>
+                        <_item>Valida fino al</_item>
                       </label>
                       <toolTip>
-                        <_item>Valida al</_item>
+                        <_item>Valida fino al</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -724,7 +724,7 @@
                         <_item>Valido dal</_item>
                       </label>
                       <toolTip>
-                        <_item>Valido da</_item>
+                        <_item>Valido dal</_item>
                       </toolTip>
                     </_object>
                     <_content/>

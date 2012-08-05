@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Oportunidades Relacionadas</_item>
+                        <_item>»Oportunidades Relacionadas</_item>
                       </label>
                       <toolTip>
                         <_item>Oportunidades Relacionadas</_item>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número do Lead</_item>
+                        <_item>Nº do Lead</_item>
                       </label>
                       <toolTip>
-                        <_item>Número do Lead</_item>
+                        <_item>Nº do Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:inventoryCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anotações de Inventário</_item>
+                        <_item>Reservas de Inventário</_item>
                       </label>
                       <toolTip>
-                        <_item>Anotações de Inventário</_item>
+                        <_item>Reservas de Inventário</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:LeadMarkAsClosedParams:leadState" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado Fechado</_item>
+                        <_item>Estado Fechado</_item>
                       </label>
                       <toolTip>
-                        <_item>estado Fechado</_item>
+                        <_item>Estado Fechado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

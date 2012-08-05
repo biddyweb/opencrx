@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.11 2008/06/06 09:53:27 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.12 2008/09/16 23:05:12 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/06 09:53:27 $
+ * Date:        $Date: 2008/09/16 23:05:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -436,5 +436,8 @@ public class Addresses {
     public static final Short USAGE_CONTRACT_DELIVERY = 10200;
     
     protected final Backend backend;
+
+    // UNASSIGNED
+    public static final String UNASSIGNED_ADDRESS = "UNASSIGNED";
     
 }

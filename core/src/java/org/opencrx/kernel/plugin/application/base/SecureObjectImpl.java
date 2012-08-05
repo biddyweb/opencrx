@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObjectImpl.java,v 1.4 2008/04/03 12:24:09 wfro Exp $
+ * Name:        $Id: SecureObjectImpl.java,v 1.5 2008/08/29 14:11:44 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/03 12:24:09 $
+ * Date:        $Date: 2008/08/29 14:11:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,14 +56,17 @@
 package org.opencrx.kernel.plugin.application.base;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.base.jmi1.BasePackage;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.compatibility.base.naming.Path;
 
 public class SecureObjectImpl {
 
@@ -120,7 +123,11 @@ public class SecureObjectImpl {
             new SecureObject(
                 backend, 
                 null,
-                params.getGroup() == null ? null : params.getGroup().refGetPath(),
+                Arrays.asList(
+                    params.getGroup() == null ? 
+                        null : 
+                        params.getGroup().refGetPath()
+                ),
                 params.getMode(),
                 null,
                 null,
@@ -148,7 +155,11 @@ public class SecureObjectImpl {
             new SecureObject(
                 backend, 
                 null,
-                params.getGroup() == null ? null : params.getGroup().refGetPath(),
+                Arrays.asList(
+                    params.getGroup() == null ? 
+                        null : 
+                        params.getGroup().refGetPath()
+                ),
                 params.getMode(),
                 null,
                 null,
@@ -221,6 +232,39 @@ public class SecureObjectImpl {
             throw new JmiServiceException(e);
         }            
     }   
+    
+    //-----------------------------------------------------------------------
+    public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult replaceOwningGroup(
+        org.opencrx.kernel.base.jmi1.ModifyOwningGroupsParams params
+    ) {
+        try {
+            Backend backend = this.getBackend();
+            List<String> report = new ArrayList<String>();
+            List<Path> owningGroups = new ArrayList<Path>();
+            List<PrincipalGroup> groups = params.getGroup();
+            for(PrincipalGroup group: groups) {
+                owningGroups.add(group.refGetPath());
+            }
+            new SecureObject(
+                backend, 
+                null,
+                owningGroups,
+                params.getMode(),
+                null,
+                null,
+                null
+            ).replaceOwningGroups(
+                this.current.refGetPath(),
+                report
+            );
+            return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createModifySecureObjectResult(
+                backend.analyseReport(report)
+            );            
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }                    
+    }
     
     //-----------------------------------------------------------------------
     // Members

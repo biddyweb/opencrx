@@ -173,6 +173,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Адрес(а) электронной почты</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Адрес(а) электронной почты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:party" _operation="create">
                     <_object>
                       <label>

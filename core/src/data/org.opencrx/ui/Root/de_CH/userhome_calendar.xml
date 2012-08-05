@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+	<_object/>
+	<_content>
+		<provider>
+			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+				<_object/>
+				<_content>
+					<segment>
+						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+							<_object/>
+							<_content>
+								<elementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:calendarProfile">
+										<_object>
+											<toolTip>
+												<_item>Kalenderprofile</_item>
+											</toolTip>
+											<label>
+												<_item>»Kalenderprofile</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile">
+										<_object>
+											<toolTip>
+												<_item>Kalenderprofil</_item>
+											</toolTip>
+											<label>
+												<_item>Kalenderprofil</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile:calendarFeed">
+										<_object>
+											<toolTip>
+												<_item>Kalenderquelle</_item>
+											</toolTip>
+											<label>
+												<_item>Kalenderquelle</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile:name">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile:description">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:name">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:description">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:isActive">
+										<_object>
+											<toolTip>
+												<_item>Aktiv</_item>
+											</toolTip>
+											<label>
+												<_item>Aktiv</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:color">
+										<_object>
+											<toolTip>
+												<_item>Schriftfarbe</_item>
+											</toolTip>
+											<label>
+												<_item>Schriftfarbe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:backColor">
+										<_object>
+											<toolTip>
+												<_item>Hintergrundfarbe</_item>
+											</toolTip>
+											<label>
+												<_item>Hintergrundfarbe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed">
+										<_object>
+											<toolTip>
+												<_item>Kalenderquelle iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Kalenderquelle iCal</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed:url">
+										<_object>
+											<toolTip>
+												<_item>URL</_item>
+											</toolTip>
+											<label>
+												<_item>URL</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed:username">
+										<_object>
+											<toolTip>
+												<_item>Benutzername</_item>
+											</toolTip>
+											<label>
+												<_item>Benutzername</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed:password">
+										<_object>
+											<toolTip>
+												<_item>Passwort</_item>
+											</toolTip>
+											<label>
+												<_item>Passwort</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ActivityGroupCalendarFeed">
+										<_object>
+											<toolTip>
+												<_item>Kalenderquelle Aktivitätsgrupe</_item>
+											</toolTip>
+											<label>
+												<_item>Kalenderquelle Aktivitätsgrupe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ActivityGroupCalendarFeed:activityGroup">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätsgrupe</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätsgrupe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ActivityFilterCalendarFeed">
+										<_object>
+											<toolTip>
+												<_item>Kalenderquelle Aktivitätsfilter</_item>
+											</toolTip>
+											<label>
+												<_item>Kalenderquelle Aktivitätsfilter</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ActivityFilterCalendarFeed:activityGroup">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätsfilter</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätsfilter</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+								</elementDefinition>
+							</_content>
+						</org.openmdx.ui1.Segment>
+					</segment>
+				</_content>
+			</org.openmdx.base.Provider>
+		</provider>
+	</_content>
+</org.openmdx.base.Authority>

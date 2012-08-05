@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+	<display-name>openCRX IMAP Service</display-name>
+	<servlet>
+		<servlet-name>IMAPServlet</servlet-name>
+		<servlet-class>org.opencrx.application.imap.IMAPServlet</servlet-class>
+		<init-param>
+		  <param-name>provider</param-name>
+		  <param-value>provider/CRX</param-value>
+		</init-param>
+		<init-param>
+		  <param-name>port</param-name>
+		  <param-value>imap:143</param-value>
+		</init-param>
+		<init-param>
+		  <param-name>debug</param-name>
+		  <param-value>false</param-value>
+		</init-param>		
+		<init-param>
+		  <param-name>delayOnStartup</param-name>
+		  <param-value>60</param-value>
+		</init-param>	
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IMAPServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>1</session-timeout>
+	</session-config>
+	<ejb-local-ref id="ejb_EntityManagerFactory">
+		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
+		<ejb-ref-type>Session</ejb-ref-type>
+		<local-home>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2LocalHome</local-home>
+		<local>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2_0Local</local>
+		<ejb-link>gateway.jar#opencrx_core_CRX_EntityManagerFactory</ejb-link>
+	</ejb-local-ref>
+</web-app>

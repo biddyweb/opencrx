@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.25 2008/06/26 00:34:34 wfro Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.31 2008/09/08 13:24:32 cmu Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.31 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/26 00:34:34 $
+ * Date:        $Date: 2008/09/08 13:24:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,7 +80,6 @@ org.openmdx.kernel.id.*
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	Texts_1_0 texts = app.getTexts();
 %>
-<!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
@@ -96,25 +95,36 @@ org.openmdx.kernel.id.*
   <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
   <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
   <link rel='shortcut icon' href='../../images/favicon.ico' />
+ 	<style type="text/css" media="all">
+    /* Add/Edit page specific settings */
+    .col1 {float: left; width: 99%;}
+  </style>
 </head>
 
 <body>
-  <%@ include file="../../show-header.html" %>
-  <div id="header" style="padding:10px 0px 10px 0px;">
-    <table id="headerlayout" style="position:relative;">
-      <tr id="headRow">
-        <td id="head" colspan="2">
-          <table id="info">
-            <tr>
-              <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-              <td id="headerCellMiddle"></td>
-              <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </div>
+<div id="container">
+	<div id="wrap">
+		<div id="eheader">
+      <div id="logoTable">
+        <table id="headerlayout">
+          <tr id="headRow">
+            <td id="head" colspan="2">
+              <table id="info">
+                <tr>
+                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+                  <td id="headerCellSpacerLeft"></td>
+                  <td id="headerCellMiddle">&nbsp;</td>
+                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="content-wrap">
+    	<div id="econtent">
 
 <%
 		final String MEDIA_CLASS = "org:opencrx:kernel:document1:Media";
@@ -195,7 +205,7 @@ org.openmdx.kernel.id.*
 			String description = (descriptions == null) || (descriptions.length == 0) ? "" : descriptions[0];
 
 			boolean replaceExisting = parameterMap.get("ReplaceExisting.CheckBox") != null;
-			System.out.println("replaceExisting=" + replaceExisting);
+			//System.out.println("replaceExisting=" + replaceExisting);
 
 			String[] objectXris = (String[])parameterMap.get("xri");
 			String objectXri = (objectXris == null) || (objectXris.length == 0) ? "" : objectXris[0];
@@ -345,13 +355,13 @@ org.openmdx.kernel.id.*
 				System.out.println("UploadMedia: file " + location + " either does not exist or has size 0: exists=" + uploadFile.exists() + "; length=" + uploadFile.length());
 			}
 			UserDefinedView userView = new UserDefinedView(
-				(RefObject_1_0)pm.getObjectById(new Path(objectXri)), 
-				app, 
+				(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+				app,
 				(View)viewsCache.getViews().values().iterator().next()
 			);
 %>
 <form name="UploadMedia" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="UploadMedia.jsp">
-	<input type="hidden" class="valueL" name="xri" value="<%= objectXri %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 <table cellspacing="8" class="tableLayout">
   <tr>
@@ -361,19 +371,11 @@ org.openmdx.kernel.id.*
           <a href="../../helpJsCookie.html" target="_blank"><img class="popUpButton" src="../../images/help.gif" width="16" height="16" border="0" onclick="javascript:void(window.open('helpJsCookie.html', 'Help', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes,directories=no,location=no,width=400'));" alt="" /></a> <%= texts.getPageRequiresScriptText() %>
         </div>
       </noscript>
-      <table class="objectTitle">
-        <tr>
-          <td>
-            <div style="padding-left:5px; padding-bottom: 3px;">
-              <%= app.getLabel(MEDIACONTENT_CLASS) %>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <br />
+      <div id="etitle" style="height:20px;">
+        <%= app.getLabel(MEDIACONTENT_CLASS) %>
+      </div>
 
-      <div class="panel" id="panelObj0" style="display: block">
-       <div class="fieldGroupName">&nbsp;</div>
+      <div class="col1"><fieldset>
 	      <table class="fieldGroup">
 	        <tr>
 	          <td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
@@ -397,14 +399,14 @@ org.openmdx.kernel.id.*
      				<td class="addon" >
 	        </tr>
      			<tr>
-	          <td class="label" colspan="3">
+	          <td colspan="3">
 	          	<br>
 	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
       			  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
 	          </td>
 	        </tr>
 	      </table>
-      </div>
+      </fieldset></div>
   	</td>
   </tr>
 </table>
@@ -420,6 +422,9 @@ org.openmdx.kernel.id.*
 		out.println("</pre></p>");
     }
 %>
-  <%@ include file="../../show-footer.html" %>
+      </div> <!-- content -->
+    </div> <!-- content-wrap -->
+	<div> <!-- wrap -->
+</div> <!-- container -->
 </body>
 </html>

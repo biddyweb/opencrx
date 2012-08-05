@@ -6,5 +6,5 @@
 	-->
 	<security-role-mapping name="OpenCrxUser">
 	</security-role-mapping>
-	<ejb-ref-mapping location="org/opencrx/core/CRX/noOrNew/gateway" name="ejb/data"/>
+	<ejb-ref-mapping location="org/opencrx/core/CRX/Gateway" name="ejb/data"/>
 </orion-web-app>

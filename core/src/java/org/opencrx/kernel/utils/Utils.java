@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.8 2008/07/06 23:57:59 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.10 2008/08/26 08:23:35 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/06 23:57:59 $
+ * Date:        $Date: 2008/08/26 08:23:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,6 +55,9 @@
  */
 package org.opencrx.kernel.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +67,8 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jmi.reflect.RefObject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.opencrx.kernel.account1.jmi1.Account1Package;
@@ -72,13 +77,17 @@ import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.building1.jmi1.Building1Package;
 import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
+import org.opencrx.kernel.forecast1.jmi1.Forecast1Package;
 import org.opencrx.kernel.generic.jmi1.GenericPackage;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
+import org.openmdx.base.accessor.jmi.spi.PersistenceManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
+import org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
+import org.openmdx.compatibility.base.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
 import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
 import org.openmdx.model1.accessor.basic.cci.Model_1_3;
 import org.openmdx.model1.accessor.basic.spi.Model_1;
@@ -395,6 +404,23 @@ public class Utils {
     }
 
     //-----------------------------------------------------------------------
+    public static Forecast1Package getForecastPackage(
+        PersistenceManager pm
+    ) {
+        Forecast1Package pkg = null;
+        try {
+            pkg = (org.opencrx.kernel.forecast1.jmi1.Forecast1Package)getOutermostPackage(pm).refPackage("org:opencrx:kernel:forecast1");            
+        }
+        catch(Exception e) {
+            pkg = (Forecast1Package)((Authority)pm.getObjectById(
+                Authority.class,
+                Forecast1Package.AUTHORITY_XRI
+            )).refImmediatePackage();
+        }
+        return pkg;
+    }
+
+    //-----------------------------------------------------------------------
     public static GenericPackage getGenericPackage(
         PersistenceManager pm
     ) {
@@ -491,7 +517,52 @@ public class Utils {
             "org:opencrx:security"
         }
     );
+
+    //-----------------------------------------------------------------------
+    public static String getPasswordDigest(
+        String password,
+        String algorithm
+    ) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            md.update(password.getBytes("UTF-8"));
+            return "{" + algorithm + "}" + org.openmdx.base.text.conversion.Base64.encode(md.digest());
+        }
+        catch(NoSuchAlgorithmException e) {
+        }
+        catch(UnsupportedEncodingException e) {
+        }
+        return null;
+    }
     
+    //-----------------------------------------------------------------------
+    public static PersistenceManagerFactory getRemotePersistenceManagerFactory(
+    ) throws NamingException, ServiceException {
+        Context initialContext = new InitialContext();
+        Map<String, Object> configuration = new HashMap<String, Object>();
+        configuration.put(
+            Dataprovider_1ConnectionFactory.class.getName(),
+            new Dataprovider_1ConnectionFactoryImpl(
+                initialContext,
+                "data",
+                new String[]{"java:comp/env/ejb"}
+            )
+        );
+        configuration.put(
+            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
+            PersistenceManagerFactory_1.class.getName()
+        );
+        configuration.put(
+            ConfigurableProperty.Optimistic.qualifiedName(),
+            Boolean.TRUE.toString()
+        );
+        configuration.put(
+            ConfigurableProperty.BindingPackageSuffix.qualifiedName(),
+            "jmi1"
+        );
+        return JDOHelper.getPersistenceManagerFactory(configuration);
+    }
+            
 }
 
 //--- End of File -----------------------------------------------------------

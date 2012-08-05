@@ -38,6 +38,7 @@ public class ActivityCreatorImpl {
                 params.getScheduledEnd(),
                 params.getDueBy(),
                 params.getPriority(),
+                params.getIcalType(),
                 params.getReportingContact() == null ? null : params.getReportingContact().refGetPath() 
             );
             return ((Activity1Package)this.current.refOutermostPackage().refPackage(Activity1Package.class.getName())).createNewActivityResult(

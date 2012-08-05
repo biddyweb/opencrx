@@ -8,12 +8,13 @@
 	</filter>
 	<filter>
 		<filter-name>CacheControlFilter</filter-name>
-		<filter-class>org.openmdx.portal.servlet.filter.ReplyHeaderFilter</filter-class>
+		<filter-class>org.openmdx.kernel.servlet.ReplyHeaderFilter</filter-class>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
+			<param-value>public, max-age=2592000</param-value>
 		</init-param>
 	</filter>
+<!--	
 	<filter>
 		<filter-name>UrlRewriteFilter</filter-name>
 		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
@@ -22,6 +23,7 @@
 			<param-value>WARN</param-value>
 		</init-param>
 	</filter>				
+-->
 	<filter-mapping>
 		<filter-name>CompressingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -42,10 +44,12 @@
 		<filter-name>CacheControlFilter</filter-name>
 		<url-pattern>/blank.html</url-pattern>
 	</filter-mapping>
+<!--
 	<filter-mapping>
 		<filter-name>UrlRewriteFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>			
+-->
 	<!-- LogConsoleServlet -->
 	<servlet id="LogConsoleServlet">
 		<servlet-name>LogConsoleServlet</servlet-name>
@@ -173,6 +177,10 @@
 		<init-param>
 			<param-name>locale[22]</param-name>
 			<param-value>es_CO</param-value>
+		</init-param>
+		<init-param>
+			<param-name>locale[23]</param-name>
+			<param-value>sk_SK</param-value>
 		</init-param>
 		<!-- mimeTypes -->
 		<init-param>

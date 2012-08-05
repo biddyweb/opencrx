@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.24 2008/05/29 23:12:38 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.26 2008/09/02 15:41:59 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/29 23:12:38 $
+ * Date:        $Date: 2008/09/02 15:41:59 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -293,7 +293,7 @@ public class WorkflowHandlerServlet
                             wfInstance.setStepCounter(
                                 new Integer(wfInstance.getStepCounter().intValue() + 1)
                             );
-                            pm.currentTransaction().rollback();
+                            pm.currentTransaction().commit();
                         }
                         catch(Exception e) {
                             AppLog.info(e.getMessage(), e.getCause());
@@ -323,6 +323,9 @@ public class WorkflowHandlerServlet
                     // wait
                 }
             }
+            try {
+                pm.close();
+            } catch(Exception e) {}
         }
         catch(Exception e) {
             System.out.println("Exception occured " + e.getMessage() + ". Continuing");

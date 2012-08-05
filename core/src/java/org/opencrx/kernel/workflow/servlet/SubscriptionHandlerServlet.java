@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.42 2008/05/29 23:12:38 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.44 2008/09/06 20:09:32 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.42 $
+ * Revision:    $Revision: 1.44 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/29 23:12:38 $
+ * Date:        $Date: 2008/09/06 20:09:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -183,7 +183,7 @@ public class SubscriptionHandlerServlet
                     }
                 }
                 catch(Exception e) {
-                    AppLog.warning("Can not get filter value", e);
+                    AppLog.warning("Can not get filter value", e.getMessage());
                 }
             }
             else {
@@ -582,6 +582,9 @@ public class SubscriptionHandlerServlet
                     System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");                    
                 }
             }
+            try {
+                pm.close();
+            } catch(Exception e) {}
         }
         catch(Exception e) {
             new ServiceException(e).log();

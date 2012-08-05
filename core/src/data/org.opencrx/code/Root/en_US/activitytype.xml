@@ -39,6 +39,8 @@
 														<longText>
 															<_item>Fax</_item>
 														</longText>
+														<validFrom>1990-01-01T00:00:00.000Z</validFrom>
+														<validTo>2008-08-18T00:00:00.000Z</validTo>
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
@@ -83,6 +85,8 @@
 														<longText>
 															<_item>MMS</_item>
 														</longText>
+														<validFrom>1990-01-01T00:00:00.000Z</validFrom>
+														<validTo>2008-08-18T00:00:00.000Z</validTo>
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
@@ -105,6 +109,8 @@
 														<longText>
 															<_item>SMS</_item>
 														</longText>
+														<validFrom>1990-01-01T00:00:00.000Z</validFrom>
+														<validTo>2008-08-18T00:00:00.000Z</validTo>
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>

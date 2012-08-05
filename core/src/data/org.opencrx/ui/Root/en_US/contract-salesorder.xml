@@ -60,12 +60,12 @@
 												<_item>Related Invoices</_item>
 											</toolTip>
 											<label>
-												<_item>Related Invoices</_item>
+												<_item>»Related Invoices</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>100</_item>
+												<_item>300</_item>
 											</order>
 											<orderObjectContainer>
 												<_item>99</_item>

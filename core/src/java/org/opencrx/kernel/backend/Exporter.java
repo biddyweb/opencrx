@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.15 2008/06/19 10:26:31 wfro Exp $
+ * Name:        $Id: Exporter.java,v 1.16 2008/08/21 16:01:43 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/19 10:26:31 $
+ * Date:        $Date: 2008/08/21 16:01:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -269,7 +269,9 @@ public class Exporter {
                     }
                 }
             }
-            this.exportMimeType = itemMimeType;            
+            this.exportMimeType = itemMimeType == null ?
+                MIME_TYPE_EXCEL :
+                MIME_TYPE_XML;
             Set<Path> allExportedObjects = new TreeSet<Path>();
             Set<Path> allReferencedObjects = new TreeSet<Path>();
             

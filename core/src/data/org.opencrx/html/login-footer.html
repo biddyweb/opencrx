@@ -1,10 +1,25 @@
 <style>
-  #crx{color:#444444;}
-  #crx:visited{color:#444444;}
-  #crx:hover{color:#F09000;background-color:#CCCCCC;}
+  #footerns {
+    text-align:center;
+    width:100%;
+    height:20px;
+    background-color:#EEE;
+    padding-top:15px;
+  }
+  #footerns a {
+    font-size:6pt;
+  }
+  html>body #footerns {
+    position:fixed;
+    bottom:0;
+    z-index:9998; /* Prevent certain problems with form controls */
+  }
+  #crx a{color:#444444;}
+  #crx a:visited{color:#444444;}
+  #crx a:hover{font-weight:bold;color:#E66D00;background-color:#EEE;}
 </style>
-<table style="text-align:center;width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:10px;">
-  <tr>
-    <td style="background-color:#CCCCCC;padding:5px 10px 5px 10px;"><b><a href="http://www.opencrx.org/" target="_blank" id="crx">openCRX v%IMPLEMENTATION_VERSION% (CRX)</a></b> - Change <b>login-footer.html</b> in order to customize this footer</td>
-  </tr>
-</table>
+<div id="footerns">
+  <div id="crx">
+    <a href="http://www.opencrx.org/" target="_blank" title="openCRX - limitless relationship management">openCRX v%IMPLEMENTATION_VERSION% (CRX)</a>
+  </div>
+</div>

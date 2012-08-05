@@ -315,10 +315,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Assessor</_item>
+                              <_item>Substituto</_item>
                             </shortText>
                             <longText>
-                              <_item>Assessor</_item>
+                              <_item>Substituto</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -326,10 +326,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="810" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Fax Assessor</_item>
+                              <_item>Fax do Substituto</_item>
                             </shortText>
                             <longText>
-                              <_item>Fax Assessor</_item>
+                              <_item>Fax do Substituto</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -337,10 +337,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="820" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Celular do Assessor</_item>
+                              <_item>Celular do Substituto</_item>
                             </shortText>
                             <longText>
-                              <_item>Celular do Assessor</_item>
+                              <_item>Celular do Substituto</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -484,6 +484,17 @@
                             </shortText>
                             <longText>
                               <_item>Fax</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3000" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Gateway</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Gateway</_item>
                             </longText>
                           </_object>
                           <_content/>

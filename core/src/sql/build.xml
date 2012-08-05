@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.24 2008/05/07 16:56:24 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.25 2008/08/18 12:54:32 wfro Exp $
  * = Description: openCRX/sql build.xml
- * = Revision:    $Revision: 1.24 $
- * = Date:        $Date: 2008/05/07 16:56:24 $
+ * = Revision:    $Revision: 1.25 $
+ * = Date:        $Date: 2008/08/18 12:54:32 $
  * = Copyright:   (c) 2003-2008 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -57,10 +57,10 @@
 		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/migrate-from-2.0.0-to-2.1.0.sql migrate-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/drop-from-2.0.0-to-2.1.0.sql drop-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="postgresql-8/populate-preferences.sql">
 			<filterchain>
@@ -75,10 +75,10 @@
 		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/migrate-from-2.0.0-to-2.1.0.sql migrate-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/drop-from-2.0.0-to-2.1.0.sql drop-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="sql-server-2005/populate-preferences.sql">
 			<filterchain>
@@ -93,10 +93,10 @@
 		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.0.0-to-2.1.0.sql migrate-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.0.0-to-2.1.0.sql drop-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="mysql-5/populate-preferences.sql">
 			<filterchain>
@@ -111,10 +111,10 @@
 		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/migrate-from-2.0.0-to-2.1.0.sql migrate-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/drop-from-2.0.0-to-2.1.0.sql drop-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="oracle-8/populate-preferences.sql">
 			<filterchain>
@@ -129,10 +129,10 @@
 		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/migrate-from-2.0.0-to-2.1.0.sql migrate-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/drop-from-2.0.0-to-2.1.0.sql drop-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="db2-9/populate-preferences.sql">
 			<filterchain>
@@ -147,10 +147,10 @@
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/migrate-from-2.0.0-to-2.1.0.sql migrate-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.0.0-to-2.1.0.sql drop-from-2.0.0-to-2.1.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="hsqldb-1/populate-preferences.sql">
 			<filterchain>

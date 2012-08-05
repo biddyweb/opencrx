@@ -1,5 +1,5 @@
-Release Name: openCRX/Groupware 2.1.0
-Release Date: 2008-07-10
+Release Name: openCRX/Groupware 2.2.0
+Release Date: 2008-09-02
 
 ---------------------------------------------------------------------
 Notes:
@@ -53,44 +53,18 @@ Changes:
 
 0.    SUMMARY
       
-      * VCF servlet added.
-      * CalDAV servlet removed. Replaced by ICalServlet.
-      
+      * Migrate ICalServlet, VCardServlet, IMAPServer to openCRX/Core.
 
 1.    NEW FEATURES
-
-      CR10007556
-      VCF servlet. VCardServlet allows clients to GET/PUT files containing 
-      a list of VCARDs. The URL pattern is:
-            
-      http://'host':'port'/opencrx-vcard-CRX/vcard?id='provider name'/'segment name'/filter/'account filter name'&resource=vcf
-      
-      Example:
-      http://localhost:8080/opencrx-vcard-CRX/vcard?id=CRX/Standard/filter/MyAccounts&resource=accounts.vcf
-
+      none
       
 2.    CHANGES  
      
 2.0.  CHANGED FEATURES
 
-      CR10007598
-      Deprecate CalDAV servlet and replace by ICalServlet. The ICalServlet
-      now allows to create activities. In order to enable activity creation
-      the calendar must contain an event of the following form:
-      
-      BEGIN:VEVENT
-      UID: qualifier of filter
-      CLASS:PUBLIC
-      DTSTART:19000101T000000Z
-      DTEND:19000101T000000Z
-      LAST-MODIFIED:19000101T000000Z
-      DTSTAMP:19000101T000000Z
-      SUMMARY: 'filterId'
-      END:VEVENT
-      
-      Calendars queried with a GET request always contain this event guard as
-      first event. If the event is missing on POST requests creation of new
-      activities is disabled.
+      CR10008009
+      Migrate ICalServlet, VCardServlet, IMAPServer. Migrate ICalServlet, 
+      VCardServlet, IMAPServer from openCRX/Groupware to openCRX/Core. 
 
 2.1.  FIXED BUGS
       none

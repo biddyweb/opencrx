@@ -11,6 +11,17 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>所有预测</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有预测</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
                     <_object>
                       <label>
@@ -18,17 +29,6 @@
                       </label>
                       <toolTip>
                         <_item>总预算</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetMilestone" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>预算里程碑</_item>
-                      </label>
-                      <toolTip>
-                        <_item>预算里程碑</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -66,17 +66,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:underlying" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>基层的</_item>
-                      </label>
-                      <toolTip>
-                        <_item>基层的</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetType" _operation="create">
                     <_object>
                       <label>
@@ -110,57 +99,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:targetValue" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>目标值</_item>
+                        <_item>名称</_item>
                       </label>
                       <toolTip>
-                        <_item>目标值</_item>
+                        <_item>名称</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:actualValue" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>实际值</_item>
+                        <_item>描述</_item>
                       </label>
                       <toolTip>
-                        <_item>实际值</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>里程碑</_item>
-                      </label>
-                      <toolTip>
-                        <_item>预算里程碑</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:targetValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>目标值</_item>
-                      </label>
-                      <toolTip>
-                        <_item>目标值</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:actualValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>实际值</_item>
-                      </label>
-                      <toolTip>
-                        <_item>实际值</_item>
+                        <_item>描述</_item>
                       </toolTip>
                     </_object>
                     <_content/>

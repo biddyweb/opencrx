@@ -28,7 +28,7 @@
                         <_item>Oportunidades</_item>
                       </label>
                       <toolTip>
-                        <_item>Todas as oportunidades</_item>
+                        <_item>Todas as Oportunidades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ofertas Relacionadas</_item>
+                        <_item>»Ofertas Relacionadas</_item>
                       </label>
                       <toolTip>
                         <_item>Ofertas Relacionadas</_item>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número da Oportunidade</_item>
+                        <_item>Nº da Oportunidade</_item>
                       </label>
                       <toolTip>
-                        <_item>Número da Oportunidade</_item>
+                        <_item>Nº da Oportunidade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:opportunitySource" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fonte da Oportunidade</_item>
+                        <_item>Origem da Oportunidade</_item>
                       </label>
                       <toolTip>
-                        <_item>Fonte da Oportunidade</_item>
+                        <_item>Origem da Oportunidade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Classificação</_item>
                       </label>
                       <toolTip>
-                        <_item>Classificação de Oportunidades</_item>
+                        <_item>Classificação da Oportunidade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:nextStep" _operation="create">
                     <_object>
                       <label>
-                        <_item>Passos Seguintes</_item>
+                        <_item>Próximos Passos</_item>
                       </label>
                       <toolTip>
-                        <_item>Passos Seguintes</_item>
+                        <_item>Próximos Passos</_item>
                       </toolTip>
                     </_object>
                     <_content/>

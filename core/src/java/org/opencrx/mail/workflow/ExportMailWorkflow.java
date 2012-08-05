@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExportMailWorkflow.java,v 1.15 2008/04/15 18:28:22 wfro Exp $
+ * Name:        $Id: ExportMailWorkflow.java,v 1.17 2008/08/28 15:13:02 wfro Exp $
  * Description: ExportMailWorkflow
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/15 18:28:22 $
+ * Date:        $Date: 2008/08/28 15:13:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,167 +55,11 @@
  */
 package org.opencrx.mail.workflow;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.jdo.PersistenceManager;
-import javax.jmi.reflect.RefObject;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Message.RecipientType;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import org.opencrx.kernel.activity1.jmi1.EmailRecipient;
-import org.opencrx.kernel.backend.Activities;
-import org.opencrx.kernel.generic.jmi1.Media;
-import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.layer.application.ByteArrayDataSource;
-import org.openmdx.base.exception.ServiceException;
-import org.openmdx.compatibility.base.naming.Path;
-
+/**
+ * @deprecated use org.opencrx.application.mail.exporter.ExportMailWorkflow instead.
+ */
 public class ExportMailWorkflow 
-    extends MailWorkflow {
-
-    //-----------------------------------------------------------------------
-    @Override
-    protected String setContent(
-        Message message,
-        Session session,
-        PersistenceManager pm,
-        Path targetIdentity,
-        Path wfProcessInstanceIdentity,
-        UserHome userHome,
-        Map params
-    ) throws ServiceException {
-        String text = null;
-        try {
-            RefObject targetObject = null;
-            try {
-                targetObject = (RefObject)pm.getObjectById(targetIdentity);
-            } catch(Exception e) {}
-            text = this.getText(
-                message,
-                pm,
-                targetIdentity,
-                targetObject,
-                wfProcessInstanceIdentity,
-                userHome,
-                params
-            );
-            // message text
-            Multipart multipart = new MimeMultipart();
-            BodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setText(text);            
-            multipart.addBodyPart(bodyPart);            
-
-            // Add EMail activity as nested message
-            if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
-                org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
-                    (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
-                bodyPart = new MimeBodyPart();
-                bodyPart.setFileName(
-                    emailActivity.getMessageSubject() + ".msg"
-                );
-                // nested message
-                MimeMessage nestedMessage = new MimeMessage(session);
-                nestedMessage.setHeader(
-                    "X-Mailer", 
-                    "openCRX SendMail"
-                );
-                // nested message subject
-                nestedMessage.setSubject(
-                    emailActivity.getMessageSubject()
-                );
-                // nested message body
-                Multipart nestedMultipart = new MimeMultipart();
-                BodyPart nestedBodyPart = new MimeBodyPart();
-                nestedBodyPart.setText(
-                    emailActivity.getMessageBody()
-                );
-                nestedMultipart.addBodyPart(nestedBodyPart);
-                // nested message sender
-                if(emailActivity.getSender() != null) {
-                    nestedMessage.setFrom(
-                        new InternetAddress(
-                            emailActivity.getSender().getEmailAddress()
-                        )
-                    );
-                }
-                // nested message sent date
-                nestedMessage.setSentDate(
-                    new Date()
-                );                
-                // nested message recipients
-                for(Iterator i = emailActivity.getEmailRecipient().iterator(); i.hasNext(); ) {
-                    EmailRecipient recipient = (EmailRecipient)i.next();
-                    RecipientType recipientType = null;
-                    if(recipient.getPartyType() == Activities.PARTY_TYPE_TO) {
-                        recipientType = RecipientType.TO;
-                    }
-                    else if(recipient.getPartyType() == Activities.PARTY_TYPE_CC) {
-                        recipientType = RecipientType.CC;
-                    }
-                    else if(recipient.getPartyType() == Activities.PARTY_TYPE_BCC) {
-                        recipientType = RecipientType.BCC;
-                    }
-                    if(recipientType != null) {
-                        nestedMessage.addRecipient(
-                            recipientType,
-                            new InternetAddress(
-                                recipient.getParty().getEmailAddress()
-                            )
-                        );
-                    }
-                }
-                // nested message media attachments
-                for(Iterator i = emailActivity.getMedia().iterator(); i.hasNext(); ) {
-                    nestedBodyPart = new MimeBodyPart();
-                    Media media = (Media)i.next();
-                    nestedBodyPart.setFileName(
-                        media.getContentName()
-                    );
-                    nestedBodyPart.setDisposition(
-                        Part.ATTACHMENT
-                    );
-                    DataSource dataSource = new ByteArrayDataSource(
-                        media.getContent().getContent(),
-                        media.getContentMimeType()
-                    );
-                    nestedBodyPart.setDataHandler(
-                        new DataHandler(dataSource)
-                    );
-                    nestedMultipart.addBodyPart(nestedBodyPart);
-                }
-                nestedMessage.setContent(nestedMultipart);
-                bodyPart.setDisposition(
-                    Part.ATTACHMENT
-                );
-                bodyPart.setContent(
-                    nestedMessage,
-                    "message/rfc822"
-                );
-                multipart.addBodyPart(bodyPart);
-            }
-            message.setContent(multipart);
-        }
-        catch(Exception e) {
-            throw new ServiceException(e);
-        }
-        return text;
-    }
-        
-    //-----------------------------------------------------------------------
-    // Members
-    //-----------------------------------------------------------------------
+    extends org.opencrx.application.mail.exporter.ExportMailWorkflow {
     
 }
 

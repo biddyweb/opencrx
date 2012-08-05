@@ -1,0 +1,988 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productApplication" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Využitia produktov</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Využitia produktov</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:deliveryInformation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodacie informácie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodacie informácie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pozícia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pozícia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pozícia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pozícia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pozícia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pozícia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoicePosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pozícia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pozícia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zmeny pozície</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zmeny pozície</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odhady</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odhady</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odhady</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odhady</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:0:Group:40" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Informácie o cenotvorbe</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Informácie o cenotvorbe</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:0:Group:50" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Finančné informácie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Finančné informácie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:lineItemNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Číslo #</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Číslo položkového radu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno pozície</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno pozície</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Text pozície</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contractPositionState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Číslo pozície referencie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Číslo pozície referencie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Merná jednotka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Merná jednotka</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:quantityShipped" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dopravené</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dopravené</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:quantityBackOrdered" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Spätne objednané množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Spätne objednané množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:listPrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hodnota listín</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hodnota listín</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Merná jednotka (hodnota)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Merná jednotka (hodnota)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricePerUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cena za jednotku</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cena za jednotku</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricingRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pravidlo cenotvorby</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pravidlo cenotvorby</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Úroveň ceny</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Úroveň ceny</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:calcRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kalkulačné pravidlo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kalkulačné pravidlo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricingState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav cenotvorby</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav cenotvorby</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricingDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dátum cenotvorby</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dátum cenotvorby</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discountIsPercentage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zľava je %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zľava je %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zľava</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zľava</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discountDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis zľavy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis zľavy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Druh obchodnej dane</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Druh obchodnej dane</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesCommissionIsPercentage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Provízia z predaja je %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Provízia z predaja je %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesCommission" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Provízia z predaja</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Provízia z predaja</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:baseAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Základné množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Základné množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discountAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Veľkosť zľavy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Veľkosť zľavy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:taxAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Daň</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Daň</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:amount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Suma (vrátane dane)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Suma (vrátane dane)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:closeProbability" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pravdepodobnosť uzavretia %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pravdepodobnosť uzavretia %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:closeProbability" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pravdepodobnosť uzavretia %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pravdepodobnosť uzavretia %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:estimatedCloseDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odhadovaný dátum ukončenia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odhadovaný dátum ukončenia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:estimatedCloseDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odhadovaný dátum ukončenia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odhadovaný dátum ukončenia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodatočné detaily</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodatočné detaily</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:25" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodatočné detaily mernej jednotky  (množstvo)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodatočné detaily mernej jednotky  (množstvo)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:35" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:40" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodatočné detaily mernej jednotky  (cena)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodatočné detaily mernej jednotky  (cena)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:45" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:50" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodatočné detaily druhu dane</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodatočné detaily druhu dane</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:55" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:minQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Minimálne množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Minimálne množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:maxQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Maximálne množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Maximálne množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:offsetQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Premiestnené množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Premiestnené množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:minMaxQuantityHandling" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>[min..max] manipulácia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>[min..max] manipulácia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productDetailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Detailný popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Detailný popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uom" _operation="null">
+                    <_object/>
+                    <_content>
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Merná jednotka (množstvo)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Merná jednotka (množstvo)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uomDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uomDetailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Detailný popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Detailný popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUom" _operation="null">
+                    <_object/>
+                    <_content>
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Merná jednotka (cena)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Merná jednotka (cena)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUomDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUomDetailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Detailný popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Detailný popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxType" _operation="null">
+                    <_object/>
+                    <_content>
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Typ ochodnej dane</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Typ ochodnej dane</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxTypeDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxTypeDetailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Detailný popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Detailný popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodacie informácie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodacie informácie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodacie informácie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodacie informácie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepravené množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepravené množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:actualDeliveryOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Skutočne dodané dňa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Skutočne dodané dňa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Využitie produktu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Využitie produktu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Využitie produktu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Využitie produktu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno využitia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno využitia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication:underlying" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Základ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Základ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Op:Tab:reprice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preceniť</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preceniť</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Op:Tab:reprice:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RepriceParams:price" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cena</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cena</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Op:Tab:reprice:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PositionModification:involved" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Príslušná pozícia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Príslušná pozícia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuantityModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modifikácia kvantity</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Modifikácia kvantity</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuantityModification:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Množtvo pred modifikáciou</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Množtvo pred modifikáciou</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ConfigurationModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modifikácia konfigurácie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Modifikácia konfigurácie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ConfigurationModification:involvedPty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Príslušná vlastnoť</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Príslušná vlastnoť</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ConfigurationModification:propertyValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hodnota vlastnosti</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hodnota vlastnosti</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PositionCreation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vytvorenie pozície</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vytvorenie pozície</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PositionRemoval" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odstránenie pozície</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odstránenie pozície</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odstránená pozícia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odstránená pozícia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

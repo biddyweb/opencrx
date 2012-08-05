@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductQueryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Abfrage</_item>
+                        <_item>Query Filter</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Abfrage</_item>
+                        <_item>Query Filter</_item>
                       </toolTip>
                     </_object>
                     <_content/>

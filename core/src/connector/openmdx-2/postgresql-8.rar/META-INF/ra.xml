@@ -27,7 +27,7 @@
 		<config-property>
 			<config-property-name>ConnectionURL</config-property-name>
 			<config-property-type>java.lang.String</config-property-type>
-			<config-property-value>jdbc:postgresql://127.0.0.1/CRX_2_1</config-property-value>
+			<config-property-value>jdbc:postgresql://127.0.0.1/CRX_2_2</config-property-value>
 		</config-property>
 		<authentication-mechanism>
 			<authentication-mechanism-type>BasicPassword</authentication-mechanism-type>

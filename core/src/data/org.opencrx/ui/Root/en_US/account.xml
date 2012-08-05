@@ -162,7 +162,7 @@
 															<_item>0</_item>
 															<_item>10</_item>
 														</order>
-														<maxMember>9</maxMember>
+														<maxMember>8</maxMember>
 													</_object>
 													<_content/>
 												</org.openmdx.ui1.AdditionalElementDefinition>
@@ -179,7 +179,7 @@
 															<_item>0</_item>
 															<_item>12</_item>
 														</order>
-														<maxMember>9</maxMember>
+														<maxMember>10</maxMember>
 													</_object>
 													<_content/>
 												</org.openmdx.ui1.AdditionalElementDefinition>

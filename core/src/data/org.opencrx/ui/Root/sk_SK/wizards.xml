@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportToOutlook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportovať kontakt do MS Outlook (iba IE)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportovať kontakt do MS Outlook (iba IE)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nový kontakt alebo právnicku osobu vyrobiť</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nový kontakt alebo právnicku osobu vyrobiť</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Upraviť kontakt</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Upraviť kontakt</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Upraviť právnicku osobu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Upraviť právnicku osobu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Upraviť skupinu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Upraviť skupinu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Upraviť nešpecifikovaný účet</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Upraviť nešpecifikovaný účet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Upraviť kontakt (rýchlo)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Upraviť kontakt (rýchlo)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Upraviť právnickú osobu (rýchlo)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Upraviť právnickú osobu (rýchlo)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Uživateľské nastavenia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Uživateľské nastavenia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresár</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresár</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail spojenie --&gt; RTF Dokument</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridať súbor dát</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridať súbor dát</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridať súbor dát</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridať súbor dát</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

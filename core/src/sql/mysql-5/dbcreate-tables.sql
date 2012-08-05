@@ -479,9 +479,7 @@ CREATE TABLE  `oocke1_activity` (
   `CUSTOMER_SATISFACTION` smallint(6) default NULL,
   `REPRODUCIBILITY` smallint(6) default NULL,
   `SEVERITY` smallint(6) default NULL,
-  `DOCUMENT` varchar(256) character set latin1 collate latin1_bin default NULL,
   `SENDER_MAILING` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `TEMPLATE` varchar(256) character set latin1 collate latin1_bin default NULL,
   `SENDER` varchar(256) character set latin1 collate latin1_bin default NULL,
   `COMPETITOR_` int(11) NOT NULL default '-1',
   `IS_ALL_DAY_EVENT` bit(1) default NULL,
@@ -493,10 +491,12 @@ CREATE TABLE  `oocke1_activity` (
   `SEND_DATE` datetime default NULL,
   `SENDER_EMAIL` varchar(256) character set latin1 collate latin1_bin default NULL,
   `REFERENCE` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `SENDER_MMS` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `SENDER_SMS` varchar(256) character set latin1 collate latin1_bin default NULL,
   `ICAL` mediumtext,
   `LAST_APPLIED_CREATOR` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `GATEWAY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DOCUMENT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `TEMPLATE` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `ICAL_TYPE` smallint(6) default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -519,6 +519,11 @@ CREATE TABLE  `oocke1_activity_` (
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `COMPETITOR` varchar(256) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_activity_number_seq`;
+CREATE TABLE  `oocke1_activity_number_seq` (
+  `nextval` bigint(20) default NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_activitycreator`;
@@ -578,6 +583,7 @@ CREATE TABLE  `oocke1_activitycreator` (
   `USER_STRING4_` int(11) NOT NULL default '-1',
   `MODIFIED_AT` datetime NOT NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ICAL_TYPE` smallint(6) default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1837,7 +1843,6 @@ CREATE TABLE  `oocke1_budget` (
   `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
   `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
   `ACCOUNT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `ACTUAL_VALUE` decimal(17,9) default NULL,
   `BUDGET_TYPE` smallint(6) default NULL,
   `CATEGORY_` int(11) NOT NULL default '-1',
   `CREATED_AT` datetime default NULL,
@@ -1850,9 +1855,7 @@ CREATE TABLE  `oocke1_budget` (
   `OWNER_` int(11) NOT NULL default '-1',
   `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
   `STARTING_FROM` datetime default NULL,
-  `TARGET_VALUE` decimal(17,9) default NULL,
   `FULFIL_ORG_UNIT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `UNDERLYING` varchar(256) character set latin1 collate latin1_bin default NULL,
   `USER_BOOLEAN0` bit(1) default NULL,
   `USER_BOOLEAN1` bit(1) default NULL,
   `USER_BOOLEAN2` bit(1) default NULL,
@@ -1885,82 +1888,13 @@ CREATE TABLE  `oocke1_budget` (
   `USER_STRING4_` int(11) NOT NULL default '-1',
   `MODIFIED_AT` datetime NOT NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_budget_`;
 CREATE TABLE  `oocke1_budget_` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `IDX` int(11) NOT NULL,
-  `CATEGORY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN4` bit(1) default NULL,
-  `USER_CODE4` smallint(6) default NULL,
-  `USER_DATE4` date default NULL,
-  `USER_DATE_TIME4` datetime default NULL,
-  `USER_NUMBER4` decimal(17,9) default NULL,
-  `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_budgetmilestone`;
-CREATE TABLE  `oocke1_budgetmilestone` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
-  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
-  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
-  `ACTUAL_VALUE` decimal(17,9) default NULL,
-  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CATEGORY_` int(11) NOT NULL default '-1',
-  `CREATED_AT` datetime default NULL,
-  `CREATED_BY_` int(11) NOT NULL default '-1',
-  `DISABLED` bit(1) default NULL,
-  `DISABLED_REASON` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK_` int(11) NOT NULL default '-1',
-  `MODIFIED_BY_` int(11) NOT NULL default '-1',
-  `OWNER_` int(11) NOT NULL default '-1',
-  `TARGET_VALUE` decimal(17,9) default NULL,
-  `USER_BOOLEAN0` bit(1) default NULL,
-  `USER_BOOLEAN1` bit(1) default NULL,
-  `USER_BOOLEAN2` bit(1) default NULL,
-  `USER_BOOLEAN3` bit(1) default NULL,
-  `USER_BOOLEAN4_` int(11) NOT NULL default '-1',
-  `USER_CODE0` smallint(6) default NULL,
-  `USER_CODE1` smallint(6) default NULL,
-  `USER_CODE2` smallint(6) default NULL,
-  `USER_CODE3` smallint(6) default NULL,
-  `USER_CODE4_` int(11) NOT NULL default '-1',
-  `USER_DATE0` date default NULL,
-  `USER_DATE1` date default NULL,
-  `USER_DATE2` date default NULL,
-  `USER_DATE3` date default NULL,
-  `USER_DATE4_` int(11) NOT NULL default '-1',
-  `USER_DATE_TIME0` datetime default NULL,
-  `USER_DATE_TIME1` datetime default NULL,
-  `USER_DATE_TIME2` datetime default NULL,
-  `USER_DATE_TIME3` datetime default NULL,
-  `USER_DATE_TIME4_` int(11) NOT NULL default '-1',
-  `USER_NUMBER0` decimal(17,9) default NULL,
-  `USER_NUMBER1` decimal(17,9) default NULL,
-  `USER_NUMBER2` decimal(17,9) default NULL,
-  `USER_NUMBER3` decimal(17,9) default NULL,
-  `USER_NUMBER4_` int(11) NOT NULL default '-1',
-  `USER_STRING0` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING1` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING2` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING3` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING4_` int(11) NOT NULL default '-1',
-  `MODIFIED_AT` datetime NOT NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_budgetmilestone_`;
-CREATE TABLE  `oocke1_budgetmilestone_` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `IDX` int(11) NOT NULL,
   `CATEGORY` varchar(256) character set latin1 collate latin1_bin default NULL,
@@ -2226,6 +2160,72 @@ CREATE TABLE  `oocke1_calendarday` (
 
 DROP TABLE IF EXISTS `oocke1_calendarday_`;
 CREATE TABLE  `oocke1_calendarday_` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `IDX` int(11) NOT NULL,
+  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_calendarfeed`;
+CREATE TABLE  `oocke1_calendarfeed` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
+  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
+  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
+  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `CREATED_AT` datetime default NULL,
+  `CREATED_BY_` int(11) NOT NULL default '-1',
+  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `IS_ACTIVE` bit(1) default NULL,
+  `MODIFIED_BY_` int(11) NOT NULL default '-1',
+  `NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER_` int(11) NOT NULL default '-1',
+  `MODIFIED_AT` datetime NOT NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ACTIVITY_FILTER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `PASSWORD` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `URL` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `USERNAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `ACTIVITY_GROUP` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `BACK_COLOR` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `COLOR` varchar(256) character set latin1 collate latin1_bin default NULL,
+  PRIMARY KEY  (`OBJECT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_calendarfeed_`;
+CREATE TABLE  `oocke1_calendarfeed_` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `IDX` int(11) NOT NULL,
+  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_calendarprofile`;
+CREATE TABLE  `oocke1_calendarprofile` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
+  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
+  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
+  `CREATED_AT` datetime default NULL,
+  `CREATED_BY_` int(11) NOT NULL default '-1',
+  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY_` int(11) NOT NULL default '-1',
+  `NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER_` int(11) NOT NULL default '-1',
+  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_AT` datetime NOT NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`OBJECT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_calendarprofile_`;
+CREATE TABLE  `oocke1_calendarprofile_` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `IDX` int(11) NOT NULL,
   `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
@@ -2871,6 +2871,81 @@ CREATE TABLE  `oocke1_contract_` (
   `QUOTE` varchar(256) character set latin1 collate latin1_bin default NULL,
   `OPPORTUNITY` varchar(256) character set latin1 collate latin1_bin default NULL,
   `INVOICE` varchar(256) character set latin1 collate latin1_bin default NULL,
+  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_contractlink`;
+CREATE TABLE  `oocke1_contractlink` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
+  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
+  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
+  `CATEGORY_` int(11) NOT NULL default '-1',
+  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `CREATED_AT` datetime default NULL,
+  `CREATED_BY_` int(11) NOT NULL default '-1',
+  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DISABLED` bit(1) default NULL,
+  `DISABLED_REASON` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `EXTERNAL_LINK_` int(11) NOT NULL default '-1',
+  `LINK_TO` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `LINK_TYPE` smallint(6) default NULL,
+  `MODIFIED_BY_` int(11) NOT NULL default '-1',
+  `NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER_` int(11) NOT NULL default '-1',
+  `USER_BOOLEAN0` bit(1) default NULL,
+  `USER_BOOLEAN1` bit(1) default NULL,
+  `USER_BOOLEAN2` bit(1) default NULL,
+  `USER_BOOLEAN3` bit(1) default NULL,
+  `USER_BOOLEAN4_` int(11) NOT NULL default '-1',
+  `USER_CODE0` smallint(6) default NULL,
+  `USER_CODE1` smallint(6) default NULL,
+  `USER_CODE2` smallint(6) default NULL,
+  `USER_CODE3` smallint(6) default NULL,
+  `USER_CODE4_` int(11) NOT NULL default '-1',
+  `USER_DATE0` date default NULL,
+  `USER_DATE1` date default NULL,
+  `USER_DATE2` date default NULL,
+  `USER_DATE3` date default NULL,
+  `USER_DATE4_` int(11) NOT NULL default '-1',
+  `USER_DATE_TIME0` datetime default NULL,
+  `USER_DATE_TIME1` datetime default NULL,
+  `USER_DATE_TIME2` datetime default NULL,
+  `USER_DATE_TIME3` datetime default NULL,
+  `USER_DATE_TIME4_` int(11) NOT NULL default '-1',
+  `USER_NUMBER0` decimal(17,9) default NULL,
+  `USER_NUMBER1` decimal(17,9) default NULL,
+  `USER_NUMBER2` decimal(17,9) default NULL,
+  `USER_NUMBER3` decimal(17,9) default NULL,
+  `USER_NUMBER4_` int(11) NOT NULL default '-1',
+  `USER_STRING0` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `USER_STRING1` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `USER_STRING2` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `USER_STRING3` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `USER_STRING4_` int(11) NOT NULL default '-1',
+  `VALID_FROM` datetime default NULL,
+  `VALID_TO` datetime default NULL,
+  `MODIFIED_AT` datetime NOT NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`OBJECT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_contractlink_`;
+CREATE TABLE  `oocke1_contractlink_` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `IDX` int(11) NOT NULL,
+  `CATEGORY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `EXTERNAL_LINK` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `USER_BOOLEAN4` bit(1) default NULL,
+  `USER_CODE4` smallint(6) default NULL,
+  `USER_DATE4` date default NULL,
+  `USER_DATE_TIME4` datetime default NULL,
+  `USER_NUMBER4` decimal(17,9) default NULL,
+  `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -3987,6 +4062,7 @@ CREATE TABLE  `oocke1_document` (
   `CMS_DEFAULT_LANGUAGE` varchar(256) character set latin1 collate latin1_bin default NULL,
   `CMS_TEMPLATE` varchar(256) character set latin1 collate latin1_bin default NULL,
   `QUALIFIED_NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DISABLED` bit(1) default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -4047,11 +4123,45 @@ CREATE TABLE  `oocke1_documentfolder` (
   `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
   `MODIFIED_AT` datetime NOT NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `DISABLED` bit(1) default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_documentfolder_`;
 CREATE TABLE  `oocke1_documentfolder_` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `IDX` int(11) NOT NULL,
+  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_documentfolderass`;
+CREATE TABLE  `oocke1_documentfolderass` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
+  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
+  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
+  `CREATED_AT` datetime default NULL,
+  `CREATED_BY_` int(11) NOT NULL default '-1',
+  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DISABLED` bit(1) default NULL,
+  `DOCUMENT_FOLDER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY_` int(11) NOT NULL default '-1',
+  `NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER_` int(11) NOT NULL default '-1',
+  `VALID_FROM` datetime default NULL,
+  `VALID_TO` datetime default NULL,
+  `MODIFIED_AT` datetime NOT NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`OBJECT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_documentfolderass_`;
+CREATE TABLE  `oocke1_documentfolderass_` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `IDX` int(11) NOT NULL,
   `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
@@ -4644,146 +4754,6 @@ CREATE TABLE  `oocke1_filterproperty_` (
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `oocke1_forecast`;
-CREATE TABLE  `oocke1_forecast` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
-  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
-  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
-  `CATEGORY_` int(11) NOT NULL default '-1',
-  `CREATED_AT` datetime default NULL,
-  `CREATED_BY_` int(11) NOT NULL default '-1',
-  `DISABLED` bit(1) default NULL,
-  `DISABLED_REASON` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK_` int(11) NOT NULL default '-1',
-  `MODIFIED_BY_` int(11) NOT NULL default '-1',
-  `ORGANIZATIONAL_UNIT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `OWNER_` int(11) NOT NULL default '-1',
-  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN0` bit(1) default NULL,
-  `USER_BOOLEAN1` bit(1) default NULL,
-  `USER_BOOLEAN2` bit(1) default NULL,
-  `USER_BOOLEAN3` bit(1) default NULL,
-  `USER_BOOLEAN4_` int(11) NOT NULL default '-1',
-  `USER_CODE0` smallint(6) default NULL,
-  `USER_CODE1` smallint(6) default NULL,
-  `USER_CODE2` smallint(6) default NULL,
-  `USER_CODE3` smallint(6) default NULL,
-  `USER_CODE4_` int(11) NOT NULL default '-1',
-  `USER_DATE0` date default NULL,
-  `USER_DATE1` date default NULL,
-  `USER_DATE2` date default NULL,
-  `USER_DATE3` date default NULL,
-  `USER_DATE4_` int(11) NOT NULL default '-1',
-  `USER_DATE_TIME0` datetime default NULL,
-  `USER_DATE_TIME1` datetime default NULL,
-  `USER_DATE_TIME2` datetime default NULL,
-  `USER_DATE_TIME3` datetime default NULL,
-  `USER_DATE_TIME4_` int(11) NOT NULL default '-1',
-  `USER_NUMBER0` decimal(17,9) default NULL,
-  `USER_NUMBER1` decimal(17,9) default NULL,
-  `USER_NUMBER2` decimal(17,9) default NULL,
-  `USER_NUMBER3` decimal(17,9) default NULL,
-  `USER_NUMBER4_` int(11) NOT NULL default '-1',
-  `USER_STRING0` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING1` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING2` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING3` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING4_` int(11) NOT NULL default '-1',
-  `MODIFIED_AT` datetime NOT NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_forecast_`;
-CREATE TABLE  `oocke1_forecast_` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `IDX` int(11) NOT NULL,
-  `CATEGORY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN4` bit(1) default NULL,
-  `USER_CODE4` smallint(6) default NULL,
-  `USER_DATE4` date default NULL,
-  `USER_DATE_TIME4` datetime default NULL,
-  `USER_NUMBER4` decimal(17,9) default NULL,
-  `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_forecastperiod`;
-CREATE TABLE  `oocke1_forecastperiod` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
-  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
-  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
-  `CATEGORY_` int(11) NOT NULL default '-1',
-  `CREATED_AT` datetime default NULL,
-  `CREATED_BY_` int(11) NOT NULL default '-1',
-  `DISABLED` bit(1) default NULL,
-  `DISABLED_REASON` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK_` int(11) NOT NULL default '-1',
-  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY_` int(11) NOT NULL default '-1',
-  `OWNER_` int(11) NOT NULL default '-1',
-  `PERSON` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN0` bit(1) default NULL,
-  `USER_BOOLEAN1` bit(1) default NULL,
-  `USER_BOOLEAN2` bit(1) default NULL,
-  `USER_BOOLEAN3` bit(1) default NULL,
-  `USER_BOOLEAN4_` int(11) NOT NULL default '-1',
-  `USER_CODE0` smallint(6) default NULL,
-  `USER_CODE1` smallint(6) default NULL,
-  `USER_CODE2` smallint(6) default NULL,
-  `USER_CODE3` smallint(6) default NULL,
-  `USER_CODE4_` int(11) NOT NULL default '-1',
-  `USER_DATE0` date default NULL,
-  `USER_DATE1` date default NULL,
-  `USER_DATE2` date default NULL,
-  `USER_DATE3` date default NULL,
-  `USER_DATE4_` int(11) NOT NULL default '-1',
-  `USER_DATE_TIME0` datetime default NULL,
-  `USER_DATE_TIME1` datetime default NULL,
-  `USER_DATE_TIME2` datetime default NULL,
-  `USER_DATE_TIME3` datetime default NULL,
-  `USER_DATE_TIME4_` int(11) NOT NULL default '-1',
-  `USER_NUMBER0` decimal(17,9) default NULL,
-  `USER_NUMBER1` decimal(17,9) default NULL,
-  `USER_NUMBER2` decimal(17,9) default NULL,
-  `USER_NUMBER3` decimal(17,9) default NULL,
-  `USER_NUMBER4_` int(11) NOT NULL default '-1',
-  `USER_STRING0` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING1` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING2` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING3` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING4_` int(11) NOT NULL default '-1',
-  `MODIFIED_AT` datetime NOT NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_forecastperiod_`;
-CREATE TABLE  `oocke1_forecastperiod_` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `IDX` int(11) NOT NULL,
-  `CATEGORY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN4` bit(1) default NULL,
-  `USER_CODE4` smallint(6) default NULL,
-  `USER_DATE4` date default NULL,
-  `USER_DATE_TIME4` datetime default NULL,
-  `USER_NUMBER4` decimal(17,9) default NULL,
-  `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `oocke1_indexentry`;
 CREATE TABLE  `oocke1_indexentry` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -4921,6 +4891,13 @@ CREATE TABLE  `oocke1_involvedobject_` (
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `oocke1_join_accthasassbudget`;
+CREATE TABLE  `oocke1_join_accthasassbudget` (
+  `ACCOUNT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ASSIGNED_BUDGET` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`ACCOUNT`,`ASSIGNED_BUDGET`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `oocke1_join_actcontainswre`;
 CREATE TABLE  `oocke1_join_actcontainswre` (
   `ACTIVITY` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -4954,6 +4931,13 @@ CREATE TABLE  `oocke1_join_fcperiodhasquote` (
   `FORECAST_PERIOD` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `QUOTE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`FORECAST_PERIOD`,`QUOTE`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_join_filterincldescontr`;
+CREATE TABLE  `oocke1_join_filterincldescontr` (
+  `CONTRACT_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `FILTERED_CONTRACT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`CONTRACT_FILTER`,`FILTERED_CONTRACT`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_join_filterincludesacct`;
@@ -5038,6 +5022,13 @@ CREATE TABLE  `oocke1_join_finderhasidxprod` (
   `OBJECT_FINDER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `INDEX_ENTRY_PRODUCT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_FINDER`,`INDEX_ENTRY_PRODUCT`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_join_fldcontainsfld`;
+CREATE TABLE  `oocke1_join_fldcontainsfld` (
+  `PARENT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `FOLDER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`PARENT`,`FOLDER`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_join_plhasassple`;
@@ -5161,78 +5152,6 @@ CREATE TABLE  `oocke1_media_` (
   `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
   `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
   `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_mmsslide`;
-CREATE TABLE  `oocke1_mmsslide` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
-  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
-  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
-  `CATEGORY_` int(11) NOT NULL default '-1',
-  `CREATED_AT` datetime default NULL,
-  `CREATED_BY_` int(11) NOT NULL default '-1',
-  `DISABLED` bit(1) default NULL,
-  `DISABLED_REASON` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK_` int(11) NOT NULL default '-1',
-  `MEDIA_OBJECT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY_` int(11) NOT NULL default '-1',
-  `OWNER_` int(11) NOT NULL default '-1',
-  `SLIDE_ORDER` int(11) default NULL,
-  `TEXT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN0` bit(1) default NULL,
-  `USER_BOOLEAN1` bit(1) default NULL,
-  `USER_BOOLEAN2` bit(1) default NULL,
-  `USER_BOOLEAN3` bit(1) default NULL,
-  `USER_BOOLEAN4_` int(11) NOT NULL default '-1',
-  `USER_CODE0` smallint(6) default NULL,
-  `USER_CODE1` smallint(6) default NULL,
-  `USER_CODE2` smallint(6) default NULL,
-  `USER_CODE3` smallint(6) default NULL,
-  `USER_CODE4_` int(11) NOT NULL default '-1',
-  `USER_DATE0` date default NULL,
-  `USER_DATE1` date default NULL,
-  `USER_DATE2` date default NULL,
-  `USER_DATE3` date default NULL,
-  `USER_DATE4_` int(11) NOT NULL default '-1',
-  `USER_DATE_TIME0` datetime default NULL,
-  `USER_DATE_TIME1` datetime default NULL,
-  `USER_DATE_TIME2` datetime default NULL,
-  `USER_DATE_TIME3` datetime default NULL,
-  `USER_DATE_TIME4_` int(11) NOT NULL default '-1',
-  `USER_NUMBER0` decimal(17,9) default NULL,
-  `USER_NUMBER1` decimal(17,9) default NULL,
-  `USER_NUMBER2` decimal(17,9) default NULL,
-  `USER_NUMBER3` decimal(17,9) default NULL,
-  `USER_NUMBER4_` int(11) NOT NULL default '-1',
-  `USER_STRING0` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING1` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING2` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING3` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_STRING4_` int(11) NOT NULL default '-1',
-  `MODIFIED_AT` datetime NOT NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_mmsslide_`;
-CREATE TABLE  `oocke1_mmsslide_` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `IDX` int(11) NOT NULL,
-  `CATEGORY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `EXTERNAL_LINK` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `USER_BOOLEAN4` bit(1) default NULL,
-  `USER_CODE4` smallint(6) default NULL,
-  `USER_DATE4` date default NULL,
-  `USER_DATE_TIME4` datetime default NULL,
-  `USER_NUMBER4` decimal(17,9) default NULL,
-  `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5628,6 +5547,11 @@ CREATE TABLE  `oocke1_orgunitrelship_` (
   `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_position_number_seq`;
+CREATE TABLE  `oocke1_position_number_seq` (
+  `nextval` bigint(20) default NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_pricelevel`;

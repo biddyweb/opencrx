@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: StoreImpl.java,v 1.48 2008/07/07 17:35:16 wfro Exp $
+ * Name:        $Id: StoreImpl.java,v 1.51 2008/09/12 08:53:31 wfro Exp $
  * Description: XWiki StoreImpl
- * Revision:    $Revision: 1.48 $
+ * Revision:    $Revision: 1.51 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/07 17:35:16 $
+ * Date:        $Date: 2008/09/12 08:53:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1048,8 +1048,30 @@ public class StoreImpl
             if(monitor != null) monitor.startTimer(MONITOR_ID);
             xWikiDocument.setStore(this);
             xWikiDocument.setDatabase(context.getDatabase());
-            session.beginTransaction();
+            // Map Space to DocumentFolder            
+            session.beginTransaction();            
+            List<DocumentFolder> folders = this.findDocumentFolder(
+                xWikiDocument.getSpace(), 
+                session
+            );
+            DocumentFolder folder = null;
+            if(folders.isEmpty()) {
+                folder = session.getDocumentPackage().getDocumentFolder().createDocumentFolder();
+                folder.refInitialize(false, false);
+                folder.setName(xWikiDocument.getSpace());
+                folder.setParent(this.getRootFolder(session));
+                session.getDocumentSegment().addFolder(
+                    false,
+                    this.uuidAsString(),
+                    folder
+                );
+            }
+            else {
+                folder = folders.get(0);
+            }
+            session.commitTransaction();            
             // These informations will allow to not look for attachments and objects on loading
+            session.beginTransaction();
             xWikiDocument.setElement(
                 XWikiDocument.HAS_ATTACHMENTS, 
                 !xWikiDocument.getAttachmentList().isEmpty()
@@ -1135,26 +1157,6 @@ public class StoreImpl
             document.setCmsDefaultLanguage(xWikiDocument.getDefaultLanguage());
             document.setCmsClass(xWikiDocument.getxWikiClassXML());
             document.setCmsTranslation(xWikiDocument.getTranslation());
-            // Map Space to DocumentFolder            
-            List<DocumentFolder> folders = this.findDocumentFolder(
-                xWikiDocument.getSpace(), 
-                session
-            );
-            DocumentFolder folder = null;
-            if(folders.isEmpty()) {
-                folder = session.getDocumentPackage().getDocumentFolder().createDocumentFolder();
-                folder.refInitialize(false, false);
-                folder.setName(xWikiDocument.getSpace());
-                folder.setParent(this.getRootFolder(session));
-                session.getDocumentSegment().addFolder(
-                    false,
-                    this.uuidAsString(),
-                    folder
-                );
-            }
-            else {
-                folder = folders.get(0);
-            }
             document.getFolder().clear();
             document.getFolder().add(folder);
             // Create document revision and store content to revision
@@ -1188,7 +1190,11 @@ public class StoreImpl
             List<IndexEntry> indexEntries = revision.getIndexEntry(latestIndexEntryQuery);
             if(!indexEntries.isEmpty()) {
                 IndexEntry indexEntry = indexEntries.get(0);
-                document.setKeywords(indexEntry.getKeywords());
+                String keywords = indexEntry.getKeywords();
+                if(keywords != null && (keywords.length() > 3500)) {
+                    keywords = keywords.substring(0, 3500);
+                }
+                document.setKeywords(keywords);
             }
             // Remove properties planned for removal
             if (xWikiDocument.getObjectsToRemove().size()>0) {
@@ -1206,7 +1212,9 @@ public class StoreImpl
             }
             if (xWikiDocument.hasElement(XWikiDocument.HAS_OBJECTS)) {
                 // TODO: Delete all objects for which we don't have a name in the Map..
-                for(Vector<BaseCollection> objects: (Collection<Vector>)xWikiDocument.getxWikiObjects().values()) {
+                Collection<Vector<BaseObject>> xWikiObjects = 
+                    (Collection<Vector<BaseObject>>)xWikiDocument.getxWikiObjects().values();
+                for(Vector<BaseObject> objects: xWikiObjects) {
                     for(BaseCollection xWikiObject: objects) {
                         if(xWikiObject != null){
                             xWikiObject.setName(xWikiDocument.getFullName());

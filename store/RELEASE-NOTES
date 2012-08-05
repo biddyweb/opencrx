@@ -1,5 +1,5 @@
-Release Name: openCRX/Store 2.0.0
-Release Date: 2008-02-20
+Release Name: openCRX/Store 2.2.0
+Release Date: 2008-09-02
 
 ---------------------------------------------------------------------
 Notes:
@@ -53,15 +53,9 @@ Changes:
 
 0.    SUMMARY
       none
-      
 
 1.    NEW FEATURES
-
-      Store Front 2004 ported to openCRX. Original store is available from
-      http://sourceforge.net/projects/storefront2004/.
-      
-      For more information see 
-      http://www.opencrx.org/opencrx/1.11/new.htm#store.
+      none
       
 2.    CHANGES  
      

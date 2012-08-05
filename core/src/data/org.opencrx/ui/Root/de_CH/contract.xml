@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:assignedAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zugewiesene Kontakte</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zugewiesene Kontakte</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:competitor" _operation="create">
                     <_object>
                       <label>
@@ -40,6 +51,28 @@
                       </label>
                       <toolTip>
                         <_item>Aktivitäten</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ausgehende Verweise</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ausgehende Verweise</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Eingehende Verweise</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Eingehende Verweise</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -170,12 +203,12 @@
                       <label>
                         <_item>Vertragsnummer</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Vertrags-Nr.</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Vertragsnummer</_item>
                       </toolTip>
-											<shortLabel>
-												<_item>Vertrags-Nr.</_item>
-											</shortLabel>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -388,6 +421,138 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Name</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Name</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beschreibung</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beschreibung</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:linkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Gültig ab</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Gültig ab</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Gültig bis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Gültig bis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ausgehender Verweis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ausgehender Verweis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Verweis auf</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Verweis auf</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Eingehender Verweis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Eingehender Verweis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Verweis auf</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Verweis auf</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Eingehender Verweis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Eingehender Verweis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zuweisung Kontakt</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zuweisung Kontakt</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract:accountRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rolle</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rolle</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition" _operation="create">
                     <_object>
                       <label>
@@ -499,72 +664,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionResult:position" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Position</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Position</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Position kreieren basierend auf Produkteangebot</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Position kreieren basierend auf Produkteangebot</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Eingabe</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Eingabe</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:quantity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Menge</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Menge</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:offering" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Produkteangebot</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Produkteangebot</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionResult:offeringPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>Position</_item>

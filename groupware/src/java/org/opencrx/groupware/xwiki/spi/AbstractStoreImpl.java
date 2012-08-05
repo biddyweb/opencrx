@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: AbstractStoreImpl.java,v 1.16 2007/12/10 22:36:59 wfro Exp $
+ * Name:        $Id: AbstractStoreImpl.java,v 1.17 2008/09/09 22:05:36 wfro Exp $
  * Description: XWiki AbstractStoreImpl
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/10 22:36:59 $
+ * Date:        $Date: 2008/09/09 22:05:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -198,7 +198,7 @@ public class AbstractStoreImpl
     //-----------------------------------------------------------------------
     protected String uuidAsString(
     ) {
-        return UUIDConversion.toUID(this.uuidGenerator.next());
+        return UUIDConversion.toUID(uuidGenerator.next());
     }
     
     //-----------------------------------------------------------------------

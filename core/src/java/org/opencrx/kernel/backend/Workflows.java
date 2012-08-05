@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.9 2008/05/30 16:43:27 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.10 2008/07/25 11:18:22 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/30 16:43:27 $
+ * Date:        $Date: 2008/07/25 11:18:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -782,6 +782,14 @@ public class Workflows {
                     );
                     wfInstance.clearValues("failed").add(Boolean.TRUE);
                 }
+                // Increment stepCounter
+                Number stepCounter = (Number)wfProcess.values("stepCounter").get(0);
+                if(stepCounter == null) {
+                    stepCounter = new Integer(0);
+                }
+                wfProcess.clearValues("stepCounter").add(
+                    new Integer(stepCounter.intValue() + 1)
+                );
                 // Create log entry
                 DataproviderObject logEntry = new DataproviderObject(
                     wfInstanceIdentity.getDescendant(new String[]{"actionLog", this.backend.getUidAsString()})

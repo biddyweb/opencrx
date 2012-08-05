@@ -580,6 +580,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo" _operation="create">
                     <_object>
                       <label>
@@ -1460,6 +1482,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description" _operation="create">
                     <_object>
                       <label>
@@ -1629,17 +1662,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Prévue pour</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Prévue pour</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority" _operation="create">
                     <_object>
                       <label>
@@ -1651,6 +1673,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prévue pour</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prévue pour</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact" _operation="create">
                     <_object>
                       <label>
@@ -1658,39 +1702,6 @@
                       </label>
                       <toolTip>
                         <_item>Contact ayant effectué la demande</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Groupe d&apos;activité</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Groupe d&apos;activité</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ressource</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ressource</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rôle de la ressource</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rôle de la ressource</_item>
                       </toolTip>
                     </_object>
                     <_content/>

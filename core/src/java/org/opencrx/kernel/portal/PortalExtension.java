@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.26 2008/06/17 15:05:16 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.36 2008/08/29 15:46:14 wfro Exp $
  * Description: Evaluator
- * Revision:    $Revision: 1.26 $
+ * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/17 15:05:16 $
+ * Date:        $Date: 2008/08/29 15:46:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,16 +68,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefStruct;
 
+import org.opencrx.kernel.activity1.jmi1.InvolvedObject;
 import org.opencrx.kernel.address1.jmi1.Addressable;
 import org.opencrx.kernel.address1.jmi1.RoomAddressable;
 import org.opencrx.kernel.building1.jmi1.AbstractBuildingUnit;
 import org.opencrx.kernel.code1.jmi1.SimpleEntry;
-import org.opencrx.kernel.contract1.jmi1.ContractPosition;
 import org.opencrx.kernel.contract1.jmi1.ContractRole;
 import org.opencrx.kernel.depot1.jmi1.Depot;
 import org.opencrx.kernel.depot1.jmi1.DepotContract;
@@ -87,7 +86,6 @@ import org.opencrx.kernel.depot1.jmi1.DepotReport;
 import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
 import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.product1.jmi1.ContractPositionConstrained;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
@@ -99,7 +97,6 @@ import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
-import org.openmdx.kernel.text.StringBuilders;
 import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
 import org.openmdx.model1.accessor.basic.cci.Model_1_0;
 import org.openmdx.portal.servlet.Action;
@@ -205,30 +202,6 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
-    private String getGridRowLevelId(
-        long lineItemNumber
-    ) {
-        CharSequence rowLevelId = StringBuilders.newStringBuilder();
-        boolean skipLeadingZeroes = true;
-        for(long d = 1000000000000000000L; d > 0; d /= 100) {
-            int q = (int)(lineItemNumber / d);
-            if(rowLevelId.length() > 0) {
-                StringBuilders.asStringBuilder(rowLevelId).append("-");
-            }
-            if(!skipLeadingZeroes || (q > 0)) {
-                StringBuilders.asStringBuilder(rowLevelId).append(
-                    q < 10 ? "0" + Integer.toString(q) : Integer.toString(q)
-                );
-                skipLeadingZeroes = false;
-            }
-            lineItemNumber %= d;
-        }
-        return rowLevelId.length() == 0
-            ? "00"
-            : rowLevelId.toString();
-    }
-    
-    //-------------------------------------------------------------------------
     @Override
     public String getTitle(
         RefObject_1_0 refObj,
@@ -272,32 +245,100 @@ public class PortalExtension
           }          
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
               org.opencrx.kernel.activity1.jmi1.Activity obj = (org.opencrx.kernel.activity1.jmi1.Activity)refObj;
-              return toS(obj.getActivityNumber()) + ": " + toS(obj.getName());
+              return toS(obj.getActivityNumber()).trim() + ": " + toS(obj.getName());
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp) {
-              org.opencrx.kernel.activity1.jmi1.ActivityFollowUp obj = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)refObj;
-              RefObject_1_0 activity = (RefObject_1_0)((RefPackage_1_0)obj.refOutermostPackage()).refObject(
-                  obj.refGetPath().getParent().getParent().toXri()
+              org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)refObj;              
+              RefObject_1_0 activity = (RefObject_1_0)application.getPmData().getObjectById(
+                  followUp.refGetPath().getParent().getParent()
               );
-              return this.getTitle(activity, locale, localeAsString, application) + ": " + toS(obj.getTitle());
+              return this.getTitle(activity, locale, localeAsString, application) + ": " + toS(followUp.getTitle());
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroupMember) {
-            return (refObj.refGetValue("address")  == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("address"), locale, localeAsString, application));
+              org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)refObj;
+              org.opencrx.kernel.account1.jmi1.AccountAddress address = member.getAddress();
+              if(address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
+                  org.opencrx.kernel.account1.jmi1.Account account = 
+                      (org.opencrx.kernel.account1.jmi1.Account)application.getPmData().getObjectById(
+                          address.refGetPath().getParent().getParent()
+                      );
+                  return this.getTitle(address, locale, localeAsString, application) + " / " + account.getFullName();
+              }
+              else {
+                  return address  == null ? 
+                      "Untitled" : 
+                      this.getTitle(address, locale, localeAsString, application);                
+              }
+          }
+          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AbstractActivityParty) {
+              RefObject_1_0 party = null;
+              if(
+                  (refObj instanceof org.opencrx.kernel.activity1.jmi1.EmailRecipient) ||
+                  (refObj instanceof org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient)
+              ) {
+                  org.opencrx.kernel.account1.jmi1.AccountAddress address = null;
+                  if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EmailRecipient) {
+                      org.opencrx.kernel.activity1.jmi1.EmailRecipient recipient = (org.opencrx.kernel.activity1.jmi1.EmailRecipient)refObj;
+                      address = recipient.getParty();
+                  }
+                  else {
+                      org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient recipient = (org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient)refObj;
+                      address = recipient.getParty();                      
+                  }
+                  if(address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
+                      org.opencrx.kernel.account1.jmi1.Account account = 
+                          (org.opencrx.kernel.account1.jmi1.Account)application.getPmData().getObjectById(
+                              address.refGetPath().getParent().getParent()
+                          );
+                      return this.getTitle(address, locale, localeAsString, application) + " / " + account.getFullName();
+                  }
+                  else {
+                      return address  == null ? 
+                          "Untitled" : 
+                          this.getTitle(address, locale, localeAsString, application);                
+                  }                  
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EmailRecipientGroup) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.EmailRecipientGroup)refObj).getParty();
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.IncidentParty) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.IncidentParty)refObj).getParty();
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MailingRecipient) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.MailingRecipient)refObj).getParty();
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup)refObj).getParty();
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MeetingParty) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.MeetingParty)refObj).getParty();
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.TaskParty) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.TaskParty)refObj).getParty();
+              }
+              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.PhoneCallRecipientGroup) {
+                  party = ((org.opencrx.kernel.activity1.jmi1.PhoneCallRecipientGroup)refObj).getParty();                  
+              }
+              return party == null ? 
+                  "Untitled" :
+                  this.getTitle(party, locale, localeAsString, application);
           }
           else if(refObj instanceof org.opencrx.kernel.contract1.jmi1.AccountAddress) {
-             return (refObj.refGetValue("address") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("address"), locale, localeAsString, application));
+             return refObj.refGetValue("address") == null ? 
+                 "Untitled" : 
+                 this.getTitle((RefObject_1_0)refObj.refGetValue("address"), locale, localeAsString, application);
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.EmailAddressable) {
-            return "* " + toS(refObj.refGetValue("emailAddress"));
+              return "* " + toS(refObj.refGetValue("emailAddress"));
           }
           else if(refObj instanceof org.opencrx.kernel.contract1.jmi1.ContractPosition) {
-            return toS(refObj.refGetValue("lineItemNumber"));
+              return toS(refObj.refGetValue("lineItemNumber"));
           }
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.AbstractProduct) {
               org.opencrx.kernel.product1.jmi1.AbstractProduct obj = (org.opencrx.kernel.product1.jmi1.AbstractProduct)refObj;
-              return obj.getProductNumber() == null || obj.getProductNumber().length() == 0 
-                  ? toS(obj.getName()) 
-                  : toS(obj.getName() + " / " + obj.getProductNumber()); 
+              return obj.getProductNumber() == null || obj.getProductNumber().length() == 0 ? 
+                  toS(obj.getName()) : 
+                  toS(obj.getName() + " / " + obj.getProductNumber()); 
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PostalAddressable) {
               String address = "";
@@ -326,11 +367,8 @@ public class PortalExtension
                       : toS(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", locale, true, true).get(postalCountry));
               return address + "<br />" + toS(refObj.refGetValue("postalCode")) + " " + toS(refObj.refGetValue("postalCity")) + "<br />" + postalCountryS;
           }
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MmsSlide) {
-            return toS(refObj.refGetValue("order"));
-          }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PhoneNumberAddressable) {
-            return toS(refObj.refGetValue("phoneNumberFull"));
+              return toS(refObj.refGetValue("phoneNumberFull"));
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.RoomAddressable) {
               RoomAddressable obj = (RoomAddressable)refObj;
@@ -348,22 +386,19 @@ public class PortalExtension
               }
           }
           else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Rating) {
-            return toS(refObj.refGetValue("ratingLevel"));
+              return toS(refObj.refGetValue("ratingLevel"));
           }
           else if(refObj instanceof org.opencrx.kernel.account1.jmi1.RevenueReport) {
-            return toS(refObj.refGetValue("reportNumber"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.forecast1.jmi1.Budget) {
-            return toS(refObj.refGetValue("underlying"));
+              return toS(refObj.refGetValue("reportNumber"));
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.WebAddressable) {
-            return "* " + toS(refObj.refGetValue("webUrl"));
+              return "* " + toS(refObj.refGetValue("webUrl"));
           }
           else if(refObj instanceof org.opencrx.kernel.code1.jmi1.CodeValueEntry) {
-            return toS(refObj.refGetValue("shortText"));
+              return toS(refObj.refGetValue("shortText"));
           }
           else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Description) {
-            return toS(refObj.refGetValue("language"));
+              return toS(refObj.refGetValue("language"));
           }
           else if(refObj instanceof org.opencrx.kernel.document1.jmi1.Document) {
               org.opencrx.kernel.document1.jmi1.Document document = (org.opencrx.kernel.document1.jmi1.Document)refObj;
@@ -376,24 +411,24 @@ public class PortalExtension
               else {
                   return toS(document.getDocumentNumber());
               }
-            }
+          }
           else if(refObj instanceof org.opencrx.kernel.account1.jmi1.Member) {
-            return (refObj.refGetValue("account") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("account"), locale, localeAsString, application));
+              return (refObj.refGetValue("account") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("account"), locale, localeAsString, application));
           }    
           else if(refObj instanceof org.opencrx.kernel.account1.jmi1.ContactRelationship) {
-            return (refObj.refGetValue("toContact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("toContact"), locale, localeAsString, application));
+              return (refObj.refGetValue("toContact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("toContact"), locale, localeAsString, application));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-            return (refObj.refGetValue("contact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("contact"), locale, localeAsString, application));
+              return (refObj.refGetValue("contact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("contact"), locale, localeAsString, application));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
-            return (refObj.refGetValue("reference") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), locale, localeAsString, application));
+              return (refObj.refGetValue("reference") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), locale, localeAsString, application));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.EmailAccount) {
-            return toS(refObj.refGetValue("eMailAddress"));
+              return toS(refObj.refGetValue("eMailAddress"));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.WfProcessInstance) {
-            return (refObj.refGetValue("process") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("process"), locale, localeAsString, application) + " " + toS(refObj.refGetValue("startedOn")));
+              return (refObj.refGetValue("process") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("process"), locale, localeAsString, application) + " " + toS(refObj.refGetValue("startedOn")));
           }      
           else if(refObj instanceof org.opencrx.kernel.base.jmi1.AuditEntry) {
               Object createdAt = refObj.refGetValue(SystemAttributes.CREATED_AT);
@@ -454,6 +489,14 @@ public class PortalExtension
                   this.getTitle(contractRole.getAccount(), locale, localeAsString, application) + " / " + 
                   this.getTitle(contractRole.getContractReferenceHolder(), locale, localeAsString, application);
           }
+          else if(refObj instanceof InvolvedObject) {
+              InvolvedObject involved = (InvolvedObject)refObj;
+              return this.getTitle(involved.getInvolved(), locale, localeAsString, application);
+          }
+          else if(refObj instanceof org.opencrx.kernel.account1.jmi1.AccountAssignment) {
+              org.opencrx.kernel.account1.jmi1.AccountAssignment obj = (org.opencrx.kernel.account1.jmi1.AccountAssignment)refObj;
+              return this.getTitle(obj.getAccount(), locale, localeAsString, application);
+          }          
           else {
               return super.getTitle(refObj, locale, localeAsString, application);
           }
@@ -468,7 +511,7 @@ public class PortalExtension
 
     //-------------------------------------------------------------------------
     public boolean isEnabled(
-        String uiElementName, 
+        String elementName, 
         RefObject_1_0 refObj,
         ApplicationContext context
     ) {
@@ -478,13 +521,13 @@ public class PortalExtension
                 boolean isPending = cb.getBookingStatus() == 1;     
                 boolean isProcessed = cb.getBookingStatus() == 2;
                 boolean isReversal = cb.getBookingType() == 30;
-                if("org:opencrx:kernel:depot1:CompoundBooking:cancelCb".equals(uiElementName)) {
+                if("org:opencrx:kernel:depot1:CompoundBooking:cancelCb".equals(elementName)) {
                     return isProcessed && !isReversal;
                 }
-                else if("org:opencrx:kernel:depot1:CompoundBooking:acceptCb".equals(uiElementName)) {
+                else if("org:opencrx:kernel:depot1:CompoundBooking:acceptCb".equals(elementName)) {
                     return isPending;
                 }
-                else if("org:opencrx:kernel:depot1:CompoundBooking:finalizeCb".equals(uiElementName)) {
+                else if("org:opencrx:kernel:depot1:CompoundBooking:finalizeCb".equals(elementName)) {
                     return isPending;
                 }
             }
@@ -494,7 +537,7 @@ public class PortalExtension
             }
         }
         return super.isEnabled(
-            uiElementName, 
+            elementName, 
             refObj,
             context
         );
@@ -542,57 +585,6 @@ public class PortalExtension
         }
     }
     
-    //-------------------------------------------------------------------------
-    public int getGridRowNestingLevel(
-        String rowLevelId
-    ) {
-        if(rowLevelId == null) {
-            return 0;
-        }
-        int level = 0;
-        // Row level id is of the form nn-nn-nn-...
-        // The nesting level is the position of last component != '00'
-        // relative to the first component != '00'
-        StringTokenizer t = new StringTokenizer(rowLevelId, "-");
-        int ii = 0;
-        int start = -1;
-        while(t.hasMoreTokens()) {
-            String item = t.nextToken();
-            if(!"00".equals(item)) {
-                if(start < 0) {
-                    start = ii;
-                }
-                level = ii;
-            }
-            ii++;
-        }
-        return level - start;       
-    }
-    
-    //-------------------------------------------------------------------------
-    public int getGridRowNestingLevel(
-        RefObject_1_0 refObj
-    ) {
-        return super.getGridRowNestingLevel(refObj);
-    }
-
-    //-------------------------------------------------------------------------
-    public String getGridRowLevelId(
-        RefObject_1_0 refObj
-    ) {
-        if(refObj instanceof ContractPosition) {
-            try {
-                return this.getGridRowLevelId(((ContractPosition)refObj).getLineItemNumber());
-            } catch(Exception e) {}
-        }
-        else if(refObj instanceof ContractPositionConstrained) {
-            try {
-                return this.getGridRowLevelId(((ContractPositionConstrained)refObj).getItemNumber());
-            } catch(Exception e) {}
-        }
-        return super.getGridRowLevelId(refObj);
-    }
-
     //-------------------------------------------------------------------------
     @Override
     public int getGridPageSize(

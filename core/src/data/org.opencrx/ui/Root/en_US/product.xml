@@ -600,11 +600,16 @@
 											<label>
 												<_item>Picture</_item>
 											</label>
-											<order>
+											<orderFieldGroup>
 												<_item>10</_item>
 												<_item>30</_item>
 												<_item>10</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

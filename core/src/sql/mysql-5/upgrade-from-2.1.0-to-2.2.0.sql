@@ -1,0 +1,251 @@
+/* This software is published under the BSD license                          */
+/* as listed below.                                                          */
+/*                                                                           */
+/* Copyright (c) 2004-2008, CRIXP Corp., Switzerland                         */
+/* All rights reserved.                                                      */
+/*                                                                           */
+/* Redistribution and use in source and binary forms, with or without        */
+/* modification, are permitted provided that the following conditions        */
+/* are met:                                                                  */
+/*                                                                           */
+/* * Redistributions of source code must retain the above copyright          */
+/* notice, this list of conditions and the following disclaimer.             */
+/*                                                                           */
+/* * Redistributions in binary form must reproduce the above copyright       */
+/* notice, this list of conditions and the following disclaimer in           */
+/* the documentation and/or other materials provided with the                */
+/* distribution.                                                             */
+/*                                                                           */
+/* * Neither the name of CRIXP Corp. nor the names of the contributors       */
+/* to openCRX may be used to endorse or promote products derived             */
+/* from this software without specific prior written permission              */
+/*                                                                           */
+/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND                    */
+/* CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,               */
+/* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF                  */
+/* MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE                  */
+/* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS         */
+/* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,                  */
+/* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED           */
+/* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,             */
+/* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON         */
+/* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,           */
+/* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY            */
+/* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE                   */
+/* POSSIBILITY OF SUCH DAMAGE.                                               */
+/*                                                                           */
+/* ------------------                                                        */
+/*                                                                           */
+/* This product includes software developed by the Apache Software           */
+/* Foundation (http://www.apache.org/).                                      */
+/*                                                                           */
+/* This product includes software developed by contributors to               */
+/* openMDX (http://www.openmdx.org/)                                         */
+/*                                                                           */
+
+ALTER TABLE `OOCKE1_ACTIVITY` ADD COLUMN `ICAL_TYPE` SMALLINT NULL;
+
+ALTER TABLE `OOCKE1_ACTIVITYCREATOR` ADD COLUMN `ICAL_TYPE` SMALLINT NULL;
+
+
+
+
+ALTER TABLE `OOCKE1_DOCUMENT` ADD COLUMN `DISABLED` BIT NULL;
+
+
+
+
+
+ALTER TABLE `OOCKE1_DOCUMENTFOLDER` ADD COLUMN `DISABLED` BIT NULL;
+
+CREATE TABLE `OOCKE1_DOCUMENTFOLDERASS`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `ACCESS_LEVEL_BROWSE` SMALLINT NULL,
+    `ACCESS_LEVEL_DELETE` SMALLINT NULL,
+    `ACCESS_LEVEL_UPDATE` SMALLINT NULL,
+    `CREATED_AT` DATETIME NULL,
+    `CREATED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `P$$PARENT` VARCHAR(256) BINARY NULL,
+    `DESCRIPTION` VARCHAR(256) BINARY NULL,
+    `DISABLED` BIT NULL,
+    `DOCUMENT_FOLDER` VARCHAR(256) BINARY NULL,
+    `MODIFIED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `NAME` VARCHAR(256) BINARY NULL,
+    `OWNER_` INTEGER NOT NULL DEFAULT -1,
+    `VALID_FROM` DATETIME NULL,
+    `VALID_TO` DATETIME NULL,
+    `MODIFIED_AT` DATETIME NOT NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`)
+) ENGINE=INNODB;
+
+CREATE TABLE `OOCKE1_DOCUMENTFOLDERASS_`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `IDX` INTEGER NOT NULL,
+    `CREATED_BY` VARCHAR(256) BINARY NULL,
+    `MODIFIED_BY` VARCHAR(256) BINARY NULL,
+    `OWNER` VARCHAR(256) BINARY NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`,`IDX`)
+) ENGINE=INNODB;
+
+
+
+
+CREATE TABLE `OOCKE1_CONTRACTLINK`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `ACCESS_LEVEL_BROWSE` SMALLINT NULL,
+    `ACCESS_LEVEL_DELETE` SMALLINT NULL,
+    `ACCESS_LEVEL_UPDATE` SMALLINT NULL,
+    `CATEGORY_` INTEGER NOT NULL DEFAULT -1,
+    `P$$PARENT` VARCHAR(256) BINARY NULL,
+    `CREATED_AT` DATETIME NULL,
+    `CREATED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `DESCRIPTION` VARCHAR(256) BINARY NULL,
+    `DISABLED` BIT NULL,
+    `DISABLED_REASON` VARCHAR(256) BINARY NULL,
+    `EXTERNAL_LINK_` INTEGER NOT NULL DEFAULT -1,
+    `LINK_TO` VARCHAR(256) BINARY NULL,
+    `LINK_TYPE` SMALLINT NULL,
+    `MODIFIED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `NAME` VARCHAR(256) BINARY NULL,
+    `OWNER_` INTEGER NOT NULL DEFAULT -1,
+    `USER_BOOLEAN0` BIT NULL,
+    `USER_BOOLEAN1` BIT NULL,
+    `USER_BOOLEAN2` BIT NULL,
+    `USER_BOOLEAN3` BIT NULL,
+    `USER_BOOLEAN4_` INTEGER NOT NULL DEFAULT -1,
+    `USER_CODE0` SMALLINT NULL,
+    `USER_CODE1` SMALLINT NULL,
+    `USER_CODE2` SMALLINT NULL,
+    `USER_CODE3` SMALLINT NULL,
+    `USER_CODE4_` INTEGER NOT NULL DEFAULT -1,
+    `USER_DATE0` DATE NULL,
+    `USER_DATE1` DATE NULL,
+    `USER_DATE2` DATE NULL,
+    `USER_DATE3` DATE NULL,
+    `USER_DATE4_` INTEGER NOT NULL DEFAULT -1,
+    `USER_DATE_TIME0` DATETIME NULL,
+    `USER_DATE_TIME1` DATETIME NULL,
+    `USER_DATE_TIME2` DATETIME NULL,
+    `USER_DATE_TIME3` DATETIME NULL,
+    `USER_DATE_TIME4_` INTEGER NOT NULL DEFAULT -1,
+    `USER_NUMBER0` DECIMAL(17,9) NULL,
+    `USER_NUMBER1` DECIMAL(17,9) NULL,
+    `USER_NUMBER2` DECIMAL(17,9) NULL,
+    `USER_NUMBER3` DECIMAL(17,9) NULL,
+    `USER_NUMBER4_` INTEGER NOT NULL DEFAULT -1,
+    `USER_STRING0` VARCHAR(256) BINARY NULL,
+    `USER_STRING1` VARCHAR(256) BINARY NULL,
+    `USER_STRING2` VARCHAR(256) BINARY NULL,
+    `USER_STRING3` VARCHAR(256) BINARY NULL,
+    `USER_STRING4_` INTEGER NOT NULL DEFAULT -1,
+    `VALID_FROM` DATETIME NULL,
+    `VALID_TO` DATETIME NULL,
+    `MODIFIED_AT` DATETIME NOT NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`)
+) ENGINE=INNODB;
+
+CREATE TABLE `OOCKE1_CONTRACTLINK_`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `IDX` INTEGER NOT NULL,
+    `CATEGORY` VARCHAR(256) BINARY NULL,
+    `CREATED_BY` VARCHAR(256) BINARY NULL,
+    `EXTERNAL_LINK` VARCHAR(256) BINARY NULL,
+    `MODIFIED_BY` VARCHAR(256) BINARY NULL,
+    `OWNER` VARCHAR(256) BINARY NULL,
+    `USER_BOOLEAN4` BIT NULL,
+    `USER_CODE4` SMALLINT NULL,
+    `USER_DATE4` DATE NULL,
+    `USER_DATE_TIME4` DATETIME NULL,
+    `USER_NUMBER4` DECIMAL(17,9) NULL,
+    `USER_STRING4` VARCHAR(256) BINARY NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`,`IDX`)
+) ENGINE=INNODB;
+
+
+
+
+CREATE TABLE `OOCKE1_CALENDARFEED`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `ACCESS_LEVEL_BROWSE` SMALLINT NULL,
+    `ACCESS_LEVEL_DELETE` SMALLINT NULL,
+    `ACCESS_LEVEL_UPDATE` SMALLINT NULL,
+    `P$$PARENT` VARCHAR(256) BINARY NULL,
+    `CREATED_AT` DATETIME NULL,
+    `CREATED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `DESCRIPTION` VARCHAR(256) BINARY NULL,
+    `BACK_COLOR` VARCHAR(256) BINARY NULL,
+    `COLOR` VARCHAR(256) BINARY NULL,
+    `IS_ACTIVE` BIT NULL,
+    `MODIFIED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `NAME` VARCHAR(256) BINARY NULL,
+    `OWNER_` INTEGER NOT NULL DEFAULT -1,
+    `MODIFIED_AT` DATETIME NOT NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    `ACTIVITY_FILTER` VARCHAR(256) BINARY NULL,
+    `PASSWORD` VARCHAR(256) BINARY NULL,
+    `URL` VARCHAR(256) BINARY NULL,
+    `USERNAME` VARCHAR(256) BINARY NULL,
+    `ACTIVITY_GROUP` VARCHAR(256) BINARY NULL,
+    PRIMARY KEY (`OBJECT_ID`)
+) ENGINE=INNODB;
+
+CREATE TABLE `OOCKE1_CALENDARFEED_`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `IDX` INTEGER NOT NULL,
+    `CREATED_BY` VARCHAR(256) BINARY NULL,
+    `MODIFIED_BY` VARCHAR(256) BINARY NULL,
+    `OWNER` VARCHAR(256) BINARY NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`,`IDX`)
+) ENGINE=INNODB;
+
+CREATE TABLE `OOCKE1_CALENDARPROFILE`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `ACCESS_LEVEL_BROWSE` SMALLINT NULL,
+    `ACCESS_LEVEL_DELETE` SMALLINT NULL,
+    `ACCESS_LEVEL_UPDATE` SMALLINT NULL,
+    `CREATED_AT` DATETIME NULL,
+    `CREATED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `DESCRIPTION` VARCHAR(256) BINARY NULL,
+    `MODIFIED_BY_` INTEGER NOT NULL DEFAULT -1,
+    `NAME` VARCHAR(256) BINARY NULL,
+    `OWNER_` INTEGER NOT NULL DEFAULT -1,
+    `P$$PARENT` VARCHAR(256) BINARY NULL,
+    `MODIFIED_AT` DATETIME NOT NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`)
+) ENGINE=INNODB;
+
+CREATE TABLE `OOCKE1_CALENDARPROFILE_`
+(
+    `OBJECT_ID` VARCHAR(256) BINARY NOT NULL,
+    `IDX` INTEGER NOT NULL,
+    `CREATED_BY` VARCHAR(256) BINARY NULL,
+    `MODIFIED_BY` VARCHAR(256) BINARY NULL,
+    `OWNER` VARCHAR(256) BINARY NULL,
+    `DTYPE` VARCHAR(256) BINARY NOT NULL,
+    PRIMARY KEY (`OBJECT_ID`,`IDX`)
+) ENGINE=INNODB;
+
+
+
+
+ALTER TABLE `OOCKE1_BUDGET` ADD COLUMN `NAME` VARCHAR(256) BINARY NULL;
+
+ALTER TABLE `OOCKE1_BUDGET` ADD COLUMN `DESCRIPTION` VARCHAR(256) BINARY NULL;
+
+
+
+
+ALTER TABLE `OOCKE1_ACTIVITY` ADD COLUMN `GATEWAY` VARCHAR(256) BINARY NULL;

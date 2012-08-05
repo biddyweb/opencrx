@@ -5,7 +5,6 @@ This installer has created an openCRX development environment.
 The SDK contains the sources of the following openCRX projects:
 
 * core: contains the openCRX Core models and functions
-* groupware: contains the openCRX Groupware functions
 * store: contains the openCRX Store application
 
 Each project contains a build.xml which accepts the following

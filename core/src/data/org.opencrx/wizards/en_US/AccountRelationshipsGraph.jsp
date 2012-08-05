@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.3 2008/07/05 11:05:20 cmu Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.6 2008/08/12 16:43:31 cmu Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/05 11:05:20 $
+ * Date:        $Date: 2008/08/12 16:43:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -116,6 +116,9 @@ org.openmdx.application.log.*
 			String encodedAccountXri = test;
 
 			String accountId = account.refGetPath().getBase();
+			if (accountId.indexOf("+") > 0) {
+			  System.out.println("accountId="+accountId);
+			}
 			json.append(
 				"\n" + indent
 			).append(
@@ -316,7 +319,8 @@ org.openmdx.application.log.*
 			null, // relationship key
 			M,
 			"",
-			Math.min(M.size(), 4),
+			//Math.min(M.size(), 4),
+			Math.min(Math.max(1, M.size()), 4),
 			app.getCodes().getLongText(
 				"org:opencrx:kernel:account1:AccountMembership:memberRole",
 				app.getCurrentLocaleAsIndex(),
@@ -452,15 +456,20 @@ org.openmdx.application.log.*
 			};
 			var E = {};
 			B.loadTreeFromJSON(json);
-			B.compute();
-			B.plot();
-			B.prepareCanvasEvents();
-			B.controller.onAfterCompute();
+			try{
+			  B.compute();
+			  B.plot();
+  			B.prepareCanvasEvents();
+  			B.controller.onAfterCompute();
+			}catch(e) {
+			  $('inner-details').innerHTML = 'no relationships';
+			}
 		}
 	</script>
 </head>
-<body class="ytheme-gray" onload="init();">
-	<div id="header"></div>
+<body onload="init();">
+  <div id="header"></div>
+	<div id="visheader"></div>
 	<div id="left">
 		<div id="details" class="toggler left-item">Details (Node Limits: 25-5-5)</div>
 		<div class="element contained-item">

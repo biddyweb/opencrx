@@ -334,7 +334,7 @@
                         <_item>Inactif</_item>
                       </label>
                       <toolTip>
-                        <_item>L&apos;objet est désactivé</_item>
+                        <_item>l&apos;objet est désactivé</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -746,6 +746,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Dossiers</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dossiers</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
@@ -900,6 +911,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Affectation du dossier</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Affectation du dossier</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nom</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Description</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Description</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media" _operation="create">
                     <_object>
                       <label>
@@ -937,6 +981,17 @@
                       </label>
                       <toolTip>
                         <_item>Longueur de contenu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media:contentMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type MIME</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1645,6 +1700,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:mimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template" _operation="create">
                     <_object>
                       <label>
@@ -1894,6 +1960,17 @@
                       </label>
                       <toolTip>
                         <_item>Filtre de référence</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type MIME</_item>
                       </toolTip>
                     </_object>
                     <_content/>

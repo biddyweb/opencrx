@@ -33,6 +33,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:media" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pièces jointes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pièces jointes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sender" _operation="create">
                     <_object>
                       <label>
@@ -73,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>Accusé de réception</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:gateway" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Passerelle (télécopie, SMS, MMS)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Passerelle (télécopie, SMS, MMS)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -161,6 +183,17 @@
                       </label>
                       <toolTip>
                         <_item>Type</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresse E-Mail</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresse E-Mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>

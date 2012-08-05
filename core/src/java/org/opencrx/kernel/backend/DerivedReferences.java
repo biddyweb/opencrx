@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: DerivedReferences.java,v 1.9 2008/06/05 16:38:57 wfro Exp $
+ * Name:        $Id: DerivedReferences.java,v 1.10 2008/08/26 00:29:10 wfro Exp $
  * Description: DerivedReferences
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/05 16:38:57 $
+ * Date:        $Date: 2008/08/26 00:29:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -531,24 +531,6 @@ public class DerivedReferences {
                 )
             );
         }
-        // FolderContainsDocument
-        else if(request.path().isLike(FOLDER_CONTAINS_DOCUMENTS)) {
-            reply = this.backend.getDelegatingLayer().find(
-                header,
-                this.remapFindRequest(
-                    request,
-                    request.path().getPrefix(5).getChild("document"),
-                    new FilterProperty[]{
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,
-                            "folder",
-                            FilterOperators.IS_IN,
-                            new Object[]{request.path().getParent()}
-                        )                        
-                    }
-                )
-            );
-        }
         // ObjectFinderSelectsIndexEntryActivity
         else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY)) {
             Path segmentIdentity = new Path(
@@ -728,7 +710,6 @@ public class DerivedReferences {
     public static final Path DEPOT_GROUP_CONTAINS_DEPOT_GROUPS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depotGroup");
     public static final Path DEPOT_ENTITY_CONTAINS_DEPOTS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depot");
     public static final Path FOLDER_CONTAINS_FOLDERS = new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/:*/segment/:*/folder/:*/folder");
-    public static final Path FOLDER_CONTAINS_DOCUMENTS = new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/:*/segment/:*/folder/:*/document");
     public static final Path MODEL_NAMESPACE_CONTAINS_ELEMENTS = new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/:*/segment/:*/element/:*/content");
     public static final Path GLOBAL_FILTER_INCLUDES_ACTIVITY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityFilter/:*/filteredActivity");
     public static final Path GLOBAL_FILTER_INCLUDES_ACCOUNT = new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/accountFilter/:*/filteredAccount");

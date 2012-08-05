@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendMailNotificationWorkflow.java,v 1.3 2008/04/01 12:33:01 wfro Exp $
+ * Name:        $Id: SendMailNotificationWorkflow.java,v 1.4 2008/08/28 15:13:02 wfro Exp $
  * Description: SendMailNotificationWorkflow
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/01 12:33:01 $
+ * Date:        $Date: 2008/08/28 15:13:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,8 +55,11 @@
  */
 package org.opencrx.mail.workflow;
 
+/**
+ * @deprecated use org.opencrx.application.mail.exporter.SendMailNotificationWorkflow instead.
+ */
 public class SendMailNotificationWorkflow 
-    extends MailWorkflow {
+    extends org.opencrx.application.mail.exporter.SendMailNotificationWorkflow {
 
 }
 

@@ -17,10 +17,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>Documents</_item>
+												<_item>Folders &amp; Documents</_item>
 											</toolTip>
 											<label>
-												<_item>Documents</_item>
+												<_item>Folders &amp; Documents</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -36,10 +36,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Document Folders</_item>
+												<_item>Folders</_item>
 											</toolTip>
 											<label>
-												<_item>Document Folders</_item>
+												<_item>Folders</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -66,9 +66,29 @@
 											</order>
 											<maxMember>20</maxMember>
 											<showMaxMember>8</showMaxMember>
-											<iconKey>Document</iconKey>
 										</_object>
-										<_content/>
+										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Documents (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>Documents (disabled)</_item>
+														</label>
+														<order>
+															<_item>10</_item>
+															<_item>0</_item>
+															<_item>20</_item>
+														</order>
+                            <maxMember>20</maxMember>
+                            <showMaxMember>8</showMaxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
+										</_content>
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!--  DocumentFolder -->
@@ -77,10 +97,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Document Folder</_item>
+												<_item>Folder</_item>
 											</toolTip>
 											<label>
-												<_item>Document Folder</_item>
+												<_item>Folder</_item>
 											</label>
 											<iconKey>DocumentFolder</iconKey>
 										</_object>
@@ -91,10 +111,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Document Folders</_item>
+												<_item>Subfolders</_item>
 											</toolTip>
 											<label>
-												<_item>Document Folders</_item>
+												<_item>Subfolders</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -105,24 +125,62 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:document">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet">
+										<_object>
+											<active>true</active>
+											<inPlace>true</inPlace>
+											<toolTip>
+												<_item>Property Sets</_item>
+											</toolTip>
+											<label>
+												<_item>»Property Sets</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>1040</_item>
+											</order>
+											<maxMember>2</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderEntry">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Documents</_item>
+												<_item>Items</_item>
 											</toolTip>
 											<label>
-												<_item>Documents</_item>
+												<_item>Items</_item>
 											</label>
 											<order>
 												<_item>10</_item>
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<maxMember>20</maxMember>
-											<showMaxMember>8</showMaxMember>
+											<maxMember>6</maxMember>
 										</_object>
-										<_content/>
+										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Items (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>Items (disabled)</_item>
+														</label>
+														<order>
+															<_item>10</_item>
+															<_item>0</_item>
+															<_item>20</_item>
+														</order>
+														<maxMember>6</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
+										</_content>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--FieldGroups in General Tab-->
 									<!--Element Definitions-->
@@ -165,15 +223,172 @@
 											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
-												<_item>Parent</_item>
+												<_item>Parent folder</_item>
 											</toolTip>
 											<label>
-												<_item>Parent</_item>
+												<_item>Parent folder</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:disabled">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Object is disabled</_item>
+											</toolTip>
+											<label>
+												<_item>Disabled</_item>
+											</label>
+											<order>
+												<_item>900100</_item>
+												<_item>10</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!--  DocumentFolderEntry -->
+									<!-- Inspector Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Folder Item</_item>
+											</toolTip>
+											<label>
+												<_item>Folder Item</_item>
+											</label>
+											<iconKey>DocumentFolderEntry</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Grid -->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Document</_item>
+											</toolTip>
+											<label>
+												<_item>Document</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validFrom">
+                    <_object>
+                      <columnBreak>true</columnBreak>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Valid from</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Valid from</_item>
+                      </label>
+                      <order>
+                        <_item>0</_item>
+                        <_item>10</_item>
+                        <_item>80</_item>
+                      </order>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validTo">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Valid to</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Valid to</_item>
+                      </label>
+                      <order>
+                        <_item>0</_item>
+                        <_item>10</_item>
+                        <_item>90</_item>
+                      </order>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:basedOn">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Entry based on</_item>
+											</toolTip>
+											<label>
+												<_item>Entry based on</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:disabled">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Object is disabled</_item>
+											</toolTip>
+											<label>
+												<_item>Disabled</_item>
+											</label>
+											<order>
+												<_item>900100</_item>
+												<_item>10</_item>
+												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -190,7 +405,7 @@
 											<label>
 												<_item>Document</_item>
 											</label>
-											<iconKey>org:opencrx:kernel:document1:Document</iconKey>
+											<iconKey>Document</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -199,10 +414,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Document Folders</_item>
+												<_item>Folders (Direct Assignments)</_item>
 											</toolTip>
 											<label>
-												<_item>Document Folders</_item>
+												<_item>Folders (Direct Assignments)</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -210,6 +425,24 @@
 												<_item>10</_item>
 											</order>
 											<maxMember>3</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Folders</_item>
+											</toolTip>
+											<label>
+												<_item>»Folders</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>1010</_item>
+											</order>
+											<maxMember>5</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -808,6 +1041,77 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:disabled">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Object is disabled</_item>
+											</toolTip>
+											<label>
+												<_item>Disabled</_item>
+											</label>
+											<order>
+												<_item>900100</_item>
+												<_item>10</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!--  FolderAssignment -->
+									<!-- Inspector Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Folder Assignment</_item>
+											</toolTip>
+											<label>
+												<_item>Folder Assignment</_item>
+											</label>
+											<iconKey>DocumentFolderAssignment</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Grid -->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--see document.xml for Document details-->
 
 									<!-- DocumentRevision-->
 									<!-- Inspector -->
@@ -1343,6 +1647,82 @@
 												<_item>0</_item>
 												<_item>30</_item>
 												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!--  DocumentFolderAssignment -->
+                  <!--Inspector Definitions-->
+                  <!-- Grid Tabs -->
+                  <!--FieldGroups in General Tab-->
+                  <!--Element Definition Contact-->
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:documentFolder">
+                    <_object>
+                      <active>true</active>
+                      <filterable>true</filterable>
+                      <toolTip>
+                        <_item>Folder</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Folder</_item>
+                      </label>
+                      <order>
+                        <_item>0</_item>
+                        <_item>0</_item>
+                        <_item>10</_item>
+                      </order>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validFrom">
+                    <_object>
+                      <columnBreak>true</columnBreak>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Valid from</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Valid from</_item>
+                      </label>
+                      <order>
+                        <_item>0</_item>
+                        <_item>0</_item>
+                        <_item>80</_item>
+                      </order>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validTo">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Valid to</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Valid to</_item>
+                      </label>
+                      <order>
+                        <_item>0</_item>
+                        <_item>0</_item>
+                        <_item>90</_item>
+                      </order>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:disabled">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Object is disabled</_item>
+											</toolTip>
+											<label>
+												<_item>Disabled</_item>
+											</label>
+											<order>
+												<_item>900100</_item>
+												<_item>10</_item>
+												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>

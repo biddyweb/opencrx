@@ -17,7 +17,7 @@
 		<config-property>
 			<config-property-name>UserName</config-property-name>
 			<config-property-type>java.lang.String</config-property-type>
-			<config-property-value>CRX_2_1</config-property-value>
+			<config-property-value>CRX_2_2</config-property-value>
 		</config-property>
 		<config-property>
 			<config-property-name>Password</config-property-name>

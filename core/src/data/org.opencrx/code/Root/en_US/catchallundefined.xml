@@ -15,6 +15,8 @@
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:contract1:SalesOrder:submitStatus</_item>
+												<_item>org:opencrx:kernel:contract1:ContractLinkFrom:linkType</_item>
+												<_item>org:opencrx:kernel:contract1:ContractLinkTo:linkType</_item>
 												<_item>org:opencrx:kernel:forecast1:Budget:budgetType</_item>
 												<_item>org:opencrx:kernel:building1:BuildingUnit:buildingUnitType</_item>
 												<_item>org:opencrx:kernel:building1:Facility:facilityType</_item>

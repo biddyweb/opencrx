@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Depositário</_item>
+                              <_item>Responsável</_item>
                             </shortText>
                             <longText>
-                              <_item>Depositário</_item>
+                              <_item>Responsável</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -198,6 +198,28 @@
                             </shortText>
                             <longText>
                               <_item>Autoridade de inspeção</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Atendimento</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Atendimento</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Fabricante</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Fabricante</_item>
                             </longText>
                           </_object>
                           <_content/>

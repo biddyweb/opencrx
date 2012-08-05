@@ -17,15 +17,6 @@
 												<_item>org:opencrx:kernel:activity1:AbstractEMailRecipient:partyType</_item>
 												<_item>org:opencrx:kernel:activity1:EMailRecipient:partyType</_item>
 												<_item>org:opencrx:kernel:activity1:EMailRecipientGroup:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:AbstractSmsRecipient:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:SmsRecipient:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:SmsRecipientGroup:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:AbstractMmsRecipient:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:MmsRecipient:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:MmsRecipientGroup:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:AbstractFaxRecipient:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:FaxRecipient:partyType</_item>
-												<_item>org:opencrx:kernel:activity1:FaxRecipientGroup:partyType</_item>
 											</name>
 										</_object>
 										<_content>

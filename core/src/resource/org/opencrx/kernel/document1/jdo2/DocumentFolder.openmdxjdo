@@ -9,9 +9,6 @@
 		<field name="segment" visibility="none">
 			<column name="P$$PARENT"/>
 		</field>		    
-		<field name="document" visibility="cci">
-			<join table="OOCKE1_JOIN_FLDCONTAINSDOC"/>
-		</field>	
 		<field name="folder" visibility="cci">
 			<join table="OOCKE1_JOIN_FLDCONTAINSFLD"/>
 		</field>			    

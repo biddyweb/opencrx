@@ -294,9 +294,6 @@
                       <label>
                         <_item>Prioritet</_item>
                       </label>
-                      <shortLabel>
-                        <_item>!</_item>
-                      </shortLabel>
                       <toolTip>
                         <_item>Prioritet</_item>
                       </toolTip>
@@ -584,6 +581,17 @@
                       </label>
                       <toolTip>
                         <_item>Sista tillämpade skapare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal-typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal-typ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1479,6 +1487,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal-typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal-typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description" _operation="create">
                     <_object>
                       <label>
@@ -1648,17 +1667,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Deadline</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Deadline</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority" _operation="create">
                     <_object>
                       <label>
@@ -1670,6 +1678,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal-typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal-typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deadline</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Deadline</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact" _operation="create">
                     <_object>
                       <label>
@@ -1677,39 +1707,6 @@
                       </label>
                       <toolTip>
                         <_item>Rapporterat av (person)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Aktivitetsgrupp</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Aktivitetsgrupp</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resurs</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resurs</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resursroll</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resursroll</_item>
                       </toolTip>
                     </_object>
                     <_content/>

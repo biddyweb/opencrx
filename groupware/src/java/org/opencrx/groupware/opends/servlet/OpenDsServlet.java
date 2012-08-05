@@ -12,9 +12,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.opencrx.groupware.generic.Util;
 import org.opencrx.groupware.opends.backends.OpenCrxBackend;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.utils.Utils;
 import org.opends.server.types.DirectoryEnvironmentConfig;
 import org.opends.server.util.EmbeddedUtils;
 import org.openmdx.base.exception.ServiceException;
@@ -68,8 +68,8 @@ public class OpenDsServlet extends HttpServlet {
     ) throws ServletException {
         super.init();        
         try {
-            Util.createModel();
-            PersistenceManagerFactory persistenceManagerFactory = Util.getPersistenceManagerFactory();
+            Utils.createModel();
+            PersistenceManagerFactory persistenceManagerFactory = Utils.getRemotePersistenceManagerFactory();
             // Validate connection. This also initializes the factory
             PersistenceManager pm = persistenceManagerFactory.getPersistenceManager(
                 SecurityKeys.ROOT_PRINCIPAL,

@@ -33,6 +33,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:media" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Anexos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Arquivo Anexado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sender" _operation="create">
                     <_object>
                       <label>
@@ -82,6 +93,17 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:gateway" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Gateway (Fax, SMS, MMS)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Gateway (Fax, SMS, MMS)</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -173,13 +195,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Endereço(s)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Endereço(s)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Endereço(s) de E-Mail</_item>
+                        <_item>Endereço(s)</_item>
                       </label>
                       <toolTip>
-                        <_item>Endereço(s) de E-Mail</_item>
+                        <_item>Endereço(s)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

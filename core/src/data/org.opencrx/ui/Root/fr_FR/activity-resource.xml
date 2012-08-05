@@ -740,10 +740,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:activityNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nupméro activité</_item>
+                        <_item>Numéro d&apos;activité</_item>
                       </label>
                       <toolTip>
-                        <_item>Nupméro activité</_item>
+                        <_item>Numéro d&apos;activité</_item>
                       </toolTip>
                     </_object>
                     <_content/>

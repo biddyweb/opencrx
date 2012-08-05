@@ -77,6 +77,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adres</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adres</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:address" _operation="create">
                     <_object>
                       <label>

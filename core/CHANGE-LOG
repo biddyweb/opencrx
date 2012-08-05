@@ -7,6 +7,103 @@
 
 
 ==============================================================================
+Version 2.2.0                                                       2008-09-02
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10008105
+      SecureObject: replaceOwningGroup().	Operation replaceOwningGroup allows 
+      to replace the owning groups of an object by a given set of groups.
+      
+      CR10008103
+      Workflow for scanning documents. Workflow which allows to scan a fs 
+      directory and its subdirs for files and map them to Documents and 
+      DocumentFolders. The DocumentScannerServlet is configured in web.xml
+      as follows:
+      * init-param for WorkflowController
+        <init-param>
+          <param-name>path[3]</param-name>
+          <param-value>/DocumentScannerServlet</param-value>
+        </init-param>
+      * Servlet declaration
+        <!-- DocumentScannerServlet -->
+        <servlet id="DocumentScannerServlet">
+          <servlet-name>DocumentScannerServlet</servlet-name>
+          <servlet-class>org.opencrx.application.document.DocumentScannerServlet</servlet-class>
+        </servlet>
+      * Mapping
+        <servlet-mapping>
+          <servlet-name>DocumentScannerServlet</servlet-name>
+          <url-pattern>/DocumentScannerServlet/*</url-pattern>
+        </servlet-mapping>
+      The workflow accepts the following component configuration options:
+      * scanDir: directory to be scanned for documents
+      * urlPrefix: Document revisions are created of type ResourceIdentifier. The
+        url of the resource identifier is set to urlPrefix + current directory 
+        name within scanDir + document name
+      * groups: List of principal groups. owningGroup of all created objects is
+        set to the specified list of principal groups. 
+      All options are multi-valued, i.e. can have an index suffix [0]..[9].
+      
+      CR10008084
+      DocumentFolderAssignment. Allow CrxObjects to be assigned to 
+      document folders. Document folders show assigned objects.
+      
+      CR10007776
+      Contract extensions:
+      * AccountAssignmentContract added
+      * ContractLinkTo, ContractLinkFrom added
+      
+      CR10008056
+      SendMailWorkflow supports mail gateway. Email activities allow to set
+      a gateway address. The gateway address is used for addresses which
+      are not of type EMailAddress (e.g. PhoneNumbers). In this case a
+      the address is converted to an email address as follows:
+      * take address (e.g. phoneNumberFull in case of phone numbers)
+      * Remove any characters except digits and letters
+      * append domain part of gateway address
+      E.g. the phone number +41441112233 is converted to the email address
+      _41441112233@fax-gateway.opencrx.org if the domain address is set to 
+      the email address noreply@fax-gateway.opencrx.org.
+      
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008134
+      Email importer: mapping of unassignable recipients. Email addresses which 
+      can not be mapped to a valid recipient are mapped to the EMailAddress 
+      'UNASSIGNED' if available.
+      
+      CR10008086
+      AccessControl: Caching
+      * Cached objects should have a time-to-live (TTL)
+      * Any object modification must remove object from cache
+      * Cache must be shared by ejb multiple instances 
+      
+      CR10008032
+      AddressBook supports mobile devices. Optimize the AddressBook 
+      wizard for mobile devices.
+      
+      CR10008009
+      Migrate ICalServlet, VCardServlet, IMAPServer. Migrate ICalServlet, 
+      VCardServlet, IMAPServer from openCRX/Groupware to openCRX/Core. 
+      
+      
+2.1.  FIXED BUGS
+      none
+
+
+2.2   REMOVED FEATURES
+      
+      CR10008065
+      Deprecate Mms, Sms and Fax activities. Mms, Sms and Fax activities are 
+      replaced by Email activities.
+      
+
+==============================================================================
 Version 2.1.0                                                       2008-07-10
 ==============================================================================
 
@@ -103,11 +200,11 @@ Version 2.1.0                                                       2008-07-10
       
       CR10007615
       Extend AccountMembership. The following Account assocations are deprecated:
-			* ContactHasDeputy
-			* ContactHasAssistant
-			* ContactReportsToContact
-			Use account members instead.
-			
+      * ContactHasDeputy
+      * ContactHasAssistant
+      * ContactReportsToContact
+      Use account members instead.
+      
       CR10007628
       PortalExtension: exclude disabled objects in autocomplete lookups. Disabled 
       objects should not be included in the result set of autocompletion lookups. 
@@ -180,41 +277,41 @@ Version 2.0.0                                                       2008-02-20
       An example UI definition looks as follows: Definition of structural feature 
       which is a reference of type org:opencrx:kernel:Activity:
 
-			<featureDefinition>
-				<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
-					<type>org:opencrx:kernel:activity1:Activity</type>
-					<multiplicity>0..n</multiplicity>
-					<changeable>false</changeable>
-					<isReference>true</isReference>
-				</org.openmdx.ui1.StructuralFeatureDefinition>
-			</featureDefinition>
+      <featureDefinition>
+        <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
+          <type>org:opencrx:kernel:activity1:Activity</type>
+          <multiplicity>0..n</multiplicity>
+          <changeable>false</changeable>
+          <isReference>true</isReference>
+        </org.openmdx.ui1.StructuralFeatureDefinition>
+      </featureDefinition>
 
-			The feature name is of the form className:id of filtered activities 
-			container!filteredActivity. The id of the filtered activites container is of 
-			the form (tracker|milestone|category)!name[!filter!name] or globalfilter!name. 
-			The macro ${USER} is replaced by the current user name. The structural feature 
-			definition can be used in element definitions as follows:
+      The feature name is of the form className:id of filtered activities 
+      container!filteredActivity. The id of the filtered activites container is of 
+      the form (tracker|milestone|category)!name[!filter!name] or globalfilter!name. 
+      The macro ${USER} is replaced by the current user name. The structural feature 
+      definition can be used in element definitions as follows:
 
-			<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
-				<_object>
-					<active>true</active>
-					<changeable>false</changeable>
-					<toolTip>
-						<_item>Private Activities</_item>
-					</toolTip>
-					<label>
-						<_item>Private Activities</_item>
-					</label>
-					<order>
-						<_item>0</_item>
-						<_item>0</_item>
-						<_item>3</_item>
-					</order>
-					<maxMember>5</maxMember>
-					<dataBindingName>org.opencrx.kernel.portal.FilteredActivitiesDataBinding</dataBindingName>
-				</_object>
-				<_content/>
-			</org.openmdx.ui1.ElementDefinition>
+      <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
+        <_object>
+          <active>true</active>
+          <changeable>false</changeable>
+          <toolTip>
+            <_item>Private Activities</_item>
+          </toolTip>
+          <label>
+            <_item>Private Activities</_item>
+          </label>
+          <order>
+            <_item>0</_item>
+            <_item>0</_item>
+            <_item>3</_item>
+          </order>
+          <maxMember>5</maxMember>
+          <dataBindingName>org.opencrx.kernel.portal.FilteredActivitiesDataBinding</dataBindingName>
+        </_object>
+        <_content/>
+      </org.openmdx.ui1.ElementDefinition>
 
 
       CR0003427
@@ -244,42 +341,42 @@ Version 2.0.0                                                       2008-02-20
       Portal: queries in XML filters. Queries can be defined in XML filters
       with the PiggyBackCondition. Here is an example:
       
-			<object class="org.openmdx.base.query.PiggyBackCondition">
-				<void property="quantor">
-					<short>1</short>
-				</void>
-				<void property="feature">
-					<string>context:BP96MI-GEdu0Lr3K4tC9bQ:object_class</string>
-				</void>
-				<void property="fulfil">
-					<boolean>true</boolean>
-				</void>
-				<void property="value">
-					<array class="java.lang.String" length="1">
-						<void index="0">
-							<string>org:openmdx:compatibility:datastore1:QueryFilter</string>
-						</void>
-					</array>
-				</void>
-			</object>
-			<object class="org.openmdx.base.query.PiggyBackCondition">
-				<void property="quantor">
-					<short>1</short>
-				</void>
-				<void property="feature">
-					<string>context:BP96MI-GEdu0Lr3K4tC9bQ:clause</string>
-				</void>
-				<void property="fulfil">
-					<boolean>true</boolean>
-				</void>
-				<void property="value">
-					<array class="java.lang.String" length="1">
-						<void index="0">
-							<string>EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND UPPER(a.full_name) LIKE '%MEIER%'</string>
-						</void>
-					</array>
-				</void>
-			</object>
+      <object class="org.openmdx.base.query.PiggyBackCondition">
+        <void property="quantor">
+          <short>1</short>
+        </void>
+        <void property="feature">
+          <string>context:BP96MI-GEdu0Lr3K4tC9bQ:object_class</string>
+        </void>
+        <void property="fulfil">
+          <boolean>true</boolean>
+        </void>
+        <void property="value">
+          <array class="java.lang.String" length="1">
+            <void index="0">
+              <string>org:openmdx:compatibility:datastore1:QueryFilter</string>
+            </void>
+          </array>
+        </void>
+      </object>
+      <object class="org.openmdx.base.query.PiggyBackCondition">
+        <void property="quantor">
+          <short>1</short>
+        </void>
+        <void property="feature">
+          <string>context:BP96MI-GEdu0Lr3K4tC9bQ:clause</string>
+        </void>
+        <void property="fulfil">
+          <boolean>true</boolean>
+        </void>
+        <void property="value">
+          <array class="java.lang.String" length="1">
+            <void index="0">
+              <string>EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND UPPER(a.full_name) LIKE '%MEIER%'</string>
+            </void>
+          </array>
+        </void>
+      </object>
       
       * The feature name 'context:$uuid:object_class' corresponds to the feature name
         'object_class' with the context prefix context:$uuid. The value of the feature
@@ -330,61 +427,61 @@ Version 2.0.0                                                       2008-02-20
       the model. A future version of openCRX will provide a simpler model
       and implementation for structured products and contract positions.
 
-			product1
-			========
-			ProductOffering
-			ComplexProductBundleType
-			ProductBundleType
-			BundledProductType
-			ProductBundleContainer
-			AbstractProductBundle
-			AbstractBundledProduct
-			BundledProduct
-			ProductBundle
-			ComplexProductBundle
-			ChangeOrderParams
-			AssignProductParams
-			ProductPosition
-			ProductOfferingPosition
-			ProductBundlePosition
-			ComplexProductBundlePosition
-			BundledProductPosition
-			EditableProductOfferingPosition
-			SelectableItem
-			SelectableItemWithQuantity
-			SelectableBundledProduct
-			SelectableProductBundle
-			SelectableComplexProductBundle
-			SelectableProductConfiguration
-			PriceOverrideEnabled
-			
-			contract1
-			=========
-			InvoiceBundledProductPosition
-			InvoiceComplexProductBundlePosition
-			InvoiceProductBundlePosition
-			InvoiceProductOfferingPosition
-			OpportunityBundledProductPosition
-			OpportunityComplexProductBundlePosition
-			OpportunityProductBundlePosition
-			OpportunityProductOfferingPosition
-			QuoteBundledProductPosition
-			QuoteComplexProductBundlePosition
-			QuoteProductBundlePosition
-			QuoteProductOfferingPosition
-			SalesOrderBundledProductPosition
-			SalesOrderComplexProductBundlePosition
-			SalesOrderProductBundlePosition
-			SalesOrderProductOfferingPosition
-			CreateProductOfferingPositionParams
-			CreateProductOfferingPositionResult
-			
-			depot1
-			======
-			BundledProductDepotPosition
-			ProductBundleDepotPosition
-			ComplexProductBundleDepotPosition
-			ProductOfferingDepotPosition
+      product1
+      ========
+      ProductOffering
+      ComplexProductBundleType
+      ProductBundleType
+      BundledProductType
+      ProductBundleContainer
+      AbstractProductBundle
+      AbstractBundledProduct
+      BundledProduct
+      ProductBundle
+      ComplexProductBundle
+      ChangeOrderParams
+      AssignProductParams
+      ProductPosition
+      ProductOfferingPosition
+      ProductBundlePosition
+      ComplexProductBundlePosition
+      BundledProductPosition
+      EditableProductOfferingPosition
+      SelectableItem
+      SelectableItemWithQuantity
+      SelectableBundledProduct
+      SelectableProductBundle
+      SelectableComplexProductBundle
+      SelectableProductConfiguration
+      PriceOverrideEnabled
+      
+      contract1
+      =========
+      InvoiceBundledProductPosition
+      InvoiceComplexProductBundlePosition
+      InvoiceProductBundlePosition
+      InvoiceProductOfferingPosition
+      OpportunityBundledProductPosition
+      OpportunityComplexProductBundlePosition
+      OpportunityProductBundlePosition
+      OpportunityProductOfferingPosition
+      QuoteBundledProductPosition
+      QuoteComplexProductBundlePosition
+      QuoteProductBundlePosition
+      QuoteProductOfferingPosition
+      SalesOrderBundledProductPosition
+      SalesOrderComplexProductBundlePosition
+      SalesOrderProductBundlePosition
+      SalesOrderProductOfferingPosition
+      CreateProductOfferingPositionParams
+      CreateProductOfferingPositionResult
+      
+      depot1
+      ======
+      BundledProductDepotPosition
+      ProductBundleDepotPosition
+      ComplexProductBundleDepotPosition
+      ProductOfferingDepotPosition
       
       
       CR10006548
@@ -447,45 +544,45 @@ Version 1.11.0                                                      2006-08-26
 
 1.    NEW FEATURES
 
-			CR0003572
-			Portal: Navigate to created object. The operation
-		    public RefObject_1_0 handleOperationResult(
-		        RefObject_1_0 target,
-		        String operationName,
-		        RefStruct params,
-		        RefStruct result
-		    ) throws ServiceException;
-		  of PortalExtension_1_0 allows to control the behaviour of the navigation
-		  after the execution of an operation. If an object is returned, a view
-		  is rendered and shown to the user. If null is returned the current view
-		  is shown, i.e. no navigation is performed. E.g. if an operation creates a
-		  new object and returns it as operation result this feature allows to
-		  navigate to a newly created object.
+      CR0003572
+      Portal: Navigate to created object. The operation
+        public RefObject_1_0 handleOperationResult(
+            RefObject_1_0 target,
+            String operationName,
+            RefStruct params,
+            RefStruct result
+        ) throws ServiceException;
+      of PortalExtension_1_0 allows to control the behaviour of the navigation
+      after the execution of an operation. If an object is returned, a view
+      is rendered and shown to the user. If null is returned the current view
+      is shown, i.e. no navigation is performed. E.g. if an operation creates a
+      new object and returns it as operation result this feature allows to
+      navigate to a newly created object.
 
       CR10006351
       Portal: localized filters. Localize the auto-generated class filters.
       Locale-specific labels for customized filters are defined by setting
       the label property in the filter definition file, e.g.
 
-			<void property="label">
-				<array class="java.lang.String" length="5">
-					<void index="0">
-						<string>filter label for locale 0</string>
-					</void>
-					<void index="1">
-						<string>filter label for locale 1</string>
-					</void>
-					<void index="2">
-						<string>filter label for locale 2</string>
-					</void>
-					<void index="3">
-						<string>filter label for locale 3</string>
-					</void>
-					<void index="4">
-						<string>filter label for locale 4</string>
-					</void>
-				</array>
-			</void>
+      <void property="label">
+        <array class="java.lang.String" length="5">
+          <void index="0">
+            <string>filter label for locale 0</string>
+          </void>
+          <void index="1">
+            <string>filter label for locale 1</string>
+          </void>
+          <void index="2">
+            <string>filter label for locale 2</string>
+          </void>
+          <void index="3">
+            <string>filter label for locale 3</string>
+          </void>
+          <void index="4">
+            <string>filter label for locale 4</string>
+          </void>
+        </array>
+      </void>
 
       If no labels are specified, label 0 is set to the filter name.
 
@@ -518,10 +615,10 @@ Version 1.11.0                                                      2006-08-26
 
       2. Set order tag in wizard or report definition to the fully qualified operation name, e.g.
 
-			   <meta name="order" content="org:opencrx:kernel:account1:Contact:showMaps">
+         <meta name="order" content="org:opencrx:kernel:account1:Contact:showMaps">
 
-			The operation org:opencrx:kernel:account1:Contact:showMaps can be customized
-			the same way as a modeled operation.
+      The operation org:opencrx:kernel:account1:Contact:showMaps can be customized
+      the same way as a modeled operation.
 
       CR10006239
       Portal: height (125 pixels) and width (230 pixels) of the panels
@@ -574,36 +671,36 @@ Version 1.11.0                                                      2006-08-26
 
       CR10006319
       WfAction in ActivityProcessTransition
-			ActivityProcessTransition allows to configure an error state (errState).
-			The activity is set to the error state if the execution of any of the
-			configured actions fails. In case of WfAction the following cases are
-			handled:
-			* Workflows.executeWorkflow() throws an exception
-			* The workflow is configured with asynchronous=true. The execution of
-			  executeWorkflow() is always successful. In this case executeWorkflow()
-			  creates a WfProcessInstance entry as marker WorkflowHandlerServlet which
-			  executes the workflow at a later time.
-			* The workflow is configured with asynchronous=false. The execution of
-			  executeWorkflow() is not successful if the execution throws an exception
-			  and maxRetries is set to 0.
+      ActivityProcessTransition allows to configure an error state (errState).
+      The activity is set to the error state if the execution of any of the
+      configured actions fails. In case of WfAction the following cases are
+      handled:
+      * Workflows.executeWorkflow() throws an exception
+      * The workflow is configured with asynchronous=true. The execution of
+        executeWorkflow() is always successful. In this case executeWorkflow()
+        creates a WfProcessInstance entry as marker WorkflowHandlerServlet which
+        executes the workflow at a later time.
+      * The workflow is configured with asynchronous=false. The execution of
+        executeWorkflow() is not successful if the execution throws an exception
+        and maxRetries is set to 0.
 
-			Transaction handling
-			* Synchronous workflows are always executed in the context of the provider
-			  transaction. A synchronous workflow can never force a rollback. Exceptions
-			  are catched by Workflows.executeWorkflow() and the status is updated in
-			  WfProcessInstance and a corresponding log entry.
-			* The implementation of a synchronous workflow must start a new transaction
-			  if it must be able to force a transaction rollback in case of an exception.
-			* Asynchronous workflows are executed in the context of WorkflowHandlerServlet
-			  within a unit of work.
+      Transaction handling
+      * Synchronous workflows are always executed in the context of the provider
+        transaction. A synchronous workflow can never force a rollback. Exceptions
+        are catched by Workflows.executeWorkflow() and the status is updated in
+        WfProcessInstance and a corresponding log entry.
+      * The implementation of a synchronous workflow must start a new transaction
+        if it must be able to force a transaction rollback in case of an exception.
+      * Asynchronous workflows are executed in the context of WorkflowHandlerServlet
+        within a unit of work.
 
-			CR10007235
-			Wizard Loading: issue warning if meta tags missing / not found. Meta tags
-			label, forClass, and order are vital for displaying the wizard in the
-			appropriate operations menu; currently, if these tags are not found, the
-			wizard is not loaded but NO WARNING is issued. The whole wizard file
-			is scanned now for tags (instead of the first 10K only) and the forClass
-			property is is logged after loading the wizard.
+      CR10007235
+      Wizard Loading: issue warning if meta tags missing / not found. Meta tags
+      label, forClass, and order are vital for displaying the wizard in the
+      appropriate operations menu; currently, if these tags are not found, the
+      wizard is not loaded but NO WARNING is issued. The whole wizard file
+      is scanned now for tags (instead of the first 10K only) and the forClass
+      property is is logged after loading the wizard.
 
       CR10006345
       MailImporterServlet: improve error handling. Improve error handling of
@@ -631,10 +728,10 @@ Version 1.11.0                                                      2006-08-26
 
 2.1.  FIXED BUGS
 
-			CR10006373
-			VCard, ICalendar: tagged attribute names. VCard and ICalendar importer are
-			able to handle tagged attribute names, e.g.
-			N;LANGUAGE=zh-cn;CHARSET=gb2312:Last name.
+      CR10006373
+      VCard, ICalendar: tagged attribute names. VCard and ICalendar importer are
+      able to handle tagged attribute names, e.g.
+      N;LANGUAGE=zh-cn;CHARSET=gb2312:Last name.
 
       CR10006316
       Portal: Media attachments with single quote in name broken. The file name
@@ -710,182 +807,182 @@ Version 1.10.1                                                      2006-02-23
       features are stored as properties custom1, ... in the property set 'Custom'
       of the corresponding Contact object.
 
-			<_content>
-				<featureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom1">
-						<_object>
-							<type>org:w3c:string</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom2">
-						<_object>
-							<type>org:w3c:integer</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom3">
-						<_object>
-							<type>org:w3c:boolean</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom4">
-						<_object>
-							<type>org:w3c:decimal</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom5">
-						<_object>
-							<type>org:opencrx:kernel:account1:Account</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom6">
-						<_object>
-							<type>org:w3c:date</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-					<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom7">
-						<_object>
-							<type>org:w3c:dateTime</type>
-							<multiplicity>0..1</multiplicity>
-							<changeable>true</changeable>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.StructuralFeatureDefinition>
-				</featureDefinition>
-				<elementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom1">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 1</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 1</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.StringPropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom2">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 2</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 2</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.IntegerPropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom3">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 3</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 3</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.BooleanPropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom4">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 4</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 4</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.DecimalPropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom5">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 5</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 5</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.ReferencePropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom6">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 6</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 6</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.DatePropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
-					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom7">
-						<_object>
-							<active>true</active>
-							<toolTip>
-								<_item>Custom field 7</_item>
-							</toolTip>
-							<label>
-								<_item>Custom 7</_item>
-							</label>
-							<dataBindingName>org.opencrx.kernel.gui.generic.servlet.DateTimePropertyDataBinding</dataBindingName>
-						</_object>
-						<_content/>
-					</org.openmdx.ui1.ElementDefinition>
+      <_content>
+        <featureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom1">
+            <_object>
+              <type>org:w3c:string</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom2">
+            <_object>
+              <type>org:w3c:integer</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom3">
+            <_object>
+              <type>org:w3c:boolean</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom4">
+            <_object>
+              <type>org:w3c:decimal</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom5">
+            <_object>
+              <type>org:opencrx:kernel:account1:Account</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom6">
+            <_object>
+              <type>org:w3c:date</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+          <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:Custom!custom7">
+            <_object>
+              <type>org:w3c:dateTime</type>
+              <multiplicity>0..1</multiplicity>
+              <changeable>true</changeable>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.StructuralFeatureDefinition>
+        </featureDefinition>
+        <elementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom1">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 1</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 1</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.StringPropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom2">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 2</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 2</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.IntegerPropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom3">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 3</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 3</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.BooleanPropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom4">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 4</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 4</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.DecimalPropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom5">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 5</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 5</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.ReferencePropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom6">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 6</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 6</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.DatePropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
+          <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Custom!custom7">
+            <_object>
+              <active>true</active>
+              <toolTip>
+                <_item>Custom field 7</_item>
+              </toolTip>
+              <label>
+                <_item>Custom 7</_item>
+              </label>
+              <dataBindingName>org.opencrx.kernel.gui.generic.servlet.DateTimePropertyDataBinding</dataBindingName>
+            </_object>
+            <_content/>
+          </org.openmdx.ui1.ElementDefinition>
           ...
 
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
 
-			CR10007305
-			Preparation for JDO. The database schema is now created using the JPOX
-			support of openMDX. CopyDb allows to copy a database with 1.10.0 schema
-			to a 'JDO compliant' database with 1.10.0+ schema. The database is accessed
-			using the openMDX database plugin. A migration to a JPOX based database
-			plugin is solved in a separate request. Schema creation is done as follows:
-			* build openCRX with 'ant deliverables'
-			* create schema with 'ant -Ddatabase.name="<db name>" create-schema
-			<db name> is the name of a JPOX properties file located in ./core/etc/jpox.
+      CR10007305
+      Preparation for JDO. The database schema is now created using the JPOX
+      support of openMDX. CopyDb allows to copy a database with 1.10.0 schema
+      to a 'JDO compliant' database with 1.10.0+ schema. The database is accessed
+      using the openMDX database plugin. A migration to a JPOX based database
+      plugin is solved in a separate request. Schema creation is done as follows:
+      * build openCRX with 'ant deliverables'
+      * create schema with 'ant -Ddatabase.name="<db name>" create-schema
+      <db name> is the name of a JPOX properties file located in ./core/etc/jpox.
 
-			CR10007371
-			Activate notifyPreDelete. Activate the MODEL/notifiyPreDelete option
-			(in kernel.jar/META-INF/ejb-jar.xml). This way ObjectRemoval audit entries are
-			created for the removed object and for recursively for its composites.
+      CR10007371
+      Activate notifyPreDelete. Activate the MODEL/notifiyPreDelete option
+      (in kernel.jar/META-INF/ejb-jar.xml). This way ObjectRemoval audit entries are
+      created for the removed object and for recursively for its composites.
 
-			CR10007348
-			The EditableElement and EditableTypeElement classes were introduced for
-			generic GUI support. The improved openMDX/Portal (wizards, customizable layouts)
-			offers better methods for model user-fridendly model editing.
+      CR10007348
+      The EditableElement and EditableTypeElement classes were introduced for
+      generic GUI support. The improved openMDX/Portal (wizards, customizable layouts)
+      offers better methods for model user-fridendly model editing.
 
 2.1.  FIXED BUGS
 
@@ -964,30 +1061,30 @@ Version 1.10.0                                                      2006-02-23
       ObjectInspectorServlet: multiplicity of multi-valued attributes can be
       customized. Default value is the modeled multiplicity.
 
-				<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalAddressLine">
-					<_object>
-						<active>true</active>
-						<spanRow>2</spanRow>
-						<multiplicity>3</multiplicity>
-						<toolTip>
-							<_item>Address line(s)</_item>
-						</toolTip>
-						<label>
-							<_item>Address line(s)</_item>
-						</label>
-						<orderFieldGroup>
-							<_item>0</_item>
-							<_item>0</_item>
-							<_item>10</_item>
-						</orderFieldGroup>
-						<orderObjectContainer>
-							<_item>0</_item>
-							<_item>0</_item>
-							<_item>18</_item>
-						</orderObjectContainer>
-					</_object>
-					<_content/>
-				</org.openmdx.ui1.ElementDefinition>
+        <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalAddressLine">
+          <_object>
+            <active>true</active>
+            <spanRow>2</spanRow>
+            <multiplicity>3</multiplicity>
+            <toolTip>
+              <_item>Address line(s)</_item>
+            </toolTip>
+            <label>
+              <_item>Address line(s)</_item>
+            </label>
+            <orderFieldGroup>
+              <_item>0</_item>
+              <_item>0</_item>
+              <_item>10</_item>
+            </orderFieldGroup>
+            <orderObjectContainer>
+              <_item>0</_item>
+              <_item>0</_item>
+              <_item>18</_item>
+            </orderObjectContainer>
+          </_object>
+          <_content/>
+        </org.openmdx.ui1.ElementDefinition>
 
       CR0003614
       Price management: The following operations are added to PriceLevel:
@@ -1054,60 +1151,60 @@ Version 1.9.11                                                      2006-12-04
       for ActivityTrackers. The following objects are exported:
 
       * Activity. An activity is exported as task as the following example shows:
-	    <Task>
-	      <UID>1</UID>
-	      <ID>1</ID>
-	      <Name>task1</Name>
-	      <Type>0</Type>
-	      <CreateDate>2006-05-08T09:59:00</CreateDate>
-	      <OutlineNumber>1</OutlineNumber>
-	      <OutlineLevel>1</OutlineLevel>
-	      <Priority>500</Priority>
-	      <Start>2006-05-09T00:00:00</Start>
-	      <Finish>2006-05-12T23:59:59</Finish>
-	      <DurationFormat>39</DurationFormat>
-	      <ActualDuration>PT40H0M0S</ActualDuration>
-	      <PercentComplete>80</PercentComplete>
-	      <ResumeValid>1</ResumeValid>
-	      <EffortDriven>1</EffortDriven>
-	      <ActualStart>2006-05-09</ActualStart>
-	      <ActualFinish>2006-05-09</ActualFinish>
-	      <ConstraintType>2</ConstraintType>
-	      <CalendarUID>1</CalendarUID>
-	      <ConstraintDate>2006-05-09</ConstraintDate>
-	      <IgnoreResourceCalendar>1</IgnoreResourceCalendar>
-	    </Task>
+      <Task>
+        <UID>1</UID>
+        <ID>1</ID>
+        <Name>task1</Name>
+        <Type>0</Type>
+        <CreateDate>2006-05-08T09:59:00</CreateDate>
+        <OutlineNumber>1</OutlineNumber>
+        <OutlineLevel>1</OutlineLevel>
+        <Priority>500</Priority>
+        <Start>2006-05-09T00:00:00</Start>
+        <Finish>2006-05-12T23:59:59</Finish>
+        <DurationFormat>39</DurationFormat>
+        <ActualDuration>PT40H0M0S</ActualDuration>
+        <PercentComplete>80</PercentComplete>
+        <ResumeValid>1</ResumeValid>
+        <EffortDriven>1</EffortDriven>
+        <ActualStart>2006-05-09</ActualStart>
+        <ActualFinish>2006-05-09</ActualFinish>
+        <ConstraintType>2</ConstraintType>
+        <CalendarUID>1</CalendarUID>
+        <ConstraintDate>2006-05-09</ConstraintDate>
+        <IgnoreResourceCalendar>1</IgnoreResourceCalendar>
+      </Task>
 
       * Resource. A resource is exported as:
-	    <Resource>
-	      <UID>1</UID>
-	      <ID>1</ID>
-	      <Name><resource name></Name>
-	      <Type>1</Type>
-	      <Hyperlink>hyperlink to corresponding openCRX object</Hyperlink>
-	      <HyperlinkAddress><object url></HyperlinkAddress>
-	      <ExtendedAttribute>
-	        <FieldID>205520904</FieldID>
-	        <Value><object xri></Value>
-	      </ExtendedAttribute>
-	    </Resource>
+      <Resource>
+        <UID>1</UID>
+        <ID>1</ID>
+        <Name><resource name></Name>
+        <Type>1</Type>
+        <Hyperlink>hyperlink to corresponding openCRX object</Hyperlink>
+        <HyperlinkAddress><object url></HyperlinkAddress>
+        <ExtendedAttribute>
+          <FieldID>205520904</FieldID>
+          <Value><object xri></Value>
+        </ExtendedAttribute>
+      </Resource>
 
       * ResourceAssignment
-	    <Assignment>
-	      <UID>1</UID>
-	      <TaskUID>3</TaskUID>
-	      <ResourceUID>1</ResourceUID>
-	      <ActualWork>PT0H0M0S</ActualWork>
-	      <Hyperlink>hyperlink to corresponding openCRX object</Hyperlink>
-	      <HyperlinkAddress><url of exported object></HyperlinkAddress>
-	      <Units>1.0</Units>
-	      <TimephasedData>
-	        <Type>2</Type>
-	        <UID>2</UID>
-	        <Unit>2</Unit>
-	        <Value>PT0H0M0S</Value>
-	      </TimephasedData>
-	    </Assignment>
+      <Assignment>
+        <UID>1</UID>
+        <TaskUID>3</TaskUID>
+        <ResourceUID>1</ResourceUID>
+        <ActualWork>PT0H0M0S</ActualWork>
+        <Hyperlink>hyperlink to corresponding openCRX object</Hyperlink>
+        <HyperlinkAddress><url of exported object></HyperlinkAddress>
+        <Units>1.0</Units>
+        <TimephasedData>
+          <Type>2</Type>
+          <UID>2</UID>
+          <Unit>2</Unit>
+          <Value>PT0H0M0S</Value>
+        </TimephasedData>
+      </Assignment>
 
       * Calendar. Only one fixed standard project calendar is exported. This way
         MS Project does not move tasks when importing the project file.

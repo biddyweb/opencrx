@@ -286,9 +286,6 @@
                       <label>
                         <_item>Prioridad</_item>
                       </label>
-                      <shortLabel>
-                        <_item>!</_item>
-                      </shortLabel>
                       <toolTip>
                         <_item>Prioridad  de la actividad</_item>
                       </toolTip>

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Documentos</_item>
+                        <_item>Pasta de Documentos</_item>
                       </label>
                       <toolTip>
-                        <_item>Documentos</_item>
+                        <_item>Pasta de Documentos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment:folder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pastas de Documento</_item>
+                        <_item>Pastas</_item>
                       </label>
                       <toolTip>
-                        <_item>Pastas de Documento</_item>
+                        <_item>Pastas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -44,13 +44,31 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment:document" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Documentos (inativo)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Documentos (inativo)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pasta de Documento</_item>
+                        <_item>Pasta</_item>
                       </label>
                       <toolTip>
-                        <_item>Pasta de Documento</_item>
+                        <_item>Pasta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,24 +76,53 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pastas de Documento</_item>
+                        <_item>Subpastas</_item>
                       </label>
                       <toolTip>
-                        <_item>Pastas de Documento</_item>
+                        <_item>Subpastas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:document" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Documentos</_item>
+                        <_item>»Conjuntos de propriedades</_item>
                       </label>
                       <toolTip>
-                        <_item>Documentos</_item>
+                        <_item>Conjuntos de propriedades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Itens</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Itens</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Itens (inativo)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Itens (inativo)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:name" _operation="create">
                     <_object>
@@ -110,6 +157,105 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objeto Inativo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Item da Pasta</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Item da Pasta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Documento</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Documento</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Válido de</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Válido de</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Válido até</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Válido até</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objeto Inativo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document" _operation="create">
                     <_object>
                       <label>
@@ -124,10 +270,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:folder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pastas de Documento</_item>
+                        <_item>Pastas (associação direta)</_item>
                       </label>
                       <toolTip>
-                        <_item>Pastas de Documento</_item>
+                        <_item>Pastas (associação direta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Pastas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pastas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +314,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Link</_item>
+                        <_item>»Links</_item>
                       </label>
                       <toolTip>
-                        <_item>Link</_item>
+                        <_item>Links</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,7 +336,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:attachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Formato</_item>
+                        <_item>Mídia</_item>
                       </label>
                       <toolTip>
                         <_item>Mídia anexada</_item>
@@ -484,6 +641,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inativo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Associação de Pasta</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Associação de Pasta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name" _operation="create">
                     <_object>
                       <label>
@@ -501,7 +702,7 @@
                         <_item>Autor</_item>
                       </label>
                       <toolTip>
-                        <_item>Author</_item>
+                        <_item>Autor</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -520,10 +721,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Conteúdo da Mídia</_item>
+                        <_item>Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Conteúdo da Mídia</_item>
+                        <_item>Mídia</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -799,6 +1000,50 @@
                       </label>
                       <toolTip>
                         <_item>Versão</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:documentFolder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pasta</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pasta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Válido de</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Válido de</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Válido até</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Válido até</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objeto Inativo</_item>
                       </toolTip>
                     </_object>
                     <_content/>

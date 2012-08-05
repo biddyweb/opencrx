@@ -11,6 +11,17 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prognozy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Wszystkie prognozy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
                     <_object>
                       <label>
@@ -18,17 +29,6 @@
                       </label>
                       <toolTip>
                         <_item>Wszystkie budżety</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetMilestone" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Kamień milowy budżetu</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Kamień milowy budżetu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -66,17 +66,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:underlying" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Podstawowy</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Podstawowy</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetType" _operation="create">
                     <_object>
                       <label>
@@ -110,57 +99,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:targetValue" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Wartość docelowa</_item>
+                        <_item>Nazwa</_item>
                       </label>
                       <toolTip>
-                        <_item>Wartość docelowa</_item>
+                        <_item>Nazwa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:actualValue" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktualna wartotość</_item>
+                        <_item>Krótki opis</_item>
                       </label>
                       <toolTip>
-                        <_item>Aktualna wartotość</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Kamień milowy</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Kamieniowo-milowy budżetu</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:targetValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Wartość docelowa</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Wartość docelowa</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:actualValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Aktualna wartotość</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Aktualna wartotość</_item>
+                        <_item>Krótki opis</_item>
                       </toolTip>
                     </_object>
                     <_content/>

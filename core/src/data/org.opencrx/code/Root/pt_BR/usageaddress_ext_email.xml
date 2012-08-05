@@ -161,10 +161,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Suplente</_item>
+                              <_item>Substituto</_item>
                             </shortText>
                             <longText>
-                              <_item>Suplente</_item>
+                              <_item>Substituto</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -209,6 +209,17 @@
                             </shortText>
                             <longText>
                               <_item>Emergência</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3000" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Gateway</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Gateway</_item>
                             </longText>
                           </_object>
                           <_content/>

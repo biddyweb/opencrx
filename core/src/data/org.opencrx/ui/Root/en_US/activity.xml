@@ -63,12 +63,12 @@
 												<_item>Activity Creators</_item>
 											</label>
 											<order>
+												<_item>40</_item>
 												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
+												<_item>25</_item>
 											</order>
-											<maxMember>8</maxMember>
-											<showMaxMember>3</showMaxMember>
+											<maxMember>9</maxMember>
+											<showMaxMember>4</showMaxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -83,7 +83,7 @@
 												<_item>Activities</_item>
 											</label>
 											<order>
-												<_item>20</_item>
+												<_item>0</_item>
 												<_item>0</_item>
 												<_item>40</_item>
 											</order>
@@ -394,11 +394,16 @@
 											<shortLabel>
 												<_item>Activity-#</_item>
 											</shortLabel>
-											<order>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>20</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>8</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -442,7 +447,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>110</_item>
+												<_item>20</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -534,7 +539,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>8</_item>
+												<_item>5</_item>
 											</orderObjectContainer>
 											<iconKey>openclosed.gif</iconKey>
 										</_object>
@@ -549,9 +554,6 @@
 											<label>
 												<_item>Priority</_item>
 											</label>
-											<shortLabel>
-												<_item>!</_item>
-											</shortLabel>
 											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>0</_item>
@@ -560,7 +562,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>81</_item>
+												<_item>50</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -585,7 +587,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>5</_item>
+												<_item>70</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -667,7 +669,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>6</_item>
+												<_item>80</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -715,7 +717,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>90</_item>
+												<_item>135</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -740,7 +742,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>77</_item>
+												<_item>60</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -836,11 +838,16 @@
 											<label>
 												<_item>Reporting contact</_item>
 											</label>
-											<order>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>20</_item>
 												<_item>20</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>25</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1047,6 +1054,23 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>iCal type</_item>
+											</toolTip>
+											<label>
+												<_item>iCal type</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>30</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical">
 										<_object>
 											<active>true</active>
@@ -1060,7 +1084,7 @@
 											<order>
 												<_item>10</_item>
 												<_item>30</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -2380,7 +2404,7 @@
 												<_item>0</_item>
 												<_item>0</_item>
 											</orderObjectContainer>
-											<maxMember>8</maxMember>
+											<maxMember>4</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -2453,6 +2477,24 @@
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalType">
+										<_object>
+                      <columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>iCal type</_item>
+											</toolTip>
+											<label>
+												<_item>iCal type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -2710,23 +2752,6 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Due by</_item>
-											</toolTip>
-											<label>
-												<_item>Due by</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>70</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority">
 										<_object>
 											<active>true</active>
@@ -2739,7 +2764,41 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
+												<_item>60</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:icalType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>iCal type</_item>
+											</toolTip>
+											<label>
+												<_item>iCal type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
 												<_item>70</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Due by</_item>
+											</toolTip>
+											<label>
+												<_item>Due by</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -2756,58 +2815,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>80</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Activity group</_item>
-											</toolTip>
-											<label>
-												<_item>Activity group</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>80</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Resource</_item>
-											</toolTip>
-											<label>
-												<_item>Resource</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
 												<_item>90</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Resource role</_item>
-											</toolTip>
-											<label>
-												<_item>Resource role</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>

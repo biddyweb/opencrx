@@ -28,7 +28,7 @@
                         <_item>Detalhes</_item>
                       </label>
                       <toolTip>
-                        <_item>Este tab contém campos de detalhe</_item>
+                        <_item>Esta aba contém campos de detalhe</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -345,7 +345,7 @@
                         <_item>Criado em (antigo)</_item>
                       </label>
                       <toolTip>
-                        <_item>Data e Hora que o objeto foi criado - antigo</_item>
+                        <_item>Data e Hora que o objeto foi criado (antigo)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -741,7 +741,18 @@
                         <_item>»Notas</_item>
                       </label>
                       <toolTip>
-                        <_item>notas anexadas</_item>
+                        <_item>Notas anexadas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Pastas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pastas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -752,7 +763,7 @@
                         <_item>»Documentos</_item>
                       </label>
                       <toolTip>
-                        <_item>Docs anexos</_item>
+                        <_item>Documentos anexos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -763,7 +774,7 @@
                         <_item>»Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Mdia anexada</_item>
+                        <_item>Mídia anexada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -896,6 +907,39 @@
                       </label>
                       <toolTip>
                         <_item>Descrição do Documento Anexado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pasta de Alocação</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pasta de Alocação</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1612,6 +1656,72 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Classes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Classes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro de Referência</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtro de Referência</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:mimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Template</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Template</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Importer:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -1718,6 +1828,160 @@
                       </label>
                       <toolTip>
                         <_item>Objeto Importado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:exportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Perfil</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Perfil</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Item Exportado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Item Exportado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome do Item</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome do Item</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Status</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Status</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mensagem de Status</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mensagem de Status</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportar Avançado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportar Avançado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro de referência</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtro de referência</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

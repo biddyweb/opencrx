@@ -160,10 +160,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Descrição resumida</_item>
+                        <_item>Descrição</_item>
                       </label>
                       <toolTip>
-                        <_item>Descrição resumida</_item>
+                        <_item>Descrição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -251,10 +251,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:alternateProductNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Núm. alternativo de produto</_item>
+                        <_item>Nº alternativo de produto</_item>
                       </label>
                       <toolTip>
-                        <_item>Núm. alternativo de produto</_item>
+                        <_item>Nº alternativo de produto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -317,10 +317,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:isStockItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Em Estoque</_item>
+                        <_item>Item em Estoque</_item>
                       </label>
                       <toolTip>
-                        <_item>Em Estoque</_item>
+                        <_item>Item em Estoque</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -383,10 +383,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fase do Produto</_item>
+                        <_item>Fase de Produto</_item>
                       </label>
                       <toolTip>
-                        <_item>Fase do Produto</_item>
+                        <_item>Fase de Produto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -526,10 +526,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship:relationshipTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Relaciona-se a</_item>
+                        <_item>Relacionado a</_item>
                       </label>
                       <toolTip>
-                        <_item>Relaciona-se a</_item>
+                        <_item>Relacionado a</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -845,10 +845,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:productSerialNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número(s) de série</_item>
+                        <_item>Nº(s) de série</_item>
                       </label>
                       <toolTip>
-                        <_item>Número(s) de série</_item>
+                        <_item>Nº(s) de série</_item>
                       </toolTip>
                     </_object>
                     <_content/>

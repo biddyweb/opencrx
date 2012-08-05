@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gerelateerde Offertes</_item>
+                        <_item>»Gerelateerde Offertes</_item>
                       </label>
                       <toolTip>
                         <_item>gerelateerde offertes</_item>

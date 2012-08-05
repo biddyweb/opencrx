@@ -6,6 +6,6 @@
 	</security-role-mapping>
 	<ejb-ref>
 		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>org/opencrx/core/CRX/noOrNew/gateway</jndi-name>
+		<jndi-name>org/opencrx/core/CRX/Gateway</jndi-name>
 	</ejb-ref>
 </sun-web-app>

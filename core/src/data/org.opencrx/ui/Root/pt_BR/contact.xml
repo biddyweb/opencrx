@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contas</_item>
+                        <_item>»Contas</_item>
                       </label>
                       <toolTip>
                         <_item>Contas</_item>
@@ -39,7 +39,7 @@
                         <_item>Contatos</_item>
                       </label>
                       <toolTip>
-                        <_item>Pessoa Contato</_item>
+                        <_item>Pessoa de Contato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Informação de Contatos</_item>
+                        <_item>Informação de Contato</_item>
                       </label>
                       <toolTip>
-                        <_item>Informação de Contatos</_item>
+                        <_item>Informação de Contato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -160,7 +160,7 @@
                         <_item>Apelido</_item>
                       </label>
                       <toolTip>
-                        <_item>Assistente</_item>
+                        <_item>Apelido da Pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -204,7 +204,7 @@
                         <_item>Não usar E-Mail</_item>
                       </label>
                       <toolTip>
-                        <_item>Indicador de não mandar E-Mail com esta pessoa</_item>
+                        <_item>Não enviar e-eail com esta pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -215,7 +215,7 @@
                         <_item>Não usar correio</_item>
                       </label>
                       <toolTip>
-                        <_item>Indicador de no usar e-mail com esta Pessoa</_item>
+                        <_item>Indicador de não enviar e-mail com esta Pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -297,6 +297,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:900100:Group:99" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>NÃO USAR</_item>
+                      </label>
+                      <toolTip>
+                        <_item>NÃO USAR</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
                     <_object>
                       <label>
@@ -311,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant" _operation="create">
                     <_object>
                       <label>
-                        <_item>Assistente</_item>
+                        <_item>Substituto</_item>
                       </label>
                       <toolTip>
-                        <_item>Assistente da Pessoa</_item>
+                        <_item>Substituto da Pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -355,10 +366,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:numberOfChildren" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número de Filhos</_item>
+                        <_item>Nº de Filhos</_item>
                       </label>
                       <toolTip>
-                        <_item>Número de Filhos da pessoa</_item>
+                        <_item>Nº de Filhos da pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +410,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeCurrency" _operation="create">
                     <_object>
                       <label>
-                        <_item>Entrada Anual (moeda)</_item>
+                        <_item>Rendimentos Anual (moeda)</_item>
                       </label>
                       <toolTip>
-                        <_item>Entrada anual da pessoa</_item>
+                        <_item>Redimentos anual da pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -410,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Entrada anual (quatidade)</_item>
+                        <_item>Rendimentos anual (quatidade)</_item>
                       </label>
                       <toolTip>
-                        <_item>Entrada anual da pessoa</_item>
+                        <_item>Rendimentos anual da pessoa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -446,7 +457,7 @@
                         <_item>RG</_item>
                       </label>
                       <toolTip>
-                        <_item>Aniversário</_item>
+                        <_item>CPF/CNPJ</_item>
                       </toolTip>
                     </_object>
                     <_content/>

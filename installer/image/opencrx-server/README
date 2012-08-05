@@ -3,10 +3,10 @@ Welcome to openCRX!
 
 This installer has created an openCRX instance running on 
 Tomcat 6 (extended by the openMDX Lightweight EJB Container) 
-and MySQL 5. The installation comes with a preconfigured MySQL 
+and HSQLDB 1. The installation comes with a preconfigured
 database. It contains data which is created when working 
 through the openCRX quick start guide (see 
-http://www.opencrx.org/opencrx/1.11/QuickStart/openCRX_quickstart.html).
+http://www.opencrx.org/opencrx/2.2/QuickStart/openCRX_quickstart.html).
 
 You can start and stop openCRX using the corresponding shortcuts
 on the desktop by the installer. After starting openCRX you can 
@@ -14,7 +14,6 @@ login using a browser. Valid URLs are:
 
 * openCRX/Core: http://localhost:<tomcat_port>/opencrx-core-CRX 
 * openCRX/Store: http://localhost:<tomcat_port>/opencrx-store-CRX/Store.jsp
-* openCRX/Wiki: http://localhost:<tomcat_port>/opencrx-wiki-CRX/
 
 The following accounts are preconfigured:
 * guest
@@ -45,7 +44,7 @@ Here is how to start the workflow controller:
 
 Configure your own database
 ---------------------------
-If you want to use another database system than MySQL or if you 
+If you want to use another database system than HSQLDB or if you 
 want to use another existing database instance you can configure
 the database connector as follows:
 

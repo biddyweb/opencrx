@@ -294,9 +294,6 @@
                       <label>
                         <_item>Приоритет</_item>
                       </label>
-                      <shortLabel>
-                        <_item>!</_item>
-                      </shortLabel>
                       <toolTip>
                         <_item>Приоритет</_item>
                       </toolTip>

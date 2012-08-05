@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.34 2008/07/09 14:45:31 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.54 2008/09/16 23:05:11 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/09 14:45:31 $
+ * Date:        $Date: 2008/09/16 23:05:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@
 package org.opencrx.kernel.backend;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,6 +77,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.zip.ZipInputStream;
 
 import javax.jdo.PersistenceManager;
 import javax.mail.Address;
@@ -89,12 +91,14 @@ import javax.mail.internet.HeaderTokenizer;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.EmailAddress;
+import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.activity1.cci2.EmailQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractEmailRecipient;
 import org.opencrx.kernel.activity1.jmi1.Activity;
@@ -108,9 +112,11 @@ import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
+import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
 import org.opencrx.kernel.activity1.jmi1.Calendar;
 import org.opencrx.kernel.activity1.jmi1.Email;
 import org.opencrx.kernel.activity1.jmi1.EmailRecipient;
+import org.opencrx.kernel.activity1.jmi1.EmailRecipientGroup;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
 import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
@@ -1250,6 +1256,7 @@ public class Activities {
         Date suppliedScheduledEnd,
         Date suppliedDueBy,
         Number suppliedPriority,
+        Number suppliedIcalType,
         Path reportingContactIdentity
     ) throws ServiceException {
         if(activityCreator.getActivityType() != null) {
@@ -1260,28 +1267,31 @@ public class Activities {
                 (Path)activityType.values("controlledBy").get(0)
             );
             Date scheduledStart = null;
-            scheduledStart = suppliedScheduledStart != null
-                ? suppliedScheduledStart
-                : (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledStart() != null)
-                    ? new Date(System.currentTimeMillis() + activityCreator.getScheduledStart().getTime())
-                    : new Date();
+            scheduledStart = suppliedScheduledStart != null ? 
+                suppliedScheduledStart : 
+                (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledStart() != null) ? 
+                    new Date(System.currentTimeMillis() + activityCreator.getScheduledStart().getTime()) : 
+                    new Date();
             Date scheduledEnd = null;
-            scheduledEnd = suppliedScheduledEnd != null
-                ? suppliedScheduledEnd
-                : (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledEnd() != null) 
-                    ? new Date(System.currentTimeMillis() + activityCreator.getScheduledEnd().getTime() - activityCreator.getBaseDate().getTime())
-                    : new Date(scheduledStart.getTime() + 3600000L);
+            scheduledEnd = suppliedScheduledEnd != null ? 
+                suppliedScheduledEnd : 
+                (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledEnd() != null) ? 
+                    new Date(System.currentTimeMillis() + activityCreator.getScheduledEnd().getTime() - activityCreator.getBaseDate().getTime()) : 
+                    new Date(scheduledStart.getTime() + 3600000L);
             Date dueBy = null;
-            dueBy = suppliedDueBy != null
-                ? suppliedDueBy
-                : (activityCreator.getBaseDate() != null) && (activityCreator.getDueBy() != null)
-                    ? new Date(System.currentTimeMillis() + activityCreator.getDueBy().getTime() - activityCreator.getBaseDate().getTime())
-                    : null;
+            dueBy = suppliedDueBy != null ? 
+                suppliedDueBy : 
+                (activityCreator.getBaseDate() != null) && (activityCreator.getDueBy() != null) ? 
+                    new Date(System.currentTimeMillis() + activityCreator.getDueBy().getTime() - activityCreator.getBaseDate().getTime()) : 
+                    null;
             short priority = (suppliedPriority == null) || (suppliedPriority.shortValue() == 0) ?
                 activityCreator.getPriority() != 0 ? 
                     activityCreator.getPriority() : 
                     (short)2 :    
                 suppliedPriority.shortValue();
+            short icalType = (suppliedIcalType == null) || (suppliedIcalType.shortValue() == 0) ?
+                activityCreator.getIcalType() :    
+                suppliedIcalType.shortValue();
             Path newActivityIdentity = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider");
             newActivityIdentity = 
                 newActivityIdentity.getDescendant(
@@ -1294,9 +1304,9 @@ public class Activities {
                     }
                 );
             DataproviderObject newActivity = new DataproviderObject(newActivityIdentity);
-            String activityClass = !activityType.values("activityClassName").isEmpty()
-                ? (String)activityType.values("activityClassName").get(0)                
-                : ACTIVITY_TYPES[((Number)activityType.values("activityClass").get(0)).intValue()];
+            String activityClass = !activityType.values("activityClassName").isEmpty() ? 
+                (String)activityType.values("activityClassName").get(0) : 
+                ACTIVITY_TYPES[((Number)activityType.values("activityClass").get(0)).intValue()];
             newActivity.values(SystemAttributes.OBJECT_CLASS).add(activityClass);
             if(name != null) {
                 newActivity.values("name").add(name);
@@ -1333,10 +1343,13 @@ public class Activities {
             newActivity.values("priority").add(
                 new Short(priority)
             );
+            newActivity.values("icalType").add(
+                new Short(icalType)
+            );
             newActivity.values("dueBy").add(
-                dueBy != null 
-                    ? DateFormat.getInstance().format(dueBy)
-                    : MAX_DATE
+                dueBy != null ? 
+                    DateFormat.getInstance().format(dueBy) : 
+                    MAX_DATE
             );
             newActivity.values("activityState").add(
                 new Short((short)0)
@@ -1522,8 +1535,8 @@ public class Activities {
                 }
                 // SetAssignedToAction
                 else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:SetAssignedToAction")) {
-                    List resources = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getPrefix(activityIdentity.size() - 2).getChild("resource"),
+                    List<DataproviderObject_1_0> resourceAssignments = this.backend.getDelegatingRequests().addFindRequest(
+                        activityIdentity.getChild("assignedResource"),
                         null,
                         AttributeSelectors.ALL_ATTRIBUTES,
                         0,
@@ -1545,21 +1558,22 @@ public class Activities {
                     }
                     if(contactIdentity != null) {
                         try {
-                            for(
-                                Iterator j = resources.iterator(); 
-                                j.hasNext(); 
-                            ) {
-                                DataproviderObject_1_0 resource = (DataproviderObject_1_0)j.next();
-                                if(
-                                    !resource.values("contact").isEmpty() &&
-                                    contactIdentity.equals(resource.values("contact").get(0))
-                                ) {
-                                    this.assignTo(
-                                        activityIdentity,
-                                        resource.path()
+                            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
+                                if(!resourceAssignment.values("resource").isEmpty()) {
+                                    DataproviderObject_1_0 resource = this.backend.retrieveObject(
+                                        (Path)resourceAssignment.values("resource").get(0)
                                     );
-                                    assigned = true;
-                                    break;
+                                    if(
+                                        !resource.values("contact").isEmpty() &&
+                                        contactIdentity.equals(resource.values("contact").get(0))
+                                    ) {
+                                        this.assignTo(
+                                            activityIdentity,
+                                            resource.path()
+                                        );
+                                        assigned = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -1572,21 +1586,17 @@ public class Activities {
                     // Try to find resource with matching resource order
                     if(!assigned && !action.values("resourceOrder").isEmpty()) {
                         try {
-                            for(
-                                Iterator j = resources.iterator(); 
-                                j.hasNext(); 
-                            ) {
-                                DataproviderObject_1_0 assignedResource = (DataproviderObject_1_0)j.next();
-                                if(!assignedResource.values("resourceOrder").isEmpty()) {
+                            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
+                                if(!resourceAssignment.values("resourceOrder").isEmpty()) {
                                     short actionResourceOrder = ((Number)action.values("resourceOrder").get(0)).shortValue();
-                                    short assignmentResourceOrder = ((Number)assignedResource.values("resourceOrder").get(0)).shortValue();
+                                    short assignmentResourceOrder = ((Number)resourceAssignment.values("resourceOrder").get(0)).shortValue();
                                     if(
                                         (actionResourceOrder == assignmentResourceOrder) &&
-                                        !assignedResource.values("resource").isEmpty()
+                                        !resourceAssignment.values("resource").isEmpty()
                                     ) {
                                         this.assignTo(
                                             activityIdentity,
-                                            (Path)assignedResource.values("resource").get(0)
+                                            (Path)resourceAssignment.values("resource").get(0)
                                         );
                                         assigned = true;
                                         break;
@@ -1603,21 +1613,17 @@ public class Activities {
                     // Try to find resource with matching resource role
                     if(!assigned && !action.values("resourceRole").isEmpty()) {
                         try {
-                            for(
-                                Iterator j = resources.iterator(); 
-                                j.hasNext(); 
-                            ) {
-                                DataproviderObject_1_0 assignedResource = (DataproviderObject_1_0)j.next();
-                                if(!assignedResource.values("resourceRole").isEmpty()) {
+                            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
+                                if(!resourceAssignment.values("resourceRole").isEmpty()) {
                                     short actionResourceRole = ((Number)action.values("resourceRole").get(0)).shortValue();
-                                    short assignmentResourceRole = ((Number)assignedResource.values("resourceRole").get(0)).shortValue();
+                                    short assignmentResourceRole = ((Number)resourceAssignment.values("resourceRole").get(0)).shortValue();
                                     if(
                                         (actionResourceRole == assignmentResourceRole) &&
-                                        !assignedResource.values("resource").isEmpty()
+                                        !resourceAssignment.values("resource").isEmpty()
                                     ) {
                                         this.assignTo(
                                             activityIdentity,
-                                            (Path)assignedResource.values("resource").get(0)
+                                            (Path)resourceAssignment.values("resource").get(0)
                                         );
                                         assigned = true;
                                         break;
@@ -1667,15 +1673,16 @@ public class Activities {
                             Path newActivityIdentity = this.newActivity(
                                 (ActivityCreator)this.backend.getDelegatingPkg().refObject(
                                     ((Path)action.values("activityCreator").get(0)).toXri()
-                                ),
-                                (String)action.values("activityName").get(0),
-                                (String)action.values("activityDescription").get(0),
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                (Path)activity.values("reportingContact").get(0)
+                                ), // activityCreator
+                                (String)action.values("activityName").get(0), // name
+                                (String)action.values("activityDescription").get(0), // description
+                                null, // detailedDescription
+                                null, // suppliedScheduledStart
+                                null, // suppliedScheduledEnd
+                                null, // suppliedDueBy
+                                null, // suppliedPriority
+                                ICalendar.ICAL_TYPE_NA, // icalType
+                                (Path)activity.values("reportingContact").get(0) // reportingContactIdentity
                             ).refGetPath();
                             // Link new activity with original
                             DataproviderObject activityLinkTo = new DataproviderObject(
@@ -3309,7 +3316,11 @@ public class Activities {
             UUIDs.getGenerator().next().toString(),
             media
         );
-        media.setContentName(contentName);
+        media.setContentName(
+            contentName == null ?
+                Utils.toFilename(contentType) :
+                contentName
+        );
         media.setContentMimeType(contentType);    
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b;
@@ -3356,7 +3367,7 @@ public class Activities {
         if (addresses == null || addresses.length == 0) {
             AppLog.trace("Message does not contain any recipient of type '" + type.toString() + "'");
         }
-        Set<String> newAddresses = new HashSet(Arrays.asList(addresses));
+        Set<String> newAddresses = new HashSet<String>(Arrays.asList(addresses));
         Collection<AbstractEmailRecipient> recipients = emailActivity.getEmailRecipient();
         for(AbstractEmailRecipient recipient: recipients) {
             if(recipient instanceof EmailRecipient) {
@@ -3367,18 +3378,28 @@ public class Activities {
             }
         }
         for(String address: newAddresses) {
-            List emailAddresses = Accounts.lookupEmailAddress(
-                pm,
-                providerName,
-                segmentName,
-                address,
-                caseInsensitiveAddressLookup
-            );
+            List<org.opencrx.kernel.account1.jmi1.EmailAddress> emailAddresses = 
+                Accounts.lookupEmailAddress(
+                    pm,
+                    providerName,
+                    segmentName,
+                    address,
+                    caseInsensitiveAddressLookup
+                );
+            if(emailAddresses.isEmpty()) {
+                emailAddresses = Accounts.lookupEmailAddress(
+                    pm,
+                    providerName,
+                    segmentName,
+                    Addresses.UNASSIGNED_ADDRESS,
+                    caseInsensitiveAddressLookup
+                );
+            }
             if(!emailAddresses.isEmpty()) {
                 Activities.addEmailRecipient(
                     pm, 
                     emailActivity, 
-                    (EmailAddress)emailAddresses.iterator().next(), 
+                    emailAddresses.iterator().next(), 
                     type
                 );
             }
@@ -3403,7 +3424,7 @@ public class Activities {
         String externalLink
     ) {
         if(externalLink == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         else {
             EmailQuery query = Utils.getActivityPackage(pm).createEmailQuery();
@@ -3463,13 +3484,14 @@ public class Activities {
         // add 'FROM's to the note
         String addresses[] = from;
         for (int i = 0; i < addresses.length; i++) {
-            List emailAddresses = Accounts.lookupEmailAddress(
-                pm,
-                providerName,
-                segmentName,
-                addresses[i],
-                caseInsensitiveAddressLookup
-            );
+            List<org.opencrx.kernel.account1.jmi1.EmailAddress> emailAddresses = 
+                Accounts.lookupEmailAddress(
+                    pm,
+                    providerName,
+                    segmentName,
+                    addresses[i],
+                    caseInsensitiveAddressLookup
+                );
             text.append("FROM: " + addresses[i] + " ["
                 + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
         }
@@ -3477,13 +3499,14 @@ public class Activities {
         // add 'TO's to the note
         addresses = to;
         for (int i = 0; i < addresses.length; i++) {
-            List emailAddresses = Accounts.lookupEmailAddress(
-                pm,
-                providerName,
-                segmentName,
-                addresses[i],
-                caseInsensitiveAddressLookup
-            );
+            List<org.opencrx.kernel.account1.jmi1.EmailAddress> emailAddresses = 
+                Accounts.lookupEmailAddress(
+                    pm,
+                    providerName,
+                    segmentName,
+                    addresses[i],
+                    caseInsensitiveAddressLookup
+                );
             text.append("TO: " + addresses[i] + " ["
                 + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
         }
@@ -3491,13 +3514,14 @@ public class Activities {
         // add 'CC's to the note
         addresses = cc;
         for (int i = 0; i < addresses.length; i++) {
-            List emailAddresses = Accounts.lookupEmailAddress(
-                pm,
-                providerName,
-                segmentName,
-                addresses[i],
-                caseInsensitiveAddressLookup
-            );
+            List<org.opencrx.kernel.account1.jmi1.EmailAddress> emailAddresses = 
+                Accounts.lookupEmailAddress(
+                    pm,
+                    providerName,
+                    segmentName,
+                    addresses[i],
+                    caseInsensitiveAddressLookup
+                );
             text.append("CC: " + addresses[i] + " ["
                 + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
         }
@@ -3505,13 +3529,14 @@ public class Activities {
         // add 'BCC's to the note
         addresses = bcc;
         for (int i = 0; i < addresses.length; i++) {
-            List emailAddresses = Accounts.lookupEmailAddress(
-                pm,
-                providerName,
-                segmentName,
-                addresses[i],
-                caseInsensitiveAddressLookup
-            );
+            List<org.opencrx.kernel.account1.jmi1.EmailAddress> emailAddresses = 
+                Accounts.lookupEmailAddress(
+                    pm,
+                    providerName,
+                    segmentName,
+                    addresses[i],
+                    caseInsensitiveAddressLookup
+                );
             text.append("BCC: " + addresses[i] + " ["
                 + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
         }
@@ -3599,29 +3624,47 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------      
-    public static String getMessageBody(
-        MimeMessage mimeMessage
-    ) throws IOException, MessagingException {
-        Object content = mimeMessage.getContent();
-        Part part = null;
+    private static Part getFirstTextPart(
+        Object content
+    ) throws MessagingException, IOException {
         if(content instanceof MimeMultipart) {
-            part = ((MimeMultipart)content).getBodyPart(0);
-            content = part.getContent();
-            // If body is itself multipart take body part as message body
-            if(content instanceof MimeMultipart) {
-                part = ((MimeMultipart)content).getBodyPart(0);
-                content = part.getContent();                
+            MimeMultipart multipartMessage = (MimeMultipart)content;
+            // Try to find a part with mimeType text/plain
+            for(int i = 0; i < multipartMessage.getCount(); i++) {
+                Part part = multipartMessage.getBodyPart(i);
+                if(part.isMimeType("text/plain")) {
+                    return part;
+                }
+                else if(part.getContent() instanceof MimeMultipart) {
+                    return getFirstTextPart(part.getContent());
+                }
             }
+            return multipartMessage.getCount() > 0 ?
+                multipartMessage.getBodyPart(0) :
+                null;
         }
+        else if(content instanceof Part) {
+            Object c = ((Part)content).getContent();
+            return c instanceof MimeMultipart ?
+                getFirstTextPart(c) :
+                (Part)content;
+        }  
         else {
-            part = mimeMessage;
+            return null;
         }
-        String contentType = part.getContentType();
+    }
+    
+    //-------------------------------------------------------------------------      
+    public static String getMessageBody(
+        MimePart messagePart
+    ) throws IOException, MessagingException {
+        Part part = getFirstTextPart(messagePart);
+        if(part == null) return null;
+        Object content = part.getContent();
         if(content instanceof String) {
             return (String)content;
         }
         else if (content instanceof InputStream) {
-            contentType = part.getContentType();
             if(part.isMimeType("text/plain") || part.isMimeType("text/html")) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                     part.getInputStream())
@@ -3662,10 +3705,17 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public static void mapMessageContent(
+    /**
+     * Maps email activity to message. If email activity has a media attachment
+     * which contains the original MimeMessage the stream of this message is
+     * returned in addition.
+     */
+    public static InputStream mapMessageContent(
         org.opencrx.kernel.activity1.jmi1.Email emailActivity,
         Message message
     ) throws MessagingException {
+        String originalMessageMediaName = emailActivity.getActivityNumber().trim() + ".eml.zip";
+        InputStream originalMessageStream = null;
         Multipart multipart = new MimeMultipart();
         MimeBodyPart messageBodyPart = new MimeBodyPart();
         String text = emailActivity.getMessageBody();
@@ -3706,8 +3756,16 @@ public class Activities {
                         AppLog.info(e.getMessage(), e.getCause());
                     }
                     bos.close();
+                    // Test whether media is zipped original mail. 
+                    // If yes return as original message
+                    if(originalMessageMediaName.equals(media.getContentName())) {
+                        ZipInputStream zippedMessageStream = 
+                            new ZipInputStream(new ByteArrayInputStream(bos.toByteArray()));
+                        zippedMessageStream.getNextEntry();
+                        originalMessageStream = zippedMessageStream;
+                    }
                     InternetHeaders headers = new InternetHeaders();
-                    headers.addHeader("Content-Type", media.getContentMimeType() + "; name=\"" + media.getContentName() + "\"");
+                    headers.addHeader("Content-Type", media.getContentMimeType() + "; name=\"" + MimeUtility.encodeText(media.getContentName()) + "\"");
                     headers.addHeader("Content-Disposition", "attachment");
                     headers.addHeader("Content-Transfer-Encoding", "base64");
                     messageBodyPart = new MimeBodyPart(                        
@@ -3722,6 +3780,39 @@ public class Activities {
             }
         }
         message.setContent(multipart);
+        return originalMessageStream;
+    }
+    
+    //-------------------------------------------------------------------------
+    public static String getInternetAddress(
+        AccountAddress address,
+        String gateway
+    ) {
+        if(address instanceof EmailAddress) {
+            return ((EmailAddress)address).getEmailAddress();
+        }
+        else if(address instanceof PhoneNumber) {
+            String phoneNumber = ((PhoneNumber)address).getPhoneNumberFull();
+            StringBuilder inetAddress = new StringBuilder();
+            for(int i = 0; i < phoneNumber.length(); i++) {
+                char c = phoneNumber.charAt(i);
+                if((c == '+') && (inetAddress.length() == 0)) {
+                    inetAddress.append("_");
+                }
+                else if(Character.isLetterOrDigit(c)) {
+                    inetAddress.append(Character.toUpperCase(c));
+                }
+            }
+            if((gateway != null) && (gateway.indexOf("@") > 0)) {
+                inetAddress.append(
+                    gateway.substring(gateway.indexOf("@"))
+                );
+            }
+            return inetAddress.toString();
+        }
+        else {
+            return null;
+        }
     }
     
     //-------------------------------------------------------------------------
@@ -3729,15 +3820,31 @@ public class Activities {
         org.opencrx.kernel.activity1.jmi1.Email emailActivity,
         Message message            
     ) throws AddressException, MessagingException {
+        String gateway = emailActivity.getGateway() == null ?
+            null : 
+            emailActivity.getGateway().getEmailAddress();
         List<Address> recipients = new ArrayList<Address>();        
-        if(emailActivity.getSender() != null) {
-            Address sender = new InternetAddress(
-                emailActivity.getSender().getEmailAddress()
-            );
-            message.setFrom(sender);
+        AccountAddress sender = null;
+        try {
+            sender = emailActivity.getSender();
         }
-        for(Iterator i = emailActivity.getEmailRecipient().iterator(); i.hasNext(); ) {
-            EmailRecipient recipient = (EmailRecipient)i.next();
+        catch(Exception e) {
+            ServiceException e0 = new ServiceException(e);
+            AppLog.detail(e0.getMessage(), e0.getCause());
+        }
+        if(sender != null) {
+            String inetAddress = getInternetAddress(
+                sender,
+                gateway
+            );
+            if(inetAddress != null) {
+                message.setFrom(
+                    new InternetAddress(inetAddress)
+                );
+            }
+        }
+        Collection<AbstractEmailRecipient> emailRecipients = emailActivity.getEmailRecipient();
+        for(AbstractEmailRecipient recipient: emailRecipients) {
             RecipientType recipientType = null;
             if(recipient.getPartyType() == PARTY_TYPE_TO) {
                 recipientType = RecipientType.TO;
@@ -3749,18 +3856,59 @@ public class Activities {
                 recipientType = RecipientType.BCC;
             }
             if(recipientType != null) {
-                try {
-                    Address to = new InternetAddress(
-                        recipient.getParty().getEmailAddress()
-                    );
-                    recipients.add(to);
-                    message.addRecipient(
-                        recipientType,
-                        to
-                    );
+                if(recipient instanceof EmailRecipient) {
+                    String inetAddress = null;
+                    try {
+                        inetAddress = getInternetAddress(
+                            ((EmailRecipient)recipient).getParty(),
+                            gateway
+                        );
+                    } 
+                    catch(Exception e) {
+                        ServiceException e0 = new ServiceException(e);
+                        AppLog.detail(e0.getMessage(), e0.getCause());
+                    }
+                    if(inetAddress != null) {
+                        try {
+                            Address to = new InternetAddress(inetAddress);
+                            recipients.add(to);
+                            message.addRecipient(
+                                recipientType,
+                                to
+                            );
+                        }
+                        catch(Exception e) {
+                            AppLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
+                        }
+                    }
                 }
-                catch(Exception e) {
-                    AppLog.warning("Email has invalid recipients", emailActivity.getActivityNumber());
+                else if(recipient instanceof EmailRecipientGroup) {
+                    EmailRecipientGroup recipientGroup = (EmailRecipientGroup)recipient;
+                    Collection<AddressGroupMember> members = recipientGroup.getParty().getMember();
+                    for(AddressGroupMember member: members) {
+                        if((member.isDisabled() == null) || !member.isDisabled()) {
+                            AccountAddress address = member.getAddress();
+                            if((address.isDisabled() == null) || !member.isDisabled()) {
+                                String inetAddress = getInternetAddress(
+                                    address,
+                                    gateway
+                                );
+                                if(inetAddress != null) {
+                                    try {
+                                        Address to = new InternetAddress(inetAddress);
+                                        recipients.add(to);
+                                        message.addRecipient(
+                                            recipientType,
+                                            to
+                                        );                                
+                                    }
+                                    catch(Exception e) {
+                                        AppLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }        
@@ -3768,18 +3916,27 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public static Message mapToMessage(
+    public static InputStream mapToMessage(
         org.opencrx.kernel.activity1.jmi1.Email emailActivity,
         Message message
     ) throws MessagingException {
         try {
-            mapMessageContent(emailActivity, message);
+            InputStream originalMessageStream = mapMessageContent(
+                emailActivity, 
+                message
+            );
+            if(originalMessageStream != null) {
+                return originalMessageStream;
+            }
         }
         catch(Exception e) {
             new ServiceException(e).log();
         }
         try {
-            mapMessageRecipients(emailActivity, message);
+            mapMessageRecipients(
+                emailActivity, 
+                message
+            );
         }
         catch(Exception e) {
             new ServiceException(e).log();
@@ -3792,12 +3949,12 @@ public class Activities {
         message.setHeader(
             "Date", 
             dateFormatter.format(
-                emailActivity.getSendDate() != null 
-                    ? emailActivity.getSendDate()
-                    : emailActivity.getCreatedAt()
+                emailActivity.getSendDate() != null ? 
+                    emailActivity.getSendDate() : 
+                    emailActivity.getCreatedAt()
             )
         );
-        return message;
+        return null;
     }
         
     //-------------------------------------------------------------------------
@@ -3812,17 +3969,17 @@ public class Activities {
     private static final String[] ACTIVITY_TYPES = 
         new String[]{
             "org:opencrx:kernel:activity1:EMail",
-            "org:opencrx:kernel:activity1:Fax",
+            "org:opencrx:kernel:activity1:EMail", // Fax is deprecated
             "org:opencrx:kernel:activity1:Incident",
             "org:opencrx:kernel:activity1:Mailing",
             "org:opencrx:kernel:activity1:Meeting",
-            "org:opencrx:kernel:activity1:Mms",
-            "org:opencrx:kernel:activity1:PhoneCall",            
-            "org:opencrx:kernel:activity1:Sms",            
+            "org:opencrx:kernel:activity1:EMail", // Sms is deprecated
+            "org:opencrx:kernel:activity1:PhoneCall",
+            "org:opencrx:kernel:activity1:EMail", // Mms is deprecated
             "org:opencrx:kernel:activity1:Task",
             "org:opencrx:kernel:activity1:Absence",
             "org:opencrx:kernel:activity1:ExternalActivity",
-            "org:opencrx:kernel:activity1:SalesVisit"            
+            "org:opencrx:kernel:activity1:SalesVisit"  
         };
     
     public static final short ACTIVITY_CLASS_EMAIL = 0;
@@ -3887,7 +4044,7 @@ public class Activities {
     public static final String ACTIVITY_TRACKER_NAME_TASKS = "Tasks";
     public static final String ACTIVITY_TRACKER_NAME_PUBLIC = "Public";
     public static final String ACTIVITY_TRACKER_NAME_TRASH = "Trash";
-    
+
     protected final Backend backend;
     protected final ICalendar icals;
         

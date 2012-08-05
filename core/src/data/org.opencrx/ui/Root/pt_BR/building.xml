@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Edifícios</_item>
+                        <_item>Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Edifícios</_item>
+                        <_item>Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="create">
                     <_object>
                       <label>
-                        <_item>Edifícios</_item>
+                        <_item>Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Edifícios</_item>
+                        <_item>Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -40,10 +40,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
                           <_object>
                             <label>
-                              <_item>Edifícios</_item>
+                              <_item>Prédios</_item>
                             </label>
                             <toolTip>
-                              <_item>Edifícios</_item>
+                              <_item>Prédios</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -58,10 +58,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Edifícios (inativo)</_item>
+                              <_item>»Prédios (inativo)</_item>
                             </label>
                             <toolTip>
-                              <_item>Edifícios (inativo)</_item>
+                              <_item>Prédios (inativo)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -72,10 +72,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Complexos de Edifícios</_item>
+                        <_item>»Complexos de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Complexos de Edifícios</_item>
+                        <_item>Complexos de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -87,10 +87,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
                           <_object>
                             <label>
-                              <_item>Complexos de Edifícios</_item>
+                              <_item>Complexos de Prédios</_item>
                             </label>
                             <toolTip>
-                              <_item>Complexos de Edifícios</_item>
+                              <_item>Complexos de Prédios</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -105,10 +105,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Complexos de Edifícios (inativo)</_item>
+                              <_item>»Complexos de Prédios (inativo)</_item>
                             </label>
                             <toolTip>
-                              <_item>Complexos de Edifícios (inativo)</_item>
+                              <_item>Complexos de Prédios (inativo)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -119,10 +119,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Unidades de Edifícios</_item>
+                        <_item>»Unidades de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Unidades de Edifícios</_item>
+                        <_item>Unidades de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -134,10 +134,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
                           <_object>
                             <label>
-                              <_item>Unidades de Edifícios</_item>
+                              <_item>Unidades de Prédios</_item>
                             </label>
                             <toolTip>
-                              <_item>Unidades de Edifícios</_item>
+                              <_item>Unidades de Prédios</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -152,10 +152,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Unidades de Edifícios (inativo)</_item>
+                              <_item>»Unidades de Prédios (inativo)</_item>
                             </label>
                             <toolTip>
-                              <_item>Unidades de Edifícios (inativo)</_item>
+                              <_item>Unidades de Prédios (inativo)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -293,10 +293,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:sizeInSquareMeter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tamanho em metros quadrados</_item>
+                        <_item>Tamanho em m²</_item>
                       </label>
                       <toolTip>
-                        <_item>Tamanho em metros quadrados</_item>
+                        <_item>Tamanho em m²</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -304,10 +304,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:sizeInCubicMeter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tamanho em metros cúbicos</_item>
+                        <_item>Tamanho em m³</_item>
                       </label>
                       <toolTip>
-                        <_item>Tamanho em metros cúbicos</_item>
+                        <_item>Tamanho em m³</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -326,10 +326,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Complexos de Edifícios</_item>
+                        <_item>Complexos de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Complexos de Edifícios</_item>
+                        <_item>Complexos de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -348,10 +348,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título/Origen</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título/Origen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -359,10 +359,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Unidades de Edifícios</_item>
+                        <_item>Unidades de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Unidade de Edifícios</_item>
+                        <_item>Unidade de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -370,10 +370,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building" _operation="create">
                     <_object>
                       <label>
-                        <_item>Edificios</_item>
+                        <_item>Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Edificios</_item>
+                        <_item>Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -381,10 +381,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:buildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Complexos de Edifícios</_item>
+                        <_item>Complexos de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Complexos de Edifícios</_item>
+                        <_item>Complexos de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -403,10 +403,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titulo/Origem</_item>
+                        <_item>Título/Origem</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo/Origem</_item>
+                        <_item>Título/Origem</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -414,10 +414,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Unidade de Edifícios</_item>
+                        <_item>Unidade de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Unidade de Edifícios</_item>
+                        <_item>Unidade de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -436,10 +436,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:parent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parte da unidade de edifícios</_item>
+                        <_item>Parte da unidade de Prédios</_item>
                       </label>
                       <toolTip>
-                        <_item>Parte da unidade de edifícios</_item>
+                        <_item>Parte da unidade de Prédios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -535,10 +535,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Designação de conta</_item>
+                        <_item>Associação de conta</_item>
                       </label>
                       <toolTip>
-                        <_item>Designação de conta</_item>
+                        <_item>Associação de conta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -546,10 +546,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:booking" _operation="create">
                     <_object>
                       <label>
-                        <_item>Reserva</_item>
+                        <_item>Reservas</_item>
                       </label>
                       <toolTip>
-                        <_item>Reserva</_item>
+                        <_item>Reservas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -601,10 +601,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AccountAssignmentInventoryItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Designação de conta</_item>
+                        <_item>Associação de conta</_item>
                       </label>
                       <toolTip>
-                        <_item>Designação de conta</_item>
+                        <_item>Associação de conta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -645,10 +645,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItem:itemLinkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ligado a</_item>
+                        <_item>Associado a</_item>
                       </label>
                       <toolTip>
-                        <_item>Ligado a</_item>
+                        <_item>Associado a</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -722,10 +722,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Item associável ligado a</_item>
+                        <_item>Item associável a</_item>
                       </label>
                       <toolTip>
-                        <_item>Item associável ligado a</_item>
+                        <_item>Item associável a</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -744,10 +744,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Item associável ligado de</_item>
+                        <_item>Item associável de</_item>
                       </label>
                       <toolTip>
-                        <_item>Item associável ligado de</_item>
+                        <_item>Item associável de</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -755,10 +755,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ligado de</_item>
+                        <_item>Associado de</_item>
                       </label>
                       <toolTip>
-                        <_item>Ligado de</_item>
+                        <_item>Associado de</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -766,10 +766,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ligado a</_item>
+                        <_item>Associado a</_item>
                       </label>
                       <toolTip>
-                        <_item>Ligado a</_item>
+                        <_item>Associado a</_item>
                       </toolTip>
                     </_object>
                     <_content/>

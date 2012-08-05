@@ -257,6 +257,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="23" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>sk_SK</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Slovensky (sk_SK)</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

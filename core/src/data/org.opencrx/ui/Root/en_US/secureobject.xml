@@ -386,6 +386,25 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:replaceOwningGroup">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>Replace Owning Groups</_item>
+											</toolTip>
+											<label>
+												<_item>Replace Owning Groups</_item>
+											</label>
+											<order>
+												<_item>600</_item>
+												<_item>0</_item>
+												<_item>1035</_item>
+											</order>
+											<iconKey>OpRemoveAllOwningGroup</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setAccessLevel">
 										<_object>
 											<active>true</active>

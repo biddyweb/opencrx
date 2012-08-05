@@ -17,6 +17,24 @@
 			<context-root>opencrx-core-CRX-Web</context-root>
 		</web>
 	</module>
+	<module id="WebModule_2">
+		<web>
+			<web-uri>opencrx-ical-CRX.war</web-uri>
+			<context-root>opencrx-ical-CRX</context-root>
+		</web>
+	</module>
+	<module id="WebModule_3">
+		<web>
+			<web-uri>opencrx-imap-CRX.war</web-uri>
+			<context-root>opencrx-imap-CRX</context-root>
+		</web>
+	</module>
+	<module id="WebModule_4">
+		<web>
+			<web-uri>opencrx-vcard-CRX.war</web-uri>
+			<context-root>opencrx-vcard-CRX</context-root>
+		</web>
+	</module>		
 	<security-role id="SecurityRole_OpenCrxUser">
 		<description>openCRX Standard Users</description>
 		<role-name>OpenCrxUser</role-name>

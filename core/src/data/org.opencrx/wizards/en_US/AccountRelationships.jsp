@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.2 2008/07/05 11:05:20 cmu Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.6 2008/08/12 15:56:26 cmu Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/05 11:05:20 $
+ * Date:        $Date: 2008/08/12 15:56:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -160,7 +160,7 @@ org.openmdx.application.log.*
   // Get account1 package
 	org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 
-%><!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
+%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
@@ -202,22 +202,29 @@ org.openmdx.application.log.*
 </head>
 
 <body>
-<%@ include file="../../show-header.html" %>
-<div id="header" style="padding:10px 0px 10px 0px;">
-  <table id="headerlayout" style="position:relative;">
-    <tr id="headRow">
-      <td id="head" colspan="2">
-        <table id="info">
-          <tr>
-            <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-            <td id="headerCellMiddle"></td>
-            <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+<div id="container">
+	<div id="wrap">
+		<div id="eheader" style="height:90px;">
+      <div id="logoTable">
+        <table id="headerlayout">
+          <tr id="headRow">
+            <td id="head" colspan="2">
+              <table id="info">
+                <tr>
+                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+                  <td id="headerCellSpacerLeft"></td>
+                  <td id="headerCellMiddle">&nbsp;</td>
+                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+                </tr>
+              </table>
+            </td>
           </tr>
         </table>
-      </td>
-    </tr>
-  </table>
-</div>
+      </div>
+    </div>
+
+    <div id="content-wrap">
+    	<div id="econtent" style="padding:100px 0.5em 0px 0.5em;">
 <%
 	try {
     Path objectPath = new Path(objectXri);
@@ -236,17 +243,11 @@ org.openmdx.application.log.*
             <a href="../../helpJsCookie.html" target="_blank"><img class="popUpButton" src="../../images/help.gif" width="16" height="16" border="0" onclick="javascript:void(window.open('helpJsCookie.html', 'Help', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes,directories=no,location=no,width=400'));" alt="" /></a> <%= texts.getPageRequiresScriptText() %>
           </div>
         </noscript>
-        <table class="objectTitle">
-          <tr>
-            <td>
-              <div style="padding-left:5px; padding-bottom: 3px;">
-                Relationships
-              </div>
-            </td>
-          </tr>
-        </table>
-        <div class="panel" id="panelObj0" style="display: block">
-          <div class="fieldGroupName">&nbsp;</div>
+        <div id="etitle" style="height:20px;">
+           Relationships
+        </div>
+
+        <fieldset>
   	      <table class="fieldGroup">
   	        <tr>
             	<td class="label"><span class="nw">&nbsp;</span></td>
@@ -348,7 +349,7 @@ org.openmdx.application.log.*
   	          <td class="addon"></td>
   	        </tr>
           </table>
-        </div>
+        </fieldset>
     	</td>
     </tr>
   </table>
@@ -360,16 +361,10 @@ org.openmdx.application.log.*
       </td>
     </tr>
     <tr id="waitMsg" style="display:none;">
-      <td colspan="3">
-        <table class="objectTitle">
-          <tr>
-            <td>
-              <div style="padding-left:5px; padding-bottom: 3px;">
-                <img src="../../images/wait.gif" alt="" />
-              </div>
-            </td>
-          </tr>
-        </table>
+      <td>
+        <div style="padding-left:5px; padding-bottom: 3px;">
+          <img src="../../images/wait.gif" alt="" />
+        </div>
       </td>
     </tr>
   </table>
@@ -552,5 +547,9 @@ org.openmdx.application.log.*
     out.println("</pre></p>");
   }
 %>
+      </div> <!-- content -->
+    </div> <!-- content-wrap -->
+	<div> <!-- wrap -->
+</div> <!-- container -->
 </body>
 </html>

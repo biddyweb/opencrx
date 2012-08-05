@@ -289,16 +289,22 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (impegno attuale)</_item>
+                        <_item>hh (impegno effettivo)</_item>
                       </label>
+                      <toolTip>
+                        <_item>hh (impegno effettivo)</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (impegno attuale)</_item>
+                        <_item>mm (impegno effettivo)</_item>
                       </label>
+                      <toolTip>
+                        <_item>mm (impegno effettivo)</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

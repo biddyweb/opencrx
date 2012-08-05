@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.27 2008/06/26 00:34:34 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.35 2008/08/12 21:50:00 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.35 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/26 00:34:34 $
+ * Date:        $Date: 2008/08/12 21:50:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -184,7 +184,6 @@ org.openmdx.base.exception.*
 	// Other commands
 	else {
 %>
-<!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
@@ -206,33 +205,20 @@ org.openmdx.base.exception.*
 
 		#content{width: 80%; margin: 0 auto; font-size: 90%;}
 
-		fieldset{
-			margin: 1%;
-			padding: 1%;
-			-moz-border-radius: 10px;
-			border: 1.5px solid #DDD;
-			background-color: #EEE;}
-		legend{
-			border: 1px solid #CCC;
-			-moz-border-radius: 10px;
-			padding: 0 1em;
-			background-color: #CCC;
-		}
-		textarea,
-		input[type='text'],
-		input[type='password']{
-			width: 100%;
-			margin: 0; border: 1px solid silver;
-			padding: 0;
-			font-size: 100%;
-			font-family: Arial, Helvetica, sans-serif;
-		}
-
-		input.button{
-			-moz-border-radius: 4px;
-			width: 120px;
-			border: 1px solid silver;
-		}
+    textarea,
+    input[type='text'],
+    input[type='password']{
+    	width: 100%;
+    	margin: 0; border: 1px solid silver;
+    	padding: 0;
+    	font-size: 100%;
+    	font-family: Arial, Helvetica, sans-serif;
+    }
+    input.button{
+    	-moz-border-radius: 4px;
+    	width: 120px;
+    	border: 1px solid silver;
+    }
 
 		/* Add/Edit page specific settings */
 		.col1,
@@ -282,21 +268,29 @@ org.openmdx.base.exception.*
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<div id="header" style="padding:10px 0px 10px 0px;">
-		<table dir="ltr" id="headerlayout" style="position:relative;">
-		  <tr id="headRow">
-			<td id="head" colspan="2">
-			  <table id="info">
-				<tr>
-				  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-				  <td id="headerCellMiddle"><h1>User Settings <%= obj.refGetPath().getBase() + "@" + segmentName %></h1></td>
-				  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-				</tr>
-			  </table>
-			</td>
-		  </tr>
-		</table>
-	</div>
+<div id="container">
+	<div id="wrap">
+		<div id="header" style="height:90px;">
+      <div id="logoTable">
+        <table id="headerlayout">
+          <tr id="headRow">
+            <td id="head" colspan="2">
+              <table id="info">
+                <tr>
+                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+                  <td id="headerCellSpacerLeft"></td>
+                  <td id="headerCellMiddle">&nbsp;</td>
+                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="content-wrap">
+    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 <%
 		// Account details
 		if(true) {
@@ -381,6 +375,12 @@ org.openmdx.base.exception.*
 							state == null ? "0" : "1"
 						);
 					}
+					// Show max items in top navigation					
+					String topNavigationShowMax = request.getParameter("topNavigationShowMax");
+					userSettings.setProperty(
+						"TopNavigation.ShowMax",
+						topNavigationShowMax
+					);
 					// History
 					String state = request.getParameter("history");
 					userSettings.setProperty(
@@ -392,8 +392,8 @@ org.openmdx.base.exception.*
 					if(currentUserIsAdmin) {
 						// Get principal group with name <principal>.Group. This is the private group of the owner of the user home page
 						org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getRealm(
-							pm, 
-							providerName, 
+							pm,
+							providerName,
 							segmentName
 						);
 						privatePrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
@@ -413,7 +413,7 @@ org.openmdx.base.exception.*
 								privatePrincipalGroup
 							);
 						}
-						// Set UserHome's primary group 
+						// Set UserHome's primary group
 						userHome.setPrimaryGroup(privatePrincipalGroup);
 						org.openmdx.security.realm1.jmi1.Principal principal = null;
 						try {
@@ -594,7 +594,7 @@ org.openmdx.base.exception.*
 		</ul>
 		<form method="post" action="<%= WIZARD_NAME %>">
 			<input type="hidden" name="command" value="apply"/>
-			<input type="hidden" name="xri" value="<%= objectXri %>"/>
+			<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>"/>
 			<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 			<div class="col1">
 				<fieldset>
@@ -674,6 +674,8 @@ org.openmdx.base.exception.*
 %>
 						<tr><td><label for="history">History:</label></td><td>
 						<input type="checkbox" <%= userSettings.getProperty("History.State", "1").equals("1") ? "checked" : "" %> id="history" name="history"/></td></tr>
+						<tr><td><label for="topNavigationShowMax">Show max items in top navigation:</label></td><td>
+						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty("TopNavigation.ShowMax", "6") %>"/></td></tr>
 					</table>
 				</fieldset>
 			</div>
@@ -753,8 +755,12 @@ org.openmdx.base.exception.*
 <%
 		}
 %>
-		</body>
-		</html>
+            </div> <!-- content -->
+          </div> <!-- content-wrap -->
+      	<div> <!-- wrap -->
+      </div> <!-- container -->
+  	</body>
+  	</html>
 <%
 	}
 %>

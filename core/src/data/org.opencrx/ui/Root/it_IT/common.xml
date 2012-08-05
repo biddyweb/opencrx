@@ -746,6 +746,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cartelle</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cartelle</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
@@ -896,6 +907,39 @@
                       </label>
                       <toolTip>
                         <_item>Descrizione del documento allegato</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Assegnazione Cartella</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Assegnazione Cartella</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1232,6 +1276,9 @@
                       <label>
                         <_item>Voce Impostazione parametro Data</_item>
                       </label>
+                      <toolTip>
+                        <_item>Voce Impostazione parametro Data</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

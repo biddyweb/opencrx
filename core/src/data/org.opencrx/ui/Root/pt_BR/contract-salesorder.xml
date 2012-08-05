@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fatura Relacionadas</_item>
+                        <_item>»Faturas Relacionadas</_item>
                       </label>
                       <toolTip>
                         <_item>Fatura Relacionadas</_item>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número de Ordem de Vendas</_item>
+                        <_item>Nº de Ordem de Vendas</_item>
                       </label>
                       <toolTip>
-                        <_item>Número de Ordem de Vendas</_item>
+                        <_item>Nº de Ordem de Vendas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,7 +190,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:markAsClosed:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Por favor selecione o estado Fechado</_item>
+                        <_item>Favor selecionar o estado Fechado</_item>
                       </label>
                       <toolTip>
                         <_item>Entrada</_item>
@@ -212,7 +212,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderMarkAsClosedParams:salesOrderState" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado Fechado</_item>
+                        <_item>Estado Fechado</_item>
                       </label>
                       <toolTip>
                         <_item>Selecione o estado Fechado</_item>

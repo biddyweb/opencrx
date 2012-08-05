@@ -12,7 +12,7 @@
 			<env-entry>
 				<env-entry-name>PersistenceManager/Multithreaded</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>false</env-entry-value>
+				<env-entry-value>true</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/namespaceId</env-entry-name>
@@ -286,7 +286,7 @@
 			<local>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
 	  		<ejb-class>org.openmdx.compatibility.application.dataprovider.transport.ejb.transaction.Gateway_1Bean</ejb-class>
 			<session-type>Stateless</session-type>
-			<transaction-type>Bean</transaction-type>
+			<transaction-type>Container</transaction-type>
 			<env-entry>
 			  <env-entry-name>KERNEL/namespaceId</env-entry-name>
 			  <env-entry-type>java.lang.String</env-entry-type>
@@ -436,6 +436,11 @@
 			  <env-entry-name>PERSISTENCE/retrievalSize</env-entry-name>
 			  <env-entry-type>java.lang.Integer</env-entry-type>
 			  <env-entry-value>25</env-entry-value>
+			</env-entry>
+			<env-entry>
+			  <env-entry-name>PERSISTENCE/Multithreaded</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>false</env-entry-value>
 			</env-entry>
 			<ejb-local-ref id="EntityManagerFactory_Ref">
 				<ejb-ref-name>ejb/dataprovider[0]</ejb-ref-name>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSession.java,v 1.19 2008/05/02 16:09:35 wfro Exp $
+ * Name:        $Id: OpenCrxSession.java,v 1.21 2008/09/12 08:53:31 wfro Exp $
  * Description: XWiki OpenCrxSession
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/02 16:09:35 $
+ * Date:        $Date: 2008/09/12 08:53:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,10 +60,10 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
-import org.opencrx.groupware.generic.Util;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.opencrx.kernel.document1.jmi1.Document1Package;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
 import org.openmdx.compatibility.datastore1.jmi1.Datastore1Package;
@@ -90,7 +90,7 @@ public class OpenCrxSession {
             );
         if(persistenceManagerFactory == null) {                    
             try {
-                persistenceManagerFactory = Util.getPersistenceManagerFactory();
+                persistenceManagerFactory = Utils.getRemotePersistenceManagerFactory();
                 if(session != null) {
                     session.setAttribute(
                         PersistenceManagerFactory.class.getName(),
@@ -116,24 +116,24 @@ public class OpenCrxSession {
             }        
         }        
         String providerName = context.getWiki().Param(PARAM_PREFIX + "provider", DEFAULT_PROVIDER_NAME); 
-        String segmentName = "xwiki".equals(context.getDatabase()) || (context.getDatabase() == null)
-            ? DEFAULT_SEGMENT_NAME
-            : context.getDatabase();
+        String segmentName = "xwiki".equals(context.getDatabase()) || (context.getDatabase() == null) ? 
+            DEFAULT_SEGMENT_NAME : 
+            context.getDatabase();
         if(segmentName.indexOf("-") > 0) {
             segmentName = segmentName.substring(0, segmentName.indexOf("-"));
         }
-        segmentName = segmentName.length() <= 5
-             ? segmentName.toUpperCase()
-             : Character.toUpperCase(segmentName.charAt(0)) + segmentName.substring(1);
-        String user = context.getUser().startsWith("XWiki.")
-            ? context.getUser().substring(6)
-            : context.getUser();
+        segmentName = segmentName.length() <= 5 ? 
+             segmentName.toUpperCase() : 
+             Character.toUpperCase(segmentName.charAt(0)) + segmentName.substring(1);
+        String user = context.getUser().indexOf(".") > 0 ? 
+            context.getUser().substring(context.getUser().lastIndexOf(".") + 1) : 
+            context.getUser();
         this.pm = persistenceManagerFactory.getPersistenceManager(
-            PRINCIPAL_XWIKI_GUEST.equals(user)
-                ? "guest"
-                : PRINCIPAL_XWIKI_ADMIN.equals(user) || PRINCIPAL_XWIKI_SUPERADMIN.equals(user)
-                    ? SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
-                    : user,
+            PRINCIPAL_XWIKI_GUEST.equals(user) ? 
+                "guest" : 
+                PRINCIPAL_XWIKI_ADMIN.equals(user) || PRINCIPAL_XWIKI_SUPERADMIN.equals(user) ? 
+                    SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName : 
+                    user,
             UUIDs.getGenerator().next().toString()
         );
         this.documentPackage = 
@@ -223,7 +223,7 @@ public class OpenCrxSession {
     private static final String PRINCIPAL_XWIKI_ADMIN = "Admin";
     private static final String PRINCIPAL_XWIKI_SUPERADMIN = "superadmin";
     
-    private static Model_1_3 model = Util.createModel(); 
+    private static Model_1_3 model = Utils.createModel(); 
     private final PersistenceManager pm;   
     private final Document1Package documentPackage;
     private final BasePackage basePackage;

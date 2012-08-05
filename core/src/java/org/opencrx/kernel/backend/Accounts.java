@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.20 2008/06/06 09:53:27 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.23 2008/09/16 09:41:51 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/06 09:53:27 $
+ * Date:        $Date: 2008/09/16 09:41:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,7 +57,6 @@ package org.opencrx.kernel.backend;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -685,7 +684,7 @@ public class Accounts {
      * @param emailAddress     The email address
      * @return                 A List of accounts containing the email address
      */
-    public static List lookupEmailAddress(
+    public static List<org.opencrx.kernel.account1.jmi1.EmailAddress> lookupEmailAddress(
         PersistenceManager pm,
         String providerName,
         String segmentName,
@@ -712,6 +711,17 @@ public class Accounts {
     }
         
     //-------------------------------------------------------------------------
+    private static List<org.opencrx.kernel.account1.jmi1.AccountAddress> getAccountAddresses(
+        org.opencrx.kernel.account1.jmi1.Account account,
+        short usage
+    ) {
+        org.opencrx.kernel.account1.cci2.AccountAddressQuery query = 
+            ((org.opencrx.kernel.account1.jmi1.Account1Package)account.refImmediatePackage()).createAccountAddressQuery();
+        query.thereExistsUsage().equalTo(usage);
+        return account.getAddress(query); 
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * Return main home and business addresses of given account.
      * @return array with elements {web home, web business, phone home, phone business, 
@@ -736,86 +746,149 @@ public class Accounts {
         
         org.opencrx.kernel.account1.jmi1.AccountAddress[] mainAddresses = 
             new org.opencrx.kernel.account1.jmi1.AccountAddress[12];
-        Collection<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = account.getAddress();
+        // HOME
+        List<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = getAccountAddresses(
+            account,
+            Addresses.USAGE_HOME
+        );
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
-            List<Short> usage = new ArrayList<Short>();
-            boolean isMain = false;
-            try {
-                isMain = address.isMain();
-            } catch(Exception e) {}
-            for(Short u: address.getUsage()) {
-                usage.add(new Short(u.shortValue()));
-            }
             if(address instanceof WebAddress) {
-                int orderHomeWeb = usage.contains(Addresses.USAGE_HOME) ? 1 : 0;
+                int orderHomeWeb = 1;
                 WebAddress webAddress = (WebAddress)address;
                 if(orderHomeWeb > currentOrderHomeWeb) {
                     mainAddresses[WEB_HOME] = webAddress;
                     currentOrderHomeWeb = orderHomeWeb;
                 }
-                int orderBusinessWeb = usage.contains(Addresses.USAGE_BUSINESS) ? 1 : 0;
+            }
+            else if(address instanceof PhoneNumber) {
+                PhoneNumber phoneNumber = (PhoneNumber)address;
+                boolean isMain = false;
+                try {
+                    isMain = phoneNumber.isMain();
+                } catch(Exception e) {}
+                int orderHomePhone = isMain ? 3 : 1;
+                if(orderHomePhone > currentOrderHomePhone) {
+                    mainAddresses[PHONE_HOME] = phoneNumber;
+                    currentOrderHomePhone = orderHomePhone;
+                }
+            }
+            else if (address instanceof PostalAddress) {
+                int orderHomePostal = 1;
+                PostalAddress postalAddress = (PostalAddress)address;
+                if(orderHomePostal > currentOrderHomePostal) {       
+                    mainAddresses[POSTAL_HOME] = postalAddress;
+                    currentOrderHomePostal = orderHomePostal;
+                }
+            }
+            else if(address instanceof EmailAddress) {
+                int orderHomeMail = 1;
+                EmailAddress mailAddress = (EmailAddress)address;
+                if(orderHomeMail > currentOrderHomeMail) {
+                    mainAddresses[MAIL_HOME] = mailAddress;
+                    currentOrderHomeMail = orderHomeMail;
+                }
+            }
+        }    
+        // BUSINESS
+        addresses = getAccountAddresses(
+            account,
+            Addresses.USAGE_BUSINESS
+        );
+        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+            if(address instanceof WebAddress) {
+                WebAddress webAddress = (WebAddress)address;
+                int orderBusinessWeb = 1;
                 if(orderBusinessWeb > currentOrderBusinessWeb) {
                     mainAddresses[WEB_BUSINESS] = webAddress;
                     currentOrderBusinessWeb = orderBusinessWeb;
                 }
             }
             else if(address instanceof PhoneNumber) {
-                int orderHomePhone = usage.contains(Addresses.USAGE_HOME) && isMain ? 3 : usage.contains(Addresses.USAGE_HOME_MAIN_PHONE) ? 2 : usage.contains(Addresses.USAGE_HOME) ? 1 : 0;
                 PhoneNumber phoneNumber = (PhoneNumber)address;
-                if(orderHomePhone > currentOrderHomePhone) {
-                    mainAddresses[PHONE_HOME] = phoneNumber;
-                    currentOrderHomePhone = orderHomePhone;
-                }
-                int orderBusinessPhone = usage.contains(Addresses.USAGE_BUSINESS) && isMain ? 3 : usage.contains(Addresses.USAGE_BUSINESS_MAIN_PHONE) ? 2 : usage.contains(Addresses.USAGE_BUSINESS) ? 1 : 0;
+                boolean isMain = false;
+                try {
+                    isMain = phoneNumber.isMain();
+                } catch(Exception e) {}
+                int orderBusinessPhone = isMain ? 3 : 1;
                 if(orderBusinessPhone > currentOrderBusinessPhone) {
                     mainAddresses[PHONE_BUSINESS] = phoneNumber;
                     currentOrderBusinessPhone = orderBusinessPhone;
                 }
-                int orderHomeFax = usage.contains(Addresses.USAGE_HOME_FAX) ? 1 : 0;
-                if(orderHomeFax > currentOrderHomeFax) {           
-                    mainAddresses[FAX_HOME] = phoneNumber;
-                    currentOrderHomeFax = orderHomeFax;
-                }
-                int orderBusinessFax = usage.contains(Addresses.USAGE_BUSINESS_FAX) ? 1 : 0;
-                if(orderBusinessFax > currentOrderBusinessFax) {
-                    mainAddresses[FAX_BUSINESS] = phoneNumber;
-                    currentOrderBusinessFax = orderBusinessFax;
-                }
-                int orderMobile = usage.contains(Addresses.USAGE_MOBILE) ? 2 : usage.contains(Addresses.USAGE_HOME_MOBILE) || usage.contains(Addresses.USAGE_BUSINESS_MOBILE) ? 1 : 0;
-                if(orderMobile > currentOrderMobile) { 
-                    mainAddresses[MOBILE] = phoneNumber;
-                    currentOrderMobile = orderMobile;
-                }
-                int orderOtherPhone = usage.contains(Addresses.USAGE_OTHER) ? 1 : 0;
-                if(orderOtherPhone > currentOrderOtherPhone) {
-                    mainAddresses[PHONE_OTHER] = phoneNumber;
-                    currentOrderOtherPhone = orderOtherPhone;
-                }
             }
             else if (address instanceof PostalAddress) {
-                int orderHomePostal = usage.contains(Addresses.USAGE_HOME) ? 1 : 0;
                 PostalAddress postalAddress = (PostalAddress)address;
-                if(orderHomePostal > currentOrderHomePostal) {       
-                    mainAddresses[POSTAL_HOME] = postalAddress;
-                    currentOrderHomePostal = orderHomePostal;
-                }
-                int orderBusinessPostal = usage.contains(Addresses.USAGE_BUSINESS) ? 1 : 0;
+                int orderBusinessPostal = 1;
                 if(orderBusinessPostal > currentOrderBusinessPostal) {
                     mainAddresses[POSTAL_BUSINESS] = postalAddress;
                     currentOrderBusinessPostal = orderBusinessPostal;
                 }
             }
             else if(address instanceof EmailAddress) {
-                int orderHomeMail = usage.contains(Addresses.USAGE_HOME) ? 1 : 0;
                 EmailAddress mailAddress = (EmailAddress)address;
-                if(orderHomeMail > currentOrderHomeMail) {
-                    mainAddresses[MAIL_HOME] = mailAddress;
-                    currentOrderHomeMail = orderHomeMail;
-                }
-                int orderBusinessMail = usage.contains(Addresses.USAGE_BUSINESS) ? 1 : 0;
+                int orderBusinessMail = 1;
                 if(orderBusinessMail > currentOrderBusinessMail) {
                     mainAddresses[MAIL_BUSINESS] = mailAddress;
                     currentOrderBusinessMail = orderBusinessMail;
+                }
+            }
+        }    
+        // OTHER
+        addresses = getAccountAddresses(
+            account,
+            Addresses.USAGE_OTHER
+        );
+        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+            if(address instanceof PhoneNumber) {
+                PhoneNumber phoneNumber = (PhoneNumber)address;                
+                int orderOtherPhone = 1;
+                if(orderOtherPhone > currentOrderOtherPhone) {
+                    mainAddresses[PHONE_OTHER] = phoneNumber;
+                    currentOrderOtherPhone = orderOtherPhone;
+                }
+            }
+        }    
+        // HOME_FAX
+        addresses = getAccountAddresses(
+            account,
+            Addresses.USAGE_HOME_FAX
+        );
+        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+            if(address instanceof PhoneNumber) {
+                PhoneNumber phoneNumber = (PhoneNumber)address;                
+                int orderHomeFax = 1;
+                if(orderHomeFax > currentOrderHomeFax) {           
+                    mainAddresses[FAX_HOME] = phoneNumber;
+                    currentOrderHomeFax = orderHomeFax;
+                }
+            }
+        }    
+        // BUSINESS_FAX
+        addresses = getAccountAddresses(
+            account,
+            Addresses.USAGE_BUSINESS_FAX
+        );
+        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+            if(address instanceof PhoneNumber) {
+                PhoneNumber phoneNumber = (PhoneNumber)address;                                
+                int orderBusinessFax = 1;
+                if(orderBusinessFax > currentOrderBusinessFax) {
+                    mainAddresses[FAX_BUSINESS] = phoneNumber;
+                    currentOrderBusinessFax = orderBusinessFax;
+                }
+            }
+        }    
+        // MOBILE
+        addresses = getAccountAddresses(
+            account,
+            Addresses.USAGE_MOBILE
+        );
+        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+            if(address instanceof PhoneNumber) {
+                PhoneNumber phoneNumber = (PhoneNumber)address;                                
+                int orderMobile = 1;
+                if(orderMobile > currentOrderMobile) { 
+                    mainAddresses[MOBILE] = phoneNumber;
+                    currentOrderMobile = orderMobile;
                 }
             }
         }    

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.28 2008/05/07 21:59:15 wfro Exp $
- * Description: Convert database RID columns from numeric to string format
- * Revision:    $Revision: 1.28 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: CopyDb.java,v 1.32 2008/09/17 14:09:43 wfro Exp $
+ * Description: CopyDb tool
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/07 21:59:15 $
+ * Date:        $Date: 2008/09/17 14:09:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2005, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -351,8 +351,6 @@ public class CopyDb {
         String[] namespaceSource,
         String[] namespaceTarget,
         List<String> dbObjects,
-        String formatSource,
-        String formatTarget,
         int startFromDbObject,
         int endWithDbObject
     ) {
@@ -463,8 +461,6 @@ public class CopyDb {
                 new String[]{"OOCKE1", "_"},
                 new String[]{"OOCKE1", "_"},
                 Arrays.asList(DBOBJECTS_KERNEL),
-                formatSource,
-                formatTarget,
                 kernelStartFromDbObject == null ? 0 : kernelStartFromDbObject.intValue(),
                 endWithDbObject == null ? Integer.MAX_VALUE : endWithDbObject.intValue()
             );
@@ -476,8 +472,6 @@ public class CopyDb {
                 new String[]{"OOCSE1", "_"},
                 new String[]{"OOCSE1", "_"},
                 Arrays.asList(DBOBJECTS_SECURITY),
-                formatSource,
-                formatTarget,
                 securityStartFromDbObject == null ? 0 : securityStartFromDbObject.intValue(),
                 endWithDbObject == null ? Integer.MAX_VALUE : endWithDbObject.intValue()
             );            
@@ -496,8 +490,6 @@ public class CopyDb {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    static final String FORMAT_OPENMDX2 = "openmdx2";
-    
     static final String[] DBOBJECTS_KERNEL = new String[]{
         "ACCESSHISTORY",
         "ACCOUNT",
@@ -525,11 +517,12 @@ public class CopyDb {
         "BOOKINGPERIOD",
         "BOOKINGTEXT",
         "BUDGET",
-        "BUDGETMILESTONE",
         "BUILDINGUNIT",
         "CALCULATIONRULE",
         "CALENDAR",
         "CALENDARDAY",
+        "CALENDARFEED",
+        "CALENDARPROFILE",
         "CHART",
         "CODEVALUECONTAINER",
         "CODEVALUEENTRY",
@@ -540,6 +533,7 @@ public class CopyDb {
         "CONTACTREL",
         "CONTACTROLE",
         "CONTRACT",
+        "CONTRACTLINK",
         "CONTRACTPOSITION",
         "CONTRACTPOSMOD",
         "CREDITLIMIT",
@@ -559,23 +553,22 @@ public class CopyDb {
         "DOCUMENT",
         "DOCUMENTATTACHMENT",
         "DOCUMENTFOLDER",
+        "DOCUMENTFOLDERASS",        
         "DOCUMENTLINK",
         "DOCUMENTLOCK",
         "EMAILACCOUNT",
         "EVENT",
         "EVENTPART",
         "EVENTSLOT",
+        "EXPORTPROFILE",
         "FACILITY",
         "FILTER",
         "FILTERPROPERTY",
-        "FORECAST",
-        "FORECASTPERIOD",
         "INDEXENTRY",
         "INVENTORYITEM",
         "INVOLVEDOBJECT",
         "LINKABLEITEMLINK",
         "MEDIA",
-        "MMSSLIDE",
         "MODELELEMENT",
         "NOTE",
         "OBJECTFINDER",

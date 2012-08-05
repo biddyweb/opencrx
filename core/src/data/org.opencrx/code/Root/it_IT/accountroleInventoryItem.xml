@@ -70,6 +70,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Utilizzatore</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Utilizzatore</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
                           <_object>
                             <shortText>
@@ -187,6 +198,28 @@
                             </shortText>
                             <longText>
                               <_item>Autorita&apos; Ispettiva</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Centro Assistenza</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Centro Assistenza</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Produttore</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Produttore</_item>
                             </longText>
                           </_object>
                           <_content/>

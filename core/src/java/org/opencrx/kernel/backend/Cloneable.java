@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.15 2008/07/06 23:56:58 wfro Exp $
+ * Name:        $Id: Cloneable.java,v 1.16 2008/09/02 12:27:56 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/06 23:56:58 $
+ * Date:        $Date: 2008/09/02 12:27:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -119,9 +119,7 @@ public class Cloneable {
             ), 
             originalIdentity.getParent(),
             null,
-            referenceFilterAsString == null  
-                ? DEFAULT_REFERENCE_FILTER
-                : referenceFilterAsString, 
+            referenceFilterAsString, 
             replaceExisting,
             AttributeSelectors.ALL_ATTRIBUTES            
         );
@@ -588,8 +586,6 @@ public class Cloneable {
     
     public static final Set<String> CLONE_EXCLUDE_COMPOSITE_REFERENCES =
         new HashSet<String>(Arrays.asList("view"));
-    
-    public static final String DEFAULT_REFERENCE_FILTER = ":*, :*/:*/:*, :*/:*/:*/:*/:*";
     
     public static final Set<String> CLONEABLE_READONLY_FEATURES =
         new HashSet<String>(Arrays.asList(

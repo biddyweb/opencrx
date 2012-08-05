@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AddressBook.jsp,v 1.40 2008/06/26 00:34:33 wfro Exp $
+ * Name:        $Id: AddressBook.jsp,v 1.62 2008/09/03 14:39:52 cmu Exp $
  * Description: AddressBook
- * Revision:    $Revision: 1.40 $
+ * Revision:    $Revision: 1.62 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/26 00:34:33 $
+ * Date:        $Date: 2008/09/03 14:39:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -78,14 +78,18 @@ org.openmdx.base.exception.*
 
 	final String WIZARD_NAME = "AddressBook.jsp";
 
+	String userAgent = request.getHeader("user-agent");
+	boolean isMobile =
+		(userAgent.indexOf("iPhone") > 0);
+
 	// Init
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
+	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + URLEncoder.encode(requestId, "UTF-8");
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
+	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + URLEncoder.encode(objectXri, "UTF-8");
 	if(objectXri == null || app == null) {
 		session.setAttribute(WIZARD_NAME, null);
 		response.sendRedirect(
@@ -104,7 +108,7 @@ org.openmdx.base.exception.*
 	String command = request.getParameter("command");
 	String accountXri = request.getParameter("accountXri");
 	String maxAsString = request.getParameter("max");
-	int max = 10;
+	int max = 50;
 	if((maxAsString != null) && (maxAsString.length() > 0)) {
 		max = Integer.valueOf(maxAsString).intValue();
 	}
@@ -147,170 +151,37 @@ org.openmdx.base.exception.*
 		response.setCharacterEncoding("UTF-8");
 		short locale =  app.getCurrentLocaleAsIndex();
 		org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
-		if(account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-			org.opencrx.kernel.account1.jmi1.Contact contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
-			byte[] item = contact.getVcard() == null ? null :  contact.getVcard().getBytes("UTF-8");
-			if(item != null) {
-				String location = UUIDs.getGenerator().next().toString();
-				File f = new File(
-				   app.getTempFileName(location, "")
-				);
-				FileOutputStream os = new FileOutputStream(f);
-				for(int i = 0; i < item.length; i++) {
-					os.write(item[i]);
-				}
-				os.flush();
-				os.close();
-				String filename = org.opencrx.kernel.utils.Utils.toFilename(contact.getFullName()) + ".vcf";
-				Action downloadAction =
-					new Action(
-						Action.EVENT_DOWNLOAD_FROM_LOCATION,
-						new Action.Parameter[]{
-							new Action.Parameter(Action.PARAMETER_LOCATION, location),
-							new Action.Parameter(Action.PARAMETER_NAME, filename),
-							new Action.Parameter(Action.PARAMETER_MIME_TYPE, org.opencrx.kernel.backend.VCard.MIME_TYPE)
-						},
-						app.getTexts().getClickToDownloadText() + " " + filename,
-						true
-					);
-				response.sendRedirect(
-					request.getContextPath() + "/" + downloadAction.getEncodedHRef(requestId)
-				);
+		byte[] item = account.getVcard() == null ? null : account.getVcard().getBytes("UTF-8");
+		if(item != null) {
+			String location = UUIDs.getGenerator().next().toString();
+			File f = new File(
+			   app.getTempFileName(location, "")
+			);
+			FileOutputStream os = new FileOutputStream(f);
+			for(int i = 0; i < item.length; i++) {
+				os.write(item[i]);
 			}
-			else {
-				response.setStatus(HttpServletResponse.SC_NO_CONTENT );
-			}
+			os.flush();
+			os.close();
+			String filename = org.opencrx.kernel.utils.Utils.toFilename(account.getFullName()) + ".vcf";
+			Action downloadAction =
+				new Action(
+					Action.EVENT_DOWNLOAD_FROM_LOCATION,
+					new Action.Parameter[]{
+						new Action.Parameter(Action.PARAMETER_LOCATION, location),
+						new Action.Parameter(Action.PARAMETER_NAME, filename),
+						new Action.Parameter(Action.PARAMETER_MIME_TYPE, org.opencrx.kernel.backend.VCard.MIME_TYPE)
+					},
+					app.getTexts().getClickToDownloadText() + " " + filename,
+					true
+				);
+			response.sendRedirect(
+				request.getContextPath() + "/" + downloadAction.getEncodedHRef(requestId)
+			);
 		}
 		else {
 			response.setStatus(HttpServletResponse.SC_NO_CONTENT );
 		}
-	}
-	// Export as CSV
-	else if(
-		"export".equalsIgnoreCase(command) ||
-		"export*".equalsIgnoreCase(command)
-	) {
-		response.setCharacterEncoding("UTF-8");
-		if((startWith == null) || (startWith.length() == 0)) {
-			startWith = "A";
-		}
-		short locale =  app.getCurrentLocaleAsIndex();
-		String localeAsString =  app.getCurrentLocaleAsString();
-		String location = UUIDs.getGenerator().next().toString();
-		File f = new File(
-		   app.getTempFileName(location, "")
-		);
-		PrintStream os = new PrintStream(f, "UTF-8");
-		org.opencrx.kernel.account1.cci2.AccountQuery query = accountPkg.createAccountQuery();
-		// Export all starting from startFrom up to a maximum of 500 accounts
-		if("export*".equals(command)) {
-			query.thereExistsFullName().greaterThanOrEqualTo(startWith);
-			max = 500;
-		}
-		else {
-			query.thereExistsFullName().like("(?i)" + startWith + ".*");
-		}
-		query.orderByFullName().ascending();
-		int n = 0;
-		os.println("group0;group1;group2;group3;group4;fullName;salutation;lastName;firstName;middleName;company;jobTitle;description;workPostal;homePostal;workPhone;homePhone;workFax;homeFax;mobile;otherPhone;workEmail;homeEmail;workWeb;homeWeb;cat0;cat1;cat2;cat3;cat4;cat5;cat6;cat7;cat8;cat9");
-		for(Iterator i = accountSegment.getAccount(query).iterator(); i.hasNext(); ) {
-			org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)i.next();
-			org.opencrx.kernel.account1.jmi1.Contact contact = account instanceof org.opencrx.kernel.account1.jmi1.Contact
-				? (org.opencrx.kernel.account1.jmi1.Contact)account
-				: null;
-			org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getMainAddresses(account);
-			// The groups0..4 allow to sort according to their membership
-			int nGroups = 0;
-			for(Iterator j = account.getAccountMembership().iterator(); j.hasNext(); ) {
-				org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)j.next();
-				if(membership.getAccountFrom() != null) {
-					org.opencrx.kernel.account1.jmi1.Account group = membership.getAccountFrom();
-					os.print(group.getFullName() == null ? "" : "\"" + group.getFullName() + "\"");
-					os.print(";");
-					nGroups++;
-				}
-			}
-			for(int j = nGroups; j < 5; j++) {
-				// If account does not have membership make it member
-				if(j == 0) {
-					os.print(account.getFullName() == null ? "" : "\"" + account.getFullName() + "\"");
-				}
-				os.print(";");
-			}
-			os.print(account.getFullName() == null ? "" : "\"" + account.getFullName() + "\"");
-			os.print(";");
-			short salutationCode = (short)0;
-			try {
-				salutationCode = contact == null ? (short)0 : contact.getSalutationCode();
-			} catch(Exception e) {}
-			os.print(contact == null ? "" : "\"" + salutationCode + "\"");
-			os.print(";");
-			os.print(contact == null || contact.getLastName() == null ? "" : "\"" + contact.getLastName() + "\"");
-			os.print(";");
-			os.print(contact == null || contact.getFirstName() == null ? "" : "\"" + contact.getFirstName() + "\"");
-			os.print(";");
-			os.print(contact == null || contact.getMiddleName() == null ? "" : "\"" + contact.getMiddleName() + "\"");
-			os.print(";");
-			os.print(contact == null || contact.getOrganization() == null ? "" : "\"" + contact.getOrganization() + "\"");
-			os.print(";");
-			os.print(contact == null || contact.getJobTitle() == null ? "" : "\"" + contact.getJobTitle() + "\"");
-			os.print(";");
-			os.print(account == null || account.getDescription() == null ? "" : "\"" + (account.getDescription().indexOf(".") > 0 ? account.getDescription().substring(0,  account.getDescription().indexOf(".")) : account.getDescription()) + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.POSTAL_BUSINESS] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_BUSINESS], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.POSTAL_HOME] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_HOME], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.PHONE_BUSINESS] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.PHONE_BUSINESS], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.PHONE_HOME] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.PHONE_HOME], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.FAX_BUSINESS] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.FAX_HOME], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.FAX_HOME] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.FAX_HOME], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.MOBILE] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.MOBILE], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.PHONE_OTHER] == null ? "" : "\"" + app.getPortalExtension().getTitle(addresses[Accounts.PHONE_OTHER], locale, localeAsString, app).replace("<br />", "\r\n") + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.MAIL_BUSINESS] == null ? "" : "\"" + ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress() + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.MAIL_HOME] == null ? "" : "\"" + ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_HOME]).getEmailAddress() + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.WEB_BUSINESS] == null ? "" : "\"" + ((org.opencrx.kernel.address1.jmi1.WebAddressable)addresses[Accounts.WEB_BUSINESS]).getWebUrl() + "\"");
-			os.print(";");
-			os.print(addresses[Accounts.WEB_HOME] == null ? "" : "\"" + ((org.opencrx.kernel.address1.jmi1.WebAddressable)addresses[Accounts.WEB_HOME]).getWebUrl() + "\"");
-			os.print(";");
-			int iCat = 0;
-			for(Iterator j = account.getCategory().iterator(); j.hasNext(); iCat++) {
-				os.print(j.next());
-				os.print(";");
-			}
-			while(iCat < 10) {
-				os.print(";");
-				iCat++;
-			}
-			// Record delimiter and new line
-			os.print("|\r\n");
-			n++;
-			if(n > max) break;
-		}
-		os.flush();
-		os.close();
-		Action downloadAction =
-			new Action(
-				Action.EVENT_DOWNLOAD_FROM_LOCATION,
-				new Action.Parameter[]{
-					new Action.Parameter(Action.PARAMETER_LOCATION, location),
-					new Action.Parameter(Action.PARAMETER_NAME, "Accounts.txt"),
-					new Action.Parameter(Action.PARAMETER_MIME_TYPE, "text/plain")
-				},
-				app.getTexts().getClickToDownloadText() + " Accounts.txt",
-				true
-			);
-		response.sendRedirect(
-			request.getContextPath() + "/" + downloadAction.getEncodedHRef(requestId)
-		);
 	}
 	// Other commands
 	else {
@@ -320,63 +191,54 @@ org.openmdx.base.exception.*
 <html dir="<%= texts.getDir() %>">
 <head>
 	<style type="text/css" media="all">
-		body{font-family: Arial, Helvetica, sans-serif; padding: 0; margin:0;}
-		h1{  margin: 0; padding: 0 1em; font-size: 150%;}
+	body{ font-family: Arial, Helvetica, sans-serif; padding: 0; margin:0;}
+    textarea,
+    input[type='text'],
+    input[type='password']{
+    	width: 100%;
+    	margin: 0; border: 1px solid silver;
+    	padding: 0;
+    	font-size: 100%;
+    	font-family: Arial, Helvetica, sans-serif;
+    }
+    input.button{
+    	-moz-border-radius: 4px;
+    	width: 120px;
+    	border: 1px solid silver;
+    }
+		h1{ margin: 0; padding: 0 1em; font-size: 150%;}
 		h2{ font-size: 130%; margin: 0; text-align: center;}
 
-		a{text-decoration: none;}
+		a{text-decoration: none; font-size:100%;}
 		img{border: none;}
 
 		/* Main Navigation across the top */
 		.nav{padding: 0; margin: 0 0 1em 0; }
-		.nav li{display: inline; }
+		.nav li{display: inline; font-size:<%= isMobile ? "300%" : "100%" %>;}
 		.nav a{padding: 0 0.5em; border: 1px solid silver;}
 		.nav a:hover,
 		.nav a:focus{background-color: silver; border: 1px solid gray;}
 		.nav.secondary {float: right;}
 
-		#content{width: 80%; margin: 0 auto; font-size: 90%;}
-
-		fieldset{
-			margin: 1%;
-			padding: 1%;
-			-moz-border-radius: 10px;
-			border: 1.5px solid #DDD;
-			background-color: #EEE;}
-		legend{
-			border: 1px solid #CCC;
-			-moz-border-radius: 10px;
-			padding: 0 1em;
-			background-color: #CCC;
-		}
-		textarea,
-		input[type='text'],
-		input[type='password']{
-			width: 100%;
-			margin: 0; border: 1px solid silver;
-			padding: 0;
-			font-size: 100%;
-			font-family: Arial, Helvetica, sans-serif;
-		}
-
-		input.button{
-			-moz-border-radius: 4px;
-			width: 120px;
-			border: 1px solid silver;
-		}
+		#content{margin: 0 auto; font-size: 90%;}
 
 		/* Add/Edit page specific settings */
 		.col1,
 		.col2{float: left; width: 49.5%;}
 
-		.buttons{clear: both; text-align: right;}
-		table{border-collapse: collapse; width: 100%; clear: both;}
+		.buttons{clear: both; text-align: right;margin-right:20px;}
+		table{border-collapse: collapse; clear: both;}
 		tr{}
 
 		/* List page specific settings */
-		table.listview tr{
+
+		fieldset table {width:100%;}
+		fieldset .labelcol {width:100px;}
+		table.listview tr td {
 			border: 1px solid #36c;
-			border-style: solid none;
+			border-style: none none solid none;
+			white-space:nowrap;
+			font-size:<%= isMobile ? "300%" : "100%" %>;
 		}
 		table.listview tr:hover{
 			background-color: #F0F0F0;
@@ -385,6 +247,7 @@ org.openmdx.base.exception.*
 		div.letterBar {
 			padding: 0.2em 0;
 			text-align: center;
+			line-height:5.6em;
 		}
 		div.letterBar a,
 		div.letterBar a:link,
@@ -392,7 +255,7 @@ org.openmdx.base.exception.*
 			padding: 0em 0.3em;
 			border: 1px solid gray;
 			-moz-border-radius: 6px;
-			margin: 0 2px;
+			margin: 0 5px;
 		}
 		div.letterBar a:hover,
 		div.letterBar a:focus{
@@ -401,6 +264,7 @@ org.openmdx.base.exception.*
 
 		div.letterBar a.current {
 			background-color: #F0F0F0;
+			font-size:<%= isMobile ? "600%" : "150%" %>;
 		}
 	</style>
 	<title>openCRX - Address Book</title>
@@ -412,30 +276,16 @@ org.openmdx.base.exception.*
 	<meta name="forClass" content="org:opencrx:kernel:account1:LegalEntity">
 	<meta name="forClass" content="org:opencrx:kernel:account1:Group">
 	<meta name="forClass" content="org:opencrx:kernel:account1:UnspecifiedAccount">
-  <meta name="order" content="org:opencrx:kernel:account1:Segment:addressBook">
-  <meta name="order" content="org:opencrx:kernel:account1:Contact:addressBook">
-  <meta name="order" content="org:opencrx:kernel:account1:LegalEntity:addressBook">
-  <meta name="order" content="org:opencrx:kernel:account1:Group:addressBook">
-  <meta name="order" content="org:opencrx:kernel:account1:UnspecifiedAccount:addressBook">
+	<meta name="order" content="org:opencrx:kernel:account1:Segment:addressBook">
+	<meta name="order" content="org:opencrx:kernel:account1:Contact:addressBook">
+	<meta name="order" content="org:opencrx:kernel:account1:LegalEntity:addressBook">
+	<meta name="order" content="org:opencrx:kernel:account1:Group:addressBook">
+	<meta name="order" content="org:opencrx:kernel:account1:UnspecifiedAccount:addressBook">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<div id="header" style="padding:10px 0px 10px 0px;">
-		<table dir="ltr" id="headerlayout" style="position:relative;">
-		  <tr id="headRow">
-			<td id="head" colspan="2">
-			  <table id="info">
-				<tr>
-				  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-				  <td id="headerCellMiddle"><h1>Address Book</h1></td>
-				  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-				</tr>
-			  </table>
-			</td>
-		  </tr>
-		</table>
-	</div>
+    	<div id="content" style="padding:0.0em 0px 0.0em; margin:0;">
 <%
 		// Search
 		if(
@@ -451,95 +301,107 @@ org.openmdx.base.exception.*
 				startWith = "A";
 			}
 %>
-			<ul class="nav">
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newContact" %>">New Contact</a></li>
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newLegalEntity" %>">New Legal Entity</a></li>
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newGroup" %>">New Group</a></li>
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newUnspecifiedAccount" %>">New Unspecified Account</a></li>
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=export&startWith=" + URLEncoder.encode(startWith) + "&max=" + max  %>">Export</a></li>
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=export*" %>">Export 500</a></li>
-				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit"  %>">Exit</a></li>
-			</ul>
-			<div class="letterBar">
+			<table>
+				<tr><td>
+					<ul class="nav">
+						<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit"  %>">&nbsp;&nbsp;&nbsp;Exit&nbsp;&nbsp;&nbsp;</a></li>
+						<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newContact" %>">New Contact</a></li>
+						<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newLegalEntity" %>">New Legal</a></li>
+						<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newGroup" %>">New Group</a></li>
+						<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newUnspecifiedAccount" %>">New Unspecified</a></li>
+					</ul>
+				</td></tr>
+				<tr><td>
+					<div class="letterBar" style="line-height:<%= isMobile ? "6em" : "2em" %>;">
 <%
-			for(int i = 0; i < 26; i++) {
-				char letter =  (char)('A' + i) ;
+						for(int i = 0; i < 26; i++) {
+							char letter =  (char)('A' + i) ;
 %>
-				<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + letter %>" style="font-size:17px;" class="current"><%= "" + letter %></a>
+							<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + letter %>" class="current"><%= "" + letter %></a>
 <%
-			}
+						}
 %>
-			</div>
-			<p />
-			<div class="letterBar">
+					</div>
+	  			</td></tr>
+				<tr><td>
+					<fieldset style="background-color: white;margin:0;">
+						<legend style="font-size:<%= isMobile ? "600%" : "150%" %>;"><%= startWith %></legend>
+						<table class="listview" width="100%">
+							<tr style="background-color: lightgrey;">
+								<td>Full name</td>
+								<td align="left">Phone / E-Mail</td>
+								<td align="left">Postal</td>
+								<td align="center">&nbsp;<br />&nbsp;</td>
+								<td align="center"></td>
+							</tr>
 <%
-			for(int i = 0; i < 26; i++) {
-				char letter =  (char)('A' + i) ;
+							app.resetPmData();
+							short locale =  app.getCurrentLocaleAsIndex();
+							String localeAsString =  app.getCurrentLocaleAsString();
+							String iStart = startWith;
+							int n = 0;
+							while(iStart.compareTo("ZZ") <= 0) {
+								org.opencrx.kernel.account1.cci2.AccountQuery query = accountPkg.createAccountQuery();
+								query.thereExistsFullName().like("(?i)" + iStart + ".*");
+								query.orderByFullName().ascending();
+								for(Iterator ai = accountSegment.getAccount(query).iterator(); ai.hasNext(); ) {
+									org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)ai.next();
+									org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getMainAddresses(account);
+									String businessEmail = addresses[Accounts.MAIL_BUSINESS] == null ? null : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress();
+									String homeEmail = addresses[Accounts.MAIL_HOME] == null ? null : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_HOME]).getEmailAddress();
+									String businessPhone = addresses[Accounts.PHONE_BUSINESS] == null ? null : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_BUSINESS], locale, localeAsString, app);
+									String homePhone = addresses[Accounts.PHONE_HOME] == null ? null : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_HOME], locale, localeAsString, app);
+									String mobilePhone = addresses[Accounts.MOBILE] == null ? null : app.getPortalExtension().getTitle(addresses[Accounts.MOBILE], locale, localeAsString, app);
 %>
-				<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + startWith.substring(0,1) + letter %>" style="font-size:11px;" class="current"><%= startWith.substring(0,1) + letter %></a>
+									<tr>
+										<td align="left" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>';"><%= account.getFullName() %></td>
+										<td align="left"><%= (businessPhone == null ? "" : "<a href='tel:" + businessPhone + "'>tel:" + businessPhone + "</a>*<br />" ) + (homePhone == null ? "" : "<a href='tel:" + homePhone + "'>tel:" + homePhone + "</a><br />")  + (mobilePhone == null ? "" : "<a href='tel:" + mobilePhone + "'>tel:" + mobilePhone + "</a><br />") + (mobilePhone == null ? "" : "<a href='sms:" + mobilePhone + "'>sms:" + mobilePhone + "</a><br />") + (businessEmail == null ? "" : "<a href='mailto:" + businessEmail + "'>" + (businessEmail.length() > 30 ? businessEmail.substring(0,30) + "*..." : businessEmail + "*") + "</a><br />") + (homeEmail == null ? "" : "<a href='mailto:" + homeEmail + "'>" + (homeEmail.length() > 30 ? homeEmail.substring(0,30) + "..." : homeEmail) + "</a>") %></td>
+										<td><%= (addresses[Accounts.POSTAL_BUSINESS] == null ? "" : app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_BUSINESS], locale, localeAsString, app) +  "<br />") + (addresses[Accounts.POSTAL_HOME] == null ? "" : app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_HOME], locale, localeAsString, app)) %></td>
+										<td align="center">
+											<a href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=vcard&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>'><img src='../../images/vcard.gif' alt='VCard' /></a>
+										</td>
+									</tr>
 <%
-			}
+									n++;
+									if(n > max)  break;
+								}
+								if(n > max) break;
+								if(iStart.length() == 1) {
+									iStart = "" + (char)(iStart.charAt(0) + 1);
+								}
+								else {
+									if(iStart.charAt(1) == 'Z') {
+										iStart = "" + (char)(iStart.charAt(0) + 1);
+									}
+									else {
+										iStart = "" + iStart.charAt(0) + (char)(iStart.charAt(1) + 1);
+									}
+								}
+							}
 %>
-			</div>
-			<fieldset style="background-color: white;">
-				<legend><%= startWith %></legend>
-				<table class="listview">
-					<tr>
-						<td>Full name</td>
-						<td>Postal Address Work</td>
-						<td>Postal Address Home</td>
-						<td>Phone Work / Home</td>
-						<td>Email Work / Home</td>
-						<td>&nbsp;<br />&nbsp;</td>
-						<td></td>
-					</tr>
+					   </table>
+					</fieldset>
+				</td></tr>
+				<tr><td style="white-space:normal;">
+					<div class="letterBar" style="line-height:<%= isMobile ? "6em" : "2em" %>;">
+						<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=50"  %>" class="current">50</a>
+						<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=100"  %>" class="current">100</a>
+						<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=200"  %>" class="current">200</a>
+						<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=500"  %>" class="current">500</a>&nbsp;&nbsp;&nbsp;
+					</div>
+					<p>
+					<div class="letterBar" style="line-height:<%= isMobile ? "6em" : "2em" %>;">
 <%
-					app.resetPmData();
-					org.opencrx.kernel.account1.cci2.AccountQuery query = accountPkg.createAccountQuery();
-					short locale =  app.getCurrentLocaleAsIndex();
-					String localeAsString =  app.getCurrentLocaleAsString();
-					query.thereExistsFullName().like("(?i)" + startWith + ".*");
-					query.orderByFullName().ascending();
-					int n = 0;
-					for(Iterator ai = accountSegment.getAccount(query).iterator(); ai.hasNext(); ) {
-						org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)ai.next();
-						org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getMainAddresses(account);
-						String businessEmail = addresses[Accounts.MAIL_BUSINESS] == null ? null : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress();
-						String homeEmail = addresses[Accounts.MAIL_HOME] == null ? null : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_HOME]).getEmailAddress();
+						for(int i = 0; i < 26; i++) {
+							char letter =  (char)('A' + i) ;
 %>
-						<tr onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>';">
-							<td><%= account.getFullName() %></td>
-							<td><%= addresses[Accounts.POSTAL_BUSINESS] == null ? "-" : app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_BUSINESS], locale, localeAsString, app) %></td>
-							<td><%= addresses[Accounts.POSTAL_HOME] == null ? "-" : app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_HOME], locale, localeAsString, app) %></td>
-							<td><%= (addresses[Accounts.PHONE_BUSINESS] == null ? "- / " : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_BUSINESS], locale, localeAsString, app) + " / <br />" ) + (addresses[Accounts.PHONE_HOME] == null ? "-" : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_HOME], locale, localeAsString, app)) %></td>
-							<td><%= (businessEmail == null ? "- / " : "<a href='mailto:" + businessEmail + "'>" + businessEmail + "</a> /  <br />") + (homeEmail == null ? "-" : "<a href='mailto:" + homeEmail + "'>" + homeEmail + "</a>") %></td>
-							<td>
+							<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + startWith.substring(0,1) + letter %>" class="current"><%= startWith.substring(0,1) + letter %></a>
 <%
-                if(account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+						}
 %>
-							    <a href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=vcard&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>'><img src='../../images/vcard.gif' alt='VCard' /></a>
-<%
-                }
-%>
-							</td>
-						</tr>
-<%
-						n++;
-						if(n > max)  break;
-					}
-%>
-					<tr>
-						<td colspan="6">
-							<div class="letterBar">
-								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=50"  %>">50</a>
-								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=100"  %>">100</a>
-								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=200"  %>">200</a>
-								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=500"  %>">500</a>&nbsp;&nbsp;&nbsp;
-							</div>
-						</td>
-					</tr>
-			   </table>
-			</fieldset>
+					</div>
+				</td></tr>
+		  	</table>
 <%
 		}
 		// Account details
@@ -581,6 +443,7 @@ org.openmdx.base.exception.*
 				try {
 					UUIDGenerator uuids = UUIDs.getGenerator();
 					if(account == null) {
+						pm.currentTransaction().begin();
 						if("newContact".equals(accountXri)) {
 							account = accountPkg.getContact().createContact();
 						}
@@ -598,7 +461,6 @@ org.openmdx.base.exception.*
 						}
 						account.refInitialize(false, false);
 						try {
-							pm.currentTransaction().begin();
 							accountSegment.addAccount(
 								false,
 								uuids.next().toString(),
@@ -930,7 +792,7 @@ org.openmdx.base.exception.*
 			<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 			<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 			<div class="col1">
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 <%
 					if(
 						"newContact".equals(accountXri) ||
@@ -941,7 +803,7 @@ org.openmdx.base.exception.*
 						<legend>Person</legend>
 						<table>
 							<tr>
-								<td><label for="salutation">Salutation:</label></td>
+								<td class="labelcol"><label for="salutation">Salutation:</label></td>
 								<td>
 									<select id="salutation" name="salutation">
 <%
@@ -980,17 +842,17 @@ org.openmdx.base.exception.*
 %>
 						<legend>Name</legend>
 						<table>
-							<tr><td><label for="name">Name:</label></td>
+							<tr><td class="labelcol"><label for="name">Name:</label></td>
 							<td><input type="text" id="name" name="name"  value="<%= group == null || group.getName() == null ? "" : group.getName() %>"/></td></tr>
 						</table>
 <%
 					}
 %>
 				</fieldset>
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 					<legend>Phone</legend>
 					<table>
-						<tr><td><label for="workPhone">Work Phone:</label></td>
+						<tr><td class="labelcol"><label for="workPhone">Work Phone:</label></td>
 						<td><input type="text" id="workPhone" name="workPhone"  value="<%= addresses[Accounts.PHONE_BUSINESS] == null ? "" : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_BUSINESS], locale, localeAsString, app) %>"/></td></tr>
 						<tr><td><label for="homePhone">Home Phone:</label></td>
 						<td><input type="text" id="homePhone" name="homePhone"  value="<%= addresses[Accounts.PHONE_HOME] == null ? "" : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_HOME], locale, localeAsString, app) %>"/></td></tr>
@@ -1000,30 +862,30 @@ org.openmdx.base.exception.*
 						<td><input type="text" id="otherPhone" name="otherPhone"  value="<%= addresses[Accounts.PHONE_OTHER] == null ? "" : app.getPortalExtension().getTitle(addresses[Accounts.PHONE_OTHER], locale, localeAsString, app) %>"/></td></tr>
 					</table>
 				</fieldset>
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 					<legend>Other</legend>
 					<label for="notes">Notes:</label>
 					<textarea name="notes" id="notes" rows="10" cols="25"><%= account == null || account.getDescription() == null ? "" : account.getDescription() %></textarea>
 				</fieldset>
 			</div>
 			<div class="col2">
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 					<legend>Email</legend>
 					<table>
-						<tr><td><label for="businessEmail">Work email:</label></td><td><input type="text" id="businessEmail" name="businessEmail"  value="<%= addresses[Accounts.MAIL_BUSINESS] == null ? "" : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress() %>"/></td></tr>
+						<tr><td class="labelcol"><label for="businessEmail">Work email:</label></td><td><input type="text" id="businessEmail" name="businessEmail"  value="<%= addresses[Accounts.MAIL_BUSINESS] == null ? "" : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress() %>"/></td></tr>
 						<tr><td><label for="homeEmail">Home email:</label></td><td><input type="text" id="homeEmail" name="homeEmail"  value="<%= addresses[Accounts.MAIL_HOME] == null ? "" : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_HOME]).getEmailAddress() %>"/></td></tr>
 					</table>
 				</fieldset>
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 					<legend>Web</legend>
 					<table>
-						<tr><td><label for="businessWeb">Work web:</label></td><td><input type="text" id="businessWeb" name="businessWeb"  value="<%= addresses[Accounts.WEB_BUSINESS] == null ? "" : ((org.opencrx.kernel.address1.jmi1.WebAddressable)addresses[Accounts.WEB_BUSINESS]).getWebUrl() %>"/></td></tr>
+						<tr><td class="labelcol"><label for="businessWeb">Work web:</label></td><td><input type="text" id="businessWeb" name="businessWeb"  value="<%= addresses[Accounts.WEB_BUSINESS] == null ? "" : ((org.opencrx.kernel.address1.jmi1.WebAddressable)addresses[Accounts.WEB_BUSINESS]).getWebUrl() %>"/></td></tr>
 						<tr><td><label for="homeWeb">Home web:</label></td><td><input type="text" id="homeWeb" name="homeWeb"  value="<%= addresses[Accounts.WEB_HOME] == null ? "" : ((org.opencrx.kernel.address1.jmi1.WebAddressable)addresses[Accounts.WEB_HOME]).getWebUrl() %>"/></td></tr>
 					</table>
 				</fieldset>
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 					<legend>Address</legend>
-					<table>
+					<table style="width:100%;">
 						<tr>
 <%
 							// Business Postal
@@ -1075,8 +937,8 @@ org.openmdx.base.exception.*
 								} catch(Exception e) {}
 							}
 %>
-							<td><label for="businessPostalAddressLines">Work:</label><textarea name="businessPostalAddressLines" id="businessPostalAddressLines" rows="2" cols="25"><%= businessPostalAddressLines %></textarea></td>
-							<td><label for="homePostalAddressLines">Home:</label><textarea name="homePostalAddressLines" id="homePostalAddressLines" rows="2" cols="25"><%= homePostalAddressLines %></textarea></td>
+							<td><label for="businessPostalAddressLines">Work:</label><br><textarea name="businessPostalAddressLines" id="businessPostalAddressLines" rows="2" cols="25"><%= businessPostalAddressLines %></textarea></td>
+							<td><label for="homePostalAddressLines">Home:</label><br><textarea name="homePostalAddressLines" id="homePostalAddressLines" rows="2" cols="25"><%= homePostalAddressLines %></textarea></td>
 						</tr>
 						<tr>
 							<td><textarea name="businessPostalStreet" id="businessPostalStreet" rows="2" cols="25"><%= businessPostalStreet %></textarea></td>
@@ -1088,7 +950,7 @@ org.openmdx.base.exception.*
 						</tr>
 					</table>
 				</fieldset>
-				<fieldset>
+				<fieldset style="margin:5px 2px 5px 2px;">
 					<legend>Categories</legend>
 <%
 						StringBuilder categories = new StringBuilder();
@@ -1114,8 +976,9 @@ org.openmdx.base.exception.*
 <%
 		}
 %>
-		</body>
-		</html>
+    </div> <!-- content -->
+</body>
+</html>
 <%
 	}
 %>

@@ -159,7 +159,7 @@
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfGPGd7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
           <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGPGt7NEdmKapscEl8OLg" x="700" y="5267" width="4859" height="1266"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGPGt7NEdmKapscEl8OLg" x="700" y="5267" width="5785" height="1266"/>
         </children>
         <children xmi:id="_JfGPJ97NEdmKapscEl8OLg" targetEdges="_JfMVvd7NEdmKapscEl8OLg">
           <children xmi:id="_JfMVkN7NEdmKapscEl8OLg" type="ImageCompartment">
@@ -231,8 +231,8 @@
           <children xmi:id="_JfMV9N7NEdmKapscEl8OLg" visible="false" type="StructureCompartment" element="_3C7B8A60016D415A99CD0095">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JfMV9d7NEdmKapscEl8OLg" canonical="false"/>
           </children>
-          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfMV6N7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="13434879" lineColor="3342489" showStereotype="Text"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfMV6d7NEdmKapscEl8OLg" x="702" y="6937" width="4838" height="1532"/>
+          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfMV6N7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="13434879" lineColor="3342489" showStereotype="Text"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfMV6d7NEdmKapscEl8OLg" x="702" y="6937" width="5790" height="1532"/>
         </children>
         <children xmi:id="_qmW9AB5CEdqET7ZHRltKzA" sourceEdges="_uEsFEB5CEdqET7ZHRltKzA" element="_qlmIAB5CEdqET7ZHRltKzA">
           <children xmi:id="_qmdDoB5CEdqET7ZHRltKzA" type="ImageCompartment" element="_qlmIAB5CEdqET7ZHRltKzA">
@@ -253,7 +253,7 @@
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_qmdDqx5CEdqET7ZHRltKzA"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_qmW9AR5CEdqET7ZHRltKzA" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="13434879" lineColor="3342489" showStereotype="Text"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_qmW9Ah5CEdqET7ZHRltKzA" x="5938" y="6959" width="3228" height="1246"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_qmW9Ah5CEdqET7ZHRltKzA" x="6890" y="6959" width="3228" height="1246"/>
         </children>
         <children xmi:id="_wTC50AjiEd2Kid2QNgKMng" targetEdges="_uEsFEB5CEdqET7ZHRltKzA">
           <children xmi:id="_wTC50QjiEd2Kid2QNgKMng" type="ImageCompartment">
@@ -284,7 +284,7 @@
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_wTC53QjiEd2Kid2QNgKMng" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
           <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wTC53gjiEd2Kid2QNgKMng" x="5968" y="5251" width="3249" height="1271"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wTC53gjiEd2Kid2QNgKMng" x="6920" y="5251" width="3249" height="1271"/>
         </children>
         <styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_ITQuDd7NEdmKapscEl8OLg"/>
         <edges xmi:id="_JfMVq97NEdmKapscEl8OLg" element="_3C7B8A60016D415745F10143" source="_JfMVnN7NEdmKapscEl8OLg" target="_JfGPCd7NEdmKapscEl8OLg">
@@ -390,6 +390,8 @@
       </generalization>
       <ownedAttribute xmi:id="_s4RV8JTKEdqX-OMBVTxzmw" name="lastLoginAt">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B630802BB?w3c/w3c/dateTime"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_05Kq4F1ZEd25QKCNQi9hiQ" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_05A54F1ZEd25QKCNQi9hiQ"/>
       </ownedAttribute>
     </ownedMember>
     <ownedMember xmi:type="uml:Association" xmi:id="_3C7B8A60016D41826973019E" name="PrincipalGroupHasGrantedRole" memberEnd="_3C7B8A60016D418269730357 _3C7B8A60016D418269730361">

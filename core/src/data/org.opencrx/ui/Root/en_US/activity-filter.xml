@@ -23,7 +23,7 @@
 												<_item>Activity Filters</_item>
 											</label>
 											<order>
-												<_item>20</_item>
+												<_item>0</_item>
 												<_item>0</_item>
 												<_item>50</_item>
 											</order>
@@ -177,7 +177,7 @@
 												<_item>0</_item>
 												<_item>20</_item>
 											</order>
-											<showMaxMember>11</showMaxMember>
+											<showMaxMember>10</showMaxMember>
 											<maxMember>16</maxMember>
 										</_object>
 										<_content/>

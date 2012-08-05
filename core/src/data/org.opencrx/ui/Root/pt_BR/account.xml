@@ -299,10 +299,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:master" _operation="create">
                     <_object>
                       <label>
-                        <_item>Mestre</_item>
+                        <_item>Principal</_item>
                       </label>
                       <toolTip>
-                        <_item>Mestre</_item>
+                        <_item>Principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -530,10 +530,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createQuote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar Quota</_item>
+                        <_item>Criar Oferta</_item>
                       </label>
                       <toolTip>
-                        <_item>Criar Quota</_item>
+                        <_item>Criar Oferta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -552,10 +552,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateQuoteParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome da Quota</_item>
+                        <_item>Nome da Proposta</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome da Quota</_item>
+                        <_item>Nome da Proposta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -596,10 +596,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateQuoteResult:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Quota</_item>
+                        <_item>Proposta</_item>
                       </label>
                       <toolTip>
-                        <_item>Quota</_item>
+                        <_item>Proposta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -771,6 +771,9 @@
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard:Group:in" _operation="create">
                     <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
                       <toolTip>
                         <_item>Entrada</_item>
                       </toolTip>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.31 2008/07/07 06:06:29 cmu Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.37 2008/08/27 09:30:31 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/07 06:06:29 $
+ * Date:        $Date: 2008/08/27 09:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -167,7 +167,8 @@ org.openmdx.base.text.conversion.*
 		String filterName,
 		org.opencrx.kernel.account1.jmi1.AccountFilterProperty[] filterProperties,
 		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.account1.jmi1.Segment segment
+		org.opencrx.kernel.account1.jmi1.Segment segment,
+		List allUsers
 	) {
 		org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilter = findAccountFilter(
 			filterName,
@@ -182,18 +183,14 @@ org.openmdx.base.text.conversion.*
 			accountFilter = accountPackage.getAccountFilterGlobal().createAccountFilterGlobal();
 			accountFilter.refInitialize(false, false);
 			accountFilter.setName(filterName);
-			accountFilter.getOwningGroup().addAll(
-				segment.getOwningGroup()
-			);
+			accountFilter.getOwningGroup().addAll(allUsers);
 			segment.addAccountFilter(
 				false,
 				UUIDConversion.toUID(uuids.next()),
 				accountFilter
 			);
 			for(int i = 0; i < filterProperties.length; i++) {
-				filterProperties[i].getOwningGroup().addAll(
-					segment.getOwningGroup()
-				);
+				filterProperties[i].getOwningGroup().addAll(allUsers);
 				accountFilter.addAccountFilterProperty(
 					false,
 					UUIDConversion.toUID(uuids.next()),
@@ -215,7 +212,8 @@ org.openmdx.base.text.conversion.*
 		String filterName,
 		org.opencrx.kernel.contract1.jmi1.ContractFilterProperty[] filterProperties,
 		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.contract1.jmi1.Segment segment
+		org.opencrx.kernel.contract1.jmi1.Segment segment,
+		List allUsers
 	) {
 		org.opencrx.kernel.contract1.jmi1.ContractFilterGlobal contractFilter = findContractFilter(
 			filterName,
@@ -230,18 +228,14 @@ org.openmdx.base.text.conversion.*
 			contractFilter = contractPackage.getContractFilterGlobal().createContractFilterGlobal();
 			contractFilter.refInitialize(false, false);
 			contractFilter.setName(filterName);
-			contractFilter.getOwningGroup().addAll(
-				segment.getOwningGroup()
-			);
+			contractFilter.getOwningGroup().addAll(allUsers);
 			segment.addContractFilter(
 				false,
 				UUIDConversion.toUID(uuids.next()),
 				contractFilter
 			);
 			for(int i = 0; i < filterProperties.length; i++) {
-				filterProperties[i].getOwningGroup().addAll(
-					segment.getOwningGroup()
-				);
+				filterProperties[i].getOwningGroup().addAll(allUsers);
 				contractFilter.addFilterProperty(
 					false,
 					UUIDConversion.toUID(uuids.next()),
@@ -263,7 +257,8 @@ org.openmdx.base.text.conversion.*
 		String filterName,
 		org.opencrx.kernel.activity1.jmi1.ActivityFilterProperty[] filterProperties,
 		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.activity1.jmi1.Segment segment
+		org.opencrx.kernel.activity1.jmi1.Segment segment,
+		List allUsers
 	) {
 		org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal activityFilter = findActivityFilter(
 			filterName,
@@ -278,18 +273,14 @@ org.openmdx.base.text.conversion.*
 			activityFilter = activityPackage.getActivityFilterGlobal().createActivityFilterGlobal();
 			activityFilter.refInitialize(false, false);
 			activityFilter.setName(filterName);
-			activityFilter.getOwningGroup().addAll(
-				segment.getOwningGroup()
-			);
+			activityFilter.getOwningGroup().addAll(allUsers);
 			segment.addActivityFilter(
 				false,
 				UUIDConversion.toUID(uuids.next()),
 				activityFilter
 			);
 			for(int i = 0; i < filterProperties.length; i++) {
-				filterProperties[i].getOwningGroup().addAll(
-					segment.getOwningGroup()
-				);
+				filterProperties[i].getOwningGroup().addAll(allUsers);
 				activityFilter.addFilterProperty(
 					false,
 					UUIDConversion.toUID(uuids.next()),
@@ -310,7 +301,8 @@ org.openmdx.base.text.conversion.*
 	public org.opencrx.kernel.document1.jmi1.DocumentFolder initDocumentFolder(
 		String documentFolderName,
 		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.document1.jmi1.Segment segment
+		org.opencrx.kernel.document1.jmi1.Segment segment,
+		List allUsers
 	) {
 		org.opencrx.kernel.document1.jmi1.DocumentFolder documentFolder = findDocumentFolder(
 			documentFolderName,
@@ -325,9 +317,7 @@ org.openmdx.base.text.conversion.*
   		documentFolder = documentPackage.getDocumentFolder().createDocumentFolder();
   		documentFolder.refInitialize(false, false);
   		documentFolder.setName(documentFolderName);
-  		documentFolder.getOwningGroup().addAll(
-  			segment.getOwningGroup()
-  		);
+  		documentFolder.getOwningGroup().addAll(allUsers);
   		segment.addFolder(
   			false,
   			UUIDConversion.toUID(uuids.next()),
@@ -350,7 +340,8 @@ org.openmdx.base.text.conversion.*
 		String documentMimeType,
 		org.opencrx.kernel.document1.jmi1.DocumentFolder documentFolder,
 		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.document1.jmi1.Segment segment
+		org.opencrx.kernel.document1.jmi1.Segment segment,
+		List allUsers
 	) {
 		org.opencrx.kernel.document1.jmi1.Document document = findDocument(
 			documentName,
@@ -366,9 +357,7 @@ org.openmdx.base.text.conversion.*
 			document.refInitialize(false, false);
 			document.setName(documentName);
 			document.setTitle(documentName);
-			document.getOwningGroup().addAll(
-				segment.getOwningGroup()
-			);
+			document.getOwningGroup().addAll(allUsers);
 			segment.addDocument(
 				false,
 				UUIDConversion.toUID(uuids.next()),
@@ -383,9 +372,7 @@ org.openmdx.base.text.conversion.*
 					getServletContext().getResource("/documents/" + documentFileName)
 				)
 			);
-			documentRevision.getOwningGroup().addAll(
-				segment.getOwningGroup()
-			);
+			documentRevision.getOwningGroup().addAll(allUsers);
 			document.addRevision(
 				false,
 				UUIDConversion.toUID(uuids.next()),
@@ -570,6 +557,24 @@ org.openmdx.base.text.conversion.*
 					providerName,
 					segmentName
 				);
+			org.opencrx.security.realm1.jmi1.PrincipalGroup usersPrincipalGroup =
+				org.opencrx.kernel.backend.SecureObject.initPrincipalGroup(
+					"Users",
+					pm,
+					providerName,
+					segmentName
+				);
+			org.opencrx.security.realm1.jmi1.PrincipalGroup administratorsPrincipalGroup =
+				org.opencrx.kernel.backend.SecureObject.initPrincipalGroup(
+					"Administrators",
+					pm,
+					providerName,
+					segmentName
+				);
+			List allUsers = new ArrayList();
+			allUsers.add(usersPrincipalGroup);
+			allUsers.add(administratorsPrincipalGroup);
+
 			org.opencrx.kernel.backend.Workflows.initWorkflows(
 				pm,
 				providerName,
@@ -665,7 +670,7 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker bugsAndFeaturesTracker =
 				org.opencrx.kernel.backend.Activities.initActivityTracker(
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES,
-					null,
+					allUsers,
 					pm,
 					providerName,
 					segmentName
@@ -673,7 +678,7 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker emailsTracker =
 				org.opencrx.kernel.backend.Activities.initActivityTracker(
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS,
-					null,
+					allUsers,
 					pm,
 					providerName,
 					segmentName
@@ -681,7 +686,7 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker tasksTracker =
 				org.opencrx.kernel.backend.Activities.initActivityTracker(
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_TASKS,
-					null,
+					allUsers,
 					pm,
 					providerName,
 					segmentName
@@ -689,7 +694,7 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker meetingsTracker =
 				org.opencrx.kernel.backend.Activities.initActivityTracker(
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS,
-					null,
+					allUsers,
 					pm,
 					providerName,
 					segmentName
@@ -697,7 +702,7 @@ org.openmdx.base.text.conversion.*
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker phoneCallsTracker =
 				org.opencrx.kernel.backend.Activities.initActivityTracker(
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS,
-					null,
+					allUsers,
 					pm,
 					providerName,
 					segmentName
@@ -715,7 +720,7 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES,
 				bugsAndFeaturesType,
 				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{bugsAndFeaturesTracker}),
-				null,
+				allUsers,
 				pm,
 				providerName,
 				segmentName
@@ -724,7 +729,7 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS,
 				emailsType,
 				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{emailsTracker}),
-				null,
+				allUsers,
 				pm,
 				providerName,
 				segmentName
@@ -733,7 +738,7 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS,
 				tasksType,
 				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{tasksTracker}),
-				null,
+				allUsers,
 				pm,
 				providerName,
 				segmentName
@@ -742,7 +747,7 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
 				meetingsType,
 				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{meetingsTracker}),
-				null,
+				allUsers,
 				pm,
 				providerName,
 				segmentName
@@ -751,7 +756,7 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS,
 				phoneCallsType,
 				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{phoneCallsTracker}),
-				null,
+				allUsers,
 				pm,
 				providerName,
 				segmentName
@@ -819,7 +824,8 @@ org.openmdx.base.text.conversion.*
 				ACCOUNT_FILTER_NAME_ALL,
 				new org.opencrx.kernel.account1.jmi1.AccountFilterProperty[]{},
 				pm,
-				accountSegment
+				accountSegment,
+				allUsers
 			);
 
 			// ContractFilter
@@ -844,7 +850,8 @@ org.openmdx.base.text.conversion.*
 					contractQueryFilterProperty
 				},
 				pm,
-				contractSegment
+				contractSegment,
+				allUsers
 			);
 
 			// CONTRACT_FILTER_NAME_WON_LEADS
@@ -869,7 +876,8 @@ org.openmdx.base.text.conversion.*
 					contractStateFilterProperty
 				},
 				pm,
-				contractSegment
+				contractSegment,
+				allUsers
 			);
 
 			// CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST
@@ -892,7 +900,8 @@ org.openmdx.base.text.conversion.*
 					contractQueryFilterProperty
 				},
 				pm,
-				contractSegment
+				contractSegment,
+				allUsers
 			);
 
 			// CONTRACT_FILTER_NAME_WON_OPPORTUNITIES
@@ -917,7 +926,8 @@ org.openmdx.base.text.conversion.*
 					contractStateFilterProperty
 				},
 				pm,
-				contractSegment
+				contractSegment,
+				allUsers
 			);
 
 			// CONTRACT_FILTER_NAME_QUOTE_FORECAST
@@ -940,7 +950,8 @@ org.openmdx.base.text.conversion.*
 					contractQueryFilterProperty
 				},
 				pm,
-				contractSegment
+				contractSegment,
+				allUsers
 			);
 
 			// CONTRACT_FILTER_NAME_WON_QUOTES
@@ -965,7 +976,8 @@ org.openmdx.base.text.conversion.*
 					contractStateFilterProperty
 				},
 				pm,
-				contractSegment
+				contractSegment,
+				allUsers
 			);
 
 			// ActivityFilter
@@ -984,7 +996,8 @@ org.openmdx.base.text.conversion.*
 					activityTypeFilterProperty
 				},
 				pm,
-				activitySegment
+				activitySegment,
+				allUsers
 			);
 
 			// ACTIVITY_FILTER_NAME_MEETINGS
@@ -1001,7 +1014,8 @@ org.openmdx.base.text.conversion.*
 					activityTypeFilterProperty
 				},
 				pm,
-				activitySegment
+				activitySegment,
+				allUsers
 			);
 
 			// ACTIVITY_FILTER_NAME_NEW_ACTIVITIES
@@ -1028,7 +1042,8 @@ org.openmdx.base.text.conversion.*
 					activityProcessStateFilterProperty
 				},
 				pm,
-				activitySegment
+				activitySegment,
+				allUsers
 			);
 
 			// ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES
@@ -1057,14 +1072,16 @@ org.openmdx.base.text.conversion.*
 					activityProcessStateFilterProperty
 				},
 				pm,
-				activitySegment
+				activitySegment,
+				allUsers
 			);
 
 			// Templates
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolder = initDocumentFolder(
 				REPORT_TEMPLATE_FOLDER_NAME,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateContractList = initDocument(
 				REPORT_TEMPLATE_NAME_CONTRACT_LIST,
@@ -1072,7 +1089,8 @@ org.openmdx.base.text.conversion.*
 				"application/x-excel",
 				templateFolder,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateContractWithPositionList = initDocument(
 				REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST,
@@ -1080,7 +1098,8 @@ org.openmdx.base.text.conversion.*
 				"application/x-excel",
 				templateFolder,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateActivityList = initDocument(
 				REPORT_TEMPLATE_NAME_ACTIVITY_LIST,
@@ -1088,7 +1107,8 @@ org.openmdx.base.text.conversion.*
 				"application/x-excel",
 				templateFolder,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateActivityWithFollowUpList = initDocument(
 				REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST,
@@ -1096,7 +1116,8 @@ org.openmdx.base.text.conversion.*
 				"application/x-excel",
 				templateFolder,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateAccountMemberList = initDocument(
 				REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST,
@@ -1104,7 +1125,8 @@ org.openmdx.base.text.conversion.*
 				"application/x-excel",
 				templateFolder,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateAccountList = initDocument(
 				REPORT_TEMPLATE_NAME_ACCOUNT_LIST,
@@ -1112,7 +1134,8 @@ org.openmdx.base.text.conversion.*
 				"application/x-excel",
 				templateFolder,
 				pm,
-				documentSegment
+				documentSegment,
+				allUsers
 			);
 
 			// ExportProfile
@@ -1234,7 +1257,6 @@ org.openmdx.base.text.conversion.*
 		}
 	}
 %>
-<!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
@@ -1242,32 +1264,20 @@ org.openmdx.base.text.conversion.*
 		body{font-family: Arial, Helvetica, sans-serif; padding: 0; margin:0;}
 		h1{ margin: 0.5em 0em; font-size: 150%;}
 		h2{ font-size: 130%; margin: 0.5em 0em; text-align: left;}
-		fieldset{
-			margin: 1%;
-			padding: 1%;
-			-moz-border-radius: 10px;
-			border: 1.5px solid #DDD;
-			background-color: #EEE;}
-		legend{
-			border: 1px solid #CCC;
-			-moz-border-radius: 10px;
-			padding: 0 1em;
-			background-color: #CCC;
-		}
-		textarea,
-		input[type='text'],
-		input[type='password']{
-			width: 100%;
-			margin: 0; border: 1px solid silver;
-			padding: 0;
-			font-size: 100%;
-			font-family: Arial, Helvetica, sans-serif;
-		}
-		input.button{
-			-moz-border-radius: 4px;
-			width: 120px;
-			border: 1px solid silver;
-		}
+    textarea,
+    input[type='text'],
+    input[type='password']{
+    	width: 100%;
+    	margin: 0; border: 1px solid silver;
+    	padding: 0;
+    	font-size: 100%;
+    	font-family: Arial, Helvetica, sans-serif;
+    }
+    input.button{
+    	-moz-border-radius: 4px;
+    	width: 120px;
+    	border: 1px solid silver;
+    }
 		.col1,
 		.col2{float: left; width: 49.5%;}
 	</style>
@@ -1281,21 +1291,30 @@ org.openmdx.base.text.conversion.*
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<div id="header" style="padding:10px 0px 10px 0px;">
-		<table dir="ltr" id="headerlayout" style="position:relative;">
-		  <tr id="headRow">
-			<td id="head" colspan="2">
-			  <table id="info">
-				<tr>
-				  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-				  <td id="headerCellMiddle"><h1>Segment Setup Wizard (<%= providerName + "/" + segmentName %>)</h1></td>
-				  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-				</tr>
-			  </table>
-			</td>
-		  </tr>
-		</table>
-	</div>
+<div id="container">
+	<div id="wrap">
+		<div id="header" style="height:90px;">
+      <div id="logoTable">
+        <table id="headerlayout">
+          <tr id="headRow">
+            <td id="head" colspan="2">
+              <table id="info">
+                <tr>
+                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+                  <td id="headerCellSpacerLeft"></td>
+                  <td id="headerCellMiddle">&nbsp;</td>
+                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="content-wrap">
+    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
+
 	<div class="col1">
 		<fieldset>
 			<legend>Activity and Incident Management</legend>
@@ -1650,7 +1669,12 @@ org.openmdx.base.text.conversion.*
 %>
 			<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" class="button" />
 			<%= currentUserIsAdmin ? "" : "<h2>This wizard requires admin permissions.</h2>" %>
+			<br>
 		</div>
 	</form>
+      </div> <!-- content -->
+    </div> <!-- content-wrap -->
+	<div> <!-- wrap -->
+</div> <!-- container -->
 </body>
 </html>

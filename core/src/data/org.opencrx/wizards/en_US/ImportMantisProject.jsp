@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ImportMantisProject.jsp,v 1.13 2008/06/26 00:34:33 wfro Exp $
+ * Name:        $Id: ImportMantisProject.jsp,v 1.17 2008/08/13 14:07:03 cmu Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2008/06/26 00:34:33 $
+ * Date:        $Date: 2008/08/13 14:07:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,7 +86,6 @@ org.openmdx.kernel.id.*
 	Texts_1_0 texts = app.getTexts();
 	javax.jdo.PersistenceManager pm = app.getPmData();
 %>
-<!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
@@ -188,22 +187,29 @@ org.openmdx.kernel.id.*
 			boolean invalidJdbcPassword = actionOk && ((jdbcPassword == null) || (jdbcPassword.length() == 0));
 %>
 
-<%@ include file="../../show-header.html" %>
-<div id="header" style="padding:10px 0px 10px 0px;">
-  <table id="headerlayout" style="position:relative;">
-    <tr id="headRow">
-      <td id="head" colspan="2">
-        <table id="info">
-          <tr>
-            <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX - limitless relationship management" title="" /></td>
-            <td id="headerCellMiddle"></td>
-            <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+<div id="container">
+	<div id="wrap">
+		<div id="header" style="height:90px;">
+      <div id="logoTable">
+        <table id="headerlayout">
+          <tr id="headRow">
+            <td id="head" colspan="2">
+              <table id="info">
+                <tr>
+                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+                  <td id="headerCellSpacerLeft"></td>
+                  <td id="headerCellMiddle">&nbsp;</td>
+                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+                </tr>
+              </table>
+            </td>
           </tr>
         </table>
-      </td>
-    </tr>
-  </table>
-</div>
+      </div>
+    </div>
+
+    <div id="content-wrap">
+    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 
 <form name="ImportMantisProject" accept-charset="UTF-8" method="POST" action="ImportMantisProject.jsp">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
@@ -216,16 +222,9 @@ org.openmdx.kernel.id.*
           <a href="../../helpJsCookie.html" target="_blank"><img class="popUpButton" src="../../images/help.gif" width="16" height="16" border="0" onclick="javascript:void(window.open('helpJsCookie.html', 'Help', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes,directories=no,location=no,width=400'));" alt="" /></a> <%= texts.getPageRequiresScriptText() %>
         </div>
       </noscript>
-      <table class="objectTitle">
-        <tr>
-          <td>
-            <div style="padding-left:5px; padding-bottom: 3px;">
-              Import Mantis Project
-            </div>
-          </td>
-        </tr>
-      </table>
-      <br />
+      <div id="etitle" style="height:20px;">
+        Import Mantis Project
+      </div>
 
       <div class="panel" id="panelObj0" style="display: block">
 		  <div class="fieldGroupName">Mantis</div>
@@ -389,5 +388,9 @@ org.openmdx.kernel.id.*
 	    ex.printStackTrace(new PrintWriter(out));
     }
 %>
+      </div> <!-- content -->
+    </div> <!-- content-wrap -->
+	<div> <!-- wrap -->
+</div> <!-- container -->
 </body>
 </html>

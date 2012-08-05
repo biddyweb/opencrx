@@ -66,7 +66,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:document" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наборы свойств</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наборы сойств</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderEntry" _operation="create">
                     <_object>
                       <label>
                         <_item>Документы</_item>
