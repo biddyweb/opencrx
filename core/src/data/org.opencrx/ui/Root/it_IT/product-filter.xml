@@ -17,7 +17,7 @@
                         <_item>Filtri Prodotto</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i filtri prodotto</_item>
+                        <_item>Filtri prodotto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -61,7 +61,7 @@
                         <_item>Prodotti filtrati</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i prodotti filtrati</_item>
+                        <_item>Prodotti filtrati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,7 +223,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductQueryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>PArametro filtro per Interrogazione</_item>
+                        <_item>Parametro filtro per Interrogazione</_item>
                       </label>
                       <toolTip>
                         <_item>Parametro filtro per Interrogazione</_item>

@@ -1,64 +1,62 @@
 package org.opencrx.application.imap;
 
-import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 
-import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.utils.Utils;
-import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
-import org.openmdx.kernel.id.UUIDs;
+import org.opencrx.application.adapter.AbstractServer;
+import org.opencrx.application.adapter.AbstractServlet;
 
-public class IMAPServlet extends HttpServlet {
+public class IMAPServlet extends AbstractServlet {
 
     //-----------------------------------------------------------------------
-    @Override
-    public void init(
-        ServletConfig config            
-    ) throws ServletException {
-        super.init();        
-        try {
-            Utils.getModel();
-            PersistenceManagerFactory persistenceManagerFactory = Utils.getPersistenceManagerFactory();
-            String providerName = config.getInitParameter("provider");
-            providerName = providerName == null 
-                ? "CRX" 
-                : (providerName.indexOf("/") > 0 ? providerName.substring(providerName.indexOf("/") + 1) : providerName);            
-            String portNumber = config.getInitParameter("port");
-            String isDebug = config.getInitParameter("debug");
-            String delayOnStartup = config.getInitParameter("delayOnStartup");
-            // Validate connection. This also initializes the factory
-            PersistenceManager pm = persistenceManagerFactory.getPersistenceManager(
-                SecurityKeys.ROOT_PRINCIPAL,
-                UUIDs.getGenerator().next().toString()
-            );
-            pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
-            );
-            IMAPServer.startServer(
-                persistenceManagerFactory,
-                providerName,
-                portNumber == null ? 143 : (portNumber.startsWith("imap:") ? Integer.valueOf(portNumber.substring(5)) : Integer.valueOf(portNumber)),
-                isDebug == null ? false : Boolean.valueOf(isDebug),
-                delayOnStartup == null ? 0 : Integer.valueOf(delayOnStartup)
-            );
-            try {
-                pm.close();
-            } 
-            catch(Exception e) {}
-        }
-        catch(Exception e) {
-            new ServiceException(e).log();
-            throw new ServletException("Can not initialize IMAP server", e);
-        }
+	@Override
+    public String getConfigurationId(
+    ) {
+		return "IMAPServlet";
     }
 
+    //-----------------------------------------------------------------------
+	@Override
+    public int getPortNumber(
+    	String configuredPortNumber
+    ) {
+		return configuredPortNumber == null ? 
+			143 : 
+				(configuredPortNumber.startsWith("imap:") ? 
+					Integer.valueOf(configuredPortNumber.substring(5)) : 
+						Integer.valueOf(configuredPortNumber));		
+    }
+
+    //-----------------------------------------------------------------------
+	@Override
+    public AbstractServer newServer(
+    	PersistenceManagerFactory pmf, 
+    	String providerName, 
+	    String bindAddress,
+	    int portNumber,
+	    String sslKeystoreFile,
+	    String sslKeystoreType,
+	    String sslKeystorePass,
+	    String sslKeyPass,
+    	boolean isDebug, 
+    	int delayOnStartup
+    ) {
+		return new IMAPServer(
+			pmf,
+			providerName,
+		    bindAddress,
+		    portNumber,
+		    sslKeystoreFile,
+		    sslKeystoreType,
+		    sslKeystorePass,
+		    sslKeyPass,
+			isDebug,
+			delayOnStartup
+		);
+    }
+        
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
     private static final long serialVersionUID = 3271417510604705711L;
-    
+
 }

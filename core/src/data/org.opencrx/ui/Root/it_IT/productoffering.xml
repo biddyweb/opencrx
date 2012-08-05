@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:itemNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numero Elemento</_item>
+                        <_item>Numero Articolo</_item>
                       </label>
                       <toolTip>
-                        <_item>Numero Elemento</_item>
+                        <_item>Numero Articolo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:itemNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>N. Elemento</_item>
+                        <_item>N. Articolo</_item>
                       </label>
                       <toolTip>
-                        <_item>Numero Elemento</_item>
+                        <_item>Numero articolo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:minPositions" _operation="create">
                     <_object>
                       <label>
-                        <_item>Righe Min</_item>
+                        <_item>Righe min.</_item>
                       </label>
                       <toolTip>
-                        <_item>Righe Min.</_item>
+                        <_item>Righe min.</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:maxPositions" _operation="create">
                     <_object>
                       <label>
-                        <_item>Righe Max</_item>
+                        <_item>Righe max</_item>
                       </label>
                       <toolTip>
-                        <_item>Righe Max</_item>
+                        <_item>Righe max</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:defaultPositions" _operation="create">
                     <_object>
                       <label>
-                        <_item>Righe Predefinite</_item>
+                        <_item>Righe predefinite</_item>
                       </label>
                       <toolTip>
-                        <_item>Righe Predefinite</_item>
+                        <_item>Righe predefinite</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:minQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Quantita&apos; Min</_item>
+                        <_item>Quantita&apos; min</_item>
                       </label>
                       <toolTip>
-                        <_item>Quantita&apos; Minima</_item>
+                        <_item>Quantita&apos; minima</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:maxQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Quantita&apos; Max</_item>
+                        <_item>Quantita&apos; max</_item>
                       </label>
                       <toolTip>
-                        <_item>Quantita&apos; Massima</_item>
+                        <_item>Quantita&apos; massima</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:defaultQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Quantita&apos; Predef.</_item>
+                        <_item>Quantita&apos; predef.</_item>
                       </label>
                       <toolTip>
-                        <_item>Quantita&apos; Predefinita</_item>
+                        <_item>Quantita&apos; predefinita</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:minMaxQuantityHandling" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gestione [min..max]</_item>
+                        <_item>gestione [min..max]</_item>
                       </label>
                       <toolTip>
-                        <_item>Gestione [min..max]</_item>
+                        <_item>gestione [min..max]</_item>
                       </toolTip>
                     </_object>
                     <_content/>

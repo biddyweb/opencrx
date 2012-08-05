@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailForwardWizard.jsp,v 1.4 2009/10/15 16:19:33 wfro Exp $
+ * Name:        $Id: EMailForwardWizard.jsp,v 1.5 2010/04/27 12:16:11 wfro Exp $
  * Description: EMailForwardToWizard
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:33 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -86,7 +86,7 @@ org.opencrx.kernel.backend.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -175,4 +175,7 @@ org.opencrx.kernel.backend.*
 	response.sendRedirect(
 		request.getContextPath() + "/" + nextAction.getEncodedHRef()
 	);
+	if(pm != null) {
+		pm.close();
+	}
 %>

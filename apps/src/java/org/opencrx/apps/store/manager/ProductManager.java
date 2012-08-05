@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: ProductManager.java,v 1.5 2009/05/24 12:49:36 wfro Exp $
+ * Name:        $Id: ProductManager.java,v 1.7 2009/11/27 18:23:05 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/24 12:49:36 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,8 +61,8 @@ import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.ObjectCollection;
 import org.opencrx.apps.store.common.PrimaryKey;
+import org.opencrx.apps.store.common.util.ApplicationContext;
 import org.opencrx.apps.store.objects.Product;
-import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.ProductClassification;
 import org.openmdx.base.exception.ServiceException;

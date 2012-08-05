@@ -8,8 +8,7 @@
                  org.opencrx.apps.store.objects.OrderItem,
                  org.opencrx.apps.store.manager.ProductManager,
                  org.opencrx.apps.store.objects.Product,
-                 org.opencrx.apps.store.common.util.*,
-                 org.opencrx.apps.utils.*"%>
+                 org.opencrx.apps.store.common.util.*,org.opencrx.apps.store.common.util.*"%>
 <%--
   Shows current orders of the user
   User: Omar Al Zabir

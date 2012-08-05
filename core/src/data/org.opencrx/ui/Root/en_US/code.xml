@@ -100,6 +100,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:CodeValueContainer:name">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Name</_item>
 											</toolTip>

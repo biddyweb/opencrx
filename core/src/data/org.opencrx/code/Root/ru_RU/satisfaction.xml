@@ -11,22 +11,22 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="satisfaction" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="satisfaction" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item>Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Неизвестно</_item>
@@ -37,57 +37,57 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Очень неудовл.</_item>
+                              <_item>Очень неуд.</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] Очень неудовл.</_item>
+                              <_item>[2] Очень неудовлетворен</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Неудовлетвор.</_item>
                             </shortText>
                             <longText>
-                              <_item>[3] Неудовлетвор.</_item>
+                              <_item>[3] Неудовлетворен</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Удовлетворительный</_item>
+                              <_item>Удовлетворен</_item>
                             </shortText>
                             <longText>
-                              <_item>[4] Удовлетворительный</_item>
+                              <_item>[4] Удовлетворен</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Очень хороший</_item>
+                              <_item>Очень доволен</_item>
                             </shortText>
                             <longText>
-                              <_item>[5] Очень хороший</_item>
+                              <_item>[5] Очень доволен</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Восторженный</_item>
+                              <_item>В восторге</_item>
                             </shortText>
                             <longText>
-                              <_item>[6] Восторженный</_item>
+                              <_item>[6] В восторге</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.41 2009/10/12 16:06:55 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.42 2010/03/25 10:09:36 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.42 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/12 16:06:55 $
+ * Date:        $Date: 2010/03/25 10:09:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,6 +81,7 @@ import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.loading.Classes;
@@ -128,34 +129,45 @@ public class WorkflowHandlerServlet
                 UserHome userHome = (UserHome)pm.getObjectById(
                     wfInstance.refGetPath().getParent().getParent()
                 );
-                ExecuteWorkflowParams params = basePackage.createExecuteWorkflowParams(
-                    null,
-                    null,
-                    wfInstance.getTargetObject(),
-                    // execute workflow with same eventId. This way the workflow
-                    // is executed in the same context, i.e. no new workflow instance is created
-                    wfInstance.refGetPath().getBase(),
-                    null,
-                    null,
-                    wfInstance.getProcess()
-                );
+                ContextCapable targetObject = null;
                 try {
-                    pm.currentTransaction().begin();
-                    userHome.executeWorkflow(params);
-                    pm.currentTransaction().commit();
-                    pm.refresh(wfInstance);
-                    // Successful execution if workflow was started (and completed)
-                    return wfInstance.getStartedOn() != null;
+                	targetObject = (ContextCapable)pm.getObjectById(
+	                	wfInstance.getTargetObject()
+	                );
+                } catch(Exception e) {}
+                if(targetObject != null) {
+	                ExecuteWorkflowParams params = basePackage.createExecuteWorkflowParams(
+	                    null,
+	                    targetObject,
+	                    // execute workflow with same eventId. This way the workflow
+	                    // is executed in the same context, i.e. no new workflow instance is created
+	                    wfInstance.refGetPath().getBase(),
+	                    null,
+	                    null,
+	                    wfInstance.getProcess()
+	                );
+	                try {
+	                    pm.currentTransaction().begin();
+	                    userHome.executeWorkflow(params);
+	                    pm.currentTransaction().commit();
+	                    pm.refresh(wfInstance);
+	                    // Successful execution if workflow was started (and completed)
+	                    return wfInstance.getStartedOn() != null;
+	                }
+	                catch(Exception e) {
+	                	SysLog.warning("Can not execute workflow. Exception occurred", "Workflow instance=" + wfInstance + "; home=" + userHome.refGetPath());
+	                	SysLog.warning(e.getMessage(), e.getCause());
+	                    try {
+	                        pm.currentTransaction().rollback();
+	                    } 
+	                    catch(Exception e0) {}
+	                    return false;
+	                }
                 }
-                catch(Exception e) {
-                	SysLog.warning("Can not execute workflow", wfInstance.getProcess().getName() + "; home=" + userHome.refMofId());
-                	SysLog.warning(e.getMessage(), e.getCause());
-                    try {
-                        pm.currentTransaction().rollback();
-                    } 
-                    catch(Exception e0) {}
-                    return false;
-                }                
+                else {
+                	SysLog.warning("Can not execute workflow. Target object not accessible", "Workflow instance=" + wfInstance + "; home=" + userHome.refGetPath());
+                    return false;                	
+                }
             }            
             // Asynchronous workflow
             else {

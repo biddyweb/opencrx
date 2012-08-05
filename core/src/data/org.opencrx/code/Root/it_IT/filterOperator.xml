@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="filterOperator" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="filterOperator" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[ 0] ND</_item>
@@ -26,7 +26,73 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="-1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>[ 1] Comprende</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[ 1] Comprende</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>[ 2] Maggiore_o_Uguale</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[ 2] Maggiore_o_Uguale</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>[ 3] Maggiore_di</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[ 3] Maggiore_di</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>[ 4] Compreso_Entro</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[ 4] Compreso_Entro</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>[ 5] Come</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[ 5] Come</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>[ 6] Suona_Come</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[ 6] Suona_Come</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="-1" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[-1] NON_PRESENTE_IN</_item>
@@ -37,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="-2" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="-2" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[-2] MINORE</_item>
@@ -48,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="-3" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="-3" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[-3] MINORE_O_UGUALE</_item>
@@ -59,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="-4" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="-4" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[-4] ESTERNO</_item>
@@ -70,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="-5" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="-5" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[-5] DIFFERENTE</_item>
@@ -81,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="-6" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="-6" _operation="create">
                           <_object>
                             <shortText>
                               <_item>[-6] SEMBRA_DIFFERENTE</_item>

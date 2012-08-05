@@ -238,10 +238,21 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>sistiert</_item>
+                              <_item>sistiert / warten</_item>
                             </shortText>
                             <longText>
-                              <_item>[04] Aktiv / sistiert</_item>
+                              <_item>[04]-a Aktiv / sistiert / warten</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>sistiert / in Bearbeitung</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[04]-b Aktiv / sistiert / in Bearbeitung</_item>
                             </longText>
                           </_object>
                           <_content/>

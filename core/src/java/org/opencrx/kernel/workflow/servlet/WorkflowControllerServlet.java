@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.58 2009/09/22 12:10:10 wfro Exp $
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.60 2009/12/29 10:37:47 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.58 $
+ * Revision:    $Revision: 1.60 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/22 12:10:10 $
+ * Date:        $Date: 2009/12/29 10:37:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,7 +70,11 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -135,74 +139,64 @@ public class WorkflowControllerServlet
        implements Runnable {
         
         public WorkflowMonitor(
-            List<WorkflowServletConfig> monitoredWorkflowServlets
         ) {
-            this.monitoredWorkflowServlets = monitoredWorkflowServlets;
         }
         
         public void run(
         ) {
-            // List all monitored paths
+            // Print all monitored paths
             List<String> paths = new ArrayList<String>();
-            for(
-                Iterator<WorkflowServletConfig> i = this.monitoredWorkflowServlets.iterator();
-                i.hasNext();
-            ) {
-                WorkflowServletConfig monitoredWorkflowServlet = i.next();
-                paths.add(monitoredWorkflowServlet.getPath());
+            for(WorkflowServletConfig workflowServletConfig: WorkflowControllerServlet.this.monitoredWorkflowServletConfigs.values()) {
+                paths.add(workflowServletConfig.getPath());
             }                
-            System.out.println(new Date().toString() + ": WorkflowController: monitoring " + paths);
+            System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": monitoring " + paths);
             // Monitor forever
             while(true) {                
                 try {
-                    for(
-                        Iterator<WorkflowServletConfig> i = this.monitoredWorkflowServlets.iterator();
-                        i.hasNext();
-                    ) {
-                        WorkflowServletConfig monitoredWorkflowServlet = i.next();
-                        URL monitoredURL = WorkflowControllerServlet.this.getWorkflowServletURL(
-                            monitoredWorkflowServlet.getPath()
-                        );
-                        SysLog.detail("Next execution", Arrays.asList(new Object[]{monitoredURL, monitoredWorkflowServlet.getNextExecutionAt()}));
-                        if(new Date().compareTo(monitoredWorkflowServlet.getNextExecutionAt()) > 0) {
-                            if(monitoredURL != null) {
-                                try {
-                                    HttpURLConnection connection = (HttpURLConnection)monitoredURL.openConnection();
-                                    connection.setInstanceFollowRedirects(false);
-                                    connection.setDoInput(true);
-                                    connection.setDoOutput(true);
-                                    connection.setRequestMethod("POST");
-                                    int rc = connection.getResponseCode();
-                                    if(rc != HttpURLConnection.HTTP_OK) {
-                                        System.out.println(new Date().toString() + ": WorkflowController: response code for " + monitoredURL + " " + rc);
-                                    }
-                                    monitoredWorkflowServlet.scheduleNextExecution();
-                                }
-                                catch(IOException e0) {
-                                    new ServiceException(e0).log();
-                                }
-                            }                            
-                        }
-                    }    
+                	if(WorkflowControllerServlet.this.isStopped) {
+                        SysLog.detail("Monitor is paused. Waiting for resume.");
+                	}
+                	else {
+	                    for(WorkflowServletConfig workflowServletConfig: WorkflowControllerServlet.this.monitoredWorkflowServletConfigs.values()) {
+	                        URL monitoredURL = WorkflowControllerServlet.this.getWorkflowServletURL(
+	                            workflowServletConfig.getPath()
+	                        );
+	                        SysLog.detail("Next execution", Arrays.asList(new Object[]{monitoredURL, workflowServletConfig.getNextExecutionAt()}));
+	                        if(new Date().compareTo(workflowServletConfig.getNextExecutionAt()) > 0) {
+	                            if(monitoredURL != null) {
+	                                try {
+	                                    HttpURLConnection connection = (HttpURLConnection)monitoredURL.openConnection();
+	                                    connection.setInstanceFollowRedirects(false);
+	                                    connection.setDoInput(true);
+	                                    connection.setDoOutput(true);
+	                                    connection.setRequestMethod("POST");
+	                                    int rc = connection.getResponseCode();
+	                                    if(rc != HttpURLConnection.HTTP_OK) {
+	                                        System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": response code for " + monitoredURL + " " + rc);
+	                                    }
+	                                    workflowServletConfig.scheduleNextExecution();
+	                                }
+	                                catch(IOException e0) {
+	                                    new ServiceException(e0).log();
+	                                }
+	                            }                            
+	                        }
+	                    }
+                	}
                     // Wait 1 min between monitoring cycles
-                    try {
-                        Thread.sleep(60000L);
-                    }
-                    catch (InterruptedException e) {}
+                    Thread.sleep(60000L);
                 }
                 catch(Exception e) {
-                    System.out.println(new Date().toString() + ": WorkflowController: catched exception (for more information see log) " + e.getMessage());
+                    System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": catched exception (for more information see log) " + e.getMessage());
                     ServiceException e0 = new ServiceException(e);
                     SysLog.error(e0.getMessage(), e0.getCause());
                 }
                 catch(Error e) {
-                    System.out.println(new Date().toString() + ": WorkflowController: catched error (for more information see log) " + e.getMessage());
+                    System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": catched error (for more information see log) " + e.getMessage());
                     SysLog.error(e.getMessage(), e.getCause());                    
                 }
             }            
         }
-        
-        private final List<WorkflowServletConfig> monitoredWorkflowServlets;
         
     }
     
@@ -256,7 +250,18 @@ public class WorkflowControllerServlet
         private final PingRate pingRate;
         private GregorianCalendar nextExecutionAt;
     }
-    
+
+    //-----------------------------------------------------------------------
+    protected void assertAndStartWorkflowMonitor(
+    ) {
+    	if(this.workflowMonitor == null || !this.workflowMonitor.isAlive()) {
+	        this.workflowMonitor = new Thread(
+	            new WorkflowMonitor()
+	        );
+	        this.workflowMonitor.start();
+    	}
+    }
+
     //-----------------------------------------------------------------------
     public void init(
         ServletConfig config
@@ -408,8 +413,8 @@ public class WorkflowControllerServlet
         
         // Create a path to be monitored from each configured path and provider/segment
         try {
-        	List<WorkflowServletConfig> workflowServlets = new ArrayList<WorkflowServletConfig>();
-        	List<WorkflowServletConfig> monitoredWorkflowServlets = new ArrayList<WorkflowServletConfig>();
+        	ConcurrentMap<String,WorkflowServletConfig> workflowServletConfigs = new ConcurrentHashMap<String,WorkflowServletConfig>();
+        	ConcurrentMap<String,WorkflowServletConfig> monitoredWorkflowServletConfigs = new ConcurrentHashMap<String,WorkflowServletConfig>();
             for(Iterator<String> j = segmentNames.iterator(); j.hasNext(); ) {
                 String segmentName = j.next();
                 int ii = 0;
@@ -417,33 +422,35 @@ public class WorkflowControllerServlet
                     String path = this.getInitParameter("path[" + ii + "]");
                     String autostart = this.getComponentConfigProperty(path.substring(1) + "." + providerName + "." + segmentName + "." + OPTION_AUTOSTART);
                     String pingrate = this.getComponentConfigProperty(path.substring(1) + "." + providerName + "." + segmentName + "." + OPTION_PINGRATE);
-                    WorkflowServletConfig servletConfig =
+                    WorkflowServletConfig workflowServletConfig =
                         new WorkflowServletConfig(
                             path + "/execute?provider=" + providerName + "&segment=" + segmentName,
                             autostart != null ? 
                             	Boolean.valueOf(autostart).booleanValue() : 
-                            	false,
+                            		false,
                             pingrate != null ? 
                             	new PingRate(Long.valueOf(pingrate).longValue()) : 
-                            	new PingRate(1L)
+                            		new PingRate(1L)
                         );                        
-                    workflowServlets.add(
-                        servletConfig
+                    workflowServletConfigs.put(
+                    	workflowServletConfig.getPath(),
+                        workflowServletConfig
                     );
-                    if(servletConfig.isAutostart()) {
-                        monitoredWorkflowServlets.add(servletConfig);
+                    if(workflowServletConfig.isAutostart()) {
+                        monitoredWorkflowServletConfigs.put(
+                        	workflowServletConfig.getPath(),
+                        	workflowServletConfig
+                        );
                     }
                     ii++;
                 }
             }
-            this.workflowServlets = workflowServlets;
-            this.monitoredWorkflowServlets = monitoredWorkflowServlets;
-            // Start monitor
-            new Thread(
-                new WorkflowMonitor(
-                    monitoredWorkflowServlets
-                )
-            ).start();
+            this.workflowServletConfigs = workflowServletConfigs;
+            this.monitoredWorkflowServletConfigs = monitoredWorkflowServletConfigs;
+            this.providerName = providerName;
+            this.assertAndStartWorkflowMonitor();
+    		String autostartConnectors = System.getProperty("org.openmdx.catalina.core.ExtendedService.autostartConnectors");
+    		this.isStopped = (autostartConnectors != null) && !Boolean.valueOf(autostartConnectors).booleanValue();
         }
         catch(Exception e) {
             throw new ServletException("Can not start workflow monitor", e);
@@ -482,9 +489,9 @@ public class WorkflowControllerServlet
         String path
     ) throws MalformedURLException {
         String servlerURL = this.getComponentConfigProperty(OPTION_SERVER_URL);
-        return servlerURL == null
-            ? null
-            : new URL(servlerURL + path);
+        return servlerURL == null ? 
+        	null : 
+        		new URL(servlerURL + path);
     }
     
     //-----------------------------------------------------------------------
@@ -493,15 +500,18 @@ public class WorkflowControllerServlet
         HttpServletResponse res
     ) throws ServletException, IOException {
         
+    	// Assert that monitoring thread is alive
+    	this.assertAndStartWorkflowMonitor();
+    	
         // Add/remove to activeURLs
         if(COMMAND_START.equals(req.getPathInfo())) {
-            for(
-                Iterator<WorkflowServletConfig> i = this.workflowServlets.iterator();
-                i.hasNext();
-            ) {
-                WorkflowServletConfig servletConfig = i.next();
-                if(URLEncoder.encode(servletConfig.getPath(), "UTF-8").equals(req.getQueryString())) {
-                    this.monitoredWorkflowServlets.add(servletConfig);
+            for(WorkflowServletConfig workflowServletConfig: this.workflowServletConfigs.values()) {
+                if(URLEncoder.encode(workflowServletConfig.getPath(), "UTF-8").equals(req.getQueryString())) {
+                    this.monitoredWorkflowServletConfigs.putIfAbsent(
+                    	workflowServletConfig.getPath(),
+                    	workflowServletConfig
+                    );
+                    System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": started " + workflowServletConfig.getPath());                    
                     break;
                 }
             }
@@ -511,36 +521,64 @@ public class WorkflowControllerServlet
                 URLDecoder.decode(req.getQueryString(), "UTF-8")
             );
             for(
-                Iterator<WorkflowServletConfig> i = this.monitoredWorkflowServlets.iterator();
+                Iterator<Map.Entry<String,WorkflowServletConfig>> i = this.monitoredWorkflowServletConfigs.entrySet().iterator();
                 i.hasNext();
             ) {
-                WorkflowServletConfig controlledWorkflow = i.next();
+            	Map.Entry<String,WorkflowServletConfig> e = i.next();
+                WorkflowServletConfig workflowServletConfig = e.getValue();
                 URL url = this.getWorkflowServletURL(
-                    controlledWorkflow.getPath()
+                    workflowServletConfig.getPath()
                 );
                 if(url.equals(monitoredURL)) {
                     i.remove();
+                    System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": stopped " + workflowServletConfig.getPath());                    
                     break;
                 }
             }
         }
+        else if(COMMAND_PAUSE.equals(req.getPathInfo())) {
+        	this.isStopped = true;
+            System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": paused " + this.providerName);                    
+        }
+        else if(COMMAND_RESUME.equals(req.getPathInfo())) {
+        	this.isStopped = false;
+            System.out.println(new Date().toString() + ": " + COMPONENT_CONFIGURATION_ID + ": resumed " + this.providerName);                    
+        }
         
-        // List status
+        // Show status and commands
+        res.setContentType("text/html");
+        res.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = res.getWriter();
         out.println("<html>");
         out.println("<head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head>");
         out.println("<body>");
-        out.println("<h2>openCRX Workflow Controller</h2>");
+        out.println("<h2>openCRX Workflow Controller " + this.providerName + "</h2>");
         out.println("<table>");
-        for(
-            Iterator<WorkflowServletConfig> i = this.workflowServlets.iterator();
-            i.hasNext();
-        ) {
-            WorkflowServletConfig servletConfig = i.next();
-            boolean active = this.monitoredWorkflowServlets.contains(servletConfig);
-            out.println("<tr>");
-            out.println("<td>" + servletConfig.getPath() + "</td><td><a href=\"" + req.getContextPath() + req.getServletPath() + (active ? "/stop" : "/start") + "?" + URLEncoder.encode(servletConfig.getPath(), "UTF-8") + "\">" + (active ? "Turn Off" : "Turn On") + "</a></td>");
-            out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><a href=\"" + req.getContextPath() + req.getServletPath() + (this.isStopped ? COMMAND_RESUME : COMMAND_PAUSE) + "\">" + (this.isStopped ? "Resume" : "Pause") + "</a></td><td />");
+        out.println("</tr>");
+        out.println("<tr><td colspan=\"2\"><br /><h3>Active</h3></td></tr>");
+        Set<String> sortedPaths = new TreeSet<String>(this.workflowServletConfigs.keySet());
+        // Active: print sorted by path
+        for(String path: sortedPaths) {
+        	WorkflowServletConfig workflowServletConfig = this.workflowServletConfigs.get(path);
+            boolean active = this.monitoredWorkflowServletConfigs.keySet().contains(workflowServletConfig.getPath());
+            if(active) {
+	            out.println("<tr>");
+	            out.println("<td>" + workflowServletConfig.getPath() + "</td><td><a href=\"" + req.getContextPath() + req.getServletPath() + COMMAND_STOP + "?" + URLEncoder.encode(workflowServletConfig.getPath(), "UTF-8") + "\">" + (active ? "Turn Off" : "Turn On") + "</a></td>");
+	            out.println("</tr>");
+            }
+        }
+        out.println("<tr><td colspan=\"2\"><br /><h3>Inactive</h3></td></tr>");
+        // Inactive: print sorted by path
+        for(String path: sortedPaths) {
+        	WorkflowServletConfig workflowServletConfig = this.workflowServletConfigs.get(path);
+            boolean active = this.monitoredWorkflowServletConfigs.keySet().contains(workflowServletConfig.getPath());
+            if(!active) {
+	            out.println("<tr>");
+	            out.println("<td>" + workflowServletConfig.getPath() + "</td><td><a href=\"" + req.getContextPath() + req.getServletPath() + COMMAND_START + "?" + URLEncoder.encode(workflowServletConfig.getPath(), "UTF-8") + "\">" + (active ? "Turn Off" : "Turn On") + "</a></td>");
+	            out.println("</tr>");
+            }
         }
         out.println("</table>");
         out.println("</body>");
@@ -578,6 +616,8 @@ public class WorkflowControllerServlet
     
     private static final String COMMAND_START = "/start";
     private static final String COMMAND_STOP = "/stop";
+    private static final String COMMAND_PAUSE = "/pause";
+    private static final String COMMAND_RESUME = "/resume";
 
     private static final String MONITORED_WORKFLOW_INDEXER = "IndexerServlet";
     private static final String MONITORED_WORKFLOW_WORKFLOWHANDLER = "WorkflowHandler";
@@ -588,9 +628,13 @@ public class WorkflowControllerServlet
     public static final String OPTION_PINGRATE = "pingrate";
     public static final String OPTION_EXECUTION_PERIOD = "executionPeriod";
     
-    private List<WorkflowServletConfig> workflowServlets = null;
-    private List<WorkflowServletConfig> monitoredWorkflowServlets = null;
-    private org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
+    protected String providerName = null;
+    protected ConcurrentMap<String,WorkflowServletConfig> workflowServletConfigs = null;
+    protected ConcurrentMap<String,WorkflowServletConfig> monitoredWorkflowServletConfigs = null;
+    protected Thread workflowMonitor = null;
+    protected boolean isStopped = false;
+    protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
+    
 }
 
 //--- End of File -----------------------------------------------------------

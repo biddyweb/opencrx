@@ -2873,14 +2873,9 @@
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IJbcud7NEdmKapscEl8OLg"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_0suOkC0gEdq3m7-vynCCsw" name="targetObject">
-        <type xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.base.emx#_3C7B8A60016D3FB3D6450214?base/base/BasicObject?"/>
+        <type xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.base.emx#_3C7B8A60016D403F48350281?base/base/ContextCapable?"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_F7Gf4S4CEdq3m7-vynCCsw" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_F7Gf4C4CEdq3m7-vynCCsw"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_C3m5sC4CEdq3m7-vynCCsw" name="targetObjectXri">
-        <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B62E40010?w3c/w3c/string?"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FaDoUC4CEdq3m7-vynCCsw" value="1"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FZ9hsC4CEdq3m7-vynCCsw"/>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D417827D803D1" name="WfProcess" isAbstract="true">

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.6 2009/09/20 22:02:08 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.8 2010/03/24 16:34:53 wfro Exp $
  * = Description: openCRX/icons build.xml
- * = Revision:    $Revision: 1.6 $
- * = Date:        $Date: 2009/09/20 22:02:08 $
+ * = Revision:    $Revision: 1.8 $
+ * = Date:        $Date: 2010/03/24 16:34:53 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,9 +60,9 @@
 	<property name="project.specification.title" value="openCRX/Icons"/>
 	<property name="build.ignore.jpa" value="true"/>
 	<!-- Slash separated platform list, the last entry being the default -->
-	<property name="project.platform.list" value="jre-1.5"/>
+	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.5.2+"/>
+	<property name="openmdx.version" value="2.5.4+"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<mkdir dir="src/java"/>
@@ -109,13 +109,13 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityCreationAction.gif"/>
 	  <copy file="src/data/images/lib1/CreateActivities.gif" tofile="${build.dir}/data/images/lib1/ActivityCreator.gif"/>
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ActivityFilter.gif"/>
-	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterCalendarFeed.gif"/>
+	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterCalendarFeed.gif"/>
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterGlobal.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterGroup.gif"/>
 	  <copy file="src/data/images/lib1/Answer.gif" tofile="${build.dir}/data/images/lib1/ActivityFollowUp.gif"/>
 	  <copy file="src/data/images/lib1/Project.gif" tofile="${build.dir}/data/images/lib1/ActivityGroup.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ActivityGroupAssignment.gif"/>
-	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityGroupCalendarFeed.gif"/>
+	  <copy file="src/data/images/lib1/Project.gif" tofile="${build.dir}/data/images/lib1/ActivityGroupCalendarFeed.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ActivityGroupFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ActivityLinkFrom.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ActivityLinkTo.gif"/>
@@ -144,6 +144,7 @@
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/AddressTypeFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/AddressUsageFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Administration.gif" tofile="${build.dir}/data/images/lib1/Administration.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AirSyncProfile.gif"/>
 	  <copy file="src/data/images/lib1/Alert.gif" tofile="${build.dir}/data/images/lib1/Alert.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AliasType.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ArtifactContext.gif"/>
@@ -197,6 +198,7 @@
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ContactMembership.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ContactRelationship.gif"/>
 	  <copy file="src/data/images/lib1/Replacement.gif" tofile="${build.dir}/data/images/lib1/ContactReplacement.gif"/>
+	  <copy file="src/data/images/lib1/Accounts.gif" tofile="${build.dir}/data/images/lib1/ContactsFeed.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Contract.gif"/>
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ContractFilter.gif"/>
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ContractFilterGlobal.gif"/>
@@ -270,7 +272,6 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Fax.gif"/>
 	  <copy file="src/data/images/lib1/Forecasts.gif" tofile="${build.dir}/data/images/lib1/Forecast.gif"/>
 	  <copy file="src/data/images/lib1/Teams.gif" tofile="${build.dir}/data/images/lib1/Group.gif"/>
-	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/IcalFeed.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ImplementationPart.gif"/>
 	  <copy file="src/data/images/lib1/Import.gif" tofile="${build.dir}/data/images/lib1/Import.gif"/>
 	  <copy file="src/data/images/lib1/Cases.gif" tofile="${build.dir}/data/images/lib1/Incident.gif"/>
@@ -492,13 +493,13 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityCreationAction.gif"/>
 	  <copy file="src/data/images/lib2/CreateActivities.gif" tofile="${build.dir}/data/images/lib2/ActivityCreator.gif"/>
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ActivityFilter.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterCalendarFeed.gif"/>
+	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterCalendarFeed.gif"/>
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterGlobal.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterGroup.gif"/>
 	  <copy file="src/data/images/lib2/FollowUp.gif" tofile="${build.dir}/data/images/lib2/ActivityFollowUp.gif"/>
 	  <copy file="src/data/images/lib2/Project.gif" tofile="${build.dir}/data/images/lib2/ActivityGroup.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ActivityGroupAssignment.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityGroupCalendarFeed.gif"/>
+	  <copy file="src/data/images/lib2/Project.gif" tofile="${build.dir}/data/images/lib2/ActivityGroupCalendarFeed.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ActivityGroupFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ActivityLinkFrom.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ActivityLinkTo.gif"/>
@@ -527,6 +528,7 @@
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/AddressTypeFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/AddressUsageFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Administration.gif" tofile="${build.dir}/data/images/lib2/Administration.gif"/>
+	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AirSyncProfile.gif"/>
 	  <copy file="src/data/images/lib2/Alert.gif" tofile="${build.dir}/data/images/lib2/Alert.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AliasType.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ArtifactContext.gif"/>
@@ -580,6 +582,7 @@
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ContactMembership.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ContactRelationship.gif"/>
 	  <copy file="src/data/images/lib2/Replacement.gif" tofile="${build.dir}/data/images/lib2/ContactReplacement.gif"/>
+	  <copy file="src/data/images/lib2/Accounts.gif" tofile="${build.dir}/data/images/lib2/ContactsFeed.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Contract.gif"/>
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ContractFilter.gif"/>
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ContractFilterGlobal.gif"/>
@@ -653,7 +656,6 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Fax.gif"/>
 	  <copy file="src/data/images/lib2/Forecasts.gif" tofile="${build.dir}/data/images/lib2/Forecast.gif"/>
 	  <copy file="src/data/images/lib2/Accounts.gif" tofile="${build.dir}/data/images/lib2/Group.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/IcalFeed.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ImplementationPart.gif"/>
 	  <copy file="src/data/images/lib2/Import.gif" tofile="${build.dir}/data/images/lib2/Import.gif"/>
 	  <copy file="src/data/images/lib2/Activities.gif" tofile="${build.dir}/data/images/lib2/Incident.gif"/>

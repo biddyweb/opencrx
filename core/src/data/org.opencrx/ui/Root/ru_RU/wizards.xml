@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:renderRtf?template=Sales%20Order%20with%20Positions%20(RTF)" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сохранить запрос на закупку в RTF</_item>
+                        <_item>Сохранить договор в RTF</_item>
                       </label>
                       <toolTip>
-                        <_item>Сохранить запрос на закупку в RTF</_item>
+                        <_item>Сохранить договор в RTF</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Invoice:Pane:Op:Tab:renderRtf?template=Invoice%20with%20Positions%20(RTF)" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сохранить счет-фактуру в RTF</_item>
+                        <_item>Сохранить счет в RTF</_item>
                       </label>
                       <toolTip>
-                        <_item>Сохранить счет-фактуру в RTF</_item>
+                        <_item>Сохранить счет в RTF</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,7 +80,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Новый контакт</_item>
+                        <_item>Новая деятельность</_item>
                       </label>
                       <toolTip>
                         <_item>Новая деятельность</_item>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createCampaign" _operation="create">
                     <_object>
                       <label>
-                        <_item>Новая компания</_item>
+                        <_item>Новая кампания</_item>
                       </label>
                       <toolTip>
-                        <_item>Новая компания</_item>
+                        <_item>Новая кампания</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createLead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Новая инициатива</_item>
+                        <_item>Новый потенциальный покупатель</_item>
                       </label>
                       <toolTip>
-                        <_item>Новая инициатива</_item>
+                        <_item>Новый потенциальный покупатель (лид)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createSalesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Новый запрос на продажу</_item>
+                        <_item>Новый договор</_item>
                       </label>
                       <toolTip>
-                        <_item>Новый запрос на продажу</_item>
+                        <_item>Новый договор</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createInvoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Новая счет-фактура</_item>
+                        <_item>Новый счет</_item>
                       </label>
                       <toolTip>
-                        <_item>Новая счет-фактура</_item>
+                        <_item>Новый счет</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,54 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importAccountsFromXLS" _operation="create">
                     <_object>
                       <label>
-                        <_item>Импортировать счета из файла Excel</_item>
+                        <_item>Импортировать участников отношений из файла Excel</_item>
                       </label>
                       <toolTip>
-                        <_item>Импортировать счета из файла Excel</_item>
+                        <_item>Импортировать участников отношений из файла Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импортировать наборы свойств из файла Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импортировать наборы свойств из файла Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импортировать свойства из файла Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импортировать свойства из файла Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импортировать конфигурации продуктов из файла Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импортировать конфигурации продуктов из файла Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импортировать типы конфигураций из файла Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импортировать типы конфигураций из файла Excel</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -363,6 +407,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Разрешен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Разрешен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Запрещен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Запрещен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge" _operation="create">
                     <_object>
                       <label>
@@ -484,6 +550,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivityFollowUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Выполнить</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Выполнить</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEventWizard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отметить как событие на весь день</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отметить как событие на весь день</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
@@ -496,6 +584,17 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Загрузить медиаданные</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Загрузить медиаданные</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
                         <_item>Загрузить медиаданные</_item>

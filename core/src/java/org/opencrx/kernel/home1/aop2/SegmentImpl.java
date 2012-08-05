@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.6 2009/04/21 00:10:37 wfro Exp $
+ * Name:        $Id: SegmentImpl.java,v 1.7 2010/02/18 13:01:11 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 00:10:37 $
+ * Date:        $Date: 2010/02/18 13:01:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,6 +86,9 @@ public class SegmentImpl
     ) {
     	try {
 	        String principalName = params.getPrincipalName();
+	        if(principalName != null) {
+	        	principalName = principalName.trim();
+	        }
 	        Contact contact = params.getContact();
 	        org.opencrx.security.realm1.jmi1.PrincipalGroup primaryUserGroup = params.getPrimaryUserGroup();
 	        String initialPassword = params.getInitialPassword();

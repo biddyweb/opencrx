@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityImpl.java,v 1.31 2009/09/02 14:27:37 wfro Exp $
+ * Name:        $Id: ActivityImpl.java,v 1.32 2010/03/10 19:15:31 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/02 14:27:37 $
+ * Date:        $Date: 2010/03/10 19:15:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.kernel.activity1.aop2;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -73,6 +74,7 @@ import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.w3c.format.DateTimeFormat;
 
 public class ActivityImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.Activity,N extends org.opencrx.kernel.activity1.cci2.Activity,C extends ActivityImpl.DerivedAttributes>
@@ -276,13 +278,14 @@ public class ActivityImpl
     // ----------------------------------------------------------------------------
     public java.lang.Boolean isAllDayEvent(
     ) {
-    	Calendar scheduledStart = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone("GMT-0:00"));
-    	scheduledStart.setTime(this.sameObject().getScheduledStart());
-    	Calendar scheduledEnd = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone("GMT-0:00"));
-    	scheduledEnd.setTime(this.sameObject().getScheduledEnd());
-    	return 
-    		scheduledStart.get(Calendar.HOUR_OF_DAY) == 0 && scheduledStart.get(Calendar.MINUTE) == 0 && scheduledStart.get(Calendar.SECOND) == 0 &&
-    		scheduledEnd.get(Calendar.HOUR_OF_DAY) == 0 && scheduledEnd.get(Calendar.MINUTE) == 0 && scheduledEnd.get(Calendar.SECOND) == 0;
+    	DateTimeFormat utcf = DateTimeFormat.BASIC_UTC_FORMAT;
+    	String scheduledStart = this.sameObject().getScheduledStart() == null ?
+    		"" : 
+    			utcf.format(this.sameObject().getScheduledStart());
+    	String scheduledEnd = this.sameObject().getScheduledStart() == null ?
+    		"" : 
+    			utcf.format(this.sameObject().getScheduledEnd());
+    	return scheduledStart.endsWith("T000000.000Z") && scheduledEnd.endsWith("T000000.000Z"); 
     }
     
     //-----------------------------------------------------------------------

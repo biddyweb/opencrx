@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Order.java,v 1.5 2009/06/10 10:43:31 wfro Exp $
+ * Name:        $Id: Order.java,v 1.7 2009/11/27 18:23:05 wfro Exp $
  * Description: Order
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/10 10:43:31 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,8 +65,8 @@ import java.util.StringTokenizer;
 import javax.jdo.JDOHelper;
 
 import org.opencrx.apps.store.common.PrimaryKey;
+import org.opencrx.apps.store.common.util.ApplicationContext;
 import org.opencrx.apps.store.common.util.Keys;
-import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;

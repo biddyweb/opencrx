@@ -352,7 +352,7 @@
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_22Pefv5-EdmYy4tTg0fh3w"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_22Pecf5-EdmYy4tTg0fh3w" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="16772351" lineColor="3342489" showStereotype="Text"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_22Pecv5-EdmYy4tTg0fh3w" x="8554" y="37934" width="9310" height="2794"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_22Pecv5-EdmYy4tTg0fh3w" x="8554" y="37934" width="9310" height="3416"/>
         </children>
         <children xmi:id="_yZdUoP5_EdmYy4tTg0fh3w" element="_yY4s4P5_EdmYy4tTg0fh3w">
           <children xmi:id="_yZdUo_5_EdmYy4tTg0fh3w" type="ImageCompartment">
@@ -2525,7 +2525,7 @@
           </children>
           <styles xmi:type="notation:ShapeStyle" xmi:id="_yVnSwuJtEdmK-aJnryN5wA" fontName="Arial" fontHeight="11" description="This software is published under the BSD license&#xA;as listed below. see class diagram _LICENSE.&#xA;" fillColor="16775658" lineColor="3342489"/>
           <element xsi:nil="true"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_yVnSw-JtEdmK-aJnryN5wA" x="6419" y="764" width="6667" height="2224"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_yVnSw-JtEdmK-aJnryN5wA" x="6220" y="622" width="7254" height="2655"/>
         </children>
         <children xmi:id="_29HCVeJtEdmK-aJnryN5wA" element="_3C7B8A60016D42A85EEE03E2">
           <children xmi:id="_29HCVuJtEdmK-aJnryN5wA" type="ImageCompartment">
@@ -2960,7 +2960,7 @@
           </children>
           <styles xmi:type="notation:ShapeStyle" xmi:id="_hbLXQxV4EdqX8-3bnaVzdg" fontName="Arial" fontHeight="11" description="This software is published under the BSD license&#xA;as listed below. see class diagram _LICENSE.&#xA;" fillColor="16775658" lineColor="3342489"/>
           <element xsi:nil="true"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hbLXRBV4EdqX8-3bnaVzdg" x="1020" y="12858" width="6667" height="2224"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hbLXRBV4EdqX8-3bnaVzdg" x="1020" y="12858" width="6889" height="2499"/>
         </children>
         <children xmi:id="_imbpcBV4EdqX8-3bnaVzdg" element="_ilenMBV4EdqX8-3bnaVzdg">
           <children xmi:id="_imn2sBV4EdqX8-3bnaVzdg" type="ImageCompartment">
@@ -3202,7 +3202,7 @@
           </children>
           <styles xmi:type="notation:ShapeStyle" xmi:id="_zIZ3MyVAEdqA2IVA8CET4w" fontName="Arial" fontHeight="11" description="This software is published under the BSD license&#xD;&#xA;as listed below. see class diagram _LICENSE.&#xD;&#xA;" fillColor="16775658" lineColor="3342489"/>
           <element xsi:nil="true"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zIZ3NCVAEdqA2IVA8CET4w" x="5940" y="701" width="5476" height="2408"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zIZ3NCVAEdqA2IVA8CET4w" x="5940" y="701" width="6408" height="2528"/>
         </children>
         <children xmi:id="_0BI2ACVAEdqA2IVA8CET4w" element="_3C7B8A60016D42A96B28006E">
           <children xmi:id="_0BI2AyVAEdqA2IVA8CET4w" type="ImageCompartment">

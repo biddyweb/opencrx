@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:searchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ricerca Soggetti/Indirizzi</_item>
+                        <_item>Ricerca</_item>
                       </label>
                       <toolTip>
-                        <_item>Ricerca Soggetti/Indirizzi</_item>
+                        <_item>Ricerca</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ricerca Indirizzi</_item>
+                        <_item>Ricerca Indirizzo</_item>
                       </label>
                       <toolTip>
-                        <_item>Ricerca Indirizzi</_item>
+                        <_item>Ricerca Indirizzo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Voce Indice Soggetto/Indirizzo</_item>
+                        <_item>Voce indice ricerca</_item>
                       </label>
                       <toolTip>
-                        <_item>Voce Indice Soggetto/Indirizzo</_item>
+                        <_item>Voce indice ricerca</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetto</_item>
+                        <_item>Conto</_item>
                       </label>
                       <toolTip>
-                        <_item>Soggetto</_item>
+                        <_item>Conto</_item>
                       </toolTip>
                     </_object>
                     <_content/>

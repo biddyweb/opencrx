@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.30 2009/09/08 14:29:55 wfro Exp $
+ * Name:        $Id: Admin.java,v 1.31 2010/02/24 14:01:49 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.30 $
+ * Revision:    $Revision: 1.31 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/08 14:29:55 $
+ * Date:        $Date: 2010/02/24 14:01:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -395,6 +395,14 @@ public class Admin extends AbstractImpl {
         groups.add(groupUsers);
         this.createPrincipal(
             SecurityKeys.USER_GROUP_UNASSIGNED,
+            null,
+            realm,
+            PrincipalType.GROUP,
+            groups,
+            segmentAdminSubject
+        );
+        this.createPrincipal(
+            SecurityKeys.USER_GROUP_PUBLIC,
             null,
             realm,
             PrincipalType.GROUP,

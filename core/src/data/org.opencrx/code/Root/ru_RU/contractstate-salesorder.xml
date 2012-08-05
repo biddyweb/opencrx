@@ -11,22 +11,22 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="salesorderState" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="salesorderState" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>NA</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item> Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Открыт/Черновик/в процессе</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Открыт/в процессе</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Открыт</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Открыт/Удержание</_item>
@@ -70,7 +70,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Удержание</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[04] Удержание / в процессе</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Закрыт/Заключен или след. этап</_item>
@@ -81,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Закрыт/Потерян</_item>
@@ -92,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Закрыт/Перепродан</_item>
@@ -103,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Закрыт/Провал по кач-ву</_item>
@@ -114,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1450" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1450" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Закрыт/Аннулир.</_item>
@@ -125,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1460" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1460" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Закрыт/Пересмотр</_item>

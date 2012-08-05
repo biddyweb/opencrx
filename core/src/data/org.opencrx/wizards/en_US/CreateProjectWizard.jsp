@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateProjectWizard.jsp,v 1.17 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: CreateProjectWizard.jsp,v 1.20 2010/04/27 12:16:10 wfro Exp $
  * Description: CreateProjectWizard
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -149,8 +149,7 @@ org.openmdx.base.naming.*
 						pm,
 						providerName,
 						segmentName
-					),
-					pm
+					)
 				);
 			org.opencrx.security.realm1.jmi1.PrincipalGroup administratorsPrincipalGroup =
 				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
@@ -159,8 +158,7 @@ org.openmdx.base.naming.*
 						pm,
 						providerName,
 						segmentName
-					),
-					pm
+					)
 				);
 			List allUsers = new ArrayList();
 			allUsers.add(usersPrincipalGroup);
@@ -275,7 +273,8 @@ org.openmdx.base.naming.*
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -320,4 +319,7 @@ org.openmdx.base.naming.*
 </script>
 <%
 p.close(false);
+if(pm != null) {
+	pm.close();
+}
 %>

@@ -1,37 +1,37 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AddressGroupRemoveDuplicateMembers.jsp,v 1.3 2009/10/15 16:19:33 wfro Exp $
+ * Name:        $Id: AddressGroupRemoveDuplicateMembers.jsp,v 1.5 2010/04/27 12:16:11 wfro Exp $
  * Description: ImportAddressGroupMemberWizard
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:33 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
- * 
+ *
  * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
- * 
+ *
  * * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in
  * the documentation and/or other materials provided with the
  * distribution.
- * 
+ *
  * * Neither the name of CRIXP Corp. nor the names of the contributors
  * to openCRX may be used to endorse or promote products derived
  * from this software without specific prior written permission
- * 
- * 
+ *
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -45,12 +45,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * ------------------
- * 
+ *
  * This product includes software developed by the Apache Software
  * Foundation (http://www.apache.org/).
- * 
+ *
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
@@ -85,7 +85,7 @@ org.openmdx.kernel.log.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -121,7 +121,7 @@ org.openmdx.kernel.log.*
 	  	if(!OF) {
 			OF = new ObjectFinder();
 	  	}
-	</script>	
+	</script>
 </head>
 <%
 	String providerName = obj.refGetPath().get(2);
@@ -137,20 +137,20 @@ org.openmdx.kernel.log.*
     int sizeOfSet = 0;
     int sizeOfEmailAddrSet = 0;
     int sizeOfPhoneNumberSet = 0;
-		for(Iterator i = addressGroup.getMember().iterator(); i.hasNext(); ) {
-				org.opencrx.kernel.activity1.jmi1.AddressGroupMember addressGroupMember = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)i.next();
-				org.opencrx.kernel.account1.jmi1.AccountAddress address = addressGroupMember.getAddress();
-				addressXris.add(address.refMofId());
-				if (addressXris.size() <= sizeOfSet) {
-						// current address object is duplicate
-						membersToDelete.add(addressGroupMember);
-				}
-				sizeOfSet = addressXris.size();
+    for(Iterator i = addressGroup.getMember().iterator(); i.hasNext(); ) {
+        org.opencrx.kernel.activity1.jmi1.AddressGroupMember addressGroupMember = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)i.next();
+        org.opencrx.kernel.account1.jmi1.AccountAddress address = addressGroupMember.getAddress();
+        addressXris.add(address.refMofId());
+        if (addressXris.size() <= sizeOfSet) {
+            // current address object is duplicate
+            membersToDelete.add(addressGroupMember);
+        }
+        sizeOfSet = addressXris.size();
 
         if (address instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
-        	  org.opencrx.kernel.account1.jmi1.EMailAddress eMailAddress = (org.opencrx.kernel.account1.jmi1.EMailAddress)address;
+            org.opencrx.kernel.account1.jmi1.EMailAddress eMailAddress = (org.opencrx.kernel.account1.jmi1.EMailAddress)address;
             if (eMailAddress.getEmailAddress() != null) {
-            	  emailAddresses.add(eMailAddress.getEmailAddress());
+                emailAddresses.add(eMailAddress.getEmailAddress());
                 if (emailAddresses.size() <= sizeOfEmailAddrSet) {
                     // current e-mail address is duplicate
                     membersToDelete.add(addressGroupMember);
@@ -160,40 +160,43 @@ org.openmdx.kernel.log.*
         }
 
         if (address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
-        	  org.opencrx.kernel.account1.jmi1.PhoneNumber phoneNumber = (org.opencrx.kernel.account1.jmi1.PhoneNumber)address;
+            org.opencrx.kernel.account1.jmi1.PhoneNumber phoneNumber = (org.opencrx.kernel.account1.jmi1.PhoneNumber)address;
             if (phoneNumber.getPhoneNumberFull() != null) {
-            	  phoneNumbers.add(phoneNumber.getPhoneNumberFull());
+                phoneNumbers.add(phoneNumber.getPhoneNumberFull());
                 if (phoneNumbers.size() <= sizeOfPhoneNumberSet) {
                     // current phone number is duplicate
                     membersToDelete.add(addressGroupMember);
                 }
                 sizeOfPhoneNumberSet = phoneNumbers.size();
             }
-              
+
         }
     }
 
-		for(Iterator i = membersToDelete.iterator(); i.hasNext(); ) {
-				try {
-						pm.currentTransaction().begin();
-						org.opencrx.kernel.activity1.jmi1.AddressGroupMember addressGroupMember = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)i.next();
-		      	addressGroupMember.refDelete();
-				pm.currentTransaction().commit();
-				} catch (Exception e) {
-						new ServiceException(e).log();
-						try {
-								pm.currentTransaction().rollback();
-						} catch (Exception er) {}
-				}
-			}
-	}	    
+    for(Iterator i = membersToDelete.iterator(); i.hasNext(); ) {
+        try {
+            pm.currentTransaction().begin();
+            org.opencrx.kernel.activity1.jmi1.AddressGroupMember addressGroupMember = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)i.next();
+            addressGroupMember.refDelete();
+            pm.currentTransaction().commit();
+        } catch (Exception e) {
+            new ServiceException(e).log();
+            try {
+                pm.currentTransaction().rollback();
+            } catch (Exception er) {}
+        }
+    }
+  }
   Action nextAction = new ObjectReference(
-  	obj, 
+  	obj,
   	app
- 	).getSelectObjectAction();
+  ).getSelectObjectAction();
 	response.sendRedirect(
 		request.getContextPath() + "/" + nextAction.getEncodedHRef()
-	);
+  );
+  if(pm != null) {
+  	pm.close();
+  }
 %>
 <body>
 </body>

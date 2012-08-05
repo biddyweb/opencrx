@@ -11,50 +11,50 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseTypeWorkOnly" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseTypeWorkOnly" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>NA</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item>Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Работа (ставка)</_item>
+                              <_item>Трудозатраты (ставка)</_item>
                             </shortText>
                             <longText>
-                              <_item>Работа по ставке</_item>
+                              <_item>Трудозатраты по ставке</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Работа (доп. время)</_item>
+                              <_item>Трудозатраты (доп. время)</_item>
                             </shortText>
                             <longText>
-                              <_item>Работа в дополнительное рабочее время</_item>
+                              <_item>Трудозатраты в дополнительное рабочее время</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Работа(альтерн.)</_item>
+                              <_item>Трудозатраты (альтерн.)</_item>
                             </shortText>
                             <longText>
-                              <_item>Работа по альтернативной ставке</_item>
+                              <_item>Трудозатраты по альтернативной ставке</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry:Pane:Op:Tab:testAndSetVisitedBy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тест и установка посещеным </_item>
+                        <_item>Тест и установка посещенным </_item>
                       </label>
                       <toolTip>
-                        <_item>Тест и установка посещеным</_item>
+                        <_item>Тест и установка посещенным</_item>
                       </toolTip>
                     </_object>
                     <_content/>

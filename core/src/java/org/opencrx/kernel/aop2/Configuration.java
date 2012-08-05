@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Configuration.java,v 1.5 2009/05/05 12:57:26 wfro Exp $
+ * Name:        $Id: Configuration.java,v 1.6 2010/04/29 11:47:50 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/05 12:57:26 $
+ * Date:        $Date: 2010/04/29 11:47:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,6 @@
  */
 package org.opencrx.kernel.aop2;
 
-
 public class Configuration {
 
 	public Configuration(		
@@ -70,6 +69,7 @@ public class Configuration {
 			org.opencrx.kernel.backend.Cloneable.register();	
 			org.opencrx.kernel.backend.Contracts.register();
 			org.opencrx.kernel.backend.Depots.register();
+			org.opencrx.kernel.backend.Documents.register();
 			org.opencrx.kernel.backend.Exporter.register();
 			org.opencrx.kernel.backend.ICalendar.register();
 			org.opencrx.kernel.backend.Importer.register();
@@ -81,7 +81,7 @@ public class Configuration {
 			org.opencrx.kernel.backend.VCard.register();
 			org.opencrx.kernel.backend.Workflows.register();
 		}
-		catch(Exception e) {}		
+		catch(Exception e) {}
 	}
 	
 	public void setPasswordEncodingAlgorithm(

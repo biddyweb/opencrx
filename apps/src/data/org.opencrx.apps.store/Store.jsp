@@ -2,7 +2,7 @@
 javax.naming.Context,
 java.util.*,
 org.opencrx.apps.store.common.util.SessionHelper,
-org.opencrx.apps.utils.*,
+org.opencrx.apps.store.common.util.*,
 org.openmdx.base.accessor.jmi.cci.RefPackage_1_0" 
 %>
 <%--
@@ -17,12 +17,12 @@ org.openmdx.base.accessor.jmi.cci.RefPackage_1_0"
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    try {
+	try {
 		SessionHelper sessionHelper = new SessionHelper(request);
 		if(sessionHelper.getApplicationContext() == null) {
-			sessionHelper.setApplicationContext(
-				ApplicationContextFactory.createContext(session)
-			);
+	sessionHelper.setApplicationContext(
+		ApplicationContextFactory.createContext(session)
+	);
 		}
 	}
 	catch(Exception e) {

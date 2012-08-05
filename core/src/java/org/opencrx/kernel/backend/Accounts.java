@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.61 2009/10/20 09:04:01 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.67 2010/03/08 14:41:48 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.61 $
+ * Revision:    $Revision: 1.67 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/20 09:04:01 $
+ * Date:        $Date: 2010/03/08 14:41:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -104,7 +104,6 @@ import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
 import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -150,7 +149,7 @@ public class Accounts extends AbstractImpl {
     	// Memberships to OuContainer
     	ContactMembershipQuery membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
     	membershipQuery.identity().like(
-    		accountSegment.refGetPath().getDescendant("organization", ":*", "contactMembership", ":*").toResourcePattern()    	
+    		accountSegment.refGetPath().getDescendant("organization", ":*", "contactMembership", ":*").toXRI()    	
     	);
     	membershipQuery.contact().equalTo(contact);
     	List<ContactMembership> memberships = accountSegment.getExtent(membershipQuery);
@@ -164,7 +163,7 @@ public class Accounts extends AbstractImpl {
     	// Memberships to Ou
     	membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
     	membershipQuery.identity().like(
-    		accountSegment.refGetPath().getDescendant("organization", ":*", "organizationalUnit", ":*", "contactMembership", ":*").toResourcePattern()
+    		accountSegment.refGetPath().getDescendant("organization", ":*", "organizationalUnit", ":*", "contactMembership", ":*").toXRI()
     	);
     	membershipQuery.contact().equalTo(contact);
     	memberships = accountSegment.getExtent(membershipQuery);
@@ -786,26 +785,22 @@ public class Accounts extends AbstractImpl {
         boolean caseInsensitive,
         boolean ignoreDisabled
     ) {
-        org.opencrx.kernel.account1.cci2.EMailAddressQuery query = 
-            Utils.getAccountPackage(pm).createEMailAddressQuery();
+        org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
             this.getAccountSegment(
                 pm,
                 providerName,
                 segmentName
             );
-        query.identity().like(
-            accountSegment.refGetPath().getDescendant("account", ":*", "address", ":*").toResourcePattern()  
-        );
         query.thereExistsEmailAddress().like(
            caseInsensitive ? 
-               "(?i)" + emailAddress : 
+               "(?i).*" + emailAddress.replace(".", "\\.") + ".*": 
                emailAddress
         );
         if(ignoreDisabled) {
         	query.forAllDisabled().isFalse();
         }
-        return accountSegment.getExtent(query);        
+        return accountSegment.getAddress(query);        
     }
         
     //-------------------------------------------------------------------------
@@ -821,6 +816,46 @@ public class Accounts extends AbstractImpl {
         return account.getAddress(query); 
     }
     
+    //-------------------------------------------------------------------------
+    public String getPrimaryBusinessEMail(
+        Account account
+    ) throws ServiceException {
+        Collection<AccountAddress> addresses = account.getAddress();
+        String emailAddress = null;
+        for(AccountAddress address: addresses) {
+            if(address instanceof EMailAddress) {
+                String adr = ((EMailAddress)address).getEmailAddress();
+                if((emailAddress == null) && (adr != null)) {
+                    emailAddress = adr;
+                }
+                if(adr != null && address.isMain() && address.getUsage().contains(Addresses.USAGE_BUSINESS)) {
+                    emailAddress = adr;
+                }
+            }
+        }
+        return emailAddress;
+    }
+	    
+    //-------------------------------------------------------------------------
+    public String getPrimaryBusinessPhone(
+        Account account
+    ) throws ServiceException {
+        Collection<AccountAddress> addresses = account.getAddress();
+        String phoneNumber = null;
+        for(AccountAddress address: addresses) {
+            if(address instanceof PhoneNumber) {
+                String adr = ((PhoneNumber)address).getPhoneNumberFull();
+                if((phoneNumber == null) && (adr != null)) {
+                    phoneNumber = adr;
+                }
+                if(adr != null && address.isMain() && address.getUsage().contains(Addresses.USAGE_BUSINESS)) {
+                    phoneNumber = adr;
+                }
+            }
+        }
+        return phoneNumber;
+    }
+	    
     //-------------------------------------------------------------------------
     /**
      * Return main home and business addresses of given account.
@@ -1307,7 +1342,10 @@ public class Accounts extends AbstractImpl {
     public static final int WEB_HOME = 9;
     public static final int MOBILE = 10;
     public static final int PHONE_OTHER = 11;
-        
+
+    public static final short MEMBER_ROLE_EMPLOYEE = 11;
+    public static final short MEMBER_ROLE_ASSISTANT = 17;
+    
 }
 
 //--- End of File -----------------------------------------------------------

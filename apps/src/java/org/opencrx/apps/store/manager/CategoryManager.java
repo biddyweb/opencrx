@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: CategoryManager.java,v 1.6 2009/05/27 23:10:14 wfro Exp $
+ * Name:        $Id: CategoryManager.java,v 1.8 2009/11/27 18:23:05 wfro Exp $
  * Description: CategoryManager
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/27 23:10:14 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,9 +62,9 @@ import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.ObjectCollection;
 import org.opencrx.apps.store.common.PrimaryKey;
+import org.opencrx.apps.store.common.util.ApplicationContext;
 import org.opencrx.apps.store.common.util.Keys;
 import org.opencrx.apps.store.objects.Category;
-import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.product1.cci2.ProductClassificationQuery;
 import org.opencrx.kernel.product1.cci2.ProductClassificationRelationshipQuery;
 import org.opencrx.kernel.product1.jmi1.ProductClassification;

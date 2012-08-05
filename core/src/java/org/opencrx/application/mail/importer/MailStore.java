@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailStore.java,v 1.3 2009/06/16 21:19:20 wfro Exp $
+ * Name:        $Id: MailStore.java,v 1.4 2010/01/22 13:47:30 wfro Exp $
  * Description: MailStore
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/16 21:19:20 $
+ * Date:        $Date: 2010/01/22 13:47:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,7 +82,10 @@ public class MailStore {
     	SysLog.info("Fetching emails with configuration", this.config);
         try {
             Context initialContxt = new InitialContext();
-            Session session = (Session)initialContxt.lookup("java:comp/env" + this.config.getMailServiceName());
+            String mailServiceName = this.config.getMailServiceName();
+            Session session = (Session)initialContxt.lookup(
+            	"java:comp/env" + (mailServiceName.startsWith("/") ? mailServiceName : "/" + mailServiceName)
+            );
             this.store = session.getStore();
             String protocol = store.getURLName().getProtocol();
             String port = session.getProperty("mail." + protocol + ".port");

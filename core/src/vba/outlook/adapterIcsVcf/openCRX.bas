@@ -1,11 +1,11 @@
 Attribute VB_Name = "openCRX"
 '* ====================================================================
 '* Project:     opencrx, http://www.opencrx.org/
-'* Name:        $Id: openCRX.bas,v 1.8 2009/06/03 13:53:28 cmu Exp $
+'* Name:        $Id: openCRX.bas,v 1.10 2010/04/30 15:43:12 cmu Exp $
 '* Description: Outlook ICS Importer/Exporter
-'* Revision:    $Revision: 1.8 $
+'* Revision:    $Revision: 1.10 $
 '* Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-'* Date:        $Date: 2009/06/03 13:53:28 $
+'* Date:        $Date: 2010/04/30 15:43:12 $
 '* ====================================================================
 '*
 '* This software is published under the BSD license
@@ -51,6 +51,7 @@ Attribute VB_Name = "openCRX"
 Option Explicit
 
 Const SHOW_WARNING_MESSAGES = True
+Const UPLOAD_IS_ENABLED = True
 
 ' if you connect through a proxy server, adjust the following 3 lines
 Const PROXY_SERVER = ""     'e.g. "127.0.0.1:8888"
@@ -71,6 +72,8 @@ Const SERVLET_TYPE_VCARD = 2
 Const TAG_ICS_VERSION = "VERSION:2.0"
 Const TAG_VCF_VERSION = "VERSION:2.1"
 
+Const UID_REC_SEPARATOR = "<>"
+
 Const TAG_PRODID = "PRODID://OPENCRX//NONSGML Version 1//EN"
 Const TAG_VCALENDAR_BEGIN = "BEGIN:VCALENDAR"
 Const TAG_VCALENDAR_END = "END:VCALENDAR"
@@ -82,8 +85,11 @@ Const TAG_VCARD_BEGIN = "BEGIN:VCARD"
 Const TAG_VCARD_END = "END:VCARD"
 Const PROPERTY_URL = "URL:"
 Const PROPERTY_UID = "UID:"
+Const PROPERTY_RECURRENCEID = "RECURRENCE-ID:"
 Const PROPERTY_DTSTART = "DTSTART"
 Const PROPERTY_DTEND = "DTEND"
+Const PROPERTY_EXDATE = "EXDATE"
+Const PROPERTY_VALUEISDATE = "VALUE=DATE"
 Const PROPERTY_DUE = "DUE"
 Const PROPERTY_LAST_MODIFIED = "LAST-MODIFIED:"
 Const PROPERTY_LOCATION = "LOCATION:"
@@ -150,6 +156,7 @@ Const RRULE_KW_BYMONTH = ";BYMONTH="
 Const RRULE_KW_BYSETPOS = ";BYSETPOS="
 Const RRULE_KW_WKST = ";WKST="
 Const RRULE_KW_XNAME = ";x-name="
+Const RRULE_EXDATE = "EXDATE:"
 
 Const QP = ";ENCODING=QUOTED-PRINTABLE:"
 
@@ -524,13 +531,20 @@ Function getTime(ByRef sItem As String, ByVal tag As String) As Date
 
     property = getProperty(sItem, tag & ":")
     If property = "" Then property = getProperty(sItem, tag)
-    If Len(property) > 15 Then property = Right(property, 16)
-    If Right(property, 1) = "Z" Then
-        'UTC, i.e. adjust to local time zone
-        getTime = toLocalTime(timeStampToDateValue(property), "UTC")
+    If (InStr(property, PROPERTY_VALUEISDATE) > 0) Then
+        'date / do NOT adjust to local time zone
+        If Len(property) >= 8 Then property = Right(property, 8)
+        getTime = DateSerial(Mid(property, 1, 4), Mid(property, 5, 2), Mid(property, 7, 2)) & " " & TimeSerial(0, 0, 0)
     Else
-        'assume local time zone
-        getTime = timeStampToDateValue(Right(property, 15) & "Z")
+        'date time
+        If Len(property) > 15 Then property = Right(property, 16)
+        If Right(property, 1) = "Z" Then
+            'UTC, i.e. adjust to local time zone
+            getTime = toLocalTime(timeStampToDateValue(property), "UTC")
+        Else
+            'assume local time zone
+            getTime = timeStampToDateValue(Right(property, 15) & "Z")
+        End If
     End If
 End Function
 
@@ -538,7 +552,7 @@ Sub createOrUpdateEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFo
     Dim olAppt As Outlook.AppointmentItem
     Dim items As Outlook.items
     Dim sFilter As String
-    Dim oRecipient As recipient
+    Dim oRecipient As Recipient
 
     sEvent = Replace(sEvent, vbCrLf, EOL)       'CRLF to EOL
     sEvent = Replace(sEvent, vbLf, EOL)         'LF to EOL
@@ -546,7 +560,7 @@ Sub createOrUpdateEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFo
     sEvent = Replace(sEvent, EOL & Chr(32), "") 'ignored when unfolding as per section 4.1 RFC 2445
 
     'locate appointment with matching UID
-    sFilter = "[Mileage] = '" & getProperty(sEvent, PROPERTY_UID) & "'"
+    sFilter = "[Mileage] = '" & getProperty(sEvent, PROPERTY_UID) & UID_REC_SEPARATOR & getProperty(sEvent, PROPERTY_RECURRENCEID) & "'"
     Set olAppt = calendarFolder.items.Find(sFilter)
 
     If olAppt Is Nothing Then
@@ -572,6 +586,8 @@ Sub createOrUpdateEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFo
             'reset attendees
             olAppt.RequiredAttendees = ""
             olAppt.OptionalAttendees = ""
+            'reset recurrence pattern (Start/End are locked if there is a recurrence pattern)
+            olAppt.ClearRecurrencePattern
         End If
     End If
 
@@ -580,9 +596,15 @@ Sub createOrUpdateEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFo
     olAppt.Subject = getProperty(sEvent, PROPERTY_SUMMARY)
     olAppt.Body = getProperty(sEvent, PROPERTY_DESCRIPTION)
     olAppt.Location = getProperty(sEvent, PROPERTY_LOCATION)
-    olAppt.Mileage = getProperty(sEvent, PROPERTY_UID)  'this is a hack, but makes search much easier
+    olAppt.Mileage = getProperty(sEvent, PROPERTY_UID) & UID_REC_SEPARATOR & getProperty(sEvent, PROPERTY_RECURRENCEID)  'this is a hack, but makes search much easier
     olAppt.Start = getTime(sEvent, PROPERTY_DTSTART)
     olAppt.End = getTime(sEvent, PROPERTY_DTEND)
+    If _
+      (InStr(getProperty(sEvent, PROPERTY_DTSTART), PROPERTY_VALUEISDATE) > 0) And _
+      (InStr(getProperty(sEvent, PROPERTY_DTEND), PROPERTY_VALUEISDATE) > 0) _
+    Then
+      olAppt.AllDayEvent = True
+    End If
 
     ' Outlook categories see http://msdn.microsoft.com/en-us/library/bb175161.aspx
     olAppt.Categories = getProperty(sEvent, PROPERTY_CATEGORIES)
@@ -658,7 +680,7 @@ Sub createOrUpdateTask(ByVal sTask As String, calendarFolder As Outlook.MAPIFold
     Dim olTask As Outlook.TaskItem
     Dim items As Outlook.items
     Dim sFilter As String
-    Dim oRecipient As recipient
+    Dim oRecipient As Recipient
 
     sTask = Replace(sTask, vbCrLf, EOL)       'CRLF to EOL
     sTask = Replace(sTask, vbLf, EOL)         'LF to EOL
@@ -666,7 +688,7 @@ Sub createOrUpdateTask(ByVal sTask As String, calendarFolder As Outlook.MAPIFold
     sTask = Replace(sTask, EOL & Chr(32), "") 'ignored when unfolding as per section 4.1 RFC 2445
 
     'locate appointment with matching UID
-    sFilter = "[Mileage] = '" & getProperty(sTask, PROPERTY_UID) & "'"
+    sFilter = "[Mileage] = '" & getProperty(sTask, PROPERTY_UID) & UID_REC_SEPARATOR & getProperty(sTask, PROPERTY_RECURRENCEID) & "'"
     Set olTask = calendarFolder.items.Find(sFilter)
 
     If olTask Is Nothing Then
@@ -683,7 +705,7 @@ Sub createOrUpdateTask(ByVal sTask As String, calendarFolder As Outlook.MAPIFold
     olTask.Subject = getProperty(sTask, PROPERTY_SUMMARY)
     olTask.Body = getProperty(sTask, PROPERTY_DESCRIPTION)
     'olTask.Location = getProperty(sTask, PROPERTY_LOCATION)
-    olTask.Mileage = getProperty(sTask, PROPERTY_UID)  'this is a hack, but makes search much easier
+    olTask.Mileage = getProperty(sTask, PROPERTY_UID) & UID_REC_SEPARATOR & getProperty(sTask, PROPERTY_RECURRENCEID)  'this is a hack, but makes search much easier
     olTask.StartDate = getTime(sTask, PROPERTY_DTSTART)
     'do not use DateCompleted as Outlook 2007 manages this field in a combined fashion with
     'the Complete property!!!
@@ -769,7 +791,7 @@ Sub createOrUpdateContact(ByVal sContact As String, contactFolder As Outlook.MAP
     Dim olContact As Outlook.ContactItem
     Dim items As Outlook.items
     Dim sFilter As String
-    Dim oRecipient As recipient
+    Dim oRecipient As Recipient
     Dim adr As Variant
     Dim n As Variant
 
@@ -779,7 +801,7 @@ Sub createOrUpdateContact(ByVal sContact As String, contactFolder As Outlook.MAP
     sContact = Replace(sContact, EOL & Chr(32), "") 'ignored when unfolding as per section 4.1 RFC 2445
 
     'locate appointment with matching UID
-    sFilter = "[Mileage] = '" & getProperty(sContact, PROPERTY_UID) & "'"
+    sFilter = "[Mileage] = '" & getProperty(sContact, PROPERTY_UID) & UID_REC_SEPARATOR & getProperty(sContact, PROPERTY_RECURRENCEID) & "'"
     Set olContact = contactFolder.items.Find(sFilter)
 
     If olContact Is Nothing Then
@@ -809,7 +831,8 @@ Sub createOrUpdateContact(ByVal sContact As String, contactFolder As Outlook.MAP
     olContact.ReminderSet = False 'prevent alerts for imported items
     olContact.Subject = getProperty(sContact, PROPERTY_SUMMARY)
     olContact.Body = getProperty(sContact, PROPERTY_DESCRIPTION)
-    olContact.Mileage = getProperty(sContact, PROPERTY_UID)  'this is a hack, but makes search much easier
+    olContact.Mileage = getProperty(sContact, PROPERTY_UID) & UID_REC_SEPARATOR & getProperty(sContact, PROPERTY_RECURRENCEID) 'this is a hack, but makes search much easier
+    
     olContact.Birthday = getTime(sContact, PROPERTY_BIRTHDAY)
     
     n = getPropertyN(sContact, PROPERTY_N)
@@ -878,17 +901,30 @@ Sub createOrUpdateContact(ByVal sContact As String, contactFolder As Outlook.MAP
     olContact.Save
 End Sub
 
-Sub getEventUID(ByVal sEvent As String, ByRef UID As String)
+Sub getEventUID(ByVal sEvent As String, ByRef UID As String, ByRef REC As String)
     sEvent = Replace(sEvent, vbCrLf, EOL)       'CRLF to EOL
     sEvent = Replace(sEvent, vbLf, EOL)         'LF to EOL
     sEvent = Replace(sEvent, "\n", EOL)         'escaped chars as per section 4.3.11 RFC 2445
     sEvent = Replace(sEvent, EOL & Chr(32), "") 'ignored when unfolding as per section 4.1 RFC 2445
     UID = getProperty(sEvent, PROPERTY_UID)
+    REC = getProperty(sEvent, PROPERTY_RECURRENCEID)
+End Sub
+
+Sub split_UID_REC(ByVal UIDREC As String, ByRef UID As String, ByRef REC As String)
+    Dim items As Variant
+    items = Split(UIDREC, UID_REC_SEPARATOR)
+    If UBound(items) >= 0 Then
+        If Not IsNull(items(0)) Then UID = items(0)
+    End If
+    If UBound(items) >= 1 Then
+        If Not IsNull(items(1)) Then REC = items(1)
+    End If
 End Sub
 
 Sub importICS(ByVal filename As String, calendarFolder As Outlook.MAPIFolder, ByRef UID As String)
     Dim sCalendar As String
     Dim sEvent, sTask As String
+    Dim REC As String
     Dim done As Boolean
     Dim counter As Integer
     Dim max As Integer
@@ -918,7 +954,7 @@ Sub importICS(ByVal filename As String, calendarFolder As Outlook.MAPIFolder, By
             sEvent = extractVContent(sCalendar, True, TAG_VEVENT_BEGIN, TAG_VEVENT_END)
             If sEvent <> "" Then
                 If (counter = 1) Then
-                  Call getEventUID(sEvent, UID) 'get UID of sentinel event [openCRX]
+                  Call getEventUID(sEvent, UID, REC) 'get UID of sentinel event [openCRX]
                 Else
                   Call createOrUpdateEvent(sEvent, calendarFolder)
                 End If
@@ -930,7 +966,7 @@ Sub importICS(ByVal filename As String, calendarFolder As Outlook.MAPIFolder, By
 
     If (calendarFolder.DefaultItemType = olTaskItem) Then
         sEvent = extractVContent(sCalendar, True, TAG_VEVENT_BEGIN, TAG_VEVENT_END)
-        If sEvent <> "" Then: Call getEventUID(sEvent, UID)
+        If sEvent <> "" Then: Call getEventUID(sEvent, UID, REC)
         Do
             DoEvents 'make sure application remains responsive
 
@@ -965,7 +1001,6 @@ Sub importVCF(ByVal filename As String, contactFolder As Outlook.MAPIFolder, ByR
     ProgressBox.Show
     counter = 0
     max = 10
-    UID = ""
 
     'convert UTF8 encoded file to Unicode
     Call fileUTF8ToUni(filename, filename)
@@ -995,6 +1030,11 @@ Sub importVCF(ByVal filename As String, contactFolder As Outlook.MAPIFolder, ByR
 closeCPGbox:
     ProgressBox.Hide
 End Sub
+
+Function formatIcalDateNoConv(d As Date) As String
+    'Format: YYYYMMDDTHHMMSSZ, e.g. ;VALUE=DATE:20080207
+    formatIcalDateNoConv = ";" & PROPERTY_VALUEISDATE & VBA.Format(d, "YYYYMMDD")
+End Function
 
 Function formatIcalDate(d As Date) As String
     Dim dUtc As Date
@@ -1076,13 +1116,16 @@ Function buildRRULE(ByVal rPattern As RecurrencePattern) As String
 'Returns a properly formatted recurrence rule string for the recurrence pattern
 
     Dim str As String
+    Dim exc As Variant
+    Dim olAppt As AppointmentItem
 
     str = TAG_RRULE
 
     If rPattern.RecurrenceType = olRecursDaily Then
         str = str & FREQ_DAILY
         If Not rPattern.NoEndDate Then
-            str = str & RRULE_KW_UNTIL & formatIcalDateTime(rPattern.PatternEndDate)
+            'rPattern.patternenddate+
+            str = str & RRULE_KW_UNTIL & formatIcalDate(rPattern.PatternEndDate + rPattern.EndTime)
             'The end date/time is marked as 12:00am on the last day.  When this is
             'parsed by php-ical, the last day of the sequence is missed. The MS Outlook
             'code has the same bug/issue.  To fix this, change the end time from
@@ -1094,7 +1137,7 @@ Function buildRRULE(ByVal rPattern As RecurrencePattern) As String
     ElseIf rPattern.RecurrenceType = olRecursMonthly Then
         str = str & FREQ_MONTHLY
         If Not rPattern.NoEndDate Then
-            str = str & RRULE_KW_UNTIL & formatIcalDateTime(rPattern.PatternEndDate)
+            str = str & RRULE_KW_UNTIL & formatIcalDate(rPattern.PatternEndDate + rPattern.EndTime)
         End If
         str = str & RRULE_KW_INTERVAL & rPattern.interval
         str = str & RRULE_KW_BYMONTHDAY & rPattern.DayOfMonth
@@ -1102,7 +1145,7 @@ Function buildRRULE(ByVal rPattern As RecurrencePattern) As String
     ElseIf rPattern.RecurrenceType = olRecursMonthNth Then
         str = str & FREQ_MONTHLY
         If Not rPattern.NoEndDate Then
-            str = str & RRULE_KW_UNTIL & formatIcalDateTime(rPattern.PatternEndDate)
+            str = str & RRULE_KW_UNTIL & formatIcalDate(rPattern.PatternEndDate + rPattern.EndTime)
         End If
         str = str & RRULE_KW_INTERVAL & rPattern.interval
         'php-icalendar has a bug for monthly recurring events.  If it is the last day of
@@ -1120,7 +1163,7 @@ Function buildRRULE(ByVal rPattern As RecurrencePattern) As String
     ElseIf rPattern.RecurrenceType = olRecursWeekly Then
         str = str & FREQ_WEEKLY
         If Not rPattern.NoEndDate Then
-            str = str & RRULE_KW_UNTIL & formatIcalDateTime(rPattern.PatternEndDate)
+            str = str & RRULE_KW_UNTIL & formatIcalDate(rPattern.PatternEndDate + rPattern.EndTime)
         End If
         str = str & RRULE_KW_INTERVAL & rPattern.interval
         str = str & RRULE_KW_BYDAY & days_of_week("", rPattern)
@@ -1128,7 +1171,7 @@ Function buildRRULE(ByVal rPattern As RecurrencePattern) As String
     ElseIf rPattern.RecurrenceType = olRecursYearly Then
         str = str & FREQ_YEARLY
         If Not rPattern.NoEndDate Then
-            str = str & RRULE_KW_UNTIL & formatIcalDateTime(rPattern.PatternEndDate)
+            str = str & RRULE_KW_UNTIL & formatIcalDate(rPattern.PatternEndDate + rPattern.EndTime)
         End If
         str = str & RRULE_KW_INTERVAL & "1"  'Can't do every nth year in Outlook
         str = str & RRULE_KW_BYDAY & days_of_week("", rPattern)
@@ -1136,14 +1179,27 @@ Function buildRRULE(ByVal rPattern As RecurrencePattern) As String
     ElseIf rPattern.RecurrenceType = olRecursYearNth Then
         str = str & FREQ_YEARLY
         If Not rPattern.NoEndDate Then
-            str = str & RRULE_KW_UNTIL & formatIcalDateTime(rPattern.PatternEndDate)
+            str = str & RRULE_KW_UNTIL & formatIcalDate(rPattern.PatternEndDate + rPattern.EndTime)
         End If
         str = str & RRULE_KW_BYMONTH & month_num(rPattern.MonthOfYear)
         str = str & RRULE_KW_BYDAY & days_of_week(week_num(rPattern.Instance), rPattern)
 
     End If
 
+    'deal with exceptions
+    Dim i As Integer
+    For i = rPattern.Exceptions.count To 1 Step -1
+        Set exc = rPattern.Exceptions.item(i)
+        If exc.Deleted Then
+            str = str & vbLf & PROPERTY_EXDATE & ":" & formatIcalDate(exc.OriginalDate + rPattern.StartTime)
+        Else
+          On Error Resume Next
+          olAppt = exc.AppointmentItem
+        End If
+    Next
+    
     buildRRULE = str
+    
 End Function
 
 Function week_num(theweek As Integer) As String
@@ -1234,7 +1290,7 @@ Function buildATTENDEEs(ByVal attendees As String, ByVal role As String, ByRef o
     Dim line As Variant
     Dim name As String
     Dim mail As String
-    Dim olRecipient As recipient
+    Dim olRecipient As Recipient
     Dim att As Variant
     Dim posOpening As Long, posClosing As Long
     Dim resultValue  As String
@@ -1275,9 +1331,11 @@ Function buildVEVENT(ByVal olAppt As AppointmentItem) As String
 
     Dim strVevent As String
     Dim oRecipient As Variant
-    Dim curRecipient As recipient
+    Dim curRecipient As Recipient
     Dim attName As String
     Dim attMail As String
+    Dim UID As String
+    Dim REC As String
     Dim posOpening As Long, posClosing As Long
 
     'Write out the record for this appointment
@@ -1287,7 +1345,12 @@ Function buildVEVENT(ByVal olAppt As AppointmentItem) As String
         olAppt.Mileage = olAppt.EntryID
     End If
     If Not IsNull(olAppt.Mileage) And Len(olAppt.Mileage) > 0 Then
-        strVevent = strVevent & PROPERTY_UID & makePropertyStr(olAppt.Mileage) & vbLf
+        'split UID and RECURRENCE-ID
+        Call split_UID_REC(olAppt.Mileage, UID, REC)
+        strVevent = strVevent & PROPERTY_UID & makePropertyStr(UID) & vbLf
+        If Not IsNull(REC) And Len(REC) > 0 Then
+            strVevent = strVevent & PROPERTY_RECURRENCEID & makePropertyStr(REC) & vbLf
+        End If
     End If
 
     If olAppt.IsRecurring Then
@@ -1308,10 +1371,10 @@ Function buildVEVENT(ByVal olAppt As AppointmentItem) As String
 
     If olAppt.AllDayEvent Then
         strVevent = strVevent & _
-                    PROPERTY_DTSTART & ":" & formatIcalDate(olAppt.Start) & vbLf
+                    PROPERTY_DTSTART & ":" & formatIcalDateNoConv(olAppt.Start) & vbLf
         If Not olAppt.IsRecurring Then
             strVevent = strVevent & _
-                        PROPERTY_DTEND & ":" & formatIcalDate(olAppt.End) & vbLf
+                        PROPERTY_DTEND & ":" & formatIcalDateNoConv(olAppt.End) & vbLf
         End If
     Else
         strVevent = strVevent & _
@@ -1359,7 +1422,7 @@ Function buildVTODO(ByVal olTask As TaskItem) As String
 
     Dim strVtask As String
     Dim oRecipient As Variant
-    Dim curRecipient As recipient
+    Dim curRecipient As Recipient
     Dim attName As String
     Dim attMail As String
     Dim posOpening As Long, posClosing As Long
@@ -1373,7 +1436,11 @@ Function buildVTODO(ByVal olTask As TaskItem) As String
         olTask.Mileage = olTask.EntryID
     End If
     If Not IsNull(olTask.Mileage) And Len(olTask.Mileage) > 0 Then
-        strVtask = strVtask & PROPERTY_UID & makePropertyStr(olTask.Mileage) & vbLf
+        Call split_UID_REC(olTask.Mileage, UID, REC)
+        strVtask = strVtask & PROPERTY_UID & makePropertyStr(UID) & vbLf
+        If Not IsNull(REC) And Len(REC) > 0 Then
+            strVtask = strVtask & PROPERTY_RECURRENCEID & makePropertyStr(REC) & vbLf
+        End If
     End If
 
     If olTask.IsRecurring Then
@@ -1445,6 +1512,7 @@ Function exportICS(calendarFolder As Outlook.MAPIFolder, ByRef UID As String, By
     Dim objItem As Object
     Dim counter As Integer
     Dim max As Integer
+    Dim iTemp As Integer
 
     ProgressBox.Show
     counter = 0
@@ -1500,7 +1568,9 @@ nextTask:
 
     tmpDir = getTempDir() & CRX_DIR & "\"
     On Error Resume Next
-    MkDir tmpDir
+    iTemp = GetAttr(tmpDir)
+    If Err.Number <> 0 Then MkDir tmpDir
+    
     If servletType = SERVLET_TYPE_ICAL Then
       filename = tmpDir & calendarFolder.name & "." & CAL_EXT
     Else
@@ -1508,7 +1578,7 @@ nextTask:
           filename = tmpDir & calendarFolder.name & "." & VCARD_EXT
       End If
     End If
-    Kill filename
+    If Dir(filename) <> "" Then Kill filename
     Call writeTextFile(filename, sCalendar)
 
 closePGbox:
@@ -1699,7 +1769,7 @@ Sub addCategories(ByRef sEvent As String, ByRef item As AppointmentItem)
     Dim resultValue As String
     Dim posOpening As Long, posClosing As Long, posFrom As Long, posTo  As Long
     Dim posSearch As Long, posCNstart As Long, posCNend As Long
-    Dim oRecipient As recipient
+    Dim oRecipient As Recipient
     Dim quit, required As Boolean
 
     resultValue = ""
@@ -1741,7 +1811,7 @@ Sub addAttendees(ByRef sEvent As String, ByRef item As AppointmentItem)
     Dim resultValue As String
     Dim posOpening As Long, posClosing As Long, posFrom As Long, posTo  As Long
     Dim posSearch As Long, posCNstart As Long, posCNend As Long
-    Dim oRecipient As recipient
+    Dim oRecipient As Recipient
     Dim quit, required As Boolean
 
     resultValue = ""
@@ -1920,7 +1990,7 @@ Sub addAttendeesTask(ByRef sTask As String, ByRef item As TaskItem)
     Dim resultValue As String
     Dim posOpening As Long, posClosing As Long, posFrom As Long, posTo  As Long
     Dim posSearch As Long, posCNstart As Long, posCNend As Long
-    Dim oRecipient As recipient
+    Dim oRecipient As Recipient
     Dim quit, required As Boolean
 
     resultValue = ""
@@ -2301,7 +2371,7 @@ Sub getFolder(startfolder As Outlook.MAPIFolder, ByVal servletType As Integer)
                     '        "LOCATION = " & olAppt.Location & vbCrLf & _
                     '        "START = " & olAppt.Start & vbCrLf & _
                     '        "END = " & olAppt.End & vbCrLf & _
-                    '        "UID = " & olAppt.Mileage & vbCrLf & _
+                    '        "UID<>REC = " & olAppt.Mileage & vbCrLf & _
                     '        "LAST_MODIFIED = " & olAppt.LastModificationTime & vbCrLf & vbCrLf & _
                     '        "Do you want to delete this appointment?" _
                     '        , vbYesNo, "DELETE APPOINTMENT?") = vbYes Then
@@ -2318,7 +2388,7 @@ Sub getFolder(startfolder As Outlook.MAPIFolder, ByVal servletType As Integer)
                     '        "LOCATION = " & olTask.Location & vbCrLf & _
                     '        "START = " & olTask.Start & vbCrLf & _
                     '        "END = " & olTask.End & vbCrLf & _
-                    '        "UID = " & olTask.Mileage & vbCrLf & _
+                    '        "UID<>REC = " & olTask.Mileage & vbCrLf & _
                     '        "LAST_MODIFIED = " & olTask.LastModificationTime & vbCrLf & vbCrLf & _
                     '        "Do you want to delete this task?" _
                     '        , vbYesNo, "DELETE APPOINTMENT?") = vbYes Then
@@ -2335,7 +2405,7 @@ Sub getFolder(startfolder As Outlook.MAPIFolder, ByVal servletType As Integer)
                     '        "LOCATION = " & olTask.Location & vbCrLf & _
                     '        "START = " & olTask.Start & vbCrLf & _
                     '        "END = " & olTask.End & vbCrLf & _
-                    '        "UID = " & olTask.Mileage & vbCrLf & _
+                    '        "UID<>REC = " & olTask.Mileage & vbCrLf & _
                     '        "LAST_MODIFIED = " & olTask.LastModificationTime & vbCrLf & vbCrLf & _
                     '        "Do you want to delete this task?" _
                     '        , vbYesNo, "DELETE APPOINTMENT?") = vbYes Then
@@ -2451,10 +2521,12 @@ Function getRemoteFile(ByVal filename As String, ByVal URL As String, ByVal user
     Dim tmpDir As String
     Dim iFile As Integer, bData() As Byte, sData As String, lSize As Long
     Dim found As Boolean, i As Integer, offset As Integer
+    Dim iTemp As Integer
 
     On Error Resume Next
     tmpDir = getTempDir() & CRX_DIR & "\"
-    MkDir tmpDir
+    iTemp = GetAttr(tmpDir)
+    If Err.Number <> 0 Then MkDir tmpDir
     If servletType = SERVLET_TYPE_ICAL Then
       filename = tmpDir & filename & "." & CAL_EXT
     Else
@@ -2546,6 +2618,8 @@ Function putRemoteFile(ByVal filename As String, ByVal URL As String, ByVal user
     Dim sData As String
 
     On Error GoTo ShowErr
+    
+    If Not UPLOAD_IS_ENABLED Then GoTo UploadIsDisabled
 
     If FileLen(filename) > 0 Then
         'Create an Http object, use any of the four objects
@@ -2588,7 +2662,13 @@ ShowErr:
         Debug.Print "Error #" & Err.Number & ": " & Err.Description
         putRemoteFile = 1
     End If
+    GoTo PrepareReturn
+    
+UploadIsDisabled:
+        Debug.Print "Warning: upload is disabled!"
+        putRemoteFile = 1
+
+PrepareReturn:
     On Error Resume Next
 End Function
-
 

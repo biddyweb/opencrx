@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeTask" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeTask" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="610" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="610" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Dodatočný účet klienta</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Dodatočný zodpovedný účet</_item>
@@ -48,13 +48,13 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ostatní</_item>
+                              <_item>Iné</_item>
                             </shortText>
                             <longText>
-                              <_item>Ostatní</_item>
+                              <_item>Iné</_item>
                             </longText>
                           </_object>
                           <_content/>

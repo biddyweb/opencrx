@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MarkAsAllDayEventWizard.jsp,v 1.2 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: MarkAsAllDayEventWizard.jsp,v 1.3 2010/04/27 12:16:11 wfro Exp $
  * Description: mark an activity as an all day event
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,7 +89,7 @@ org.openmdx.kernel.id.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
 	if(!(obj instanceof org.opencrx.kernel.activity1.jmi1.Activity)) {
@@ -131,6 +131,9 @@ org.openmdx.kernel.id.*
 	response.sendRedirect(
 		request.getContextPath() + "/" + nextAction.getEncodedHRef()
 	);
+	if(pm != null) {
+		pm.close();
+	}
 %>
   </body>
 </html>

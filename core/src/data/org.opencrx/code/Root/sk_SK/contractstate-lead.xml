@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="leadState" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="leadState" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
                           <_object>
                             <shortText>
                               <_item>nový</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
                           <_object>
                             <shortText>
                               <_item>predbežný</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
                           <_object>
                             <shortText>
                               <_item>kontaktovaný</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
                           <_object>
                             <shortText>
                               <_item>v diskusii</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
                           <_object>
                             <shortText>
                               <_item>kvalifikovaný</_item>
@@ -81,18 +81,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>získané alebo ďalšie fáze</_item>
+                              <_item>získané alebo ďalšia fáza</_item>
                             </shortText>
                             <longText>
-                              <_item>[06] Otvorený / získané alebo ďalšie fáze</_item>
+                              <_item>[06] Otvorený / získané alebo ďalšia fáza</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="create">
                           <_object>
                             <shortText>
                               <_item>stratený</_item>
@@ -103,18 +103,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>nejde kontaktovať</_item>
+                              <_item>nie je možné kontaktovať</_item>
                             </shortText>
                             <longText>
-                              <_item>[08] Zavretý / nejde kontaktovať</_item>
+                              <_item>[08] Zavretý / nie je možné kontaktovať</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="create">
                           <_object>
                             <shortText>
                               <_item>nemá záujem</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="create">
                           <_object>
                             <shortText>
                               <_item>zrušený</_item>

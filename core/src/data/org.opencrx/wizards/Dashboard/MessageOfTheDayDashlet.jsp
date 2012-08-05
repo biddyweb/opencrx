@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MessageOfTheDayDashlet.jsp,v 1.2 2009/10/23 15:31:59 wfro Exp $
+ * Name:        $Id: MessageOfTheDayDashlet.jsp,v 1.3 2010/04/27 12:16:11 wfro Exp $
  * Description: MessageOfTheDayDashlet
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/23 15:31:59 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,7 +80,7 @@ org.openmdx.kernel.log.*
 		<div>
 <%				
 			if(xri != null && requestId != null && dashletId != null && viewsCache.getView(requestId) != null) {
-				javax.jdo.PersistenceManager pm = app.getPmData();
+				javax.jdo.PersistenceManager pm = app.getNewPmData();
 				RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(xri));
 				String segmentName = obj.refGetPath().get(4);
 				org.opencrx.kernel.home1.jmi1.UserHome userHomeAdmin = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(
@@ -112,6 +112,7 @@ org.openmdx.kernel.log.*
 				if(messageOfTheDay.length() == 0) {
 					messageOfTheDay += "<pre>" + new Date() + "</pre>";
 				}
+				pm.close();
 %>
 				<%= messageOfTheDay %>
 <%

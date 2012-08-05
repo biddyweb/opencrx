@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VCardServlet.java,v 1.14 2009/07/18 14:32:39 wfro Exp $
+ * Name:        $Id: VCardServlet.java,v 1.16 2009/11/20 22:31:10 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/18 14:32:39 $
+ * Date:        $Date: 2009/11/20 22:31:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,8 +75,8 @@ import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.backend.VCard;
 import org.opencrx.kernel.base.jmi1.ImportParams;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.utils.AccountsHelper;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.AccountsFilterHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -146,11 +146,11 @@ public class VCardServlet extends HttpServlet {
     }
     
     //-----------------------------------------------------------------------
-    protected AccountsHelper getAccountsHelper(
+    protected AccountsFilterHelper getAccountsHelper(
         PersistenceManager pm,
         String requestedAccountFilter
     ) {
-        AccountsHelper accountsHelper = new AccountsHelper(pm);
+        AccountsFilterHelper accountsHelper = new AccountsFilterHelper(pm);
         if(requestedAccountFilter != null) {
             try {
                 accountsHelper.parseFilteredAccountsUri(                        
@@ -165,7 +165,7 @@ public class VCardServlet extends HttpServlet {
     //-----------------------------------------------------------------------
     protected Account findAccount(
         PersistenceManager pm,
-        AccountsHelper accountsHelper,
+        AccountsFilterHelper accountsHelper,
         String uid
     ) {
         Account1Package accountPkg = Utils.getAccountPackage(pm);
@@ -220,7 +220,7 @@ public class VCardServlet extends HttpServlet {
             return;
         }        
         String requestedAccountFilter = req.getParameter("id");
-        AccountsHelper accountsHelper = this.getAccountsHelper(pm, requestedAccountFilter);
+        AccountsFilterHelper accountsHelper = this.getAccountsHelper(pm, requestedAccountFilter);
         org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = 
             this.getComponentConfiguration(
                  accountsHelper.getAccountSegment().refGetPath().get(2)
@@ -291,82 +291,87 @@ public class VCardServlet extends HttpServlet {
             return;
         }        
         String filterId = req.getParameter("id");
-        AccountsHelper accountsHelper = this.getAccountsHelper(pm, filterId);
-        if(
-            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter(PARAMETER_NAME_RESOURCE)) ||
-            RESOURCE_TYPE_VCF.equals(req.getParameter(PARAMETER_NAME_TYPE))
-        ) {
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setCharacterEncoding("UTF-8");
-            BufferedReader reader = new BufferedReader(req.getReader());
-            String l = null;
-            while((l = reader.readLine()) != null) {
-                if(l.toUpperCase().startsWith("BEGIN:VCARD")) {
-                    StringBuilder vcard = new StringBuilder();
-                    vcard.append("BEGIN:VCARD\n");
-                    String uid = null;
-                    String rev = null;
-                    while((l = reader.readLine()) != null) {
-                        vcard.append(l).append("\n");
-                        if(l.startsWith("UID:")) {
-                            uid = l.substring(4);
-                        }
-                        else if(l.startsWith("REV:")) {
-                            rev = l.substring(4);
-                        }
-                        else if(l.startsWith("END:VCARD")) {
-                            break;
-                        }
-                    }
-                    SysLog.trace("VCARD", vcard);
-                    if((uid != null) && (rev != null)) {
-                    	SysLog.detail("Lookup account", uid);
-                        Account account = this.findAccount(
-                            pm,
-                            accountsHelper, 
-                            uid
-                        );
-                        if(
-                            (account != null) &&
-                            ((account.getModifiedAt() == null) || 
-                            // only compare date, hours and minutes (a sample date is 20070922T005655Z)
-                            (rev.substring(0, 13).compareTo(ActivitiesHelper.formatDate(account.getModifiedAt()).substring(0, 13)) >= 0))
-                        ) {
-                            try {
-                                pm.currentTransaction().begin();
-                                ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
-                                    vcard.toString().getBytes("UTF-8"), 
-                                    VCard.MIME_TYPE, 
-                                    "import.vcf", 
-                                    (short)0
-                                );
-                                account.importItem(importItemParams);
-                                pm.currentTransaction().commit();
-                            }
-                            catch(Exception e) {
-                                try {
-                                    pm.currentTransaction().rollback();
-                                } 
-                                catch(Exception e0) {}                                    
-                            }
-                        }
-                        else {
-                        	SysLog.detail(
-                                "Skipping ", 
-                                new String[]{
-                                    "UID: " + uid, 
-                                    "REV: " + rev, 
-                                    "Account.number: " + (account == null ? null : account.refMofId()),
-                                    "Account.modifiedAt:" + (account == null ? null : account.getModifiedAt())
-                                }
-                            );
-                        }
-                    }
-                    else {
-                    	SysLog.detail("Skipping", vcard); 
-                    }
-                }                    
-            }
+        AccountsFilterHelper accountsHelper = this.getAccountsHelper(pm, filterId);
+        if(req.getRequestURI().endsWith("/vcard") || req.getRequestURI().endsWith("/accounts")) {
+	        if(
+	            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter(PARAMETER_NAME_RESOURCE)) ||
+	            RESOURCE_TYPE_VCF.equals(req.getParameter(PARAMETER_NAME_TYPE))
+	        ) {
+	            resp.setStatus(HttpServletResponse.SC_OK);
+	            resp.setCharacterEncoding("UTF-8");
+	            BufferedReader reader = new BufferedReader(req.getReader());
+	            String l = null;
+	            while((l = reader.readLine()) != null) {
+	                if(l.toUpperCase().startsWith("BEGIN:VCARD")) {
+	                    StringBuilder vcard = new StringBuilder();
+	                    vcard.append("BEGIN:VCARD\n");
+	                    String uid = null;
+	                    String rev = null;
+	                    while((l = reader.readLine()) != null) {
+	                        vcard.append(l).append("\n");
+	                        if(l.startsWith("UID:")) {
+	                            uid = l.substring(4);
+	                        }
+	                        else if(l.startsWith("REV:")) {
+	                            rev = l.substring(4);
+	                        }
+	                        else if(l.startsWith("END:VCARD")) {
+	                            break;
+	                        }
+	                    }
+	                    SysLog.trace("VCARD", vcard);
+	                    if((uid != null) && (rev != null)) {
+	                    	SysLog.detail("Lookup account", uid);
+	                        Account account = this.findAccount(
+	                            pm,
+	                            accountsHelper, 
+	                            uid
+	                        );
+	                        if(
+	                            (account != null) &&
+	                            ((account.getModifiedAt() == null) || 
+	                            // only compare date, hours and minutes (a sample date is 20070922T005655Z)
+	                            (rev.substring(0, 13).compareTo(ActivitiesFilterHelper.formatDate(account.getModifiedAt()).substring(0, 13)) >= 0))
+	                        ) {
+	                            try {
+	                                pm.currentTransaction().begin();
+	                                ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
+	                                    vcard.toString().getBytes("UTF-8"), 
+	                                    VCard.MIME_TYPE, 
+	                                    "import.vcf", 
+	                                    (short)0
+	                                );
+	                                account.importItem(importItemParams);
+	                                pm.currentTransaction().commit();
+	                            }
+	                            catch(Exception e) {
+	                                try {
+	                                    pm.currentTransaction().rollback();
+	                                } 
+	                                catch(Exception e0) {}                                    
+	                            }
+	                        }
+	                        else {
+	                        	SysLog.detail(
+	                                "Skipping ", 
+	                                new String[]{
+	                                    "UID: " + uid, 
+	                                    "REV: " + rev, 
+	                                    "Account.number: " + (account == null ? null : account.refMofId()),
+	                                    "Account.modifiedAt:" + (account == null ? null : account.getModifiedAt())
+	                                }
+	                            );
+	                        }
+	                    }
+	                    else {
+	                    	SysLog.detail("Skipping", vcard); 
+	                    }
+	                }                    
+	            }
+	        }
+	        else {
+	            super.doPut(req, resp);
+	        }	        
         }            
         else {
             super.doPut(req, resp);

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.15 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.17 2010/04/27 12:16:11 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -92,7 +92,7 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
 
@@ -302,7 +302,7 @@ org.openmdx.base.naming.*
                 </script>
   	          </td>
   	          <td class="addon">
-                <img class="popUpButton" border="0" align="bottom" alt="Click to open ObjectFinder" src="../../images/lookup.gif" onclick="OF.findObject('../../<%= findAccountTargetObjectAction.getEncodedHRef() %>', $('accountTargetXri.Title'), $('accountTargetXri'), '<%= lookupId %>');" /></div>
+                <img class="popUpButton" border="0" align="bottom" alt="Click to open ObjectFinder" src="../../images/lookup.gif" onclick="OF.findObject('../../<%= findAccountTargetObjectAction.getEncodedHRef() %>', $('accountTargetXri.Title'), $('accountTargetXri'), '<%= lookupId %>');" />
   	          </td>
             </tr>
 
@@ -566,6 +566,10 @@ org.openmdx.base.naming.*
       PrintWriter pw = new PrintWriter(out);
       e0.printStackTrace(pw);
       out.println("</pre></p>");
+  } finally {
+	  if(pm != null) {
+		  pm.close();
+	  }
   }
 %>
       </div> <!-- content -->

@@ -8,7 +8,7 @@
 			<remote>org.openmdx.application.rest.ejb.Connection_2_0Remote</remote>
 			<ejb-class>org.openmdx.application.rest.ejb.DataManager_2Bean</ejb-class>
 			<session-type>Stateful</session-type>
-			<transaction-type>Container</transaction-type>
+			<transaction-type>Bean</transaction-type>
 			<resource-ref id="jdbc_opencrx_CRX">
 				<res-ref-name>jdbc_opencrx_CRX</res-ref-name>
 				<res-type>javax.sql.DataSource</res-type>

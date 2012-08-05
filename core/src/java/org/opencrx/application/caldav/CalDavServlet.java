@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: CalDavServlet.java,v 1.24 2009/09/19 16:58:16 wfro Exp $
+ * Name:        $Id: CalDavServlet.java,v 1.35 2010/03/24 13:06:07 wfro Exp $
  * Description: CalDavServlet
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.35 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/19 16:58:16 $
+ * Date:        $Date: 2010/03/24 13:06:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,9 +61,12 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
@@ -84,23 +87,25 @@ import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.cci2.CalendarProfileQuery;
 import org.opencrx.kernel.home1.jmi1.ActivityFilterCalendarFeed;
 import org.opencrx.kernel.home1.jmi1.ActivityGroupCalendarFeed;
-import org.opencrx.kernel.home1.jmi1.CalendarFeed;
 import org.opencrx.kernel.home1.jmi1.CalendarProfile;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
+import org.opencrx.kernel.home1.jmi1.SyncFeed;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.XMLEncoder;
-import org.openmdx.base.text.format.DateFormat;
+import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.WebKeys;
+import org.w3c.format.DateTimeFormat;
 
 public class CalDavServlet extends HttpServlet  {
 
@@ -183,12 +188,12 @@ public class CalDavServlet extends HttpServlet  {
     }
     
     //-----------------------------------------------------------------------
-    protected ActivitiesHelper getActivitiesHelper(
+    protected ActivitiesFilterHelper getActivitiesHelper(
         PersistenceManager pm,
         String filterId,
         String isDisabledFilter
     ) {
-        ActivitiesHelper activitiesHelper = new ActivitiesHelper(pm);
+        ActivitiesFilterHelper activitiesHelper = new ActivitiesFilterHelper(pm);
         if(filterId != null) {
             try {
                 activitiesHelper.parseFilteredActivitiesUri(                        
@@ -289,86 +294,145 @@ public class CalDavServlet extends HttpServlet  {
 //        }
 //    }
     
-    protected void printICal(
+    //-----------------------------------------------------------------------
+    protected String getUid(
+    	String event
+    ) {
+    	String uid = null;
+    	if(event.indexOf("UID:") > 0) {
+    		int start = event.indexOf("UID:");
+    		int end = event.indexOf("\n", start);
+    		if(end > start) {
+    			uid = event.substring(start + 4, end).trim();
+    		}
+    	}    	
+    	return uid;
+    }
+    
+    //-----------------------------------------------------------------------
+    protected void printCalendar(
     	Activity activity,
+    	ActivitiesFilterHelper activitiesHelper,
     	PrintWriter p,
     	HttpServletRequest req,
     	int index
     ) {
-        String ical = activity.getIcal();
-        ical = ical.replace("\r\n", "\n"); // Remove \r just in case
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
+    	String ical = activity.getIcal();
+    	// In case of recurring activities collect activities 
+    	// which are member of the same recurrence
+    	List<Activity> events = new ArrayList<Activity>();
+    	events.add(activity);
+    	String uid = this.getUid(ical);
+    	if((uid != null) && (ical.indexOf("RRULE:") > 0)) {
+        	ActivityQuery memberQuery = (ActivityQuery)pm.newQuery(Activity.class);
+        	memberQuery.thereExistsExternalLink().equalTo(
+        		ICalendar.ICAL_SCHEMA + uid 
+        	);
+        	memberQuery.thereExistsExternalLink().startsWith(
+        		ICalendar.ICAL_RECURRENCE_ID_SCHEMA
+        	);
+        	Collection<Activity> members = activitiesHelper.getFilteredActivities(memberQuery);
+        	events.addAll(members);
+    	}
 		String userAgent = req.getHeader("user-agent");
         boolean iPhone = userAgent != null && userAgent.indexOf("iPhone") > 0;
-    	p.println("BEGIN:VCALENDAR");
+    	p.println("<![CDATA[BEGIN:VCALENDAR");
         p.println("PRODID:" + ICalendar.PROD_ID);
         p.println("VERSION:2.0");
         p.println("CALSCALE:GREGORIAN");
-        if(ical.indexOf("BEGIN:VEVENT") >= 0) {
-            int start = ical.indexOf("BEGIN:VEVENT");
-            int end = ical.indexOf("END:VEVENT");
-            String vevent = ical.substring(start, end);
-    		String url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, activity, false);
-            // The attribute ORGANIZER (and ATTENDE and maybe other) attribute
-            // puts the event into read-only mode in case of iPhone.
-        	if(iPhone) {
-        		if((vevent.indexOf("ORGANIZER:") > 0) && (vevent.indexOf("ATTENDEE:") < 0)) {
-        			start = vevent.indexOf("ORGANIZER:");
-        			end = vevent.indexOf("\n", start);
-        			vevent = vevent.substring(0, start) + vevent.substring(end + 1); 
-        		}
-        		if(vevent.indexOf("DESCRIPTION:") > 0) {
-        			start = vevent.indexOf("DESCRIPTION:");
-        			end = vevent.indexOf("\n", start);
-        			if(end > start) {
-        				vevent = 
-        					vevent.substring(0, end) + 
-        					ICalendar.LINE_COMMENT_INDICATOR + " " + url + " " +
-        					vevent.substring(end);    					        					
-        			}
-        		}
-        		else {
-        			vevent += "DESCRIPTION:" + ICalendar.LINE_COMMENT_INDICATOR + " " + url + "\n";
-        		}
-        	}
-        	String encVevent = XMLEncoder.encode(vevent); 
-            p.print(encVevent);            
-            SysLog.detail("VEVENT #", index);
-            SysLog.detail(encVevent);
-            if(vevent.indexOf("URL:") < 0) {
-                p.println("URL:" + XMLEncoder.encode(url));
-            }
-            p.println("END:VEVENT");
-        }
-        else if(ical.indexOf("BEGIN:VTODO") >= 0) {
-            int start = ical.indexOf("BEGIN:VTODO");
-            int end = ical.indexOf("END:VTODO");
-            String vtodo = ical.substring(start, end);
-            String url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, activity, false);
-            if(iPhone) {
-        		if(vtodo.indexOf("DESCRIPTION:") > 0) {
-        			start = vtodo.indexOf("DESCRIPTION:");
-        			end = vtodo.indexOf("\n", start);
-        			if(end > start) {
-        				vtodo = 
-        					vtodo.substring(0, end) + 
-        					ICalendar.LINE_COMMENT_INDICATOR + " " + url + " " +
-        					vtodo.substring(end);        					        					
-        			}
-        		}            	
-	    		else {
-	    			vtodo += "DESCRIPTION:" + ICalendar.LINE_COMMENT_INDICATOR + " " + url + "\n";
-	    		}
-            }
-            String encVTodo = XMLEncoder.encode(vtodo); 
-            p.print(encVTodo);
-            SysLog.detail("VTODO #", index);
-            SysLog.detail(encVTodo);
-            if(vtodo.indexOf("URL:") < 0) {
-                p.println("URL:" + XMLEncoder.encode(url));
-            }
-            p.println("END:VTODO");                        
-        }
-        p.print("END:VCALENDAR");    	
+    	for(Activity event: events) {
+	        ical = event.getIcal();
+	        uid = this.getUid(ical);
+	        boolean externalLinkMatchesUid = false;
+	        for(String externalLink: event.getExternalLink()) {
+	        	if(externalLink.startsWith(ICalendar.ICAL_SCHEMA) && externalLink.endsWith(uid)) {
+	        		externalLinkMatchesUid = true;
+	        		break;
+	        	}
+	        }
+	        if(externalLinkMatchesUid) {
+		        ical = ical.replace("\r\n", "\n"); // Remove \r just in case
+		        if(ical.indexOf("BEGIN:VEVENT") >= 0) {
+		            int start = ical.indexOf("BEGIN:VEVENT");
+		            int end = ical.indexOf("END:VEVENT");
+		            String vevent = ical.substring(start, end);
+		    		String url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, event, false);
+		            // The attribute ORGANIZER (and ATTENDE and maybe other) attribute
+		            // puts the event into read-only mode in case of iPhone.
+		        	if(iPhone) {
+		        		if((vevent.indexOf("ORGANIZER:") > 0) && (vevent.indexOf("ATTENDEE:") < 0)) {
+		        			start = vevent.indexOf("ORGANIZER:");
+		        			end = vevent.indexOf("\n", start);
+		        			vevent = vevent.substring(0, start) + vevent.substring(end + 1); 
+		        		}
+		        		if(vevent.indexOf("DESCRIPTION:") > 0) {
+		        			start = vevent.indexOf("DESCRIPTION:");
+		        			end = vevent.indexOf("\n", start);
+		        			if(end > start) {
+		        				vevent = 
+		        					vevent.substring(0, end) + 
+		        					ICalendar.LINE_COMMENT_INDICATOR + " " + url + " " +
+		        					vevent.substring(end);    					        					
+		        			}
+		        		}
+		        		else {
+		        			vevent += "DESCRIPTION:" + ICalendar.LINE_COMMENT_INDICATOR + " " + url + "\n";
+		        		}
+		        	}
+		        	String encVevent = XMLEncoder.encode(vevent); 
+		            p.print(encVevent);            
+		            SysLog.detail("VEVENT #", index);
+		            SysLog.detail(encVevent);
+		            if(vevent.indexOf("URL:") < 0) {
+		                p.println("URL:" + XMLEncoder.encode(url));
+		            }
+		            p.println("END:VEVENT");
+		        }
+		        else if(ical.indexOf("BEGIN:VTODO") >= 0) {
+		            int start = ical.indexOf("BEGIN:VTODO");
+		            int end = ical.indexOf("END:VTODO");
+		            String vtodo = ical.substring(start, end);
+		            String url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, event, false);
+		            if(iPhone) {
+		        		if(vtodo.indexOf("DESCRIPTION:") > 0) {
+		        			start = vtodo.indexOf("DESCRIPTION:");
+		        			end = vtodo.indexOf("\n", start);
+		        			if(end > start) {
+		        				vtodo = 
+		        					vtodo.substring(0, end) + 
+		        					ICalendar.LINE_COMMENT_INDICATOR + " " + url + " " +
+		        					vtodo.substring(end);        					        					
+		        			}
+		        		}            	
+			    		else {
+			    			vtodo += "DESCRIPTION:" + ICalendar.LINE_COMMENT_INDICATOR + " " + url + "\n";
+			    		}
+		            }
+		            String encVTodo = XMLEncoder.encode(vtodo); 
+		            p.print(encVTodo);
+		            SysLog.detail("VTODO #", index);
+		            SysLog.detail(encVTodo);
+		            if(vtodo.indexOf("URL:") < 0) {
+		                p.println("URL:" + XMLEncoder.encode(url));
+		            }
+		            p.println("END:VTODO");                        
+		        }
+	        }
+	        else {
+	        	ServiceException e = new ServiceException(
+	        		BasicException.Code.DEFAULT_DOMAIN,
+	        		BasicException.Code.ASSERTION_FAILURE,
+	        		"Mismatch of activity's external link and ical's UID. Ignoring event",
+	        		new BasicException.Parameter("activity", activity.refGetPath()),
+	        		new BasicException.Parameter("externalLink", activity.getExternalLink()),
+	        		new BasicException.Parameter("uid", uid),
+	        		new BasicException.Parameter("ical", ical)
+	        	);
+	        	e.log();
+	        }
+    	}
+        p.print("END:VCALENDAR]]>");
     }
     
     //-----------------------------------------------------------------------
@@ -406,7 +470,7 @@ public class CalDavServlet extends HttpServlet  {
         String profileName = null;
         boolean isFeedsQuery = false;
         int icalType = ICalendar.ICAL_TYPE_VEVENT;
-        ActivitiesHelper activitiesHelper = null;
+        ActivitiesFilterHelper activitiesHelper = null;
         if(components.length > 0) {
         	providerName = components[0];
         }
@@ -571,16 +635,15 @@ public class CalDavServlet extends HttpServlet  {
 	        	p.println("  </D:response>");
 	        	if(profileName != null) {
 		        	CalendarProfile calendarProfile = null;
-		        	Collection<CalendarProfile> calendarProfiles = userHome.getCalendarProfile();
-		        	for(CalendarProfile profile: calendarProfiles) {
-		        		if(profileName.equals(profile.getName())) {
-		        			calendarProfile = profile;
-		        			break;
-		        		}
+		        	CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
+		        	calendarProfileQuery.name().equalTo(profileName);
+		        	List<CalendarProfile> calendarProfiles = userHome.getSyncProfile(calendarProfileQuery);
+		        	if(!calendarProfiles.isEmpty()) {
+		        		calendarProfile = calendarProfiles.iterator().next();
 		        	}
 		        	if(calendarProfile != null) {
-		        		Collection<CalendarFeed> feeds = calendarProfile.getCalendarFeed();
-		        		for(CalendarFeed feed: feeds) {
+		        		Collection<SyncFeed> feeds = calendarProfile.getFeed();
+		        		for(SyncFeed feed: feeds) {
 		        			if(feed.isActive() != null && feed.isActive()) {
 			        			String href = contextPath + "/" + providerName + "/" + segmentName;
 			        			if(feed instanceof ActivityGroupCalendarFeed) {
@@ -660,6 +723,14 @@ public class CalDavServlet extends HttpServlet  {
         	}
         	// Properties of calendar and its content
         	else {
+        		boolean returnGetetag = request.indexOf(":getetag") > 0;
+        		boolean returnResourcetype = request.indexOf(":resourcetype") > 0;
+        		boolean returnGetcontenttype = request.indexOf(":getcontenttype") > 0;
+        		boolean returnSupportedCalendarComponentSet = request.indexOf(":supported-calendar-component-set") > 0;
+        		boolean returnCalendarDescription = request.indexOf(":calendar-description") > 0;
+        		boolean returnGetctag = request.indexOf(":getctag") > 0;
+        		boolean returnDisplayname = request.indexOf(":displayname") > 0;
+        		
         		p.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	        	p.println("<D:multistatus xmlns:D=\"DAV:\" xmlns:C=\"urn:ietf:params:xml:ns:caldav\" xmlns:CS=\"http://calendarserver.org/ns/\">");
 	        	// Properties for calendar
@@ -669,35 +740,37 @@ public class CalDavServlet extends HttpServlet  {
 	            p.println("      <D:status>HTTP/1.1 200 OK</D:status>");
 	            p.println("      <D:prop>");
 	            // displayname
-	            if(request.indexOf("displayname") > 0) {
+	            if(returnDisplayname) {
 	            	p.println("        <D:displayname>" + activitiesHelper.getCalendarName() + "</D:displayname>");
 	            }            
 	            // getctag
-	            if(request.indexOf("getctag") > 0) {
+	            if(returnGetctag) {
 	            	p.println("        <CS:getctag xmlns:CS=\"http://calendarserver.org/ns/\">" + System.currentTimeMillis() + "</CS:getctag>");
 	            }
 	            // getetag
-	            if(request.indexOf("getetag") > 0) {
+	            if(returnGetetag) {
 	            	p.println("        <D:getetag>&quot;" + activitiesHelper.getFilteredActivitiesParentId() + "&quot;</D:getetag>");
 	            }
 	            // calendar-description
-	            if(request.indexOf("calendar-description") > 0) {
+	            if(returnCalendarDescription) {
 	            	p.println("        <C:calendar-description xmlns:C=\"urn:ietf:params:xml:ns:caldav\">" + activitiesHelper.getCalendarName() + "</C:calendar-description>");
 	            }
 	            // getcontenttype
-	            if(request.indexOf("getcontenttype") > 0) {
+	            if(returnGetcontenttype) {
 	            	p.println("        <D:getcontenttype>text/calendar</D:getcontenttype>");
 	            }
-	            if(request.indexOf("supported-calendar-component-set") > 0) {
+	            if(returnSupportedCalendarComponentSet) {
 	            	p.println("        <C:supported-calendar-component-set xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
 		            p.println("          <C:comp name=\"" + (icalType == ICalendar.ICAL_TYPE_VTODO ? "VTODO" : "VEVENT") + "\" />");
 		            p.println("        </C:supported-calendar-component-set>");
 	            }	            
 	            // resourcetype
-	            p.println("        <D:resourcetype>");
-	            p.println("          <D:collection />");
-	            p.println("          <C:calendar xmlns:C=\"urn:ietf:params:xml:ns:caldav\" />");
-	            p.println("        </D:resourcetype>");
+	            if(returnResourcetype) {
+		            p.println("        <D:resourcetype>");
+		            p.println("          <D:collection />");
+		            p.println("          <C:calendar xmlns:C=\"urn:ietf:params:xml:ns:caldav\" />");
+		            p.println("        </D:resourcetype>");
+	            }
 	            p.println("      </D:prop>");
 	            p.println("    </D:propstat>");     
 	            p.println("  </D:response>");
@@ -729,20 +802,28 @@ public class CalDavServlet extends HttpServlet  {
 	                	activityQuery.icalType().equalTo(ICalendar.ICAL_TYPE_VTODO);
 	                }
 	                activityQuery.ical().isNonNull();
+	                activityQuery.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
+	                activityQuery.orderByCreatedAt().ascending();
 	                int n = 0;
 	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
 	                    p.println("  <D:response>");
-	                    p.println("    <D:href>" + contextPath + this.urlEncodePath(path) + "activity/" + activity.refGetPath().getBase() + ".ics</D:href>");
+	                    p.println("    <D:href>" + contextPath + this.urlEncodePath(path) + activity.refGetPath().getBase() + ".ics</D:href>");
 	                    p.println("    <D:propstat>");
 	                    p.println("      <D:status>HTTP/1.1 200 OK</D:status>");
 	                    p.println("      <D:prop>");
-	                    p.println("        <D:getetag>&quot;" + activity.getModifiedAt().getTime() + "&quot;</D:getetag>");
-	                    p.println("        <D:resourcetype />");
+	                    if(returnGetcontenttype) {
+	                    	p.println("        <D:getcontenttype>text/calendar; component=" + ((icalType == ICalendar.ICAL_TYPE_VTODO ? "vtodo" : "vevent")) + "</D:getcontenttype>");	                    	
+	                    }
+	                    if(returnGetetag) {
+	                    	p.println("        <D:getetag>&quot;" + activity.getModifiedAt().getTime() + "&quot;</D:getetag>");
+	                    }
+	                    if(returnResourcetype) {
+	                    	p.println("        <D:resourcetype />");
+	                    }
 	                    p.println("      </D:prop>");
 	                    p.println("    </D:propstat>");
 	                    p.println("  </D:response>");
 	                    n++;
-	                    if(n % 50 == 0) pm.evictAll();                
 	                    if(n > maxActivities) break;
 	                }
                 }
@@ -785,12 +866,21 @@ public class CalDavServlet extends HttpServlet  {
 	                    activityQuery.forAllDisabled().isFalse();                    
 	                }
 	                if(icalType == ICalendar.ICAL_TYPE_VEVENT) {
-	                	activityQuery.icalType().elementOf(ICalendar.ICAL_TYPE_NA, ICalendar.ICAL_TYPE_VEVENT);
+	                	activityQuery.icalType().elementOf(
+	                		ICalendar.ICAL_TYPE_NA, 
+	                		ICalendar.ICAL_TYPE_VEVENT
+	                	);
 	                }
 	                else if(icalType == ICalendar.ICAL_TYPE_VTODO) {
-	                	activityQuery.icalType().equalTo(ICalendar.ICAL_TYPE_VTODO);
+	                	activityQuery.icalType().equalTo(
+	                		ICalendar.ICAL_TYPE_VTODO
+	                	);
 	                }	                
 	                activityQuery.ical().isNonNull();
+	                activityQuery.forAllExternalLink().startsNotWith(
+	                	ICalendar.ICAL_RECURRENCE_ID_SCHEMA
+	                );
+	                activityQuery.orderByCreatedAt().ascending();
 		            resp.setStatus(SC_MULTI_STATUS);
 		            resp.setCharacterEncoding("UTF-8");
 		            resp.setContentType("application/xml");
@@ -802,13 +892,14 @@ public class CalDavServlet extends HttpServlet  {
 	                int n = 0;
 	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
 	    	        	p.println("  <D:response>");
-	    	        	p.println("    <D:href>" + contextPath + this.urlEncodePath(path) + "activity/" + activity.refGetPath().getBase() + ".ics</D:href>");
+	    	        	p.println("    <D:href>" + contextPath + this.urlEncodePath(path) + activity.refGetPath().getBase() + ".ics</D:href>");
 	    	        	p.println("    <D:propstat>");
 	    	        	p.println("      <D:prop>");
 	    	        	p.println("        <D:getetag>&quot;" + activity.getModifiedAt().getTime() + "&quot;</D:getetag>");
 	    	        	p.print  ("        <C:calendar-data xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
-	    	        	this.printICal(
+	    	        	this.printCalendar(
 	    	        		activity, 
+	    	        		activitiesHelper,
 	    	        		p, 
 	    	        		req, 
 	    	        		n
@@ -819,7 +910,6 @@ public class CalDavServlet extends HttpServlet  {
 	    	        	p.println("    </D:propstat>");
 	    	        	p.println("  </D:response>");
 	                    n++;
-	                    if(n % 50 == 0) pm.evictAll();                
 	                    if(n > maxActivities) break;
 	                }
 		        	p.println("</D:multistatus>");
@@ -845,10 +935,11 @@ public class CalDavServlet extends HttpServlet  {
     	            resp.setCharacterEncoding("UTF-8");
     	            resp.setContentType(ICalendar.MIME_TYPE);
 		            resp.setHeader("DAV", "1, 2, calendar-access");
-		            resp.setHeader("ETag", DateFormat.getInstance().format(activity.getModifiedAt()));		            
+		            resp.setHeader("ETag", DateTimeFormat.BASIC_UTC_FORMAT.format(activity.getModifiedAt()));		            
     	        	PrintWriter p = resp.getWriter();
-    	        	this.printICal(
+    	        	this.printCalendar(
     	        		activity, 
+    	        		activitiesHelper,
     	        		p, 
     	        		req, 
     	        		0

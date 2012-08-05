@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.76 2009/10/19 16:32:13 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.83 2010/04/07 12:16:27 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.76 $
+ * Revision:    $Revision: 1.83 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/19 16:32:13 $
+ * Date:        $Date: 2010/04/07 12:16:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,7 +57,6 @@ package org.opencrx.kernel.backend;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -82,7 +81,6 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.activity1.jmi1.Absence;
@@ -107,17 +105,18 @@ import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Task;
 import org.opencrx.kernel.activity1.jmi1.TaskParty;
 import org.opencrx.kernel.base.jmi1.ImportParams;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.base.text.format.DateTimeFormat;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.format.DateTimeFormat;
 
 public class ICalendar extends AbstractImpl {
 
@@ -139,26 +138,6 @@ public class ICalendar extends AbstractImpl {
 		
 	}
 	
-    //-------------------------------------------------------------------------
-    public String getPrimaryEMailAddress(
-        Account account
-    ) throws ServiceException {
-        Collection<AccountAddress> addresses = account.getAddress();
-        String emailAddress = null;
-        for(AccountAddress address: addresses) {
-            if(address instanceof EMailAddress) {
-                String adr = ((EMailAddress)address).getEmailAddress();
-                if((emailAddress == null) && (adr != null)) {
-                    emailAddress = adr;
-                }
-                if((adr != null) && (address.getUsage().contains(USAGE_EMAIL_PRIMARY))) {
-                    emailAddress = adr;
-                }
-            }
-        }
-        return emailAddress;
-    }
-
     //-------------------------------------------------------------------------
     private String escapeNewlines(
         String from
@@ -354,7 +333,7 @@ public class ICalendar extends AbstractImpl {
                     // Party is Contact
                     if(party instanceof Account) {
                         account = (Account)party;
-                        emailAddress = this.getPrimaryEMailAddress(
+                        emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(
                             account
                         );
                     }
@@ -395,7 +374,7 @@ public class ICalendar extends AbstractImpl {
         // ORGANIZER
         String organizerEmailAddress = null;
         if(activity.getAssignedTo() != null) {
-            organizerEmailAddress = this.getPrimaryEMailAddress(
+            organizerEmailAddress = Accounts.getInstance().getPrimaryBusinessEMail(
                 activity.getAssignedTo()
             );
         }
@@ -435,7 +414,7 @@ public class ICalendar extends AbstractImpl {
                 "END:VCALENDAR";            
         }
         try {
-            ByteArrayOutputStream targetIcalBos = new ByteArrayOutputStream();
+            QuotaByteArrayOutputStream targetIcalBos = new QuotaByteArrayOutputStream(ICalendar.class.getName());
             PrintWriter targetIcal = new PrintWriter(new OutputStreamWriter(targetIcalBos, "UTF-8"));
             String lSourceIcal = null;
             BufferedReader readerSourceIcal = new BufferedReader(new StringReader(sourceIcal));
@@ -920,34 +899,26 @@ public class ICalendar extends AbstractImpl {
                 (attendeeAsString.indexOf("MAILTO:") >= 0) ||
                 (attendeeAsString.indexOf("mailto:") >= 0)
             ) {
-                BasicObject attendee = this.getAttendeeAsContact(
-                    attendeeAsString,
-                    accountSegment,
-                    locale,
-                    report
-                );
-                if(attendee != null) {
-                	int pos = attendeeAsString.indexOf("MAILTO:");
-                    String emailPrefInternet = attendeeAsString.substring(pos + 7);                	
-                	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
-                		pm, 
-                		activity.refGetPath().get(2), 
-                		activity.refGetPath().get(4), 
-                		emailPrefInternet,
-                        isEMailAddressLookupCaseInsensitive,
-                        isEMailAddressLookupIgnoreDisabled
-                	);
-                	if(!emailAddresses.isEmpty()) {
-                		attendees.add(
-                			emailAddresses.iterator().next()
-                		);
-                        attendeeRoles.add(
-                            (attendeeAsString.indexOf("ROLE=OPT-PARTICIPANT") >= 0) || (attendeeAsString.indexOf("role=opt-participant") >= 0) ? 
-                            	new Short((short)PARTY_TYPE_OPTIONAL) : 
-                            	new Short((short)PARTY_TYPE_REQUIRED)
-                        );
-                	}
-                }
+            	int pos = attendeeAsString.indexOf("MAILTO:");
+                String emailPrefInternet = attendeeAsString.substring(pos + 7);                	
+            	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+            		pm, 
+            		activity.refGetPath().get(2), 
+            		activity.refGetPath().get(4), 
+            		emailPrefInternet,
+                    isEMailAddressLookupCaseInsensitive,
+                    isEMailAddressLookupIgnoreDisabled
+            	);
+            	if(!emailAddresses.isEmpty()) {
+            		attendees.add(
+            			emailAddresses.iterator().next()
+            		);
+                    attendeeRoles.add(
+                        (attendeeAsString.indexOf("ROLE=OPT-PARTICIPANT") >= 0) || (attendeeAsString.indexOf("role=opt-participant") >= 0) ? 
+                        	new Short((short)PARTY_TYPE_OPTIONAL) : 
+                        	new Short((short)PARTY_TYPE_REQUIRED)
+                    );
+            	}
             }
             count++;
         }
@@ -972,10 +943,12 @@ public class ICalendar extends AbstractImpl {
         dateTimeFormatter.setTimeZone(tz);        
         // externalLink
         boolean hasIcalUid = false;
+        boolean hasIcalRecurrenceId = false;
         List<String> externalLinks = activity.getExternalLink();
         String icalUid = fields.get("UID") == null ? 
         	activity.refGetPath().getBase() : 
-        	fields.get("UID");
+        		fields.get("UID");
+        String icalRecurrenceId = fields.get("RECURRENCE-ID");
         for(int i = 0; i < externalLinks.size(); i++) {
             if((externalLinks.get(i)).startsWith(ICAL_SCHEMA)) {
                 externalLinks.set(
@@ -985,10 +958,23 @@ public class ICalendar extends AbstractImpl {
                 hasIcalUid = true;
                 break;
             }
+            else if((externalLinks.get(i)).startsWith(ICAL_RECURRENCE_ID_SCHEMA)) {
+                externalLinks.set(
+                    i,
+                    ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId
+                );
+                hasIcalRecurrenceId = true;
+                break;
+            }
         }
         if(!hasIcalUid) {
             externalLinks.add(
                 ICAL_SCHEMA + icalUid    
+            );
+        }
+        if(!hasIcalRecurrenceId && icalRecurrenceId != null) {
+            externalLinks.add(
+                ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId    
             );
         }
         // Update activity according to ical fields
@@ -1259,7 +1245,7 @@ public class ICalendar extends AbstractImpl {
     //-------------------------------------------------------------------------
     public boolean putICal(
     	BufferedReader reader,
-    	ActivitiesHelper activitiesHelper,
+    	ActivitiesFilterHelper activitiesHelper,
     	boolean allowCreation
     ) throws ServiceException {    
     	PersistenceManager pm = activitiesHelper.getPersistenceManager();
@@ -1280,6 +1266,7 @@ public class ICalendar extends AbstractImpl {
 	                        new StringBuilder("BEGIN:VTODO\n")
 	                );
 	                String uid = null;
+	                String recurrenceId = null;
 	                boolean isAlarm = false;
 	                while((l = reader.readLine()) != null) {
 	                    if(l.startsWith("BEGIN:VALARM")) {
@@ -1290,6 +1277,9 @@ public class ICalendar extends AbstractImpl {
 	                	}
 	                    if(l.startsWith("UID:")) {
 	                        uid = l.substring(4);
+	                    }
+	                    else if(l.startsWith("RECURRENCE-ID:")) {
+	                        recurrenceId = l.substring(14);
 	                    }
 	                    else if(l.startsWith("END:VALARM")) {
 	                    	isAlarm = false;
@@ -1310,7 +1300,8 @@ public class ICalendar extends AbstractImpl {
 		                    Activity activity = Activities.getInstance().findActivity(
 		                        pm,
 		                        activitiesHelper, 
-		                        uid
+		                        uid,
+		                        recurrenceId
 		                    );
 		                    StringBuilder dummy = new StringBuilder();
 		                    Map<String,String> newICal = new HashMap<String,String>();
@@ -1524,6 +1515,7 @@ public class ICalendar extends AbstractImpl {
     public static final String MIME_TYPE = "text/calendar";
     public static final int MIME_TYPE_CODE = 4;
     public final static String ICAL_SCHEMA = "ICAL:";    
+    public final static String ICAL_RECURRENCE_ID_SCHEMA = "ICAL-RECURRENCE-ID:";    
     public static final Short USAGE_EMAIL_PRIMARY = new Short((short)300);
     public static final String LINE_COMMENT_INDICATOR = " //";
     public static final int PARTY_TYPE_NA = 0;

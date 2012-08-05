@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter typu účtu</_item>
+                        <_item>Filter pre typ účtu</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter podľa typu účtu</_item>
+                        <_item>Filter pre typ účtu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter podľa kategórie účtu</_item>
+                        <_item>Filter pre kategóriu účtu</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter podľa kategórie účtu</_item>
+                        <_item>Filter pre kategóriu účtu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter podľa kategórie</_item>
+                        <_item>Filter pre kategóriu</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter podľa kategórie</_item>
+                        <_item>Filter pre kategóriu</_item>
                       </toolTip>
                     </_object>
                     <_content/>

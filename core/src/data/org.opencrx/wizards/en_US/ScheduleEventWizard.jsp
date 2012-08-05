@@ -2,17 +2,17 @@
 /**
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ScheduleEventWizard.jsp,v 1.57 2009/10/16 22:42:32 wfro Exp $
+ * Name:		$Id: ScheduleEventWizard.jsp,v 1.60 2010/04/27 12:16:10 wfro Exp $
  * Description: ScheduleEventWizard
- * Revision:	$Revision: 1.57 $
+ * Revision:	$Revision: 1.60 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2009/10/16 22:42:32 $
+ * Date:		$Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -300,7 +300,7 @@ org.openmdx.kernel.log.*
 						dateTimeParser24.parse(n[1] + " " + datePlusOneDayAsString);
 			}
 		} catch(Exception e) {}
-		org.openmdx.base.text.format.DateFormat standardDateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+		org.w3c.format.DateTimeFormat standardDateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 		return standardDateFormat.format(dateFrom) + (dateFrom.compareTo(dateTo) == 0 ? "" : "-" + standardDateFormat.format(dateTo)) + (n[2] == null ? "" : "@" + n[2]);
 	}
 
@@ -399,7 +399,7 @@ org.openmdx.kernel.log.*
 		app.getCurrentLocale(),
 		this.getServletContext()
 	);
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -537,7 +537,7 @@ org.openmdx.kernel.log.*
 		org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)obj;
 		formValues.put(
 			"emailCreator",
-			email.getLastAppliedCreator()
+			email.getLastAppliedCreator().refGetPath()
 		);
 		formValues.put(
 			"org:opencrx:kernel:activity1:Activity:name",
@@ -563,7 +563,7 @@ org.openmdx.kernel.log.*
 				if(((org.opencrx.kernel.activity1.jmi1.EMailRecipient)recipient).getParty() instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
 					formValues.put(
 						"voter." + ii,
-						((org.opencrx.kernel.activity1.jmi1.EMailRecipient)recipient).getParty()
+						((org.opencrx.kernel.activity1.jmi1.EMailRecipient)recipient).getParty().refGetPath()
 					);
 					ii++;
 				}
@@ -618,7 +618,7 @@ org.openmdx.kernel.log.*
 					try {
 						formValues.put(
 							"eventTracker",
-							pm.getObjectById(new Path(eventAndPollInfo.getProperty("eventTracker")))
+							new Path(eventAndPollInfo.getProperty("eventTracker"))
 						);
 					} catch(Exception e) {}
 				}
@@ -627,7 +627,7 @@ org.openmdx.kernel.log.*
 				Enumeration propertyNames = eventAndPollInfo.propertyNames();
 				GregorianCalendar date = new GregorianCalendar();
 				date.setTimeZone(timezone);
-				org.openmdx.base.text.format.DateFormat dateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+				org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 				while(propertyNames.hasMoreElements()) {
 					String propertyName = (String)propertyNames.nextElement();
 					if(propertyName.startsWith("event.")) {
@@ -683,7 +683,7 @@ org.openmdx.kernel.log.*
 		if(request.getParameter("emailCreator") != null) {
 			formValues.put(
 				"emailCreator",
-				pm.getObjectById(new Path(request.getParameter("emailCreator")))
+				new Path(request.getParameter("emailCreator"))
 			);
 		}
 		// Event activity creator
@@ -692,7 +692,7 @@ org.openmdx.kernel.log.*
 			if(xri.startsWith("xri:")) {
 				formValues.put(
 					"eventTracker",
-					pm.getObjectById(new Path(xri))
+					new Path(xri)
 				);
 			}
 		}
@@ -762,7 +762,7 @@ org.openmdx.kernel.log.*
 			if(addressXri != null) {
 				formValues.put(
 					"voter." + i,
-					pm.getObjectById(new Path(addressXri))
+					new Path(addressXri)
 				);
 			}
 		}
@@ -781,7 +781,8 @@ org.openmdx.kernel.log.*
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -793,7 +794,10 @@ org.openmdx.kernel.log.*
 	boolean isEditMode = "edit".equals(formValues.get("Mode"));
 	if(actionAddVoter) {
 		anchor = ANCHOR_PARTICIPANTS;
-		org.opencrx.kernel.account1.jmi1.AccountAddress party = (org.opencrx.kernel.account1.jmi1.AccountAddress)formValues.get("org:opencrx:kernel:activity1:EMailRecipient:party");
+		org.opencrx.kernel.account1.jmi1.AccountAddress party = formValues.get("org:opencrx:kernel:activity1:EMailRecipient:party") != null ?
+			(org.opencrx.kernel.account1.jmi1.AccountAddress)pm.getObjectById(
+				formValues.get("org:opencrx:kernel:activity1:EMailRecipient:party")
+			) : null;
 		if(
 			(party != null) &&
 			(party instanceof org.opencrx.kernel.account1.jmi1.EMailAddress)
@@ -815,7 +819,7 @@ org.openmdx.kernel.log.*
 				if(!found) {
 					formValues.put(
 						"voter." + voterCount,
-						party
+						party.refGetPath()
 					);
 					voterCount++;
 				}
@@ -959,9 +963,12 @@ org.openmdx.kernel.log.*
 					String slotId = getSlotId(dateAsString, i);
 					formValues.remove(slotId);
 				}
-				org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)formValues.get("eventTracker");
+				org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = formValues.get("eventTracker") != null ? 
+					(org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
+						formValues.get("eventTracker")
+					) : null;
 				if(isEditMode && eventTracker != null) {
-					org.openmdx.base.text.format.DateFormat dateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+					org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 					Date from = dateFormat.parse(dateAsString + "T000000.000Z");
 					Date to = dateFormat.parse(dateAsString + "T235959.999Z");
 					disableActivities(
@@ -1000,7 +1007,10 @@ org.openmdx.kernel.log.*
 	}
 	if(actionCreateTentativeEvent || actionCreateConfirmedEvent) {
 		anchor = ANCHOR_CALENDAR;
-		org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)formValues.get("eventTracker");
+		org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = formValues.get("eventTracker") != null ?
+			(org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
+				formValues.get("eventTracker")
+			) : null;
 		String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
 		String description = (String)formValues.get("org:opencrx:kernel:activity1:Activity:description");
 		String detailedDescription = (String)formValues.get("org:opencrx:kernel:activity1:Activity:detailedDescription");
@@ -1010,7 +1020,7 @@ org.openmdx.kernel.log.*
 			(eventTracker.getDefaultCreator() != null) &&
 			(name != null)
 		) {
-			org.openmdx.base.text.format.DateFormat dateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+			org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 			// In case of actionCreateConfirmedEvent disable all tentative events
 			if(actionCreateConfirmedEvent) {
 				Date from = dateFormat.parse(selectedDates.get(0) + "T000000.000Z");
@@ -1089,9 +1099,12 @@ org.openmdx.kernel.log.*
 		}
 	}
 	if(actionDisableTentativeEvent) {
-		org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)formValues.get("eventTracker");
+		org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = formValues.get("eventTracker") != null ?
+			(org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
+				formValues.get("eventTracker")
+			) : null;
 		if(isEditMode && eventTracker != null) {
-			org.openmdx.base.text.format.DateFormat dateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+			org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 			Date scheduledStart = dateFormat.parse(disableEvent.substring(0, 20));
 			Date scheduledEnd = disableEvent.length() < 41 ? dateFormat.parse(disableEvent.substring(0, 20)) : dateFormat.parse(disableEvent.substring(21, 41));
 
@@ -1109,7 +1122,10 @@ org.openmdx.kernel.log.*
 		String description = (String)formValues.get("org:opencrx:kernel:activity1:Activity:description");
 		String detailedDescription = (String)formValues.get("org:opencrx:kernel:activity1:Activity:detailedDescription");
 		String messageBody = (String)formValues.get("messageBody");
-		org.opencrx.kernel.activity1.jmi1.ActivityCreator emailCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)formValues.get("emailCreator");
+		org.opencrx.kernel.activity1.jmi1.ActivityCreator emailCreator = formValues.get("emailCreator") != null ? 
+			(org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
+				formValues.get("emailCreator")
+			) : null;
 		if(
 			(name != null) &&
 			(name.trim().length() > 0) &&
@@ -1145,15 +1161,15 @@ org.openmdx.kernel.log.*
 					} catch(Exception e1) {}
 				}
         if (result != null) {
-				  activity = (org.opencrx.kernel.activity1.jmi1.EMail)pm.getObjectById(new Path(result.getActivity().refMofId()));
-				  objectXri = activity.refMofId();
+		  	activity = (org.opencrx.kernel.activity1.jmi1.EMail)pm.getObjectById(new Path(result.getActivity().refMofId()));
+		  	objectXri = activity.refMofId();
         }
-				isEditMode = false;
-				formValues.put(
-					"Mode",
-					"edit"
-				);
-			}
+		isEditMode = false;
+		formValues.put(
+			"Mode",
+			"edit"
+		);
+  	  } 
       if (activity != null) {
     			// Update EMail activity
     			org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
@@ -1186,7 +1202,10 @@ org.openmdx.kernel.log.*
     				if(r instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipient) {
 	    				boolean toBeRemoved = true;
 	    				for(int j = 0; j < voterCount; j++) {
-	    					org.opencrx.kernel.account1.jmi1.AccountAddress address = (org.opencrx.kernel.account1.jmi1.AccountAddress)formValues.get("voter." + j);
+	    					org.opencrx.kernel.account1.jmi1.AccountAddress address = formValues.get("voter." + j) != null ? 
+	    						(org.opencrx.kernel.account1.jmi1.AccountAddress)pm.getObjectById(
+	    							formValues.get("voter." + j)
+	    						) : null;
 	    					if(address.equals(((org.opencrx.kernel.activity1.jmi1.EMailRecipient)r).getParty())) {
 	    						toBeRemoved = false;
 	    						break;
@@ -1199,7 +1218,10 @@ org.openmdx.kernel.log.*
     			}
     			// Add recipients
     			for(int i = 0; i < voterCount; i++) {
-    				org.opencrx.kernel.account1.jmi1.AccountAddress address = (org.opencrx.kernel.account1.jmi1.AccountAddress)formValues.get("voter." + i);
+    				org.opencrx.kernel.account1.jmi1.AccountAddress address = formValues.get("voter." + i) != null ? 
+    					(org.opencrx.kernel.account1.jmi1.AccountAddress)pm.getObjectById(
+    						formValues.get("voter." + i)
+    					) : null;
     				org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient = null;
     				for(Iterator j = activity.getEmailRecipient().iterator(); j.hasNext(); ) {
     					org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient r = (org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient)j.next();
@@ -1214,7 +1236,12 @@ org.openmdx.kernel.log.*
     					recipient = pm.newInstance(org.opencrx.kernel.activity1.jmi1.EMailRecipient.class);
     					recipient.refInitialize(false, false);
     					recipient.setPartyType(org.opencrx.kernel.backend.Activities.PARTY_TYPE_TO);
-    					recipient.setParty((org.opencrx.kernel.account1.jmi1.AccountAddress)formValues.get("voter." + i));
+    					recipient.setParty(
+    						formValues.get("voter." + i) != null ?
+	    						(org.opencrx.kernel.account1.jmi1.AccountAddress)pm.getObjectById(
+	    							formValues.get("voter." + i)
+	    						) : null
+    					);
     					activity.addEmailRecipient(
     						false,
     						org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
@@ -1243,7 +1270,7 @@ org.openmdx.kernel.log.*
     			if(formValues.get("eventTracker") != null) {
     				eventAndPollInfo.put(
     	   				"eventTracker",
-    	   			 	((RefObject_1_0)formValues.get("eventTracker")).refMofId()
+    	   				((Path)formValues.get("eventTracker")).toXRI()
     	   			);
     			}
     			int eventIndex = 0;
@@ -1536,7 +1563,7 @@ org.openmdx.kernel.log.*
 										for(Iterator i = activitySegment.getActivityCreator(emailCreatorQuery).iterator(); i.hasNext(); ) {
 											org.opencrx.kernel.activity1.jmi1.ActivityCreator emailCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)i.next();
 %>
-											<option <%= emailCreator.equals(formValues.get("emailCreator")) ? "selected" : "" %> value="<%= emailCreator.refMofId() %>"><%= new ObjectReference(emailCreator, app).getTitle() %></option>
+											<option <%= emailCreator.refGetPath().equals(formValues.get("emailCreator")) ? "selected" : "" %> value="<%= emailCreator.refMofId() %>"><%= new ObjectReference(emailCreator, app).getTitle() %></option>
 <%
 										}
 %>
@@ -1590,16 +1617,16 @@ org.openmdx.kernel.log.*
 						eventTrackerQuery.orderByName().ascending();
 						for(Iterator i = activitySegment.getActivityTracker(eventTrackerQuery).iterator(); i.hasNext(); ) {
 							org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
-							if (eventTracker.equals(formValues.get("eventTracker"))) {
-									try {
-										tentativeCreator = eventTracker.getDefaultCreator();
-									} catch (Exception e) {}
+							if (eventTracker.refGetPath().equals(formValues.get("eventTracker"))) {
+								try {
+									tentativeCreator = eventTracker.getDefaultCreator();
+								} catch (Exception e) {}
 %>
-										<option selected
+									<option selected
 <%
 							} else {
 %>
-										<option
+								<option
 <%
 							}
 %>
@@ -1726,7 +1753,7 @@ org.openmdx.kernel.log.*
 								if(!selectedDates.isEmpty()) {
 									// Retrieve all events of eventTracker where scheduleStart/scheduledEnd
 									// overlaps the period [first selected date, last selected date]
-									org.openmdx.base.text.format.DateFormat dateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+									org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 									Date start = new Date(getDateAsCalendar((String)selectedDates.get(0)).getTime().getTime() - 86400000L);
 									Date end = new Date(getDateAsCalendar((String)selectedDates.get(selectedDates.size() - 1)).getTime().getTime() + 86400000L);
 									org.opencrx.kernel.activity1.cci2.ActivityQuery eventQuery =
@@ -1734,7 +1761,10 @@ org.openmdx.kernel.log.*
 									eventQuery.thereExistsScheduledStart().lessThanOrEqualTo(end);
 									eventQuery.thereExistsScheduledEnd().greaterThanOrEqualTo(start);
 									eventQuery.forAllDisabled().isFalse();
-									org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)formValues.get("eventTracker");
+									org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = formValues.get("eventTracker") != null ? 
+										(org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
+											formValues.get("eventTracker")
+										) : null;
 									List events = eventTracker == null ?
 										Collections.EMPTY_LIST :
 										eventTracker.getFilteredActivity(eventQuery);
@@ -1937,7 +1967,10 @@ org.openmdx.kernel.log.*
 							for(i = 0; i < voterCount; i++) {
 								if(formValues.get("voter." + i) != null) {
 									lastVoterIndex = i;
-									org.opencrx.kernel.account1.jmi1.EMailAddress emailAddress = (org.opencrx.kernel.account1.jmi1.EMailAddress)formValues.get("voter." + i);
+									org.opencrx.kernel.account1.jmi1.EMailAddress emailAddress = formValues.get("voter." + i) != null ?
+										(org.opencrx.kernel.account1.jmi1.EMailAddress)pm.getObjectById(
+											formValues.get("voter." + i)
+										) : null;
 									String subject = formValues.get("org:opencrx:kernel:activity1:Activity:name") != null
 									  ? java.net.URLEncoder.encode((String)formValues.get("org:opencrx:kernel:activity1:Activity:name"), "UTF-8").replace("+", "%20")
 									  : "";
@@ -2191,5 +2224,8 @@ org.openmdx.kernel.log.*
 </body>
 <%
 p.close(false);
+if(pm != null) {
+	pm.close();
+}
 %>
 </html>

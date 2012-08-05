@@ -451,10 +451,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отчетный счет</_item>
+                        <_item>Отчетный контрагент</_item>
                       </label>
                       <toolTip>
-                        <_item>Отчетный счет</_item>
+                        <_item>Отчетный контрагент</_item>
                       </toolTip>
                     </_object>
                     <_content/>

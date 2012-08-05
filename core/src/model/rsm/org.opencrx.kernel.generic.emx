@@ -2013,7 +2013,7 @@
           <children xmi:id="_Q6rbE6JHEduFZfna3MXTdw" type="NameLabel">
             <children xmi:id="_Q6rbFaJHEduFZfna3MXTdw" type="Stereotype" element="_Q6PWMKJHEduFZfna3MXTdw"/>
             <children xmi:id="_Q6rbFqJHEduFZfna3MXTdw" type="Name" element="_Q6PWMKJHEduFZfna3MXTdw"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Q6rbFKJHEduFZfna3MXTdw" x="-371" y="3361"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Q6rbFKJHEduFZfna3MXTdw" x="3" y="-138"/>
           </children>
           <children xmi:id="_Q6rbF6JHEduFZfna3MXTdw" type="ToMultiplicityLabel" element="_Q6PWMqJHEduFZfna3MXTdw">
             <children xmi:id="_Q6rbGaJHEduFZfna3MXTdw" type="ToMultiplicity" element="_Q6PWMqJHEduFZfna3MXTdw"/>

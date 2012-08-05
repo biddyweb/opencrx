@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RequestContext.java,v 1.6 2009/08/19 14:34:28 wfro Exp $
+ * Name:        $Id: RequestContext.java,v 1.9 2009/12/17 14:42:44 wfro Exp $
  * Description: RequestContext
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/19 14:34:28 $
+ * Date:        $Date: 2009/12/17 14:42:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,9 +57,8 @@ package org.opencrx.kernel.layer.application;
 
 import java.util.List;
 
-import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.spi.Layer_1_0;
+import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.mof.cci.Model_1_0;
 
 public class RequestContext {
@@ -68,16 +67,12 @@ public class RequestContext {
     public RequestContext(
         Model_1_0 model,
         ServiceHeader header,
-        RequestCollection delegatingRequests,
-        Layer_1_0 delegatingLayer,
-        RequestCollection localRequests,
+        Layer_1.LayerInteraction delegatingInteraction,
         List<String> readOnlyTypes
     ) {
         this.model = model;
         this.header = header;
-        this.delegatingRequests = delegatingRequests;
-        this.delegatingLayer = delegatingLayer;
-        this.localRequests = localRequests;
+        this.delegatingInteraction = delegatingInteraction;
         this.readOnlyTypes = readOnlyTypes;
     }
     
@@ -86,9 +81,7 @@ public class RequestContext {
     //-----------------------------------------------------------------------
     public final Model_1_0 model;
     public final ServiceHeader header;
-    public final RequestCollection delegatingRequests;
-    public final Layer_1_0 delegatingLayer;
-    public final RequestCollection localRequests;
+    public final Layer_1.LayerInteraction delegatingInteraction;
     public final List<String> readOnlyTypes;
     
 }

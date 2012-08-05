@@ -198,6 +198,58 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importAccountsFromXLS" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Importa Soggetti Da Foglio Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Proprieta&apos; Importazione / Impostazioni Proprieta&apos; da File Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Proprieta&apos; Importazione / Impostazioni Proprieta&apos; da File Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Proprieta&apos; Importazione da File Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Proprieta&apos; Importazione da File Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Configurazioni Importazione Prodotto / Proprieta&apos; da File Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Configurazioni Importazione Prodotto / Proprieta&apos; da File Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipi Configurazione Importazione Prodotto / Proprieta&apos; da File Excel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipi Configurazione Importazione Prodotto/ Proprieta&apos; da File Excel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:vcard" _operation="create">
                     <_object>
                       <label>
@@ -352,6 +404,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Abilita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Abilita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Disabilita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Disabilita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge" _operation="create">
                     <_object>
                       <label>
@@ -473,6 +547,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivityFollowUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prosecuzione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prosecuzione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEventWizard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Marca come Evento Giorno Intero</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Marca come Evento Giorno Intero</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
@@ -491,6 +587,17 @@
                       </label>
                       <toolTip>
                         <_item>Trasmissione Media</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Trasmetti Media</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Trasmetti Media</_item>
                       </toolTip>
                     </_object>
                     <_content/>

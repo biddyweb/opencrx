@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RequestHelper.java,v 1.8 2009/08/19 14:34:28 wfro Exp $
+ * Name:        $Id: RequestHelper.java,v 1.12 2009/12/17 14:42:44 wfro Exp $
  * Description: RequestHelper
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/19 14:34:28 $
+ * Date:        $Date: 2009/12/17 14:42:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,16 +63,17 @@ import javax.resource.cci.MappedRecord;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.spi.Layer_1_0;
+import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.AttributeSpecifier;
-import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
+import org.openmdx.base.rest.spi.Object_2Facade;
+import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -101,15 +102,9 @@ public class RequestHelper {
     }
 
     //-----------------------------------------------------------------------
-    public RequestCollection getDelegatingRequests(
+    public Layer_1.LayerInteraction getDelegatingInteraction(
     ) {
-        return this.context.delegatingRequests;
-    }
-    
-    //-----------------------------------------------------------------------
-    public Layer_1_0 getDelegatingLayer(
-    ) {
-        return this.context.delegatingLayer;
+        return this.context.delegatingInteraction;
     }
     
     //-----------------------------------------------------------------------
@@ -131,50 +126,36 @@ public class RequestHelper {
     }
     
     //-------------------------------------------------------------------------
-    public MappedRecord retrieveObjectFromDelegation(
-        Path identity
-    ) throws ServiceException {
-        return this.getDelegatingRequests().addGetRequest(
-            identity,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            new AttributeSpecifier[]{}
-        );
-    }
-    
-    //-------------------------------------------------------------------------
     public MappedRecord retrieveObject(
         Path identity
     ) throws ServiceException {
-        if(!identity.get(0).startsWith("org:opencrx:kernel")) {
-            return this.retrieveObjectFromDelegation(
-                identity
-            );
-        }
-        else {
-            try {
-	            return this.context.delegatingLayer.get(
-	                this.getServiceHeader(),
-	                new DataproviderRequest(
-	                    ObjectHolder_2Facade.newInstance(identity).getDelegate(),
-	                    DataproviderOperations.OBJECT_RETRIEVAL,
-	                    AttributeSelectors.ALL_ATTRIBUTES,
-	                    new AttributeSpecifier[]{}
-	                )
-	            ).getObject();
-            }
-            catch (ResourceException e) {
-            	throw new ServiceException(e);
-            }
-        }
+    	try {
+	    	DataproviderRequest getRequest = new DataproviderRequest(
+	            Query_2Facade.newInstance(identity).getDelegate(),
+	            DataproviderOperations.OBJECT_RETRIEVAL,
+	            AttributeSelectors.ALL_ATTRIBUTES,
+	            new AttributeSpecifier[]{}
+	    	);
+	    	DataproviderReply getReply = new DataproviderReply();
+	    	this.getDelegatingInteraction().get(
+	    		getRequest.getInteractionSpec(), 
+	    		Query_2Facade.newInstance(getRequest.object()), 
+	    		getReply.getResult()
+	    	);
+	    	return getReply.getObject();
+    	} catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
-
+    
     //-------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     public void testObjectIsChangeable(
         MappedRecord object
     ) throws ServiceException {
-    	ObjectHolder_2Facade facade;
+    	Object_2Facade facade;
         try {
-	        facade = ObjectHolder_2Facade.newInstance(object);
+	        facade = Object_2Facade.newInstance(object);
         }
         catch (ResourceException e) {
         	throw new ServiceException(e);

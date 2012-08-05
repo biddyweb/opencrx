@@ -231,6 +231,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fax ufficio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fax ufficio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull" _operation="create">
                     <_object>
                       <label>
@@ -443,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:master" _operation="create">
                     <_object>
                       <label>
-                        <_item>Principale</_item>
+                        <_item>Primario</_item>
                       </label>
                       <toolTip>
-                        <_item>Principale</_item>
+                        <_item>Primario</_item>
                       </toolTip>
                     </_object>
                     <_content/>

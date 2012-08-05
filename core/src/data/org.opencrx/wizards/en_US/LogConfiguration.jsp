@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: LogConfiguration.jsp,v 1.9 2009/10/15 16:19:33 wfro Exp $
+ * Name:        $Id: LogConfiguration.jsp,v 1.10 2010/04/27 12:16:11 wfro Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2009/10/15 16:19:33 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -84,7 +84,7 @@ org.openmdx.kernel.id.*
 		return;
 	}
 	Texts_1_0 texts = app.getTexts();
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -274,3 +274,8 @@ org.openmdx.kernel.id.*
 	</script>
 </body>
 </html>
+<%
+if(pm != null) {
+	pm.close();
+}
+%>

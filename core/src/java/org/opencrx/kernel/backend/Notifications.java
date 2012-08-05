@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Notifications.java,v 1.14 2009/09/30 09:38:24 wfro Exp $
+ * Name:        $Id: Notifications.java,v 1.16 2009/11/19 17:58:44 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/30 09:38:24 $
+ * Date:        $Date: 2009/11/19 17:58:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -289,16 +289,17 @@ public class Notifications extends AbstractImpl {
         PersistenceManager pm,
         ContextCapable target,
         UserHome userHome,  
-        Map<String,Object> params
+        Map<String,Object> params,
+        boolean useSendMailSubjectPrefix
     ) throws ServiceException {
         Path userHomeIdentity = userHome.refGetPath();
         String title = null;
         String subscriptionId = (params.get("triggeredBySubscription") == null ? 
-            "N/A" : 
-            ((Path)params.get("triggeredBySubscription")).getBase());
+        	"N/A" : 
+        		((Path)params.get("triggeredBySubscription")).getBase());
         String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null ? 
             "[" + userHome.refGetPath().get(2) + ":" + userHome.refGetPath().get(4) + "]" : 
-            userHome.getSendMailSubjectPrefix();
+            	userHome.getSendMailSubjectPrefix();
         String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
         if(
             (target != null) && 
@@ -308,7 +309,7 @@ public class Notifications extends AbstractImpl {
                 if(target instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
                     org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
                         (org.opencrx.kernel.activity1.jmi1.EMail)target;
-                    title = emailActivity.getMessageSubject();
+                    title =  (useSendMailSubjectPrefix ? sendMailSubjectPrefix + ": " : "") + emailActivity.getMessageSubject();
                 }
                 else if(target instanceof org.opencrx.kernel.home1.jmi1.Alert) {
                     org.opencrx.kernel.home1.jmi1.Alert alert = 
@@ -321,7 +322,8 @@ public class Notifications extends AbstractImpl {
                             pm, 
                             alert.getReference(), 
                             userHome, 
-                            params
+                            params,
+                            useSendMailSubjectPrefix
                         );
                     }
                     else {

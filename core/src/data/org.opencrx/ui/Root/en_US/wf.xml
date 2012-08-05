@@ -504,7 +504,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DecimalProperty:decimalValue">
 										<_object>
-										    <columnBreak>true</columnBreak>
+										  <columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Decimal value</_item>
@@ -512,6 +512,7 @@
 											<label>
 												<_item>Decimal value</_item>
 											</label>
+											<decimalPlaces>9</decimalPlaces>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>

@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Юр. название</_item>
+                        <_item>Название юр. лица</_item>
                       </label>
                       <toolTip>
                         <_item>Название юр. лица</_item>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:organizationalUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Организацонная ед-ца</_item>
+                        <_item>Организационная ед-ца</_item>
                       </label>
                       <toolTip>
-                        <_item>Организацонная ед-ца</_item>
+                        <_item>Организационная ед-ца</_item>
                       </toolTip>
                     </_object>
                     <_content/>

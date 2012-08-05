@@ -1,5 +1,4 @@
 <%@ page import="org.opencrx.apps.store.common.util.*,
-				 org.opencrx.apps.utils.*,
                  org.opencrx.apps.store.manager.OrderManager,
                  org.opencrx.apps.store.common.ObjectCollection,
                  java.util.Iterator,

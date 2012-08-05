@@ -2,7 +2,7 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="122">
+			<array class="java.lang.String" length="130">
 				<void index="0">
 					<string>org:opencrx:kernel:activity1:Absence:note</string>
 				</void>
@@ -47,9 +47,6 @@
 				</void>
 				<void index="14">
 					<string>org:opencrx:kernel:activity1:PhoneCall:followUp</string>
-				</void>
-				<void index="15">
-					<string>org:opencrx:kernel:activity1:Task:followUp</string>
 				</void>
 				<void index="15">
 					<string>org:opencrx:kernel:activity1:Task:followUp</string>
@@ -380,6 +377,31 @@
 				</void>
 				<void index="121">
 					<string>org:opencrx:kernel:activity1:Segment:workReportEntry</string>
+				</void>
+
+				<void index="122">
+					<string>org:opencrx:kernel:activity1:Absence:media</string>
+				</void>
+				<void index="123">
+					<string>org:opencrx:kernel:activity1:EMail:media</string>
+				</void>
+				<void index="124">
+					<string>org:opencrx:kernel:activity1:ExternalActivity:media</string>
+				</void>
+				<void index="125">
+					<string>org:opencrx:kernel:activity1:Incident:media</string>
+				</void>
+				<void index="126">
+					<string>org:opencrx:kernel:activity1:Mailing:media</string>
+				</void>
+				<void index="127">
+					<string>org:opencrx:kernel:activity1:Meeting:media</string>
+				</void>
+				<void index="128">
+					<string>org:opencrx:kernel:activity1:PhoneCall:media</string>
+				</void>
+				<void index="129">
+					<string>org:opencrx:kernel:activity1:Task:media</string>
 				</void>
 
 			</array>

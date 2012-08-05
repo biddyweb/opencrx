@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.20 2009/10/14 13:43:22 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.21 2009/12/17 14:42:45 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/14 13:43:22 $
+ * Date:        $Date: 2009/12/17 14:42:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,7 +74,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
+import org.openmdx.base.rest.spi.Object_2Facade;
 
 public class Importer extends AbstractImpl {
 
@@ -120,7 +120,7 @@ public class Importer extends AbstractImpl {
                     RefObject_1_0 existing = null;
                     try {
                         existing = (RefObject_1_0)pm.getObjectById(
-                            ObjectHolder_2Facade.getPath(entry)
+                            Object_2Facade.getPath(entry)
                         );
                     }
                     catch(Exception e) {}
@@ -137,7 +137,7 @@ public class Importer extends AbstractImpl {
                         );
                     }
                     else {
-                        String qualifiedClassName = ObjectHolder_2Facade.getObjectClass(entry);
+                        String qualifiedClassName = Object_2Facade.getObjectClass(entry);
                         String packageName = qualifiedClassName.substring(0, qualifiedClassName.lastIndexOf(':'));
                         RefObject_1_0 newEntry = (RefObject_1_0)(pm.getObjectById(
                             Authority.class,
@@ -150,7 +150,7 @@ public class Importer extends AbstractImpl {
                             loadedObjects, // object cache
                             null
                         );
-                        Path entryPath = ObjectHolder_2Facade.getPath(entry);
+                        Path entryPath = Object_2Facade.getPath(entry);
                         Path parentIdentity = entryPath.getParent().getParent();
                         RefObject_1_0 parent = null;
                         try {

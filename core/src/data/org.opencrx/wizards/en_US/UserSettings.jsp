@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.52 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.54 2010/04/27 12:16:10 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.52 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -94,7 +94,7 @@ org.openmdx.base.exception.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
 	Texts_1_0 texts = app.getTexts();
@@ -302,6 +302,7 @@ org.openmdx.base.exception.*
 			String fSendmailSubjectPrefix = request.getParameter("sendmailSubjectPrefix");
 			String fWebAccessUrl = request.getParameter("webAccessUrl");
 			String fTopNavigationShowMax = request.getParameter("topNavigationShowMax");
+			String fShowTopNavigationSublevel = request.getParameter("showTopNavigationSublevel");
 			List<String> fRootObjects = new ArrayList<String>();
 			fRootObjects.add("1"); // always show root object 0
 			for(int i = 1; i < 20; i++) {
@@ -342,6 +343,7 @@ org.openmdx.base.exception.*
 						fSendmailSubjectPrefix,
 						fWebAccessUrl,
 						fTopNavigationShowMax,
+						"on".equals(fShowTopNavigationSublevel),
 						fRootObjects,
 						fSubscriptions
 					);
@@ -441,7 +443,10 @@ org.openmdx.base.exception.*
 						}
 %>
 						<tr><td><label for="topNavigationShowMax">Show max items in top navigation:</label></td><td>
-						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty("TopNavigation.ShowMax", "6") %>"/></td></tr>
+						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty(RootMenuControl.TOP_NAVIGATION_SHOW_MAX, "6") %>"/></td></tr>
+
+						<tr><td><label for="showTopNavigationSublevel">Show top navigation sub-levels:</label></td>
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(RootMenuControl.TOP_NAVIGATION_SHOW_SUBLEVEL)) ? "checked" : "" %> id="showTopNavigationSublevel" name="showTopNavigationSublevel"/></td></tr>
 					</table>
 				</fieldset>
 			</div>
@@ -507,4 +512,7 @@ org.openmdx.base.exception.*
   	</html>
 <%
 	}
+    if(pm != null) {
+    	pm.close();
+    }
 %>

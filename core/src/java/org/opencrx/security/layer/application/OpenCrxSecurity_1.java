@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.43 2009/10/23 11:13:32 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.55 2010/03/23 17:32:08 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/23 11:13:32 $
+ * Date:        $Date: 2010/03/23 17:32:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,9 +55,12 @@
  */
 package org.opencrx.security.layer.application;
 
-import java.util.Set;
+import java.util.Date;
 
 import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.IndexedRecord;
+import javax.resource.cci.Interaction;
 import javax.resource.cci.MappedRecord;
 
 import org.opencrx.kernel.generic.OpenCrxException;
@@ -67,19 +70,21 @@ import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
+import org.openmdx.application.dataprovider.cci.DataproviderRequestProcessor;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.spi.Layer_1_0;
+import org.openmdx.application.dataprovider.layer.application.Standard_1;
+import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.mof.cci.Model_1_0;
-import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.AttributeSpecifier;
 import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
-import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
+import org.openmdx.base.resource.spi.RestInteractionSpec;
+import org.openmdx.base.rest.cci.MessageRecord;
+import org.openmdx.base.rest.spi.Object_2Facade;
+import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -100,25 +105,35 @@ import org.openmdx.kernel.id.UUIDs;
  * service.
  * 
  */
-public class OpenCrxSecurity_1
-  extends org.openmdx.application.dataprovider.layer.application.Standard_1 {
+public class OpenCrxSecurity_1 extends Standard_1 {
 
+    //-------------------------------------------------------------------------
+	public OpenCrxSecurity_1(
+	) {
+	}
+	
+    //--------------------------------------------------------------------------
+    public Interaction getInteraction(
+        Connection connection
+    ) throws ResourceException {
+        return new LayerInteraction(connection);
+    }
+ 
     //-------------------------------------------------------------------------
     public void activate(
       short id, 
       Configuration configuration,
-      Layer_1_0 delegation
+      Layer_1 delegation
     ) throws ServiceException {
       super.activate(
         id,
         configuration,
         delegation
       );      
-      this.model = Model_1Factory.getModel();
     } 
 
     //-------------------------------------------------------------------------
-    private String getPrincipalName(
+    protected String getPrincipalName(
         ServiceHeader header
     ) throws ServiceException {
         if(header.getPrincipalChain().size() == 0) {
@@ -130,21 +145,18 @@ public class OpenCrxSecurity_1
     //-------------------------------------------------------------------------
     protected void completeObject(
       ServiceHeader header,
-      Set<String> fetchSet,
       MappedRecord object
     ) throws ServiceException {
     }
     
     //-------------------------------------------------------------------------
-    private DataproviderReply completeReply(
+    protected DataproviderReply completeReply(
       ServiceHeader header,
-      Set<String> fetchSet,
       DataproviderReply reply
     ) throws ServiceException {
       for(int i = 0; i < reply.getObjects().length; i++) {
           this.completeObject(
               header,
-              fetchSet,
               reply.getObjects()[i]
           );
       }
@@ -156,20 +168,26 @@ public class OpenCrxSecurity_1
     	MappedRecord obj
     ) throws ServiceException {
     	try {
-	    	ObjectHolder_2Facade objFacade = ObjectHolder_2Facade.newInstance(obj);
+	    	Object_2Facade objFacade = Object_2Facade.newInstance(obj);
 	        if(
-	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
-	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
-	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
-	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
-	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
+	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
+	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
+	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
+	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
+	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
 	        ) {
-	        	objFacade.clearAttributeValues("name").add(objFacade.getPath().getBase());            
+	        	objFacade.attributeValuesAsList("name").clear();            
+	        	objFacade.attributeValuesAsList("name").add(
+	        		objFacade.getPath().getBase()
+	        	);            
 	        }
 	        else if(
-	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
+	        	this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
 	        ) {
-	        	objFacade.clearAttributeValues("id").add(objFacade.getPath().getBase());            
+	        	objFacade.attributeValuesAsList("id").clear();            
+	        	objFacade.attributeValuesAsList("id").add(
+	        		objFacade.getPath().getBase()
+	        	);            
 	        }
     	}
     	catch(ResourceException e) {
@@ -178,28 +196,17 @@ public class OpenCrxSecurity_1
     }
     
     //-------------------------------------------------------------------------
-    public MappedRecord retrieveObject(
-        Path identity
-    ) throws ServiceException {
-        return this.delegation.addGetRequest(
-            identity,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            new AttributeSpecifier[]{}
-        );        
-    }
-
-    //-------------------------------------------------------------------------
-    private MappedRecord createResult(
+    protected Object_2Facade createResult(
       DataproviderRequest request,
       String structName
     ) throws ServiceException {
     	try {
-	    	MappedRecord result = ObjectHolder_2Facade.newInstance(
+    		Object_2Facade result = Object_2Facade.newInstance(
 		        request.path().getDescendant(
 		          new String[]{ "reply", UUIDs.getGenerator().next().toString()}
 		        ),
 		        structName
-	      ).getDelegate();
+	      );
 	      return result;
     	}
     	catch(ResourceException e) {
@@ -208,35 +215,7 @@ public class OpenCrxSecurity_1
     }
 
     //-------------------------------------------------------------------------
-    public void prolog(
-      ServiceHeader header,
-      DataproviderRequest[] requests
-    ) throws ServiceException {
-      super.prolog(
-          header,
-          requests
-      );
-      this.delegation = new RequestCollection(
-          header,
-          this.getDelegation()
-      );
-    }
-
-    //-------------------------------------------------------------------------
-    public void epilog(
-      ServiceHeader header,
-      DataproviderRequest[] requests,
-      DataproviderReply[] replies
-    ) throws ServiceException {
-      super.epilog(
-          header,
-          requests,
-          replies
-      );
-    }
-
-    //-------------------------------------------------------------------------
-    private void setAttributes(
+    protected void setAttributes(
       ServiceHeader header,
       MappedRecord obj,
       MappedRecord oldValues
@@ -247,14 +226,19 @@ public class OpenCrxSecurity_1
     }
 
     //-------------------------------------------------------------------------
-    private void changePassword(
+    protected void changePassword(
+    	ServiceHeader header,
     	MappedRecord passwordCredential,
     	MappedRecord changePasswordParams
     ) throws ServiceException {
+        DataproviderRequestProcessor delegation = new DataproviderRequestProcessor(
+            header,
+            this.getDelegation()
+        );    	    	
     	try {
-	    	ObjectHolder_2Facade changePasswordParamsFacade = ObjectHolder_2Facade.newInstance(changePasswordParams);
-	    	ObjectHolder_2Facade passwordCredentialFacade = ObjectHolder_2Facade.newInstance(passwordCredential);
-	        String oldPassword = (changePasswordParamsFacade.getAttributeValues("oldPassword") != null) && !changePasswordParamsFacade.attributeValues("oldPassword").isEmpty() ? 
+	    	Object_2Facade changePasswordParamsFacade = Object_2Facade.newInstance(changePasswordParams);
+	    	Object_2Facade passwordCredentialFacade = Object_2Facade.newInstance(passwordCredential);
+	        String oldPassword = (changePasswordParamsFacade.getAttributeValues("oldPassword") != null) && !changePasswordParamsFacade.attributeValuesAsList("oldPassword").isEmpty() ? 
 	        	Base64.encode((byte[])changePasswordParamsFacade.attributeValue("oldPassword")) : 
 	        	null;
 	        if((oldPassword != null) && !oldPassword.equals(passwordCredentialFacade.attributeValue("password"))) {
@@ -267,15 +251,17 @@ public class OpenCrxSecurity_1
 	        }
 	        MappedRecord changedPasswordCredential;
             try {
-	            changedPasswordCredential = ObjectHolder_2Facade.cloneObject(passwordCredential);
+	            changedPasswordCredential = Object_2Facade.cloneObject(passwordCredential);
             }
             catch (ResourceException e) {
             	throw new ServiceException(e);
             }
-	        ObjectHolder_2Facade.newInstance(changedPasswordCredential).clearAttributeValues("password").add(
+            Object_2Facade changedPasswordCredentialFacade = Object_2Facade.newInstance(changedPasswordCredential);
+            changedPasswordCredentialFacade.attributeValuesAsList("password").clear();
+            changedPasswordCredentialFacade.attributeValuesAsList("password").add(
 	            Base64.encode((byte[])changePasswordParamsFacade.attributeValue("password"))
 	        );
-	        this.delegation.addReplaceRequest(
+	        delegation.addReplaceRequest(
 	            changedPasswordCredential
 	        );
     	}
@@ -295,8 +281,7 @@ public class OpenCrxSecurity_1
         // read allowed for everybody
         if(
             operation == DataproviderOperations.OBJECT_RETRIEVAL ||
-            operation == DataproviderOperations.ITERATION_START ||
-            operation == DataproviderOperations.ITERATION_CONTINUATION
+            operation == DataproviderOperations.ITERATION_START
         ) {
             return;
         }
@@ -321,7 +306,7 @@ public class OpenCrxSecurity_1
     /**
      * Update the realm if any object contained in the realm was modified.
      */
-    private void updateRealm(
+    protected void updateRealm(
         ServiceHeader header,
         DataproviderRequest request
     ) throws ServiceException {
@@ -331,7 +316,7 @@ public class OpenCrxSecurity_1
         ) {
             try {
                 Path realmIdentity = request.path().getPrefix(7);
-                RequestCollection delegation = new RequestCollection(
+                DataproviderRequestProcessor delegation = new DataproviderRequestProcessor(
                     header,
                     this.getDelegation()
                 );
@@ -340,8 +325,12 @@ public class OpenCrxSecurity_1
                     AttributeSelectors.ALL_ATTRIBUTES,
                     new AttributeSpecifier[]{}
                 );
+                MappedRecord updatedRealm = (MappedRecord)realm.clone();
+                Object_2Facade updatedRealmFacade = Object_2Facade.newInstance(updatedRealm);
+                updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();                	
+                updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());                	
                 delegation.addReplaceRequest(
-                    (MappedRecord)realm.clone()
+                    updatedRealmFacade.getDelegate()
                 );
             }
             catch(ServiceException e) {
@@ -350,258 +339,339 @@ public class OpenCrxSecurity_1
                     throw e;
                 }
             }
-            catch (CloneNotSupportedException e) {
+            catch (Exception e) {
             	throw new ServiceException(e);
             }
         }
     }
     
-    //-------------------------------------------------------------------------
-    public DataproviderReply remove(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-        this.checkPermission(
-            header,
-            request
-        );
-        this.updateRealm(
-            header,
-            request
-        );
-        return super.remove(
-            header, 
-            request
-        );
-    }
-    
-    //-------------------------------------------------------------------------
-    public DataproviderReply create(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-        this.checkPermission(
-            header,
-            request
-        );
-        this.setAttributes(
-            header,
-            request.object(),
-            null
-        );
-        this.updateRealm(
-            header,
-            request
-        );
-        return super.create(header, request);
-    }
-    
-    //-------------------------------------------------------------------------
-    public DataproviderReply replace(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-        this.checkPermission(
-            header,
-            request
-        );
-        this.setAttributes(
-            header,
-            request.object(),
-            this.delegation.addGetRequest(
-              request.path(),
-              AttributeSelectors.ALL_ATTRIBUTES,
-              null
-            )
-        );
-        // Only mark realm as dirty if group memberships are modified
-        // E.g. modifying lastLoginAt does not require to refresh the realm
-        try {
-	        if(ObjectHolder_2Facade.newInstance(request.object()).getValue().keySet().contains("isMemberOf")) {
-	            this.updateRealm(
-	                header,
-	                request
-	            );
-	        }
+    // --------------------------------------------------------------------------
+    public class LayerInteraction extends Standard_1.LayerInteraction {
+        
+        //---------------------------------------------------------------------------
+        public LayerInteraction(
+            javax.resource.cci.Connection connection
+        ) throws ResourceException {
+            super(connection);
         }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
+                
+        //-------------------------------------------------------------------------
+        public MappedRecord retrieveObject(
+        	ServiceHeader header,
+            Path identity
+        ) throws ServiceException {
+        	try {
+	        	DataproviderRequest getRequest = new DataproviderRequest(
+	                Query_2Facade.newInstance(identity).getDelegate(),
+	                DataproviderOperations.OBJECT_RETRIEVAL,
+	                AttributeSelectors.ALL_ATTRIBUTES,
+	                new AttributeSpecifier[]{}
+	        	);
+	        	DataproviderReply getReply = this.newDataproviderReply();
+	        	this.getDelegatingInteraction().get(
+	        		getRequest.getInteractionSpec(), 
+	        		Query_2Facade.newInstance(getRequest.path()), 
+	        		getReply.getResult()
+	        	);
+	        	return getReply.getObject();
+        	} catch(ResourceException e) {
+        		throw new ServiceException(e);
+        	}
         }
-        try {
-            return super.replace(
-                header,
-                request
-            );
-        }
-        catch(ServiceException e) {
-            // Ignore CONCURRENT_ACCESS_FAILURE on realms (updateRealm could have
-            // been called before)
-            if(
-                (e.getExceptionCode() == BasicException.Code.CONCURRENT_ACCESS_FAILURE) &&
-                request.path().isLike(PATH_PATTERN_REALM)
-            ) {
-                return new DataproviderReply(request.object());                
-            }
-            throw e;            
-        }
-    }
-    
-    //-------------------------------------------------------------------------
-    public DataproviderReply get(
-      ServiceHeader header,
-      DataproviderRequest request
-    ) throws ServiceException {
-        this.checkPermission(
-            header,
-            request
-        );
-        return this.completeReply(
-            header,
-            request.attributeSelector() == AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES ? 
-            	request.attributeSpecifierAsMap().keySet() : 
-            	null,
-            super.get(
+
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean delete(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+	        OpenCrxSecurity_1.this.checkPermission(
 	            header,
 	            request
-            )
-        );
-    }
-
-    //-------------------------------------------------------------------------
-    public DataproviderReply operation(
-      ServiceHeader header,
-      DataproviderRequest request
-    ) throws ServiceException {
-        this.checkPermission(
-            header,
-            request
-        );
-                    
-        String operationName = request.path().get(
-            request.path().size() - 2
-        );
-        MappedRecord source = this.retrieveObject(
-            request.path().getPrefix(request.path().size() - 2)
-        );
-        String sourceClass = ObjectHolder_2Facade.getObjectClass(source);
-        MappedRecord param = request.object();
-        // change password
-        MappedRecord reply = null;
-        if("org:openmdx:security:authentication1:Password".equals(sourceClass)) {
-            if("change".equals(operationName)) {
-                this.changePassword(
-                    source,
-                    param
-                );
-                reply = this.createResult(
-                    request,
-                    "org:openmdx:base:Void"
-                );
-            }
-        }
-        
-        // reply
-        if(reply != null) {
-            return new DataproviderReply(
-              reply
-            );
-        }
-        else {
-            return super.operation(
-              header,
-              request
-            );
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    public DataproviderReply find(
-      ServiceHeader header,
-      DataproviderRequest request
-    ) throws ServiceException {
-        this.checkPermission(
-            header,
-            request
-        );
-        String principalName = this.getPrincipalName(header);
-        String realmName = principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) ? 
-        	principalName.substring(principalName.indexOf("-") + 1) : 
-        		"";
-        // Restrict browsing on principals
-        if(request.path().isLike(PATH_PATTERN_PRINCIPALS)) {
-            boolean containsSubjectFilter = false;
-            for(int i = 0; i < request.attributeFilter().length; i++) {
-                if("subject".equals(request.attributeFilter()[i].name())) {
-                    containsSubjectFilter = true;
-                    break;
-                }
-            }
-            // Return users and groups only if requesting principal is not admin-Root or segment admin
-            if(
-                !containsSubjectFilter &&
-                !"Root".equals(realmName) &&
-                !realmName.equals(request.path().get(request.path().size()-2))
-            ) {
-                request.addAttributeFilterProperty(
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        SystemAttributes.OBJECT_CLASS,
-                        FilterOperators.IS_IN,
-                        "org:opencrx:security:realm1:PrincipalGroup",   
-                        "org:opencrx:security:realm1:User"   
-                    )
-                );                    
-            }
-        }
-        // Restrict browsing on subjects
-        else if(request.path().isLike(PATH_PATTERN_SUBJECTS)) {
-            // Do not restrict Root            
-            if(!"Root".equals(realmName)) {
-                request.addAttributeFilterProperty(
-                    new FilterProperty(
-                        Quantors.FOR_ALL,
-                        SystemAttributes.OBJECT_CLASS,
-                        FilterOperators.IS_IN
-                    )
-                );
-            }
-        }
-        return this.completeReply(
-            header,
-            request.attributeSelector() == AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES ? 
-            	request.attributeSpecifierAsMap().keySet() : 
-            	null,
-            super.find(
+	        );
+	        OpenCrxSecurity_1.this.updateRealm(
 	            header,
-	            new DataproviderRequest(
-	            	request,
-	            	request.object(),
-	            	request.operation(),
-	            	request.attributeFilter(),
-	            	request.position(),
-	            	request.size(),
-	            	request.direction(),
-	            	AttributeSelectors.ALL_ATTRIBUTES,
-	            	request.attributeSpecifier()
+	            request
+	        );
+	        return super.delete(
+	            ispec,
+	            input,
+	            output
+	        );
+	    }
+	    
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean create(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            OpenCrxSecurity_1.this.checkPermission(
+	            header,
+	            request
+	        );
+            OpenCrxSecurity_1.this.setAttributes(
+	            header,
+	            request.object(),
+	            null
+	        );
+            OpenCrxSecurity_1.this.updateRealm(
+	            header,
+	            request
+	        );
+	        return super.create(
+	        	ispec,
+	        	input,
+	        	output
+	        );
+	    }
+	    
+	    //-------------------------------------------------------------------------
+	    @SuppressWarnings("unchecked")
+	    @Override
+	    public boolean put(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+            OpenCrxSecurity_1.this.checkPermission(
+	            header,
+	            request
+	        );
+	        OpenCrxSecurity_1.this.setAttributes(
+	            header,
+	            request.object(),
+	            this.retrieveObject(
+	            	header,
+	            	request.path()
 	            )
-            )
-        );
+	        );
+	        // Only mark realm as dirty if group memberships are modified
+	        // E.g. modifying lastLoginAt does not require to refresh the realm
+	        try {
+		        if(Object_2Facade.newInstance(request.object()).getValue().keySet().contains("isMemberOf")) {
+		        	OpenCrxSecurity_1.this.updateRealm(
+		                header,
+		                request
+		            );
+		        }
+	        }
+	        catch (ResourceException e) {
+	        	throw new ServiceException(e);
+	        }
+	        try {
+	            return super.put(
+	                ispec,
+	                input,
+	                output
+	            );
+	        }
+	        catch(Exception e) {
+	        	ServiceException e0 = new ServiceException(e);
+	            // Ignore CONCURRENT_ACCESS_FAILURE on realms (updateRealm could have
+	            // been called before)
+	            if(
+	                (e0.getExceptionCode() == BasicException.Code.CONCURRENT_ACCESS_FAILURE) &&
+	                request.path().isLike(PATH_PATTERN_REALM)
+	            ) {
+	            	if(reply.getResult() != null) {
+	            		reply.getResult().add(
+	            			request.object()
+	            		);
+	            	}
+	            	return true;
+	            }
+	            throw e0;            
+	        }
+	    }
+	    
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean get(
+	        RestInteractionSpec ispec,
+	        Query_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+            OpenCrxSecurity_1.this.checkPermission(
+	            header,
+	            request
+	        );
+            super.get(
+	            ispec,
+	            input,
+	            output
+            );
+            OpenCrxSecurity_1.this.completeReply(
+	            header,
+            	reply
+	        );
+	        return true;
+	    }
+	
+	    //-------------------------------------------------------------------------
+	    @SuppressWarnings("unchecked")
+	    @Override
+	    public boolean invoke(
+            RestInteractionSpec ispec, 
+            MessageRecord input, 
+            MessageRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            OpenCrxSecurity_1.this.checkPermission(
+	            header,
+	            request
+	        );
+	                    
+	        String operationName = request.path().get(
+	            request.path().size() - 2
+	        );
+	        MappedRecord source = this.retrieveObject(
+	        	header,
+	            request.path().getPrefix(request.path().size() - 2)
+	        );
+	        String sourceClass = Object_2Facade.getObjectClass(source);
+	        MappedRecord param = request.object();
+	        // change password
+	        Object_2Facade result = null;
+	        if("org:openmdx:security:authentication1:Password".equals(sourceClass)) {
+	            if("change".equals(operationName)) {
+	                OpenCrxSecurity_1.this.changePassword(
+	                	header,
+	                    source,
+	                    param
+	                );
+	                result = OpenCrxSecurity_1.this.createResult(
+	                    request,
+	                    "org:openmdx:base:Void"
+	                );
+	            }
+	        }
+	        
+	        // reply
+	        if(result != null) {
+	        	output.setPath(result.getPath());
+	        	output.setBody(result.getValue());
+	        	return true;
+	        }
+	        else {
+	            return super.invoke(
+	              ispec,
+	              input,
+	              output
+	            );
+	        }
+	    }
+	
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean find(
+	        RestInteractionSpec ispec,
+	        Query_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+            OpenCrxSecurity_1.this.checkPermission(
+	            header,
+	            request
+	        );
+	        String principalName = OpenCrxSecurity_1.this.getPrincipalName(header);
+	        String realmName = principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) ? 
+	        	principalName.substring(principalName.indexOf("-") + 1) : 
+	        		"";
+	        // Restrict browsing on principals
+	        if(request.path().isLike(PATH_PATTERN_PRINCIPALS)) {
+	            boolean containsSubjectFilter = false;
+	            for(int i = 0; i < request.attributeFilter().length; i++) {
+	                if("subject".equals(request.attributeFilter()[i].name())) {
+	                    containsSubjectFilter = true;
+	                    break;
+	                }
+	            }
+	            // Return users and groups only if requesting principal is not admin-Root or segment admin
+	            if(
+	                !containsSubjectFilter &&
+	                !"Root".equals(realmName) &&
+	                !realmName.equals(request.path().get(request.path().size()-2))
+	            ) {
+	                request.addAttributeFilterProperty(
+	                    new FilterProperty(
+	                        Quantors.THERE_EXISTS,
+	                        SystemAttributes.OBJECT_CLASS,
+	                        FilterOperators.IS_IN,
+	                        "org:opencrx:security:realm1:PrincipalGroup",   
+	                        "org:opencrx:security:realm1:User"   
+	                    )
+	                );                    
+	            }
+	        }
+	        // Restrict browsing on subjects
+	        else if(request.path().isLike(PATH_PATTERN_SUBJECTS)) {
+	            // Do not restrict Root            
+	            if(!"Root".equals(realmName)) {
+	                request.addAttributeFilterProperty(
+	                    new FilterProperty(
+	                        Quantors.FOR_ALL,
+	                        SystemAttributes.OBJECT_CLASS,
+	                        FilterOperators.IS_IN
+	                    )
+	                );
+	            }
+	        }
+	        DataproviderRequest findRequest =  new DataproviderRequest(
+            	request.object(),
+            	request.operation(),
+            	request.attributeFilter(),
+            	request.position(),
+            	request.size(),
+            	request.direction(),
+            	AttributeSelectors.ALL_ATTRIBUTES,
+            	request.attributeSpecifier()
+            );
+	        try {
+	            super.find(
+	            	findRequest.getInteractionSpec(), 
+	            	Query_2Facade.newInstance(findRequest.object()), 
+	            	reply.getResult()
+	            );
+            }
+            catch (ResourceException e) {
+            	throw new ServiceException(e);
+            }
+	        OpenCrxSecurity_1.this.completeReply(
+	            header,
+	            reply
+	        );
+	        return true;
+	    }
+	    
     }
-
+    
     //-------------------------------------------------------------------------
     // Variables
     //-------------------------------------------------------------------------
-    private static final Path PATH_PATTERN_PRINCIPALS = 
+    protected static final Path PATH_PATTERN_PRINCIPALS = 
         new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/principal");
-    private static final Path PATH_PATTERN_REALM =
+    protected static final Path PATH_PATTERN_REALM =
         new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*");        
-    private static final Path PATH_PATTERN_REALM_COMPOSITE =
+    protected static final Path PATH_PATTERN_REALM_COMPOSITE =
         new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/:*");        
-    private static final Path PATH_PATTERN_SUBJECTS = 
+    protected static final Path PATH_PATTERN_SUBJECTS = 
         new Path("xri:@openmdx:org.opencrx.security.identity1/provider/:*/segment/:*/subject");
-
-    private RequestCollection delegation = null;
-    private Model_1_0 model = null;
     
 }
 

@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:         openCRX/Core, http://www.opencrx.org/
- * Name:            $Id: CreateWorkAndExpenseRecord.jsp,v 1.49 2009/10/15 16:19:34 wfro Exp $
+ * Name:            $Id: CreateWorkAndExpenseRecord.jsp,v 1.52 2010/04/27 12:16:10 wfro Exp $
  * Description:     Create Work Record
- * Revision:        $Revision: 1.49 $
+ * Revision:        $Revision: 1.52 $
  * Owner:           CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:            $Date: 2009/10/15 16:19:34 $
+ * Date:            $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -162,8 +162,7 @@ org.openmdx.base.text.conversion.*
     try {
       org.opencrx.security.realm1.jmi1.PrincipalGroup principalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
         principalGroupName,
-        realm,
-        pm
+        realm
       );
       return principalGroup;
     } catch (Exception e) {
@@ -230,7 +229,6 @@ org.openmdx.base.text.conversion.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	javax.jdo.PersistenceManager pm = app.getPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
@@ -240,6 +238,7 @@ org.openmdx.base.text.conversion.*
 		);
 		return;
 	}
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	Texts_1_0 texts = app.getTexts();
 	org.openmdx.portal.servlet.Codes codes = app.getCodes();
 
@@ -251,14 +250,14 @@ org.openmdx.base.text.conversion.*
 
 	// Format DateTimes
 	TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
-	SimpleDateFormat dtf = new SimpleDateFormat("EEEE", app.getCurrentLocale());										dtf.setTimeZone(timezone);
-	SimpleDateFormat monthFormat = new java.text.SimpleDateFormat("MMMM", app.getCurrentLocale());	monthFormat.setTimeZone(timezone);
+	SimpleDateFormat dtf = new SimpleDateFormat("EEEE", app.getCurrentLocale()); dtf.setTimeZone(timezone);
+	SimpleDateFormat monthFormat = new java.text.SimpleDateFormat("MMMM", app.getCurrentLocale()); monthFormat.setTimeZone(timezone);
 	SimpleDateFormat dayInWeekFormat = new java.text.SimpleDateFormat("E", app.getCurrentLocale()); dayInWeekFormat.setTimeZone(timezone);
-	SimpleDateFormat weekdayf = new SimpleDateFormat("EE", app.getCurrentLocale());									weekdayf.setTimeZone(timezone);
-	SimpleDateFormat dateonlyf = new SimpleDateFormat("dd-MMM-yyyy", app.getCurrentLocale());				dateonlyf.setTimeZone(timezone);
+	SimpleDateFormat weekdayf = new SimpleDateFormat("EE", app.getCurrentLocale()); weekdayf.setTimeZone(timezone);
+	SimpleDateFormat dateonlyf = new SimpleDateFormat("dd-MMM-yyyy", app.getCurrentLocale()); dateonlyf.setTimeZone(timezone);
 	SimpleDateFormat datetimef = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());	datetimef.setTimeZone(timezone);
-	SimpleDateFormat datef = new SimpleDateFormat("EE d-MMMM-yyyy", app.getCurrentLocale());				datef.setTimeZone(timezone);
-	SimpleDateFormat dtsortf = new SimpleDateFormat("yyyyMMddHHmmss", app.getCurrentLocale());			dtsortf.setTimeZone(timezone);
+	SimpleDateFormat datef = new SimpleDateFormat("EE d-MMMM-yyyy", app.getCurrentLocale()); datef.setTimeZone(timezone);
+	SimpleDateFormat dtsortf = new SimpleDateFormat("yyyyMMddHHmmss", app.getCurrentLocale()); dtsortf.setTimeZone(timezone);
 	NumberFormat formatter = new DecimalFormat("00000");
 	NumberFormat quantityf = new DecimalFormat("0.000");
 	NumberFormat ratesepf = new DecimalFormat("#,##0.00");
@@ -2063,8 +2062,7 @@ org.openmdx.base.text.conversion.*
                     );
                     principal = org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
                       myUserHome.refGetPath().getBase(),
-                      realm,
-                      pm
+                      realm
                     );
                     // check whether user is member of at least one private group which is also an owning group of the selected activity
                     for (
@@ -2445,3 +2443,8 @@ org.openmdx.base.text.conversion.*
 </div> <!-- container -->
 </body>
 </html>
+<%
+if(pm != null) {
+	pm.close();
+}
+%>

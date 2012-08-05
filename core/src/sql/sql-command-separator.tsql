@@ -8,6 +8,6 @@ GO
 
 #elif defined(DB2_9)
 
-#elif defined(HSQLDB_1)
+#elif defined(HSQLDB_2)
 
 #endif

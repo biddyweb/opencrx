@@ -1,7 +1,6 @@
 <%@ page import="org.opencrx.apps.store.common.util.SessionHelper,
                  org.opencrx.apps.store.objects.User,
-                 org.opencrx.apps.store.common.util.*,
-                 org.opencrx.apps.utils.*,
+                 org.opencrx.apps.store.common.util.*,org.opencrx.apps.store.common.util.*,
                  org.opencrx.apps.store.manager.UserManager"%>
  <%--
   New user registration part

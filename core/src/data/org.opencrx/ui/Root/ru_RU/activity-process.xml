@@ -66,28 +66,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Заголовок / Текст</_item>
-											</toolTip>
-											<label>
-												<_item>Заголовок / Текст</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
-										<_object>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedFollowUp" _operation="create">
+                    <_object>
                       <label>
-                        <_item>Дата создания</_item>
+                        <_item>Информация о переходе</_item>
                       </label>
                       <toolTip>
-                        <_item>Время и дата создания объекта (не модифицированного)</_item>
+                        <_item>Информация о переходе</_item>
                       </toolTip>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заголовок / Текст</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Заголовок / Текст</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:modifiedAt" _operation="create">
                     <_object>
                       <label>
@@ -99,13 +99,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Дата создания</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Время и дата создания объекта (не модифицированного)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:text" _operation="create">
                     <_object>
                       <label>
                         <_item>Текст</_item>
                       </label>
                       <toolTip>
-                        <_item>текст</_item>
+                        <_item>Текст</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:newActivityState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Новое Состояние Деятельности</_item>
+                        <_item>Новое состояние деятельности</_item>
                       </label>
                       <toolTip>
-                        <_item>Новое Состояние Деятельности</_item>
+                        <_item>Новое состояние деятельности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -366,10 +377,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetAssignedToAction:resourceOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Заказ на Ресурсы</_item>
+                        <_item>Заказ на ресурсы</_item>
                       </label>
                       <toolTip>
-                        <_item>Заказ на Ресурсы</_item>
+                        <_item>Заказ на ресурсы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -377,10 +388,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetAssignedToAction:resourceRole" _operation="create">
                     <_object>
                       <label>
-                        <_item>Роль Ресурса</_item>
+                        <_item>Роль ресурса</_item>
                       </label>
                       <toolTip>
-                        <_item>Роль Ресурса</_item>
+                        <_item>Роль ресурса</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +410,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetActualStartAction:resetToNull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сбросить в Состояние &quot;Неопределенный&quot;</_item>
+                        <_item>Сбросить в состояние &quot;Неопределенный&quot;</_item>
                       </label>
                       <toolTip>
-                        <_item>Сбросить в Состояние &quot;Неопределенный&quot;</_item>
+                        <_item>Сбросить в состояние &quot;Неопределенный&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +432,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetActualEndAction:resetToNull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сбросить в Состояние &quot;Неопределенный&quot;</_item>
+                        <_item>Сбросить в состояние &quot;Неопределенный&quot;</_item>
                       </label>
                       <toolTip>
-                        <_item>Сбросить в Состояние &quot;Неопределенный&quot;</_item>
+                        <_item>Сбросить в состояние &quot;Неопределенный&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>

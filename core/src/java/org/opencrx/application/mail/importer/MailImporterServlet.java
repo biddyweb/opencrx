@@ -1,17 +1,17 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.14 2009/06/16 21:19:20 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.18 2010/04/16 13:51:22 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.14 $
+   * Revision:    $Revision: 1.18 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2009/06/16 21:19:20 $
+   * Date:        $Date: 2010/04/16 13:51:22 $
    * ====================================================================
    *
    * This software is published under the BSD license
    * as listed below.
    * 
-   * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+   * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
    * All rights reserved.
    * 
    * Redistribution and use in source and binary forms, with or without 
@@ -56,16 +56,16 @@
 package org.opencrx.application.mail.importer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -73,24 +73,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
-import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
-import org.opencrx.kernel.activity1.jmi1.EMail;
-import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
-import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
-import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
-import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.SendAlertParams;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -174,239 +166,39 @@ public class MailImporterServlet
         }        
     }
     
-    //-----------------------------------------------------------------------
-    /**
-     * @param mimeMsg          The email to be imported as openCRX EMailActivity
-     * @param rootPkg          The root package to be used for this request
-     * @param emailActivity    The openCRX EMailActivity currently in process
-     */
-    @SuppressWarnings("unchecked")
-    private void addMedia(
-        SimpleMimeMessage mimeMsg,
-        PersistenceManager pm,
-        EMail emailActivity
-    ) throws MessagingException, ServiceException {
-        // add attachments to email
-        // if the email already contains attachments as media, only
-        // those attachments not already contained in the email
-        // are imported. This check is done by comparing the name
-        // of the attachment with the contentNames of the media.
-        if(mimeMsg.containsAttachments()) {
-            Iterator contentsIter = mimeMsg.getContents().iterator();
-            boolean emailContainsMedia = emailActivity.getMedia().size() > 0;
-            while (contentsIter.hasNext()) {
-                MessageContent content = (MessageContent)contentsIter.next();
-                if (emailContainsMedia) {
-                    Iterator attachments = emailActivity.getMedia().iterator();
-                    while (attachments.hasNext()) {
-                        Media attachment = (Media)attachments.next();
-                        if(content.getId() != null && content.getId().equals(attachment.getContentName())) {
-                        	SysLog.trace("Attachment already linked, '"
-                                + mimeMsg.getSubject() + "', "
-                                + mimeMsg.getMessageID() + "', "
-                                + content.getId());
-                        }
-                        else {                            
-                            // add the attachment
-                            try {
-                                Activities.getInstance().addMedia(
-                                    pm,
-                                    emailActivity,
-                                    content.getContentType(),
-                                    content.getId(),
-                                    content.getInputStream()
-                                );
-                            }
-                            catch(IOException e) {
-                            	SysLog.warning("Can not add attachment", e);
-                                new ServiceException(e).log();
-                                SysLog.detail(e.getMessage(), e.getCause());
-                            }
-                        }
-                    }
-                }
-                else {
-                    // add the attachment
-                    try {
-                        Activities.getInstance().addMedia(
-                            pm,
-                            emailActivity,
-                            content.getContentType(),
-                            content.getId(),
-                            content.getInputStream()
-                        );
-                    }
-                    catch(IOException e) {
-                    	SysLog.warning("Can not add attachment", e);
-                        new ServiceException(e).log();
-                        SysLog.detail(e.getMessage(), e.getCause());
-                    }
-                }
-            }
-        }
-    }
-
     // -----------------------------------------------------------------------
-    /**
-     * Imports an inbound MimeMessage as an EMail activity.
-     * 
-     * @param providerName     The name of the current provider
-     * @param segmentName      The name of the current segment
-     * @param mimeMessage          The email to be imported as openCRX EMailActivity
-     * @throws ServiceException
-     */
-    private void importSimpleMimeMessage(
+    private void importMimeMessage(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         String creatorCriteria,
-        SimpleMimeMessage mimeMessage,
+        MimeMessage mimeMessage,
         MailImporterConfig config
     ) throws ServiceException {
-
-        try {
-            List<Activity> activities = Activities.getInstance().lookupEmailActivity(
+    	try {
+            ActivityCreator emailCreator = this.getEmailCreator(
                 pm,
                 providerName,
                 segmentName,
-                mimeMessage.getMessageID()
+                creatorCriteria
+            );    		
+    		Activities.getInstance().importMimeMessage(
+	     		providerName, 
+	     		segmentName, 
+	     		mimeMessage, 
+	     		emailCreator, 
+                mimeMessage.getFrom(),
+                mimeMessage.getRecipients(Message.RecipientType.TO),
+                mimeMessage.getRecipients(Message.RecipientType.CC),
+                mimeMessage.getRecipients(Message.RecipientType.BCC),
+                config.isEMailAddressLookupCaseInsensitive(),
+                config.isEMailAddressLookupIgnoreDisabled()    		
             );
-            if (activities.isEmpty()) {
-            	SysLog.trace("create a new EMailActivity");
-      
-                ActivityCreator emailCreator = this.getEmailCreator(
-                    pm,
-                    providerName,
-                    segmentName,
-                    creatorCriteria
-                );
-                
-                pm.currentTransaction().begin();
-                
-                Activity1Package activityPkg = Utils.getActivityPackage(pm);
-                NewActivityParams newActParam = activityPkg.createNewActivityParams(
-                    null, // description
-                    null, // detailedDescription
-                    null, // dueBy
-                    ICalendar.ICAL_TYPE_NA, // icalType
-                    mimeMessage.getSubject(),
-                    mimeMessage.getPriority(),
-                    null, // reportingContract
-                    null, // scheduledEnd
-                    null  // scheduledStart
-                );
-                NewActivityResult newActivityResult = emailCreator.newActivity(
-                    newActParam
-                );
-                pm.currentTransaction().commit();
-      
-                // Update EMail activity
-                EMail emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
-                pm.currentTransaction().begin();
-                String subject = mimeMessage.getSubject();                
-                emailActivity.setMessageSubject(
-                    subject == null ? "" : subject
-                );
-                String body = mimeMessage.getBody();
-                emailActivity.setMessageBody(
-                    body == null ? "" : body
-                );
-                emailActivity.getExternalLink().clear();
-                emailActivity.getExternalLink().add(
-                    mimeMessage.getMessageID()
-                );
-                emailActivity.setSendDate(
-                    mimeMessage.getDate()
-                );
-                pm.currentTransaction().commit();
-      
-                // Add FROM as sender
-                String fromAddress = mimeMessage.getFrom()[0];
-                List<org.opencrx.kernel.account1.jmi1.EMailAddress> addresses = Accounts.getInstance().lookupEmailAddress(
-                    pm,
-                    providerName,
-                    segmentName,
-                    fromAddress,
-                    config.isEMailAddressLookupCaseInsensitive(),
-                    config.isEMailAddressLookupIgnoreDisabled()
-                );
-                EMailAddress from = null;
-                if (addresses.size() == 1) {
-                    from = addresses.iterator().next();
-                    pm.currentTransaction().begin();
-                    emailActivity.setSender(from);
-                    pm.currentTransaction().commit();
-                } 
-                else {
-                	SysLog.trace("lookup " + fromAddress + " finds "
-                        + addresses.size() + " addresses");
-                }
-                // Handle recipients
-                Activities.getInstance().addRecipientToEmailActivity(
-                    pm,
-                    providerName,
-                    segmentName,
-                    emailActivity,
-                    mimeMessage.getRecipients(),
-                    Message.RecipientType.TO,
-                    config.isEMailAddressLookupCaseInsensitive(),
-                    config.isEMailAddressLookupIgnoreDisabled()
-                );
-                Activities.getInstance().addRecipientToEmailActivity(
-                    pm,
-                    providerName,
-                    segmentName,
-                    emailActivity,
-                    mimeMessage.getRecipients(Message.RecipientType.CC),
-                    Message.RecipientType.CC,
-                    config.isEMailAddressLookupCaseInsensitive(),
-                    config.isEMailAddressLookupIgnoreDisabled()                    
-                );      
-                // add originator and recipients to a note
-                Activities.getInstance().addNote(
-                    pm,
-                    emailActivity,
-                    "Recipients",
-                    Activities.getInstance().getRecipientsAsNoteText(
-                        pm,
-                        providerName,
-                        segmentName,
-                        mimeMessage.getFrom(),
-                        mimeMessage.getRecipients(Message.RecipientType.TO),
-                        mimeMessage.getRecipients(Message.RecipientType.CC),
-                        mimeMessage.getRecipients(Message.RecipientType.BCC),
-                        config.isEMailAddressLookupCaseInsensitive(),
-                        config.isEMailAddressLookupIgnoreDisabled()                        
-                    )
-                );
-      
-                // add EMail headers as Note
-                Activities.getInstance().addNote(
-                    pm,
-                    emailActivity,
-                    "Message-Header",
-                    mimeMessage.getAllHeaderLinesAsString()
-                );
-                // Add attachments if some exist
-                this.addMedia(
-                    mimeMessage, 
-                    pm, 
-                    emailActivity
-                );
-            }
-            else if (activities.size() == 1) {
-            	SysLog.info(
-                  "Import of email message skipped, an email with this message id exists already, "
-                  + mimeMessage.getMessageID() + ", " + mimeMessage.getSubject());
-            }
-            else {
-            	SysLog.info(
-                    "Import of email message skipped, found "
-                    + activities.size() + " email with this message id, "
-                    + mimeMessage.getMessageID() + ", " + mimeMessage.getSubject());
-            }
-        }
-        catch (Exception e) {
+    	} catch (Exception e) {
+            try {
+                pm.currentTransaction().rollback();
+            } 
+            catch(Exception e0) {}
             this.notifyAdmin(
                 pm,
                 providerName,
@@ -417,9 +209,8 @@ public class MailImporterServlet
                 new String[]{}
             );
             SysLog.warning("Can not create email activity", e.getMessage());
-            SysLog.info(e.getMessage(), e.getCause());
-            throw new ServiceException(e);
-        }
+            new ServiceException(e).log();                        
+        }                                
     }
 
     //-----------------------------------------------------------------------
@@ -485,7 +276,7 @@ public class MailImporterServlet
     	SysLog.info("Importing Message (" + providerName + "/" + segmentName + "): ", message);
         String messageId = "NA";
         try {
-            messageId = message.getMessageID();
+            messageId = message.getMimeMessage().getMessageID();
         } 
         catch(Exception e) {}
         if(message.containsNestedMessage()) {
@@ -497,12 +288,12 @@ public class MailImporterServlet
                 MessageContent content = (MessageContent)i.next();
                 if(content.getContent() instanceof SimpleMimeMessage) {
                     try {
-                        this.importSimpleMimeMessage(
+                        this.importMimeMessage(
                             pm,
                             providerName,
                             segmentName,
                             message.getSubject(),
-                            (SimpleMimeMessage)content.getContent(),
+                            ((SimpleMimeMessage)content.getContent()).getMimeMessage(),
                             config
                         );
                     }
@@ -616,13 +407,12 @@ public class MailImporterServlet
             for(int i = 0; i < messages.length; i++) {
                 Message message = messages[i];
                 if(message instanceof MimeMessage) {
-                    MimeMessage mimeMsg = (MimeMessage) message;
+                    MimeMessage mimeMessage = (MimeMessage) message;
                     String messageId = "NA";
                     try {
-                        messageId = mimeMsg.getMessageID();
+                        messageId = mimeMessage.getMessageID();
                         SimpleMimeMessage simpleMimeMessage = new SimpleMimeMessage(
-                            mimeMsg, 
-                            true
+                            mimeMessage 
                         );
                         this.importNestedMessages(
                             pm,
@@ -663,7 +453,11 @@ public class MailImporterServlet
             }
             SysLog.warning(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": ");
             new ServiceException(e).log();
-        }
+        } finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
+    	}
     }
 
     //-----------------------------------------------------------------------
@@ -683,25 +477,34 @@ public class MailImporterServlet
         String providerName = req.getParameter("provider");
         String id = providerName + "/" + segmentName;
         // run
-        if(
-            COMMAND_EXECUTE.equals(req.getPathInfo()) &&
-            !this.runningSegments.contains(id)
-        ) {
-            try {
-                this.runningSegments.add(id);
-                this.importMessages(
-                    providerName,
-                    segmentName
-                );
+        if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
+            if(!this.runningSegments.containsKey(id)) {
+                try {
+                    this.runningSegments.put(
+                    	id,
+                    	Thread.currentThread()
+                    );
+	                this.importMessages(
+	                    providerName,
+	                    segmentName
+	                );
+	            }
+	            catch(Exception e) {
+	                ServiceException e0 = new ServiceException(e);
+	                SysLog.warning("Import messages failed", e0.getMessage());
+	                SysLog.warning(e0.getMessage(), e0.getCause());
+	            }
+	            finally {
+	                this.runningSegments.remove(id);
+	            }
             }
-            catch(Exception e) {
-                ServiceException e0 = new ServiceException(e);
-                SysLog.warning("Import messages failed", e0.getMessage());
-                SysLog.warning(e0.getMessage(), e0.getCause());
-            }
-            finally {
-                this.runningSegments.remove(id);
-            }
+        	else if(
+        		!this.runningSegments.get(id).isAlive() || 
+        		this.runningSegments.get(id).isInterrupted()
+        	) {
+            	Thread t = this.runningSegments.get(id);
+        		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+        	}	            
         }
     }
 
@@ -746,8 +549,7 @@ public class MailImporterServlet
     private static final String COMMAND_EXECUTE = "/execute";
     
     private PersistenceManagerFactory persistenceManagerFactory = null;
-
-    private final List<String> runningSegments = new ArrayList<String>();
+    private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
 
 }
 

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета</_item>
+                        <_item>Участники отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Счета</_item>
+                        <_item>Участники отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Все Счета</_item>
+                        <_item>Все Участники отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Все счета</_item>
+                        <_item>Все Участники отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -40,10 +40,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
                           <_object>
                             <label>
-                              <_item>Счета</_item>
+                              <_item>Участники отношений</_item>
                             </label>
                             <toolTip>
-                              <_item>Счета</_item>
+                              <_item>Участники отношений</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -58,10 +58,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>Счета (заблокированные)</_item>
+                              <_item>Участники отношений (заблокированные)</_item>
                             </label>
                             <toolTip>
-                              <_item>Счета (заблокированные)</_item>
+                              <_item>Участники отношений (заблокированные)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -76,10 +76,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>Группы счетов</_item>
+                              <_item>Группы участников отношений</_item>
                             </label>
                             <toolTip>
-                              <_item>Только группы счетов</_item>
+                              <_item>Только группы участников отношений</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -90,10 +90,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета</_item>
+                        <_item>Участники отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Счета</_item>
+                        <_item>Участники отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -188,10 +188,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет</_item>
+                        <_item>Участник отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет</_item>
+                        <_item>Участник отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -199,10 +199,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25:Group:10" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет</_item>
+                        <_item>Участник отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет</_item>
+                        <_item>Участник отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -372,7 +372,7 @@
                         <_item>Полное имя</_item>
                       </label>
                       <toolTip>
-                        <_item>Полное имя владельца счета (Фамилия, Имя)</_item>
+                        <_item>Полное имя участника отношений (Фамилия, Имя)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -383,7 +383,7 @@
                         <_item>Альтерн. наим.</_item>
                       </label>
                       <toolTip>
-                        <_item>Альтерн. имя владельца счета</_item>
+                        <_item>Альтерн. имя участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -416,7 +416,7 @@
                         <_item>Состояние</_item>
                       </label>
                       <toolTip>
-                        <_item>Состояние счета</_item>
+                        <_item>Состояние (статус)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -427,7 +427,7 @@
                         <_item>Рейтинг</_item>
                       </label>
                       <toolTip>
-                        <_item>Рейтинг счета</_item>
+                        <_item>Рейтинг участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -438,7 +438,7 @@
                         <_item>Категория</_item>
                       </label>
                       <toolTip>
-                        <_item>Категория счета</_item>
+                        <_item>Категория участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -449,7 +449,7 @@
                         <_item>Тип</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип счета</_item>
+                        <_item>Тип участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -479,10 +479,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначен</_item>
                       </label>
                       <toolTip>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначен на</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -490,10 +490,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAssignment:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет</_item>
+                        <_item>Участник отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет</_item>
+                        <_item>Участник отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -523,10 +523,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createLead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Создать директиву</_item>
+                        <_item>Создать потенциального покупателя</_item>
                       </label>
                       <toolTip>
-                        <_item>Создать директиву</_item>
+                        <_item>Создать потенциального покупателя (Лида)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -545,10 +545,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateLeadParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Наименование директивы</_item>
+                        <_item>Наименование потенциального покупателя</_item>
                       </label>
                       <toolTip>
-                        <_item>Наименование директивы</_item>
+                        <_item>Наименование потенциального покупателя (Лида)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -600,10 +600,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateLeadResult:lead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Директива</_item>
+                        <_item>Потенциальный покупатель</_item>
                       </label>
                       <toolTip>
-                        <_item>Директива</_item>
+                        <_item>Лид</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -765,10 +765,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createSalesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Создать запрос на продажу</_item>
+                        <_item>Создать договор</_item>
                       </label>
                       <toolTip>
-                        <_item>Создать запрос на продажу</_item>
+                        <_item>Создать договор</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -787,10 +787,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateSalesOrderParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Наименование запроса на продажу</_item>
+                        <_item>Наименование договора</_item>
                       </label>
                       <toolTip>
-                        <_item>Наименование запроса на продажу</_item>
+                        <_item>Наименование договора</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -831,10 +831,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateSalesOrderResult:salesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Запрос на продажу</_item>
+                        <_item>Договор</_item>
                       </label>
                       <toolTip>
-                        <_item>Запрос на продажу</_item>
+                        <_item>Договор</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -842,10 +842,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createInvoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Создать счет-фактуру</_item>
+                        <_item>Создать счет</_item>
                       </label>
                       <toolTip>
-                        <_item>Создать счет-фактуру</_item>
+                        <_item>Создать счет</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -864,10 +864,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateInvoiceParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Название счет-фактуры</_item>
+                        <_item>Название счета</_item>
                       </label>
                       <toolTip>
-                        <_item>Название счет-фактуры</_item>
+                        <_item>Название счета</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -908,10 +908,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateInvoiceResult:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет-фактура</_item>
+                        <_item>Счет</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет-фактура</_item>
+                        <_item>Счет</_item>
                       </toolTip>
                     </_object>
                     <_content/>

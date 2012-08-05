@@ -11,13 +11,57 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:calendarProfile" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:syncProfile" _operation="create">
                     <_object>
                       <label>
                         <_item>Perfis de Calendário</_item>
                       </label>
                       <toolTip>
                         <_item>Perfis de Calendário</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Perfis de Calendário</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Perfis de Calendário</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:feed" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Atualização do Calendário</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Atualização do Calendário</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -33,18 +77,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile:calendarFeed" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Atualização do Calendário</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Atualização do Calendário</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:name" _operation="create">
                     <_object>
                       <label>
                         <_item>Nome</_item>
@@ -55,7 +88,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:description" _operation="create">
                     <_object>
                       <label>
                         <_item>Descrição</_item>
@@ -66,29 +99,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nome</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nome</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descrição</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Descrição</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:isActive" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:isActive" _operation="create">
                     <_object>
                       <label>
                         <_item>Ativo</_item>
@@ -99,7 +110,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:color" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:color" _operation="create">
                     <_object>
                       <label>
                         <_item>Cor da Fonte</_item>
@@ -110,57 +121,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarFeed:backColor" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:backColor" _operation="create">
                     <_object>
                       <label>
                         <_item>Cor de Fundo</_item>
                       </label>
                       <toolTip>
                         <_item>Cor de Fundo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Atualizar iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Atualizar iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed:url" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>URL</_item>
-                      </label>
-                      <toolTip>
-                        <_item>URL</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed:username" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Usuário</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Usuário</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:IcalFeed:password" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Senha</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Senha</_item>
                       </toolTip>
                     </_object>
                     <_content/>

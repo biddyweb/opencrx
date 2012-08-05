@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: NewsServlet.java,v 1.10 2009/05/10 17:36:57 wfro Exp $
- * Description: VCardServlet
- * Revision:    $Revision: 1.10 $
+ * Project:     openCRX/Application, http://www.opencrx.org/
+ * Name:        $Id: NewsServlet.java,v 1.13 2010/04/23 13:25:00 wfro Exp $
+ * Description: NewsServlet
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/10 17:36:57 $
+ * Date:        $Date: 2010/04/23 13:25:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -57,6 +57,8 @@ package org.opencrx.application.news;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -185,6 +187,8 @@ public class NewsServlet extends HttpServlet {
                     new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + req.getUserPrincipal().getName())
                 );
                 if(userHome != null) {
+                	// Sample date: Fri, 23 Apr 2010 12:49:00 +0200
+                	DateFormat dateTimeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
                     AlertQuery alertQuery = (AlertQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Alert.class);
                     alertQuery.alertState().lessThanOrEqualTo((short)1);
                     alertQuery.reference().isNonNull();
@@ -200,7 +204,7 @@ public class NewsServlet extends HttpServlet {
                         "    <title>Alerts " + req.getUserPrincipal().getName() + "@" + providerName + ":" + segmentName + "</title>\n" +
                         "    <description>Alerts " + req.getUserPrincipal().getName() + "@" + providerName + ":" + segmentName + "</description>\n" +
                         "    <link>" + XMLEncoder.encode(UserHomes.getInstance().getWebAccessUrl(userHome)) + "</link>\n" +
-                        "    <pubDate>" + new Date() + "</pubDate>\n" +
+                        "    <pubDate>" + dateTimeFormat.format(new Date()) + "</pubDate>\n" +
                         "    <lastBuildDate>" + (alerts.isEmpty() ? new Date() : alerts.iterator().next().getModifiedAt()) + "</lastBuildDate>\n"
                     );     
                     int count = 0;
@@ -215,7 +219,8 @@ public class NewsServlet extends HttpServlet {
 	                            pm, 
 	                            alert, 
 	                            userHome, 
-	                            new HashMap<String,Object>()
+	                            new HashMap<String,Object>(),
+	                            true // useSendMailSubjectPrefix
 	                        );
 	                        String text = Notifications.getInstance().getNotificationText(
 	                            pm, 
@@ -256,7 +261,7 @@ public class NewsServlet extends HttpServlet {
 	                            "      <link>" + XMLEncoder.encode(linkReferencedObject) + "</link>\n" +
 	                            "      <guid>" + XMLEncoder.encode(linkAlert) + "</guid>\n" +
 	                            "      <category>Alerts</category>\n" +
-	                            "      <pubDate>" + alert.getModifiedAt() + "</pubDate>\n" +
+	                            "      <pubDate>" + dateTimeFormat.format(alert.getModifiedAt()) + "</pubDate>\n" +
 	                            "      <description>" + XMLEncoder.encode(text.replace("\n", "<br />")) + "</description>\n" +
 	                            "    </item>\n"
 	                        );

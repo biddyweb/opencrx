@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObjectImpl.java,v 1.7 2009/04/20 17:56:44 wfro Exp $
+ * Name:        $Id: SecureObjectImpl.java,v 1.10 2010/03/17 17:10:08 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:44 $
+ * Date:        $Date: 2010/03/17 17:10:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,9 @@ package org.opencrx.kernel.base.aop2;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.JDOUserException;
+import javax.jdo.listener.StoreCallback;
+
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.utils.Utils;
@@ -67,8 +70,9 @@ import org.openmdx.base.exception.ServiceException;
 
 public class SecureObjectImpl
 	<S extends org.opencrx.kernel.base.jmi1.SecureObject,N extends org.opencrx.kernel.base.cci2.SecureObject,C extends Void>
-	extends AbstractObject<S,N,C> {
-
+	extends AbstractObject<S,N,C>
+	implements StoreCallback {
+	
     //-----------------------------------------------------------------------
     public SecureObjectImpl(
         S same,
@@ -204,5 +208,24 @@ public class SecureObjectImpl
             throw new JmiServiceException(e);
         }                    
     }
-        
+
+    //-----------------------------------------------------------------------
+	@Override
+    public void jdoPreStore(
+    ) {
+    	try {
+    		SecureObject.getInstance().updateSecureObject(
+    			this.sameObject() 
+    		);
+    		super.jdoPreStore();
+    	}
+    	catch(ServiceException e) {
+    		throw new JDOUserException(
+    			"jdoPreStore failed",
+    			e,
+    			this.sameObject()
+    		);
+    	}
+    }
+	
 }

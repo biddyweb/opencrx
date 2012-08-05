@@ -157,6 +157,35 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 
+                <!-- Wizard ImportPropertiesFromXLS.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:importPropertiesFromXLS">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+                <!-- Wizard ImportPropertiesFromXLS.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:base:PropertySet:importPropertiesFromXLS">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+                <!-- Wizard ImportPropertiesFromXLS.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:Segment:importPropertiesFromXLS">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+                <!-- Wizard ImportPropertiesFromXLS.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:ProductConfigurationTypeSet:importPropertiesFromXLS">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+
                 <!-- Wizard vCard.jsp -->
 								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:vcard">
 								    <_object>
@@ -264,6 +293,22 @@
 <!-- Edit -->
                 <!-- Wizard UserSettings.jsp -->
 								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:userSettings">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+
+                <!-- Wizard EnableCrxObject.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:enable">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+
+                <!-- Wizard DisableCrxObject.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:disable">
 								    <_object>
 								      <isQuery>true</isQuery>
 								    </_object>
@@ -727,6 +772,76 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+                <!-- Wizard ImportPropertiesFromXLS.jsp -->
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:importPropertiesFromXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import Properties / Property Sets from Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Import Properties / Property Sets from Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:Pane:Op:Tab:importPropertiesFromXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import Properties from Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Import Properties from Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:importPropertiesFromXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import Product Configurations / Properties from Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Import Product Configurations / Properties from Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:Pane:Op:Tab:importPropertiesFromXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import Product Configuration Types / Properties from Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Import Product Configuration Types / Properties from Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                 <!-- Wizard vCard.jsp -->
 								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:vcard">
 										<_object>
@@ -994,6 +1109,44 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+                <!-- Wizard EnableCrxObject.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Enable</_item>
+											</toolTip>
+											<label>
+												<_item>Enable</_item>
+											</label>
+											<order>
+												<_item>200</_item>
+												<_item>0</_item>
+												<_item>145</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard DisableCrxObject.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Disable</_item>
+											</toolTip>
+											<label>
+												<_item>Disable</_item>
+											</label>
+											<order>
+												<_item>200</_item>
+												<_item>0</_item>
+												<_item>148</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 <!-- View 300 -->
 
 <!-- Tools -->
@@ -1193,15 +1346,15 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Follow Up (advanced)</_item>
+												<_item>Follow Up</_item>
 											</toolTip>
 											<label>
-												<_item>Follow Up (advanced)</_item>
+												<_item>Follow Up</_item>
 											</label>
 											<order>
 												<_item>500</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>10</_item>
 											</order>
 										</_object>
 										<_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.18 2009/09/04 08:57:43 wfro Exp $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.19 2010/01/24 22:29:15 wfro Exp $
  * Description: DocumentScannerServlet
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/04 08:57:43 $
+ * Date:        $Date: 2010/01/24 22:29:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,10 +88,10 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
+import org.w3c.format.DateTimeFormat;
 
 /**
  * The DocumentScannerServlet scans a directory and its sub-directories. File names
@@ -226,7 +226,7 @@ public class DocumentScannerServlet
                     for(String name: names) {
                     	if(name.startsWith("@")) {
                     		try {
-                    			activeOn = DateFormat.getInstance().parse(
+                    			activeOn = DateTimeFormat.BASIC_UTC_FORMAT.parse(
                     				name.indexOf("T") > 0 ?
                     					name.substring(1) :
                     					name.substring(1) + "T000000.000Z"

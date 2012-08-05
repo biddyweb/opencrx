@@ -66,6 +66,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedFollowUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dati Transizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dati Transizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
                     <_object>
                       <label>
@@ -135,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcess:state" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stati</_item>
+                        <_item>Fasi</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti gli stati</_item>
+                        <_item>tutte le fasi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato elaborazione Attivita&apos;</_item>
+                        <_item>Fase elaborazione Attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato elaborazione Attivita&apos;</_item>
+                        <_item>Fase elaborazione Attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:prevState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato Precedente</_item>
+                        <_item>Fase Precedente</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato Precedente</_item>
+                        <_item>Fase Precedente</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:nextState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato Seguente</_item>
+                        <_item>Fase Seguente</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato Seguente</_item>
+                        <_item>Fase Seguente</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:errState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato di Errore</_item>
+                        <_item>In errore</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato di Errore</_item>
+                        <_item>In errore</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:newActivityState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato Nuova Attivita&apos;</_item>
+                        <_item>Nuova fase attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato Nuova Attivita&apos;</_item>
+                        <_item>Nuova fase attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +410,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetActualStartAction:resetToNull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Reimposta a non definito</_item>
+                        <_item>Reimposta a indefinito</_item>
                       </label>
                       <toolTip>
-                        <_item>Reimposta a non indefinito</_item>
+                        <_item>Reimposta a indefinito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +432,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetActualEndAction:resetToNull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Reimposta a non definito</_item>
+                        <_item>Reimposta a indefinito</_item>
                       </label>
                       <toolTip>
-                        <_item>Reimposta a non definito</_item>
+                        <_item>Reimposta a indefinito</_item>
                       </toolTip>
                     </_object>
                     <_content/>

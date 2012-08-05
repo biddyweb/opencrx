@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.49 2009/10/19 16:32:13 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.61 2010/01/03 15:07:29 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.49 $
+ * Revision:    $Revision: 1.61 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/19 16:32:13 $
+ * Date:        $Date: 2010/01/03 15:07:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,6 +56,7 @@
 package org.opencrx.kernel.layer.persistence;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -67,6 +68,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.IndexedRecord;
+import javax.resource.cci.Interaction;
 import javax.resource.cci.MappedRecord;
 
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -74,76 +78,55 @@ import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
-import org.openmdx.application.dataprovider.cci.DataproviderReplyContexts;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.layer.model.LayerConfigurationEntries;
-import org.openmdx.application.dataprovider.spi.DatatypeFormat;
-import org.openmdx.application.dataprovider.spi.Layer_1_0;
+import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.accessor.cci.SystemAttributes;
-import org.openmdx.base.collection.SparseList;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.Directions;
 import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
-import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
-import org.openmdx.base.text.format.DateFormat;
+import org.openmdx.base.resource.spi.RestInteractionSpec;
+import org.openmdx.base.rest.spi.Object_2Facade;
+import org.openmdx.base.rest.spi.Query_2Facade;
+import org.w3c.format.DateTimeFormat;
 
 /**
  * This plugin creates audit entries for modified objects.
  */
-public class Audit_1 
-    extends Indexed_1 {
+public class Audit_1 extends Indexed_1 {
 
+    // --------------------------------------------------------------------------
+    public Interaction getInteraction(
+        javax.resource.cci.Connection connection
+    ) throws ResourceException {
+        return new LayerInteraction(connection);
+    }
+        	
     //-------------------------------------------------------------------------
-    @SuppressWarnings({
-        "unchecked"
-    })
+    @Override
     public void activate(
         short id, 
         Configuration configuration,
-        Layer_1_0 delegation
+        Layer_1 delegation
     ) throws ServiceException {
         super.activate(
             id, 
             configuration, 
             delegation
         );
-        this.datatypeFormat = configuration.isOn(
-            LayerConfigurationEntries.XML_DATATYPES
-        ) ? DatatypeFormat.newInstance(true) : null;        
-        this.visitorIds.addAll(
-            (SparseList)configuration.values("visitorId")
-        );
+        for(Object value: configuration.values("visitorId").values()) {
+	        this.visitorIds.add((String)value);	        	
+        }
     }
     
     //-------------------------------------------------------------------------
-    public void prolog(
-        ServiceHeader header,
-        DataproviderRequest[] requests
-    ) throws ServiceException {
-        super.prolog(
-          header,
-          requests
-        );
-    }
-
-    // --------------------------------------------------------------------------
-    /**
-     * Tells whether XML datatype formatting is required
-     * @return
-     */
-    protected boolean useDatatypes(){
-        return this.datatypeFormat != null;
-    }
-        
-    //-------------------------------------------------------------------------
-    private boolean isAuditee(
+    protected boolean isAuditee(
       MappedRecord object
     ) throws ServiceException {
-        String objectClass = ObjectHolder_2Facade.getObjectClass(object);
+        String objectClass = Object_2Facade.getObjectClass(object);
         return this.getModel().isSubtypeOf(
             objectClass,
             "org:opencrx:kernel:base:Auditee"
@@ -154,7 +137,7 @@ public class Audit_1
     protected boolean isInstanceOfBasicObject(
     	MappedRecord object
     ) {
-        return ObjectHolder_2Facade.getPath(object).size() > 5;
+        return Object_2Facade.getPath(object).size() > 5;
     }
 
     //-------------------------------------------------------------------------
@@ -169,29 +152,32 @@ public class Audit_1
     protected void setSecurityAttributes(
     	MappedRecord auditEntry
     ) throws ServiceException {
-    	ObjectHolder_2Facade auditEntryFacade;
+    	Object_2Facade auditEntryFacade;
         try {
-	        auditEntryFacade = ObjectHolder_2Facade.newInstance(auditEntry);
+	        auditEntryFacade = Object_2Facade.newInstance(auditEntry);
         }
         catch (ResourceException e) {
         	throw new ServiceException(e);
         }
         // Owner of audit entries is segment administrator
         String segmentName = auditEntryFacade.getPath().get(4);
-        auditEntryFacade.clearAttributeValues("owner");
-        auditEntryFacade.attributeValues("owner").add(
+        auditEntryFacade.attributeValuesAsList("owner").clear();
+        auditEntryFacade.attributeValuesAsList("owner").add(
             this.getQualifiedPrincipalName(auditEntryFacade.getPath(), SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName + "." + SecurityKeys.USER_SUFFIX)
         );
-        auditEntryFacade.attributeValues("owner").add(
+        auditEntryFacade.attributeValuesAsList("owner").add(
             this.getQualifiedPrincipalName(auditEntryFacade.getPath(), SecurityKeys.PRINCIPAL_GROUP_ADMINISTRATORS)
         );
-        auditEntryFacade.clearAttributeValues("accessLevelBrowse").add(
+        auditEntryFacade.attributeValuesAsList("accessLevelBrowse").clear();
+        auditEntryFacade.attributeValuesAsList("accessLevelBrowse").add(
             new Short(SecurityKeys.ACCESS_LEVEL_BASIC)
         );
-        auditEntryFacade.clearAttributeValues("accessLevelUpdate").add(
+        auditEntryFacade.attributeValuesAsList("accessLevelUpdate").clear();
+        auditEntryFacade.attributeValuesAsList("accessLevelUpdate").add(
             new Short(SecurityKeys.ACCESS_LEVEL_PRIVATE)
         );
-        auditEntryFacade.clearAttributeValues("accessLevelDelete").add(
+        auditEntryFacade.attributeValuesAsList("accessLevelDelete").clear();
+        auditEntryFacade.attributeValuesAsList("accessLevelDelete").add(
             new Short(SecurityKeys.ACCESS_LEVEL_NA)
         );        
     }
@@ -202,91 +188,635 @@ public class Audit_1
         MappedRecord object,
         short operation
     ) throws ServiceException {
-    	ObjectHolder_2Facade facade;
+    	Object_2Facade facade;
         try {
-	        facade = ObjectHolder_2Facade.newInstance(object);
+	        facade = Object_2Facade.newInstance(object);
         }
         catch (ResourceException e) {
         	throw new ServiceException(e);
         }
-        String at = header.getRequestedAt();
-        if(at == null) at = DateFormat.getInstance().format(new Date());        
+        Date at = null;
+        try {
+        	at = header.getRequestedAt() == null ?
+            	new Date() :
+            	    DateTimeFormat.BASIC_UTC_FORMAT.parse(header.getRequestedAt());
+        }
+        catch(ParseException e) {
+            at = new Date();
+        }
         List<String> by = header.getPrincipalChain();
         switch(operation) {
             case DataproviderOperations.OBJECT_CREATION:
                 // exclude Authority, Provider, Segment
                 if(this.isInstanceOfBasicObject(object)) {
-                  facade.clearAttributeValues(
-                      SystemAttributes.CREATED_BY
-                  ).addAll(
-                      by
-                  );
-                  facade.clearAttributeValues(
-                      SystemAttributes.CREATED_AT
-                  ).add(
-                      this.useDatatypes() ? this.datatypeFormat.marshal(at) : at
-                  );
+                  facade.attributeValuesAsList(SystemAttributes.CREATED_BY).clear();
+                  facade.attributeValuesAsList(SystemAttributes.CREATED_BY).addAll(by);
+                  facade.attributeValuesAsList(SystemAttributes.CREATED_AT).clear();
+                  facade.attributeValuesAsList(SystemAttributes.CREATED_AT).add(at);
                 }
                 // no break here!         
-            case DataproviderOperations.OBJECT_MODIFICATION:
             case DataproviderOperations.OBJECT_REPLACEMENT:
-            case DataproviderOperations.OBJECT_SETTING: 
                 // exclude Authority, Provider, Segment
                 if(this.isInstanceOfBasicObject(object)) {
-                  facade.clearAttributeValues(
-                      SystemAttributes.MODIFIED_BY
-                  ).addAll(
-                      by
-                  );
-                  facade.clearAttributeValues(
-                      SystemAttributes.MODIFIED_AT
-                  ).add(
-                      this.useDatatypes() ? this.datatypeFormat.marshal(at) : at
-                  );
+                  facade.attributeValuesAsList(SystemAttributes.MODIFIED_BY).clear();
+                  facade.attributeValuesAsList(SystemAttributes.MODIFIED_BY).addAll(by);
+                  facade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();
+                  facade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(at);
                 }
                 break;
         }        
     }
     
-    //-------------------------------------------------------------------------
-    private boolean isAuditSegment(
-        ServiceHeader header,
-        Path path
-    ) throws ServiceException {
-        Path p = path.getPrefix(5);
-        Boolean isAuditSegment = this.auditSegments.get(p);
-        if(isAuditSegment == null) {
-        	MappedRecord segment;
-            try {
-	            segment = super.get(
-	                header,
-	                new DataproviderRequest(
-	                    ObjectHolder_2Facade.newInstance(p).getDelegate(),
+    // --------------------------------------------------------------------------
+    public class LayerInteraction extends Indexed_1.LayerInteraction {
+        
+        public LayerInteraction(
+            Connection connection
+        ) throws ResourceException {
+            super(connection);
+        }
+            
+	    //-------------------------------------------------------------------------
+	    private boolean isAuditSegment(
+	        ServiceHeader header,
+	        Path path
+	    ) throws ServiceException {
+	        Path p = path.getPrefix(5);
+	        Boolean isAuditSegment = Audit_1.this.auditSegments.get(p);
+	        if(isAuditSegment == null) {
+	        	MappedRecord segment;
+	            try {
+	            	DataproviderRequest getRequest = new DataproviderRequest(
+	                    Object_2Facade.newInstance(p).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
 	                    AttributeSelectors.ALL_ATTRIBUTES,
 	                    null
-	                )
-	            ).getObject();
-            }
-            catch (ResourceException e) {
-            	throw new ServiceException(e);
-            }
-            this.auditSegments.put(
-                p,
-                isAuditSegment = new Boolean(this.isAuditee(segment))
-            );
-        }
-        return isAuditSegment.booleanValue();
+	                );
+	            	DataproviderReply getReply = super.newDataproviderReply();
+		            super.get(	            	
+		                getRequest.getInteractionSpec(),
+		                Query_2Facade.newInstance(getRequest.path()),
+		                getReply.getResult()
+		            );
+		            segment = getReply.getObject();
+	            }
+	            catch (ResourceException e) {
+	            	throw new ServiceException(e);
+	            }
+	            Audit_1.this.auditSegments.put(
+	                p,
+	                isAuditSegment = new Boolean(Audit_1.this.isAuditee(segment))
+	            );
+	        }
+	        return isAuditSegment.booleanValue();
+	    }
+	    
+	    //-----------------------------------------------------------------------
+	    @SuppressWarnings("unchecked")
+	    @Override
+	    public boolean get(
+	        RestInteractionSpec ispec,
+	        Query_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+	    	try {
+		        Path reference = request.path().getParent();
+		        if("audit".equals(reference.getBase())) {
+		        	DataproviderRequest getRequest = new DataproviderRequest(
+	                    Object_2Facade.newInstance(
+	                        request.path().getPrefix(5).getDescendant(new String[]{"audit", request.path().getBase()})
+	                    ).getDelegate(),
+	                    DataproviderOperations.OBJECT_RETRIEVAL,
+	                    AttributeSelectors.ALL_ATTRIBUTES,
+	                    null
+	                );
+		        	DataproviderReply getReply = super.newDataproviderReply();
+		        	super.get(
+		        		getRequest.getInteractionSpec(),
+		        		Query_2Facade.newInstance(getRequest.path()),
+		        		getReply.getResult()
+		        	);
+		        	MappedRecord auditEntry = getReply.getObject();            
+		        	MappedRecord mappedAuditEntry = Object_2Facade.newInstance(
+		                request.path()
+		            ).getDelegate();
+		            Object_2Facade.getValue(mappedAuditEntry).putAll(
+		                Object_2Facade.getValue(auditEntry)
+		            );
+		            if(reply.getResult() != null) {
+		            	reply.getResult().add(
+		            		mappedAuditEntry
+		            	);
+		            }
+		            return true;
+		        }
+		        else {
+		            return super.get(
+		                ispec,
+		                input,
+		                output
+		            );
+		        }
+	    	}
+	    	catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+	    
+	    //-----------------------------------------------------------------------
+	    @SuppressWarnings("unchecked")
+	    @Override
+	    public boolean find(
+	        RestInteractionSpec ispec,
+	        Query_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+	    	try {
+		        // If auditee is segment do not rewrite find request. Otherwise filter
+		        // audit entries with auditee = requested reference
+		        if(
+		            (request.path().size() > 6) &&
+		            "audit".equals(request.path().getBase())
+		        ) {            
+		            // Find audit entries assigned to requesting object,
+		            // request.path().getParent() IS_IN auditee of audit entry
+		            List<FilterProperty> filterProperties = request.attributeFilter() == null ? 
+		            	new ArrayList<FilterProperty>() : 
+		            	new ArrayList<FilterProperty>(Arrays.asList(request.attributeFilter()));
+		            filterProperties.add(
+		                new FilterProperty(
+		                    Quantors.THERE_EXISTS,
+		                    "auditee",
+		                    FilterOperators.IS_IN,
+		                    request.path().getParent().toXri()
+		                )
+		            );
+		            DataproviderRequest findRequest = new DataproviderRequest(
+	                    Query_2Facade.newInstance(
+	                        request.path().getPrefix(5).getChild("audit")
+	                    ).getDelegate(),
+	                    DataproviderOperations.ITERATION_START,
+	                    filterProperties.toArray(new FilterProperty[filterProperties.size()]),
+	                    0, 
+	                    500, // get max 500 audit entries
+	                    Directions.ASCENDING,
+	                    AttributeSelectors.ALL_ATTRIBUTES,
+	                    request.attributeSpecifier()
+	                );
+		            DataproviderReply findReply = super.newDataproviderReply();
+		            super.find(
+		            	findRequest.getInteractionSpec(),
+		            	Query_2Facade.newInstance(findRequest.object()),
+		            	findReply.getResult()
+		            );
+		            MappedRecord[] auditEntries = findReply.getObjects();	            
+		            // Remap audit entries so that the parent of the mapped
+		            // audit entries is the requesting object, i.e. the auditee.
+		            List<MappedRecord> mappedAuditEntries = new ArrayList<MappedRecord>();
+		            for(
+		                int i = 0; 
+		                i < auditEntries.length; 
+		                i++
+		            ) {
+		            	MappedRecord mappedAuditEntry = Object_2Facade.cloneObject(auditEntries[i]);
+		            	Object_2Facade.newInstance(mappedAuditEntry).setPath(
+		                    request.path().getChild(Object_2Facade.getPath(auditEntries[i]).getBase())
+		                );
+		                mappedAuditEntries.add(
+		                    mappedAuditEntry
+		                );
+		            }	            
+		            // reply
+		            if(reply.getResult() != null) {
+		            	reply.getResult().addAll(
+		            		mappedAuditEntries
+		            	);
+		            }
+		            reply.setHasMore(
+		            	Boolean.FALSE
+		            );
+		            reply.setTotal(
+		                new Integer(mappedAuditEntries.size())
+		            );
+		            return true;
+		        }
+		        else {
+		            return super.find(
+		                ispec,
+		                input,
+		                output
+		            );
+		        }
+	    	}
+	    	catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+	    
+	    //-----------------------------------------------------------------------
+	    @SuppressWarnings("unchecked")
+	    @Override
+	    public boolean put(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+	    	try {
+		        // Ignore replace requests for top-level objects such as segments 
+		        // (if not user is segment admin) providers, authorities
+		        String principalName = header.getPrincipalChain().size() == 0 ? 
+		            null : 
+		            (String)header.getPrincipalChain().get(0);        
+		        if(
+		            (request.path().size() > 5) ||
+		            ((request.path().size() == 5) && principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) 
+		        ) {
+		            if(this.isAuditSegment(header, request.path())) {    
+		                // Create audit entry
+		            	DataproviderRequest getRequest = new DataproviderRequest(
+	                        request.object(),
+	                        DataproviderOperations.OBJECT_RETRIEVAL,
+	                        AttributeSelectors.ALL_ATTRIBUTES,
+	                        null
+	                    );
+		            	DataproviderReply getReply = super.newDataproviderReply();
+		            	super.get(
+		            		getRequest.getInteractionSpec(), 
+		            		Query_2Facade.newInstance(getRequest.path()), 
+		            		getReply.getResult()
+		            	);
+		            	MappedRecord existing = getReply.getObject();
+		                // Create ObjectModificationAuditEntry and add it to segment
+		                if(Audit_1.this.isAuditee(existing)) {
+		                	MappedRecord auditEntry = Object_2Facade.newInstance(
+		                        request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
+		                        "org:opencrx:kernel:base:ObjectModificationAuditEntry"
+		                    ).getDelegate();
+		                	Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
+		                	auditEntryFacade.attributeValuesAsList("auditee").add(
+		                        request.path().toXri()
+		                    );
+		                    for(Iterator<String> i = Audit_1.this.visitorIds.iterator(); i.hasNext(); ) {
+		                        String visitorId = i.next();
+		                        auditEntryFacade.attributeValuesAsList("visitedBy").add(
+		                            visitorId + ":" + NOT_VISITED_SUFFIX
+		                        );
+		                    }
+		                    // Remove all attribute names from existing object (before
+		                    // image) which are not modified. This produces a before image
+		                    // which contains the attribute values before modification of
+		                    // modified object attributes.
+		                    MappedRecord beforeImage;
+	                        try {
+		                        beforeImage = Object_2Facade.cloneObject(existing);
+	                        }
+	                        catch (ResourceException e) {
+	                        	throw new ServiceException(e);
+	                        }            
+		                    Object_2Facade.getValue(beforeImage).keySet().retainAll(
+		                        Object_2Facade.getValue(request.object()).keySet()
+		                    );
+		                    Set<String> modifiedFeatures = Audit_1.this.getChangedAttributes(
+		                        beforeImage,
+		                        request.object()
+		                    );
+		                    // --> trivial update
+		                    if(modifiedFeatures.isEmpty()) {
+			                    // do not create audit entry if modifiedAt is only modified attribute	                    	
+		                    }
+		                    else if(
+		                        ((modifiedFeatures.size() > 1) ||
+		                        !modifiedFeatures.contains(SystemAttributes.MODIFIED_AT))
+		                    ) {
+		                        Object_2Facade.getValue(beforeImage).keySet().retainAll(
+		                            modifiedFeatures
+		                        );
+		                        auditEntryFacade.attributeValuesAsList("beforeImage").add(
+		                        	Audit_1.this.getBeforeImageAsString(beforeImage)
+		                        );
+		                        String modifiedFeaturesAsString = modifiedFeatures.toString();
+		                        auditEntryFacade.attributeValuesAsList("modifiedFeatures").add(
+		                            modifiedFeaturesAsString.length() > 300 
+		                                ? modifiedFeaturesAsString.substring(0, 280) + "..." 
+		                                : modifiedFeaturesAsString
+		                        );
+		                        Audit_1.this.setSystemAttributes(
+		                            header, 
+		                            auditEntry, 
+		                            DataproviderOperations.OBJECT_CREATION
+		                        );
+		                        Audit_1.this.setSecurityAttributes(
+		                            auditEntry
+		                        );
+		                
+		                        // create entry
+		                        try {
+		                        	this.createAuditEntry(
+		                                header,
+		                                auditEntry
+		                            );
+		                        }
+		                        catch(ServiceException e) {
+		                            e.log();
+		                        }
+		                    }
+		                }
+		            }
+		            
+		            // Replace object
+		            super.put(		            	
+		                ispec,
+		                input,
+		                output
+		            );
+		            return true;
+		        }
+		        else {
+		        	if(reply.getResult() != null) {
+		        		reply.getResult().add(
+		        			request.object()
+		        		);
+		        	}
+		        	return true;
+		        }
+	    	}
+	    	catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+
+	    //-----------------------------------------------------------------------
+	    @SuppressWarnings("deprecation")
+	    @Override
+	    public boolean create(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+	    	try {
+		        // Create object
+		        super.create(
+		            ispec,
+		            input,
+		            output
+		        );	       
+		        // Create audit log entries for non-root-level objects only
+		        // and for objects which are contained in an auditable segment
+		        if(
+		            (request.path().size() > 5) &&
+		             this.isAuditSegment(header, request.path()) &&
+		             Audit_1.this.isAuditee(request.object())
+		        ) {	
+		            // Create audit entry
+		        	MappedRecord auditEntry = Object_2Facade.newInstance(
+		                request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
+		                "org:opencrx:kernel:base:ObjectCreationAuditEntry"
+		            ).getDelegate();
+		        	Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
+		        	auditEntryFacade.attributeValuesAsList("auditee").add(
+		                input.getPath().toXri()
+		            );
+		            for(Iterator<String> i = Audit_1.this.visitorIds.iterator(); i.hasNext(); ) {
+		                String visitorId = i.next();
+		                auditEntryFacade.attributeValuesAsList("visitedBy").add(
+		                    visitorId + ":" + NOT_VISITED_SUFFIX
+		                );
+		            }            
+		            Audit_1.this.setSystemAttributes(
+		                header, 
+		                auditEntry, 
+		                DataproviderOperations.OBJECT_CREATION
+		            );
+		            Audit_1.this.setSecurityAttributes(
+		                auditEntry
+		            );            
+		            // create entry
+		            try {
+		            	this.createAuditEntry(
+		                    header, 
+		                    auditEntry
+		                );
+		            }
+		            catch(ServiceException e) {
+		                e.log();
+		            }
+		        }           
+		        return true;
+	    	}
+	    	catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+	    
+	    //-----------------------------------------------------------------------
+	    @Override
+	    public boolean delete(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+	    	try {
+		        // Create audit log entries for non-root-level objects only
+		        // and for objects which are contained in an auditable segment
+		        if(
+		            (request.path().size() > 5) &&
+		             this.isAuditSegment(header, request.path())
+		        ) {
+		            // Create audit entry
+		        	DataproviderRequest getRequest = new DataproviderRequest(
+	                    request.object(),
+	                    DataproviderOperations.OBJECT_RETRIEVAL,
+	                    AttributeSelectors.ALL_ATTRIBUTES,
+	                    null
+	                );
+		        	DataproviderReply getReply = super.newDataproviderReply();
+		        	super.get(
+		        		getRequest.getInteractionSpec(), 
+		        		Query_2Facade.newInstance(getRequest.path()), 
+		        		getReply.getResult()
+		        	);
+		        	MappedRecord existing = getReply.getObject();
+		
+		            // Create ObjectRemovalAuditEntry and add it to segment
+		            if(Audit_1.this.isAuditee(existing)) {
+		            	MappedRecord auditEntry = Object_2Facade.newInstance(
+		                    request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
+		                    "org:opencrx:kernel:base:ObjectRemovalAuditEntry"
+		                ).getDelegate();
+		            	Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
+		            	auditEntryFacade.attributeValuesAsList("auditee").add(
+		                    request.path().toXri()
+		                );
+		                for(Iterator<String> i = Audit_1.this.visitorIds.iterator(); i.hasNext(); ) {
+		                    String visitorId = i.next();
+		                    auditEntryFacade.attributeValuesAsList("visitedBy").add(
+		                        visitorId + ":" + NOT_VISITED_SUFFIX
+		                    );
+		                }                
+		                auditEntryFacade.attributeValuesAsList("beforeImage").add(
+		                	Audit_1.this.getBeforeImageAsString(existing)
+		                );
+		                Audit_1.this.setSystemAttributes(
+		                    header, 
+		                    auditEntry, 
+		                    DataproviderOperations.OBJECT_CREATION
+		                );
+		                Audit_1.this.setSecurityAttributes(
+		                    auditEntry
+		                );
+		                
+		                // create entry
+		                try {
+		                	this.createAuditEntry(
+		                        header, 
+		                        auditEntry
+		                    );
+		                }
+		                catch(ServiceException e) {
+		                    e.log();
+		                }
+		            }
+		        }        
+		        // Remove object
+		        super.delete(
+		            ispec,
+		            input,
+		            output
+		        );
+		        return true;
+	    	}
+	    	catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+	    
+	    //-----------------------------------------------------------------------
+	    @Override
+	    protected MappedRecord otherOperation(
+	        ServiceHeader header,
+	        DataproviderRequest request,
+	        String operation, 
+	        Path replyPath
+	    ) throws ServiceException {
+	    	try {
+		        if("testAndSetVisitedBy".equals(operation)) {
+		            Path auditEntryIdentity = request.path().getPrefix(request.path().size() - 2);
+		            DataproviderRequest getRequest = new DataproviderRequest(
+	                    Object_2Facade.newInstance(auditEntryIdentity).getDelegate(),
+	                    DataproviderOperations.OBJECT_RETRIEVAL,
+	                    AttributeSelectors.ALL_ATTRIBUTES,
+	                    null
+	                );
+		            DataproviderReply getReply = super.newDataproviderReply();
+		            super.get(
+		            	getRequest.getInteractionSpec(), 
+		            	Query_2Facade.newInstance(getRequest.path()), 
+		            	getReply.getResult()
+		            );
+		            MappedRecord auditEntry = getReply.getObject();
+		            Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
+		            String visitorId = (String)Object_2Facade.newInstance(request.object()).attributeValue("visitorId");
+		            MappedRecord reply = Audit_1.this.createResult(
+		                request,
+		                "org:opencrx:kernel:base:TestAndSetVisitedByResult"
+		            );
+		            int pos = 0;
+		            if(
+		                (visitorId == null) ||
+		                !Audit_1.this.visitorIds.contains(visitorId)
+		            ) {
+		                Object_2Facade.newInstance(reply).attributeValuesAsList("visitStatus").add(
+		                    new Short((short)2)
+		                );                
+		            }
+		            // Not yet visited by visitorId
+		            else if((pos = auditEntryFacade.attributeValuesAsList("visitedBy").indexOf(visitorId + ":" + NOT_VISITED_SUFFIX)) >= 0) {
+		            	auditEntryFacade.attributeValuesAsList("visitedBy").set(
+		                    pos,
+		                    visitorId + ":" + DateTimeFormat.BASIC_UTC_FORMAT.format(new Date())
+		                );
+		            	DataproviderRequest putRequest = new DataproviderRequest(
+	                        auditEntry,
+	                        DataproviderOperations.OBJECT_REPLACEMENT,
+	                        AttributeSelectors.NO_ATTRIBUTES,
+	                        null
+	                    );
+		            	DataproviderReply putReply = super.newDataproviderReply();
+		            	super.put(
+		            		putRequest.getInteractionSpec(), 
+		            		Object_2Facade.newInstance(putRequest.object()), 
+		            		putReply.getResult()
+		            	);
+		                Object_2Facade.newInstance(reply).attributeValuesAsList("visitStatus").add(
+		                    new Short((short)0)
+		                );
+		            }            
+		            else {
+		            	 Object_2Facade.newInstance(reply).attributeValuesAsList("visitStatus").add(
+		                    new Short((short)1)
+		                );                
+		            }
+		            return reply;
+		        }
+		        // Delegate
+		        else {
+		            return super.otherOperation(
+		                header,
+		                request,
+		                operation,
+		                replyPath
+		            );
+		        }
+	    	}
+	    	catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+
+	    //-----------------------------------------------------------------------
+	    protected void createAuditEntry(
+	       ServiceHeader header,
+	       MappedRecord auditEntry
+	    ) throws ServiceException {
+	    	DataproviderRequest createRequest = new DataproviderRequest(
+	            auditEntry,
+	            DataproviderOperations.OBJECT_CREATION,
+	            AttributeSelectors.NO_ATTRIBUTES,
+	            null
+	        );
+	    	DataproviderReply createReply = super.newDataproviderReply();
+	    	try {
+		        super.create(
+		            createRequest.getInteractionSpec(),
+		            Object_2Facade.newInstance(createRequest.object()),
+		            createReply.getResult()
+		        );
+	    	} catch(ResourceException e) {
+	    		throw new ServiceException(e);
+	    	}
+	    }
+	    	    
     }
     
     //-------------------------------------------------------------------------
-    private MappedRecord createResult(
+    protected MappedRecord createResult(
       DataproviderRequest request,
       String structName
     ) throws ServiceException {
     	MappedRecord result = null;
         try {
-	        result = ObjectHolder_2Facade.newInstance(
+	        result = Object_2Facade.newInstance(
 	            request.path().getDescendant(
 	              new String[]{ "reply", super.uidAsString()}
 	            ),
@@ -307,23 +837,24 @@ public class Audit_1
     /**
      * Return the set of attributes which's values changed in o2 relative to o1.
      */
-    private Set<String> getChangedAttributes(
+    @SuppressWarnings("unchecked")
+    protected Set<String> getChangedAttributes(
     	MappedRecord o1,
     	MappedRecord o2
     ) throws ServiceException {
         if(o2 == null) {
           return new HashSet<String>();
         }
-        ObjectHolder_2Facade o1Facade;
+        Object_2Facade o1Facade;
         try {
-	        o1Facade = ObjectHolder_2Facade.newInstance(o1);
+	        o1Facade = Object_2Facade.newInstance(o1);
         }
         catch (ResourceException e) {
         	throw new ServiceException(e);
         }
-        ObjectHolder_2Facade o2Facade;
+        Object_2Facade o2Facade;
         try {
-	        o2Facade = ObjectHolder_2Facade.newInstance(o2);
+	        o2Facade = Object_2Facade.newInstance(o2);
         }
         catch (ResourceException e) {
         	throw new ServiceException(e);
@@ -333,7 +864,7 @@ public class Audit_1
           Iterator<String> i = o1Facade.getValue().keySet().iterator();
           i.hasNext();
         ) {
-        	o2Facade.attributeValues(i.next());
+        	o2Facade.attributeValuesAsList(i.next());
         }        
         // diff
         Set<String> changedAttributes = new HashSet<String>();
@@ -342,8 +873,8 @@ public class Audit_1
             i.hasNext();
         ) {
             String attributeName = i.next();
-            SparseList<Object> v1 = o1Facade.attributeValues(attributeName);
-            SparseList<Object> v2 = o2Facade.attributeValues(attributeName);
+            List<Object> v1 = o1Facade.attributeValuesAsList(attributeName);
+            List<Object> v2 = o2Facade.attributeValuesAsList(attributeName);
             if(
                 !SystemAttributes.OBJECT_INSTANCE_OF.equals(attributeName) &&
                 !"identity".equals(attributeName) && 
@@ -378,13 +909,14 @@ public class Audit_1
     }
 
     //-----------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     public String getBeforeImageAsString(
     	MappedRecord beforeImage
     ) throws ServiceException {
         String beforeImageAsString = "";
-        ObjectHolder_2Facade beforeImageFacade;
+        Object_2Facade beforeImageFacade;
         try {
-	        beforeImageFacade = ObjectHolder_2Facade.newInstance(beforeImage);
+	        beforeImageFacade = Object_2Facade.newInstance(beforeImage);
         }
         catch (ResourceException e) {
         	throw new ServiceException(e);
@@ -397,7 +929,7 @@ public class Audit_1
             beforeImageAsString += attributeName + ":\n";
             int jj = 0;
             for(
-                Iterator<Object> j = beforeImageFacade.attributeValues(attributeName).iterator();
+                Iterator<Object> j = beforeImageFacade.attributeValuesAsList(attributeName).iterator();
                 j.hasNext();
                 jj++
             ) {
@@ -408,502 +940,10 @@ public class Audit_1
     }
     
     //-----------------------------------------------------------------------
-    protected void createAuditEntry(
-       ServiceHeader header,
-       MappedRecord auditEntry
-    ) throws ServiceException {
-        super.create(
-            header,
-            new DataproviderRequest(
-                auditEntry,
-                DataproviderOperations.OBJECT_CREATION,
-                AttributeSelectors.NO_ATTRIBUTES,
-                null
-            )
-        );        
-    }
-    
-    //-----------------------------------------------------------------------
-    public DataproviderReply get(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-    	try {
-	        Path reference = request.path().getParent();
-	        if("audit".equals(reference.getBase())) {            
-	        	MappedRecord auditEntry = super.get(
-	                header,
-	                new DataproviderRequest(
-	                    ObjectHolder_2Facade.newInstance(
-	                        request.path().getPrefix(5).getDescendant(new String[]{"audit", request.path().getBase()})
-	                    ).getDelegate(),
-	                    DataproviderOperations.OBJECT_RETRIEVAL,
-	                    AttributeSelectors.ALL_ATTRIBUTES,
-	                    null
-	                )
-	            ).getObject();            
-	        	MappedRecord mappedAuditEntry = ObjectHolder_2Facade.newInstance(
-	                request.path()
-	            ).getDelegate();
-	            ObjectHolder_2Facade.getValue(mappedAuditEntry).putAll(
-	                ObjectHolder_2Facade.getValue(auditEntry)
-	            );
-	            return new DataproviderReply(
-	                mappedAuditEntry
-	            );
-	        }
-	        else {
-	            return super.get(
-	                header, 
-	                request
-	            );
-	        }
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public DataproviderReply find(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-    	try {
-	        // If auditee is segment do not rewrite find request. Otherwise filter
-	        // audit entries with auditee = requested reference
-	        if(
-	            (request.path().size() > 6) &&
-	            "audit".equals(request.path().getBase())
-	        ) {            
-	            // Find audit entries assigned to requesting object,
-	            // request.path().getParent() IS_IN auditee of audit entry
-	            List<FilterProperty> filterProperties = request.attributeFilter() == null ? 
-	            	new ArrayList<FilterProperty>() : 
-	            	new ArrayList<FilterProperty>(Arrays.asList(request.attributeFilter()));
-	            filterProperties.add(
-	                new FilterProperty(
-	                    Quantors.THERE_EXISTS,
-	                    "auditee",
-	                    FilterOperators.IS_IN,
-	                    request.path().getParent().toXri()
-	                )
-	            );
-	            MappedRecord[] auditEntries = super.find(
-	                header,
-	                new DataproviderRequest(
-	                    ObjectHolder_2Facade.newInstance(
-	                        request.path().getPrefix(5).getChild("audit")
-	                    ).getDelegate(),
-	                    DataproviderOperations.ITERATION_START,
-	                    filterProperties.toArray(new FilterProperty[filterProperties.size()]),
-	                    0, 
-	                    500, // get max 500 audit entries
-	                    Directions.ASCENDING,
-	                    AttributeSelectors.ALL_ATTRIBUTES,
-	                    request.attributeSpecifier()
-	                )
-	            ).getObjects();	            
-	            // Remap audit entries so that the parent of the mapped
-	            // audit entries is the requesting object, i.e. the auditee.
-	            List<MappedRecord> mappedAuditEntries = new ArrayList<MappedRecord>();
-	            for(
-	                int i = 0; 
-	                i < auditEntries.length; 
-	                i++
-	            ) {
-	            	MappedRecord mappedAuditEntry = ObjectHolder_2Facade.cloneObject(auditEntries[i]);
-	            	ObjectHolder_2Facade.newInstance(mappedAuditEntry).setPath(
-	                    request.path().getChild(ObjectHolder_2Facade.getPath(auditEntries[i]).getBase())
-	                );
-	                mappedAuditEntries.add(
-	                    mappedAuditEntry
-	                );
-	            }	            
-	            // reply
-	            DataproviderReply reply = new DataproviderReply(
-	                mappedAuditEntries
-	            );
-	            reply.context(
-	                DataproviderReplyContexts.HAS_MORE
-	            ).set(0, Boolean.FALSE);
-	            reply.context(
-	                DataproviderReplyContexts.TOTAL
-	            ).set(
-	                0, 
-	                new Integer(mappedAuditEntries.size())
-	            );
-	            reply.context(DataproviderReplyContexts.ATTRIBUTE_SELECTOR).set(
-	                0,
-	                new Short(request.attributeSelector())
-	            );
-	            return reply;            
-	        }
-	        else {
-	            return super.find(
-	                header, 
-	                request
-	            );
-	        }
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public DataproviderReply replace(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {        
-    	try {
-	        // Ignore replace requests for top-level objects such as segments 
-	        // (if not user is segment admin) providers, authorities
-	        String principalName = header.getPrincipalChain().size() == 0 ? 
-	            null : 
-	            (String)header.getPrincipalChain().get(0);        
-	        if(
-	            (request.path().size() > 5) ||
-	            ((request.path().size() == 5) && principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) 
-	        ) {
-	            if(this.isAuditSegment(header, request.path())) {    
-	                // Create audit entry
-	            	MappedRecord existing = super.get(
-	                    header,
-	                    new DataproviderRequest(
-	                        request.object(),
-	                        DataproviderOperations.OBJECT_RETRIEVAL,
-	                        AttributeSelectors.ALL_ATTRIBUTES,
-	                        null
-	                    )
-	                ).getObject();                
-	                // Create ObjectModificationAuditEntry and add it to segment
-	                if(this.isAuditee(existing)) {
-	                	MappedRecord auditEntry = ObjectHolder_2Facade.newInstance(
-	                        request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
-	                        "org:opencrx:kernel:base:ObjectModificationAuditEntry"
-	                    ).getDelegate();
-	                	ObjectHolder_2Facade auditEntryFacade = ObjectHolder_2Facade.newInstance(auditEntry);
-	                	auditEntryFacade.attributeValues("auditee").add(
-	                        request.path().toXri()
-	                    );
-	                	String unitOfWorkId = super.getUnitOfWorkId(request);
-	                    if(unitOfWorkId != null) {
-	                    	auditEntryFacade.attributeValues("unitOfWork").add(
-	                            unitOfWorkId
-	                        );
-	                    }
-	                    for(Iterator<String> i = this.visitorIds.iterator(); i.hasNext(); ) {
-	                        String visitorId = i.next();
-	                        auditEntryFacade.attributeValues("visitedBy").add(
-	                            visitorId + ":" + NOT_VISITED_SUFFIX
-	                        );
-	                    }
-	                    // Remove all attribute names from existing object (before
-	                    // image) which are not modified. This produces a before image
-	                    // which contains the attribute values before modification of
-	                    // modified object attributes.
-	                    MappedRecord beforeImage;
-                        try {
-	                        beforeImage = ObjectHolder_2Facade.cloneObject(existing);
-                        }
-                        catch (ResourceException e) {
-                        	throw new ServiceException(e);
-                        }            
-	                    ObjectHolder_2Facade.getValue(beforeImage).keySet().retainAll(
-	                        ObjectHolder_2Facade.getValue(request.object()).keySet()
-	                    );
-	                    Set<String> modifiedFeatures = this.getChangedAttributes(
-	                        beforeImage,
-	                        request.object()
-	                    );
-	                    // --> trivial update
-	                    if(modifiedFeatures.isEmpty()) {
-		                    // do not create audit entry if modifiedAt is only modified attribute	                    	
-	                    }
-	                    else if(
-	                        ((modifiedFeatures.size() > 1) ||
-	                        !modifiedFeatures.contains(SystemAttributes.MODIFIED_AT))
-	                    ) {
-	                        ObjectHolder_2Facade.getValue(beforeImage).keySet().retainAll(
-	                            modifiedFeatures
-	                        );
-	                        auditEntryFacade.attributeValues("beforeImage").add(
-	                            this.getBeforeImageAsString(beforeImage)
-	                        );
-	                        String modifiedFeaturesAsString = modifiedFeatures.toString();
-	                        auditEntryFacade.attributeValues("modifiedFeatures").add(
-	                            modifiedFeaturesAsString.length() > 300 
-	                                ? modifiedFeaturesAsString.substring(0, 280) + "..." 
-	                                : modifiedFeaturesAsString
-	                        );
-	                        this.setSystemAttributes(
-	                            header, 
-	                            auditEntry, 
-	                            DataproviderOperations.OBJECT_CREATION
-	                        );
-	                        this.setSecurityAttributes(
-	                            auditEntry
-	                        );
-	                
-	                        // create entry
-	                        try {
-	                            this.createAuditEntry(
-	                                header,
-	                                auditEntry
-	                            );
-	                        }
-	                        catch(ServiceException e) {
-	                            e.log();
-	                        }
-	                    }
-	                }
-	            }
-	            
-	            // Replace object
-	            return super.replace(
-	                header, 
-	                request
-	            );
-	        }
-	        else {
-	            return new DataproviderReply(
-	                request.object()
-	            );
-	        }
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
-    }
+    protected static final String NOT_VISITED_SUFFIX = "-";
 
-    //-----------------------------------------------------------------------
-    public DataproviderReply create(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-    	try {
-	        // Create object
-	        DataproviderReply reply = super.create(
-	            header, 
-	            request
-	        );	       
-	        // Create audit log entries for non-root-level objects only
-	        // and for objects which are contained in an auditable segment
-	        if(
-	            (request.path().size() > 5) &&
-	             this.isAuditSegment(header, request.path()) &&
-	             this.isAuditee(request.object())
-	        ) {	
-	            // Create audit entry
-	        	MappedRecord auditEntry = ObjectHolder_2Facade.newInstance(
-	                request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
-	                "org:opencrx:kernel:base:ObjectCreationAuditEntry"
-	            ).getDelegate();
-	        	ObjectHolder_2Facade auditEntryFacade = ObjectHolder_2Facade.newInstance(auditEntry);
-	        	auditEntryFacade.attributeValues("auditee").add(
-	                ObjectHolder_2Facade.getPath(reply.getObject()).toXri()
-	            );
-	        	String unitOfWorkId = super.getUnitOfWorkId(request);
-	            if(unitOfWorkId != null) {
-	            	auditEntryFacade.attributeValues("unitOfWork").add(
-	                    unitOfWorkId
-	                );
-	            }	        	
-	            for(Iterator<String> i = this.visitorIds.iterator(); i.hasNext(); ) {
-	                String visitorId = i.next();
-	                auditEntryFacade.attributeValues("visitedBy").add(
-	                    visitorId + ":" + NOT_VISITED_SUFFIX
-	                );
-	            }            
-	            this.setSystemAttributes(
-	                header, 
-	                auditEntry, 
-	                DataproviderOperations.OBJECT_CREATION
-	            );
-	            this.setSecurityAttributes(
-	                auditEntry
-	            );            
-	            // create entry
-	            try {
-	                this.createAuditEntry(
-	                    header, 
-	                    auditEntry
-	                );
-	            }
-	            catch(ServiceException e) {
-	                e.log();
-	            }
-	        }           
-	        return reply;
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public DataproviderReply remove(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {    
-    	try {
-	        // Create audit log entries for non-root-level objects only
-	        // and for objects which are contained in an auditable segment
-	        if(
-	            (request.path().size() > 5) &&
-	             this.isAuditSegment(header, request.path())
-	        ) {
-	            // Create audit entry
-	        	MappedRecord existing = super.get(
-	                header,
-	                new DataproviderRequest(
-	                    request.object(),
-	                    DataproviderOperations.OBJECT_RETRIEVAL,
-	                    AttributeSelectors.ALL_ATTRIBUTES,
-	                    null
-	                )
-	            ).getObject();
-	
-	            // Create ObjectRemovalAuditEntry and add it to segment
-	            if(this.isAuditee(existing)) {
-	            	MappedRecord auditEntry = ObjectHolder_2Facade.newInstance(
-	                    request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
-	                    "org:opencrx:kernel:base:ObjectRemovalAuditEntry"
-	                ).getDelegate();
-	            	ObjectHolder_2Facade auditEntryFacade = ObjectHolder_2Facade.newInstance(auditEntry);
-	            	auditEntryFacade.attributeValues("auditee").add(
-	                    request.path().toXri()
-	                );
-	            	String unitOfWorkId = super.getUnitOfWorkId(request);
-	                if(unitOfWorkId != null) {
-	                	auditEntryFacade.attributeValues("unitOfWork").add(
-	                        unitOfWorkId
-	                    );
-	                }
-	                for(Iterator<String> i = this.visitorIds.iterator(); i.hasNext(); ) {
-	                    String visitorId = i.next();
-	                    auditEntryFacade.attributeValues("visitedBy").add(
-	                        visitorId + ":" + NOT_VISITED_SUFFIX
-	                    );
-	                }                
-	                auditEntryFacade.attributeValues("beforeImage").add(
-	                    this.getBeforeImageAsString(existing)
-	                );
-	                this.setSystemAttributes(
-	                    header, 
-	                    auditEntry, 
-	                    DataproviderOperations.OBJECT_CREATION
-	                );
-	                this.setSecurityAttributes(
-	                    auditEntry
-	                );
-	                
-	                // create entry
-	                try {
-	                    this.createAuditEntry(
-	                        header, 
-	                        auditEntry
-	                    );
-	                }
-	                catch(ServiceException e) {
-	                    e.log();
-	                }
-	            }
-	        }        
-	        // Remove object
-	        return super.remove(
-	            header, 
-	            request
-	        );
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    @Override
-    protected MappedRecord otherOperation(
-        ServiceHeader header,
-        DataproviderRequest request,
-        String operation, 
-        Path replyPath
-    ) throws ServiceException {
-    	try {
-	        if("testAndSetVisitedBy".equals(operation)) {
-	            Path auditEntryIdentity = request.path().getPrefix(request.path().size() - 2);
-	            MappedRecord auditEntry = super.get(
-	                header,
-	                new DataproviderRequest(
-	                    ObjectHolder_2Facade.newInstance(auditEntryIdentity).getDelegate(),
-	                    DataproviderOperations.OBJECT_RETRIEVAL,
-	                    AttributeSelectors.ALL_ATTRIBUTES,
-	                    null
-	                )             
-	            ).getObject();
-	            ObjectHolder_2Facade auditEntryFacade = ObjectHolder_2Facade.newInstance(auditEntry);
-	            String visitorId = (String)ObjectHolder_2Facade.newInstance(request.object()).attributeValue("visitorId");
-	            MappedRecord reply = this.createResult(
-	                request,
-	                "org:opencrx:kernel:base:TestAndSetVisitedByResult"
-	            );
-	            int pos = 0;
-	            if(
-	                (visitorId == null) ||
-	                !this.visitorIds.contains(visitorId)
-	            ) {
-	                ObjectHolder_2Facade.newInstance(reply).attributeValues("visitStatus").add(
-	                    new Short((short)2)
-	                );                
-	            }
-	            // Not yet visited by visitorId
-	            else if((pos = auditEntryFacade.attributeValues("visitedBy").indexOf(visitorId + ":" + NOT_VISITED_SUFFIX)) >= 0) {
-	            	auditEntryFacade.attributeValues("visitedBy").set(
-	                    pos,
-	                    visitorId + ":" + org.openmdx.base.text.format.DateFormat.getInstance().format(new Date())
-	                );
-	                super.replace(
-	                    header,
-	                    new DataproviderRequest(
-	                        auditEntry,
-	                        DataproviderOperations.OBJECT_REPLACEMENT,
-	                        AttributeSelectors.NO_ATTRIBUTES,
-	                        null
-	                    )
-	                );
-	                ObjectHolder_2Facade.newInstance(reply).attributeValues("visitStatus").add(
-	                    new Short((short)0)
-	                );
-	            }            
-	            else {
-	            	 ObjectHolder_2Facade.newInstance(reply).attributeValues("visitStatus").add(
-	                    new Short((short)1)
-	                );                
-	            }
-	            return reply;
-	        }
-	        // Delegate
-	        else {
-	            return super.otherOperation(
-	                header,
-	                request,
-	                operation,
-	                replyPath
-	            );
-	        }
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    private static final String NOT_VISITED_SUFFIX = "-";
-
-    private final Map<Path,Boolean> auditSegments = new HashMap<Path,Boolean>();
-    private final List<String> visitorIds = new ArrayList<String>();
-    private DatatypeFormat datatypeFormat = null;
+    protected final Map<Path,Boolean> auditSegments = new HashMap<Path,Boolean>();
+    protected final List<String> visitorIds = new ArrayList<String>();
     
 }
 

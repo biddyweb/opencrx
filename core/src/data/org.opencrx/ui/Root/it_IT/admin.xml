@@ -223,7 +223,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:ImportLoginPrincipalsParams:itemName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome Item</_item>
+                        <_item>Nome</_item>
                       </label>
                       <toolTip>
                         <_item>Nome Item</_item>

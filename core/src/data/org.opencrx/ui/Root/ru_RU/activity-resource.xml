@@ -17,7 +17,7 @@
                         <_item>Ресурсы</_item>
                       </label>
                       <toolTip>
-                        <_item>все ресурсы</_item>
+                        <_item>Все ресурсы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:workReportEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отчеты работы</_item>
+                        <_item>Отчеты о трудозатратах</_item>
                       </label>
                       <toolTip>
-                        <_item>Отчеты работы</_item>
+                        <_item>Отчеты о трудозатратах</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Календари</_item>
                       </label>
                       <toolTip>
-                        <_item>все календари</_item>
+                        <_item>Все календари</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:workReportEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отчет работы</_item>
+                        <_item>Отчет о трудозатратах</_item>
                       </label>
                       <toolTip>
-                        <_item>Отчет работы</_item>
+                        <_item>Отчет о трудозатратах</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WeekDay" _operation="create">
                     <_object>
                       <label>
-                        <_item>Недельный день</_item>
+                        <_item>День начала недели</_item>
                       </label>
                       <toolTip>
-                        <_item>Недельный день</_item>
+                        <_item>День начала недели</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -314,7 +314,7 @@
                         <_item>Оценка усилий</_item>
                       </label>
                       <toolTip>
-                        <_item>Оценка усилий</_item>
+                        <_item>Оценка трудоемкости</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -355,10 +355,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:estimateEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (оценка усилий)</_item>
+                        <_item>hh (оценка трудоемкости)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (оценка усилий)</_item>
+                        <_item>hh (оценка трудоемкости)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -366,10 +366,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:estimateEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (оценка усилий)</_item>
+                        <_item>mm (оценка трудоемкости)</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (оценка усилий)</_item>
+                        <_item>mm (оценка трудоемкости)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -410,10 +410,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:workRecord" _operation="create">
                     <_object>
                       <label>
-                        <_item>Записи работы</_item>
+                        <_item>Записи трудозатрат</_item>
                       </label>
                       <toolTip>
-                        <_item>все записи работы</_item>
+                        <_item>все записи трудозатрат</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -522,9 +522,6 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>&amp;nbsp;</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -698,9 +695,6 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>&amp;nbsp;</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -949,10 +943,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecord" _operation="create">
                     <_object>
                       <label>
-                        <_item>Добавить запись Работ</_item>
+                        <_item>Добавить запись трудозатрат</_item>
                       </label>
                       <toolTip>
-                        <_item>Добавить запись Работ</_item>
+                        <_item>Добавить запись трудозатрат</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1114,10 +1108,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddWorkAndExpenseRecordResult:workRecord" _operation="create">
                     <_object>
                       <label>
-                        <_item>Запись работ</_item>
+                        <_item>Запись трудозатрат</_item>
                       </label>
                       <toolTip>
-                        <_item>Запись работ</_item>
+                        <_item>Запись трудозатрат</_item>
                       </toolTip>
                     </_object>
                     <_content/>

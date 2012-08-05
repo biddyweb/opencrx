@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.41 2009/10/15 16:19:33 wfro Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.45 2010/04/27 17:02:44 wfro Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:33 $
+ * Date:        $Date: 2010/04/27 17:02:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -140,9 +140,9 @@ org.openmdx.kernel.id.*
 				upload.setHeaderEncoding("UTF-8");
 				try {
 					List items = upload.parseRequest(
-					  request,
-            15000000, // request size threshold [memory limit]
-            15000000, // max request size [overall limit]
+						request,
+						200,  // in-memory threshold. Content for fields larger than threshold is written to disk
+						50000000, // max request size [overall limit]
 					  app.getTempDirectory().getPath()
 					);
 					for(Iterator i = items.iterator(); i.hasNext(); ) {
@@ -196,7 +196,7 @@ org.openmdx.kernel.id.*
 			ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 			String[] requestIds = (String[])parameterMap.get(Action.PARAMETER_REQUEST_ID);
 			String requestId = (requestIds == null) || (requestIds.length == 0) ? "" : requestIds[0];
-			javax.jdo.PersistenceManager pm = app.getPmData();
+			javax.jdo.PersistenceManager pm = app.getNewPmData();
 
 			boolean actionOk = parameterMap.get("OK.Button") != null;
 			boolean actionCancel = parameterMap.get("Cancel.Button") != null;
@@ -395,6 +395,7 @@ org.openmdx.kernel.id.*
 				app,
 				viewsCache.getView(requestId)
 			);
+			pm.close();
 %>
 <form name="UploadMedia" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="UploadMedia.jsp">
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />

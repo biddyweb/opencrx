@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Продукция</_item>
+                        <_item>Продукты</_item>
                       </label>
                       <toolTip>
-                        <_item>Продукция</_item>
+                        <_item>Продукты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вся Продукция</_item>
+                        <_item>Все продукты</_item>
                       </label>
                       <toolTip>
-                        <_item>Вся Продукция</_item>
+                        <_item>Все продукты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -158,9 +158,6 @@
                       <label>
                         <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>&amp;nbsp;</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -621,10 +618,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignmentProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение контрагента</_item>
                       </label>
                       <toolTip>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение контрагента</_item>
                       </toolTip>
                     </_object>
                     <_content/>

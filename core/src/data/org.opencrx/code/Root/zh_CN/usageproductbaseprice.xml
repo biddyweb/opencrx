@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="usageproductbaseprice" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="usageproductbaseprice" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>无效</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
                           <_object>
                             <shortText>
                               <_item>消费者</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
                           <_object>
                             <shortText>
                               <_item>零售商</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
                           <_object>
                             <shortText>
                               <_item>批发商</_item>
@@ -59,18 +59,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>转售商</_item>
+                              <_item>经销商</_item>
                             </shortText>
                             <longText>
-                              <_item>转售商</_item>
+                              <_item>经销商</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
                           <_object>
                             <shortText>
                               <_item>出口商</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="create">
                           <_object>
                             <shortText>
                               <_item>其他</_item>

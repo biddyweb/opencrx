@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.39 2009/09/18 12:25:56 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.43 2010/04/01 11:28:20 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.39 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/18 12:25:56 $
+ * Date:        $Date: 2010/04/01 11:28:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,9 +76,10 @@ import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.utils.AccountsHelper;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.AccountsFilterHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -168,12 +169,12 @@ public class ICalServlet extends FreeBusyServlet {
     }
     
     //-----------------------------------------------------------------------
-    protected AccountsHelper getAccountsHelper(
+    protected AccountsFilterHelper getAccountsHelper(
         PersistenceManager pm,
         String filterId,
         String isDisabledFilter
     ) {
-    	AccountsHelper accountsHelper = new AccountsHelper(pm);
+    	AccountsFilterHelper accountsHelper = new AccountsFilterHelper(pm);
         if(filterId != null) {
             try {
             	accountsHelper.parseFilteredAccountsUri(                        
@@ -197,7 +198,13 @@ public class ICalServlet extends FreeBusyServlet {
         if(ical.indexOf("BEGIN:VEVENT") >= 0) {
             int start = ical.indexOf("BEGIN:VEVENT");
             int end = ical.indexOf("END:VEVENT");
-            String vevent = ical.substring(start, end).replace("BEGIN:VEVENTBEGIN:VCALENDAR", "BEGIN:VEVENT");
+            String vevent;
+            if(end < start) {
+            	vevent = ical.substring(start).replace("BEGIN:VEVENTBEGIN:VCALENDAR", "BEGIN:VEVENT");
+            	SysLog.warning("Activity has invalid ical", activity.refGetPath());
+            } else {
+            	vevent = ical.substring(start, end).replace("BEGIN:VEVENTBEGIN:VCALENDAR", "BEGIN:VEVENT");            	
+            }
             p.write(vevent);
             SysLog.detail("VEVENT #", index);
             SysLog.detail(vevent);            
@@ -209,7 +216,13 @@ public class ICalServlet extends FreeBusyServlet {
         else if(ical.indexOf("BEGIN:VTODO") >= 0) {
             int start = ical.indexOf("BEGIN:VTODO");
             int end = ical.indexOf("END:VTODO");
-            String vtodo = ical.substring(start, end).replace("BEGIN:VTODOBEGIN:VCALENDAR", "BEGIN:VTODO");
+            String vtodo;
+            if(end < start) {
+            	vtodo = ical.substring(start).replace("BEGIN:VTODOBEGIN:VCALENDAR", "BEGIN:VTODO");
+            	SysLog.warning("Activity has invalid ical", activity.refGetPath());
+            } else {
+            	vtodo = ical.substring(start, end).replace("BEGIN:VTODOBEGIN:VCALENDAR", "BEGIN:VTODO");            	
+            }
             p.write(vtodo);
             SysLog.detail("VTODO #", index);
             SysLog.detail(vtodo);            
@@ -234,7 +247,7 @@ public class ICalServlet extends FreeBusyServlet {
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
         if(req.getRequestURI().endsWith("/ical") || req.getRequestURI().endsWith("/activities")) {        
-	        ActivitiesHelper activitiesHelper = this.getActivitiesHelper(
+	        ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
 	            pm, 
 	            filterId,
 	            isDisabledFilter
@@ -319,7 +332,6 @@ public class ICalServlet extends FreeBusyServlet {
 	                		n
 	                	);
 	                    n++;
-	                    if(n % 50 == 0) pm.evictAll();                
 	                    if(n > maxActivities) break;
 	                }
 	                p.write("END:VCALENDAR\n");
@@ -355,7 +367,6 @@ public class ICalServlet extends FreeBusyServlet {
 	                    ));
 	                    p.write("  </event>\n");
 	                    n++;
-	                    if(n % 50 == 0) pm.evictAll();
 	                    if(n > maxActivities) break;
 	                }
 	                p.write("</data>\n");
@@ -486,7 +497,7 @@ public class ICalServlet extends FreeBusyServlet {
         else if(req.getRequestURI().endsWith("/bdays")) {
         	final int YEARS_BEFORE_SELECTED_YEAR = 1;
         	final int YEARS_AFTER_SELECTED_YEAR = 1;        	
-	        AccountsHelper accountsHelper = this.getAccountsHelper(
+	        AccountsFilterHelper accountsHelper = this.getAccountsHelper(
 	            pm, 
 	            filterId,
 	            isDisabledFilter
@@ -598,7 +609,7 @@ public class ICalServlet extends FreeBusyServlet {
 								        date.add(GregorianCalendar.DAY_OF_MONTH, 1);
 								        dtEnd = "DTEND;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
 								        dtDue = "DUE;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
-								        String emailAddress = ICalendar.getInstance().getPrimaryEMailAddress(account);
+								        String emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(account);
 								        String attendee = null;
 								        if(emailAddress != null) {
 											String fullName = contact.getFullName();
@@ -635,7 +646,6 @@ public class ICalServlet extends FreeBusyServlet {
 							}
 						}
 					    n++;
-	                    if(n % 50 == 0) pm.evictAll();
 	                    if(n > max) break;								    						
 	        		}
 	        	}
@@ -669,7 +679,7 @@ public class ICalServlet extends FreeBusyServlet {
         }        
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);        
-        ActivitiesHelper activitiesHelper = this.getActivitiesHelper(
+        ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
             pm, 
             filterId,
             isDisabledFilter

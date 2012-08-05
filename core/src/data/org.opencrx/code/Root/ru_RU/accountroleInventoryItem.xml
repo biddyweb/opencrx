@@ -11,22 +11,22 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="accountRoleInventoryItem" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="accountRoleInventoryItem" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>N/A</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item> Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Владелец</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Администратор</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Менеджер</_item>
@@ -59,18 +59,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Ответственный</_item>
                             </shortText>
                             <longText>
-                              <_item>Ответсвенный</_item>
+                              <_item>Ответственный</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Пользователь</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Собственник</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="31" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="31" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Арендодатель</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Арендатор</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Наниматель</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Работодатель/Арендодатель</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Контакт для экстренной связи</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="60" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="60" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Поставщик</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Водитель</_item>
@@ -169,7 +169,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="80" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="80" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Покупатель</_item>
@@ -180,7 +180,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Продавец</_item>
@@ -191,13 +191,35 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Полномочный инспектор</_item>
                             </shortText>
                             <longText>
                               <_item>Полномочный инспектор</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Точка обсл.</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Точка обслуживания</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Производитель</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Производитель</_item>
                             </longText>
                           </_object>
                           <_content/>

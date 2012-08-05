@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.28 2009/09/07 15:42:47 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.31 2010/03/18 18:23:37 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.28 $
+ * Revision:    $Revision: 1.31 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/07 15:42:47 $
+ * Date:        $Date: 2010/03/18 18:23:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -121,7 +121,7 @@ public class Workflows extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-            new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
+            new Path("xri://@openmdx*org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
         );
     }
     
@@ -463,7 +463,6 @@ public class Workflows extends AbstractImpl {
         WorkflowTarget wfTarget,
         WfProcess wfProcess,
         ContextCapable targetObject,
-        String targetObjectXri,
         String triggeredByEventId,
         org.opencrx.kernel.base.jmi1.Subscription triggeredBySubscription,
         Integer triggeredByEventType
@@ -480,19 +479,14 @@ public class Workflows extends AbstractImpl {
         	false :
         	wfProcess.isSynchronous().booleanValue();
         // Target
-        if((targetObject == null) && (targetObjectXri == null)) {
+        if(targetObject == null) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_MISSING_TARGET,
                 "Missing target object"
             );                                                                
         }
-        Path targetObjectIdentity = targetObject == null ?
-        	new Path(targetObjectXri) :
-        	targetObject.refGetPath();
-        targetObject = targetObject == null ?
-        	(ContextCapable)pm.getObjectById(targetObjectIdentity) :
-        	targetObject;
+        Path targetObjectIdentity = targetObject.refGetPath();
         // Create workflow instance
         Path wfInstanceIdentity = 
             wfTarget.refGetPath().getDescendant(
@@ -658,12 +652,17 @@ public class Workflows extends AbstractImpl {
             }
             // Execute workflow
             try {
-                workflow.execute(
-                    wfTarget,
-                    targetObject,
-                    params,
-                    wfInstance
-                );
+            	if(targetObject != null) {
+	                workflow.execute(
+	                    wfTarget,
+	                    targetObject,
+	                    params,
+	                    wfInstance
+	                );
+            	}
+            	else {
+            		SysLog.detail("Workflow not executed on null target. Workflow instance is", wfInstance == null ? null : wfInstance.refGetPath());
+            	}
                 // Update workflow instance after successful execution
                 wfInstance.setStartedOn(new Date());
                 wfInstance.setLastActivityOn(new Date());

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.148 2009/10/14 09:10:21 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.161 2010/04/29 13:06:13 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.148 $
+ * Revision:    $Revision: 1.161 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/14 09:10:21 $
+ * Date:        $Date: 2010/04/29 13:06:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,14 +57,12 @@
 package org.opencrx.kernel.backend;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +75,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -91,31 +93,26 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.HeaderTokenizer;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MailDateFormat;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
 
 import org.omg.mof.spi.Names;
+import org.opencrx.application.imap.MimeMessageImpl;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
-import org.opencrx.kernel.activity1.cci2.AbsenceQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessActionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.AddressGroupMemberQuery;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
-import org.opencrx.kernel.activity1.cci2.ExternalActivityQuery;
-import org.opencrx.kernel.activity1.cci2.IncidentQuery;
-import org.opencrx.kernel.activity1.cci2.MailingQuery;
-import org.opencrx.kernel.activity1.cci2.MeetingQuery;
-import org.opencrx.kernel.activity1.cci2.PhoneCallQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
-import org.opencrx.kernel.activity1.cci2.SalesVisitQuery;
-import org.opencrx.kernel.activity1.cci2.TaskQuery;
 import org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity;
@@ -124,6 +121,7 @@ import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreationAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
@@ -143,6 +141,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityVote;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
+import org.opencrx.kernel.activity1.jmi1.AddressGroup;
 import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
 import org.opencrx.kernel.activity1.jmi1.AssignedToFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.Calendar;
@@ -152,6 +151,8 @@ import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup;
 import org.opencrx.kernel.activity1.jmi1.EffortEstimate;
 import org.opencrx.kernel.activity1.jmi1.LinkedActivityFollowUpAction;
+import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
+import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.activity1.jmi1.ScheduledEndFilterProperty;
@@ -176,17 +177,18 @@ import org.opencrx.kernel.generic.jmi1.PropertySet;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.Quantors;
+import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -194,6 +196,7 @@ import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObjects;
+import org.w3c.format.DateTimeFormat;
 
 public class Activities extends AbstractImpl {
 
@@ -225,6 +228,13 @@ public class Activities extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    public void markActivityAsDirty(
+        Activity activity
+    ) throws ServiceException {
+    	activity.setActivityState(activity.getActivityState());
+    }
+    	
+    //-------------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.ActivityType findActivityType(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
@@ -254,12 +264,29 @@ public class Activities extends AbstractImpl {
         	activityProcesses.iterator().next();
     }
 
+    //-----------------------------------------------------------------------
+    public ActivityProcessTransition findActivityProcessTransition(
+    	Activity activity,
+    	String transitionName
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
+    	ActivityProcessState state = activity.getProcessState();
+    	ActivityProcess process = (ActivityProcess)pm.getObjectById(state.refGetPath().getParent().getParent());    	
+    	ActivityProcessTransitionQuery transitionQuery = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
+    	transitionQuery.name().equalTo(transitionName);
+    	List<ActivityProcessTransition> transitions = process.getTransition(transitionQuery);
+    	if(!transitions.isEmpty()) {
+    		return transitions.iterator().next();
+    	}
+    	return null;
+    }
+        
     //-------------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.ActivityCreator findActivityCreator(
         String name,
-        org.opencrx.kernel.activity1.jmi1.Segment segment,
-        javax.jdo.PersistenceManager pm
+        org.opencrx.kernel.activity1.jmi1.Segment segment
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCreator.class);
         activityCreatorQuery.name().equalTo(name);
@@ -1069,7 +1096,7 @@ public class Activities extends AbstractImpl {
             segmentName
         );
         ActivityCreator activityCreator = null;
-        if((activityCreator = this.findActivityCreator(creatorName, activitySegment, pm)) == null) {
+        if((activityCreator = this.findActivityCreator(creatorName, activitySegment)) == null) {
             Activity1Package activityPkg = Utils.getActivityPackage(pm);
             pm.currentTransaction().begin();
             activityCreator = activityPkg.getActivityCreator().createActivityCreator();
@@ -1103,51 +1130,6 @@ public class Activities extends AbstractImpl {
         return activityCreator;
     }
             
-    //-------------------------------------------------------------------------
-    private static int calculateOpenActivityTimeDistribution(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        ActivityQuery query,
-        int[] timeDistribution,
-        String distributionOnAttribute,
-        boolean lookAhead
-    ) {
-        try {
-            List<org.opencrx.kernel.activity1.jmi1.Activity> activities = userHome.getAssignedActivity(query);
-            int count = 0;
-            for(org.opencrx.kernel.activity1.jmi1.Activity activity: activities) {
-                Date dt = null;
-                try {
-                    dt = (Date)activity.refGetValue(distributionOnAttribute);
-                } 
-                catch(Exception e) {}
-                if(dt == null) dt = new Date(); 
-                long delayInDays = (lookAhead ? 1 : -1) * (dt.getTime() - System.currentTimeMillis()) / 86400000;
-                if(delayInDays < 0) timeDistribution[0]++;
-                else if(delayInDays < 1) timeDistribution[1]++;
-                else if(delayInDays < 2) timeDistribution[2]++;
-                else if(delayInDays < 3) timeDistribution[3]++;
-                else if(delayInDays < 4) timeDistribution[4]++;
-                else if(delayInDays < 5) timeDistribution[5]++;
-                else if(delayInDays < 6) timeDistribution[6]++;
-                else if(delayInDays < 7) timeDistribution[7]++;
-                else if(delayInDays < 8) timeDistribution[8]++;
-                else if(delayInDays < 15) timeDistribution[9]++;
-                else if(delayInDays < 31) timeDistribution[10]++;
-                else if(delayInDays < 91) timeDistribution[11]++;
-                else if(delayInDays < 181) timeDistribution[12]++;
-                else if(delayInDays < 361) timeDistribution[13]++;
-                else timeDistribution[14]++;              
-                count++;
-                if(count > 500) break;
-            }
-            return count;
-        }
-        catch(Exception e) {
-        	SysLog.warning("Error when iterating activities for user", Arrays.asList(userHome, e.getMessage()));
-            return 0;
-        }            
-    }
-
     //-------------------------------------------------------------------------
     public ActivityTracker refreshTracker(
       ActivityTracker activityTracker
@@ -1537,7 +1519,6 @@ public class Activities extends AbstractImpl {
                                     activity,
                                     null,
                                     null,
-                                    null,
                                     null
                                 );
                             SysLog.info("Execution of workflow successful.", action);
@@ -1846,7 +1827,6 @@ public class Activities extends AbstractImpl {
         if(description != null) {
             workRecord.setDescription(description);
         }           
-        DateFormat dateFormat = DateFormat.getInstance();
         try {
 	        workRecord.setStartedAt(
 	            startedAt == null ? 
@@ -1857,7 +1837,7 @@ public class Activities extends AbstractImpl {
 	            endedAt == null ?
 	            	quantity == null ?
 	            		null :
-	            	    (endedAt = dateFormat.parse(dateFormat.format(new Date(startedAt.getTime() + quantity.multiply(new BigDecimal(3600000L)).longValue())))) : 
+	            	    (endedAt = DateTimeFormat.BASIC_UTC_FORMAT.parse(DateTimeFormat.BASIC_UTC_FORMAT.format(new Date(startedAt.getTime() + quantity.multiply(new BigDecimal(3600000L)).longValue())))) : 
 	            	endedAt
 	        );
         }
@@ -1968,7 +1948,7 @@ public class Activities extends AbstractImpl {
         if(!JDOHelper.isPersistent(activity) && JDOHelper.isNew(activity)) {
             if((activity.getDueBy() == null)) {
             	try {
-            		activity.setDueBy(DateFormat.getInstance().parse("99991231T000000.000Z"));
+            		activity.setDueBy(DateTimeFormat.BASIC_UTC_FORMAT.parse("99991231T000000.000Z"));
             	}
             	catch(Exception e) {}
             }
@@ -2106,15 +2086,17 @@ public class Activities extends AbstractImpl {
                     else {
                         // Try to find resource matching the current user
                     	ResourceQuery resourceQuery = (ResourceQuery)pm.newQuery(Resource.class);
-                    	resourceQuery.thereExistsContact().equalTo(
-                    		UserHomes.getInstance().getUserHome(activityCreator.refGetPath(), pm).getContact()
-                    	);
-                    	List<Resource> allResources = activitySegment.getResource(resourceQuery);
-                        if(!allResources.isEmpty()) {
-                            resources.add(
-                                allResources.iterator().next()
-                            );
-                        }
+                    	org.opencrx.kernel.account1.jmi1.Contact contact = 
+                    		UserHomes.getInstance().getUserHome(activityCreator.refGetPath(), pm).getContact();
+                    	if(contact != null) {
+	                    	resourceQuery.thereExistsContact().equalTo(contact);
+	                    	List<Resource> allResources = activitySegment.getResource(resourceQuery);
+	                        if(!allResources.isEmpty()) {
+	                            resources.add(
+	                                allResources.iterator().next()
+	                            );
+	                        }
+                    	}
                     }
                     // Remove already assigned resources from list to be added 
                     Collection<ResourceAssignment> existingResourceAssignments = activity.getAssignedResource();
@@ -3008,43 +2990,43 @@ public class Activities extends AbstractImpl {
      * @param content          The content of the media object, e.g. an
      *                          attachment
      */
-    public void addMedia(
-        PersistenceManager pm,
+    public void createOrUpdateMedia(
         EMail emailActivity,
         String contentType,
         String contentName,
         InputStream content
     ) throws IOException {
-        pm.currentTransaction().begin();
-        Media media = Utils.getGenericPackage(pm).getMedia().createMedia();
-        emailActivity.addMedia(
-            false,
-            UUIDs.getGenerator().next().toString(),
-            media
-        );
-        media.setContentName(
-            contentName == null ?
-                Utils.toFilename(contentType) :
-                contentName
-        );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
+        Collection<Media> medias = emailActivity.getMedia();
+        Media media = null;
+        for(Media attachment: medias) {
+            if((contentName != null) && contentName.equals(attachment.getContentName())) {
+                media = attachment;
+                break;
+            }
+        }
+        if(media == null) {    	    	
+	        media = Utils.getGenericPackage(pm).getMedia().createMedia();
+	        media.refInitialize(false, false);
+	        emailActivity.addMedia(
+	            false,
+	            UUIDs.getGenerator().next().toString(),
+	            media
+	        );
+	        media.setContentName(
+	            contentName == null ?
+	                Utils.toFilename(contentType) :
+	                contentName
+	        );
+        }
         media.setContentMimeType(contentType);    
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        int b;
-        while((b = content.read()) != -1) {
-            bos.write(b);
-        }
-        bos.close();
         media.setContent(
-            BinaryLargeObjects.valueOf(bos.toByteArray())
+            BinaryLargeObjects.valueOf(content)
         );
-        if(SysLog.isTraceOn()) {
-        	SysLog.trace("Media to add: " + content.toString());
-        }
         // 'copy' the email's owning groups
         media.getOwningGroup().addAll(
             emailActivity.getOwningGroup()
         );
-        pm.currentTransaction().commit();
     }
     
     //-----------------------------------------------------------------------
@@ -3055,23 +3037,20 @@ public class Activities extends AbstractImpl {
      * recorded via a note attached to the email activity.
      * 
      * @param rootPkg                   The root package to be used for this request
-     * @param providerName              The name of the current provider
-     * @param segmentName               The name of the current segment
      * @param emailActivity             The EMailActivity currently in process
      * @param addresses                 A list of addresses
      * @param type                      The address type (TO, CC, BCC)
      */
-    public void addRecipientToEmailActivity(
-        PersistenceManager pm,
-        String providerName,
-        String segmentName,
+    public void mapAddressesToEMailRecipients(
         EMail emailActivity,
         String[] addresses,
         Message.RecipientType type,
         boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled
-        
+        boolean isEMailAddressLookupIgnoreDisabled        
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
+    	String providerName = emailActivity.refGetPath().get(2);
+    	String segmentName = emailActivity.refGetPath().get(4);
         if (addresses == null || addresses.length == 0) {
         	SysLog.trace("Message does not contain any recipient of type '" + type.toString() + "'");
         }
@@ -3524,24 +3503,21 @@ public class Activities extends AbstractImpl {
         for(org.opencrx.kernel.generic.jmi1.Media media: medias) {
             if(media.getContentName() != null) {
                 try {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    QuotaByteArrayOutputStream mediaContent = new QuotaByteArrayOutputStream(Activities.class.getName());
                     try {
                         InputStream is = media.getContent().getContent();
-                        int b;
-                        while((b = is.read()) != -1) {
-                            bos.write(b);
-                        }
+                        BinaryLargeObjects.streamCopy(is, 0L, mediaContent);
                     }
                     catch(Exception e) {
                     	SysLog.warning("Unable to get media content (see detail for more info)", e.getMessage());
                     	SysLog.info(e.getMessage(), e.getCause());
                     }
-                    bos.close();
+                    mediaContent.close();
                     // Test whether media is zipped original mail. 
                     // If yes return as original message
                     if(originalMessageMediaName.equals(media.getContentName())) {
                         ZipInputStream zippedMessageStream = 
-                            new ZipInputStream(new ByteArrayInputStream(bos.toByteArray()));
+                            new ZipInputStream(mediaContent.toInputStream());
                         zippedMessageStream.getNextEntry();
                         originalMessageStream = zippedMessageStream;
                     }
@@ -3551,7 +3527,7 @@ public class Activities extends AbstractImpl {
                     headers.addHeader("Content-Transfer-Encoding", "base64");
                     messageBodyPart = new MimeBodyPart(                        
                         headers,
-                        org.openmdx.base.text.conversion.Base64.encode(bos.toByteArray()).getBytes("US-ASCII")
+                        Base64.encode(mediaContent.getBuffer(), 0, mediaContent.size()).getBytes("US-ASCII")
                     );
                     multipart.addBodyPart(messageBodyPart);
                 }
@@ -3598,6 +3574,13 @@ public class Activities extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public List<Address> mapMessageRecipients(
+        org.opencrx.kernel.activity1.jmi1.EMail emailActivity
+    ) throws AddressException, MessagingException {
+    	return this.mapMessageRecipients(emailActivity, null);
+    }
+    
+    //-------------------------------------------------------------------------
+    public List<Address> mapMessageRecipients(
         org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
         Message message            
     ) throws AddressException, MessagingException {
@@ -3620,9 +3603,11 @@ public class Activities extends AbstractImpl {
                 gateway
             );
             if(inetAddress != null) {
-                message.setFrom(
-                    new InternetAddress(inetAddress)
-                );
+            	if(message != null) {
+	                message.setFrom(
+	                    new InternetAddress(inetAddress)
+	                );
+            	}
             }
         }
         Collection<AbstractEMailRecipient> emailRecipients = emailActivity.getEmailRecipient();
@@ -3639,11 +3624,18 @@ public class Activities extends AbstractImpl {
             }
             if(recipientType != null) {
                 if(recipient instanceof EMailRecipient) {
-                	if(!Boolean.TRUE.equals(((EMailRecipient)recipient).getParty().isDisabled())) {
+                	AccountAddress address = null;
+                	try {
+                		address = ((EMailRecipient)recipient).getParty();
+                	}
+                	catch(Exception e) {
+                		new ServiceException(e).log();
+                	}
+                	if((address != null) && !Boolean.TRUE.equals(address.isDisabled())) {
 	                    String inetAddress = null;
 	                    try {
 	                        inetAddress = this.getInternetAddress(
-	                            ((EMailRecipient)recipient).getParty(),
+	                            address,
 	                            gateway
 	                        );
 	                    } 
@@ -3655,10 +3647,12 @@ public class Activities extends AbstractImpl {
 	                        try {
 	                            Address to = new InternetAddress(inetAddress);
 	                            recipients.add(to);
-	                            message.addRecipient(
-	                                recipientType,
-	                                to
-	                            );
+	                            if(message != null) {
+		                            message.addRecipient(
+		                                recipientType,
+		                                to
+		                            );
+	                            }
 	                        }
 	                        catch(Exception e) {
 	                        	SysLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
@@ -3668,10 +3662,17 @@ public class Activities extends AbstractImpl {
                 }
                 else if(recipient instanceof EMailRecipientGroup) {
                     EMailRecipientGroup recipientGroup = (EMailRecipientGroup)recipient;
+                	AddressGroup addressGroup = null;
+                	try {
+                		addressGroup = recipientGroup.getParty();
+                	}
+                	catch(Exception e) {
+                		new ServiceException(e).log();
+                	}                    
                     AddressGroupMemberQuery addressGroupMemberQuery = (AddressGroupMemberQuery)pm.newQuery(AddressGroupMember.class);
                     addressGroupMemberQuery.forAllDisabled().isFalse();
-                    if(!Boolean.TRUE.equals(recipientGroup.getParty().isDisabled())) {
-	                    Collection<AddressGroupMember> members = recipientGroup.getParty().getMember(addressGroupMemberQuery);
+                    if((addressGroup != null) && !Boolean.TRUE.equals(addressGroup.isDisabled())) {
+	                    Collection<AddressGroupMember> members = addressGroup.getMember(addressGroupMemberQuery);
 	                    for(AddressGroupMember member: members) {
 	                    	AccountAddress address = null;
 	                    	try {
@@ -3689,10 +3690,12 @@ public class Activities extends AbstractImpl {
 	                                try {
 	                                    Address to = new InternetAddress(inetAddress);
 	                                    recipients.add(to);
-	                                    message.addRecipient(
-	                                        recipientType,
-	                                        to
-	                                    );                                
+	                                    if(message != null) {
+		                                    message.addRecipient(
+		                                        recipientType,
+		                                        to
+		                                    );
+	                                    }
 	                                }
 	                                catch(Exception e) {
 	                                	SysLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
@@ -3750,18 +3753,45 @@ public class Activities extends AbstractImpl {
     }
         
     //-----------------------------------------------------------------------
+//    public Activity findActivity(
+//        PersistenceManager pm,
+//        ActivitiesFilterHelper activitiesHelper,
+//        String uid
+//    ) {
+//    	return this.findActivity(
+//    		pm, 
+//    		activitiesHelper, 
+//    		uid, 
+//    		null
+//    	);
+//    }
+    
+    //-----------------------------------------------------------------------
     public Activity findActivity(
         PersistenceManager pm,
-        ActivitiesHelper activitiesHelper,
-        String calUid
+        ActivitiesFilterHelper activitiesHelper,
+        String icalUid,
+        String icalRecurrenceId 
     ) {
         Activity1Package activityPkg = Utils.getActivityPackage(pm);
         ActivityQuery query = activityPkg.createActivityQuery();
-        query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + calUid);
+        query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + icalUid);
+        if(icalRecurrenceId == null) {
+        	query.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
+        }
+        else {
+            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId);       
+        }
         List<Activity> activities = activitiesHelper.getActivitySegment().getActivity(query);
         if(activities.isEmpty()) {
             query = activityPkg.createActivityQuery();
-            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + calUid.replace('.', '+'));
+            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + icalUid.replace('.', '+'));
+            if(icalRecurrenceId == null) {
+            	query.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
+            }            
+            else {
+            	query.thereExistsExternalLink().equalTo(ICalendar.ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId);    
+            }
             activities = activitiesHelper.getActivitySegment().getActivity(query);
             if(activities.isEmpty()) {
                 return null;
@@ -3808,6 +3838,384 @@ public class Activities extends AbstractImpl {
         Activity activity,
         boolean preDelete
     ) throws ServiceException {
+    }
+
+    //-------------------------------------------------------------------------
+    public String[] getInternetAddresses(
+        javax.mail.Address[] addresses
+    ) throws AddressException {
+        String internetAddresses[] = null;
+        if (addresses != null && addresses.length > 0) {
+            internetAddresses = new String[addresses.length];
+            for (int i = 0; i < addresses.length; i++) {
+                if (addresses[0] instanceof InternetAddress) {
+                    internetAddresses[i] = ((InternetAddress)addresses[i]).getAddress();
+                } 
+                else {
+                    InternetAddress temp = new InternetAddress(addresses[i].toString());
+                    internetAddresses[i] = temp.getAddress();
+                }
+            }
+        } 
+        else {
+            internetAddresses = new String[]{UNSPECIFIED_ADDRESS};
+        }
+        return internetAddresses;
+    }
+    
+    //-----------------------------------------------------------------------
+    public String[] parseContentType(
+        String contentType
+    ) {
+        String[] result = new String[2];
+        Pattern pattern = Pattern.compile("([0-9a-zA-Z/\\+\\-\\.]+)(?:;(?:[ \\r\\n\\t]*)name(?:[^\\=]*)\\=\"(.*)\")?");
+        Matcher matcher = pattern.matcher(contentType);
+        if(matcher.find()) {
+            result[0] = matcher.group(1);
+            result[1] = matcher.group(2);
+        }
+        else {
+            result[0] = contentType;
+            result[1] = null;                            
+        }
+        return result;
+    }
+    
+    //-----------------------------------------------------------------------
+    public void addMimeMessageAsMedia(
+        MimeMessage mimeMessage,
+        EMail emailActivity
+    ) throws IOException, MessagingException, ServiceException {
+        if(mimeMessage.getContent() instanceof MimeMultipart) {
+            MimeMultipart multipart = (MimeMultipart)mimeMessage.getContent();
+            for(int i = 1; i < multipart.getCount(); i++) {
+                MimeBodyPart part = (MimeBodyPart)multipart.getBodyPart(i);
+                String[] contentType = this.parseContentType(part.getContentType());
+                if(contentType[1] == null) contentType[1] = part.getContentID();
+            	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
+            	pm.currentTransaction().begin();
+                Activities.getInstance().createOrUpdateMedia(
+                    emailActivity,
+                    contentType[0],
+                    contentType[1],
+                    part.getInputStream()
+                );
+                pm.currentTransaction().commit();
+            }
+        }
+    }
+        
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.EMail importMimeMessage(
+    	String providerName,
+    	String segmentName,
+    	MimeMessage mimeMessage,
+    	ActivityCreator emailCreator,
+    	javax.mail.Address[] addressesFrom,
+    	javax.mail.Address[] addressesTo,
+    	javax.mail.Address[] addressesCc,
+    	javax.mail.Address[] addressesBcc,
+        boolean isEMailAddressLookupCaseInsensitive,
+        boolean isEMailAddressLookupIgnoreDisabled    	
+    ) throws ServiceException, MessagingException, IOException, ParseException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailCreator);
+        MailDateFormat mailDateFormat = new MailDateFormat();    	
+        List<org.opencrx.kernel.activity1.jmi1.Activity> activities = this.lookupEmailActivity(
+            pm,
+            providerName,
+            segmentName,
+            mimeMessage.getMessageID()
+        );
+        EMail emailActivity = null;
+        if(activities.isEmpty()) {
+            pm.currentTransaction().begin();                            
+            Activity1Package activityPkg = Utils.getActivityPackage(pm);
+            NewActivityParams newActParam = activityPkg.createNewActivityParams(
+                null, // description
+                null, // detailedDescription
+                null, // dueBy
+                ICalendar.ICAL_TYPE_NA, // icalType
+                mimeMessage.getSubject(),
+                this.getMessagePriority(mimeMessage),
+                null, // reportingContract
+                null, // scheduledEnd
+                null  // scheduledStart
+            );
+            NewActivityResult newActivityResult = emailCreator.newActivity(
+                newActParam
+            );
+            pm.currentTransaction().commit();                  
+            emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
+            // Update activity step 1
+            pm.currentTransaction().begin();
+            String subject = mimeMessage.getSubject();                
+            emailActivity.setMessageSubject(
+                subject == null ? "" : subject
+            );
+            emailActivity.getExternalLink().clear();
+            if(mimeMessage.getMessageID() != null) {
+                emailActivity.getExternalLink().add(
+                    mimeMessage.getMessageID()
+                );
+            }
+            pm.currentTransaction().commit();
+            // Update activity step 2
+            // Append original email as media attachment
+            String mimeMessageName = emailActivity.getActivityNumber().trim() + ".eml";
+            QuotaByteArrayOutputStream mimeMessageBytes = new QuotaByteArrayOutputStream(Activities.class.getName());
+            ZipOutputStream mimeMessageZipped = new ZipOutputStream(mimeMessageBytes);
+            mimeMessageZipped.putNextEntry(
+                new ZipEntry(mimeMessageName)
+            );
+            mimeMessage.writeTo(mimeMessageZipped);
+            mimeMessageZipped.close();
+            pm.currentTransaction().begin();
+            this.createOrUpdateMedia(
+                emailActivity, 
+                "application/zip", 
+                mimeMessageName + ".zip", 
+                mimeMessageBytes.toInputStream()
+            );
+            pm.currentTransaction().commit();
+            // Update activity step 3
+            pm.currentTransaction().begin();
+            String body = this.getMessageBody(mimeMessage);
+            emailActivity.setMessageBody(
+                body == null ? "" : body
+            );
+            String[] date = mimeMessage.getHeader("Date");
+            if(date.length > 0) {
+                emailActivity.setSendDate(
+                    mailDateFormat.parse(date[0])
+                );
+            }
+            pm.currentTransaction().commit();
+            // Add originator and recipients to a note
+            this.addNote(
+                pm,
+                emailActivity,
+                "Recipients",
+                this.getRecipientsAsNoteText(
+                    pm,
+                    providerName,
+                    segmentName,
+                    this.getInternetAddresses(addressesFrom),
+                    this.getInternetAddresses(addressesTo),
+                    this.getInternetAddresses(addressesCc),
+                    this.getInternetAddresses(addressesBcc),
+                    isEMailAddressLookupCaseInsensitive,
+                    isEMailAddressLookupIgnoreDisabled
+                )
+            );                  
+            // Add headers as Note
+            Activities.getInstance().addNote(
+                pm,
+                emailActivity,
+                "Message-Header",
+                MimeMessageImpl.getHeadersAsRFC822(
+                     mimeMessage, 
+                     null
+                )
+            );
+            this.addMimeMessageAsMedia(
+                mimeMessage, 
+                emailActivity
+            );
+        }
+        else {
+            emailActivity = (EMail)activities.iterator().next();
+        }
+        // Add FROM as sender
+        List<org.opencrx.kernel.account1.jmi1.EMailAddress> addresses = 
+            Accounts.getInstance().lookupEmailAddress(
+                pm,
+                providerName,
+                segmentName,
+                this.getInternetAddresses(addressesFrom)[0],
+                isEMailAddressLookupCaseInsensitive,
+                isEMailAddressLookupIgnoreDisabled                                
+            );
+        if(addresses.isEmpty()) {
+            addresses = Accounts.getInstance().lookupEmailAddress(
+                pm,
+                providerName,
+                segmentName,
+                Addresses.UNASSIGNED_ADDRESS,
+                isEMailAddressLookupCaseInsensitive,
+                isEMailAddressLookupIgnoreDisabled                                
+            );                            
+        }
+        EMailAddress from = null;
+        if(!addresses.isEmpty()) {
+            from = addresses.iterator().next();
+            pm.currentTransaction().begin();
+            emailActivity.setSender(from);
+            pm.currentTransaction().commit();
+        } 
+        Activities.getInstance().mapAddressesToEMailRecipients(
+            emailActivity,
+            this.getInternetAddresses(addressesTo),
+            Message.RecipientType.TO,
+            isEMailAddressLookupCaseInsensitive,
+            isEMailAddressLookupIgnoreDisabled                            
+        );
+        Activities.getInstance().mapAddressesToEMailRecipients(
+            emailActivity,
+            this.getInternetAddresses(addressesCc),
+            Message.RecipientType.CC,
+            isEMailAddressLookupCaseInsensitive,
+            isEMailAddressLookupIgnoreDisabled                            
+        );
+        return emailActivity;
+    }
+
+    //-------------------------------------------------------------------------
+    public void addEMailRecipients(
+    	EMail email,
+    	String sender,
+    	List<String> recipientTo,
+    	List<String> recipientCc,
+    	List<String> recipientBcc
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
+    	String providerName = email.refGetPath().get(2);
+    	String segmentName = email.refGetPath().get(4);
+		// Sender
+		if(sender != null) {
+			List<EMailAddress> emailAddresses = 
+				Accounts.getInstance().lookupEmailAddress(
+					pm, 
+					providerName,
+					segmentName,
+					sender, 
+					false, // caseSensitive 
+					false // ignoreDisabled
+				);        	
+			if(!emailAddresses.isEmpty()) {
+				email.setSender(emailAddresses.iterator().next());
+			}
+		}
+		// Recipients TO  
+		for(String recipientAddress: recipientTo) {
+			List<EMailAddress> emailAddresses = 
+				Accounts.getInstance().lookupEmailAddress(
+					pm, 
+					providerName,
+					segmentName,
+					recipientAddress, 
+					false, // caseSensitive 
+					false // ignoreDisabled
+				);        	
+			if(!emailAddresses.isEmpty()) {
+				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
+				recipient.refInitialize(false, false);
+				recipient.setParty(emailAddresses.iterator().next());
+				recipient.setPartyType(Activities.PARTY_TYPE_TO);
+				email.addEmailRecipient(
+					this.getUidAsString(),
+					recipient
+				);
+			}
+		}
+		// Recipients CC
+		for(String recipientAddress: recipientCc) {
+			List<EMailAddress> emailAddresses = 
+				Accounts.getInstance().lookupEmailAddress(
+					pm, 
+					providerName,
+					segmentName,
+					recipientAddress, 
+					false, // caseSensitive 
+					false // ignoreDisabled
+				);        	
+			if(!emailAddresses.isEmpty()) {
+				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
+				recipient.refInitialize(false, false);
+				recipient.setParty(emailAddresses.iterator().next());
+				recipient.setPartyType(Activities.PARTY_TYPE_CC);
+				email.addEmailRecipient(
+					this.getUidAsString(),
+					recipient
+				);
+			}        					
+		}
+		// Recipients BCC
+		for(String recipientAddress: recipientBcc) {
+			List<EMailAddress> emailAddresses = 
+				Accounts.getInstance().lookupEmailAddress(
+					pm, 
+					providerName,
+					segmentName,
+					recipientAddress, 
+					false, // caseSensitive 
+					false // ignoreDisabled
+				);        	
+			if(!emailAddresses.isEmpty()) {
+				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
+				recipient.refInitialize(false, false);
+				recipient.setParty(emailAddresses.iterator().next());
+				recipient.setPartyType(Activities.PARTY_TYPE_BCC);
+				email.addEmailRecipient(
+					this.getUidAsString(),
+					recipient
+				);
+			}         					
+		}    	
+    }
+
+    //-------------------------------------------------------------------------
+    public void sendEMail(
+    	EMail email
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
+		// Assign
+		ActivityProcessTransition transition = this.findActivityProcessTransition(
+			email, 
+			"Assign"
+		);
+		pm.currentTransaction().begin();
+		ActivityDoFollowUpParams doFollowUpParams = Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
+			null, // assignTo 
+			null, // followUpText
+			"Accepted", 
+			transition
+		);
+		email.doFollowUp(doFollowUpParams);
+		pm.currentTransaction().commit();
+		// Send as mail
+		transition = this.findActivityProcessTransition(
+			email, 
+			"Send as Mail"
+		);
+		if(transition == null) {
+			transition = this.findActivityProcessTransition(
+				email, 
+				"Send as mail"
+			);         					
+		}
+		pm.currentTransaction().begin();
+		doFollowUpParams = Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
+			null, // assignTo 
+			null, // followUpText 
+			"Processing", 
+			transition
+		);
+		email.doFollowUp(doFollowUpParams);
+		pm.currentTransaction().commit();
+		// Close
+		transition = this.findActivityProcessTransition(
+			email, 
+			"Close"
+		);
+		pm.currentTransaction().begin();
+		doFollowUpParams = Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
+			null, // assignTo 
+			null, // followUpText 
+			"Sent", 
+			transition
+		);
+		email.doFollowUp(doFollowUpParams);
+		pm.currentTransaction().commit();    	
     }
     
     //-------------------------------------------------------------------------
@@ -3856,6 +4264,8 @@ public class Activities extends AbstractImpl {
     public static final short PRIORITY_LOW = 1;
     public static final short PRIORITY_NORMAL = 2;
     public static final short PRIORITY_HIGH = 3;
+    public static final short PRIORITY_URGENT = 4;
+    public static final short PRIORITY_IMMEDIATE = 5;
         
     // Booking texts
     protected static final String BOOKING_TEXT_NAME_WORK_EFFORT = "work efforts";
@@ -3902,7 +4312,9 @@ public class Activities extends AbstractImpl {
     public static final String ACTIVITY_TRACKER_NAME_TRASH = "Trash";
     public static final String ACTIVITY_TRACKER_NAME_POLLS = "Polls";
     public static final String ACTIVITY_TRACKER_NAME_MEETING_ROOMS = "Meeting Rooms";
-        
+
+    public static final String UNSPECIFIED_ADDRESS = "NO_ADDRESS_SPECIFIED";
+    
 }
 
 //--- End of File -----------------------------------------------------------

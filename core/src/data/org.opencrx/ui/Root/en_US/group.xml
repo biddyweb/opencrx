@@ -30,6 +30,15 @@
 									</_object>
 									<_content/>
 								  </org.openmdx.ui1.StructuralFeatureDefinition>
+								  <!-- 500 = Business -->
+								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Member:(account;address)*Business!emailAddress">
+									<_object>
+									  <type>org:w3c:string</type>
+									  <multiplicity>0..1</multiplicity>
+									  <changeable>false</changeable>
+									</_object>
+									<_content/>
+								  </org.openmdx.ui1.StructuralFeatureDefinition>
 
 								  <!-- 500 = Business -->
 								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!phoneNumberFull">
@@ -42,6 +51,15 @@
 								  </org.openmdx.ui1.StructuralFeatureDefinition>
 								  <!-- 200 = Mobile -->
 								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Mobile!phoneNumberFull">
+									<_object>
+									  <type>org:w3c:string</type>
+									  <multiplicity>0..1</multiplicity>
+									  <changeable>false</changeable>
+									</_object>
+									<_content/>
+								  </org.openmdx.ui1.StructuralFeatureDefinition>
+								  <!-- 500 = Business -->
+								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!emailAddress">
 									<_object>
 									  <type>org:w3c:string</type>
 									  <multiplicity>0..1</multiplicity>
@@ -67,7 +85,7 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<maxMember>9</maxMember>
+											<maxMember>10</maxMember>
 										</_object>
 										<_content>
 											<additionalElementDefinition>
@@ -84,7 +102,7 @@
 															<_item>0</_item>
 															<_item>20</_item>
 														</order>
-														<maxMember>9</maxMember>
+														<maxMember>10</maxMember>
 													</_object>
 													<_content/>
 												</org.openmdx.ui1.AdditionalElementDefinition>
@@ -329,7 +347,6 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Mobile!phoneNumberFull">
 										<_object>
                       <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PhoneNumber;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true</dataBindingName>
-                      <columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Phone mobile</_item>
@@ -340,12 +357,36 @@
 											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>80</_item>
+												<_item>20</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>14</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Business!emailAddress">
+										<_object>
+                      <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:EMailAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500</dataBindingName>
+                      <columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>E-mail business</_item>
+											</toolTip>
+											<label>
+												<_item>E-mail business</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>80</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>16</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -491,7 +532,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>8</_item>
+												<_item>9</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -649,7 +690,6 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Mobile!phoneNumberFull">
 										<_object>
                       <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PhoneNumber;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true</dataBindingName>
-                      <columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Phone mobile</_item>
@@ -660,12 +700,36 @@
 											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>80</_item>
+												<_item>20</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>7</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!emailAddress">
+										<_object>
+                      <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:EMailAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500</dataBindingName>
+                      <columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>E-mail business</_item>
+											</toolTip>
+											<label>
+												<_item>E-mail business [from]</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>80</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>8</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>

@@ -1616,15 +1616,15 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Follow Up</_item>
+												<_item>Follow Up (simple)</_item>
 											</toolTip>
 											<label>
-												<_item>Follow Up</_item>
+												<_item>Follow Up (simple)</_item>
 											</label>
 											<order>
 												<_item>500</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 											<iconKey>Activity</iconKey>
 										</_object>

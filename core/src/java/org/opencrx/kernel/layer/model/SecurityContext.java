@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.37 2009/09/04 23:42:34 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.43 2010/04/16 13:51:22 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/04 23:42:34 $
+ * Date:        $Date: 2010/04/16 13:51:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,12 +81,52 @@ import org.openmdx.kernel.log.SysLog;
 public class SecurityContext {
     
     //-------------------------------------------------------------------------
+	public static class CachedPrincipal {
+	
+		public CachedPrincipal(
+			org.openmdx.security.realm1.jmi1.Principal principal
+		) {
+			this.principalIdentity = principal.refGetPath();
+			this.isMemberOf = new HashSet<Path>();
+			List<org.openmdx.security.realm1.jmi1.Group> groups = principal.getIsMemberOf();
+			for(org.openmdx.security.realm1.jmi1.Group group: groups) {
+				this.isMemberOf.add(group.refGetPath());
+			}
+		}
+		
+		public Path getIdentity(
+		) {
+			return this.principalIdentity;
+		}
+		
+		public void setPrimaryGroup(
+			Path primaryGroup
+		) {
+			this.primaryGroup = primaryGroup;
+		}
+		
+		public Path getPrimaryGroup(
+		) {
+			return this.primaryGroup;
+		}
+		
+		public Set<Path> getIsMemberOf(
+		) {
+			return this.isMemberOf;
+		}
+		
+		private final Path principalIdentity;
+		private final Set<Path> isMemberOf;
+		private Path primaryGroup;
+	}
+
+    //-------------------------------------------------------------------------
     public SecurityContext(
         AccessControl_1 plugin,
         Path realmIdentity
     ) throws ServiceException {
         this.plugin = plugin;
-        this.realm = (org.openmdx.security.realm1.jmi1.Realm)plugin.getPmAsRoot().getObjectById(realmIdentity);
+        this.realmIdentity = realmIdentity;
         this.isActive = true;
         if(System.getProperty(SecurityKeys.ENABLE_SECURITY_PROPERTY) != null) {
             this.isActive = "true".equals(System.getProperty(SecurityKeys.ENABLE_SECURITY_PROPERTY));
@@ -98,17 +138,18 @@ public class SecurityContext {
     
     //-------------------------------------------------------------------------
     private Set<String> getAllSubgroups(
-        PrincipalGroup groupOf
+        PrincipalGroup groupOf,
+        Map<Path,PrincipalGroup> groups
     ) throws ServiceException {
         Set<String> subgroups = new HashSet<String>();
         subgroups.add(
             this.plugin.getQualifiedPrincipalName(groupOf.refGetPath())
         );
-        for(Iterator<PrincipalGroup> i = this.groups.values().iterator(); i.hasNext(); ) {
+        for(Iterator<PrincipalGroup> i = groups.values().iterator(); i.hasNext(); ) {
         	PrincipalGroup group = i.next();
             if(group.getIsMemberOf().contains(groupOf)) {
                 subgroups.addAll(
-                    this.getAllSubgroups(group)
+                    this.getAllSubgroups(group, groups)
                 );
                 subgroups.add(
                     this.plugin.getQualifiedPrincipalName(group.refGetPath())
@@ -146,17 +187,18 @@ public class SecurityContext {
         String principalName,
         boolean checkGroups
     ) throws ServiceException {
-        PersistenceManager pm = this.plugin.getPmAsRoot();
+        PersistenceManager pm = this.plugin.getDelegatingPersistenceManager();
+        org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(this.realmIdentity);
         org.openmdx.security.realm1.jmi1.Principal principal = null;
         try {
             // Already present in cache
             if(this.principals.get(principalName) == null) {
                 principal = (org.openmdx.security.realm1.jmi1.Principal)pm.getObjectById(
-                    this.realm.refGetPath().getDescendant(new String[]{"principal", principalName})
+                    this.realmIdentity.getDescendant(new String[]{"principal", principalName})
                 );            
                 this.principals.put(
                     principalName,
-                    principal
+                    new CachedPrincipal(principal)
                 );
             }
         }
@@ -166,54 +208,56 @@ public class SecurityContext {
         }
         SysLog.detail("principal cache size", new Integer(this.principals.size()));        
         if(checkGroups) {   
-        	this.plugin.getPmAsRoot().evictAll();
             // Cache principal groups
         	PrincipalGroupQuery principalGroupQuery = (PrincipalGroupQuery)pm.newQuery(PrincipalGroup.class);
-            List<PrincipalGroup> principalGroups = this.realm.getPrincipal(principalGroupQuery);
-            this.groups = new HashMap<Path,PrincipalGroup>();
+            List<PrincipalGroup> principalGroups = realm.getPrincipal(principalGroupQuery);
+            Map<Path,PrincipalGroup> groups = new HashMap<Path,PrincipalGroup>();
             for(
                 Iterator<PrincipalGroup> i = principalGroups.iterator(); 
                 i.hasNext(); 
             ) {
             	PrincipalGroup principalGroup = i.next();
-                this.groups.put(
+                groups.put(
                     principalGroup.refGetPath(),
                     principalGroup
                 );
             }            
             // Update group hierarchy
-            this.subgroups = new HashMap<String,Set<String>>();
-            this.supergroups = new HashMap<String,Set<String>>();
-            for(Iterator<Map.Entry<Path,PrincipalGroup>> i = this.groups.entrySet().iterator(); i.hasNext(); ) {
+            Map<String,Set<String>> subgroups = new HashMap<String,Set<String>>();
+            Map<String,Set<String>> supergroups = new HashMap<String,Set<String>>();
+            for(Iterator<Map.Entry<Path,PrincipalGroup>> i = groups.entrySet().iterator(); i.hasNext(); ) {
             	Map.Entry<Path,PrincipalGroup> e = i.next();
                 Path groupIdentity = e.getKey();
                 PrincipalGroup group = e.getValue();
-                this.supergroups.put(
+                supergroups.put(
                     this.plugin.getQualifiedPrincipalName(groupIdentity),
                     this.getAllSupergroups(group)
                 );
                 // Do not calculate subgroups for final groups
             	if(Boolean.TRUE.equals(group.isFinal())) {
-	                this.subgroups.put(
+	                subgroups.put(
 	                    this.plugin.getQualifiedPrincipalName(groupIdentity),
 	                    Collections.EMPTY_SET
 	                );
             	}
             	else {
-	                this.subgroups.put(
+	                subgroups.put(
 	                    this.plugin.getQualifiedPrincipalName(groupIdentity),
-	                    this.getAllSubgroups(group)
+	                    this.getAllSubgroups(group, groups)
 	                );            		
             	}
             }
+            this.supergroups = supergroups;
+            this.subgroups = subgroups;
         }
+        pm.close();
     }
     
     //-------------------------------------------------------------------------
-    protected org.openmdx.security.realm1.jmi1.Principal getPrincipal(
+    protected CachedPrincipal getPrincipal(
         String principalName
     ) throws ServiceException {        
-    	org.openmdx.security.realm1.jmi1.Principal principal = this.principals == null ? 
+    	CachedPrincipal principal = this.principals == null ? 
     		null : 
     		this.principals.get(principalName);
         // Refresh subjects
@@ -221,17 +265,17 @@ public class SecurityContext {
             (principal == null) ||
             (System.currentTimeMillis() > this.securityRealmCheckAt)
         ) {         
-            PersistenceManager pm = this.plugin.getPmAsRoot();
-            pm.refresh(this.realm);
-            Date securityRealmModifiedAt = this.realm.getModifiedAt();
+            PersistenceManager pm = this.plugin.getDelegatingPersistenceManager();
+            org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(this.realmIdentity);
+            Date securityRealmModifiedAt = realm.getModifiedAt();
             this.assertPrincipals(               
                 principalName,
                 this.securityRealmModifiedAt == null || securityRealmModifiedAt.compareTo(this.securityRealmModifiedAt) != 0
             );
             this.securityRealmModifiedAt = securityRealmModifiedAt; 
-            this.securityRealmCheckAt = System.currentTimeMillis() + SECURITY_REALM_CHECK_RATE;            
-        }
-        
+            this.securityRealmCheckAt = System.currentTimeMillis() + SECURITY_REALM_CHECK_RATE;
+            pm.close();
+        }        
 	    if(principal == null) {
             principal = this.principals.get(principalName);
             if(principal == null) {
@@ -240,7 +284,7 @@ public class SecurityContext {
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.NOT_FOUND, 
                     "principal not found",
-                    new BasicException.Parameter("realm", this.realm),
+                    new BasicException.Parameter("realm", this.realmIdentity),
                     new BasicException.Parameter("principal", principalName)
     	        );
             }
@@ -249,67 +293,34 @@ public class SecurityContext {
     }
 
     //-------------------------------------------------------------------------
-    protected UserHome getUserHome(
-        Path principalIdentity
-    ) throws ServiceException {
-        String providerName = principalIdentity.get(2);
-        String segmentName = principalIdentity.get(principalIdentity.size()-3);
-        PersistenceManager pm = this.plugin.getPmAsRoot();            
-        return (UserHome)pm.getObjectById(
-            new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + principalIdentity.getBase())
-        );        
-    }
-    
-    //-------------------------------------------------------------------------
-    protected org.openmdx.security.realm1.jmi1.Principal getPrimaryGroup(
-    	org.openmdx.security.realm1.jmi1.Principal principal
+    protected Path getPrimaryGroup(
+    	CachedPrincipal principal
     ) throws ServiceException {
         try {
-        	UserHome userHome = this.getUserHome(principal.refGetPath());
-            PrincipalGroup userGroup = userHome.getPrimaryGroup();
-            return userGroup == null ? 
-            	this.getPrincipal(principal.refGetPath().getBase() + "." + SecurityKeys.USER_SUFFIX) : 
-            	this.getPrincipal(userGroup.refGetPath().getBase());
+        	if(principal.getPrimaryGroup() == null) {
+	            String providerName = principal.getIdentity().get(2);
+	            String segmentName = principal.getIdentity().get(principal.getIdentity().size()-3);
+	            PersistenceManager pm = this.plugin.getDelegatingPersistenceManager();            
+	            UserHome userHome = (UserHome)pm.getObjectById(
+	                new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + principal.getIdentity().getBase())
+	            );        
+	            PrincipalGroup userGroup = userHome.getPrimaryGroup();
+	            Path primaryGroup = userGroup == null ? 
+	            	this.getPrincipal(principal.getIdentity().getBase() + "." + SecurityKeys.USER_SUFFIX).getIdentity() : 
+	            		this.getPrincipal(userGroup.refGetPath().getBase()).getIdentity();
+	            principal.setPrimaryGroup(primaryGroup);
+	            pm.close();	            
+        	}
+        	return principal.getPrimaryGroup();
         }
         // In case the principal does not have a user home
         // which defines the primary group fallback to user principal
         catch(Exception e) {
-            return this.getPrincipal(principal.refGetPath().getBase() + "." + SecurityKeys.USER_SUFFIX);
+        	Path primaryGroup = 
+        		this.getPrincipal(principal.getIdentity().getBase() + "." + SecurityKeys.USER_SUFFIX).getIdentity();
+        	principal.setPrimaryGroup(primaryGroup);
+        	return primaryGroup;
         }
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * Get user principal for the given principal. The group principal is
-     * the assigned to the same subject as the given principal and is of type
-     * PrincipalGroup. The owningGroup of a openCRX object is a PrincipalGroup.
-     */
-    protected org.opencrx.security.realm1.jmi1.User getUser(
-    	org.openmdx.security.realm1.jmi1.Principal principal
-    ) throws ServiceException {
-    	org.opencrx.security.realm1.jmi1.User user = this.groupMapping.get(principal.refGetPath());
-        if(user == null) {
-        	PersistenceManager pm = this.plugin.getPmAsRoot();
-        	org.opencrx.security.realm1.cci2.UserQuery userQuery = (org.opencrx.security.realm1.cci2.UserQuery)pm.newQuery(org.opencrx.security.realm1.jmi1.User.class);
-        	userQuery.thereExistsSubject().equalTo(
-        		principal.getSubject()
-        	);
-            List<org.opencrx.security.realm1.jmi1.User> owningGroups = this.realm.getPrincipal(userQuery);
-            if(owningGroups.isEmpty()) {
-                throw new ServiceException(
-                    BasicException.Code.DEFAULT_DOMAIN,
-                    BasicException.Code.NOT_FOUND, 
-                    "Undefined user for principal",
-                    new BasicException.Parameter("principal", principal)
-                );                    
-            }
-            user = owningGroups.iterator().next();
-            this.groupMapping.put(
-            	principal.refGetPath(),
-                user
-            );
-        }
-        return user;
     }
     
     //-------------------------------------------------------------------------
@@ -340,8 +351,8 @@ public class SecurityContext {
     
     //-------------------------------------------------------------------------
     protected Set<String> getMemberships(
-    	org.openmdx.security.realm1.jmi1.Principal principal,
-    	org.opencrx.security.realm1.jmi1.User user,
+    	CachedPrincipal principal,
+    	Path userIdentity,
         short accessLevel,
         boolean useExtendedAccessLevelBasic
     ) throws ServiceException {
@@ -349,45 +360,45 @@ public class SecurityContext {
         if(!this.isActive || (accessLevel == SecurityKeys.ACCESS_LEVEL_GLOBAL)) {
             return null;
         }
-        Set<String> allowedPrincipals = new HashSet<String>();
+        Set<String> memberships = new HashSet<String>();
         try {
             // PRIVATE --> grant requesting user access to all owned objects
             if(accessLevel >= SecurityKeys.ACCESS_LEVEL_PRIVATE) {
-                allowedPrincipals.add(
-                    this.plugin.getQualifiedPrincipalName(principal.refGetPath())
+                memberships.add(
+                    this.plugin.getQualifiedPrincipalName(principal.getIdentity())
                 );
-	            allowedPrincipals.add(
-	                this.plugin.getQualifiedPrincipalName(user.refGetPath())
+	            memberships.add(
+	                this.plugin.getQualifiedPrincipalName(userIdentity)
 	            );
             }
             // BASIC, DEEP --> all direct subgroups, supergroups 
             if((accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) || (accessLevel == SecurityKeys.ACCESS_LEVEL_BASIC)) {
-            	List<org.openmdx.security.realm1.jmi1.Group> groups = principal.getIsMemberOf();
+            	Set<Path> groups = principal.getIsMemberOf();
 	            if(useExtendedAccessLevelBasic) {
-	                for(org.openmdx.security.realm1.jmi1.Group group: groups) {
-	                    allowedPrincipals.addAll(
-	                        this.getSubgroups(this.plugin.getQualifiedPrincipalName(group.refGetPath()))
+	                for(Path group: groups) {
+	                    memberships.addAll(
+	                        this.getSubgroups(this.plugin.getQualifiedPrincipalName(group))
 	                    );
 	                }	                
 	            }
                 // Add all supergroups
-	            for(org.openmdx.security.realm1.jmi1.Group group: groups) {
-	                allowedPrincipals.addAll(
-	                    this.getSupergroups(this.plugin.getQualifiedPrincipalName(group.refGetPath()))
+	            for(Path group: groups) {
+	                memberships.addAll(
+	                    this.getSupergroups(this.plugin.getQualifiedPrincipalName(group))
 	                );
 	            }
             }
             // DEEP --> all subgroups of direct and supergroups
             if(accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) {
 	            // All subgroups of all supergroups
-	            for(Iterator<String> i = new HashSet<String>(allowedPrincipals).iterator(); i.hasNext(); ) {
-	                allowedPrincipals.addAll(
+	            for(Iterator<String> i = new HashSet<String>(memberships).iterator(); i.hasNext(); ) {
+	                memberships.addAll(
 	                    this.getSubgroups(i.next())
 	                );
 	            }
                 // ... and their supergroups
-                for(Iterator<String> i = new HashSet<String>(allowedPrincipals).iterator(); i.hasNext(); ) {
-                    allowedPrincipals.addAll(
+                for(Iterator<String> i = new HashSet<String>(memberships).iterator(); i.hasNext(); ) {
+                    memberships.addAll(
                         this.getSupergroups(i.next())
                     );
                 }
@@ -395,12 +406,12 @@ public class SecurityContext {
         }
         catch(ServiceException e) {
         	SysLog.warning("requesting principal can not be determined. Set of allowed principals = {}");
-            return allowedPrincipals;
+            return memberships;
         }
         // member of Root:Administrators --> access level global
-        return allowedPrincipals.contains(SecurityKeys.ROOT_ADMINISTRATORS_GROUP) ? 
+        return memberships.contains(SecurityKeys.ROOT_ADMINISTRATORS_GROUP) ? 
         	null : 
-        	allowedPrincipals;
+        	memberships;
     }
         
     //-----------------------------------------------------------------------
@@ -409,11 +420,9 @@ public class SecurityContext {
     private static final int SECURITY_REALM_CHECK_RATE = 10000;
     
     private final AccessControl_1 plugin;
-    private final org.openmdx.security.realm1.jmi1.Realm realm;
+    private final Path realmIdentity;
     
-    private Map<String,org.openmdx.security.realm1.jmi1.Principal> principals = 
-    	new HashMap<String,org.openmdx.security.realm1.jmi1.Principal>();
-    private Map<Path,PrincipalGroup> groups = null;
+    private Map<String,CachedPrincipal> principals = new HashMap<String,CachedPrincipal>();
     private boolean isActive = true;
     private long securityRealmCheckAt = 0;
     private Date securityRealmModifiedAt = null;
@@ -423,11 +432,6 @@ public class SecurityContext {
     private Map<String,Set<String>> subgroups = null;
     private Map<String,Set<String>> supergroups = null;
     
-    // principal -> principal group. Key is principal path,
-    // value is principal group path
-    private final Map<Path,org.opencrx.security.realm1.jmi1.User> groupMapping = 
-    	new HashMap<Path,org.opencrx.security.realm1.jmi1.User>();
-
 }
 
 //--- End of File -----------------------------------------------------------

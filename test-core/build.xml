@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.5 2008/02/15 16:27:48 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.15 2010/04/22 10:26:23 wfro Exp $
  * = Description: openCRX/Core Test build.xml
- * = Revision:    $Revision: 1.5 $
- * = Date:        $Date: 2008/02/15 16:27:48 $
- * = Copyright:   (c) 2003-2005 CRIXP AG
+ * = Revision:    $Revision: 1.15 $
+ * = Date:        $Date: 2010/04/22 10:26:23 $
+ * = Copyright:   (c) 2003-2010 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2005, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -51,28 +51,19 @@
  * openMDX (http://www.openmdx.org/)
 -->
 <project
-  name="opencrx-test-core" 
-  default="-projecthelp" 
+	name="opencrx-test.core" 
+	default="-projecthelp" 
 	xmlns:openmdx="xri://(antlib:org.openmdx.tools.ant)"
 	xmlns:antcontrib="antlib:net.sf.antcontrib"
-  xmlns:ivy="xri:(antlib:fr.jayasoft.ivy.ant)"
 >
 	<description>Build the openCRX/Core Test project</description>
 	<property name="project.specification.title" value="openCRX/Core Test"/>
 	<!-- Slash separated platform list, the last entry being the default -->
-	<property name="project.platform.list" value="jre-1.5"/>
+	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.0.0"/>
+	<property name="openmdx.version" value="2.6.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
-	<!-- Generic client parameters -->
-	<property name="client.provider.name" value="CRX"/>
-	<property name="client.segment.name" value="Standard"/>
-	<!-- SimpleClient parameters -->
-	<property name="simple.client.name" value="Guest"/>
-	<property name="simple.client.xmlExport" value="false"/>
-	<!-- CodeClient parameters -->
-	<property name="code.client.name" value="org:opencrx:kernel:address1:PostalAddressable:postalCountry"/>
 	<!-- classpath -->
 	<path id="project.lib.classpath">
 		<path refid="openmdx.core.lib"/>
@@ -80,17 +71,28 @@
 		<path refid="java2.extension.lib"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-kernel.jar"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-security.jar"/>
+		<pathelement location="../${build.java.platform}/core/lib/opencrx-application.jar"/>
+		<pathelement location="../${build.java.platform}/core/lib/opencrx-resources.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/${build.java.platform}/security/lib/openmdx-security.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/${build.java.platform}/portal/lib/openmdx-portal.jar"/>
 	</path>
 	<path id="project.bin.classpath">
 		<path refid="project.lib.classpath"/>
 		<pathelement location="${basedir}/src/resource"/>
 		<pathelement location="${build.dir}/bin"/>
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
-		<pathelement location="../opt/microsoft/jre-1.5/sql-server-2005/lib/sqljdbc.jar"/>
+		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-8/lib/postgresql-8.3.jdbc3.jar"/>
+		<pathelement location="../opt/hsqldb/${build.java.platform}/hsqldb-2/lib/hsqldb.jar"/>
+		<pathelement location="../codehaus/${build.java.platform}/janino/lib/janino.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/openjpa.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/commons-lang.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/commons-collections.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/commons-collections-extendedproperties.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/serp.jar"/>
 	</path>
+	<property name="junit.test.datasource.name" value="jdbc_opencrx_CRX" />	
 	<patternset id="project.junit.test.case">
-		<include name="org/opencrx/**/Test*.java"/>
+		<include name="test/org/opencrx/**/Test*.java"/>
 	</patternset>
 	<!-- ******************************************************************* -->
 	<!-- * generate -->
@@ -113,25 +115,34 @@
 		<openmdx:archive 
 			destfile="${distribution.dir}/${project.implementation.prefix}-${project.implementation.version}-${base.dir.name}.${build.target.platform}."
 			format="${distribution.format}"
-			checksum="MD5"
-		>
-			<openmdx:archivefileset 
-				dir="${basedir}" 
-				prefix="${project.implementation.prefix}-${project.implementation.version}/${base.dir.name}"
-			>
+			checksum="MD5">
+			<openmdx:archivefileset dir="${basedir}" prefix="${project.implementation.prefix}-${project.implementation.version}/${base.dir.name}">
 				<include name="build.xml"/>
 				<include name="build.properties"/>
 				<include name="version.properties"/>
 				<include name="etc/**"/>
 			</openmdx:archivefileset>
-			<openmdx:archivefileset 
-				dir="${project.home}" 
-				prefix="${project.implementation.prefix}-${project.implementation.version}"
-			>				
+			<openmdx:archivefileset dir="${project.home}" prefix="${project.implementation.prefix}-${project.implementation.version}">				
 				<include name="source-archive/test-core/**"/>
 				<include name="${build.target.platform}/test-core/src/opencrx-*"/>
 				<include name="${build.target.platform}/test-core/lib/opencrx-*"/>
 			</openmdx:archivefileset>
+			<openmdx:archivefileset 
+				dir="${project.home}/${base.dir.name}" 
+				prefix="${project.implementation.prefix}-${project.implementation.version}/${base.dir.name}/"
+			>
+				<include name=".classpath"/>
+				<include name=".project"/>
+			</openmdx:archivefileset>
+			<openmdx:archivefilterchain>
+				<patternset>
+					<include name="**/.project"/>
+					<include name="**/.classpath"/>
+				</patternset>
+				<tokenfilter>
+				    <replaceregex pattern="( \(.*\))? ~ " replace=" (${project.implementation.version}) ~ "/>
+				</tokenfilter>
+			</openmdx:archivefilterchain>			
 		</openmdx:archive>
 	</target>
 	<!-- ******************************************************************* -->
@@ -154,55 +165,5 @@
 				</patternset>
 			</openmdx:archivefileset>
 		</openmdx:archive>
-	</target>
-	<!-- ******************************************************************* -->
-	<!-- * test-SimpleClient -->
-	<!-- ******************************************************************* -->
-	<target name="test-SimpleClient" description="Simple openCRX Client Application">
-		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" failonerror="true" maxmemory="96m" classpathref="project.bin.classpath">
-			<sysproperty key="user.language" value="en"/>
-			<sysproperty key="user.region" value="US"/>
-			<sysproperty key="file.encoding" value="Cp1252"/>
-			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
-			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
-			<arg line="-ear file:src/ear/test-SimpleClient.ear --name=${simple.client.name} --xmlExport=${simple.client.xmlExport} --providerName=${client.provider.name} --segmentName=${client.segment.name}"/>
-		</java>
-		<echo/>
-		<echo>You can specify a different account name with option -Dsimple.client.name=...</echo>
-		<echo>You can perform an XML export with option -Dsimple.client.xmlExport=true</echo>
-		<echo>You can specify a different provider name with option -Dclient.provider.name=...</echo>
-		<echo>You can specify a different segment name with option -Dclient.segment.name=...</echo>
-	</target>
-	<!-- ******************************************************************* -->
-	<!-- * test-CodeClient -->
-	<!-- ******************************************************************* -->
-	<target name="test-CodeClient" description="openCRX Code Client Application">
-		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" failonerror="true" maxmemory="96m" classpathref="project.bin.classpath">
-			<sysproperty key="user.language" value="en"/>
-			<sysproperty key="user.region" value="US"/>
-			<sysproperty key="file.encoding" value="Cp1252"/>
-			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
-			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
-			<arg line="-ear file:src/ear/test-CodeClient.ear --name=${client.name} --providerName=${client.provider.name}"/>
-		</java>
-		<echo/>
-		<echo>You can specify a different code container name with option -Dcode.client.name=...</echo>
-		<echo>You can specify a different provider name with option -Dclient.provider.name=...</echo>
-	</target>
-	<!-- ******************************************************************* -->
-	<!-- * test-StressTester -->
-	<!-- ******************************************************************* -->
-	<target name="test-StressTester" description="openCRX Stress Tester">
-		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" failonerror="true" maxmemory="256m" classpathref="project.bin.classpath">
-			<sysproperty key="user.language" value="en"/>
-			<sysproperty key="user.region" value="US"/>
-			<sysproperty key="file.encoding" value="Cp1252"/>
-			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
-			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
-			<arg line="-ear file:src/ear/test-StressTester.ear --providerName=${client.provider.name} --segmentName=${client.segment.name}"/>
-		</java>
-		<echo/>
-		<echo>You can specify a different provider name with option -Dclient.provider.name=...</echo>
-		<echo>You can specify a different provider name with option -Dclient.segment.name=...</echo>
 	</target>
 </project>

@@ -77,13 +77,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Название</_item>
+                        <_item>Наименование</_item>
                       </label>
                       <toolTip>
-                        <_item>Название контейнера</_item>
+                        <_item>Наименование организации (в целом)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -99,18 +99,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:Pane:Attr:Tab:0:Group:10" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:Pane:Attr:Tab:0:Group:10" _operation="create">
                     <_object>
                       <label>
-                        <_item>Дополн. информация</_item>
+                        <_item>Дополнительная информация</_item>
                       </label>
                       <toolTip>
-                        <_item>Дополн. информация</_item>
+                        <_item>Дополнительная информация</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:description" _operation="create">
                     <_object>
                       <label>
                         <_item>Описание</_item>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:OrganizationalUnit:costCenter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Бюро кальк-ций</_item>
+                        <_item>Центр затрат</_item>
                       </label>
                       <toolTip>
-                        <_item>Бюро кальк-ций</_item>
+                        <_item>Центр затрат</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:OrganizationalUnitRelationship:relationshipType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип вз-связи</_item>
+                        <_item>Тип взаимосвязи</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип вз-связи</_item>
+                        <_item>Тип взаимосвязи</_item>
                       </toolTip>
                     </_object>
                     <_content/>

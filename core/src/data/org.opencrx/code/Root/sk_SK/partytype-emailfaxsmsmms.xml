@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeEMailFaxSmsMms" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeEMailFaxSmsMms" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,29 +26,29 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Od</_item>
+                              <_item>OD</_item>
                             </shortText>
                             <longText>
-                              <_item>Od</_item>
+                              <_item>OD</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Do</_item>
+                              <_item>DO</_item>
                             </shortText>
                             <longText>
-                              <_item>Do</_item>
+                              <_item>DO</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="create">
                           <_object>
                             <shortText>
                               <_item>CC</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="create">
                           <_object>
                             <shortText>
                               <_item>BCC</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Kópia papiera</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Ostatní</_item>

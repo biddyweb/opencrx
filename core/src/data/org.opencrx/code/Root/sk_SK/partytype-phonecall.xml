@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypePhoneCall" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypePhoneCall" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Volajúci</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Volaný</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Účastník (povinné)</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="540" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="540" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Účastník (voliteľné)</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Moderátor</_item>
@@ -81,13 +81,13 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ostatný</_item>
+                              <_item>Ostatní</_item>
                             </shortText>
                             <longText>
-                              <_item>Ostatný</_item>
+                              <_item>Ostatní</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:assignedActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Деятельнось</_item>
+                        <_item>Деятельность</_item>
                       </label>
                       <toolTip>
-                        <_item>Деятельнось</_item>
+                        <_item>Деятельность</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: OpenCrxKernel_1.java,v 1.316 2009/08/19 14:34:28 wfro Exp $
+ * Name:        $Id: OpenCrxKernel_1.java,v 1.322 2009/12/31 02:15:25 wfro Exp $
  * Description: OpenCrxKernel_1
- * Revision:    $Revision: 1.316 $
+ * Revision:    $Revision: 1.322 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/19 14:34:28 $
+ * Date:        $Date: 2009/12/31 02:15:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,31 +56,52 @@
 
 package org.opencrx.kernel.layer.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.IndexedRecord;
+import javax.resource.cci.Interaction;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.layer.application.Standard_1;
 import org.openmdx.application.dataprovider.spi.Layer_1;
-import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.resource.spi.RestInteractionSpec;
+import org.openmdx.base.rest.spi.Object_2Facade;
+import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 
-public class OpenCrxKernel_1 extends Layer_1 {
+public class OpenCrxKernel_1 extends Standard_1 {
 
     //-------------------------------------------------------------------------
+	public OpenCrxKernel_1(
+	) {
+	}
+	
+    //--------------------------------------------------------------------------
+    public Interaction getInteraction(
+        Connection connection
+    ) throws ResourceException {
+        return new StandardLayerInteraction(connection);
+    }
+ 
+    //-------------------------------------------------------------------------
+	@SuppressWarnings("unchecked")
+    @Override
     public void activate(
         short id, 
         Configuration configuration,
-        Layer_1_0 delegation
+        Layer_1 delegation
     ) throws ServiceException {        
         super.activate(
             id,
@@ -88,7 +109,9 @@ public class OpenCrxKernel_1 extends Layer_1 {
             delegation
         );
         try {
-            this.readOnlyTypes = configuration.values("readOnlyObjectType");
+            this.readOnlyTypes = new ArrayList(
+            	configuration.values("readOnlyObjectType").values()
+            );
             this.datatypes = DatatypeFactory.newInstance();
         }
         catch(Exception e) {
@@ -96,151 +119,159 @@ public class OpenCrxKernel_1 extends Layer_1 {
         }        
     }
 
-    //-------------------------------------------------------------------------
-    protected RequestContext getRequestContext(
-        ServiceHeader header
-    ) throws ServiceException {
-        return new RequestContext(
-            this.getModel(),
-            header,
-            new RequestCollection(
-                header,
-                this.getDelegation()
-            ),
-            this.getDelegation(),
-            new RequestCollection(
-                header,
-                this
-            ),
-            this.readOnlyTypes
-        );
+    //--------------------------------------------------------------------------
+    public class StandardLayerInteraction extends Standard_1.LayerInteraction {
+      
+        public StandardLayerInteraction(
+            Connection connection
+        ) throws ResourceException {
+            super(connection);
+        }
+        
+	    //-------------------------------------------------------------------------
+	    protected RequestContext getRequestContext(
+	        ServiceHeader header
+	    ) throws ServiceException {
+	        return new RequestContext(
+	            this.getModel(),
+	            header,
+	            this.getDelegatingInteraction(),
+	            OpenCrxKernel_1.this.readOnlyTypes
+	        );
+	    }
+	    
+	    //-------------------------------------------------------------------------
+	    protected RequestHelper getRequestHelper(
+	    	RequestContext context
+	    ) throws ServiceException {
+	        return new RequestHelper(context);
+	    }
+	    
+	    //-------------------------------------------------------------------------
+	    public void testReferenceIsChangeable(
+	        Path referencePath
+	    ) throws ServiceException {
+	        // Reference must be changeable
+	        ModelElement_1_0 reference = null;
+	        try {
+	            reference = this.getModel().getReferenceType(referencePath);
+	        }
+	        catch(ServiceException e) {
+	        	SysLog.warning("Reference not found in model", referencePath);
+	        }           
+	        if(
+	            (reference != null) &&
+	            !((Boolean)reference.objGetValue("isChangeable")).booleanValue()
+	        ) {
+	            throw new ServiceException(
+	                OpenCrxException.DOMAIN,
+	                OpenCrxException.REFERENCE_IS_READONLY,
+	                "Reference is readonly. Can not add/remove objects.",
+	                new BasicException.Parameter("param0", referencePath)
+	            );                                                                
+	        }
+	    }
+	
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean get(
+	        RestInteractionSpec ispec,
+	        Query_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+	    	RequestHelper requestHelper = this.getRequestHelper(
+	    		this.getRequestContext(
+	                header
+	            )
+	    	);
+	        boolean isDerived = requestHelper.getDerivedReferences().getReply(
+	        	header, 
+	        	request,
+	        	reply
+	        );
+	        if(!isDerived) {
+	            super.get(
+	                ispec,
+	                input,
+	                output
+	            );
+	        }
+	        return true;
+	    }
+	
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean find(
+	        RestInteractionSpec ispec,
+	        Query_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+        	ServiceHeader header = this.getServiceHeader();
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+            DataproviderReply reply = this.newDataproviderReply(output);
+	    	RequestHelper requestHelper = this.getRequestHelper(
+	    		this.getRequestContext(
+	                header
+	            )    		
+	    	);
+	        boolean isDerived = requestHelper.getDerivedReferences().getReply(
+	        	header, 
+	        	request,
+	        	reply
+	        );
+	        if(!isDerived) {
+	            super.find(
+	                ispec,
+	                input,
+	                output
+	            );            
+	        }
+	        return true;
+	    }
+	
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean create(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+	        this.testReferenceIsChangeable(
+	            request.path().getParent()
+	        );
+	        super.create(
+	        	ispec,
+	        	input,
+	        	output
+	        );
+	        return true;
+	    }
+	
+	    //-------------------------------------------------------------------------
+	    @Override
+	    public boolean delete(
+	        RestInteractionSpec ispec,
+	        Object_2Facade input,
+	        IndexedRecord output
+	    ) throws ServiceException {
+            DataproviderRequest request = this.newDataproviderRequest(ispec, input);
+	        this.testReferenceIsChangeable(
+	            request.path().getParent()
+	        );
+	        super.delete(
+	            ispec,
+	            input,
+	            output
+	        );
+	        return true;
+	    }
+	    
     }
     
-    //-------------------------------------------------------------------------
-    protected RequestHelper getRequestHelper(
-    	RequestContext context
-    ) throws ServiceException {
-        return new RequestHelper(context);
-    }
-    
-    //-------------------------------------------------------------------------
-    public void testReferenceIsChangeable(
-        Path referencePath
-    ) throws ServiceException {
-        // Reference must be changeable
-        ModelElement_1_0 reference = null;
-        try {
-            reference = this.getModel().getReferenceType(referencePath);
-        }
-        catch(ServiceException e) {
-        	SysLog.warning("Reference not found in model", referencePath);
-        }           
-        if(
-            (reference != null) &&
-            !((Boolean)reference.objGetValue("isChangeable")).booleanValue()
-        ) {
-            throw new ServiceException(
-                OpenCrxException.DOMAIN,
-                OpenCrxException.REFERENCE_IS_READONLY,
-                "Reference is readonly. Can not add/remove objects.",
-                new BasicException.Parameter("param0", referencePath)
-            );                                                                
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    public void prolog(
-        ServiceHeader header,
-        DataproviderRequest[] requests
-    ) throws ServiceException {
-        super.prolog(
-            header,
-            requests
-        );
-    }
-
-    //-------------------------------------------------------------------------
-    public void epilog(
-        ServiceHeader header,
-        DataproviderRequest[] requests,
-        DataproviderReply[] replies
-    ) throws ServiceException {      
-        super.epilog(
-            header,
-            requests,
-            replies
-        );
-    }
-
-    //-------------------------------------------------------------------------
-    public DataproviderReply get(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-    	RequestHelper requestHelper = this.getRequestHelper(
-    		this.getRequestContext(
-                header
-            )
-    	);
-        DataproviderReply reply = requestHelper.getDerivedReferences().getReply(header, request);
-        if(reply == null) {
-            reply = super.get(
-                header,
-                request
-            );
-        }
-        return reply;
-    }
-
-    //-------------------------------------------------------------------------
-    public DataproviderReply find(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-    	RequestHelper requestHelper = this.getRequestHelper(
-    		this.getRequestContext(
-                header
-            )    		
-    	);
-        DataproviderReply reply = requestHelper.getDerivedReferences().getReply(header, request);
-        if(reply == null) {
-            reply = super.find(
-                header,
-                request
-            );            
-        }
-        return reply;
-    }
-
-    //-------------------------------------------------------------------------
-    public DataproviderReply create(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-        this.testReferenceIsChangeable(
-            request.path().getParent()
-        );
-        DataproviderReply reply = super.create(
-            header,
-            request
-        );
-        return reply;
-    }
-
-    //-------------------------------------------------------------------------
-    public DataproviderReply remove(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {        
-        this.testReferenceIsChangeable(
-            request.path().getParent()
-        );
-        return super.remove(
-            header,
-            request
-        );
-    }
-
     //-------------------------------------------------------------------------
     // Variables
     //-------------------------------------------------------------------------

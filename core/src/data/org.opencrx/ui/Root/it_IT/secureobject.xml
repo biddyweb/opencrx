@@ -83,7 +83,7 @@
                         <_item>^</_item>
                       </label>
                       <toolTip>
-                        <_item>Gruppi Proprietari(Sicurezza)</_item>
+                        <_item>Gruppi Proprietari (Sicurezza)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setOwningUser" _operation="create">
                     <_object>
                       <label>
-                        <_item>Impostare Utente Proprietario</_item>
+                        <_item>Imposta Utente Proprietario</_item>
                       </label>
                       <toolTip>
-                        <_item>Impostare Utente Proprietario</_item>
+                        <_item>Imposta Utente Proprietario</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setAccessLevel" _operation="create">
                     <_object>
                       <label>
-                        <_item>Impostare Permesso d&apos;Accesso</_item>
+                        <_item>Imposta Permesso d&apos;Accesso</_item>
                       </label>
                       <toolTip>
-                        <_item>Impostare Permesso d&apos;Accesso</_item>
+                        <_item>Imposta Permesso d&apos;Accesso</_item>
                       </toolTip>
                     </_object>
                     <_content/>

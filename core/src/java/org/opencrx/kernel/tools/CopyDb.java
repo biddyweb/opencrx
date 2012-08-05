@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.41 2009/05/26 14:45:26 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.43 2009/12/31 02:15:25 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/26 14:45:26 $
+ * Date:        $Date: 2009/12/31 02:15:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -185,8 +185,10 @@ public class CopyDb {
         Database_1 db = new Database_1();
         try {
             Configuration configuration = new Configuration();
-            configuration.values(LayerConfigurationEntries.BOOLEAN_TYPE).add(LayerConfigurationEntries.BOOLEAN_TYPE_STANDARD);
-            configuration.values(LayerConfigurationEntries.XML_DATATYPES).add(Boolean.TRUE);
+            configuration.values(LayerConfigurationEntries.BOOLEAN_TYPE).put(
+            	0,
+            	LayerConfigurationEntries.BOOLEAN_TYPE_STANDARD
+            );
             configuration.values(LayerConfigurationEntries.DATABASE_CONNECTION_FACTORY );           
             db.activate(
                 (short)0,

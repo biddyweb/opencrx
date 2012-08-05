@@ -171,6 +171,17 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Business!emailAddress" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>E-mail Geschäft</_item>
+											</toolTip>
+											<label>
+												<_item>E-mail Geschäft</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership" _operation="create">
                     <_object>
                       <label>
@@ -321,6 +332,17 @@
 											</toolTip>
 											<label>
 												<_item>Telefon Mobil [von]</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!emailAddress" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>E-mail Geschäft</_item>
+											</toolTip>
+											<label>
+												<_item>E-mail Geschäft [von]</_item>
 											</label>
 										</_object>
 										<_content/>

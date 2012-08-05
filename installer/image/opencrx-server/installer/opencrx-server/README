@@ -2,10 +2,10 @@ Welcome to openCRX!
 -------------------
 
 This installer has created an openCRX instance running on
-Tomcat 6 extended by Apache OpenEJB and HSQLDB 1. The installation 
+Tomcat extended by Apache OpenEJB and HSQLDB. The installation 
 comes with a preconfigured database. It contains data which is 
 created when working through the openCRX quick start guide (see
-http://www.opencrx.org/opencrx/2.5/tomcat-6/openCRX_Installation_Tomcat-6.html).
+http://www.opencrx.org/opencrx/2.6/tomcat-6/openCRX_Installation_Tomcat-6.html).
 
 You can start and stop openCRX using the corresponding shortcuts
 on the desktop by the installer. After starting openCRX you can
@@ -14,11 +14,10 @@ login using a browser. Valid URLs are:
 * openCRX/Core: http://localhost:<tomcat_port>/opencrx-core-CRX
 * openCRX/Store: http://localhost:<tomcat_port>/opencrx-store-CRX/Store.jsp
 
-The following accounts are preconfigured:
-* guest
-* admin-Standard
-* admin-Root
-The password for all three accounts is 'opencrx'.
+The following accounts are preconfigured (UserId / Password):
+* guest / guest
+* admin-Standard / admin-Standard
+* admin-Root / admin-Root
 
 Troubleshooting
 ---------------
@@ -26,8 +25,8 @@ When you are not able to login then try the following:
 
 * Open an command shell
 * cd to ${installdir}/bin
-* Start openCRX with opencrx.bat START in Windows platforms
-  and ./opencrx.sh START in Linux platforms
+* Start Tomcat with tomcat.bat START in Windows platforms
+  and ./tomcat.sh START in Linux platforms
 * Check the console output for errors
 
 WorkflowController

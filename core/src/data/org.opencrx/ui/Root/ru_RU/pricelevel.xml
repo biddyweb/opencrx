@@ -142,10 +142,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Фильтры контактов</_item>
+                        <_item>Фильтры контрактов</_item>
                       </label>
                       <toolTip>
-                        <_item>Фильтры контактов</_item>
+                        <_item>Фильтры контрактов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -316,7 +316,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Продукты (Отфильтрованные)</_item>
+                        <_item>Продукты (отфильтрованные)</_item>
                       </label>
                       <toolTip>
                         <_item>Все отфильтрованные продукты</_item>
@@ -338,10 +338,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета (Отфильтрованные)</_item>
+                        <_item>Участники (отфильтрованные)</_item>
                       </label>
                       <toolTip>
-                        <_item>все отфильтрованные счета</_item>
+                        <_item>все отфильтрованные участники отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -360,7 +360,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Фильтр продутов</_item>
+                        <_item>Фильтр продуктов</_item>
                       </label>
                       <toolTip>
                         <_item>все свойства фильтра</_item>
@@ -371,7 +371,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Продукты (Отфильтрованные)</_item>
+                        <_item>Продукты (отфильтрованные)</_item>
                       </label>
                       <toolTip>
                         <_item>все отфильтрованные продукты</_item>
@@ -382,7 +382,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Фильтр счетов</_item>
+                        <_item>Фильтр участников отношений</_item>
                       </label>
                       <toolTip>
                         <_item>все свойства фильтра</_item>
@@ -393,10 +393,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета (Отфильтрованные)</_item>
+                        <_item>Участники отношений (отфильтрованные)</_item>
                       </label>
                       <toolTip>
-                        <_item>все отфильтрованные счета</_item>
+                        <_item>все отфильтрованные участники отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -773,10 +773,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение контрагента</_item>
                       </label>
                       <toolTip>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение контрагента</_item>
                       </toolTip>
                     </_object>
                     <_content/>

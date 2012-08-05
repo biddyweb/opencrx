@@ -315,7 +315,7 @@
           </children>
           <styles xmi:type="notation:ShapeStyle" xmi:id="_JMeN4d7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" description="This software is published under the BSD license&#xA;as listed below. see class diagram _LICENSE.&#xA;" fillColor="16775658" lineColor="3342489"/>
           <element xsi:nil="true"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JMeN4t7NEdmKapscEl8OLg" x="9500" y="553" width="6374" height="2303"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JMeN4t7NEdmKapscEl8OLg" x="9500" y="553" width="6788" height="2614"/>
         </children>
         <children xmi:id="_JMeN5d7NEdmKapscEl8OLg" element="_3C7B8A60016D3FECAAE80041">
           <children xmi:id="_JMeN6N7NEdmKapscEl8OLg" type="ImageCompartment">

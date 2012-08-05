@@ -1,0 +1,12 @@
+-------------------------------------------------------------------
+     
+                         openCRX/Test Core
+
+-------------------------------------------------------------------
+
+1. Create the file build.properties in your home directory with the 
+   following content:
+   
+   opencrx-test.core.datasource=jdbc:postgresql:\/\/localhost\/CRX_2_5?user=postgres&password=manager99&driver=org.postgresql.Driver
+
+3. Open a shell and go to the directory ./test-core. Run ant test.

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: IMAPServer.java,v 1.5 2009/03/08 17:04:52 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: IMAPServer.java,v 1.13 2010/02/10 16:36:34 wfro Exp $
  * Description: IMAPServer
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:52 $
+ * Date:        $Date: 2010/02/10 16:36:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,106 +55,57 @@
  */
 package org.opencrx.application.imap;
 
-import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.jdo.PersistenceManagerFactory;
 
-public class IMAPServer implements Runnable {
+import org.opencrx.application.adapter.AbstractServer;
+import org.opencrx.application.adapter.AbstractSession;
+
+public class IMAPServer extends AbstractServer {
     
 	//-----------------------------------------------------------------------
 	protected IMAPServer(
-	    PersistenceManagerFactory persistenceManagerFactory,
+	    PersistenceManagerFactory pmf,
 	    String providerName,
+	    String bindAddress,
 	    int portNumber,
+	    String sslKeystoreFile,
+	    String sslKeystoreType,
+	    String sslKeystorePass,
+	    String sslKeyPass,
 	    boolean isDebug,
 	    int delayOnStartup
 	) {
-	    this.persistenceManagerFactory = persistenceManagerFactory;
-		this.portNumber = portNumber;
-		this.providerName = providerName;
-		this.isDebug = isDebug;
-		this.delayOnStartup = delayOnStartup;
+		super(
+			"IMAPServer",
+			pmf,
+			providerName,
+		    bindAddress,
+		    portNumber,
+		    sslKeystoreFile,
+		    sslKeystoreType,
+		    sslKeystorePass,
+		    sslKeyPass,
+			isDebug,
+			delayOnStartup
+		);
 	}
 	
     //-----------------------------------------------------------------------
-	public void run(
-	) {
-        try {           
-            Thread.sleep(this.delayOnStartup * 1000L);
-            ServerSocket serverSocket = new ServerSocket(this.portNumber);
-            System.out.println("IMAPServer " + this.providerName + " is listening on port " + this.portNumber);            
-            while(true) {
-                Socket socket = serverSocket.accept();
-                socket.setSoTimeout(600000);
-                Thread clientHandler = new Thread(
-                    new IMAPSessionImpl(socket, this)
-                );
-                clientHandler.start();
-            }
-        }
-        catch(Exception err) {
-            err.printStackTrace();
-        }
-	}
-
-    //-----------------------------------------------------------------------
-	public String getProviderName(
-	) {
-	    return this.providerName;
-	}
-	
-    //-----------------------------------------------------------------------
-    public boolean isDebug(
+	@Override
+    public AbstractSession newSession(
+    	Socket socket, 
+    	AbstractServer server
     ) {
-        return this.isDebug;
+		return new IMAPSession(
+			socket,
+			server
+		);
     }
-    
-    //-----------------------------------------------------------------------
-	public static void main(
-	    String[] args
-	) {
-		IMAPServer.startServer(
-	        null,
-	        "CRX",
-	        143,
-	        true,
-	        0
-	    );
-	}
-	
-    //-----------------------------------------------------------------------
-	public static void startServer(
-        PersistenceManagerFactory persistenceManagerFactory,
-        String providerName,
-        int portNumber,
-        boolean isDebug,
-        int delayOnStartup
-	) {
-        IMAPServer server = new IMAPServer(
-            persistenceManagerFactory,
-            providerName,
-            portNumber,
-            isDebug,
-            delayOnStartup
-        );
-        Thread serverThread = new Thread(server);
-        serverThread.start();    
-	}
-
-    //-----------------------------------------------------------------------
-	public PersistenceManagerFactory getPersistenceManagerFactory(
-	) {
-	    return this.persistenceManagerFactory;
-	}
 	
     //-----------------------------------------------------------------------
 	// Members
     //-----------------------------------------------------------------------
-    protected final int portNumber;
-    protected final String providerName;
-    protected final boolean isDebug;
-    protected final int delayOnStartup;
-    protected final PersistenceManagerFactory persistenceManagerFactory;
     
 }

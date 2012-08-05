@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedNoteDataBinding.java,v 1.12 2009/09/12 07:58:06 wfro Exp $
+ * Name:        $Id: FormattedNoteDataBinding.java,v 1.13 2010/02/04 11:25:39 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/12 07:58:06 $
+ * Date:        $Date: 2010/02/04 11:25:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,16 +66,15 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
 
     //-----------------------------------------------------------------------
     public FormattedNoteDataBinding(
-        ApplicationContext applicationContext
     ) {
-        this.applicationContext = applicationContext;
     }
     
     //-----------------------------------------------------------------------
     @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         if(object instanceof Note) {
             Note note = (Note)object;
@@ -121,6 +120,5 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected final ApplicationContext applicationContext;
     
 }

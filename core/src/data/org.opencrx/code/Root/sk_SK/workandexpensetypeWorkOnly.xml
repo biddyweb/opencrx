@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseTypeWorkOnly" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseTypeWorkOnly" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,35 +26,35 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Práca (Štandardná sadzba)</_item>
+                              <_item>Práca (štandardná sadzba)</_item>
                             </shortText>
                             <longText>
-                              <_item>Práca (Štandardná sadzba)</_item>
+                              <_item>Práca (štandardná sadzba)</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Práca (Sadzba za nadčas)</_item>
+                              <_item>Práca (sadzba za nadčas)</_item>
                             </shortText>
                             <longText>
-                              <_item>Práca (Sadzba za nadčas)</_item>
+                              <_item>Práca (sadzba za nadčas)</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Práca (Alternatívna sadzba)</_item>
+                              <_item>Práca (alternatívna sadzba)</_item>
                             </shortText>
                             <longText>
-                              <_item>Práca (Alternatívna sadzba)</_item>
+                              <_item>Práca (alternatívna sadzba)</_item>
                             </longText>
                           </_object>
                           <_content/>

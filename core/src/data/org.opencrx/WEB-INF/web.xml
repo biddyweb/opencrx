@@ -14,16 +14,6 @@
 			<param-value>public, max-age=2592000</param-value>
 		</init-param>
 	</filter>
-<!--	
-	<filter>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-		<init-param>
-			<param-name>logLevel</param-name>
-			<param-value>WARN</param-value>
-		</init-param>
-	</filter>				
--->
 	<filter-mapping>
 		<filter-name>CompressingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -44,12 +34,9 @@
 		<filter-name>CacheControlFilter</filter-name>
 		<url-pattern>/blank.html</url-pattern>
 	</filter-mapping>
-<!--
-	<filter-mapping>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>			
--->
+	<listener>
+		<listener-class>org.openmdx.portal.servlet.PortalSessionCloser</listener-class>
+	</listener>	
 	<!-- WorkflowController -->
 	<servlet id="WorkflowController">
 		<servlet-name>WorkflowController</servlet-name>
@@ -97,6 +84,11 @@
 	<servlet id="IndexerServlet">
 		<servlet-name>IndexerServlet</servlet-name>
 		<servlet-class>org.opencrx.kernel.workflow.servlet.IndexerServlet</servlet-class>
+	</servlet>
+	<!-- GetCaptchaServlet -->
+	<servlet id="GetCaptchaServlet">
+		<servlet-name>GetCaptchaServlet</servlet-name>
+		<servlet-class>org.opencrx.application.captcha.GetCaptchaServlet</servlet-class>
 	</servlet>
 	<servlet id="ObjectInspectorServlet">
 		<servlet-name>ObjectInspectorServlet</servlet-name>
@@ -386,6 +378,10 @@
 		<servlet-name>IndexerServlet</servlet-name>
 		<url-pattern>/IndexerServlet/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetCaptchaServlet</servlet-name>
+		<url-pattern>/GetCaptchaServlet/*</url-pattern>
+	</servlet-mapping>
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
@@ -417,7 +413,7 @@
 		<res-type>javax.mail.Session</res-type>
 		<res-auth>Container</res-auth>
 	</resource-ref>
--->
+	-->
 	<!-- security-constraint -->
 	<security-constraint id="security_constraint-Default">
 		<web-resource-collection id="c-Default">
@@ -425,6 +421,7 @@
 			<url-pattern>/ObjectInspectorServlet</url-pattern>
 			<url-pattern>/run</url-pattern>
 			<url-pattern>/wizards/*</url-pattern>
+			<url-pattern>/jsp/*</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>

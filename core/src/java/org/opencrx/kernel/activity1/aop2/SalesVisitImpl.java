@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SalesVisitImpl.java,v 1.2 2009/08/04 22:35:12 wfro Exp $
+ * Name:        $Id: SalesVisitImpl.java,v 1.3 2010/02/01 00:29:29 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/04 22:35:12 $
+ * Date:        $Date: 2010/02/01 00:29:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,12 +55,13 @@
  */
 package org.opencrx.kernel.activity1.aop2;
 
+import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 public class SalesVisitImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.SalesVisit,N extends org.opencrx.kernel.activity1.cci2.SalesVisit,C extends ActivityImpl.DerivedAttributes>
 	extends ActivityImpl<S,N,C>
-	implements StoreCallback {
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
     public SalesVisitImpl(
@@ -79,7 +80,7 @@ public class SalesVisitImpl
       
     //-----------------------------------------------------------------------
 	@Override
-    protected void jdoPreDelete(
+    public void jdoPreDelete(
     ) {
 	    super.jdoPreDelete();
     }

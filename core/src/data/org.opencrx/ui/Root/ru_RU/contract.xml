@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение участника отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -143,10 +143,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:customer" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет</_item>
+                        <_item>Заказчик</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет</_item>
+                        <_item>Заказчик</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -187,10 +187,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:salesRep" _operation="create">
                     <_object>
                       <label>
-                        <_item>Торг. представитель</_item>
+                        <_item>Менеджер по продажам</_item>
                       </label>
                       <toolTip>
-                        <_item>Торговый представитель</_item>
+                        <_item>Менеджер по продажам</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -402,10 +402,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Итого (без. налог.)</_item>
+                        <_item>Итого (без. НДС)</_item>
                       </label>
                       <toolTip>
-                        <_item>Итого (без. налог.)</_item>
+                        <_item>Итого (без. НДС)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -413,10 +413,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalTaxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сумма налогов</_item>
+                        <_item>Сумма НДС</_item>
                       </label>
                       <toolTip>
-                        <_item>Сумма налогов</_item>
+                        <_item>Сумма НДС</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -424,10 +424,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmountIncludingTax" _operation="create">
                     <_object>
                       <label>
-                        <_item>Итого (вкл. налоги)</_item>
+                        <_item>Итого (вкл. НДС)</_item>
                       </label>
                       <toolTip>
-                        <_item>Итого (вкл. налоги)</_item>
+                        <_item>Итого (вкл. НДС)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -545,10 +545,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract" _operation="create">
                     <_object>
                       <label>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение участника отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Назначение счета</_item>
+                        <_item>Назначение участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -589,7 +589,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Наим.-поз</_item>
+                        <_item>Наим.позиции</_item>
                       </label>
                       <toolTip>
                         <_item>Наименование позиции</_item>
@@ -655,10 +655,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOM (Цена)</_item>
+                        <_item>Ед.изм. (цена)</_item>
                       </label>
                       <toolTip>
-                        <_item>UOM (Цена)</_item>
+                        <_item>Ед.изм. (цена)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -776,10 +776,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Переназначить цену</_item>
+                        <_item>Пересчитать цену</_item>
                       </label>
                       <toolTip>
-                        <_item>Переназначить цену</_item>
+                        <_item>Пересчитать цену</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -958,10 +958,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetPositionAmountsResult:taxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Налог</_item>
+                        <_item>НДС</_item>
                       </label>
                       <toolTip>
-                        <_item>Налог</_item>
+                        <_item>НДС</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1068,10 +1068,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsParams:positionTaxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сумма налога с позиции</_item>
+                        <_item>Сумма НДС с позиции</_item>
                       </label>
                       <toolTip>
-                        <_item>Сумма налога с позиции</_item>
+                        <_item>Сумма НДС с позиции</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1145,10 +1145,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalTaxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сумма налогов</_item>
+                        <_item>Сумма НДС</_item>
                       </label>
                       <toolTip>
-                        <_item>Сумма налогов</_item>
+                        <_item>Сумма НДС</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1156,10 +1156,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Общая (без. налог.)</_item>
+                        <_item>Общая (без. НДС)</_item>
                       </label>
                       <toolTip>
-                        <_item>Общая (без. налог.)</_item>
+                        <_item>Общая (без. НДС)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1167,10 +1167,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalAmountIncludingTax" _operation="create">
                     <_object>
                       <label>
-                        <_item>Общая (вкл. налоги)</_item>
+                        <_item>Общая (вкл. НДС)</_item>
                       </label>
                       <toolTip>
-                        <_item>Общая (вкл. налоги)</_item>
+                        <_item>Общая (вкл. НДС)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -7,8 +7,7 @@
                  java.util.Vector,
                  java.util.ArrayList,
                  java.util.ListIterator,
-                 org.opencrx.apps.store.common.util.*,
-                 org.opencrx.apps.utils.*"%>
+                 org.opencrx.apps.store.common.util.*,org.opencrx.apps.store.common.util.*"%>
 <%--
   Renders a list of category under the specified parent category
   User: Omar Al Zabir

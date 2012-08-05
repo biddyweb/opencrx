@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: iCal.jsp,v 1.8 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: iCal.jsp,v 1.9 2010/04/27 12:16:10 wfro Exp $
  * Description: create vCard(s)
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -114,7 +114,7 @@ org.openmdx.base.query.*
       return;
    }
    Texts_1_0 texts = app.getTexts();
-   javax.jdo.PersistenceManager pm = app.getPmData();
+   javax.jdo.PersistenceManager pm = app.getNewPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -385,5 +385,9 @@ org.openmdx.base.query.*
     response.sendRedirect(
       request.getContextPath() + "/" + nextAction.getEncodedHRef()
     );
+  } finally {
+	  if(pm != null) {
+		  pm.close();
+	  }
   }
 %>

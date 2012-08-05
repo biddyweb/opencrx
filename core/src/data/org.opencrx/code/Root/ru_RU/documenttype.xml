@@ -11,17 +11,17 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="documentType" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="documentType" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Недоступно</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> Недоступно</_item>
+                              <_item> Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:         openCRX/Core, http://www.opencrx.org/
- * Name:            $Id: WorkAndExpenseReport.jsp,v 1.37 2009/10/16 02:08:53 cmu Exp $
+ * Name:            $Id: WorkAndExpenseReport.jsp,v 1.38 2010/04/27 12:16:11 wfro Exp $
  * Description:     Create Work Record
- * Revision:        $Revision: 1.37 $
+ * Revision:        $Revision: 1.38 $
  * Owner:           CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:            $Date: 2009/10/16 02:08:53 $
+ * Date:            $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -263,7 +263,7 @@ org.apache.poi.hssf.util.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
@@ -2987,3 +2987,8 @@ org.apache.poi.hssf.util.*
 </div> <!-- container -->
 </body>
 </html>
+<%
+if(pm != null) {
+	pm.close();
+}
+%>

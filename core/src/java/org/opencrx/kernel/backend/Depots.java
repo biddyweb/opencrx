@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.41 2009/07/19 00:28:27 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.42 2010/01/24 22:30:55 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.42 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/19 00:28:27 $
+ * Date:        $Date: 2010/01/24 22:30:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -96,8 +96,8 @@ import org.opencrx.kernel.product1.jmi1.Product;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.UserObjects;
-import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.exception.BasicException;
+import org.w3c.format.DateTimeFormat;
 
 public class Depots extends AbstractImpl {
 
@@ -1026,7 +1026,7 @@ public class Depots extends AbstractImpl {
             );                                                
         }
         List<String> principals = UserObjects.getPrincipalChain(pm);
-        String acceptedBy = principals.isEmpty() ? "NA" : principals.get(0) + " @ " + DateFormat.getInstance().format(new Date());
+        String acceptedBy = principals.isEmpty() ? "NA" : principals.get(0) + " @ " + DateTimeFormat.BASIC_UTC_FORMAT.format(new Date());
         compoundBooking.getAcceptedBy().add(acceptedBy);
     }
     

@@ -2,7 +2,7 @@
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
-/* Copyright (c) 2004-2009, CRIXP Corp., Switzerland                         */
+/* Copyright (c) 2004-2010, CRIXP Corp., Switzerland                         */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* Redistribution and use in source and binary forms, with or without        */
@@ -96,12 +96,13 @@
 #define STRSUB SUBSTRING
 #define STRLEN LEN
 #define REORG_TABLE(t)
+#define P_PARENT p$$parent
 
-#elif defined(HSQLDB_1)
+#elif defined(HSQLDB_2)
 -- This software is published under the BSD license                          
 -- as listed below.                                                          
 --                                                                           
--- Copyright (c) 2004-2009, CRIXP Corp., Switzerland                              
+-- Copyright (c) 2004-2010, CRIXP Corp., Switzerland                              
 -- All rights reserved.                                                      
 --                                                                           
 -- Redistribution and use in source and binary forms, with or without        
@@ -194,12 +195,13 @@
 #define STRSUB SUBSTRING
 #define STRLEN LEN
 #define REORG_TABLE(t)
+#define P_PARENT "P$$PARENT"
 
 #elif defined(SQL_SERVER_2005)
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
-/* Copyright (c) 2004-2009, CRIXP Corp., Switzerland                         */
+/* Copyright (c) 2004-2010, CRIXP Corp., Switzerland                         */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* Redistribution and use in source and binary forms, with or without        */
@@ -293,12 +295,13 @@
 #define STRSUB SUBSTRING
 #define STRLEN LEN
 #define REORG_TABLE(t)
+#define P_PARENT p$$parent
 
 #elif defined(MYSQL_5)
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
-/* Copyright (c) 2004-2009, CRIXP Corp., Switzerland                         */
+/* Copyright (c) 2004-2010, CRIXP Corp., Switzerland                         */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* Redistribution and use in source and binary forms, with or without        */
@@ -392,12 +395,13 @@
 #define STRSUB SUBSTRING
 #define STRLEN LEN
 #define REORG_TABLE(t)
+#define P_PARENT p$$parent
 
 #elif defined(ORACLE_10)
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
-/* Copyright (c) 2004-2009, CRIXP Corp., Switzerland                         */
+/* Copyright (c) 2004-2010, CRIXP Corp., Switzerland                         */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* Redistribution and use in source and binary forms, with or without        */
@@ -491,12 +495,13 @@
 #define STRSUB SUBSTR
 #define STRLEN LENGTH
 #define REORG_TABLE(t)
+#define P_PARENT p$$parent
 
 #elif defined(DB2_9)
 -- This software is published under the BSD license                          
 -- as listed below.                                                          
 --                                                                           
--- Copyright (c) 2004-2009, CRIXP Corp., Switzerland                              
+-- Copyright (c) 2004-2010, CRIXP Corp., Switzerland                              
 -- All rights reserved.                                                      
 --                                                                           
 -- Redistribution and use in source and binary forms, with or without        
@@ -590,5 +595,6 @@
 #define STRSUB SUBSTRING
 #define STRLEN LEN
 #define REORG_TABLE(table) REORG TABLE table
+#define P_PARENT p$$parent
 
 #endif

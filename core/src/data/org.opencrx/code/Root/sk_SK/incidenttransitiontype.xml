@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="incidentTransitionType" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="incidentTransitionType" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
                           <_object>
                             <shortText>
                               <_item>potvrdiť príjem</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
                           <_object>
                             <shortText>
                               <_item>potvrdiť</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
                           <_object>
                             <shortText>
                               <_item>prideliť</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
                           <_object>
                             <shortText>
                               <_item>odozva</_item>
@@ -70,18 +70,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>zastaviť</_item>
+                              <_item>odložiť</_item>
                             </shortText>
                             <longText>
-                              <_item>zastaviť</_item>
+                              <_item>odložiť</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
                           <_object>
                             <shortText>
                               <_item>pridať poznámku</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
                           <_object>
                             <shortText>
                               <_item>pripomenúť</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
                           <_object>
                             <shortText>
                               <_item>neskoršie</_item>
@@ -114,18 +114,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>nejde upraviť</_item>
+                              <_item>nedá sa opraviť</_item>
                             </shortText>
                             <longText>
-                              <_item>nejde upraviť</_item>
+                              <_item>nedá sa opraviť</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
                           <_object>
                             <shortText>
                               <_item>neplatný</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="create">
                           <_object>
                             <shortText>
                               <_item>duplikát</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
                           <_object>
                             <shortText>
                               <_item>presunutý</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="460" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="460" _operation="create">
                           <_object>
                             <shortText>
                               <_item>pracuje pre mňa</_item>
@@ -169,7 +169,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1000" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1000" _operation="create">
                           <_object>
                             <shortText>
                               <_item>opravený</_item>

@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BulkEmail.jsp,v 1.2 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: BulkEmail.jsp,v 1.6 2010/04/28 08:24:08 cmu Exp $
  * Description: create Bulk E-mail (e.g. for campaign)
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/28 08:24:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,8 +88,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
     try {
       items = upload.parseRequest(
         request,
-        15000000, // request size threshold [memory limit]
-        15000000, // max request size [overall limit]
+        200, // in-memory threshold. Content for fields larger than threshold is written to disk
+	      50000000, // max request size [overall limit]
         app.getTempDirectory().getPath()
       );
 		}
@@ -111,8 +111,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
       if (uploadFailed) {
         items = upload.parseRequest(
           request,
-          40000000, // request size threshold [memory limit]
-          40000000, // max request size [overall limit]
+          200, // in-memory threshold. Content for fields larger than threshold is written to disk
+          60000000, // max request size [overall limit]
           app.getTempDirectory().getPath()
         );
       }
@@ -187,7 +187,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
     );
     return;
   }
-  javax.jdo.PersistenceManager pm = app.getPmData();
+  javax.jdo.PersistenceManager pm = app.getNewPmData();
   Texts_1_0 texts = app.getTexts();
 
 %>
@@ -575,7 +575,6 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams wfparams = basePkg.createExecuteWorkflowParams(
                 null,
                 (org.openmdx.base.jmi1.BasicObject) newActivity,
-                "",
                 null,
                 null,
                 null,
@@ -638,7 +637,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                     <td class="label"><span class="nw"><%= userView.getFieldLabel(ACTIVITYCREATOR_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
                       <select class="valueL" name="activityCreatorSelector" tabindex="10">
-                        <option value="0">N/A
+                        <option value="0">N/A</option>
 <%
                         // get ActivityCreators sorted by name (asc) for SalesRep responsible for customer
                         org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorFilter = activityPkg.createActivityCreatorQuery();
@@ -676,7 +675,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                             counter++;
                             selectedModifier = (activityCreatorSelector != null) && (activityCreatorSelector.compareTo((activityCreator.refMofId()).toString()) == 0) ? "selected" : "";
 %>
-                            <option <%= selectedModifier %> value="<%= activityCreator.refMofId() %>"><%= activityCreator.getName() != null ? activityCreator.getName() : "Kein Name" %><%= activityCreator.getDescription() != null ? " / " + activityCreator.getDescription() : "" %>
+                            <option <%= selectedModifier %> value="<%= activityCreator.refMofId() %>"><%= activityCreator.getName() != null ? activityCreator.getName() : "Kein Name" %><%= activityCreator.getDescription() != null ? " / " + activityCreator.getDescription() : "" %></option>
 <%
                           }
                         }
@@ -689,7 +688,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
        	      </fieldset>
 
             	<fieldset>
-            		<legend><span><img border=0 src="../../images/EMail.gif" alt="E-mail" /></span></legend>
+            		<legend><span><img border="0" src="../../images/EMail.gif" alt="E-mail" /></span></legend>
                 <table class="fieldGroup">
                   <tr>
                     <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
@@ -826,7 +825,6 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                       <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%= findAddressGroupObjectAction.getIconKey() %>" onclick="OF.findObject('../../<%= findAddressGroupObjectAction.getEncodedHRef(requestId) %>', document.forms['bulkEmail'].elements['bulkRecipientGroupXri.Title'], document.forms['bulkEmail'].elements['bulkRecipientGroupXri'], '<%= addressGroupLookupId %>');" />
                     </td>
                   </tr>
-                  </tr>
                   <tr>
                     <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "messageSubject", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
@@ -837,7 +835,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                   <tr>
                     <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "messageBody", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
-                      <textarea id="messageBody" name="messageBody" rows=6 style="font-family:courier;" tabindex="80"><%= messageBody %></textarea>
+                      <textarea id="messageBody" name="messageBody" rows="6" style="font-family:courier;" tabindex="80"><%= messageBody %></textarea>
                     </td>
                     <td class="addon" ></td>
                   </tr>
@@ -889,8 +887,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               </fieldset>
 
               <fieldset>
-            		<legend><span><img border=0 src="../../images/Document.gif" alt="Attachment(s)" /></span></legend>
-                <input type="file" size=50 name="uploadFile" tabindex="600" /><INPUT type="Submit" name="Verify.Button" tabindex="601" value="Upload" />
+            		<legend><span><img border="0" src="../../images/Document.gif" alt="Attachment(s)" /></span></legend>
+                <input type="file" size="50" name="uploadFile" tabindex="600" /><INPUT type="Submit" name="Verify.Button" tabindex="601" value="Upload" />
                 <hr>
 <%
                 int j = 0;
@@ -906,8 +904,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 %>
                   <div>
                     <input type="hidden" name="filename<%= j %>" value="<%= filename %>">
-                    <b><%= contentName %></b> [<%= contentMimeType %>] <input type="button" value="X" onclick="javascript:debugger;
-                    this.parentNode.parentNode.removeChild( this.parentNode );" >
+                    <b><%= contentName %></b> [<%= contentMimeType %>] <input type="button" value="X" onclick="javascript:this.parentNode.parentNode.removeChild( this.parentNode );" >
                   </div>
 <%
                   j++;
@@ -998,6 +995,10 @@ org.openmdx.uses.org.apache.commons.fileupload.*
              request.getContextPath() + "/" + nextAction.getEncodedHRef()
           );
           */
+        } finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
         }
 %>
       </div> <!-- content -->

@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateLeadWizard.jsp,v 1.15 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: CreateLeadWizard.jsp,v 1.17 2010/04/27 12:16:10 wfro Exp $
  * Description: CreateLeadWizard
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,7 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -146,7 +146,7 @@ org.openmdx.base.naming.*
 	    org.opencrx.kernel.account1.jmi1.Contact contact = (org.opencrx.kernel.account1.jmi1.Contact)obj;
 	    formValues.put(
 	        "org:opencrx:kernel:contract1:AbstractContract:customer",
-	        contact
+	        contact.refGetPath()
 	    );
 	    if(contact.getAliasName() != null) {
 		    formValues.put(
@@ -156,7 +156,10 @@ org.openmdx.base.naming.*
 	    }
 	}
 	if(actionCreate) {
-	    org.opencrx.kernel.account1.jmi1.Contact customer = (org.opencrx.kernel.account1.jmi1.Contact)formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer");
+	    org.opencrx.kernel.account1.jmi1.Contact customer = formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer") != null ?
+	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer")
+	    	) : null;
 	    String name = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:name");
 	    String contractNumber = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:contractNumber");
 	    Short leadSource = (Short)formValues.get("org:opencrx:kernel:contract1:Lead:leadSource");
@@ -210,7 +213,8 @@ org.openmdx.base.naming.*
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -255,4 +259,7 @@ org.openmdx.base.naming.*
 </script>
 <%
 p.close(false);
+if(pm != null) {
+	pm.close();
+}
 %>

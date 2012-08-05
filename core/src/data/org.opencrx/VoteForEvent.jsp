@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.14 2009/09/21 13:20:50 cmu Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.15 2010/02/23 12:44:41 wfro Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.14 $
+ * Revision:	$Revision: 1.15 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2009/09/21 13:20:50 $
+ * Date:		$Date: 2010/02/23 12:44:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -379,7 +379,7 @@ java.text.*"
 				Enumeration propertyNames = eventAndPollInfo.propertyNames();
 				GregorianCalendar date = new GregorianCalendar();
 				date.setTimeZone(timezone);
-				org.openmdx.base.text.format.DateFormat dateFormat = org.openmdx.base.text.format.DateFormat.getInstance();
+				org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 				while(propertyNames.hasMoreElements()) {
 					String propertyName = (String)propertyNames.nextElement();
 					if(propertyName.startsWith("event.")) {

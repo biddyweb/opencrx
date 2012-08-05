@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ConnectionHelper.jsp,v 1.11 2009/10/15 16:19:33 wfro Exp $
+ * Name:        $Id: ConnectionHelper.jsp,v 1.16 2010/04/27 12:16:10 wfro Exp $
  * Description: Generate vCard/iCal/CalDAV URLs
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:33 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,17 +88,17 @@ org.openmdx.kernel.log.*
       return;
    }
    Texts_1_0 texts = app.getTexts();
-   javax.jdo.PersistenceManager pm = app.getPmData();
+   javax.jdo.PersistenceManager pm = app.getNewPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 
 <head>
-  <title><%= app.getApplicationName() %> - Calendar / vCard Connection Helper</title>
+  <title><%= app.getApplicationName() %> - Connection Helper: AirSync / Calendar / vCard</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="label" content="Calendar / vCard Connection Helper">
-  <meta name="toolTip" content="Calendar / vCard Connection Helper">
+  <meta name="label" content="Connection Helper: AirSync / Calendar / vCard">
+  <meta name="toolTip" content="Connection Helper: AirSync / Calendar / vCard">
   <meta name="targetType" content="_blank">
   <!-- calendars based on activities -->
   <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
@@ -108,6 +108,7 @@ org.openmdx.kernel.log.*
   <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGroup">
   <meta name="forClass" content="org:opencrx:kernel:activity1:Resource">
   <meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
+  <meta name="forClass" content="org:opencrx:kernel:home1:AirSyncProfile">
   <meta name="forClass" content="org:opencrx:kernel:home1:CalendarProfile">
   <!-- calendars based on contacts -->
   <meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal"> <!-- bday -->
@@ -128,7 +129,7 @@ org.openmdx.kernel.log.*
   try {
 	  boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
     boolean mustReload = request.getParameter("mustReload") != null;
-    System.out.println("must reload = " + mustReload);
+    //System.out.println("must reload = " + mustReload);
 
     RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
     Path objectPath = obj.refGetPath();
@@ -149,8 +150,8 @@ org.openmdx.kernel.log.*
     String type = request.getParameter("type") != null ? request.getParameter("type") : "";
     String selectorType = request.getParameter("selectorType") != null ? request.getParameter("selectorType") : "";
 
-    System.out.println("anchor = " + anchorObjectXri);
-    System.out.println("obj    = " + obj.refMofId());
+    //System.out.println("anchor = " + anchorObjectXri);
+    //System.out.println("obj    = " + obj.refMofId());
 
     final String ACTIVITYTRACKER_CLASS = "org:opencrx:kernel:activity1:ActivityTracker";
     final String ACTIVITYCATEGORY_CLASS = "org:opencrx:kernel:activity1:ActivityCategory";
@@ -169,6 +170,7 @@ org.openmdx.kernel.log.*
     final String HTML_COMMENT_END = " -->";
     final String UNKNOWN = "_?_";
 
+    final String TYPE_AIRSYNC               = "AirSync";
     final String TYPE_CALENDAR              = "Calendar";
     final String TYPE_VCARD                 = "vCard";
 
@@ -178,6 +180,7 @@ org.openmdx.kernel.log.*
     final String SELTYPE_FILTERED           = "Filtered";
     final String SELTYPE_GLOBALFILTER       = "globalfilter";
     final String SELTYPE_USERHOME           = "userhome";
+    final String SELTYPE_AIRSYNCPROFILE     = "airsyncprofile";
     final String SELTYPE_CALENDARPROFILE    = "calendarprofile";
     final String SELTYPE_RESOURCE           = "resource";
     final String SELTYPE_BDAY               = "bday";
@@ -192,6 +195,7 @@ org.openmdx.kernel.log.*
     final String optionSummaryPrefixDefault = "";
     final String optionTypeHtml = "html";
     final String optionTypeCalDAV = "CalDAV";
+    final String optionTypeAirSync = "AirSync";
     final String optionTypeIcs  = "ics";
     final String optionTypeXml  = "xml";
     final String optionIcalTypeEvent= "VEVENT";
@@ -209,10 +213,11 @@ org.openmdx.kernel.log.*
     String anchorObjectFilteredXriFromInitialObject = null;
 
     String target = "";
+    String server = "";
     String options = "";
                                                                                                                                   // default                    options          available for sourceTypes
     String sourceType          = request.getParameter("sourceType")          != null ? request.getParameter("sourceType"         ) : optionSourceActivities; // [freebusy|activities|bdays]
-    String optionType          = request.getParameter("optionType")          != null ? request.getParameter("optionType"         ) : optionTypeIcs;          // [CalDAV|ics|xml|html]   activities
+    String optionType          = request.getParameter("optionType")          != null ? request.getParameter("optionType"         ) : optionTypeIcs;          // [AirSync|CalDAV|ics|xml|html] activities
     String optionDisabled      = request.getParameter("optionDisabled")      != null ? request.getParameter("optionDisabled"     ) : optionValueFALSE;       // [true|false]     activities, freebusy
     String optionAlarm         = request.getParameter("optionAlarm")         != null ? request.getParameter("optionAlarm"        ) : optionValueFALSE;       // [true|false]     bdays
     String optionIcalType      = request.getParameter("optionIcalType")      != null ? request.getParameter("optionIcalType"     ) : optionIcalTypeEvent;    // [VTODO|VEVENT]   bdays
@@ -226,6 +231,9 @@ org.openmdx.kernel.log.*
     String optionHeight        = request.getParameter("optionHeight")        != null ? request.getParameter("optionHeight"       ) : "500";                  // in pixels        activities/xml
 
     int tabIndex = 0;
+
+    // get current userHome
+    org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
 
     org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
     org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
@@ -303,12 +311,24 @@ org.openmdx.kernel.log.*
         typeFromInitialObject = TYPE_CALENDAR;
         selectorTypeFromInitialObject = SELTYPE_CALENDARPROFILE + selectorTypeFromInitialObject;
         optionType = optionTypeCalDAV;
-        org.opencrx.kernel.home1.jmi1.CalendarProfile calendarProfile =
-            (org.opencrx.kernel.home1.jmi1.CalendarProfile)obj;
-        if ((calendarProfile.getName() != null) && (calendarProfile.getName().length() > 0)) {
-            // userhome is parent object of calendarProfile --> get parent object
+        org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile =
+            (org.opencrx.kernel.home1.jmi1.SyncProfile)obj;
+        if ((syncProfile.getName() != null) && (syncProfile.getName().length() > 0)) {
+            // userhome is parent object of syncProfile --> get parent object
         	  org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(obj.refMofId()).getParent().getParent());
-            groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + URLEncoder.encode(calendarProfile.getName(), "UTF-8");
+            groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + URLEncoder.encode(syncProfile.getName(), "UTF-8");
+        }
+    }
+    else if(obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile) {
+        typeFromInitialObject = TYPE_AIRSYNC;
+        selectorTypeFromInitialObject = SELTYPE_AIRSYNCPROFILE + selectorTypeFromInitialObject;
+        optionType = optionTypeAirSync;
+        org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile =
+            (org.opencrx.kernel.home1.jmi1.SyncProfile)obj;
+        if ((syncProfile.getName() != null) && (syncProfile.getName().length() > 0)) {
+            // userhome is parent object of syncProfile --> get parent object
+        	  org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(obj.refMofId()).getParent().getParent());
+            groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + URLEncoder.encode(syncProfile.getName(), "UTF-8");
         }
     }
     else if(obj instanceof org.opencrx.kernel.activity1.jmi1.Resource) {
@@ -337,7 +357,7 @@ org.openmdx.kernel.log.*
           filterComponent = "/filter/" + URLEncoder.encode(accountFilterGlobal.getName(), "UTF-8");
           anchorObjectFilteredXriFromInitialObject = accountFilterGlobal.refMofId();
         }
-      }
+    }
 
     if (anchorObjectFilteredXriFromInitialObject != null) {
         anchorObjectXriFromInitialObject = anchorObjectFilteredXriFromInitialObject;
@@ -347,18 +367,24 @@ org.openmdx.kernel.log.*
     selectorType = request.getParameter("selectorType") != null ? request.getParameter("selectorType") : selectorTypeFromInitialObject;
     String anchorObjectLabel = "Anchor object";
 
-    if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
+    if (type.compareTo(optionTypeAirSync) == 0) {
+        target = urlBase.replace("-core-", "-airsync-") + "/Microsoft-Server-ActiveSync/";
+        /* selectorType = SELTYPE_AIRSYNCPROFILE; */
+        java.security.cert.X509Certificate certs [] = (java.security.cert.X509Certificate [])
+          request.getAttribute("javax.servlet.request.X509Certificate");
+        server = request.getServerName() + ":" + request.getServerPort() + request.getContextPath().replace("-core-", "-airsync-") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + ((certs != null) && (certs.length > 0) ? "yes" : "no") + "]";
+    } else if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
         if (type.compareTo(TYPE_CALENDAR) == 0) {
-            if ((optionType.compareTo(optionTypeCalDAV) == 0) && (sourceType.compareTo(optionSourceActivities) == 0)) {
+            if ((optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeAirSync) == 0) && (sourceType.compareTo(optionSourceActivities) == 0)) {
                 target =
-                		urlBase.replace("-core-", "-caldav-") + "/" +
-                		providerName + "/" + segmentName +
-                		groupComponent + filterComponent;
+                    urlBase.replace("-core-", "-caldav-") + "/" +
+                    providerName + "/" + segmentName +
+                    groupComponent + filterComponent;
             } else {
                 target =
-                		urlBase.replace("-core-", "-ical-") + "/" + sourceType + "?id=" +
-                		providerName + "/" + segmentName +
-                		groupComponent + filterComponent;
+                    urlBase.replace("-core-", "-ical-") + "/" + sourceType + "?id=" +
+                    providerName + "/" + segmentName +
+                    groupComponent + filterComponent;
             }
         } else if (type.compareTo(TYPE_VCARD) == 0) {
             target =
@@ -506,22 +532,39 @@ org.openmdx.kernel.log.*
         }
     } else if (selectorType.compareTo(SELTYPE_CALENDARPROFILE) == 0) {
         anchorObjectLabel = app.getLabel(CALENDARPROFILE_CLASS);
-        // get current userHome
-        org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
         org.opencrx.kernel.account1.jmi1.Contact contact = null;
         try {
             contact = currentUserHome.getContact();
         } catch (Exception e) {}
         String principal = currentUserHome.refGetPath().getBase();
         int index = 0;
-        for(Iterator i = currentUserHome.getCalendarProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.home1.jmi1.CalendarProfile calendarProfile = (org.opencrx.kernel.home1.jmi1.CalendarProfile)i.next();
-            String display = (calendarProfile.getName() != null ? calendarProfile.getName() : "?") + " [" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " /" + principal + "]";
+        for(Iterator i = currentUserHome.getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = (org.opencrx.kernel.home1.jmi1.SyncProfile)i.next();
+            String display = (syncProfile.getName() != null ? syncProfile.getName() : "?")
+              + (syncProfile instanceof org.opencrx.kernel.home1.jmi1.CalendarProfile ? " {Calendar}" : " {AirSync}")
+              + " [" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " /" + principal + "]";
             String sortKey = display.toUpperCase() + formatter.format(index++);
             orderedanchorObjects.put(
                 HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
-                calendarProfile.refMofId()
+                syncProfile.refMofId()
             );
+        }
+    } else if (selectorType.compareTo(SELTYPE_AIRSYNCPROFILE) == 0) {
+        anchorObjectLabel = optionTypeAirSync;
+        int index = 0;
+        for(Iterator i = currentUserHome.getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = (org.opencrx.kernel.home1.jmi1.SyncProfile)i.next();
+            if (
+                (syncProfile instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile) &&
+                (syncProfile.getName() != null && syncProfile.getName().compareTo(TYPE_AIRSYNC) == 0)
+            ) {
+                String display = (syncProfile.getName() != null ? syncProfile.getName() : "?");
+                String sortKey = display.toUpperCase() + formatter.format(index++);
+                orderedanchorObjects.put(
+                    HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+                    syncProfile.refMofId()
+                );
+            }
         }
     } else if (selectorType.compareTo(SELTYPE_RESOURCE) == 0) {
         anchorObjectLabel = app.getLabel(RESOURCE_CLASS);
@@ -593,6 +636,7 @@ org.openmdx.kernel.log.*
                     <td class="label"><span class="nw"><%= userView.getFieldLabel(RESOURCEASSIGNMENT_CLASS, "resourceRole", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
                         <select class="valueL" id="type" name="type" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('mustReload').checked = true;$('reload.button').click();">
+                            <option <%= type.compareTo(TYPE_AIRSYNC ) == 0 ? "selected" : "" %> value="<%= TYPE_AIRSYNC  %>"><%= TYPE_AIRSYNC  %></option>
                             <option <%= type.compareTo(TYPE_CALENDAR) == 0 ? "selected" : "" %> value="<%= TYPE_CALENDAR %>"><%= TYPE_CALENDAR %></option>
                             <option <%= type.compareTo(TYPE_VCARD   ) == 0 ? "selected" : "" %> value="<%= TYPE_VCARD    %>"><%= TYPE_VCARD    %></option>
                         </select>
@@ -600,7 +644,7 @@ org.openmdx.kernel.log.*
                     <td class="addon"></td>
                   </tr>
 
-                  <tr>
+                  <tr <%= type.compareTo(TYPE_AIRSYNC) == 0 ? "style='display:none;'" : "" %>>
 <%
                     if (type.compareTo(TYPE_CALENDAR) == 0) {
 %>
@@ -615,7 +659,7 @@ org.openmdx.kernel.log.*
                                 <option <%= selectorType.compareTo(SELTYPE_MILESTONE + SELTYPE_FILTERED) == 0 ? "selected" : "" %> value="<%= SELTYPE_MILESTONE + SELTYPE_FILTERED %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS)    %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
                                 <option <%= selectorType.compareTo(SELTYPE_GLOBALFILTER                ) == 0 ? "selected" : "" %> value="<%= SELTYPE_GLOBALFILTER                 %>"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %></option>
                                 <option <%= selectorType.compareTo(SELTYPE_USERHOME                    ) == 0 ? "selected" : "" %> value="<%= SELTYPE_USERHOME                     %>"><%= app.getLabel(USERHOME_CLASS)             %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_CALENDARPROFILE             ) == 0 ? "selected" : "" %> value="<%= SELTYPE_CALENDARPROFILE              %>">CalDAV <%= app.getLabel(CALENDARPROFILE_CLASS)      %></option>
+                                <option <%= selectorType.compareTo(SELTYPE_CALENDARPROFILE             ) == 0 ? "selected" : "" %> value="<%= SELTYPE_CALENDARPROFILE              %>">CalDAV <%= app.getLabel(CALENDARPROFILE_CLASS) %></option>
                                 <option <%= selectorType.compareTo(SELTYPE_RESOURCE                    ) == 0 ? "selected" : "" %> value="<%= SELTYPE_RESOURCE                     %>"><%= app.getLabel(RESOURCE_CLASS)             %></option>
                                 <option <%= selectorType.compareTo(SELTYPE_BDAY                        ) == 0 ? "selected" : "" %> value="<%= SELTYPE_BDAY                         %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS)  %> / <%= userView.getFieldLabel(CONTACT_CLASS, "birthdate", app.getCurrentLocaleAsIndex()) %></option>
                             </select>
@@ -636,7 +680,7 @@ org.openmdx.kernel.log.*
 %>
                   </tr>
 
-                  <tr>
+                  <tr <%= type.compareTo(TYPE_AIRSYNC) == 0 ? "style='display:none;'" : "" %>>
                     <td class="label"><span class="nw"><%= anchorObjectLabel %>:</span></td>
                     <td>
 <%
@@ -671,7 +715,7 @@ org.openmdx.kernel.log.*
 	                          </select>
 <%
                             if ((anchorObjectXri != null) && (anchorObjectXri.length() > 0) && (!hasSelection)) {
-                            	   mustReload = true;
+                                mustReload = true;
                             }
                         }
 %>
@@ -792,7 +836,7 @@ org.openmdx.kernel.log.*
                                 <td class="label"><span class="nw">Type:</span></td>
                                 <td>
                                     <select class="valueL" id="optionType" name="optionType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-                                        <option <%= optionType.compareTo(optionTypeCalDAV) == 0 ? "selected" : "" %> value="<%= optionTypeCalDAV %>"><%= optionTypeCalDAV %></option>
+                                        <option <%= optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeAirSync) == 0 ? "selected" : "" %> value="<%= optionTypeCalDAV %>"><%= optionTypeCalDAV %></option>
 <%
                                         if (selectorType.compareTo(SELTYPE_CALENDARPROFILE) != 0) {
 %>
@@ -808,7 +852,10 @@ org.openmdx.kernel.log.*
                               </tr>
 <%
                               boolean hasSelection = false;
-                              if (optionType.compareTo(optionTypeCalDAV)  == 0) {
+                              if (
+                                  optionType.compareTo(optionTypeCalDAV)  == 0 ||
+                                  optionType.compareTo(optionTypeAirSync) == 0
+                              ) {
                                   //options += "&type=" + optionTypeCalDAV; this is NOT needed
                                   hasSelection = true;
                                   optionDisabled = optionValueFALSE; // CalDAV does NOT support this option
@@ -846,7 +893,7 @@ org.openmdx.kernel.log.*
                           if (optionDisabled.compareTo(optionValueTRUE) == 0) {options += "&disabled=" + optionValueTRUE;}
 
 %>
-                          <tr title="activate filter 'disabled' to process disabled activities only" <%= (sourceType.compareTo(optionSourceActivities) == 0) && (optionType.compareTo(optionTypeCalDAV)  == 0) ? "style='display:none;'" : "" %>>
+                          <tr title="activate filter 'disabled' to process disabled activities only" <%= (sourceType.compareTo(optionSourceActivities) == 0) && (optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeAirSync) == 0) ? "style='display:none;'" : "" %>>
                             <td class="label"><span class="nw">Filter <i>disabled</i>:</span></td>
                             <td>
                                 <select class="valueL" id="optionDisabled" name="optionDisabled" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
@@ -877,6 +924,30 @@ org.openmdx.kernel.log.*
 %>
                 <br>
                 URL: <a href="<%= target + options %>" target="_blank"><%= target + options %></a><br>
+<%
+            }
+            if (server != null && server.length() > 0) {
+%>
+                <br>
+                <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
+                <table class="fieldGroup">
+                  <tr>
+                    <td class="label"><span class="nw">Server:</span></td>
+                    <td><b><%= server %></b></td>
+                    <td class="addon"></td>
+                  </tr>
+                  <tr>
+                    <td class="label"><span class="nw">Domain:</span></td>
+                    <td><b><%= segmentName %></b></td>
+                    <td class="addon"></td>
+                  </tr>
+                  <tr>
+                    <td class="label"><span class="nw">Username:</span></td>
+                    <td><b><%= currentUserHome.refGetPath().getBase() %></b></td>
+                    <td class="addon"></td>
+                  </tr>
+                </table>
+                </div>
 <%
             }
 %>
@@ -917,5 +988,9 @@ org.openmdx.kernel.log.*
     response.sendRedirect(
       request.getContextPath() + "/" + nextAction.getEncodedHRef()
     );
+  } finally {
+	  if(pm != null) {
+		  pm.close();
+	  }
   }
 %>

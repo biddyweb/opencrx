@@ -16,7 +16,7 @@
 </head>
 
 <%
-  response.sendRedirect("../../WorkflowController/");
+	response.sendRedirect(request.getContextPath() + "/WorkflowController/");
 %>
 
 </html>

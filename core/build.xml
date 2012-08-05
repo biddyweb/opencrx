@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.402 2009/10/26 14:34:30 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.419 2010/04/30 13:12:20 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.402 $
- * = Date:        $Date: 2009/10/26 14:34:30 $
+ * = Revision:    $Revision: 1.419 $
+ * = Date:        $Date: 2010/04/30 13:12:20 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -51,23 +51,23 @@
  * openMDX (http://www.openmdx.org/)
 -->
 <project 
-  name="opencrx-core" 
-  default="-projecthelp" 
+	name="opencrx-core" 
+	default="-projecthelp" 
 	xmlns:openmdx="xri://(antlib:org.openmdx.tools.ant)"
 	xmlns:antcontrib="antlib:net.sf.antcontrib"
 >
 	<description>Build the openCRX project Core</description>
 	<property name="project.specification.title" value="openCRX/Core"/>
 	<!-- Slash separated platform list, the last entry being the default -->
-	<property name="project.platform.list" value="jre-1.5"/>
+	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.5.3"/>
+	<property name="openmdx.version" value="2.6.0"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
 	<import file="../../openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../../openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
-  <property name="install-bin.callback" value="install-bin.callback"/>  	
+  	<property name="install-bin.callback" value="install-bin.callback"/>  	
 	<!-- Check existence of openmdx/core -->
 	<available file="../opt/openmdx-${openmdx.version}/core/build.xml" property="openmdx.core.available.option.1"/>
 	<available file="../../openmdx-${openmdx.version}/core/build.xml" property="openmdx.core.available.option.2"/>
@@ -151,6 +151,7 @@
 		<pathelement location="../apache/${build.target.platform}/poi/lib/poi-scratchpad.jar"/>
 		<pathelement location="../pdfbox/${build.target.platform}/pdfbox/lib/PDFBox.jar"/>
 		<pathelement location="../pdfbox/${build.target.platform}/pdfbox/lib/FontBox.jar"/>
+		<pathelement location="../octo/${build.target.platform}/captcha/lib/jcaptcha-all.jar"/>
 	</path>
 	<path id="project.bin.classpath">
 		<path refid="project.lib.classpath"/>
@@ -160,11 +161,11 @@
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
 		<pathelement location="../opt/mysql/${build.target.platform}/mysql-5/lib/mysql-connector-java-bin.jar"/>
 		<pathelement location="../opt/microsoft/${build.target.platform}/sql-server-2005/lib/sqljdbc.jar"/>
-		<pathelement location="../opt/postgresql/${build.target.platform}/postgresql-8/lib/postgresql-8.3.jdbc3.jar"/>
+		<pathelement location="../opt/postgresql/${build.target.platform}/postgresql-8/lib/postgresql-8.4.jdbc4.jar"/>
 		<pathelement location="../opt/oracle/${build.target.platform}/oracle-10/lib/ojdbc14.jar"/>
 		<pathelement location="../opt/ibm/${build.target.platform}/db2-9/lib/db2jcc.jar"/>
 		<pathelement location="../opt/ibm/${build.target.platform}/db2-9/lib/db2jcc_license_cu.jar"/>
-		<pathelement location="../opt/hsqldb/${build.target.platform}/hsqldb-1/lib/hsqldb.jar"/>
+		<pathelement location="../opt/hsqldb/${build.target.platform}/hsqldb-2/lib/hsqldb.jar"/>
 	</path>
 	<path id="utilities.bin.classpath">
 		<path refid="project.lib.classpath"/>
@@ -179,24 +180,6 @@
 		<include name="**/*.xml"/>
 		<include name="**/*.html"/>
 		<include name="META-INF/*.properties"/>
-		<exclude name="openmdx-base.jar"/>
-		<exclude name="opencrx-system.jar"/>
-		<exclude name="opencrx-mail.jar"/>
-		<exclude name="opencrx-extension.jar"/>
-		<exclude name="opencrx-security.jar"/>
-		<exclude name="openmdx-application.jar"/>
-		<exclude name="openmdx-security.jar"/>
-		<exclude name="openmdx-base.jar"/>
-		<exclude name="openmdx-system.jar"/>
-		<exclude name="openjpa.jar"/>
-		<exclude name="commons-collections.jar"/>
-		<exclude name="commons-lang.jar"/>
-		<exclude name="FontBox.jar"/>
-		<exclude name="PDFBox.jar"/>
-		<exclude name="poi.jar"/>
-		<exclude name="poi-scratchpad.jar"/>
-		<exclude name="plugins/**/*.jar"/>
-		<exclude name="WEB-INF/lib/*.jar"/>
 		<patternset refid="jboss-3.edition.pattern"/>
 		<patternset refid="weblogic-7.edition.pattern"/>
 		<patternset refid="websphere-5.edition.pattern"/>
@@ -244,6 +227,8 @@
 			<replacestring from="opencrx-vcard-CRX" to="opencrx-vcard-${web.application.name}"/>			
 			<replacestring from="opencrx-news-CRX" to="opencrx-news-${web.application.name}"/>			
 			<replacestring from="opencrx-rest-CRX" to="opencrx-rest-${web.application.name}"/>			
+			<replacestring from="opencrx-ldap-CRX" to="opencrx-ldap-${web.application.name}"/>
+			<replacestring from="opencrx-airsync-CRX" to="opencrx-airsync-${web.application.name}"/>
 			<replacestring from="org.opencrx.kernel.aop2.Configuration" to="${configuration.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1" to="${kernel.interception.plugin.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.type.Strict_1" to="${kernel.type.plugin.class.name}"/>
@@ -255,8 +240,17 @@
 			<replacestring from="Provider qualifiedName=&quot;CRX&quot;" to="Provider qualifiedName=&quot;${provider.name}&quot;"/>
 			<replacestring from="%IMPLEMENTATION_VERSION%" to="${project.implementation.version}"/>
 			<replacestring from="imap:143" to="imap:${imap.listenPort}"/>
+			<replacestring from="ldap:389" to="ldap:${ldap.listenPort}"/>
 		</tokenfilter>
 	</openmdx:archivefilterchain>
+	<!-- Project manifest -->
+	<openmdx:archivemanifest id="project.manifest">
+		<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
+		<attribute name="Specification-Version" value="${project.specification.version}"/>
+		<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
+		<attribute name="Implementation-Vendor-Id" value="${project.vendor.id}"/>
+		<attribute name="Implementation-Version" value="${project.implementation.version}-${build.starttime}"/>
+	</openmdx:archivemanifest>	
 	<!-- ******************************************************************* -->
 	<!-- * generate -->
 	<!-- ******************************************************************* -->
@@ -337,6 +331,7 @@
 				<include name="apache/${build.target.platform}/**"/>
 				<include name="pdfbox/${build.target.platform}/pdfbox/**"/>
 				<include name="lowagie/${build.target.platform}/itext/**"/>
+				<include name="octo/${build.target.platform}/captcha/**"/>
 				<include name="eclipse/${build.target.platform}/${base.dir.name}/**"/>
 			</openmdx:archivefileset>
 			<openmdx:archivefileset 
@@ -359,25 +354,19 @@
 					<include name="**/.classpath"/>
 				</patternset>
 				<tokenfilter>
-				    <replaceregex pattern="openCRX 2( \(.*\))? ~ " replace="openCRX 2 (${project.implementation.version}) ~ "/>
-				    <replaceregex pattern="openCRX Thirdparty( \(.*\))? ~ " replace="openCRX Thirdparty (${project.implementation.version}) ~ "/>
-				    <replaceregex pattern="openMDX 2( \(.*\))? ~ " replace="openMDX 2 (${openmdx.version}) ~ "/>
-				    <replaceregex pattern="openMDX Thirdparty( \(.*\))? ~ " replace="openMDX Thirdparty (${openmdx.version}) ~ "/>
+				    <replaceregex pattern="( \(.*\))? ~ " replace=" (${project.implementation.version}) ~ "/>
 				</tokenfilter>
-			</openmdx:archivefilterchain>		
+			</openmdx:archivefilterchain>
 		</openmdx:archive>
 	</target>
 	<!-- ******************************************************************* -->
 	<!-- * java-archives -->
 	<!-- ******************************************************************* -->
 	<target name="java-archives" depends="deliverables-init,build">
-
 		<!-- opencrx-kernel.jar -->
 		<openmdx:archive 
 		  destfile="${deliver.dir}/lib/opencrx-kernel.jar"
-		  format="jar"
-			duplicate="preserve"
-		>
+		  format="jar" duplicate="preserve">
 			<openmdx:archivemanifest refid="project.manifest"/>
 			<manifest>
 				<attribute name="Specification-Title" value="${project.specification.title} Library kernel"/>
@@ -399,12 +388,8 @@
 				<patternset refid="opencrx-kernel.jar.content"/>
 			</openmdx:archivefileset>
 		</openmdx:archive>
-
 		<!-- opencrx-extension.jar -->
-		<openmdx:archive
-			destfile="${deliver.dir}/lib/opencrx-extension.jar"
-			format="jar"
-	  >
+		<openmdx:archive destfile="${deliver.dir}/lib/opencrx-extension.jar" format="jar">
 			<openmdx:archivemanifest refid="project.manifest"/>
 			<manifest>
 				<attribute name="Specification-Title" value="${project.specification.title} Library extension"/>
@@ -420,13 +405,8 @@
 				<patternset refid="opencrx-extension.jar.content"/>
 			</openmdx:archivefileset>
 		</openmdx:archive>
-
 		<!-- opencrx-security.jar -->
-		<openmdx:archive
-			destfile="${deliver.dir}/lib/opencrx-security.jar"
-			format="jar"
-			duplicate="preserve"
-		>
+		<openmdx:archive destfile="${deliver.dir}/lib/opencrx-security.jar" format="jar" duplicate="preserve">
 			<openmdx:archivemanifest refid="project.manifest"/>
 			<manifest>
 				<attribute name="Specification-Title" value="${project.specification.title} Library security"/>
@@ -448,12 +428,8 @@
 				<patternset refid="opencrx-security.jar.content"/>
 			</openmdx:archivefileset>
 		</openmdx:archive>
-
 		<!-- opencrx-application.jar -->
-		<openmdx:archive
-			destfile="${deliver.dir}/lib/opencrx-application.jar"
-			format="jar"
-		>
+		<openmdx:archive destfile="${deliver.dir}/lib/opencrx-application.jar" format="jar">
 			<openmdx:archivemanifest refid="project.manifest"/>
 			<manifest>
 				<attribute name="Specification-Title" value="${project.specification.title} Library application"/>
@@ -466,12 +442,8 @@
 				<patternset refid="opencrx-application.jar.content"/>
 			</openmdx:archivefileset>
 		</openmdx:archive>
-
 		<!-- opencrx-mail.jar -->
-		<openmdx:archive
-			destfile="${deliver.dir}/lib/opencrx-mail.jar"
-			format="jar"
-		>
+		<openmdx:archive destfile="${deliver.dir}/lib/opencrx-mail.jar" format="jar">
 			<openmdx:archivemanifest refid="project.manifest"/>
 			<manifest>
 				<attribute name="Specification-Title" value="${project.specification.title} Library mail"/>
@@ -484,7 +456,11 @@
 				<patternset refid="opencrx-mail.jar.content"/>
 			</openmdx:archivefileset>
 		</openmdx:archive>
-		
+		<!-- opencrx-resources.jar -->
+		<openmdx:archive format="jar" destfile="${deliver.dir}/lib/opencrx-resources.jar">
+			<zipfileset dir="src/jar/opencrx-resources.jar"/>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>		
 	</target>
 	<!-- ******************************************************************* -->
 	<!-- * assemble -->
@@ -506,6 +482,10 @@
 			<param name="news.target.name" value="opencrx-news-${web.application.name}"/>			
 			<param name="rest.source.name" value="opencrx-rest-CRX"/>
 			<param name="rest.target.name" value="opencrx-rest-${web.application.name}"/>			
+			<param name="ldap.source.name" value="opencrx-ldap-CRX"/>
+			<param name="ldap.target.name" value="opencrx-ldap-${web.application.name}"/>
+			<param name="airsync.source.name" value="opencrx-airsync-CRX"/>
+			<param name="airsync.target.name" value="opencrx-airsync-${web.application.name}"/>
 		</antcall>
 	</target>
 	<!-- ******************************************************************* -->
@@ -998,12 +978,104 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.rest/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.rest/META-INF" prefix="META-INF"/>
 			<openmdx:archivefilterchain refid="archive.filter"/>
-		</openmdx:archive>				
-		<!-- opencrx-resources.jar -->
-		<openmdx:archive format="jar" destfile="${build.dir}/lib/${app.target.name}/opencrx-resources.jar">
-			<zipfileset dir="src/ear/${app.source.name}.ear/APP-INF/lib/opencrx-resources.jar"/>
+		</openmdx:archive>	
+		<!-- opencrx-ldap-CRX.war -->
+		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${ldap.target.name}.war" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} LDAP WAR"/>
+				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
+			</manifest>
+			<zipfileset dir="${data.home}/src/data/${data.dir}.ldap/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>			
+			<!-- WEB-INF -->
+			<zipfileset dir="src/data/${data.dir.generic}.ldap/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>						
+			<zipfileset dir="src/ear/${app.source.name}.ear/${ldap.source.name}.war/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="tomcat-6.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- META-INF -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}.ldap/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.ldap/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/${data.dir.generic}.ldap/META-INF" prefix="META-INF"/>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
+		<!-- opencrx-airsync-CRX.war -->
+		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${airsync.target.name}.war" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} AirSync WAR"/>
+				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
+			</manifest>
+			<zipfileset dir="${data.home}/src/data/${data.dir}.airsync/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>			
+			<!-- WEB-INF -->
+			<zipfileset dir="src/data/${data.dir.generic}.airsync/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>			
+			<zipfileset dir="src/ear/${app.source.name}.ear/${airsync.source.name}.war/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="tomcat-6.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- META-INF -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}.airsync/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.airsync/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/${data.dir.generic}.airsync/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/org.opencrx.airsync">
+				<include name="**/*.js"/>
+				<include name="**/*.gif"/>
+				<include name="**/*.png"/>
+				<include name="**/*.css"/>
+			</zipfileset>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>
+		<!-- opencrx-resources.jar -->
+		<openmdx:archive format="jar" destfile="${build.dir}/lib/${app.target.name}/opencrx-resources.jar">
+			<zipfileset src="${opencrx.home}/${build.target.platform}/core/lib/opencrx-resources.jar"/>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>		
 		<!-- EAR -->
 		<openmdx:archive format="ear" destfile="${deliver.dir}/deployment-unit/${app.target.name}.ear" duplicate="preserve">
 			<openmdx:archivemanifest refid="project.manifest"/>
@@ -1025,6 +1097,9 @@
 				<include name="opencrx-mail.jar"/>
 				<include name="opencrx-application.jar"/>
 			</zipfileset>
+			<zipfileset dir="${build.dir}/lib/${app.target.name}" prefix="APP-INF/lib">
+				<include name="opencrx-resources.jar"/>
+			</zipfileset>
 			<zipfileset dir="${openmdx.home}/${build.target.platform}/core/lib" prefix="APP-INF/lib">
 				<include name="openmdx-application.jar"/>
 			</zipfileset>
@@ -1045,6 +1120,9 @@
 				<include name="poi.jar"/>
 				<include name="poi-scratchpad.jar"/>
 			</zipfileset>
+			<zipfileset dir="../octo/${build.target.platform}/captcha/lib" prefix="APP-INF/lib">
+				<include name="jcaptcha-all.jar"/>
+			</zipfileset>
 			<zipfileset dir="${openmdx.home}/java2/${build.target.platform}/extension/lib" prefix="APP-INF/lib">
 				<include name="openjpa.jar"/>
 				<include name="commons-collections.jar"/>
@@ -1062,9 +1140,6 @@
 			<zipfileset dir="${openmdx.home}/planetj/${build.target.platform}/compfilter/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>
 			</zipfileset>			
-			<zipfileset dir="${build.dir}/lib/${app.target.name}" prefix="APP-INF/lib">
-				<include name="opencrx-resources.jar"/>
-			</zipfileset>
 			<zipfileset dir="${data.home}/src/ear/${app.target.name}.ear/META-INF" prefix="META-INF">
 				<include name="application.xml"/>
 				<patternset refid="jboss-3.edition.pattern"/>
@@ -1099,10 +1174,9 @@
 			<packageset dir="${basedir}/src/java"/>
 			<packageset dir="${build.dir}/src/java"/>
 			<classpath refid="project.bin.classpath"/>
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/j2se/"/>
-			<link href="http://java.sun.com/javaee/5/docs/api/" offline="true" packagelistLoc="${opencrx.home}/core/etc/javadoc/j2ee/"/>
-			<link href="http://junit.org/junit/javadoc/4.5/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/junit/"/>
-			<link href="http://www.openmdx.org/openmdx/core/2.5/java-jre-1.5/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/openmdx/"/>
+			<link href="http://java.sun.com/javase/6/docs/api/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/j2se/"/>
+			<link href="http://java.sun.com/javaee/5/docs/api/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/j2ee/"/>
+			<link href="http://www.openmdx.org/openmdx/core/2.6/java-jre-1.6/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/openmdx/"/>
 			<group>
 				<title>${project.specification.title} Accounts</title>
 				<package name="org.opencrx.kernel.account1.*"/>
@@ -1170,11 +1244,6 @@
 			<group>
 				<title>${project.specification.title} Workflows</title>
 				<package name="org.opencrx.kernel.workflow1.*"/>
-			</group>
-			<group>
-				<title>${project.specification.title} Plugins</title>
-				<package name="org.opencrx.kernel.layer.*"/>
-				<package name="org.opencrx.kernel.gui.*"/>
 			</group>
 			<bottom>This software is published under the BSD license. Copyright &#169; 2003-${build.year}, CRIXP AG, Switzerland, All rights reserved. Use is subject to &lt;a href="http://www.opencrx.org/license.htm"&gt;license terms&lt;/a&gt;.</bottom>
 		</javadoc>
@@ -1276,12 +1345,12 @@ ${build.dir}/doc/api/index.html
 		<echo>*** - HSQLDB:     org.hsqldb.jdbcDriver                                                       ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** Sample driver classpath                                                                   ***</echo>
-		<echo>*** - PostgreSQL: ..\opt\postgresql\jre-1.5\postgresql-8\lib\postgresql-8.3.jdbc3.jar         ***</echo>
-		<echo>*** - MySQL:      ..\opt\mysql\jre-1.5\mysql-5\lib\mysql-connector-java-3.1.12-bin.jar        ***</echo>
-		<echo>*** - Oracle:     ..\opt\oracle\jre-1.5\oracle-10\lib\ojdbc14.jar                             ***</echo>
-		<echo>*** - DB2:        ..\opt\ibm\jre-1.5\db2-9\db2jcc.jar;..\jre-1.5\db2-9\db2jcc_license_cu.jar  ***</echo>
-		<echo>*** - SQL Server: ..\opt\microsoft\jre-1.5\sql-server-2005\lib\sqljdbc.jar                    ***</echo>
-		<echo>*** - HSQLDB:     ..\opt\hsqldb\jre-1.5\hsqldb-1\lib\hsqldb.jar                               ***</echo>
+		<echo>*** - PostgreSQL: ..\opt\postgresql\jre-1.6\postgresql-8\lib\postgreql-8.4.jdbc4.jar         ***</echo>
+		<echo>*** - MySQL:      ..\opt\mysql\jre-1.6\mysql-5\lib\mysql-connector-java-3.1.12-bin.jar        ***</echo>
+		<echo>*** - Oracle:     ..\opt\oracle\jre-1.6\oracle-10\lib\ojdbc14.jar                             ***</echo>
+		<echo>*** - DB2:        ..\opt\ibm\jre-1.6\db2-9\db2jcc.jar;..\jre-1.5\db2-9\db2jcc_license_cu.jar  ***</echo>
+		<echo>*** - SQL Server: ..\opt\microsoft\jre-1.6\sql-server-2005\lib\sqljdbc.jar                    ***</echo>
+		<echo>*** - HSQLDB:     ..\opt\hsqldb\jre-1.6\hsqldb-2\lib\hsqldb.jar                               ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT           ***</echo>
 		<echo>***                                                                                           ***</echo>

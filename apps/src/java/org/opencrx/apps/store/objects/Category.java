@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Category.java,v 1.3 2009/05/21 10:59:38 wfro Exp $
+ * Name:        $Id: Category.java,v 1.5 2009/11/27 18:23:05 wfro Exp $
  * Description: Category
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/21 10:59:38 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,8 +62,8 @@ import java.util.Collection;
 
 import org.opencrx.apps.store.common.IStandardObject;
 import org.opencrx.apps.store.common.PrimaryKey;
+import org.opencrx.apps.store.common.util.ApplicationContext;
 import org.opencrx.apps.store.common.util.Keys;
-import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.product1.jmi1.ProductClassification;
 import org.opencrx.kernel.product1.jmi1.ProductClassificationRelationship;
 

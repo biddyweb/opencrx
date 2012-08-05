@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Технологии</_item>
+                        <_item>Технологические процессы</_item>
                       </label>
                       <toolTip>
-                        <_item>Технологии</_item>
+                        <_item>Технологические процессы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:WfProcess:maxRetries" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Максимальное кол-во попыток</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Максимальное кол-во попыток</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:ExternalTask" _operation="create">
                     <_object>
                       <label>
@@ -146,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:Topic:topicPathPattern" _operation="create">
                     <_object>
                       <label>
-                        <_item>Образец темы</_item>
+                        <_item>Шаблон темы</_item>
                       </label>
                       <toolTip>
-                        <_item>Образец темы</_item>
+                        <_item>Шаблон темы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -194,6 +205,17 @@
                       </label>
                       <toolTip>
                         <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Property:domain" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Домен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Домен</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -432,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ReferenceProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эталонное свойство</_item>
+                        <_item>Ссылочное свойство</_item>
                       </label>
                       <toolTip>
-                        <_item>Эталонное свойство</_item>
+                        <_item>Ссылочное свойство</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -443,10 +465,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ReferenceProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эталонное свойство</_item>
+                        <_item>Ссылочное свойство</_item>
                       </label>
                       <toolTip>
-                        <_item>Эталонное свойство</_item>
+                        <_item>Ссылочное свойство</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -454,10 +476,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ReferenceProperty:referenceValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эталонное свойство</_item>
+                        <_item>Ссылочное свойство</_item>
                       </label>
                       <toolTip>
-                        <_item>Эталонное свойство</_item>
+                        <_item>Ссылочное свойство</_item>
                       </toolTip>
                     </_object>
                     <_content/>

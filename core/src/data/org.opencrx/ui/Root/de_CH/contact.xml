@@ -55,6 +55,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Postadresse Geschäft / Privat</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Postadresse Geschäft / Privat</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
@@ -211,17 +223,6 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:15" _operation="create">
-                    <_object>
-                      <toolTip>
-                        <_item>Hauptadresse Privat</_item>
-                      </toolTip>
-                      <label>
-                        <_item>Hauptadresse Privat</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalAddressLine" _operation="create">
 										<_object>
 											<toolTip>

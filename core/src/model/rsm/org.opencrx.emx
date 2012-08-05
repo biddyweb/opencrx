@@ -513,6 +513,14 @@
         </generalization>
       </packagedElement>
     </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_ysf8gNkYEd66vMy08UbRDQ" name="application">
+      <eAnnotations xmi:id="_ytKq4NkYEd66vMy08UbRDQ" source="uml2.diagrams"/>
+      <eAnnotations xmi:id="_4xDf8NkYEd66vMy08UbRDQ" source="uml2.ownedShortcuts">
+        <contents xmi:type="ecore:EAnnotation" xmi:id="_4xDf8dkYEd66vMy08UbRDQ" source="eObjectShortcut">
+          <references xmi:type="uml:Package" href="org.opencrx.application.shop1.emx#_QX1ZltkYEd66vMy08UbRDQ?org.opencrx.application.shop1/shop1?"/>
+        </contents>
+      </eAnnotations>
+    </packagedElement>
   </packagedElement>
   <profileApplication xmi:id="_eqxdR6VkEdqPfv_DBM-TSg">
     <eAnnotations xmi:id="_eqxdSKVkEdqPfv_DBM-TSg" source="http://www.eclipse.org/uml2/2.0.0/UML">

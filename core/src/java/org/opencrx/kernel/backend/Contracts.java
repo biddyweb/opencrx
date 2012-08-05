@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.95 2009/10/14 09:10:21 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.101 2010/04/23 13:56:16 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.95 $
+ * Revision:    $Revision: 1.101 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/14 09:10:21 $
+ * Date:        $Date: 2010/04/23 13:56:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,8 +56,6 @@
 
 package org.opencrx.kernel.backend;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -68,12 +66,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 
 import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
@@ -145,7 +141,7 @@ import org.opencrx.kernel.product1.jmi1.Product;
 import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.base.accessor.cci.SystemAttributes;
+import org.openmdx.base.exception.RuntimeServiceException;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
@@ -157,7 +153,6 @@ import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
-import org.w3c.cci2.BinaryLargeObjects;
 
 public class Contracts extends AbstractImpl {
 
@@ -506,7 +501,7 @@ public class Contracts extends AbstractImpl {
         try {
             Method getPositionAmountMethod = getPositionAmountMethods.get(script);
             if(getPositionAmountMethod == null) {
-                Class<?> c = new ClassBodyEvaluator(script).evaluate();
+                Class<?> c = new ClassBodyEvaluator(script).getClazz();
                 getPositionAmountMethod = c.getMethod(
                     "getPositionAmounts", 
                     new Class[] {
@@ -609,7 +604,7 @@ public class Contracts extends AbstractImpl {
         try {
             Method getContractAmountMethod = getContractAmountMethods.get(script);
             if(getContractAmountMethod == null) {
-                Class<?> c = new ClassBodyEvaluator(script).evaluate();
+                Class<?> c = new ClassBodyEvaluator(script).getClazz();
                 getContractAmountMethod = c.getMethod(
                     "getContractAmounts", 
                     new Class[] {
@@ -1409,12 +1404,18 @@ public class Contracts extends AbstractImpl {
         if(pricingRule == null) return;       
         BigDecimal quantity = position.getQuantity();
         if(quantity == null) return;
-        Date pricingDate = position.getPricingDate();
+        Date pricingDate = position.getPricingDate() != null ?
+        	position.getPricingDate() :
+        		contract.getPricingDate() != null ?
+        			contract.getPricingDate() :
+        				contract.getActiveOn() != null ?
+        					contract.getActiveOn() :
+        						new Date();
         org.opencrx.kernel.uom1.jmi1.Uom priceUom = position.getPriceUom() != null ?
             position.getPriceUom() :
-            position.getUom() == null ?
-            	null :
-            	position.getUom();           
+            	position.getUom() != null ?
+            		position.getUom() :
+            			null;
         AbstractPriceLevel priceLevel = null;
         BigDecimal customerDiscount = null;
         Boolean customerDiscountIsPercentage = null;        
@@ -1429,9 +1430,7 @@ public class Contracts extends AbstractImpl {
                     product,
                     priceUom,
                     quantity, 
-                    pricingDate == null ? 
-                    	new Date() : 
-                    	pricingDate
+                    pricingDate
                   );            
             priceLevel = res.getPriceLevel() == null ?
             	null :
@@ -1474,10 +1473,9 @@ public class Contracts extends AbstractImpl {
         }
         // List price found?
         SysLog.trace("List price found", "" + (listPrice != null));
-        position.setPricingState(PRICING_STATE_NA);
         position.setListPrice(listPrice);
+        position.setPricingState(PRICING_STATE_NA);
         if(listPrice != null) {
-            position.setPricingState(PRICING_STATE_OK);
             BigDecimal listPriceDiscount = listPrice.getDiscount();
             Boolean listPriceDiscountIsPercentage = listPrice.isDiscountIsPercentage();
             BigDecimal discount = position.getDiscount();
@@ -1563,6 +1561,7 @@ public class Contracts extends AbstractImpl {
                 	listPrice.getUom()
                 );
             }
+            position.setPricingState(PRICING_STATE_OK);            
         }
     }
     
@@ -1757,9 +1756,7 @@ public class Contracts extends AbstractImpl {
             }
             else {
                 position.setPricingDate(
-                    contract.getPricingDate() != null ? 
-                    	contract.getPricingDate() : 
-                    	new Date()
+                    contract.getPricingDate()
                 );
             }
             // uom (only touch if specified as param
@@ -1808,51 +1805,6 @@ public class Contracts extends AbstractImpl {
 	    return position;
     }
     
-    //-------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
-    private int calculateTimeDistributionOpenContracts(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        Query query,
-        int[] timeDistribution,
-        String distributionOnAttribute
-    ) {
-        try {
-            query.setCandidates(userHome.getAssignedContract());
-            List<org.opencrx.kernel.contract1.jmi1.AbstractContract> contracts = (List<org.opencrx.kernel.contract1.jmi1.AbstractContract>)query.execute();
-            int count = 0;
-            for(org.opencrx.kernel.contract1.jmi1.AbstractContract contract: contracts) {
-                Date dt = null;
-                try {
-                    dt = (Date)contract.refGetValue(distributionOnAttribute);
-                } catch(Exception e) {}
-                if(dt == null) dt = new Date();
-                long delayInDays = (System.currentTimeMillis() - dt.getTime()) / 86400000;
-                if(delayInDays < 0) timeDistribution[0]++;
-                else if(delayInDays < 1) timeDistribution[1]++;
-                else if(delayInDays < 2) timeDistribution[2]++;
-                else if(delayInDays < 3) timeDistribution[3]++;
-                else if(delayInDays < 4) timeDistribution[4]++;
-                else if(delayInDays < 5) timeDistribution[5]++;
-                else if(delayInDays < 6) timeDistribution[6]++;
-                else if(delayInDays < 7) timeDistribution[7]++;
-                else if(delayInDays < 8) timeDistribution[8]++;
-                else if(delayInDays < 15) timeDistribution[9]++;
-                else if(delayInDays < 31) timeDistribution[10]++;
-                else if(delayInDays < 91) timeDistribution[11]++;
-                else if(delayInDays < 181) timeDistribution[12]++;
-                else if(delayInDays < 361) timeDistribution[13]++;
-                else timeDistribution[14]++;
-                count++;
-                if(count > 500) break;
-            }
-            return count;
-        }
-        catch(Exception e) {
-        	SysLog.warning("Error when iterating contracts for user", Arrays.asList(userHome, e.getMessage()));
-            return 0;
-        }
-    }
-
     //-------------------------------------------------------------------------
     public void removeContractPosition(
     	AbstractContractPosition position,
@@ -2216,6 +2168,37 @@ public class Contracts extends AbstractImpl {
             return null;
         }
     }
+
+    //-------------------------------------------------------------------------
+    public void setPricingState(
+    	AbstractContractPosition position,
+    	short pricingState
+    ) {
+    	if(JDOHelper.isPersistent(position)) {
+	    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+	        AbstractContract contract = 
+	        	(AbstractContract)pm.getObjectById(
+	            position.refGetPath().getParent().getParent()
+	        );
+	        this.setPricingState(
+	        	contract, 
+	        	pricingState
+	        );
+    	}
+        position.setPricingState(
+            PRICING_STATE_DIRTY
+        );
+    }
+    
+    //-------------------------------------------------------------------------
+    public void setPricingState(
+    	AbstractContract contract,
+    	short pricingState
+    ) {
+        contract.setPricingState(
+            PRICING_STATE_DIRTY
+        );    	
+    }
     
     //-------------------------------------------------------------------------
     public void updateContractPosition(
@@ -2226,27 +2209,6 @@ public class Contracts extends AbstractImpl {
         	(AbstractContract)pm.getObjectById(
             position.refGetPath().getParent().getParent()
         );
-        // Pricing state is dirty if pricePerUnit is modified
-        PersistenceManager pmOld = pm.getPersistenceManagerFactory().getPersistenceManager(
-        	SecurityKeys.ROOT_PRINCIPAL,
-        	null
-        );
-        if(!JDOHelper.isNew(position)) {
-        	AbstractContractPosition positionOld = (AbstractContractPosition)pmOld.getObjectById(
-	        	position.refGetPath()
-	        );
-	        boolean priceIsModified = (position.getPricePerUnit() == null) || (positionOld.getPricePerUnit() == null) ?
-	            position.getPricePerUnit() != positionOld.getPricePerUnit() :
-	            position.getPricePerUnit().compareTo(positionOld.getPricePerUnit()) != 0;
-	        if(priceIsModified) {
-	            position.setPricingState(
-	                PRICING_STATE_DIRTY
-	            );
-	            contract.setPricingState(
-	                PRICING_STATE_DIRTY
-	            );
-	        }
-        }
         if(position instanceof ConfiguredProduct) {
         	Product product = ((ConfiguredProduct)position).getProduct();
 	        if(product != null) {
@@ -2638,6 +2600,7 @@ public class Contracts extends AbstractImpl {
         return contracts.size();
     }
             
+    
     //-------------------------------------------------------------------------
     public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
         org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
@@ -2647,10 +2610,29 @@ public class Contracts extends AbstractImpl {
         java.math.BigDecimal uomScaleFactor,
         java.math.BigDecimal salesTaxRate
     ) {
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =
-            (org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(
-                org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
-            );
+    	try {
+	    	return Contracts.getInstance().getPositionAmounts(
+	    		calculationRule, 
+	    		position, 
+	    		minMaxAdjustedQuantity, 
+	    		uomScaleFactor, 
+	    		salesTaxRate
+	    	);
+    	} catch(ServiceException e) {
+    		throw new RuntimeServiceException(e);
+    	}
+    }
+    
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
+        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
+        org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position,
+        java.math.BigDecimal minMaxAdjustedQuantity,
+        java.math.BigDecimal uomScaleFactor,
+        java.math.BigDecimal salesTaxRate
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm);
         java.math.BigDecimal pricePerUnit = position.getPricePerUnit() == null ?
             java.math.BigDecimal.ZERO :
             position.getPricePerUnit();
@@ -2738,28 +2720,21 @@ public class Contracts extends AbstractImpl {
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
-    private final static short STATUS_CODE_OK = 0;
-    private final static short STATUS_CODE_ERROR = 1;
+    public final static short STATUS_CODE_OK = 0;
+    public final static short STATUS_CODE_ERROR = 1;
     
-    // Closed Thresholds
-    private static final short CLOSED_THRESHOLD_LEAD = 1110;
-    private static final short CLOSED_THRESHOLD_OPPORTUNITY = 1210;
-    private static final short CLOSED_THRESHOLD_QUOTE = 1310;
-    private static final short CLOSED_THRESHOLD_SALES_ORDER = 1410;
-    private static final short CLOSED_THRESHOLD_INVOICE = 1510;
-
     // Min/Max Quantity Handling
-    private static final int MIN_MAX_QUANTITY_HANDLING_NA = 0;
-    private static final int MIN_MAX_QUANTITY_HANDLING_LIMIT = 3;
+    public static final int MIN_MAX_QUANTITY_HANDLING_NA = 0;
+    public static final int MIN_MAX_QUANTITY_HANDLING_LIMIT = 3;
     
     // Pricing Status
-    private static final short PRICING_STATE_NA = 0;
-    private static final short PRICING_STATE_DIRTY = 10;
-    private static final short PRICING_STATE_OK = 20;
+    public static final short PRICING_STATE_NA = 0;
+    public static final short PRICING_STATE_DIRTY = 10;
+    public static final short PRICING_STATE_OK = 20;
     
     // Booking texts
-    private static final String BOOKING_TEXT_NAME_RETURN_GOODS = "return goods";
-    private static final String BOOKING_TEXT_NAME_DELIVER_GOODS = "deliver goods";
+    public static final String BOOKING_TEXT_NAME_RETURN_GOODS = "return goods";
+    public static final String BOOKING_TEXT_NAME_DELIVER_GOODS = "deliver goods";
             
     public static final String CALCULATION_RULE_NAME_DEFAULT = "Default";
         

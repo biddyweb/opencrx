@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="lockingReason" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="lockingReason" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,13 +26,13 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>v spracovaní</_item>
+                              <_item>pripravuje sa</_item>
                             </shortText>
                             <longText>
-                              <_item>v spracovaní</_item>
+                              <_item>pripravuje sa</_item>
                             </longText>
                           </_object>
                           <_content/>

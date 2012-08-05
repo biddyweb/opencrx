@@ -11,17 +11,17 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="paymentterms" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="paymentterms" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="00" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="00" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item>Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmlns:uml2tools.notation="http://www.eclipse.org/mdt/uml2tools/gmf/notation/ext/2008" xmi:id="_q_krkE0gEd-LLraCh8Tbyw" type="UMLClass" measurementUnit="Pixel">
+  <children xmi:type="notation:Shape" xmi:id="_r0xOME0gEd-LLraCh8Tbyw" type="2014" fontName="Arial" fontHeight="11" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_r0xOMk0gEd-LLraCh8Tbyw" type="5020"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_r0xOM00gEd-LLraCh8Tbyw" type="5041"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_r0xONE0gEd-LLraCh8Tbyw" type="7032" collapsed="true">
+      <styles xmi:type="notation:SortingStyle" xmi:id="_r0xONU0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_r0xONk0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_r0xON00gEd-LLraCh8Tbyw"/>
+    </children>
+    <element xmi:type="uml:Model" href="../../org.opencrx.kernel.uom1.uml#_BStagN8IEdmKapscEl8OLg"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_r0xOMU0gEd-LLraCh8Tbyw"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_r0xOOE0gEd-LLraCh8Tbyw" type="2002" fontName="Arial" fontHeight="11" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_r0x1QE0gEd-LLraCh8Tbyw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_r0x1QU0gEd-LLraCh8Tbyw" type="7010">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_r0x1Qk0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_r0x1Q00gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_r0x1RE0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_r0x1RU0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_r0x1Rk0gEd-LLraCh8Tbyw" type="7011">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_r0x1R00gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_r0x1SE0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_r0x1SU0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_r0x1Sk0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_r0x1S00gEd-LLraCh8Tbyw" type="7012">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_r0x1TE0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_r0x1TU0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_r0x1Tk0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_r0x1T00gEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:HintedDiagramLinkStyle" xmi:id="_r0xOOU0gEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Package" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3FECB361004APPP"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_r0xOOk0gEd-LLraCh8Tbyw" y="108"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_uruNME0gEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ur3-ME0gEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ur3-MU0gEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_uru0QE0gEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_uryeoE0gEd-LLraCh8Tbyw" bold="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_uru0QU0gEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_uru0Qk0gEd-LLraCh8Tbyw" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_uru0Q00gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_uru0RE0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_uru0RU0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_uru0Rk0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_uru0R00gEd-LLraCh8Tbyw" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_uru0SE0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_uru0SU0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_uru0Sk0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_uru0S00gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_uru0TE0gEd-LLraCh8Tbyw" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_uru0TU0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_uru0Tk0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_uru0T00gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_uru0UE0gEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_uruNMU0gEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3FECB38501A0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uruNMk0gEd-LLraCh8Tbyw" x="234" y="36" width="1212"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_yITo0E0gEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_yIkukE0gEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_yIkukU0gEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIUP4E0gEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_yIa9kE0gEd-LLraCh8Tbyw" bold="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIUP4U0gEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_yIUP4k0gEd-LLraCh8Tbyw" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_yIUP400gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_yIUP5E0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_yIUP5U0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_yIUP5k0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_yIUP500gEd-LLraCh8Tbyw" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_yIUP6E0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_yIUP6U0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_yIUP6k0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_yIU28E0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_yIU28U0gEd-LLraCh8Tbyw" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_yIU28k0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_yIU2800gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_yIU29E0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_yIU29U0gEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_yITo0U0gEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3F3EBFB30391"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_yITo0k0gEd-LLraCh8Tbyw" x="235" y="342" width="384"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_47oWwE0gEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_476DkE0gEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_476DkU0gEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_47pk4E0gEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_47w5oE0gEd-LLraCh8Tbyw" bold="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_47pk4U0gEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_47pk4k0gEd-LLraCh8Tbyw" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_47pk400gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_47pk5E0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_47pk5U0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_47qL8E0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_47qL8U0gEd-LLraCh8Tbyw" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_47qL8k0gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_47qL800gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_47qL9E0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_47qL9U0gEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_47qL9k0gEd-LLraCh8Tbyw" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_47qL900gEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_47qL-E0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_47qL-U0gEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_47qL-k0gEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_47oWwU0gEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3F3EBFBD038B"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_47oWwk0gEd-LLraCh8Tbyw" x="1001" y="338"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_HLu_UE0hEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_HL8asE0hEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_HL8asU0hEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_HLwNcE0hEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_HLzQwE0hEd-LLraCh8Tbyw" bold="true" italic="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_HLwNcU0hEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_HLwNck0hEd-LLraCh8Tbyw" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_HLwNc00hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_HLwNdE0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_HLwNdU0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_HLwNdk0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_HLwNd00hEd-LLraCh8Tbyw" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_HLwNeE0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_HLwNeU0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_HLwNek0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_HLwNe00hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_HLwNfE0hEd-LLraCh8Tbyw" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_HLwNfU0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_HLwNfk0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_HLwNf00hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_HLwNgE0hEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_HLu_UU0hEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.generic.uml#_3C7B8A60016D409FD37B02C8"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_HLu_Uk0hEd-LLraCh8Tbyw" x="83" y="243"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_LSVoUE0hEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_LSdkIE0hEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_LSdkIU0hEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_LSWPYE0hEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_LSZ5wE0hEd-LLraCh8Tbyw" bold="true" italic="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_LSWPYU0hEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_LSWPYk0hEd-LLraCh8Tbyw" visible="false" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_LSWPY00hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_LSWPZE0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_LSWPZU0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_LSW2cE0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_LSW2cU0hEd-LLraCh8Tbyw" visible="false" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_LSW2ck0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_LSW2c00hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_LSW2dE0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_LSW2dU0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_LSW2dk0hEd-LLraCh8Tbyw" visible="false" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_LSW2d00hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_LSW2eE0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_LSW2eU0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_LSW2ek0hEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_LSVoUU0hEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D40D03B5F0220"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_LSVoUk0hEd-LLraCh8Tbyw" x="756" y="633"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_PeNL0E0hEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_PeW80E0hEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_PeW80U0hEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_PeNL000hEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_PeQ2ME0hEd-LLraCh8Tbyw" bold="true" italic="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_PeNL1E0hEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_PeNL1U0hEd-LLraCh8Tbyw" visible="false" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_PeNL1k0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_PeNL100hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_PeNL2E0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_PeNL2U0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_PeNy4E0hEd-LLraCh8Tbyw" visible="false" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_PeNy4U0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_PeNy4k0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_PeNy400hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_PeNy5E0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_PeNy5U0hEd-LLraCh8Tbyw" visible="false" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_PeNy5k0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_PeNy500hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_PeNy6E0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_PeNy6U0hEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_PeNL0U0hEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D414D676C01DB"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PeNL0k0hEd-LLraCh8Tbyw" x="678" y="726"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_Uz1MsE0hEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_U0G5gE0hEd-LLraCh8Tbyw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_U0G5gU0hEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_Uz2a0E0hEd-LLraCh8Tbyw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_Uz5eIE0hEd-LLraCh8Tbyw" bold="true" italic="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_Uz2a0U0hEd-LLraCh8Tbyw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_Uz2a0k0hEd-LLraCh8Tbyw" visible="false" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_Uz2a000hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_Uz2a1E0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_Uz2a1U0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_Uz2a1k0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_Uz2a100hEd-LLraCh8Tbyw" visible="false" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_Uz2a2E0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_Uz2a2U0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_Uz2a2k0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_Uz3B4E0hEd-LLraCh8Tbyw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_Uz3B4U0hEd-LLraCh8Tbyw" visible="false" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_Uz3B4k0hEd-LLraCh8Tbyw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_Uz3B400hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_Uz3B5E0hEd-LLraCh8Tbyw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_Uz3B5U0hEd-LLraCh8Tbyw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_Uz1zwE0hEd-LLraCh8Tbyw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Uz1zwU0hEd-LLraCh8Tbyw" x="1361" y="157"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_q_krkU0gEd-LLraCh8Tbyw"/>
+  <styles xmi:type="uml2tools.notation:U2TDiagramCanonicalStyle" xmi:id="_q_krkk0gEd-LLraCh8Tbyw"/>
+  <styles xmi:type="notation:FilteringStyle" xmi:id="_q_krk00gEd-LLraCh8Tbyw"/>
+  <element xmi:type="uml:Model" href="../../org.opencrx.kernel.uom1.uml#_BStagN8IEdmKapscEl8OLg"/>
+  <edges xmi:type="notation:Edge" xmi:id="_yIq1ME0gEd-LLraCh8Tbyw" type="4005" source="_yITo0E0gEd-LLraCh8Tbyw" target="_uruNME0gEd-LLraCh8Tbyw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1NE0gEd-LLraCh8Tbyw" type="6003">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1NU0gEd-LLraCh8Tbyw" y="20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1Nk0gEd-LLraCh8Tbyw" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1N00gEd-LLraCh8Tbyw" x="10" y="-5"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1OE0gEd-LLraCh8Tbyw" type="6005">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1OU0gEd-LLraCh8Tbyw" x="-17" y="-3"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1Ok0gEd-LLraCh8Tbyw" type="6006">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1O00gEd-LLraCh8Tbyw" x="-18" y="76"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1PE0gEd-LLraCh8Tbyw" type="6007">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1PU0gEd-LLraCh8Tbyw" x="16" y="70"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1Pk0gEd-LLraCh8Tbyw" type="6008">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1P00gEd-LLraCh8Tbyw" x="-24" y="-35"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIq1QE0gEd-LLraCh8Tbyw" type="6009">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIq1QU0gEd-LLraCh8Tbyw" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIrcQE0gEd-LLraCh8Tbyw" type="6019">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIrcQU0gEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_yIq1MU0gEd-LLraCh8Tbyw" routing="Rectilinear"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_yIq1Mk0gEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Association" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3F40F3900077"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_yIq1M00gEd-LLraCh8Tbyw" points="[0, 0, -607, -49]$[331, 27, -276, -22]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_yIrcQk0gEd-LLraCh8Tbyw" type="4005" source="_yITo0E0gEd-LLraCh8Tbyw" target="_yITo0E0gEd-LLraCh8Tbyw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDUE0gEd-LLraCh8Tbyw" type="6003">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDUU0gEd-LLraCh8Tbyw" x="-10" y="20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDUk0gEd-LLraCh8Tbyw" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDU00gEd-LLraCh8Tbyw" x="-19" y="-9"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDVE0gEd-LLraCh8Tbyw" type="6005">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDVU0gEd-LLraCh8Tbyw" x="24" y="2"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDVk0gEd-LLraCh8Tbyw" type="6006">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDV00gEd-LLraCh8Tbyw" x="-56" y="-75"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDWE0gEd-LLraCh8Tbyw" type="6007">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDWU0gEd-LLraCh8Tbyw" x="52" y="-81"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDWk0gEd-LLraCh8Tbyw" type="6008">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDW00gEd-LLraCh8Tbyw" x="-56" y="33"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDXE0gEd-LLraCh8Tbyw" type="6009">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDXU0gEd-LLraCh8Tbyw" x="56" y="25"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_yIsDXk0gEd-LLraCh8Tbyw" type="6019">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yIsDX00gEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_yIrcQ00gEd-LLraCh8Tbyw" routing="Rectilinear"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_yIrcRE0gEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Association" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3F40F3AD00C9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_yIrcRU0gEd-LLraCh8Tbyw" points="[142, 102, 142, 102]$[142, 233, 142, 233]$[-128, 233, -128, 233]$[-128, 102, -128, 102]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_48AKME0gEd-LLraCh8Tbyw" type="4005" source="_47oWwE0gEd-LLraCh8Tbyw" target="_uruNME0gEd-LLraCh8Tbyw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AKNE0gEd-LLraCh8Tbyw" type="6003">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AKNU0gEd-LLraCh8Tbyw" y="20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AKNk0gEd-LLraCh8Tbyw" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AKN00gEd-LLraCh8Tbyw" x="11" y="-2"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AKOE0gEd-LLraCh8Tbyw" type="6005">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AKOU0gEd-LLraCh8Tbyw" x="-17" y="1"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AKOk0gEd-LLraCh8Tbyw" type="6006">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AKO00gEd-LLraCh8Tbyw" x="-20" y="68"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AKPE0gEd-LLraCh8Tbyw" type="6007">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AKPU0gEd-LLraCh8Tbyw" x="16" y="75"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AxQE0gEd-LLraCh8Tbyw" type="6008">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AxQU0gEd-LLraCh8Tbyw" x="-21" y="-33"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AxQk0gEd-LLraCh8Tbyw" type="6009">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AxQ00gEd-LLraCh8Tbyw" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48AxRE0gEd-LLraCh8Tbyw" type="6019">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48AxRU0gEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_48AKMU0gEd-LLraCh8Tbyw" routing="Rectilinear"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_48AKMk0gEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Association" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3F40F391038F"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_48AKM00gEd-LLraCh8Tbyw" points="[0, 0, -607, -49]$[331, 27, -276, -22]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_48BYUE0gEd-LLraCh8Tbyw" type="4005" source="_47oWwE0gEd-LLraCh8Tbyw" target="_yITo0E0gEd-LLraCh8Tbyw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYVE0gEd-LLraCh8Tbyw" type="6003">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYVU0gEd-LLraCh8Tbyw" x="-8" y="44"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYVk0gEd-LLraCh8Tbyw" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYV00gEd-LLraCh8Tbyw" x="12" y="-13"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYWE0gEd-LLraCh8Tbyw" type="6005">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYWU0gEd-LLraCh8Tbyw" x="30" y="-16"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYWk0gEd-LLraCh8Tbyw" type="6006">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYW00gEd-LLraCh8Tbyw" x="13" y="-46"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYXE0gEd-LLraCh8Tbyw" type="6007">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYXU0gEd-LLraCh8Tbyw" x="-4" y="-44"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYXk0gEd-LLraCh8Tbyw" type="6008">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYX00gEd-LLraCh8Tbyw" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYYE0gEd-LLraCh8Tbyw" type="6009">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYYU0gEd-LLraCh8Tbyw" x="26" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_48BYYk0gEd-LLraCh8Tbyw" type="6019">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_48BYY00gEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_48BYUU0gEd-LLraCh8Tbyw" routing="Rectilinear"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_48BYUk0gEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Association" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D3F40F39B00C3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_48BYU00gEd-LLraCh8Tbyw" points="[0, 0, -320, -333]$[246, 256, -74, -77]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_HMHZ0E0hEd-LLraCh8Tbyw" type="4001" source="_yITo0E0gEd-LLraCh8Tbyw" target="_HLu_UE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_HMHZ000hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_HMHZ1E0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_HMHZ0U0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D409FD61E006F"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_HMHZ0k0hEd-LLraCh8Tbyw" points="[-74, -77, 246, 256]$[-320, -333, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_LSrmkE0hEd-LLraCh8Tbyw" type="4001" source="_uruNME0gEd-LLraCh8Tbyw" target="_LSVoUE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_LSsNoE0hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_LSsNoU0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_LSrmkU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D40D04A850186"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_LSrmkk0hEd-LLraCh8Tbyw" points="[-276, -22, 331, 27]$[-607, -49, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_LSs0sE0hEd-LLraCh8Tbyw" type="4001" source="_yITo0E0gEd-LLraCh8Tbyw" target="_LSVoUE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_LSs0s00hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_LSs0tE0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_LSs0sU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D40D060340192"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_LSs0sk0hEd-LLraCh8Tbyw" points="[192, 61, -196, -158]$[358, 61, -30, -158]$[358, 189, -30, -30]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_LStbwE0hEd-LLraCh8Tbyw" type="4001" source="_47oWwE0gEd-LLraCh8Tbyw" target="_LSVoUE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_LStbw00hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_LStbxE0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_LStbwU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D40D0603702AF"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_LStbwk0hEd-LLraCh8Tbyw" points="[-132, 76, 223, -173]$[-132, 147, 223, -102]$[-322, 147, 33, -102]$[-322, 219, 33, -30]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_PemNYE0hEd-LLraCh8Tbyw" type="4001" source="_uruNME0gEd-LLraCh8Tbyw" target="_PeNL0E0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_PemNY00hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_PemNZE0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_PemNYU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D414D7CC60253"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_PemNYk0hEd-LLraCh8Tbyw" points="[-276, -22, 331, 27]$[-607, -49, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_Pem0cE0hEd-LLraCh8Tbyw" type="4001" source="_yITo0E0gEd-LLraCh8Tbyw" target="_PeNL0E0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_PenbgE0hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_PenbgU0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_Pem0cU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D414D7CCB037D"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Pem0ck0hEd-LLraCh8Tbyw" points="[192, 76, -115, -236]$[275, 76, -32, -236]$[275, 282, -32, -30]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_PeoCkE0hEd-LLraCh8Tbyw" type="4001" source="_47oWwE0gEd-LLraCh8Tbyw" target="_PeNL0E0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_PeoCk00hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_PeoClE0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_PeoCkU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D414D7CC90225"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_PeoCkk0hEd-LLraCh8Tbyw" points="[-102, 76, 334, -266]$[-102, 342, 334, 0]$[-379, 342, 57, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_U0U78E0hEd-LLraCh8Tbyw" type="4001" source="_uruNME0gEd-LLraCh8Tbyw" target="_Uz1MsE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_U0VjAE0hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_U0VjAU0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_U0U78U0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D415FF47C005C"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_U0U78k0hEd-LLraCh8Tbyw" points="[-276, -22, 331, 27]$[-607, -49, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_U0VjAk0hEd-LLraCh8Tbyw" type="4001" source="_yITo0E0gEd-LLraCh8Tbyw" target="_Uz1MsE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_U0WKEk0hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_U0WKE00hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_U0WKEE0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D4155D3BD0200"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_U0WKEU0hEd-LLraCh8Tbyw" points="[166, -102, -862, 137]$[166, -244, -862, -5]$[949, -244, -79, -5]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_U0WxIE0hEd-LLraCh8Tbyw" type="4001" source="_47oWwE0gEd-LLraCh8Tbyw" target="_Uz1MsE0hEd-LLraCh8Tbyw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_U0WxI00hEd-LLraCh8Tbyw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_U0WxJE0hEd-LLraCh8Tbyw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_U0WxIU0hEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.uom1.uml#_3C7B8A60016D4155D3B30184"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_U0WxIk0hEd-LLraCh8Tbyw" points="[143, -76, -127, 151]$[143, -137, -127, 90]$[234, -137, -36, 90]$[234, -197, -36, 30]"/>
+  </edges>
+</notation:Diagram>

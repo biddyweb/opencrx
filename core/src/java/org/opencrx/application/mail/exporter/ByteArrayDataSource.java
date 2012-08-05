@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ByteArrayDataSource.java,v 1.1 2009/04/15 18:00:41 wfro Exp $
+ * Name:        $Id: ByteArrayDataSource.java,v 1.2 2010/04/07 12:16:27 wfro Exp $
  * Description: ByteArrayDataSource
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/15 18:00:41 $
+ * Date:        $Date: 2010/04/07 12:16:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,78 +55,62 @@
  */
 package org.opencrx.application.mail.exporter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import javax.activation.DataSource;
+
+import org.openmdx.base.io.QuotaByteArrayOutputStream;
+import org.w3c.cci2.BinaryLargeObjects;
 
 public class ByteArrayDataSource implements DataSource {
 
     /* Create a DataSource from an input stream */
-    public ByteArrayDataSource(InputStream is, String type) {
+    public ByteArrayDataSource(
+    	InputStream is, 
+    	String type
+    ) {
         this.type = type;
         try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            int ch;
-
-            while ((ch = is.read()) != -1) {
-                // XXX - must be made more efficient by
-                // doing buffered reads, rather than one byte reads
-                os.write(ch);
-            }
-            data = os.toByteArray();
+            QuotaByteArrayOutputStream os = new QuotaByteArrayOutputStream(ByteArrayDataSource.class.getName());
+            BinaryLargeObjects.streamCopy(is, 0L, os);
+            this.data = os;
         } 
         catch (IOException ioex) {}
-    }
-
-    /* Create a DataSource from a byte array */
-    public ByteArrayDataSource(byte[] data, String type) {
-        this.data = data;
-        this.type = type;
-    }
-
-    /* Create a DataSource from a String */
-    public ByteArrayDataSource(String data, String type) {
-        try {
-            // Assumption that the string contains only ASCII
-            // characters! Otherwise just pass a charset into this
-            // constructor and use it in getBytes()
-            this.data = data.getBytes("iso-8859-1");
-        } 
-        catch (UnsupportedEncodingException uex) {}
-        this.type = type;
     }
 
     /**
      * Return an InputStream for the data. Note - a new stream must be returned
      * each time.
      */
-    public InputStream getInputStream() throws IOException {
-        if (data == null)
+    public InputStream getInputStream(
+    ) throws IOException {
+        if (data == null) {
             throw new IOException("no data");
-        return new ByteArrayInputStream(data);
+        }
+        return this.data.toInputStream();
     }
 
-    public OutputStream getOutputStream() throws IOException {
+    public OutputStream getOutputStream(
+    ) throws IOException {
         throw new IOException("cannot do this");
     }
 
-    public String getContentType() {
+    public String getContentType(
+    ) {
         return type;
     }
 
-    public String getName() {
+    public String getName(
+    ) {
         return "dummy";
     }
     
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------    
-    private byte[] data; // data
+    private QuotaByteArrayOutputStream data; // data
     private String type; // content-type
 
 }

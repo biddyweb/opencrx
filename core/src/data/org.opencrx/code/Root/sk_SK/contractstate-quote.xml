@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="quoteState" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="quoteState" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
                           <_object>
                             <shortText>
                               <_item>návrh / v príprave</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="create">
                           <_object>
                             <shortText>
                               <_item>v príprave</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="create">
                           <_object>
                             <shortText>
                               <_item>otvorený</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="330" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="330" _operation="create">
                           <_object>
                             <shortText>
                               <_item>pozastavený</_item>
@@ -70,18 +70,18 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1310" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1310" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>získané alebo ďalšie fáze</_item>
+                              <_item>získané alebo ďalšia fáza</_item>
                             </shortText>
                             <longText>
-                              <_item>[05] Zavretý / získané alebo ďalšie fáze</_item>
+                              <_item>[05] Zavretý / získané alebo ďalšia fáza</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1320" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1320" _operation="create">
                           <_object>
                             <shortText>
                               <_item>stratený</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1330" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1330" _operation="create">
                           <_object>
                             <shortText>
                               <_item>projekt stratený</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1340" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1340" _operation="create">
                           <_object>
                             <shortText>
                               <_item>problém kvality</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1350" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1350" _operation="create">
                           <_object>
                             <shortText>
                               <_item>zrušený</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1360" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1360" _operation="create">
                           <_object>
                             <shortText>
                               <_item>revidovaný</_item>

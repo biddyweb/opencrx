@@ -46,6 +46,18 @@
 			<context-root>opencrx-rest-CRX</context-root>
 		</web>
 	</module>
+	<module id="opencrx-ldap-CRX">
+		<web>
+			<web-uri>opencrx-ldap-CRX.war</web-uri>
+			<context-root>opencrx-ldap-CRX</context-root>
+		</web>
+	</module>
+	<module id="opencrx-airsync-CRX">
+		<web>
+			<web-uri>opencrx-airsync-CRX.war</web-uri>
+			<context-root>opencrx-airsync-CRX</context-root>
+		</web>
+	</module>
 	<security-role id="SecurityRole_OpenCrxUser">
 		<description>openCRX Standard Users</description>
 		<role-name>OpenCrxUser</role-name>

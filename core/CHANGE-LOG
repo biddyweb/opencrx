@@ -1,28 +1,205 @@
-
+﻿
 
                     =====================================
                            CHANGE LOG openCRX/Core
                     =====================================
 
+==============================================================================
+Version 2.6.0                                                       2010-05-01
+==============================================================================
+
+1.    NEW FEATURES
+
+      CR10008982
+      Shop Adapter. The shop API (org:opencrx:application:shop1) gives a service-
+      oriented access to a subset of the openCRX API. The API allows to manage
+      customers, contracts, products, prices and activities. Application clients
+      (GUIs, XML-RPC servlets, JSPs, EJBs, ...) can instantiate the shop adapter
+      with new org.opencrsx.application.shop1.service.ShopServiceImpl() and then
+      use its public methods. The adapter itself delegates to the openCRX API.
+
+      CR10009335
+      SSL support for IMAP and LDAP. IMAPServlet and LDAPServlet are configured
+      for SSL support as follows:
+
+      * Create cert and key with OpenSSL (e.g. server.key, server.crt)
+      * Convert cert and key to PEM format using OpenSSL:
+        o Key: openssl rsa -in server.key -out server-key.pem -outform PEM
+        o Cert: openssl x509 -in server.crt -out server-cert.pem -outform PEM
+
+      * Use a Java Keytool which allows you to a) create a keystore,
+        b) import a certificate, c) import a private key.
+        The following tools allow you to easily manage Java keystores:
+        o Portecle:    http://sourceforge.net/projects/portecle/
+        o KeyTool IUI: http://yellowcat1.free.fr/keytool_iui.html
+      * Add init-param to web.xml of IMAPServlet and LDAPServlet as follows:
+
+		<init-param>
+		  <param-name>sslKeystoreFile</param-name>
+		  <param-value>/var/ssl/keystore.jks</param-value>
+		</init-param>
+		<init-param>
+		  <param-name>sslKeystoreType</param-name>
+		  <param-value>JKS</param-value>
+		</init-param>
+		<init-param>
+		  <param-name>sslKeystorePass</param-name>
+		  <param-value>changeit</param-value>
+		</init-param>
+		<init-param>
+		  <param-name>sslKeyPass</param-name>
+		  <param-value>changeit</param-value>
+		</init-param>
+
+      * For IMAPServlet the port should be changed from 1143 to 1443:
+
+		<init-param>
+		  <param-name>port</param-name>
+		  <param-value>imap:1443</param-value>
+		</init-param>
+
+      * For LDAPServlet the port should be changed from 1389 to 1689.
+
+		<init-param>
+		  <param-name>port</param-name>
+		  <param-value>ldap:1689</param-value>
+		</init-param>
+
+
+      CR10009206
+      The AirSync servlet (org.opencrx.application.airsync.server.impl.SyncServlet)
+      allows AirSync-capable clients to synchronize with openCRX. The UserSettings
+      wizard creates the SyncProfile 'AirSync' which is used by the SyncServlet.
+      The SyncServlet synchronizes contacts (Accounts), activities
+      (Meeting, Task, EMail) and alerts (EMails).
+
+      CR10009196
+      LDAP Server. LDAP server added in org.opencrx.application.ldap. The
+      server allows to access contact information using LDAP clients. Below
+      is a sample query using ldapsearch:
+
+      ldapsearch -D "guest@Standard" -w guest -h localhost -p 1389 -b "ou=filter/All Accounts,ou=Persons" -l 100 -z 100 -P 3 ""
+
+
+      CR10008978
+      Captcha Servlet. Add servlet which allows to generate Captchas
+      (see http://jcaptcha.sourceforge.net/). The GetCaptchaServlet allows to
+      get captchas which can be used in JSPs offering openCRX functionality
+      for anonymous and non-authenticated users. E.g. AnonymousCreateActivity.jsp
+      accepts posts which create activities.
+
+      CR10008958
+      Tomcat Connectors: pause / resume. Tomcat extension which allows to start
+      multiple Tomcat instances with the same configuration and allow to stop /
+      start the connectors of these instances individually.
+
+      The class org.openmdx.catalina.core.ExtendedService allows to handle the
+      requested scenario. Adapt the server.xml as follows:
+
+      <Server port="${tomcat.server.port}" shutdown="SHUTDOWN">
+      ...
+      <Service name="Catalina" port="${tomcat.service.port}" className="org.openmdx.catalina.core.ExtendedService">
+      ...
+
+      The system properties are set per Tomcat instance, e.g.
+
+      Instance A:
+      * -Dtomcat.server.port=8005
+      * -Dtomcat.service.port=8006
+
+      Instance B:
+      * -Dtomcat.server.port=8105
+      * -Dtomcat.service.port=8106
+
+      If instance A and instance B have to run with different versions of EARs/WARs
+      create a Tomcat directory for each instance.
+
+      Start instance A. The connectors are started.
+      Start instance B. The connectors can not be started because of port conflicts.
+
+      Switch from instance A to B as follows:
+      * telnet localhost 8006. Enter command stopConnectors.
+      * telnet localhost 8106. Enter command startConnectors.
+
+      If the property org.openmdx.catalina.core.ExtendedService.autostartConnectors is unset
+      or the property is set to true then the connectors will be started at startup of Tomcat.
+      Otherwise the connectors are not started.
+
+      CR10008960
+      IMAPServer: pause / resume. The IMAPServlet (opencrx-imap-CRX/IMAPServlet) provides a
+      simple GUI which allows to pause and resume the IMAPServer. The Wizard IMAPServer.jsp
+      available as admin-Root redirects to the IMAPServlet. The IMAPServlet accepts the
+      system property org.openmdx.catalina.core.ExtendedService.autostartConnectors.
+      If unset or set to true, the IMAPServer is started at startup. If set to false, the
+      IMAPServer has to be started manually.
+
+      CR10008961
+      WorkflowController: pause / resume. The WorkflowControllerServlet accepts the new
+      commands pause and resume. Pause stops pinging the controlled WorkflowServlets.
+      The new commands are available via the GUI. The WorkflowControllerServlet accepts
+      the system property org.openmdx.catalina.core.ExtendedService.autostartConnectors.
+      If it is unset or set to true the WorkflowController is activated on startup. If
+      set to false the WorkflowController has to be resumed manually.
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+
+      CR10009315
+      SubscriptionHandlerServlet. SubscriptionHandlerServlet must use a persistence
+      manager which is specific for the subscribing user.
+
+      CR10009198
+      PortalExtension: getDataBinding(). The signature of getDataBinding() has changed.
+      The parameter ApplicationContext app is removed because data bindings must not
+      depend on the application context. The new interface DataBinding_2_0 has been
+      added to support data bindings where the application context is passed as
+      parameter for setValue(), getValue().
+
+      CR20018907
+      Portal: Ajax-based login.
+      Login.jsp now first invokes the protected ./jsp/GetPath.jsp. The session
+      is not authenticated if GetPath returns the redirect URL to the Login page.
+      In this case the Login form is displayed. If GetPath returns the non-redirected
+      URL, Login.jsp forwards to the ObjectInspectorServlet without displaying
+      the login form. As a consequence /jsp/* must be protected in web.xml.
+
+2.1.  FIXED BUGS
+
+      CR10009299
+      Rendering contracts as RTF (cyrillic text).
+      Error: workstr.append("\\'" + Integer.toHexString(ch))
+      You are encoding UTF character as «\'hh» (h — hexadecimal digit). But in
+      RTF format UTF characters are encoded as «\udddd?» (d — decimal digit,
+      dddd — shift from beginning of UTF-8 table).
+      So, I think that correct version of this statemnet must be:
+      workstr.append("\\u" + String.format("%04d", (int)ch) + "?");
+
+      CR10009177
+      ICAL: ATTENDEE not updated. ICALs ATTENDEEs are not updated in activity parties
+      are added or removed.
+
+2.2   REMOVED FEATURES
+      none
 
 ==============================================================================
 Version 2.5.3                                                       2009-10-16
 ==============================================================================
 
 1.    NEW FEATURES
-            
+
       CR20018858
-      Portal: DashboardControl. DashboardControl and wizard which 
-      allows to manage dashlets.             
-            
+      Portal: DashboardControl. DashboardControl and wizard which
+      allows to manage dashlets.
+
       CR10008432
       Add GUI mode which is optimized for mobile browsers. Currently tested
       and supported is Safari for iPhone and desktop browsers.
-      
+
       CR10008878
       EMailRecipientDataBinding. Data binding to manage recipients of EMail activity.
       Here is a sample customizing:
-      
+
 		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:EMail:to0">
 		      <_object>
 			<type>org:opencrx:kernel:account1:EMailAddress</type>
@@ -39,9 +216,9 @@ Version 2.5.3                                                       2009-10-16
 		      </_object>
 		      <_content/>
 		</org.openmdx.ui1.StructuralFeatureDefinition>
-		
+
 		...
-		
+
 		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to0">
 		    <_object>
 			<dataBindingName>org.opencrx.kernel.portal.EMailRecipientDataBinding?index=0;partyType=220</dataBindingName>
@@ -79,89 +256,89 @@ Version 2.5.3                                                       2009-10-16
 			</order>
 		    </_object>
 		<_content/>
-		</org.openmdx.ui1.ElementDefinition>  
-		       
-      
+		</org.openmdx.ui1.ElementDefinition>
+
+
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008870
       The schema paths in the ui and code files have to be changed:
       * xri:+resource/org/openmdx/ui1/xmi/ui1.xsd --> xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd
       * xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd --> xri://+resource/org/opencrx/kernel/code1/xmi/code1.xsd
       Files in custom projects have to be adapted correspondingly. The following commands do the job:
 	  * grep -rl 'xri:+resource/org/openmdx/ui1/xmi/ui1.xsd' . | xargs sed -i -e 's/xri:+resource\/org\/openmdx\/ui1\/xmi\/ui1.xsd/xri:\/\/+resource\/org\/openmdx\/ui1\/xmi1\/ui1.xsd/'
-      * grep -rl 'xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd' . | xargs sed -i -e 's/xri:+resource\/org\/opencrx\/kernel\/code1\/xmi\/code1.xsd/xri:\/\/+resource\/org\/opencrx\/kernel\/code1\/xmi1\/code1.xsd/      
+      * grep -rl 'xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd' . | xargs sed -i -e 's/xri:+resource\/org\/opencrx\/kernel\/code1\/xmi\/code1.xsd/xri:\/\/+resource\/org\/opencrx\/kernel\/code1\/xmi1\/code1.xsd/
       Also the _operation tag in the code files have to be fixed:
       grep -rl '_operation=\"create\"' . | xargs sed -i -e 's/_operation=\"create\"/_operation=\"set\"/'
-             
+
 2.1.  FIXED BUGS
-      
+
 2.2   REMOVED FEATURES
       none
-      
+
 ==============================================================================
 Version 2.5.2                                                       2009-09-14
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10008773
       PortalExtension: queries for customized feature definitions. The method
       PortalExtension_1_0.getQuery() allows to specify user-defined queries.
       The method takes as parameter the field and the filter value. Identity
-      columns for example require user-defined queries. 
-      
+      columns for example require user-defined queries.
+
       CR10008709
-      Favorites with xri of current object. Favorites which are invoked on the 
+      Favorites with xri of current object. Favorites which are invoked on the
       current object can be defined as follows:
       1. Set favorite's reference to null. The favorite's reference is then
          set to current object.
       2. The macro $XRI is replaced with the XRI of the currently selected object.
          Example:
-         window.location.href='./wizards/en_US/CreateWorkAndExpenseRecord.jsp?xri=$XRI'; 
-      
+         window.location.href='./wizards/en_US/CreateWorkAndExpenseRecord.jsp?xri=$XRI';
+
       CR10008577
-      CalDAV servlet added to EAR. 
-      
+      CalDAV servlet added to EAR.
+
       With iPhone 3 connect as follows:
-      1) With standard GUI go to user home of user {login} and create a calendar 
-         profile {P}. 
-      2) Attach one are more calendar feeds pointing to an activity group or 
-         activity filter. Set active to true and background color to some value, 
+      1) With standard GUI go to user home of user {login} and create a calendar
+         profile {P}.
+      2) Attach one are more calendar feeds pointing to an activity group or
+         activity filter. Set active to true and background color to some value,
          e.g. #112233.
-      3) On iPhone subscribe to calendar with 
-         url http://host:port/opencrx-caldav-CRX/CRX/Standard/user/{login}/profile/{P}      
-                  
+      3) On iPhone subscribe to calendar with
+         url http://host:port/opencrx-caldav-CRX/CRX/Standard/user/{login}/profile/{P}
+
       With Sunbird connect as follows:
-      1) Subscribe to calendar with URL 
+      1) Subscribe to calendar with URL
          http://host:port/opencrx-caldav-CRX/CRX/Standard/tracker/{tracker name}[/filter/{filter name}]
-      
+
       CR10007844
       Portal: support for Wiki tags. Text fields are rendered client-side using
       Wiky. For more information about features and supported Wiki tags
-      see http://goessner.net/articles/wiky/. 
-      
+      see http://goessner.net/articles/wiky/.
+
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008803: isAllDayEvent
       isAllDayEvent is currently modeled as persistent attribute.
-      * isAllDayEvent should be derived. It is true, if scheduledStart and scheduledEnd do not 
+      * isAllDayEvent should be derived. It is true, if scheduledStart and scheduledEnd do not
         specify a time, i.e. 00:00:00.000
       * Add operation markAsAllDayEvent() which resets the time of scheduledStart and scheduledEnd.
-            
+
       CR10008789: Deprecate EJBs
       Deprecate Kernel and Security Dataprovider EJBs in favor of REST plug-ins.
-        
+
       CR10008788: Rename ContractPosition
       Rename the abstract class ContractPosition to AbstractContractPosition.
-      
-                  
+
+
 2.1.  FIXED BUGS
-      
+
 2.2   REMOVED FEATURES
       none
 
@@ -170,55 +347,55 @@ Version 2.5.1                                                       2009-07-22
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10008599
-      Birthday calendars. Generation of birthday calendars added to ICal servlet. 
+      Birthday calendars. Generation of birthday calendars added to ICal servlet.
       Sample URL is: http://localhost:8080/opencrx-ical-CRX/bdays?id=CRX/Standard/filter/Accounts~all&alarm=true&max=100
       Parameters:
       * id: account filter.
       * alarm: true|false. Generate alarm tag. Default is false.
       * max: Generate events for max accounts. Default is 500.
       * icalType: VTODO|VEVENT. Default is VEVENT.
-      * year: Generate events for years [year-1, year, year+1]. Default is current year. 
+      * year: Generate events for years [year-1, year, year+1]. Default is current year.
       * categories: CATEGORIES attribute. Default is Birthday
       * summaryPrefix: Prefix for attribute SUMMARY. Default is ""
-            
+
       CR10008602
       Redesign Grid Follow-Ups. Add FormattedFollowUpDataBinding which formats
-      the fields transition, assignedTo, createdAt, modifiedAt of an ActivityFollowUp. 
-      
+      the fields transition, assignedTo, createdAt, modifiedAt of an ActivityFollowUp.
+
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008700
-      Database: improve case-insensitive search. UPPER(column) LIKE UPPER(?) 
-      does not work for all databases. 
-            
+      Database: improve case-insensitive search. UPPER(column) LIKE UPPER(?)
+      does not work for all databases.
+
       CR10008581
       Upgrade Timeline to version 2.3.0.
-            
+
 2.1.  FIXED BUGS
-      
+
       SF2808264
       Setup-Problem with 2.5.0 on Tomcat and DB2. OpenCrxSecurity_1 plugin fixed. This
       fixes the following reported errors:
       1) User creation error
       2) Start openCRX with empty database
       3) Change password
-            
+
       CR10008615
-      vCard Importer appends postalStreet. Importing the same vCard multiple 
-      times leads to unwanted extra lines in postalStreet; it seems that the 
-      importer just appends the imported lines to postalStreet instead of 
-      replacing existing lines with the imported lines. 
-      
+      vCard Importer appends postalStreet. Importing the same vCard multiple
+      times leads to unwanted extra lines in postalStreet; it seems that the
+      importer just appends the imported lines to postalStreet instead of
+      replacing existing lines with the imported lines.
+
       CR10008609
-      ui/code-merge/split broken. Parameter sourceDir ignored/not correctly injected? 
-            
+      ui/code-merge/split broken. Parameter sourceDir ignored/not correctly injected?
+
       CR10008595
-      pg script dbcreate-table.sql of v2.5.0 is no good. Use TIMESTAMP WITH TIME ZONE 
-      instead of ABSTIME. 
+      pg script dbcreate-table.sql of v2.5.0 is no good. Use TIMESTAMP WITH TIME ZONE
+      instead of ABSTIME.
 
 2.2   REMOVED FEATURES
       none
@@ -229,43 +406,43 @@ Version 2.5.0                                                       2009-06-08
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10008468
-      Final PrincipalGroups. Add flag to mark PrincipalGroups as final. Access 
+      Final PrincipalGroups. Add flag to mark PrincipalGroups as final. Access
       level deep does not calculate subgroups for final principal groups. isFinal
       can therefore be used to fine-control the behaviour of access level deep.
 
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008468
       Final PrincipalGroups. Add flag to mark PrincipalGroups as final. The access
       control plugin does not subgroups for final principal groups in case of
-      accessLevelBrowse=access level deep. 
-       
+      accessLevelBrowse=access level deep.
+
       CR10008467
-      Work and Expense record. Extend existing work record so that expenses 
+      Work and Expense record. Extend existing work record so that expenses
       can be stored as well. Wizard CreateWorkAndExpenseRecord which allows
-      user-friendly management of work and expense records. 
-            
+      user-friendly management of work and expense records.
+
       CR10007950
       Migrate application plugin to openMDX 2 architecture. Backend classes
       in package org.opencrx.kernel.backend are fully rewritten. The backend
-      now uses the typed jmi1 openCRX API instead of the deprecated, generic 
-      openMDX 1 RequestCollection/DataproviderObject API. A backend is now 
-      organized as library. The methods can be used in wizards, portal 
-      extensions, data bindings or backend extensions. beClass.getInstance(), 
-      e.g. Accounts.getInstance() allows an easy-to-use lookup. The standard 
+      now uses the typed jmi1 openCRX API instead of the deprecated, generic
+      openMDX 1 RequestCollection/DataproviderObject API. A backend is now
+      organized as library. The methods can be used in wizards, portal
+      extensions, data bindings or backend extensions. beClass.getInstance(),
+      e.g. Accounts.getInstance() allows an easy-to-use lookup. The standard
       backend classes can be overriden by user-defined implementations.
       This way the standard openCRX business-logic can easily be adapted and
       extended.
-      
+
       A user-defined backend class can be added as follows:
-      
-      1. Write a class which extends one of the standard backend classes, 
+
+      1. Write a class which extends one of the standard backend classes,
       e.g. Accounts as follows:
-      
+
       package com.mycompany.opencrx.backend;
 
       public class Accounts extends org.opencrx.kernel.backend.Accounts {
@@ -274,19 +451,19 @@ Version 2.5.0                                                       2009-06-08
 	    ) {
 		    registerImpl(new com.mycompany.opencrx.backend.Accounts());
 	    }
-	
+
         protected Accounts(
         ) {
         }
-        
+
         ...
       }
 
-      2. Extend the standard Configuration class and register your backend 
+      2. Extend the standard Configuration class and register your backend
       class as follows:
 
       package com.mycompany.opencrx.backend;
-            
+
       public class Configuration extends org.opencrx.kernel.aop2.Configuration {
 
 	    public Configuration(
@@ -294,15 +471,15 @@ Version 2.5.0                                                       2009-06-08
 		   super();
 		   com.mycompany.opencrx.backend.Accounts.register();
 	    }
-	
+
       }
-              
-      3. Register the configuration class in 
+
+      3. Register the configuration class in
       src/ear/opencrx-core-CRX.ear/gateway.jar/META-INF/ejb-jar.xml. This can
       be done by adapting the entry configuration.class.name in the
       build.properties file.
-      
-      
+
+
       CR10008417
       Replace openMDX/Log by SLF4J / JDK Logger. The sub-project openMDX/Log is
       not used anymore by openCRX. Tomcat+OpenEJB can therefore be configured
@@ -315,19 +492,19 @@ Version 2.5.0                                                       2009-06-08
       * Remove slf4j-openmdx1.jar from CATALINA_HOME/lib
       * Adapt log configuration in CATALINA_HOME/conf/logging.properties to your needs
       * Remove LogConsoleServlet from customized web.xml
-            
+
 2.1.  FIXED BUGS
-      
+
       SF329844
-      So I did a post with the following settings:  
-      POST http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/7wmWgCjdEd6ri3Nu6Dapag/member 
-      <?xml version="1.0"?> 
-      <org.opencrx.kernel.account1.Member> 
-        <name>MyName</name> 
-        <account>xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/NI7XwEIBEd29BeMf4vj8cA</account> 
-      </org.opencrx.kernel.account1.Member> 
-      NI7XwEIBEd29BeMf4vj8cA should become a member of 7wmWgCjdEd6ri3Nu6Dapag. 
-      Anyway, I get a server error, without using the account argument all is fine.      
+      So I did a post with the following settings:
+      POST http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/7wmWgCjdEd6ri3Nu6Dapag/member
+      <?xml version="1.0"?>
+      <org.opencrx.kernel.account1.Member>
+        <name>MyName</name>
+        <account>xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/NI7XwEIBEd29BeMf4vj8cA</account>
+      </org.opencrx.kernel.account1.Member>
+      NI7XwEIBEd29BeMf4vj8cA should become a member of 7wmWgCjdEd6ri3Nu6Dapag.
+      Anyway, I get a server error, without using the account argument all is fine.
 
 2.2   REMOVED FEATURES
       none
@@ -343,11 +520,11 @@ Version 2.4.1                                                       2009-03-23
 
 2.0.  CHANGED FEATURES
       none
-            
+
 2.1.  FIXED BUGS
-      
+
       SF6884208
-      When I run ant script: 
+      When I run ant script:
 
       ant -Dformat.source=openmdx2 -Dformat.target=openmdx2
       -Ddb.jdbc.driver.classpath="D:\temp\hsqldb.jar;D:\temp\ojdbc14.jar"
@@ -360,7 +537,7 @@ Version 2.4.1                                                       2009-03-23
 
       I get an error: [java] java.lang.NoClassDefFoundError:
       org/openmdx/kernel/application/client/Launch
-      
+
       SF6853479
       I tried http://www.opencrx.org/opencrx/2.3/new.htm#REST in 2.3 it is ok. But
       in 2.4 I get an error:
@@ -376,7 +553,7 @@ Version 2.4.1                                                       2009-03-23
 	      org.apache.tomcat.util.net.AprEndpoint$Worker.run(AprEndpoint.java:1509)
 	      java.lang.Thread.run(Thread.java:595)
 
-      root cause 
+      root cause
 
       java.lang.NoClassDefFoundError:
       org/openmdx/application/dataprovider/transport/ejb/cci/Jmi1AccessorFactory_2org.openmdx.application.rest.RestServlet.getPersistenceManagerFactory(RestServlet.java:1317)
@@ -403,7 +580,7 @@ Version 2.4.0                                                       2009-03-06
 
       CR10008389
       Notifications as RSS feed. NewsServlet added.
-      
+
       CR10008279
       User interface that is more intuitive to use. Added the following
       wizards:
@@ -414,14 +591,14 @@ Version 2.4.0                                                       2009-03-06
       * CreateContractWizard
       * CreateLeadWizard
       * CreateContactWizard
-      
+
       CR10008309
       Forms: allow to define forms which are composed from customized fields.
       A form consists of a set of field groups and a field group of a set
       of fields. A field definition is specified by the class name and
       feature name of a modeled, customized field and a field order. Below
       is a sample definition:
-      
+
 			<?xml version="1.0" encoding="UTF-8"?>
 			<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi/ui1.xsd">
 			  <_object/>
@@ -462,7 +639,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
 						                            <featureName>usage</featureName>
-						                            <order>100</order>                            
+						                            <order>100</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -470,7 +647,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractPriceLevel</forClass>
 						                            <featureName>basedOn</featureName>
-						                            <order>200</order>                            
+						                            <order>200</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -478,7 +655,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
 						                            <featureName>price</featureName>
-						                            <order>300</order>                            
+						                            <order>300</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -486,7 +663,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
 						                            <featureName>quantityFrom</featureName>
-						                            <order>400</order>                            
+						                            <order>400</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -494,7 +671,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
 						                            <featureName>quantityTo</featureName>
-						                            <order>500</order>                            
+						                            <order>500</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -502,7 +679,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
 						                            <featureName>discountIsPercentage</featureName>
-						                            <order>600</order>                            
+						                            <order>600</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -510,7 +687,7 @@ Version 2.4.0                                                       2009-03-06
 						                          <_object>
 						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
 						                            <featureName>discount</featureName>
-						                            <order>700</order>                            
+						                            <order>700</order>
 						                          </_object>
 						                          <_content />
 						                        </org.openmdx.ui1.FormFieldDefinition>
@@ -519,7 +696,7 @@ Version 2.4.0                                                       2009-03-06
 						                  </org.openmdx.ui1.FormFieldGroupDefinition>
 						                </formFieldGroupDefinition>
 						              </_content>
-						            </org.openmdx.ui1.FormDefinition>                       
+						            </org.openmdx.ui1.FormDefinition>
 						          </formDefinition>
 			              </_content>
 			            </org.openmdx.ui1.Segment>
@@ -529,9 +706,9 @@ Version 2.4.0                                                       2009-03-06
 			    </provider>
 			  </_content>
 			</org.openmdx.base.Authority>
-      
+
       The form can then be used in a wizard as follows:
-      
+
 			1. Get the form
 			org.openmdx.ui1.jmi1.FormDefinition productBasePriceFormDefinition = app.getUiFormDefinition("ProductBasePriceForm");
 			org.openmdx.portal.servlet.control.FormControl productBasePriceForm = new org.openmdx.portal.servlet.control.FormControl(
@@ -541,7 +718,7 @@ Version 2.4.0                                                       2009-03-06
 				app.getUiContext(),
 				productBasePriceFormDefinition
 			);
-			
+
 			2. Read the fields from an HttpRequest into a field value map
 			Map formValues = new HashMap();
 			productBasePriceForm.updateObject(
@@ -550,7 +727,7 @@ Version 2.4.0                                                       2009-03-06
 				app,
 				pm
 			);
-			
+
 			3. Paint the form
 			form.paint(
 				p,
@@ -562,15 +739,15 @@ Version 2.4.0                                                       2009-03-06
 
       CR10008349
       Support for OpenEJB. Setup is done as follows:
-      
+
 			From Apache get:
 			* tomcat 6.0.18
-			
+
 			From openMDX get:
 			* openmdx-openejb.war
-			  openmdx-openejb.war is the original openejb.war from Apache OpenEJB with the 
-			  following modifications: 
-			  - Patch for TomcatWebAppBuilder which allows to load context.xml files from 
+			  openmdx-openejb.war is the original openejb.war from Apache OpenEJB with the
+			  following modifications:
+			  - Patch for TomcatWebAppBuilder which allows to load context.xml files from
 			    WebApps META-INF
 			  - Patch for MailSessionFactory which allows to use multiple mail sessions
 			  - Deployment factory for in-process deployment, log stream for slf4j.
@@ -578,30 +755,30 @@ Version 2.4.0                                                       2009-03-06
 			* catalina.jar which contains ExtendedJDBCRealm
 			* tomcat-juli.jar which contains xri protocol handler
 			* slf4j-openmdx1.jar
-			
+
 			From openCRX get:
 			* opencrx-core-CRX.ear
-      
-			Installation                                                                                                                       
+
+			Installation
 			* Unzip Tomcat
-			* Copy openmdx-openejb.war to webapps and rename to 0-openejb.war. This asserts 
+			* Copy openmdx-openejb.war to webapps and rename to 0-openejb.war. This asserts
 			  that openejb.war is the first WebApp deployed by tomcat
 			* Copy openmdx-kernel.jar, catalina.jar, slf4j-openmdx1.jar, database driver jars to lib
 			* Copy tomcat-juli.jar to bin
 			* Create directory apps (same dir level as webapps) and copy opencrx-core-CRX.ear to apps
 			* Copy openejb.xml to conf. Adapt JDBC resource.
 			* Add users to tomcat-users.xml
-			* Start Tomcat with the same -D options as Tomcat+LWC.      
-      
-			Configuring Security Realm with in opencrx-core-CRX.ear                                                  
-			The WebApps in opencrx-core-CRX.ear have a context.xml located in the META-INF 
-			directory of each WebApp. The Realm is configured by setting the following 
-			environment variables (-D option):			
-			-Dopencrx.CRX.jdbc.driverName="org.postgresql.Driver" 
+			* Start Tomcat with the same -D options as Tomcat+LWC.
+
+			Configuring Security Realm with in opencrx-core-CRX.ear
+			The WebApps in opencrx-core-CRX.ear have a context.xml located in the META-INF
+			directory of each WebApp. The Realm is configured by setting the following
+			environment variables (-D option):
+			-Dopencrx.CRX.jdbc.driverName="org.postgresql.Driver"
 			-Dopencrx.CRX.jdbc.url="jdbc:postgresql://127.0.0.1:5432/CRX_2_4"
-			-Dopencrx.CRX.jdbc.userName="postgres" 
+			-Dopencrx.CRX.jdbc.userName="postgres"
 			-Dopencrx.CRX.jdbc.password="..."
-			
+
 
 2.    CHANGES
 
@@ -609,7 +786,7 @@ Version 2.4.0                                                       2009-03-06
 
 			CR10008387
 			Migrate models to RSM 7.5.
-			
+
       CR20018534
       Replace JPOX by OpenJPA. The model mapper now generates JPA compliant
       persistence classes and a default persistence mapping (orm.xml). The
@@ -617,8 +794,8 @@ Version 2.4.0                                                       2009-03-06
       the following targets:
       * enhance: enhances the classes listed in orm.xml
       * create-schema: orm.xml --> openjpa-schema.xml
-      * create-sql: openjpa-schema --> sql build and upgrade script            
-            
+      * create-sql: openjpa-schema --> sql build and upgrade script
+
 2.1.  FIXED BUGS
       none
 
@@ -630,13 +807,13 @@ Version 2.3.0                                                       2008-12-03
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR0003539
-      Ui perspectives. Perspectives allow to modify the Root UI customizing. 
-      A perspective overrides the Root customizing, i.e. a perspective inherits 
-      all UI element definitions from the Root customizing. The WEB-INF/config/ui 
+      Ui perspectives. Perspectives allow to modify the Root UI customizing.
+      A perspective overrides the Root customizing, i.e. a perspective inherits
+      all UI element definitions from the Root customizing. The WEB-INF/config/ui
       directory structure looks as follows:
-      
+
       WEB-INF/config/ui
           Root
               locale 0
@@ -650,29 +827,29 @@ Version 2.3.0                                                       2008-12-03
               locale 0
               locale 1
               ...
-              
+
       The name of a Perspective must be of the form {order}-{name}, e.g.
       1-Guest, 2-BackOffice, 3-FrontOffice, 4-Mgmt. The order defines in
       which order the perspectives are rendered in the perspective selector
       in the GUI. Root has the predefined order 0.
-      
+
       CR10008205
       REST servlet added to openCRX/Core. The servlet allows easy 3rd party
       integration with openCRX. The full functionality of the openCRX API
       can be accessed via rest requests. See See http://code.google.com/p/rest-client/
       for a REST client. Below are some sample requests:
-      
-			Object creation                                                                                                     
+
+			Object creation
 			  Method: POST
-			  Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account			
-			  Body:			
+			  Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account
+			  Body:
 					<?xml version="1.0"?>
 					<org.opencrx.kernel.account1.Contact>
 						<lastName>REST</lastName>
 						<firstName>Test #1</firstName>
 					</org.opencrx.kernel.account1.Contact>
-			
-			Object Retrievals                                                                                                                           
+
+			Object Retrievals
 			  Method: GET
 			  Urls:
 					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/extent?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=identity().like(%22xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/%25%22);orderByFirstName().ascending()
@@ -686,43 +863,43 @@ Version 2.3.0                                                       2008-12-03
 					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().elementOf(%22Joe%22,%22Guest%22);orderByFirstName().ascending()
 					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().equalTo(%22Guest%22);orderByLastName().ascending()
 					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().equalTo(%22Guest%22)
-			
-			Object modification                                                                                                                        
-				Method: PUT			
+
+			Object modification
+				Method: PUT
 				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/2YlAOJYlEd2Y4zv65ePspg
-				Body:			
+				Body:
 					<?xml version="1.0"?>
 					<org.opencrx.kernel.account1.Contact>
 						<preferredContactMethod>1</preferredContactMethod>
 					  <preferredSpokenLanguage>1</preferredSpokenLanguage>
 					</org.opencrx.kernel.account1.Contact>
-			
-			Operation Invocation                                                                                                             
-				Method: POST			
-				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.home1/provider/CRX/segment/Standard/userHome/guest/sendAlert			
-				Body:			
+
+			Operation Invocation
+				Method: POST
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.home1/provider/CRX/segment/Standard/userHome/guest/sendAlert
+				Body:
 					<?xml version="1.0"?>
 					<org.opencrx.kernel.base.SendAlertParams>
 						<toUsers>guest</toUsers>
 						<name>Test REST</name>
 					  <importance>0</importance>
 					</org.opencrx.kernel.base.SendAlertParams>
-			
-			Object Deletion         
-				Method: DELETE		
+
+			Object Deletion
+				Method: DELETE
 				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/2YlAOJYlEd2Y4zv65ePspg
 
 
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008288
-      memberRole is embedded. The attribute Member.memberRole should be configured 
-      as embedded, i.e. move the column from table OOCKE1_ACCOUNTASSIGNMENT_ to 
+      memberRole is embedded. The attribute Member.memberRole should be configured
+      as embedded, i.e. move the column from table OOCKE1_ACCOUNTASSIGNMENT_ to
       OOCKE1_ACCOUNTASSIGNMENT.
-            
-            
+
+
 2.1.  FIXED BUGS
       none
 
@@ -735,19 +912,19 @@ Version 2.2.1                                                       2008-10-14
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10008166: FormattedNoteDataBinding
-      DataBinding which allows to format Title / Text of a Note. This allows to 
-      improve the customizing of grids containing notes. The data binding 
+      DataBinding which allows to format Title / Text of a Note. This allows to
+      improve the customizing of grids containing notes. The data binding
       concatenates title and text of a Note to one string separated by a <br />.
       The title is set to bold. The title is filled up with &nbsp; according
       to the longest line of the text up to a maximum of 140 characters.
-      
-      Here is an example which shows how to configure the column 'formattedNote' 
+
+      Here is an example which shows how to configure the column 'formattedNote'
       of an ActivityFollowUp:
-      
+
       1. Configure a feature definition for formattedNote:
-      
+
 			<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
 				<_object>
 				  <type>org:w3c:string</type>
@@ -756,10 +933,10 @@ Version 2.2.1                                                       2008-10-14
 				</_object>
 				<_content/>
 				</org.openmdx.ui1.StructuralFeatureDefinition>
-			</featureDefinition>							
+			</featureDefinition>
 
       2. Configure an element definition for formattedNote:
-      
+
 			<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
 				<_object>
 					<active>true</active>
@@ -783,37 +960,37 @@ Version 2.2.1                                                       2008-10-14
 				</_object>
 				<_content/>
 			</org.openmdx.ui1.ElementDefinition>
-      
-      
+
+
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008163
       home1: replace Chart by Media. Replace class Chart by Media.
-      
-      
+
+
 2.1.  FIXED BUGS
       none
 
 
 2.2   REMOVED FEATURES
       none
-      
+
 
 ==============================================================================
 Version 2.2.0                                                       2008-09-02
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10008105
-      SecureObject: replaceOwningGroup().	Operation replaceOwningGroup allows 
+      SecureObject: replaceOwningGroup().	Operation replaceOwningGroup allows
       to replace the owning groups of an object by a given set of groups.
-      
+
       CR10008103
-      Workflow for scanning documents. Workflow which allows to scan a fs 
-      directory and its subdirs for files and map them to Documents and 
+      Workflow for scanning documents. Workflow which allows to scan a fs
+      directory and its subdirs for files and map them to Documents and
       DocumentFolders. The DocumentScannerServlet is configured in web.xml
       as follows:
       * init-param for WorkflowController
@@ -835,21 +1012,21 @@ Version 2.2.0                                                       2008-09-02
       The workflow accepts the following component configuration options:
       * scanDir: directory to be scanned for documents
       * urlPrefix: Document revisions are created of type ResourceIdentifier. The
-        url of the resource identifier is set to urlPrefix + current directory 
+        url of the resource identifier is set to urlPrefix + current directory
         name within scanDir + document name
       * groups: List of principal groups. owningGroup of all created objects is
-        set to the specified list of principal groups. 
+        set to the specified list of principal groups.
       All options are multi-valued, i.e. can have an index suffix [0]..[9].
-      
+
       CR10008084
-      DocumentFolderAssignment. Allow CrxObjects to be assigned to 
+      DocumentFolderAssignment. Allow CrxObjects to be assigned to
       document folders. Document folders show assigned objects.
-      
+
       CR10007776
       Contract extensions:
       * AccountAssignmentContract added
       * ContractLinkTo, ContractLinkFrom added
-      
+
       CR10008056
       SendMailWorkflow supports mail gateway. Email activities allow to set
       a gateway address. The gateway address is used for addresses which
@@ -859,62 +1036,62 @@ Version 2.2.0                                                       2008-09-02
       * Remove any characters except digits and letters
       * append domain part of gateway address
       E.g. the phone number +41441112233 is converted to the email address
-      _41441112233@fax-gateway.opencrx.org if the domain address is set to 
+      _41441112233@fax-gateway.opencrx.org if the domain address is set to
       the email address noreply@fax-gateway.opencrx.org.
-      
-      
+
+
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10008134
-      Email importer: mapping of unassignable recipients. Email addresses which 
-      can not be mapped to a valid recipient are mapped to the EMailAddress 
+      Email importer: mapping of unassignable recipients. Email addresses which
+      can not be mapped to a valid recipient are mapped to the EMailAddress
       'UNASSIGNED' if available.
-      
+
       CR10008086
       AccessControl: Caching
       * Cached objects should have a time-to-live (TTL)
       * Any object modification must remove object from cache
-      * Cache must be shared by ejb multiple instances 
-      
+      * Cache must be shared by ejb multiple instances
+
       CR10008032
-      AddressBook supports mobile devices. Optimize the AddressBook 
+      AddressBook supports mobile devices. Optimize the AddressBook
       wizard for mobile devices.
-      
+
       CR10008009
-      Migrate ICalServlet, VCardServlet, IMAPServer. Migrate ICalServlet, 
-      VCardServlet, IMAPServer from openCRX/Groupware to openCRX/Core. 
-      
-      
+      Migrate ICalServlet, VCardServlet, IMAPServer. Migrate ICalServlet,
+      VCardServlet, IMAPServer from openCRX/Groupware to openCRX/Core.
+
+
 2.1.  FIXED BUGS
       none
 
 
 2.2   REMOVED FEATURES
-      
+
       CR10008065
-      Deprecate Mms, Sms and Fax activities. Mms, Sms and Fax activities are 
+      Deprecate Mms, Sms and Fax activities. Mms, Sms and Fax activities are
       replaced by Email activities.
-      
+
 
 ==============================================================================
 Version 2.1.0                                                       2008-07-10
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10007866
-      Keep track of the last applied ActivityCreator of an activity. Add 
+      Keep track of the last applied ActivityCreator of an activity. Add
       reference Activity.lastAppliedCreator. ActivityCreator.newActivity()
       and Activity.reapplyActivityCreator() updates the reference.
-      
+
       CR10007849
       Product filters. Add global product filters.
-      
+
       CR10007845
       Contract filters. Add global contract filters.
-      
+
       CR10007754
       SegmentSetup wizard. The wizard allows the segment administrator to create
       all required objects for:
@@ -924,16 +1101,16 @@ Version 2.1.0                                                       2008-07-10
       * User management
       * Product management
       * Contract management
-      
+
       CR0003145
       Reporting - Incident. Each object offers the operation exportItem(). The
       parameters are:
       * itemMimeType: this parameter specifies the export format. Supported
         formats are text/xml and application/x-excel.
-      * referenceFilter: allows to specify which references are traversed 
+      * referenceFilter: allows to specify which references are traversed
         starting from the object to be exported. This is a comma-seperated
         list of either qualified or unqualified reference names.
-        
+
       Examples:
       * Export of an Account with its addresses, assigned activities and
         assigned contracts:
@@ -942,7 +1119,7 @@ Version 2.1.0                                                       2008-07-10
         'position, customer, address, uom, salesTaxType, org:opencrx:kernel:product1:ProductDescriptor:product'
       * Export of filtered accounts specified by an AccountFilter:
         'filteredAccount, address'
-        
+
       The Excel-Export creates a sheet for each exported object type. Object
       attributes can be accessed as shown in the following examples:
 
@@ -954,9 +1131,9 @@ Version 2.1.0                                                       2008-07-10
 
       // IDX=0
       = VLOOKUP(cell containing account xri; Account.DATA; MATCH("fullName"; Account.COLUMN;0); 0)
-      
+
       CR10007780
-      AccountMemberships are a recursive list of account assignments for a 
+      AccountMemberships are a recursive list of account assignments for a
       given account. The set of account memberships is calculated by a
       database view. AccountMemberships fulfill the following conditions
       for a given account A:
@@ -970,62 +1147,62 @@ Version 2.1.0                                                       2008-07-10
       * distance == -2, accountFrom=C, accountTo=B
         --> there exists a relationship from C to B and B to A
       * etc.
-      
+
       CR10007777
       XFN Graphing. The following wizards are added to the Accounts menu:
       * AccountMembershipGraph.jsp: graph showing the relationships of accounts using the
         JIT library (for more info see http://www.thejit.org).
       * Relationships.jsp. Calculates the shortest path between two accounts.
-      
+
       CR10007739
       Add support for HSQLDB 1.8. Scripts and connectors added to src/connector
       and src/sql (see openCRX SDK).
-      
+
       CR10007604
       Add multi-valued attributes Account::extCode20-29.
-      
+
 
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
+
       CR10007720
-      DepotReportItemPosition. Add balanceSimple and balanceSimpleBop. balance = 
+      DepotReportItemPosition. Add balanceSimple and balanceSimpleBop. balance =
       balanceCredit - balanceDebit and balanceBop = balanceCreditBop - balanceDebitBop.
-      
+
       CR10007615
       Extend AccountMembership. The following Account assocations are deprecated:
       * ContactHasDeputy
       * ContactHasAssistant
       * ContactReportsToContact
       Use account members instead.
-      
+
       CR10007628
-      PortalExtension: exclude disabled objects in autocomplete lookups. Disabled 
-      objects should not be included in the result set of autocompletion lookups. 
+      PortalExtension: exclude disabled objects in autocomplete lookups. Disabled
+      objects should not be included in the result set of autocompletion lookups.
       Extend PortalExtension.getFindObjectsBaseFilter() correspondingly.
-      
+
       CR10007613
-      VCard: unnecessary updates on addresses. When importing VCards all 
-      existing addresses are retrieved for modification and marked as dirty even 
-      if the VCard does not contain matching addresses. 
-      
+      VCard: unnecessary updates on addresses. When importing VCards all
+      existing addresses are retrieved for modification and marked as dirty even
+      if the VCard does not contain matching addresses.
+
       CR10006424
-      Default position name in openDepotPosition() should be based on 
+      Default position name in openDepotPosition() should be based on
       Product::productNumber instead of Product::name.
-      
-      
+
+
 2.1.  FIXED BUGS
-      
+
       CR10007712
       reprice. The operation AbstractContract.reprice() resets manually set
-      ContractPosition.discountIsPercentage and discount. 
-      
+      ContractPosition.discountIsPercentage and discount.
+
       CR10007603
-      PriceLevel: calculatePrices for base price levels. A price level is a 
-      base price level if basedOn.isEmpty(). The current implementation with 
-      !basedOn.isEmpty() results in a wrong retrieval of prices assigned to a 
-      base price level. As a result the base price level is added to all prices 
+      PriceLevel: calculatePrices for base price levels. A price level is a
+      base price level if basedOn.isEmpty(). The current implementation with
+      !basedOn.isEmpty() results in a wrong retrieval of prices assigned to a
+      base price level. As a result the base price level is added to all prices
       of the filtered products.
 
 
@@ -1038,38 +1215,38 @@ Version 2.0.0                                                       2008-02-20
 ==============================================================================
 
 1.    NEW FEATURES
-      
+
       CR10006537
       openCRX on Tomcat. Allow to deploy openCRX on Tomcat only using LWC. See
       Tomcat installation guide for more information.
-      
+
       CR10006597
-      depot1: SimpleBooking. A SimpleBooking allows lightweight recording of 
-      any kind of quantities on depot positions. 
-      
+      depot1: SimpleBooking. A SimpleBooking allows lightweight recording of
+      any kind of quantities on depot positions.
+
       CR10006574
-      Extend Price Levels. Allow to have different types of price levels. 
+      Extend Price Levels. Allow to have different types of price levels.
       Currently suppported are:
       * Price level with absolute start and end date
       * Price level with start date relative to product phases
-      
+
       CR10006428
-      Activities provide generic reference to CrxObjects. InvolvedObject allows 
+      Activities provide generic reference to CrxObjects. InvolvedObject allows
       to attach any CrxObject to activities. The role of the relationship can
       be specified.
-      
+
       CR10006522
       UserSettings wizard. Add wizard which allows management of user settings.
-      
+
       CR10006494
       Add Address book wizard. The wizard provides simple management of contacts
       and addresses.
-      
+
       CR10006521
-      FilteredActivitiesDataBinding. Add a data binding which allows to access 
+      FilteredActivitiesDataBinding. Add a data binding which allows to access
       collections of filtered activities.
 
-      An example UI definition looks as follows: Definition of structural feature 
+      An example UI definition looks as follows: Definition of structural feature
       which is a reference of type org:opencrx:kernel:Activity:
 
       <featureDefinition>
@@ -1081,10 +1258,10 @@ Version 2.0.0                                                       2008-02-20
         </org.openmdx.ui1.StructuralFeatureDefinition>
       </featureDefinition>
 
-      The feature name is of the form className:id of filtered activities 
-      container!filteredActivity. The id of the filtered activites container is of 
-      the form (tracker|milestone|category)!name[!filter!name] or globalfilter!name. 
-      The macro ${USER} is replaced by the current user name. The structural feature 
+      The feature name is of the form className:id of filtered activities
+      container!filteredActivity. The id of the filtered activites container is of
+      the form (tracker|milestone|category)!name[!filter!name] or globalfilter!name.
+      The macro ${USER} is replaced by the current user name. The structural feature
       definition can be used in element definitions as follows:
 
       <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
@@ -1117,25 +1294,25 @@ Version 2.0.0                                                       2008-02-20
       invokes the search wizard ./core/src/data/org.opencrx/wizards/en_US/Search.jsp
       which in turn takes the query string and creates a corresponding ObjectFinder
       on the user home and navigates to it. The object finder lists all index
-      entries which match the query. Index entries are updates by the Indexer 
-      servlet which is implemented as workflow and is controlled by the 
-      WorkflowControllerServlet. The IndexerServlet indexes all objects which do 
-      not have an IndexEntry which is newer than the modification date of the 
+      entries which match the query. Index entries are updates by the Indexer
+      servlet which is implemented as workflow and is controlled by the
+      WorkflowControllerServlet. The IndexerServlet indexes all objects which do
+      not have an IndexEntry which is newer than the modification date of the
       object. The IndexerServlet creates an index by invoking the operation
       updateIndex() on the object to be indexed.
-      
+
       CR10006498
       Model: The class ActivityFilterProperty is extendded as follows:
       * add AssignedToFilterProperty
       * In case no values for scheduled start and scheduled end are specified
         for ScheduledStartFilterProperty and ScheduledEndFilterProperty,
-        respectively, the current date is used as filter value. offsetInHours 
-        allows to shift the date. 
-      
+        respectively, the current date is used as filter value. offsetInHours
+        allows to shift the date.
+
       CR10006511
       Portal: queries in XML filters. Queries can be defined in XML filters
       with the PiggyBackCondition. Here is an example:
-      
+
       <object class="org.openmdx.base.query.PiggyBackCondition">
         <void property="quantor">
           <short>1</short>
@@ -1172,7 +1349,7 @@ Version 2.0.0                                                       2008-02-20
           </array>
         </void>
       </object>
-      
+
       * The feature name 'context:$uuid:object_class' corresponds to the feature name
         'object_class' with the context prefix context:$uuid. The value of the feature
         must be 'org:openmdx:compatibility:datastore1:QueryFilter'. The value is
@@ -1190,33 +1367,33 @@ Version 2.0.0                                                       2008-02-20
 
       CR10006610
       account1: codes for address usage.
-      
+
       CR10006605
-      Move ContractRole to segment-level. ContractRole is at segment-level and 
-      not composite to ContractReferenceHolder anymore. This allows to perform 
-      global searches on contract roles, e.g. return all contract roles of 
+      Move ContractRole to segment-level. ContractRole is at segment-level and
+      not composite to ContractReferenceHolder anymore. This allows to perform
+      global searches on contract roles, e.g. return all contract roles of
       account A.
-      
+
       CR10006609
-      account1: move UnspecifiedAccount.ext... to Account. Move all ext... 
+      account1: move UnspecifiedAccount.ext... to Account. Move all ext...
       attributes of class UnspecifiedAccount to class Account.
-      
+
       CR10006600
-      depot1: assertReports() takes bookingStatusThreshold as parameter. 
-      assertReports() takes bookingStatus as parameter. This allows to include 
-      bookings in the depot reports matching the specified booking status. The 
-      previous implementation allowed to include bookings with status processed 
+      depot1: assertReports() takes bookingStatusThreshold as parameter.
+      assertReports() takes bookingStatus as parameter. This allows to include
+      bookings in the depot reports matching the specified booking status. The
+      previous implementation allowed to include bookings with status processed
       only.
-      
+
       CR10006599
-      account1: generalize GroupMembership. Generalize GroupMembership so that 
-      any account can have members and the memberships are listed at account 
+      account1: generalize GroupMembership. Generalize GroupMembership so that
+      any account can have members and the memberships are listed at account
       level. At the same time deprecate the relationships Account.partner,
       Account.contact and the class ContactRelationships.
-      
+
       CR10006598
-      depot1: createBooking() operations take the booking origin as parameter.      
-      
+      depot1: createBooking() operations take the booking origin as parameter.
+
       CR10007446
       product1: Reorg product offerings. The classes below are removed from
       the model. A future version of openCRX will provide a simpler model
@@ -1249,7 +1426,7 @@ Version 2.0.0                                                       2008-02-20
       SelectableComplexProductBundle
       SelectableProductConfiguration
       PriceOverrideEnabled
-      
+
       contract1
       =========
       InvoiceBundledProductPosition
@@ -1270,59 +1447,59 @@ Version 2.0.0                                                       2008-02-20
       SalesOrderProductOfferingPosition
       CreateProductOfferingPositionParams
       CreateProductOfferingPositionResult
-      
+
       depot1
       ======
       BundledProductDepotPosition
       ProductBundleDepotPosition
       ComplexProductBundleDepotPosition
       ProductOfferingDepotPosition
-      
-      
+
+
       CR10006548
       Migrate application plugin to OperationAwarePlugin_1. As a consequence
       the plugin is split as follows:
-      * the classes in package org.opencrx.kernel.backend contain the 
+      * the classes in package org.opencrx.kernel.backend contain the
         business logic of openCRX
       * The classes in the packages org.opencrx.kernel.application.* contain
         the classes which dispatch operation requests to the backend classes
       * The compatibility plugin OpenCrxKernel_1 is still responsible for
-        create, replace, get and find requests. However it does not handle 
-        operation requests anymore. 
+        create, replace, get and find requests. However it does not handle
+        operation requests anymore.
       To be done
       * Migrate the backend to jmi1/cci2. Get rid of DataproviderObjects.
       * Migrate OpenCrxKernel_1 to be fully OO. Instead of an
         OperationAwarePlugin_1 it should be a Plugin_1.
-      
+
       CR10006543
       Migrate to cci2/jmi1 bindings. Migrate the openCRX APIs from the Java 1.4
       compliant cci binding to the Java 5 compliant jmi1/cci2 binding. Migration
       of client code (wizards, remote clients, reports, user-specific GUIs, ...)
       is straight forward. The wizards delivered in openCRX/Core and the
       openCRX/Store application show how to migrate to the new APIs.
-      
+
       CR10006529
-      Merge Web.ear and App.ear. Merge Web.ear and App.ear to one single EAR. 
-      The merge a) improves performance (use of local refs) and b) simplifies 
+      Merge Web.ear and App.ear. Merge Web.ear and App.ear to one single EAR.
+      The merge a) improves performance (use of local refs) and b) simplifies
       deployement.
-      
+
       CR10006523
-      JVM local ui repository. Migrate deployment to JVM local ui repository. 
-      The ui provider is local to the ObjectInspectorServlet which has the 
-      following advantages a) performance improvement, b) no conflicts in case 
+      JVM local ui repository. Migrate deployment to JVM local ui repository.
+      The ui provider is local to the ObjectInspectorServlet which has the
+      following advantages a) performance improvement, b) no conflicts in case
       of multiple instances of ObjectInspectorServlet with different ui configurations.
-      
+
       CR10006474
-      activity1: calculation of actual effort. For performance reasons, the calculation 
-      of ActivityGroup.actualEffort should be calculated by an operation instead by derived 
+      activity1: calculation of actual effort. For performance reasons, the calculation
+      of ActivityGroup.actualEffort should be calculated by an operation instead by derived
       attributes.
-      
+
       CR10006414
-      AccessControl: missing owner filter for extent queries. AccessControl 
+      AccessControl: missing owner filter for extent queries. AccessControl
       does now add owner filter property in case of extent queries.
-      
+
       CR10006493
-      Change package name org.opencrx.kernel.gui.generic.servlet to 
+      Change package name org.opencrx.kernel.gui.generic.servlet to
       org.opencrx.kernel.portal.
 
 

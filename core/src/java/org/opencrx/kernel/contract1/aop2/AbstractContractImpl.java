@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractImpl.java,v 1.10 2009/08/26 12:11:47 wfro Exp $
+ * Name:        $Id: AbstractContractImpl.java,v 1.11 2010/04/22 12:50:04 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/26 12:11:47 $
+ * Date:        $Date: 2010/04/22 12:50:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -146,6 +146,38 @@ public class AbstractContractImpl
     	}
     }
 
+    //-----------------------------------------------------------------------
+    public void setPricingDate(
+        java.util.Date pricingDate
+    ) {
+        try {
+            Contracts.getInstance().setPricingState(
+                this.sameObject(),
+                Contracts.PRICING_STATE_DIRTY
+            );
+            this.nextObject().setPricingDate(pricingDate);
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }        	    	
+    }
+    
+    //-----------------------------------------------------------------------
+    public void setActiveOn(
+        java.util.Date activeOn
+    ) {
+        try {
+            Contracts.getInstance().setPricingState(
+                this.sameObject(),
+                Contracts.PRICING_STATE_DIRTY
+            );
+            this.nextObject().setActiveOn(activeOn);
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }        	    	
+    }
+        
     //-----------------------------------------------------------------------
 	@Override
     public void jdoPreStore(

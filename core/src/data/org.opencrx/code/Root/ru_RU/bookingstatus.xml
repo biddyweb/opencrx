@@ -11,39 +11,39 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="bookingStatus" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="bookingStatus" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>NA</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item>[0] N/A</_item>
+                              <_item>[0] Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Незаконченный</_item>
+                              <_item>В процессе</_item>
                             </shortText>
                             <longText>
-                              <_item>[1] Незаконченный</_item>
+                              <_item>[1] В процессе</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Конечный</_item>
+                              <_item>Завершенный</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] Конечный</_item>
+                              <_item>[2] Завершенный</_item>
                             </longText>
                           </_object>
                           <_content/>

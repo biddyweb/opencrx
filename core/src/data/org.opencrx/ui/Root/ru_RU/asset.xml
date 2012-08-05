@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:ras1:Profile:idHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>ID история</_item>
+                        <_item>ID истории</_item>
                       </label>
                       <toolTip>
-                        <_item>ID история</_item>
+                        <_item>ID истории</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -377,10 +377,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:ras1:UseCase" _operation="create">
                     <_object>
                       <label>
-                        <_item>Случай использования</_item>
+                        <_item>Сценарий использования</_item>
                       </label>
                       <toolTip>
-                        <_item>Случай использования</_item>
+                        <_item>Сценарий использования</_item>
                       </toolTip>
                     </_object>
                     <_content/>

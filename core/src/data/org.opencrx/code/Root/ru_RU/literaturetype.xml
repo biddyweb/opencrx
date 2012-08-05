@@ -11,25 +11,25 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="literatureType" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="literatureType" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>Н/П</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item>Неприменимо</_item>
                             </longText>
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ПР</_item>
+                              <_item>Презентация</_item>
                             </shortText>
                             <longText>
                               <_item>Презентация</_item>
@@ -37,10 +37,10 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ИЗ</_item>
+                              <_item>Изображение</_item>
                             </shortText>
                             <longText>
                               <_item>Изображение</_item>
@@ -48,10 +48,10 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>БР</_item>
+                              <_item>Брошюра</_item>
                             </shortText>
                             <longText>
                               <_item>Брошюра</_item>
@@ -59,10 +59,10 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ШБ</_item>
+                              <_item>Шаблон</_item>
                             </shortText>
                             <longText>
                               <_item>Шаблон</_item>
@@ -70,10 +70,10 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>СТ</_item>
+                              <_item>Статья</_item>
                             </shortText>
                             <longText>
                               <_item>Статья</_item>
@@ -81,10 +81,10 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ФР</_item>
+                              <_item>Форма</_item>
                             </shortText>
                             <longText>
                               <_item>Форма</_item>
@@ -92,10 +92,10 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>СП</_item>
+                              <_item>Справ.</_item>
                             </shortText>
                             <longText>
                               <_item>Справочник</_item>

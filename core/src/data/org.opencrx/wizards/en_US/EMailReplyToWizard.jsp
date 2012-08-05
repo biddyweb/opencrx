@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailReplyToWizard.jsp,v 1.3 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: EMailReplyToWizard.jsp,v 1.4 2010/04/27 12:16:10 wfro Exp $
  * Description: EMailReplyToWizard
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,7 +86,7 @@ org.opencrx.kernel.backend.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -192,4 +192,7 @@ org.opencrx.kernel.backend.*
 	response.sendRedirect(
 		request.getContextPath() + "/" + nextAction.getEncodedHRef()
 	);
+	if(pm != null) {
+		pm.close();
+	}
 %>

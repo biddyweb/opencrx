@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.18 2009/06/16 21:19:20 wfro Exp $
+ * Name:        $Id: ProjectExporter.java,v 1.19 2010/01/24 22:30:06 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/16 21:19:20 $
+ * Date:        $Date: 2010/01/24 22:30:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -141,14 +141,6 @@ public class ProjectExporter {
         Date getTaskFinish() {
           return this.taskFinish;
         }
-        void clear() {
-          this.activity = null;
-          this.uid = 0;
-          this.partActivityMappers.clear();
-          this.predecessorActivityMappers.clear();
-          this.taskStart = null;
-          this.taskFinish = null;
-        }
 
         //-----------------------------------------------------------------------
         // Members
@@ -178,10 +170,6 @@ public class ProjectExporter {
         int getUid() {
           return this.uid;
         }
-        void clear() {
-          this.resource = null;
-          this.uid = 0;
-        }        
         //-----------------------------------------------------------------------
         // Members
         //-----------------------------------------------------------------------    

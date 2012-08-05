@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.27 2009/06/01 16:56:03 wfro Exp $
+ * Name:        $Id: SecureObject.java,v 1.29 2010/03/03 10:10:11 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/01 16:56:03 $
+ * Date:        $Date: 2010/03/03 10:10:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.kernel.backend;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
 import org.oasisopen.jmi1.RefContainer;
@@ -225,10 +226,10 @@ public class SecureObject extends AbstractImpl {
     //-------------------------------------------------------------------------
     public org.openmdx.security.realm1.jmi1.Principal findPrincipal(
         String name,
-        org.openmdx.security.realm1.jmi1.Realm realm,
-        javax.jdo.PersistenceManager pm
+        org.openmdx.security.realm1.jmi1.Realm realm
     ) {
         try {
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(realm);
             return (org.openmdx.security.realm1.jmi1.Principal)pm.getObjectById(
                 realm.refGetPath().getDescendant(new String[]{"principal", name})
             );
@@ -263,7 +264,7 @@ public class SecureObject extends AbstractImpl {
             segmentName
         );
         PrincipalGroup principalGroup = null;
-        if((principalGroup = (PrincipalGroup)this.findPrincipal(groupName, realm, pm)) != null) {
+        if((principalGroup = (PrincipalGroup)this.findPrincipal(groupName, realm)) != null) {
             return principalGroup;            
         }        
         pm.currentTransaction().begin();
@@ -461,6 +462,13 @@ public class SecureObject extends AbstractImpl {
     	String realmName
     ) {
         return new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + realmName);
+    }
+
+    //-------------------------------------------------------------------------
+    public void updateSecureObject(
+        org.opencrx.kernel.base.jmi1.SecureObject secureObject
+    ) throws ServiceException {
+    	
     }
     
     //-------------------------------------------------------------------------

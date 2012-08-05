@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxSdk</shortName>
     <fullName>openCRX SDK</fullName>
-    <version>2.5.3</version>
+    <version>2.6.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-sdk/README</readmeFile>
     <licenseFile>../../image/opencrx-sdk/LICENSE</licenseFile>
@@ -46,7 +46,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.5.3</value>
+                                    <value>2.6.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -145,7 +145,7 @@
             <title>IMPORTANT</title>
             <description></description>
             <explanation>Installation instructions</explanation>
-            <value>This installer creates an openCRX development environment.The installer does NOT include the JDK 1.5 and Ant 1.7.0 binaries. Make sure you have these packages installed before continuing.</value>
+            <value>This installer creates an openCRX development environment.The installer does NOT include the JDK 1.6 and Ant 1.8.0 binaries. Make sure you have these packages installed before continuing.</value>
             <default></default>
             <trimMarginNumChars>0</trimMarginNumChars>
         </infoParameter>
@@ -164,8 +164,8 @@
         </directoryParameter>
         <directoryParameter>
             <name>java_home</name>
-            <description>JDK 1.5 home directory</description>
-            <explanation>Select home directory of an existing JDK 1.5, e.g. C:\pgm\Java\jdk1.5.0 on Windows or /usr/lib/jvm/jdk1.5.0 on Linux platforms.</explanation>
+            <description>JDK 1.6 home directory</description>
+            <explanation>Select home directory of an existing JDK 1.6, e.g. C:\pgm\Java\jdk1.6.0 on Windows or /usr/lib/jvm/jdk1.6.0 on Linux platforms.</explanation>
             <value></value>
             <default></default>
             <allowEmptyValue>0</allowEmptyValue>
@@ -177,10 +177,10 @@
         </directoryParameter>
         <directoryParameter>
             <name>ant_home</name>
-            <description>Ant 1.7.0 home directory</description>
-            <explanation>Select home directory of an existing Ant 1.7.0 installation, e.g. C:\pgm\apache-ant-1.7.0 on Windows or /opt/apache-ant-1.7.0 on Linux platforms.</explanation>
+            <description>Ant 1.8.0 home directory</description>
+            <explanation>Select home directory of an existing Ant 1.8.0 installation, e.g. C:\pgm\apache-ant-1.8.0 on Windows or /opt/apache-ant-1.8.0 on Linux platforms.</explanation>
             <value></value>
-            <default>/opt/apache-ant-1.7.0</default>
+            <default>/opt/apache-ant-1.8.0</default>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
             <cliOptionName>prefix</cliOptionName>

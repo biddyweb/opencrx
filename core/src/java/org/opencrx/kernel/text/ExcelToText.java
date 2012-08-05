@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExcelToText.java,v 1.2 2009/03/08 17:04:53 wfro Exp $
+ * Name:        $Id: ExcelToText.java,v 1.4 2009/12/29 15:42:54 wfro Exp $
  * Description: ExcelToText
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:53 $
+ * Date:        $Date: 2009/12/29 15:42:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,6 +74,8 @@ import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.openmdx.base.exception.ServiceException;
+import org.openmdx.kernel.exception.BasicException;
 
 public class ExcelToText implements HSSFListener {
 
@@ -86,21 +88,35 @@ public class ExcelToText implements HSSFListener {
     //-----------------------------------------------------------------------
     public Reader parse(
         InputStream document
-    ) throws IOException {
-        this.text.setLength(0);
-        POIFSFileSystem fs = new POIFSFileSystem(document);
-        InputStream workbook = fs.createDocumentInputStream("Workbook");
-        HSSFRequest request = new HSSFRequest();
-        request.addListenerForAllRecords(this);
-        HSSFEventFactory eventFactory = new HSSFEventFactory();
-        eventFactory.processEvents(
-            request, 
-            workbook
-        );
-        workbook.close();
-        return new StringReader(
-            this.text.toString()
-        );
+    ) throws ServiceException {
+    	try {
+	        this.text.setLength(0);
+	        POIFSFileSystem fs = new POIFSFileSystem(document);
+	        InputStream workbook = fs.createDocumentInputStream("Workbook");
+	        HSSFRequest request = new HSSFRequest();
+	        request.addListenerForAllRecords(this);
+	        HSSFEventFactory eventFactory = new HSSFEventFactory();
+	        try {
+		        eventFactory.processEvents(
+		            request, 
+		            workbook
+		        );
+	        }
+	        catch(Exception e) {
+	        	throw new ServiceException(e);
+	        }
+	        catch(NoSuchMethodError e) {
+	        	throw new ServiceException(
+	        		BasicException.toExceptionStack(e)
+	        	);
+	        }
+	        workbook.close();
+	        return new StringReader(
+	            this.text.toString()
+	        );
+    	} catch(IOException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------
@@ -141,7 +157,8 @@ public class ExcelToText implements HSSFListener {
                     }
                 }
             } 
-            catch (Exception ex) {}
+            catch(Exception ex) {}
+            catch(NoSuchMethodError e) {}
         }
         switch (record.getSid()) {
             case BoundSheetRecord.sid:

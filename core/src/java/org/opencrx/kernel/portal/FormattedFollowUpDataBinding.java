@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedFollowUpDataBinding.java,v 1.4 2009/07/13 21:15:16 wfro Exp $
+ * Name:        $Id: FormattedFollowUpDataBinding.java,v 1.5 2010/02/04 11:25:39 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/13 21:15:16 $
+ * Date:        $Date: 2010/02/04 11:25:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -62,8 +62,6 @@ import javax.jmi.reflect.RefObject;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
-import org.openmdx.base.exception.RuntimeServiceException;
-import org.openmdx.base.exception.ServiceException;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 import org.openmdx.portal.servlet.attribute.DateValue;
@@ -72,23 +70,17 @@ public class FormattedFollowUpDataBinding extends DefaultDataBinding {
 
     //-----------------------------------------------------------------------
     public FormattedFollowUpDataBinding(
-        ApplicationContext applicationContext
     ) {
-        this.app = applicationContext;
-    	try {
-	    	this.fCreatedAt = this.app.getUiElementDefinition("org:openmdx:base:Creatable:createdAt");
-        }
-        catch (ServiceException e) {
-        	throw new RuntimeServiceException(e);
-        }
     }
     
     //-----------------------------------------------------------------------
+    
     private String getLabel(
-    	org.openmdx.ui1.jmi1.ElementDefinition field
+    	org.openmdx.ui1.jmi1.ElementDefinition field,
+    	ApplicationContext app
     ) {
-    	return this.app.getCurrentLocaleAsIndex() < field.getLabel().size() ?
-    		field.getLabel().get(this.app.getCurrentLocaleAsIndex()) :
+    	return app.getCurrentLocaleAsIndex() < field.getLabel().size() ?
+    		field.getLabel().get(app.getCurrentLocaleAsIndex()) :
     		field.getLabel().get(0);
     }
     
@@ -96,9 +88,14 @@ public class FormattedFollowUpDataBinding extends DefaultDataBinding {
     @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         if(object instanceof ActivityFollowUp) {
+        	org.openmdx.ui1.jmi1.ElementDefinition fCreatedAt = null;
+        	try {
+        		fCreatedAt = app.getUiElementDefinition("org:openmdx:base:Creatable:createdAt");
+        	} catch(Exception e) {}
         	ActivityFollowUp followUp = (ActivityFollowUp)object;
         	ActivityProcessTransition transition = followUp.getTransition();
         	Contact reportedBy = followUp.getAssignedTo();
@@ -121,13 +118,13 @@ public class FormattedFollowUpDataBinding extends DefaultDataBinding {
         	formattedText
 	    		.append("")
 	    		.append("")
-	    		.append(DateValue.getLocalizedDateTimeFormatter(null, false, this.app).format(modifiedAt));
+	    		.append(DateValue.getLocalizedDateTimeFormatter(null, false, app).format(modifiedAt));
         	if(createdAt.compareTo(modifiedAt) != 0) {
         		formattedText
 		    		.append("<br />(")
-		    		.append(this.getLabel(this.fCreatedAt))
+		    		.append(fCreatedAt == null ? "createdAt" : this.getLabel(fCreatedAt, app))
 		    		.append(": ")
-		    		.append(DateValue.getLocalizedDateTimeFormatter(null, false, this.app).format(createdAt))
+		    		.append(DateValue.getLocalizedDateTimeFormatter(null, false, app).format(createdAt))
 		    		.append(")");
         	}
 		    formattedText.append("<br />");
@@ -141,7 +138,5 @@ public class FormattedFollowUpDataBinding extends DefaultDataBinding {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected final ApplicationContext app;
-    protected final org.openmdx.ui1.jmi1.ElementDefinition fCreatedAt;
     
 }

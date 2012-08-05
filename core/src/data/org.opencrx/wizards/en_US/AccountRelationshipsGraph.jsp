@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.14 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.17 2010/04/27 12:16:10 wfro Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -109,16 +109,16 @@ org.openmdx.base.query.*
             plusLocation = test.indexOf("+");
         }
         String encodedAccountXri = test;
-    
+
         StringBuilder title = new StringBuilder();
-        /*
         title.append(
           "<a title='center node and reload tree' href='AccountRelationshipsGraph.jsp?xri=" + encodedAccountXri + "&requestId=" + requestId + "'>&gt;o&lt;</a><br>" + "<a title='load in openCRX' href='../../" + accountRef.getSelectObjectAction().getEncodedHRef(requestId) + "'>*</a> " + getNodeTitle(account,app)
         );
-        */
+        /*
         title.append(
             getNodeTitle(account,app)
         );
+        */
         return title.toString();
     }
 
@@ -266,7 +266,7 @@ org.openmdx.base.query.*
             ).append(
               "}"
             );
-            
+
             // process child nodes
             // Map C = (Map)M.get(account);
             if(C != null) {
@@ -445,7 +445,7 @@ org.openmdx.base.query.*
     );
     return;
   }
-  javax.jdo.PersistenceManager pm = app.getPmData();
+  javax.jdo.PersistenceManager pm = app.getNewPmData();
 	Texts_1_0 texts = app.getTexts();
 
 	try {
@@ -640,9 +640,9 @@ org.openmdx.base.query.*
                     Graph.Util.eachAdjacency(node, function(adj){
                         var nodeTo = adj.nodeTo;
                         if(nodeTo.data){
-                        	var rel = (nodeTo.data.key == node.id) ? nodeTo.data.relationships : node.data.relationships; 
+                        	var rel = (nodeTo.data.key == node.id) ? nodeTo.data.relationships : node.data.relationships;
                         	html += "<li>" + nodeTo.name + ' <div class=\"relation\">(relationship: ' + rel + ")</div></li>"
-                        } 
+                        }
                     });
                     html += "</ul>";
                     document.getElementById('inner-details').innerHTML = html;
@@ -689,6 +689,10 @@ org.openmdx.base.query.*
 	}
 	catch (Exception e) {
  	  new ServiceException(e).log();
+  } finally {
+	  if(pm != null) {
+		  pm.close();
+	  }		  
   }
 %>
 </body>

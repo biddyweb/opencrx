@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:salesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Заказы на закупку</_item>
+                        <_item>Договора</_item>
                       </label>
                       <toolTip>
-                        <_item>Заказы на закупку</_item>
+                        <_item>Договора</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +28,7 @@
                         <_item>Позиции</_item>
                       </label>
                       <toolTip>
-                        <_item>Позиции закуп. заказов</_item>
+                        <_item>Позиции договора</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета-фактуры</_item>
+                        <_item>Счета</_item>
                       </label>
                       <toolTip>
-                        <_item>Счета-фактуры</_item>
+                        <_item>Счета</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Заказ на закупку</_item>
+                        <_item>Договор</_item>
                       </label>
                       <toolTip>
-                        <_item>Заказ на закупку</_item>
+                        <_item>Договор</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Наим. заказа на закупку</_item>
+                        <_item>Наим. договора</_item>
                       </label>
                       <toolTip>
-                        <_item>Наим. заказа на закупку</_item>
+                        <_item>Наименование договора</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:contractLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Язык заказа на закупку</_item>
+                        <_item>Язык договора</_item>
                       </label>
                       <toolTip>
-                        <_item>Язык заказа на закупку</_item>
+                        <_item>Язык договора</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>№ заказа на закупку</_item>
+                        <_item>№ договора</_item>
                       </label>
                       <toolTip>
-                        <_item>№ заказа на закупку</_item>
+                        <_item>№ договора</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:createInvoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Создать счет-фактуру</_item>
+                        <_item>Создать счет</_item>
                       </label>
                       <toolTip>
-                        <_item>Создать счет-фактуру</_item>
+                        <_item>Создать счет</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderCreateInvoiceResult:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет-фактура</_item>
+                        <_item>Счет</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет-фактура</_item>
+                        <_item>Счет</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -182,7 +182,7 @@
                         <_item>Пометить как закр.</_item>
                       </label>
                       <toolTip>
-                        <_item>Пометить как закр.</_item>
+                        <_item>Пометить как закрытый</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -35,6 +35,8 @@
    ----------------------------------------
    * Replace OBJECT_ID VARCHAR(256) by OBJECT_ID VARCHAR(250)
    * Replace NUMERIC by DECIMAL(17,9)
+   * Replace CLOB by LONGTEXT
+   * Set the type of column OOCKE1_VOTE.description to LONGTEXT
    
 ---
 End of README

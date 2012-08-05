@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendAlert.java,v 1.29 2009/04/23 22:30:57 wfro Exp $
+ * Name:        $Id: SendAlert.java,v 1.30 2009/12/23 17:02:25 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.29 $
+ * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/23 22:30:57 $
+ * Date:        $Date: 2009/12/23 17:02:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,6 +59,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.jmi.reflect.RefObject;
+
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.SynchWorkflow_2_0;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
@@ -92,7 +94,7 @@ public class SendAlert
             i.hasNext();
         ) {
             Entry<String,Object> e = i.next();
-            description += e.getKey() + "=" + e.getValue() + "\n";
+            description += e.getKey() + "=" + (e.getValue() instanceof RefObject ? ((RefObject)e.getValue()).refMofId() : e.getValue()) + "\n";
         }
         try {
         	if(wfTarget instanceof UserHome) {

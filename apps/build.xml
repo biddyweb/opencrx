@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.13 2009/10/14 22:54:39 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.20 2010/04/21 17:33:13 wfro Exp $
  * = Description: openCRX/Apps build.xml
- * = Revision:    $Revision: 1.13 $
- * = Date:        $Date: 2009/10/14 22:54:39 $
- * = Copyright:   (c) 2003-2008 CRIXP AG
+ * = Revision:    $Revision: 1.20 $
+ * = Date:        $Date: 2010/04/21 17:33:13 $
+ * = Copyright:   (c) 2003-2010 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,9 +60,9 @@
 	<property name="project.specification.title" value="openCRX/Apps"/>
 	<property name="build.ignore.jpa" value="true"/>
 	<!-- Slash separated platform list, the last entry being the default -->
-	<property name="project.platform.list" value="jre-1.5"/>
+	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.5.3"/>
+	<property name="openmdx.version" value="2.6.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<path id="project.lib.classpath">
@@ -118,6 +118,14 @@
 			<replacestring from="opencrx-apps-store-CRX" to="opencrx-apps-store-${web.application.name}"/>
 		</tokenfilter>
 	</openmdx:archivefilterchain>	
+	<!-- Project manifest -->
+	<openmdx:archivemanifest id="project.manifest">
+		<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
+		<attribute name="Specification-Version" value="${project.specification.version}"/>
+		<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
+		<attribute name="Implementation-Vendor-Id" value="${project.vendor.id}"/>
+		<attribute name="Implementation-Version" value="${project.implementation.version}-${build.starttime}"/>
+	</openmdx:archivemanifest>		
 	<!-- ******************************************************************* -->
 	<!-- * generate -->
 	<!-- ******************************************************************* -->
@@ -187,12 +195,9 @@
 					<include name="**/.classpath"/>
 				</patternset>
 				<tokenfilter>
-				    <replaceregex pattern="openCRX 2( \(.*\))? ~ " replace="openCRX 2 (${project.implementation.version}) ~ "/>
-				    <replaceregex pattern="openCRX Thirdparty( \(.*\))? ~ " replace="openCRX Thirdparty (${project.implementation.version}) ~ "/>
-				    <replaceregex pattern="openMDX 2( \(.*\))? ~ " replace="openMDX 2 (${openmdx.version}) ~ "/>
-				    <replaceregex pattern="openMDX Thirdparty( \(.*\))? ~ " replace="openMDX Thirdparty (${openmdx.version}) ~ "/>
+				    <replaceregex pattern="( \(.*\))? ~ " replace=" (${project.implementation.version}) ~ "/>
 				</tokenfilter>
-			</openmdx:archivefilterchain>			
+			</openmdx:archivefilterchain>
 		</openmdx:archive>
 	</target>
 	<!-- ******************************************************************* -->

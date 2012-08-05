@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: ResponseHelper.java,v 1.2 2009/05/21 11:00:22 wfro Exp $
+ * Name:        $Id: ResponseHelper.java,v 1.3 2009/11/27 17:40:08 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/21 11:00:22 $
+ * Date:        $Date: 2009/11/27 17:40:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,7 +59,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.apps.store.common.IStandardObject;
 import org.opencrx.apps.store.common.PrimaryKey;
-import org.opencrx.apps.utils.Converter;
 
 /**
  * @author OAZM (initial implementation)
@@ -141,6 +140,6 @@ public final class ResponseHelper
 
     public final String makeInputBox( final String name, final String value, final int columns )
     {
-        return "<input name=\"" + name + "\" value=\"" + value + "\" size=\"" + Converter.getString( columns ) + "\" maxlength=\"" + Converter.getString( columns ) + "\"" + ">";
+        return "<input name=\"" + name + "\" value=\"" + value + "\" size=\"" + Integer.toString(columns) + "\" maxlength=\"" + Integer.toString(columns) + "\"" + ">";
     }
 }

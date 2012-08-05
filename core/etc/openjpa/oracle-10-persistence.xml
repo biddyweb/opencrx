@@ -11,7 +11,7 @@
 			<property name="openjpa.jdbc.DBDictionary" value="oracle(CharacterColumnSize=256)"/>											
 			<property name="openjpa.ConnectionURL" value="jdbc:oracle:thin:@localhost:1521:XE"/>
 			<property name="openjpa.ConnectionDriverName" value="oracle.jdbc.OracleDriver"/>
-			<property name="openjpa.ConnectionUserName" value="CRX_2_5"/>
+			<property name="openjpa.ConnectionUserName" value="CRX_2_6"/>
 			<property name="openjpa.ConnectionPassword" value="manager99"/>
 		</properties>
 	</persistence-unit>

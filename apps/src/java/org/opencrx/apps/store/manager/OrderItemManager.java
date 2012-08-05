@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderItemManager.java,v 1.10 2009/08/27 16:59:55 wfro Exp $
+ * Name:        $Id: OrderItemManager.java,v 1.12 2009/11/27 18:23:05 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/27 16:59:55 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,8 +62,8 @@ import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.ObjectCollection;
 import org.opencrx.apps.store.common.PrimaryKey;
+import org.opencrx.apps.store.common.util.ApplicationContext;
 import org.opencrx.apps.store.objects.OrderItem;
-import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.product1.cci2.SalesTaxTypeQuery;

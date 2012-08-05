@@ -946,10 +946,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp" _operation="create">
                     <_object>
                       <label>
-                        <_item>Arbeitsschritt hinzufügen</_item>
+                        <_item>Arbeitsschritt hinzufügen (einfach)</_item>
                       </label>
                       <toolTip>
-                        <_item>Arbeitsschritt hinzufügen</_item>
+                        <_item>Arbeitsschritt hinzufügen (einfach)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1001,10 +1001,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Zuständigkeit Arbeitsschritt</_item>
+                        <_item>Arbeitsschritt gemeldet von</_item>
                       </label>
                       <toolTip>
-                        <_item>Zuständigkeit Arbeitsschritt</_item>
+                        <_item>Arbeitsschritt gemeldet von</_item>
                       </toolTip>
                     </_object>
                     <_content/>

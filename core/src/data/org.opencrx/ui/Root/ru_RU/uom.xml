@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:uom1:Uom:uomSchedule" _operation="create">
                     <_object>
                       <label>
-                        <_item>График ед-цы изм.</_item>
+                        <_item>Список ед-цы изм.</_item>
                       </label>
                       <toolTip>
-                        <_item>График ед-цы изм.</_item>
+                        <_item>Список ед-цы изм.</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:uom1:Uom:isScheduleBaseUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Базовая ед. изм. для данного графика</_item>
+                        <_item>Базовая ед. изм. для данного списка</_item>
                       </label>
                       <toolTip>
-                        <_item>Базовая ед. изм. для данного графика</_item>
+                        <_item>Базовая ед. изм. для данного списка</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:uom1:Segment:uomSchedule" _operation="create">
                     <_object>
                       <label>
-                        <_item>Графики ед. изм.</_item>
+                        <_item>Списки ед. изм.</_item>
                       </label>
                       <toolTip>
-                        <_item>Графики единиц измерения</_item>
+                        <_item>Списки единиц измерения</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:uom1:UomSchedule" _operation="create">
                     <_object>
                       <label>
-                        <_item>График ед. изм.</_item>
+                        <_item>Список ед. изм.</_item>
                       </label>
                       <toolTip>
-                        <_item>График единицы измерения</_item>
+                        <_item>Список единицы измерения</_item>
                       </toolTip>
                     </_object>
                     <_content/>

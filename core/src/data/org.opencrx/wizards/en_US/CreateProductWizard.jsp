@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateProductWizard.jsp,v 1.12 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: CreateProductWizard.jsp,v 1.14 2010/04/27 12:16:10 wfro Exp $
  * Description: CreateProduct wizard
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -178,7 +178,7 @@ org.openmdx.base.naming.*
 		    );
 		    formValues.put(
 		        "productBasePrice.priceLevel." + i,
-		        pm.getObjectById(new Path(request.getParameter("productBasePrice.priceLevel." + i)))
+		        new Path(request.getParameter("productBasePrice.priceLevel." + i))
 		    );
 		    formValues.put(
 		        "productBasePrice.price." + i,
@@ -217,7 +217,10 @@ org.openmdx.base.naming.*
 	    formValues.remove("productBasePrice.discount." + deleteProductBasePriceIndex);
 	}
 	if(actionAddProductBasePrice) {
-	    org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = (org.opencrx.kernel.product1.jmi1.PriceLevel)formValues.get("org:opencrx:kernel:product1:AbstractPriceLevel:basedOn");
+	    org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = formValues.get("org:opencrx:kernel:product1:AbstractPriceLevel:basedOn") != null ?
+	    	(org.opencrx.kernel.product1.jmi1.PriceLevel)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:product1:AbstractPriceLevel:basedOn")
+	    	) : null;
 	    java.math.BigDecimal price = (java.math.BigDecimal)formValues.get("org:opencrx:kernel:product1:AbstractProductPrice:price");
 	    Short priceCurrency = priceLevel == null ? null : priceLevel.getPriceCurrency();
 	    List usage = (List)formValues.get("org:opencrx:kernel:product1:AbstractProductPrice:usage");
@@ -233,7 +236,7 @@ org.openmdx.base.naming.*
 	        );
 	        formValues.put(
 	            "productBasePrice.priceLevel." + productBasePriceCount,
-	            priceLevel
+	            priceLevel.refGetPath()
 	        );
 	        formValues.put(
 	            "productBasePrice.price." + productBasePriceCount,
@@ -265,8 +268,14 @@ org.openmdx.base.naming.*
 	if(actionOk) {
 	    String productName = (String)formValues.get("org:opencrx:kernel:product1:AbstractProduct:name");
 	    String productNumber = (String)formValues.get("org:opencrx:kernel:product1:AbstractProduct:productNumber");
-	    org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = (org.opencrx.kernel.product1.jmi1.SalesTaxType)formValues.get("org:opencrx:kernel:product1:AbstractProduct:salesTaxType");
-	    org.opencrx.kernel.uom1.jmi1.Uom defaultUom = (org.opencrx.kernel.uom1.jmi1.Uom)formValues.get("org:opencrx:kernel:product1:AbstractProduct:defaultUom");
+	    org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = formValues.get("org:opencrx:kernel:product1:AbstractProduct:salesTaxType") != null ?
+	    	(org.opencrx.kernel.product1.jmi1.SalesTaxType)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:product1:AbstractProduct:salesTaxType")
+	    	) : null;
+	    org.opencrx.kernel.uom1.jmi1.Uom defaultUom = formValues.get("org:opencrx:kernel:product1:AbstractProduct:defaultUom") != null ?
+	    	(org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:product1:AbstractProduct:defaultUom")
+	    	) : null;
 	    if(
 	        (productName != null) &&
 	        (productNumber != null) &&
@@ -301,7 +310,11 @@ org.openmdx.base.naming.*
 			    if(formValues.get("productBasePrice.priceLevel." + i) != null) {
 			        org.opencrx.kernel.product1.jmi1.ProductBasePrice basePrice = pm.newInstance(org.opencrx.kernel.product1.jmi1.ProductBasePrice.class);
 			        basePrice.refInitialize(false, false);
-				    basePrice.getPriceLevel().add((org.opencrx.kernel.product1.jmi1.PriceLevel)formValues.get("productBasePrice.priceLevel." + i));
+				    basePrice.getPriceLevel().add(
+				    	(org.opencrx.kernel.product1.jmi1.PriceLevel)pm.getObjectById(
+				    		formValues.get("productBasePrice.priceLevel." + i)
+				    	)
+				    );
 				    basePrice.setUom(defaultUom);
 				    basePrice.getUsage().addAll((List)formValues.get("productBasePrice.usage." + i));
 				    basePrice.setPrice((java.math.BigDecimal)formValues.get("productBasePrice.price." + i));
@@ -332,7 +345,8 @@ org.openmdx.base.naming.*
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -384,10 +398,14 @@ org.openmdx.base.naming.*
 							        java.math.BigDecimal quantityTo = (java.math.BigDecimal)formValues.get("productBasePrice.quantityTo." + i);
 							        java.math.BigDecimal price = (java.math.BigDecimal)formValues.get("productBasePrice.price." + i);
 							        java.math.BigDecimal discount = (java.math.BigDecimal)formValues.get("productBasePrice.discount." + i);
+							        org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = 
+							        	(org.opencrx.kernel.product1.jmi1.PriceLevel)pm.getObjectById(
+							        		formValues.get("productBasePrice.priceLevel." + i)
+							        	);
 %>
 									<tr class="gridTableRowFull">
 										<td><input class="abutton" type="submit" name="DeleteProductBasePrice.<%= i %>" value="-" onclick="javascript:$('Command').value=this.name;"/></td>
-										<td><%= new ObjectReference((RefObject_1_0)formValues.get("productBasePrice.priceLevel." + i), app).getTitle() %><input type="hidden" name="productBasePrice.priceLevel.<%= i %>" value="<%= ((RefObject_1_0)formValues.get("productBasePrice.priceLevel." + i)).refMofId() %>"/></td>
+										<td><%= new ObjectReference(priceLevel, app).getTitle() %><input type="hidden" name="productBasePrice.priceLevel.<%= i %>" value="<%= priceLevel.refMofId() %>"/></td>
 										<td>
 <%
 											for(Iterator j = ((List)formValues.get("productBasePrice.usage." + i)).iterator(); j.hasNext(); ) {
@@ -445,4 +463,7 @@ org.openmdx.base.naming.*
 </script>
 <%
 p.close(false);
+if(pm != null) {
+	pm.close();
+}
 %>

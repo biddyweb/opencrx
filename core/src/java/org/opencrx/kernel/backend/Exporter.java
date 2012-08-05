@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.47 2009/10/07 14:55:29 wfro Exp $
+ * Name:        $Id: Exporter.java,v 1.50 2010/04/07 12:16:27 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.47 $
+ * Revision:    $Revision: 1.50 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/07 14:55:29 $
+ * Date:        $Date: 2010/04/07 12:16:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,8 +55,6 @@
  */
 package org.opencrx.kernel.backend;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -93,6 +91,7 @@ import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.mof.cci.AggregationKind;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
@@ -102,9 +101,10 @@ import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.XMLEncoder;
-import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.exception.BasicException;
 import org.w3c.cci2.BinaryLargeObject;
+import org.w3c.cci2.BinaryLargeObjects;
+import org.w3c.format.DateTimeFormat;
 
 public class Exporter extends AbstractImpl {
 
@@ -523,7 +523,7 @@ public class Exporter extends AbstractImpl {
 			}
 			nonCompositeStartingPoints.removeAll(startPoints);
 			// Pass 2
-			ByteArrayOutputStream bs = new ByteArrayOutputStream();
+			QuotaByteArrayOutputStream bs = new QuotaByteArrayOutputStream(Exporter.class.getName());
 			out = isMultiFileExport ? new ZipOutputStream(bs) : bs;
 			ps = new PrintStream(out);
 			exportParams.getContext().keySet().retainAll(Arrays.asList("template"));
@@ -770,10 +770,10 @@ public class Exporter extends AbstractImpl {
 									wb = new HSSFWorkbook(content.getContent(), true);
 									// Replace template document by its stream
 									// representation
-									ByteArrayOutputStream bos = new ByteArrayOutputStream();
+									QuotaByteArrayOutputStream bos = new QuotaByteArrayOutputStream(Exporter.class.getName());
 									wb.write(bos);
 									bos.close();
-									context.put("template", new ByteArrayInputStream(bos.toByteArray()));
+									context.put("template", bos.toInputStream());
 								}
 							}
 						}
@@ -846,7 +846,7 @@ public class Exporter extends AbstractImpl {
 						}
 						catch (Exception e) {
 						}
-						if(value instanceof Collection) {
+						if(value instanceof Collection<?>) {
 							maxIndex = Math.max(maxIndex, ((Collection<?>) value).size());
 						}
 						else if(value != null) {
@@ -940,7 +940,7 @@ public class Exporter extends AbstractImpl {
 							catch (Exception e) {
 							}
 							List<Object> values = new ArrayList<Object>();
-							if(v instanceof Collection) {
+							if(v instanceof Collection<?>) {
 								try {
 									values.addAll((Collection<?>) v);
 								}
@@ -957,18 +957,15 @@ public class Exporter extends AbstractImpl {
 								if(value != null) {
 									cell = row.createCell(this.getCellNum(this.sheet, sheetName, attributeName));
 									if(value instanceof InputStream) {
-										ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-										int b;
 										try {
-											while ((b = ((InputStream) value).read()) != -1) {
-												bytes.write(b);
+											QuotaByteArrayOutputStream bytes = new QuotaByteArrayOutputStream(Exporter.class.getName());
+											BinaryLargeObjects.streamCopy((InputStream)value, 0, bytes);
+											String encodedBytes = Base64.encode(bytes.getBuffer(), 0, bytes.size());
+											if(encodedBytes.length() < Short.MAX_VALUE) {
+												cell.setCellValue(new HSSFRichTextString(encodedBytes));
 											}
-										}
-										catch (IOException e) {
-										}
-										String encodedBytes = Base64.encode(bytes.toByteArray());
-										if(encodedBytes.length() < Short.MAX_VALUE) {
-											cell.setCellValue(new HSSFRichTextString(encodedBytes));
+										} catch(Exception e) {
+											throw new ServiceException(e);
 										}
 									}
 									else if(value instanceof byte[]) {
@@ -1114,7 +1111,7 @@ public class Exporter extends AbstractImpl {
 						boolean needsPosition = multiplicity.equals(Multiplicities.SPARSEARRAY);
 						String elementTag = this.toSimpleQualifiedName((String) attributeDef.objGetValue("qualifiedName"));
 						List<Object> attributeValues = new ArrayList<Object>();
-						if(attributeValue instanceof Collection) {
+						if(attributeValue instanceof Collection<?>) {
 							try {
 								attributeValues.addAll((Collection<?>) attributeValue);
 							}
@@ -1134,7 +1131,7 @@ public class Exporter extends AbstractImpl {
 								ModelElement_1_0 attributeType = this.model.getDereferencedType(attributeDef.objGetValue("type"));
 								String typeName = (String) attributeType.objGetValue("qualifiedName");
 								if(PrimitiveTypes.DATETIME.equals(typeName)) {
-									String v = DateFormat.getInstance().format((Date) value);
+									String v = DateTimeFormat.BASIC_UTC_FORMAT.format((Date) value);
 									String t = v.substring(0, 4) + "-" + v.substring(4, 6) + "-" + v.substring(6, 11) + ":" + v.substring(11, 13) + ":" + v.substring(13, 20);
 									stringValue = t;
 								}
@@ -1214,7 +1211,7 @@ public class Exporter extends AbstractImpl {
 			}
 
 			public void endTraversal(TraversedObject object) throws ServiceException {
-				PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+				PersistenceManager pm = JDOHelper.getPersistenceManager(object.getObject());
 				for (int i = object.getObject().refGetPath().size() - 2; i > 0; i -= 2) {
 					RefObject_1_0 parent = (RefObject_1_0) pm.getObjectById(object.getObject().refGetPath().getPrefix(i));
 					String qualifiedTypeName = parent.refClass().refMofId();
@@ -1226,7 +1223,7 @@ public class Exporter extends AbstractImpl {
 			}
 
 			public void startTraversal(TraversedObject object) throws ServiceException {
-				PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+				PersistenceManager pm = JDOHelper.getPersistenceManager(object.getObject());
 				this.xmlWriter.startDocument();
 				for (int i = 1; i < object.getObject().refGetPath().size(); i += 2) {
 					RefObject_1_0 parent = (RefObject_1_0) pm.getObjectById(object.getObject().refGetPath().getPrefix(i));

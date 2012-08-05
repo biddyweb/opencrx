@@ -113,7 +113,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelClassPrivilege" _operation="create">
                     <_object>
                       <label>
-                        <_item>Permesso (Classe)</_item>
+                        <_item>Permesso Classe Modello</_item>
                       </label>
                       <toolTip>
                         <_item>Permesso su una Classe del Modello</_item>
@@ -124,7 +124,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelReferencePrivilege" _operation="create">
                     <_object>
                       <label>
-                        <_item>Permesso (Riferimento)</_item>
+                        <_item>Permesso Riferimento</_item>
                       </label>
                       <toolTip>
                         <_item>Permesso su un Riferimento del Modello</_item>
@@ -135,7 +135,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ResourcePrivilege" _operation="create">
                     <_object>
                       <label>
-                        <_item>Permesso (Risorsa)</_item>
+                        <_item>Permesso Risorsa</_item>
                       </label>
                       <toolTip>
                         <_item>Permesso su una Risorsa</_item>
@@ -212,7 +212,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelReferencePrivilege:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Permesso (Riferimento)</_item>
+                        <_item>Permesso Riferimento</_item>
                       </label>
                       <toolTip>
                         <_item>Permesso su un Riferimento</_item>
@@ -458,6 +458,17 @@
                       </label>
                       <toolTip>
                         <_item>Gruppo del Principale</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:isFinal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Gruppo Base</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Gruppo Base</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -740,7 +751,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:UserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gruppo d&apos;Utente</_item>
+                        <_item>Gruppo Utente</_item>
                       </label>
                       <toolTip>
                         <_item>Gruppo dell&apos;Utente</_item>

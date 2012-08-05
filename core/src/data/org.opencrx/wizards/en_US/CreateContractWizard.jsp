@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateContractWizard.jsp,v 1.24 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: CreateContractWizard.jsp,v 1.27 2010/04/27 12:16:11 wfro Exp $
  * Description: CreateContractWizard
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,7 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -220,7 +220,7 @@ org.openmdx.base.naming.*
 	    org.opencrx.kernel.account1.jmi1.Account customer = (org.opencrx.kernel.account1.jmi1.Account)obj;
 	    formValues.put(
 	        "org:opencrx:kernel:contract1:AbstractContract:customer",
-	        customer
+	        customer.refGetPath()
 	    );
 	    formValues.put(
 	        "org:opencrx:kernel:contract1:AbstractContract:activeOn",
@@ -229,7 +229,10 @@ org.openmdx.base.naming.*
         actionRefresh = true;
 	}
 	// Refresh
-	org.opencrx.kernel.account1.jmi1.Account customer = (org.opencrx.kernel.account1.jmi1.Account)formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer");
+	org.opencrx.kernel.account1.jmi1.Account customer = formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer") != null ?
+		(org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
+			formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer")
+		) : null;
 	if(actionRefresh) {
 	    // Contract number
 	    if(customer != null) {
@@ -252,8 +255,10 @@ org.openmdx.base.naming.*
 	        }
 	    }
 	    // Pricing rule
-	    org.opencrx.kernel.product1.jmi1.PricingRule pricingRule =
-	        (org.opencrx.kernel.product1.jmi1.PricingRule)formValues.get("org:opencrx:kernel:contract1:AbstractContract:pricingRule");
+	    org.opencrx.kernel.product1.jmi1.PricingRule pricingRule = formValues.get("org:opencrx:kernel:contract1:AbstractContract:pricingRule") != null ?
+	        (org.opencrx.kernel.product1.jmi1.PricingRule)pm.getObjectById(
+	        	formValues.get("org:opencrx:kernel:contract1:AbstractContract:pricingRule")
+	        ) : null;
 	    org.opencrx.kernel.product1.jmi1.Segment productSegment = (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
 	        new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName)
 	    );
@@ -262,19 +267,21 @@ org.openmdx.base.naming.*
 	        if(pricingRule != null) {
 	            formValues.put(
 	                "org:opencrx:kernel:contract1:AbstractContract:pricingRule",
-	                pricingRule
+	                pricingRule.refGetPath()
 	            );
 	        }
 	    }
 	    // Calculation Rule
-	    org.opencrx.kernel.contract1.jmi1.CalculationRule calcRule =
-	        (org.opencrx.kernel.contract1.jmi1.CalculationRule)formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule");
+	    org.opencrx.kernel.contract1.jmi1.CalculationRule calcRule = formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule") != null ?
+	        (org.opencrx.kernel.contract1.jmi1.CalculationRule)pm.getObjectById(
+	        	formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule")
+	        ) : null;
 	    if(calcRule == null) {
 	        calcRule = Contracts.getInstance().findCalculationRule(Contracts.CALCULATION_RULE_NAME_DEFAULT, contractSegment, pm);
 	        if(calcRule != null) {
 	            formValues.put(
 	                "org:opencrx:kernel:contract1:AbstractContract:calcRule",
-	                calcRule
+	                calcRule.refGetPath()
 	            );
 	        }
 	    }
@@ -326,7 +333,10 @@ org.openmdx.base.naming.*
 	    );
 	}
 	if(actionAddPosition) {
-	    org.opencrx.kernel.product1.jmi1.Product product = (org.opencrx.kernel.product1.jmi1.Product)formValues.get("org:opencrx:kernel:product1:ProductDescriptor:product");
+	    org.opencrx.kernel.product1.jmi1.Product product = formValues.get("org:opencrx:kernel:product1:ProductDescriptor:product") != null ?
+	    	(org.opencrx.kernel.product1.jmi1.Product)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:product1:ProductDescriptor:product")
+	    	) : null;
 	    java.math.BigDecimal quantity = (java.math.BigDecimal)formValues.get("org:opencrx:kernel:contract1:AbstractContractPosition:quantity");
 	    String positionName = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContractPosition:name");
 	    if(
@@ -366,6 +376,12 @@ org.openmdx.base.naming.*
 	                product.getDefaultUom().equals(price.getUom())
 	            ) {
 	                Date now = new Date();
+	                if (formValues.get("org:opencrx:kernel:contract1:AbstractContract:activeOn") != null) {
+	                   try {
+	                       now = (Date)formValues.get("org:opencrx:kernel:contract1:AbstractContract:activeOn");
+	                   } catch (Exception e) {}
+	                }
+
 	                for(Iterator j = price.getPriceLevel().iterator(); j.hasNext(); ) {
 						org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = (org.opencrx.kernel.product1.jmi1.PriceLevel)j.next();
 						if(
@@ -404,8 +420,10 @@ org.openmdx.base.naming.*
 	if(actionCreateQuote || actionCreateSalesOrder || actionCreateInvoice || actionCreateOpportunity) {
 	    String name = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:name");
 	    String contractNumber = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:contractNumber");
-	    org.opencrx.kernel.account1.jmi1.Account account =
-	        (org.opencrx.kernel.account1.jmi1.Account)formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer");
+	    org.opencrx.kernel.account1.jmi1.Account account = formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer") != null ?
+	        (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
+	        	formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer")
+	        ) : null;
 	    List postalAddressLineShipping = (List)formValues.get("org:opencrx:kernel:account1:Contact:address!postalAddressLine");
 	    List postalStreetShipping = (List)formValues.get("org:opencrx:kernel:account1:Contact:address!postalStreet");
 	    List postalAddressLineBilling = (List)formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalAddressLine");
@@ -433,21 +451,38 @@ org.openmdx.base.naming.*
 		    else {
 		        contract = pm.newInstance(org.opencrx.kernel.contract1.jmi1.Invoice.class);
 		    }
-		    org.opencrx.kernel.product1.jmi1.PricingRule pricingRule =
-		        (org.opencrx.kernel.product1.jmi1.PricingRule)formValues.get("org:opencrx:kernel:contract1:AbstractContract:pricingRule");
+		    org.opencrx.kernel.product1.jmi1.PricingRule pricingRule = formValues.get("org:opencrx:kernel:contract1:AbstractContract:pricingRule") != null ?
+		        (org.opencrx.kernel.product1.jmi1.PricingRule)pm.getObjectById(
+		        	formValues.get("org:opencrx:kernel:contract1:AbstractContract:pricingRule")
+		        ) : null;
 			contract.refInitialize(false, false);
 			contract.setDescription((String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:description"));
 			contract.setCustomer(account);
 			contract.setActiveOn((Date)formValues.get("org:opencrx:kernel:contract1:AbstractContract:activeOn"));
 			contract.setContractCurrency((Short)formValues.get("org:opencrx:kernel:contract1:AbstractContract:contractCurrency"));
 			contract.setPriority((Short)formValues.get("org:opencrx:kernel:contract1:AbstractContract:priority"));
-			contract.setSalesRep((org.opencrx.kernel.account1.jmi1.Account)formValues.get("org:opencrx:kernel:contract1:AbstractContract:salesRep"));
+			contract.setSalesRep(
+				formValues.get("org:opencrx:kernel:contract1:AbstractContract:salesRep") != null ?
+					(org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
+						formValues.get("org:opencrx:kernel:contract1:AbstractContract:salesRep")
+					) : null
+			);
 			contract.setExpiresOn((Date)formValues.get("org:opencrx:kernel:contract1:AbstractContract:expiresOn"));
 			contract.setPaymentTerms((Short)formValues.get("org:opencrx:kernel:contract1:AbstractContract:paymentTerms"));
-			contract.setOrigin((org.opencrx.kernel.contract1.jmi1.AbstractContract)formValues.get("org:opencrx:kernel:contract1:AbstractContract:origin"));
+			contract.setOrigin(
+				formValues.get("org:opencrx:kernel:contract1:AbstractContract:origin") != null ?
+					(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+						formValues.get("org:opencrx:kernel:contract1:AbstractContract:origin")
+					) : null
+			);
 			contract.setPricingRule(pricingRule);
-			contract.setCalcRule((org.opencrx.kernel.contract1.jmi1.CalculationRule)formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule"));
-			contract.setPricingDate(new Date());
+			contract.setCalcRule(
+				formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule") != null ?
+					(org.opencrx.kernel.contract1.jmi1.CalculationRule)pm.getObjectById(
+						formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule")
+					) : null
+			);
+			//contract.setPricingDate(new Date());
 			contract.setShippingMethod((Short)formValues.get("org:opencrx:kernel:contract1:ShippingDetail:shippingMethod"));
 			pm.currentTransaction().begin();
 			if(actionCreateOpportunity) {
@@ -530,7 +565,7 @@ org.openmdx.base.naming.*
 			            Boolean.TRUE,
 			            positionName,
 			            null, // default UOM
-			            new Date(),
+			            null, // use pricing date from contract
 			            pricingRule,
 			            (org.opencrx.kernel.product1.jmi1.Product)pm.getObjectById(new Path(productXri)),
 			            app.parseNumber(quantity),
@@ -541,11 +576,12 @@ org.openmdx.base.naming.*
 					    org.opencrx.kernel.contract1.jmi1.CreatePositionResult result = contract.createPosition(params);
 					    pm.currentTransaction().commit();
 					    if(pricePerUnit != null) {
-						    org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = result.getPosition();
-						    pm.refresh(position);
-						    pm.currentTransaction().begin();
-							position.setPricePerUnit(app.parseNumber(pricePerUnit));
-							pm.currentTransaction().commit();
+                org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = result.getPosition();
+                pm.refresh(position);
+                pm.currentTransaction().begin();
+                position.setPricePerUnit(app.parseNumber(pricePerUnit));
+                //position.setPricingDate(null);
+                pm.currentTransaction().commit();
 					    }
 				    }
 				    catch(Exception e) {
@@ -571,7 +607,8 @@ org.openmdx.base.naming.*
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -700,4 +737,7 @@ org.openmdx.base.naming.*
 </script>
 <%
 p.close(false);
+if(pm != null) {
+	pm.close();
+}
 %>

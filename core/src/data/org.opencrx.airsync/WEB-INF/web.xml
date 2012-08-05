@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+	<display-name>openCRX AirSync Service</display-name>
+	<servlet>
+		<servlet-name>AirSyncServlet</servlet-name>
+		<servlet-class>org.opencrx.application.airsync.server.impl.SyncServlet</servlet-class>
+		<init-param>
+		  <param-name>provider</param-name>
+		  <param-value>provider/CRX</param-value>
+		</init-param>	
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AirSyncServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>20</session-timeout>
+	</session-config>
+	<resource-ref>
+		<res-ref-name>jdbc_opencrx_CRX</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>		
+	<!-- Mail resource
+	<resource-ref id="mail_opencrx_CRX">
+		<res-ref-name>mail/provider/CRX</res-ref-name>
+		<res-type>javax.mail.Session</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+	-->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>airsync</web-resource-name>
+			<description>AirSync</description>
+			<url-pattern>/</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	<security-role>
+		<description>An openCRX user</description>
+		<role-name>OpenCrxUser</role-name>
+	</security-role>	
+</web-app>

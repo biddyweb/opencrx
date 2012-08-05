@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="reproducibility" _operation="set">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="reproducibility" _operation="create">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Vždy</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Niekedy</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Náhodne</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
                           <_object>
                             <shortText>
                               <_item>Nevyskúšané</_item>
@@ -70,13 +70,13 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="set">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Nemožné</_item>
+                              <_item>Nie je možné zduplikovať</_item>
                             </shortText>
                             <longText>
-                              <_item>Nemožné</_item>
+                              <_item>Nie je možné zduplikovať</_item>
                             </longText>
                           </_object>
                           <_content/>

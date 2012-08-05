@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>Esportazione Profili</_item>
+                        <_item>Profili Esportazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Esportazione Profili</_item>
+                        <_item>Profili Esportazione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,21 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
                     <_object>
                       <label>
-                        <_item>La mia pagina iniziale</_item>
+                        <_item>Pagina iniziale</_item>
                       </label>
                       <toolTip>
-                        <_item>La mia pagina iniziale</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Grafici</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Grafici</_item>
+                        <_item>Pagina iniziale</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -139,17 +128,6 @@
                       </label>
                       <toolTip>
                         <_item>Calendario</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Grafici</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Grafici</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -206,146 +184,6 @@
                       <toolTip>
                         <_item>Settimana Lavorativa</_item>
                       </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart0" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titolo/Fonte</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titolo/Fonte</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nome</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descrizione</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart1" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titolo/Fonte</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titolo/Fonte</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nome</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descrizione</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart2" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titolo/Fonte</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titolo/Fonte</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nome</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descrizione</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart3" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titolo/Fonte</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titolo/Fonte</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nome</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descrizione</_item>
-                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -605,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionType" _operation="create">
                     <_object>
                       <label>
-                        <_item>tipo Azione</_item>
+                        <_item>Tipo azione</_item>
                       </label>
                       <toolTip>
-                        <_item>tipo Azione</_item>
+                        <_item>Tipo azione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -616,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionName" _operation="create">
                     <_object>
                       <label>
-                        <_item>nome Azione</_item>
+                        <_item>Nome azione</_item>
                       </label>
                       <toolTip>
-                        <_item>nome Azione</_item>
+                        <_item>Nome azione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -627,10 +465,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionParam" _operation="create">
                     <_object>
                       <label>
-                        <_item>parametri Azione</_item>
+                        <_item>Parametri azione</_item>
                       </label>
                       <toolTip>
-                        <_item>parametri Azione</_item>
+                        <_item>Parametri azione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -825,10 +663,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:allWords" _operation="create">
                     <_object>
                       <label>
-                        <_item>Con tutte le parole</_item>
+                        <_item>Tutte le parole</_item>
                       </label>
                       <toolTip>
-                        <_item>Con tutte le parole</_item>
+                        <_item>Tutte le parole</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -836,10 +674,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:atLeastOneOfTheWords" _operation="create">
                     <_object>
                       <label>
-                        <_item>Con almeno una parola</_item>
+                        <_item>Almeno una parola</_item>
                       </label>
                       <toolTip>
-                        <_item>Con almeno una parola</_item>
+                        <_item>Almeno una parola</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -979,10 +817,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creare Utente</_item>
+                        <_item>Creazione Utente</_item>
                       </label>
                       <toolTip>
-                        <_item>Creare Utente</_item>
+                        <_item>Creazione Utente</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1045,7 +883,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Password</_item>
+                        <_item>Password iniziale</_item>
                       </label>
                       <toolTip>
                         <_item>Password Iniziale</_item>
@@ -1169,7 +1007,7 @@
                         <_item>Messaggio Status</_item>
                       </label>
                       <toolTip>
-                        <_item>Messaggio di status</_item>
+                        <_item>Messaggio status</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1210,10 +1048,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cambia Password</_item>
+                        <_item>Cambio Password</_item>
                       </label>
                       <toolTip>
-                        <_item>Cambia Password</_item>
+                        <_item>Cambio Password</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1243,10 +1081,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:oldPassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Password vecchia</_item>
+                        <_item>Vecchia Password</_item>
                       </label>
                       <toolTip>
-                        <_item>Password vecchia</_item>
+                        <_item>Vecchia Password</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1375,10 +1213,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:allWords" _operation="create">
                     <_object>
                       <label>
-                        <_item>Con tutte le parole</_item>
+                        <_item>Tutte le parole</_item>
                       </label>
                       <toolTip>
-                        <_item>Con tutte le parole</_item>
+                        <_item>Tutte le parole</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1386,10 +1224,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:atLeastOneOfTheWords" _operation="create">
                     <_object>
                       <label>
-                        <_item>Con almeno una parola</_item>
+                        <_item>Almeno una parola</_item>
                       </label>
                       <toolTip>
-                        <_item>Con almeno una parola</_item>
+                        <_item>Almeno una parola</_item>
                       </toolTip>
                     </_object>
                     <_content/>

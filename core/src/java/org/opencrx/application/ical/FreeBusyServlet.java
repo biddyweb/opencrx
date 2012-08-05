@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.12 2009/07/20 10:43:06 wfro Exp $
+ * Name:        $Id: FreeBusyServlet.java,v 1.13 2009/11/20 22:31:08 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/20 10:43:06 $
+ * Date:        $Date: 2009/11/20 22:31:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,7 +73,7 @@ import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -184,12 +184,12 @@ public class FreeBusyServlet extends HttpServlet {
     }
     
     //-----------------------------------------------------------------------
-    protected ActivitiesHelper getActivitiesHelper(
+    protected ActivitiesFilterHelper getActivitiesHelper(
         PersistenceManager pm,
         String filterId,
         String isDisabledFilter
     ) {
-        ActivitiesHelper activitiesHelper = new ActivitiesHelper(pm);
+        ActivitiesFilterHelper activitiesHelper = new ActivitiesFilterHelper(pm);
         if(filterId != null) {
             try {
                 activitiesHelper.parseFilteredActivitiesUri(                        
@@ -217,7 +217,7 @@ public class FreeBusyServlet extends HttpServlet {
         }
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
-        ActivitiesHelper activitiesHelper = this.getActivitiesHelper(
+        ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
             pm, 
             filterId,
             isDisabledFilter
@@ -232,7 +232,7 @@ public class FreeBusyServlet extends HttpServlet {
             p.write("PRODID:-" + ICalendar.PROD_ID + "\n");
             p.write("METHOD:PUBLISH\n");
             p.write("BEGIN:VFREEBUSY\n");
-            p.write("DTSTAMP:" + ActivitiesHelper.formatDate(ActivitiesHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
+            p.write("DTSTAMP:" + ActivitiesFilterHelper.formatDate(ActivitiesFilterHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
             ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
             Date dtStart = new Date(System.currentTimeMillis() - 7*86400000L);
             Date dtEnd = new Date(System.currentTimeMillis() + 60*86400000L);
@@ -244,8 +244,8 @@ public class FreeBusyServlet extends HttpServlet {
             }
             activityQuery.ical().isNonNull();
             activityQuery.orderByScheduledStart();
-            p.write("DTSTART:" + ActivitiesHelper.formatDate(dtStart) + "\n");
-            p.write("DTEND:" + ActivitiesHelper.formatDate(dtEnd) + "\n");
+            p.write("DTSTART:" + ActivitiesFilterHelper.formatDate(dtStart) + "\n");
+            p.write("DTEND:" + ActivitiesFilterHelper.formatDate(dtEnd) + "\n");
             for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
                 if((activity.getScheduledStart() != null) && (activity.getScheduledEnd() != null)) {
                     if(
@@ -267,7 +267,7 @@ public class FreeBusyServlet extends HttpServlet {
                             (scheduledEnd.getTime().compareTo(dtStart) >= 0) &&
                             (scheduledStart.getTime().compareTo(dtEnd) <= 0)                            
                         ) {
-                            p.write("FREEBUSY:" + ActivitiesHelper.formatDate(scheduledStart.getTime()) + "/" + ActivitiesHelper.formatDate(scheduledEnd.getTime()) + "\n");
+                            p.write("FREEBUSY:" + ActivitiesFilterHelper.formatDate(scheduledStart.getTime()) + "/" + ActivitiesFilterHelper.formatDate(scheduledEnd.getTime()) + "\n");
                             if("DAILY".equals(rrule.getFreq())) {
                                 scheduledStart.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
                                 scheduledEnd.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());

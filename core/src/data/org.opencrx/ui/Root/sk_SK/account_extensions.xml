@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:91:Group:30" _operation="create">
                     <_object>
                       <label>
-                        <_item>Booleansy</_item>
+                        <_item>Boolean-y</_item>
                       </label>
                       <toolTip>
-                        <_item>Booleansy</_item>
+                        <_item>Boolean-y</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.41 2009/09/22 13:51:11 wfro Exp $
+ * Name:        $Id: Cloneable.java,v 1.43 2010/03/22 21:00:53 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/22 13:51:11 $
+ * Date:        $Date: 2010/03/22 21:00:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,13 +63,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.oasisopen.jmi1.RefContainer;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
-import org.openmdx.base.mof.cci.AggregationKind;
-import org.openmdx.base.mof.cci.ModelElement_1_0;
-import org.openmdx.base.mof.cci.Model_1_0;
-import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 
 public class Cloneable extends AbstractImpl {
@@ -135,7 +132,97 @@ public class Cloneable extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
+    private static class CloneContext {
+    	
+    	public CloneContext(
+    		RefObject_1_0 target,
+    		String targetReferenceName
+    	) {
+    		this.target = target;
+    		this.targetReferenceName = targetReferenceName;
+    	}
+    	
+    	public final RefObject_1_0 target;
+    	public final String targetReferenceName;
+    	
+    }
+    
+    //-------------------------------------------------------------------------
+    private static class CloneCallback implements Utils.TraverseObjectTreeCallback {
+
+    	public CloneCallback(
+            Set<String> excludeAttributes,
+            Map<String,Marshaller> objectMarshallers,
+            org.opencrx.security.realm1.jmi1.User owningUser,
+            List<org.opencrx.security.realm1.cci2.PrincipalGroup> owningGroup
+    	) {
+    		this.excludeAttributes = excludeAttributes;
+    		this.objectMarshallers = objectMarshallers;
+    		this.owningUser = owningUser;
+    		this.owningGroup = owningGroup;
+    	}
+    	
+		@Override
+		public Object visit(
+			RefObject_1_0 object,
+			Object context
+		) throws ServiceException {
+			CloneContext cloneContext = (CloneContext)context;
+	        String objectType = object.refClass().refMofId();
+	        // Clone
+	        RefObject_1_0 clone = null;
+	        if((this.objectMarshallers != null) && (this.objectMarshallers.get(objectType) != null)) {
+	            clone = (RefObject_1_0)(this.objectMarshallers.get(objectType)).marshal(
+	                object
+	            );
+	        }
+	        else {
+	            clone = PersistenceHelper.clone(object);
+	        }        
+	        if(clone instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+	        	if(this.owningUser != null) {
+	        		((org.opencrx.kernel.base.jmi1.SecureObject)clone).setOwningUser(owningUser);
+	        	}
+	        	if(this.owningGroup != null) {
+		            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().clear();
+		            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().addAll(
+		            	this.owningGroup
+		            );
+	        	}
+	        }
+	        RefContainer container = (RefContainer)cloneContext.target.refGetValue(
+	        	cloneContext.targetReferenceName != null ? 
+	        		cloneContext.targetReferenceName : 
+	        			object.refGetPath().getParent().getBase()
+	        );
+	        container.refAdd(
+	            org.oasisopen.cci2.QualifierType.REASSIGNABLE,
+	            Utils.getUidAsString(),
+	            clone
+	        );
+	        // Exclude attributes
+	        if(this.excludeAttributes != null) {
+	        	for(String excludeAttribute: this.excludeAttributes) {
+	        		try {
+	        			clone.refSetValue(excludeAttribute, null);
+	        		}
+	        		catch(Exception e) {}
+	        	}
+	        }
+	        return new CloneContext(
+	        	clone,
+	        	null
+	        );
+		}
+
+        private final Set<String> excludeAttributes;
+        private final Map<String,Marshaller> objectMarshallers;
+        private final org.opencrx.security.realm1.jmi1.User owningUser;
+        private final List<org.opencrx.security.realm1.cci2.PrincipalGroup> owningGroup;
+		
+    }
+    
+    //-------------------------------------------------------------------------
     public RefObject_1_0 cloneObject(
         RefObject_1_0 object,
         RefObject_1_0 target,
@@ -145,90 +232,22 @@ public class Cloneable extends AbstractImpl {
         Set<String> referenceFilter,
         org.opencrx.security.realm1.jmi1.User owningUser,
         List<org.opencrx.security.realm1.cci2.PrincipalGroup> owningGroup
-    ) throws ServiceException {        	
-        String objectType = object.refClass().refMofId();
-        // Clone
-        RefObject_1_0 clone = null;
-        if((objectMarshallers != null) && (objectMarshallers.get(objectType) != null)) {
-            clone = (RefObject_1_0)(objectMarshallers.get(objectType)).marshal(
-                object
-            );
-        }
-        else {
-            clone = PersistenceHelper.clone(object);
-        }        
-        if(clone instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
-        	if(owningUser != null) {
-        		((org.opencrx.kernel.base.jmi1.SecureObject)clone).setOwningUser(owningUser);
-        	}
-        	if(owningGroup != null) {
-	            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().clear();
-	            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().addAll(
-	            	owningGroup
-	            );
-        	}
-        }
-        RefContainer container = (RefContainer)target.refGetValue(referenceName);
-        container.refAdd(
-            org.oasisopen.cci2.QualifierType.REASSIGNABLE,
-            this.getUidAsString(),
-            clone
-        );
-        // Exclude attributes
-        if(excludeAttributes != null) {
-        	for(String excludeAttribute: excludeAttributes) {
-        		try {
-        			clone.refSetValue(excludeAttribute, null);
-        		}
-        		catch(Exception e) {}
-        	}
-        }        
-        // Clone content (shared and composite)
-        Model_1_0 model = Model_1Factory.getModel();
-        Map<String,ModelElement_1_0> references = (Map)model.getElement(
-            objectType
-        ).objGetValue("reference");
-        for(ModelElement_1_0 featureDef: references.values()) {
-            ModelElement_1_0 referencedEnd = model.getElement(
-                featureDef.objGetValue("referencedEnd")
-            );
-            boolean referenceIsCompositeAndChangeable = 
-                model.isReferenceType(featureDef) &&
-                AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
-                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();
-            boolean referenceIsSharedAndChangeable = 
-                model.isReferenceType(featureDef) &&
-                AggregationKind.SHARED.equals(referencedEnd.objGetValue("aggregation")) &&
-                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();            
-            // Only navigate changeable references which are either 'composite' or 'shared'
-            // Do not navigate references with aggregation 'none'.
-            if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
-                referenceName = (String)featureDef.objGetValue("name");
-                boolean matches = referenceFilter == null;
-                if(!matches) {
-                    String qualifiedReferenceName = (String)featureDef.objGetValue("qualifiedName");
-                    matches =
-                        referenceFilter.contains(referenceName) ||
-                        referenceFilter.contains(qualifiedReferenceName);
-                }
-                if(matches) {   
-                	List<?> content = ((RefContainer)object.refGetValue(referenceName)).refGetAll(null);
-                    for(Object contained: content) {
-                        this.cloneObject(
-                            (RefObject_1_0)contained,
-                            clone,
-                            referenceName,
-                            excludeAttributes,
-                            objectMarshallers,
-                            referenceFilter,
-                            owningUser,
-                            owningGroup
-                        );
-                    }
-                }
-            }
-        }
-        return clone;
+    ) throws ServiceException {
+    	CloneContext cloneContext = (CloneContext)Utils.traverseObjectTree(
+    		object, 
+    		referenceFilter,
+    		new CloneCallback(
+    			excludeAttributes,
+    			objectMarshallers,
+    			owningUser,
+    			owningGroup
+    		),
+    		new CloneContext(
+    			target,
+    			referenceName
+    		)
+    	);
+        return cloneContext.target;
     }
 
     //-------------------------------------------------------------------------

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.20 2009/10/15 16:19:33 wfro Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.25 2010/04/27 17:02:44 wfro Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:33 $
+ * Date:        $Date: 2010/04/27 17:02:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,16 +89,16 @@ org.openmdx.kernel.id.*
   	upload.setHeaderEncoding("UTF-8");
   	List items = null;
     try {
-      items = upload.parseRequest(
-        request,
-        15000000, // request size threshold [memory limit]
-        15000000, // max request size [overall limit]
-        app.getTempDirectory().getPath()
-      );
-		}
-		catch(FileUploadException e) {
-		  uploadFailed = true;
-		  SysLog.warning("cannot upload file", e.getMessage());
+		items = upload.parseRequest(
+	        request,
+	        200, // in-memory threshold. Content for fields larger than threshold is written to disk
+	        50000000, // max request size [overall limit]
+	        app.getTempDirectory().getPath()
+	    );
+	}
+	catch(FileUploadException e) {
+	  uploadFailed = true;
+	  SysLog.warning("cannot upload file", e.getMessage());
 %>
       <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
         <table>
@@ -109,13 +109,13 @@ org.openmdx.kernel.id.*
         </table>
       </div>
 <%
-		}
-		try {
-      if (uploadFailed) {
+	}
+	try {
+      if(uploadFailed) {
         items = upload.parseRequest(
           request,
-          40000000, // request size threshold [memory limit]
-          40000000, // max request size [overall limit]
+          200, // in-memory threshold. Content for fields larger than threshold is written to disk
+          60000000, // max request size [overall limit]
           app.getTempDirectory().getPath()
         );
       }
@@ -192,7 +192,7 @@ org.openmdx.kernel.id.*
 	    );
 	    return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	Texts_1_0 texts = app.getTexts();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -725,12 +725,16 @@ org.openmdx.kernel.id.*
 		    response.sendRedirect(
 		        request.getContextPath() + "/" + nextAction.getEncodedHRef()
 		    );
-			}
+	  }
     }
     catch (Exception ex) {
 	    out.println("<pre><b>!! Failed !!<br><br>The following exception occur:</b><br><br>");
 	    ex.printStackTrace(new PrintWriter(out));
 	    out.println("</pre>");
+    } finally {
+    	if(pm != null) {
+    		pm.close();
+    	}
     }
 %>
       </div> <!-- content -->

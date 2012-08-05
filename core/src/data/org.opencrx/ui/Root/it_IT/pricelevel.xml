@@ -123,10 +123,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetti (manualmente assegnati)</_item>
+                        <_item>Conti (manualmente assegnati)</_item>
                       </label>
                       <toolTip>
-                        <_item>Soggetti (manualmente assegnati)</_item>
+                        <_item>Conti (manualmente assegnati)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -308,7 +308,7 @@
                         <_item>Filtro Prodotto</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i parametri del Filtro</_item>
+                        <_item>Parametri del Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -327,7 +327,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtro Soggetto</_item>
+                        <_item>Filtro Conto</_item>
                       </label>
                       <toolTip>
                         <_item>Tutti i parametri del filtro</_item>
@@ -338,10 +338,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetti (filtrati)</_item>
+                        <_item>Conti (filtrati)</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i Soggetti (filtrati)</_item>
+                        <_item>tutti i Conti (filtrati)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -363,7 +363,7 @@
                         <_item>Filtro Prodotto</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i parametri del Filtro</_item>
+                        <_item>Parametri del Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -382,7 +382,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtro Soggetto</_item>
+                        <_item>Filtro Conto</_item>
                       </label>
                       <toolTip>
                         <_item>Tutti i parametri del Filtro</_item>
@@ -393,10 +393,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetti (filtrati)</_item>
+                        <_item>Conti (filtrati)</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i Soggetti (filtrati)</_item>
+                        <_item>tutti i Conti (filtrati)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -773,10 +773,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Assegnazione Soggetto</_item>
+                        <_item>Assegnazione Conto</_item>
                       </label>
                       <toolTip>
-                        <_item>Assegnazione Soggetto</_item>
+                        <_item>Assegnazione Conto</_item>
                       </toolTip>
                     </_object>
                     <_content/>

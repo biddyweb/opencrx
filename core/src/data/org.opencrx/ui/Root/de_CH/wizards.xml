@@ -431,6 +431,30 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable">
+										<_object>
+											<toolTip>
+												<_item>Re(Aktivieren)</_item>
+											</toolTip>
+											<label>
+												<_item>Re(Aktivieren)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable">
+										<_object>
+											<toolTip>
+												<_item>Deaktivieren</_item>
+											</toolTip>
+											<label>
+												<_item>Deaktivieren</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 <!-- View -->
 
 <!-- Tools -->
@@ -562,10 +586,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivityFollowUp">
 										<_object>
 											<toolTip>
-												<_item>Arbeitsschritt hinzufügen (erweitert)</_item>
+												<_item>Arbeitsschritt hinzufügen</_item>
 											</toolTip>
 											<label>
-												<_item>Arbeitsschritt hinzufügen (erweitert)</_item>
+												<_item>Arbeitsschritt hinzufügen</_item>
 											</label>
 										</_object>
 										<_content/>

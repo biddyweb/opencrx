@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:AliasType" _operation="create">
                     <_object>
                       <label>
-                        <_item>tipo Alias</_item>
+                        <_item>Tipo alias</_item>
                       </label>
                       <toolTip>
-                        <_item>tipo Alias</_item>
+                        <_item>tipo alias</_item>
                       </toolTip>
                     </_object>
                     <_content/>

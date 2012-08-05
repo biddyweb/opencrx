@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.79 2009/09/22 13:51:11 wfro Exp $
+ * Name:        $Id: Products.java,v 1.84 2010/01/26 17:24:23 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.79 $
+ * Revision:    $Revision: 1.84 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/22 13:51:11 $
+ * Date:        $Date: 2010/01/26 17:24:23 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1260,12 +1260,12 @@ public class Products extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);    	
         // Price level must not be final
-        if(priceLevel.isFinal()) {
+        if(priceLevel.isFinal() != null && priceLevel.isFinal()) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
                 "Operation is not allowed for final price level.",
-                new BasicException.Parameter("param0", priceLevel)
+                new BasicException.Parameter("param0", priceLevel.getName())
             );                                                                
         }
         // Get price modifiers        
@@ -1347,7 +1347,7 @@ public class Products extends AbstractImpl {
             if(c == null) {
                 pricingRules.put(
                    script, 
-                   c = new ClassBodyEvaluator(script).evaluate()
+                   c = new ClassBodyEvaluator(script).getClazz()
                 );
             }
             Method m = c.getMethod(
@@ -1513,19 +1513,10 @@ public class Products extends AbstractImpl {
         java.math.BigDecimal quantity,
         java.util.Date pricingDate
     ) {
-        boolean logLevelDetail = false;
-        boolean loggingActivated = true;
-        if (loggingActivated && logLevelDetail) {
+        boolean loggingActivated = false;
+        if (loggingActivated) {
           System.out.println("pricing rule LowestPriceRule invoked: get lowest price");
         }
-        org.opencrx.kernel.product1.jmi1.Product1Package productPkg =
-            (org.opencrx.kernel.product1.jmi1.Product1Package)rootPkg.refPackage(
-            org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
-            );
-        org.opencrx.kernel.account1.jmi1.Account1Package accountPkg =
-            (org.opencrx.kernel.account1.jmi1.Account1Package)rootPkg.refPackage(
-            org.opencrx.kernel.account1.jmi1.Account1Package.class.getName()
-            );
         org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel = null;    
         short statusCode = (short)0;
         String statusMessage = null;
@@ -1535,36 +1526,28 @@ public class Products extends AbstractImpl {
         org.opencrx.kernel.account1.jmi1.Account lowestPriceCustomer = null;
         java.math.BigDecimal lowestPriceAfterDiscount = null;
         if((contract != null) && (pricingRule != null) && (priceUom != null)) {
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(pricingRule);
             try {
               org.opencrx.kernel.product1.jmi1.Segment productSegment = 
-                  (org.opencrx.kernel.product1.jmi1.Segment)rootPkg.refObject(
-                      new org.openmdx.base.naming.Path(pricingRule.refMofId()).getParent().getParent().toXri()
+                  (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+                      pricingRule.refGetPath().getParent().getParent()
                   );
-              org.opencrx.kernel.product1.cci2.PriceLevelQuery priceLevelFilter = productPkg.createPriceLevelQuery();
+              org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery priceLevelFilter = (org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.AbstractPriceLevel.class);
               priceLevelFilter.forAllDisabled().isFalse();           
               List<org.opencrx.kernel.product1.jmi1.AbstractPriceLevel> priceLevels = productSegment.getPriceLevel(priceLevelFilter);
               for(org.opencrx.kernel.product1.jmi1.AbstractPriceLevel candidate: priceLevels) {
                   boolean candidateMatches = false;
-                  if(candidate instanceof org.opencrx.kernel.product1.jmi1.PriceLevel) {
-                      org.opencrx.kernel.product1.jmi1.PriceLevel l = (org.opencrx.kernel.product1.jmi1.PriceLevel)candidate;
-                      boolean validFromMatches = (pricingDate == null) || (l.getValidFrom() == null) || l.getValidFrom().compareTo(pricingDate) <= 0;
-                      boolean validToMatches = (pricingDate == null) || (l.getValidTo() == null) || l.getValidTo().compareTo(pricingDate) >= 0;
-                      if (loggingActivated && logLevelDetail) {
-                        System.out.println("testing candidate price level=" + candidate.getName() + "; validFromMatches=" + validFromMatches + "; validToMatches=" + validToMatches);
-                      }
-                      candidateMatches = validFromMatches && validToMatches;
+                  boolean validFromMatches = (pricingDate == null) || (candidate.getValidFrom() == null) || candidate.getValidFrom().compareTo(pricingDate) <= 0;
+                  boolean validToMatches = (pricingDate == null) || (candidate.getValidTo() == null) || candidate.getValidTo().compareTo(pricingDate) >= 0;
+                  if (loggingActivated) {
+                    System.out.println("testing candidate price level=" + candidate.getName() + "; validFromMatches=" + validFromMatches + "; validToMatches=" + validToMatches);
                   }
-                  else {
-                      if (loggingActivated && logLevelDetail) {
-                        System.out.println("testing candidate price level=" + candidate.getName() + "; is not instance of PriceLevel. Ignoring");
-                      }
-                      candidateMatches = false;
-                  }
+                  candidateMatches = validFromMatches && validToMatches;
                   if(
                       (contract.getContractCurrency() == candidate.getPriceCurrency()) &&
                       candidateMatches
                   ) {
-                      if (loggingActivated && logLevelDetail) {
+                      if (loggingActivated) {
                         System.out.println("candidate for price level found=" + candidate.getName());
                       }
                       candidateMatches = false;
@@ -1577,11 +1560,12 @@ public class Products extends AbstractImpl {
                           boolean customerAssigned = false;
                           org.opencrx.kernel.account1.jmi1.Account customer = contract.getCustomer();
                           if (customer != null) {
-                              org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = accountPkg.createAccountQuery();
+                              org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = 
+                            	  (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
                               accountFilter.identity().equalTo(
                                   new String(customer.refMofId())
                               );
-                              customerFiltered = (candidate.getFilteredAccount(accountFilter).size() > 0);
+                              customerFiltered = !candidate.getFilteredAccount(accountFilter).isEmpty();
                               if (customer != null) {
                                   // check whether there exists an accountAssignment
                             	  Collection<org.opencrx.kernel.product1.jmi1.AccountAssignment> accountAssignments = candidate.getAssignedAccount();
@@ -1607,7 +1591,7 @@ public class Products extends AbstractImpl {
                           }
                           if ((customer == null) || customerFiltered || customerAssigned) {
                               // if customer is set it must either be assigned or filtered
-                              if (loggingActivated && logLevelDetail) {
+                              if (loggingActivated) {
                                 System.out.println("customer is " + (customer == null ? "undefined" : "") + (customerFiltered ? "filtered " : "") + (customerAssigned ? "assigned" : ""));
                               }
                               // test whether candidate price level defines lower price
@@ -1616,7 +1600,7 @@ public class Products extends AbstractImpl {
                                   boolean quantityFromMatches = (quantity == null) || (basePrice.getQuantityFrom() == null) || basePrice.getQuantityFrom().compareTo(quantity) <= 0;
                                   boolean quantityToMatches = (quantity == null) || (basePrice.getQuantityTo() == null) || basePrice.getQuantityTo().compareTo(quantity) >= 0;
                                   boolean priceUomMatches = (basePrice.getUom() == null)  || priceUom.equals(basePrice.getUom());
-                                  if (loggingActivated && logLevelDetail) {
+                                  if (loggingActivated) {
                                       System.out.println("quantityFromMatches=" + quantityFromMatches + "; quantityToMatches=" + quantityToMatches + "; priceUomMatches=" + priceUomMatches + "; basePrice.getPriceLevel().contains()=" + basePrice.getPriceLevel().contains(candidate));
                                   }
                                   if (basePrice.getPrice() == null) {
@@ -1650,13 +1634,13 @@ public class Products extends AbstractImpl {
                               }
                           }
                           else {
-                              if (loggingActivated && logLevelDetail) {
+                              if (loggingActivated) {
                                 System.out.println("customer is neither filtered nor assigned");
                               }
                           }
                       }
                       else {
-                          if (loggingActivated && logLevelDetail) {
+                          if (loggingActivated) {
                             System.out.println("product is null");
                           }
                           break;
@@ -1674,6 +1658,10 @@ public class Products extends AbstractImpl {
               e0.log();
           }
         }
+        org.opencrx.kernel.product1.jmi1.Product1Package productPkg =
+            (org.opencrx.kernel.product1.jmi1.Product1Package)rootPkg.refPackage(
+            	org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
+            );        
         org.opencrx.kernel.product1.jmi1.GetPriceLevelResult result = productPkg.createGetPriceLevelResult(
             lowestPriceCustomer,
             lowestPriceCustomerDiscount,

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.59 2009/10/12 16:06:55 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.63 2010/03/25 10:09:35 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.59 $
+ * Revision:    $Revision: 1.63 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/12 16:06:55 $
+ * Date:        $Date: 2010/03/25 10:09:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jmi.reflect.RefObject;
@@ -89,6 +90,7 @@ import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
 import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByParams;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByResult;
+import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
 import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
@@ -96,8 +98,11 @@ import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
+import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 
@@ -362,11 +367,11 @@ public class SubscriptionHandlerServlet
     private List<Subscription> findSubscriptions(
         String providerName,
         String segmentName,
-        org.opencrx.kernel.home1.jmi1.Home1Package homePkg,
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
         org.opencrx.kernel.home1.jmi1.Segment userHomeSegment,
         AuditEntry auditEntry
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(workflowSegment);
         // Find topics matching the auditee (modified, created or removed object)
         List<Topic> matchingTopics = new ArrayList<Topic>();
         Collection<Topic> topics = workflowSegment.getTopic();
@@ -380,9 +385,9 @@ public class SubscriptionHandlerServlet
         if(!matchingTopics.isEmpty()) {
             matchingSubscriptions = new ArrayList<Subscription>();
             for(Topic topic: matchingTopics) {                
-                org.opencrx.kernel.home1.cci2.SubscriptionQuery query = homePkg.createSubscriptionQuery();
+                SubscriptionQuery query = (SubscriptionQuery)pm.newQuery(Subscription.class);
                 query.identity().like(
-                    new Path("xri:@openmdx:org.opencrx.kernel.home1/provider").getDescendant(providerName, "segment", segmentName, "userHome", ":*", "subscription", ":*").toResourcePattern()  
+                    new Path("xri://@openmdx*org.opencrx.kernel.home1/provider").getDescendant(providerName, "segment", segmentName, "userHome", ":*", "subscription", ":*").toResourcePattern()  
                 );
                 query.thereExistsTopic().equalTo(topic);                
                 Collection<Subscription> subscriptions = userHomeSegment.getExtent(query);
@@ -401,8 +406,6 @@ public class SubscriptionHandlerServlet
         String providerName,
         String segmentName,
         PersistenceManager pm,
-        org.opencrx.kernel.base.jmi1.BasePackage basePkg,
-        org.opencrx.kernel.home1.jmi1.Home1Package homePkg,
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
         org.opencrx.kernel.home1.jmi1.Segment userHomeSegment,
         List<AuditEntry> auditEntries
@@ -425,7 +428,7 @@ public class SubscriptionHandlerServlet
             if(auditEntry != null) {
                 TestAndSetVisitedByResult markAsVisistedReply = null;
                 try {
-                    TestAndSetVisitedByParams params = basePkg.createTestAndSetVisitedByParams(
+                    TestAndSetVisitedByParams params = Utils.getBasePackage(pm).createTestAndSetVisitedByParams(
                         VISITOR_ID
                     );
                     markAsVisistedReply = auditEntry.testAndSetVisitedBy(params);
@@ -442,68 +445,88 @@ public class SubscriptionHandlerServlet
                     List<Subscription> subscriptions = this.findSubscriptions(
                         providerName,
                         segmentName,
-                        homePkg,
                         workflowSegment,
                         userHomeSegment,
                         auditEntry
                     );
                     if(subscriptions != null) {
                         for(Subscription subscription: subscriptions) {
-                            UserHome userHome = (UserHome)pm.getObjectById(
-                                new Path(subscription.refMofId()).getParent().getParent()
-                            );
+                        	Path userHomeIdentity = subscription.refGetPath().getParent().getParent();
+                            UserHome userHome = (UserHome)pm.getObjectById(userHomeIdentity);
                             org.opencrx.security.realm1.jmi1.User user = userHome.getOwningUser();
-                            boolean userIsDisabled = false;
-                            // Invalid NULLs on the DB may throw a NullPointer. Ignore.
+                        	// User-specific persistence manager
+                            PersistenceManager pmUser = pm.getPersistenceManagerFactory().getPersistenceManager(
+                            	userHomeIdentity.getBase(), 
+                            	null
+                            );
+                            ContextCapable targetObject = null;
                             try {
-                                userIsDisabled = user.isDisabled();
-                            } 
-                            catch(Exception e) {}
-                            // Execute all actions attached to the topic if owning user of user home is not disabled
-                            if(!userIsDisabled) {
-                                Collection<WfProcess> actions = subscription.getTopic().getPerformAction();
-                                for(WfProcess performAction: actions) {
-                                    // Execute workflow. A workflow instance is created for each
-                                    // executed workflow. Synchronous workflows are executed immediately 
-                                    // if startedOn and lastActivityOn are set. Pending workflow instances,
-                                    // i.e. asynchronous and non-successful synchronous workflows are handled 
-                                    // by the WorkflowControllerServlet.
-                                    try {
-                                        MessageDigest md = MessageDigest.getInstance("MD5");
-                                        md.update(auditEntry.refMofId().getBytes("UTF-8"));
-                                        md.update(performAction.refMofId().getBytes("UTF-8"));
-                                        ExecuteWorkflowParams params = basePkg.createExecuteWorkflowParams(
-                                            null,
-                                            null,
-                                            auditEntry.getAuditee(),
-                                            Base64.encode(md.digest()).replace('/', '-'),
-                                            new Integer(this.getEventType(auditEntry).intValue()),
-                                            subscription,
-                                            performAction
-                                        );
-                                        try {
-                                            pm.currentTransaction().begin();
-                                            userHome.executeWorkflow(params);
-                                            // executeWorkflow touches userHome in separate uow. Prevent concurrent modification exception                                            
-                                            pm.refresh(userHome);
-                                            pm.currentTransaction().commit();
-                                        }
-                                        catch(Exception e) {
-                                        	SysLog.warning("Execution of workflow FAILED", performAction.getName() + "; home=" + userHome.refMofId() + "; cause=" + e.getCause().getMessage());
-                                        	SysLog.detail(e.getMessage(), e.getCause());
-                                            try {
-                                                pm.currentTransaction().rollback();
-                                            } 
-                                            catch(Exception e0) {}
-                                        }
-                                    }
-                                    catch(NoSuchAlgorithmException e) {
-                                        new ServiceException(e).log();
-                                    }
-                                    catch (UnsupportedEncodingException e) {
-                                        new ServiceException(e).log();
-                                    }
-                                }
+                            	targetObject = (ContextCapable)pmUser.getObjectById(
+                            		new Path(auditEntry.getAuditee())
+                            	);
+                            } catch(Exception e) {}
+                            // In case user has no access to target object (NO_PERMISSION, ...) ignore subscription
+                            if(targetObject instanceof BasicObject) {
+	                            boolean userIsDisabled = false;
+	                            // Invalid NULLs on the DB may throw a NullPointer. Ignore.
+	                            try {
+	                                userIsDisabled = user.isDisabled();
+	                            } 
+	                            catch(Exception e) {}
+	                            // Execute all actions attached to the topic if owning user of user home is not disabled
+	                            if(!userIsDisabled) {
+	                                Collection<WfProcess> actions = subscription.getTopic().getPerformAction();
+	                                for(WfProcess action: actions) {
+	                                    // Execute workflow. A workflow instance is created for each
+	                                    // executed workflow. Synchronous workflows are executed immediately 
+	                                    // if startedOn and lastActivityOn are set. Pending workflow instances,
+	                                    // i.e. asynchronous and non-successful synchronous workflows are handled 
+	                                    // by the WorkflowControllerServlet.
+	                                    try {
+	                                        MessageDigest md = MessageDigest.getInstance("MD5");
+	                                        md.update(auditEntry.refMofId().getBytes("UTF-8"));
+	                                        md.update(action.refMofId().getBytes("UTF-8"));                                        
+	                                        ExecuteWorkflowParams params = Utils.getBasePackage(pmUser).createExecuteWorkflowParams(
+	                                            null, // startedAt
+	                                            (BasicObject)targetObject, // targetObject
+	                                            Base64.encode(md.digest()).replace('/', '-'),
+	                                            new Integer(this.getEventType(auditEntry).intValue()),
+	                                            (Subscription)pmUser.getObjectById(subscription.refGetPath()),
+	                                            (WfProcess)pmUser.getObjectById(action.refGetPath())
+	                                        );
+	                                        try {
+	                                            pmUser.currentTransaction().begin();
+	                                            ((UserHome)pmUser.getObjectById(
+	                                            	userHome.refGetPath())
+	                                            ).executeWorkflow(params);
+	                                            // executeWorkflow touches userHome in separate uow. Prevent concurrent modification exception                                            
+	                                            pmUser.refresh(userHome);
+	                                            pmUser.currentTransaction().commit();
+	                                        }
+	                                        catch(Exception e) {
+	                                        	ServiceException e0 = new ServiceException(e);
+	                                        	SysLog.warning("Execution of workflow FAILED", "action=" + (action == null ? null : action.getName()) + "; home=" + (userHome == null ? null : userHome.refMofId()) + "; cause=" + (e0.getCause() == null ? null : e0.getCause().getMessage()));
+	                                        	if(e0.getExceptionCode() == BasicException.Code.NOT_FOUND) {
+	                                        		e0.log(); // log at WARNING level
+	                                        	} else {
+	                                        		SysLog.detail(e.getMessage(), e.getCause());
+	                                        	}
+	                                            try {
+	                                                pmUser.currentTransaction().rollback();
+	                                            } catch(Exception e1) {}
+	                                        }
+	                                    }
+	                                    catch(NoSuchAlgorithmException e) {
+	                                        new ServiceException(e).log();
+	                                    }
+	                                    catch (UnsupportedEncodingException e) {
+	                                        new ServiceException(e).log();
+	                                    }
+	                                }
+	                            }
+                            }
+                            if(pmUser != null) {
+                            	pmUser.evictAll();
                             }
                         }
                     }
@@ -537,51 +560,47 @@ public class SubscriptionHandlerServlet
             // Get auditees
             List<Auditee> auditSegments = new ArrayList<Auditee>();
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
+                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
             );
                                 
             // Workflow segment
             org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
+                new Path("xri://@openmdx*org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
             );
             // User home segment
             org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
+                new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
             );                    
-            // base package
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getBasePackage(pm);
-            org.opencrx.kernel.home1.jmi1.Home1Package homePkg = Utils.getHomePackage(pm);
-            
             // Iterate all auditees and check for new audit entries
             for(Auditee auditee: auditSegments) {
-                AuditEntryQuery query = basePkg.createAuditEntryQuery();
+                AuditEntryQuery query = (AuditEntryQuery)pm.newQuery(AuditEntry.class);
                 // Not visited elements are marked with VISITOR_ID:-
                 // Visited elements are marked with VISITOR_ID:<time stamp of visit>
                 query.thereExistsVisitedBy().equalTo(
@@ -593,8 +612,6 @@ public class SubscriptionHandlerServlet
                         providerName,
                         segmentName,
                         pm,
-                        basePkg,
-                        homePkg,
                         workflowSegment,
                         userHomeSegment,
                         auditEntries
@@ -692,7 +709,7 @@ public class SubscriptionHandlerServlet
     private static final int BATCH_SIZE = 50;
     
     private static final String WORKFLOW_NAME = "SubscriptionHandler";    
-    private static final Path PATH_PATTERN_USER_HOME = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*");
+    private static final Path PATH_PATTERN_USER_HOME = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*");
     private static final String COMMAND_EXECUTE = "/execute";
     private static final String VISITOR_ID = "SubscriptionHandler";
 

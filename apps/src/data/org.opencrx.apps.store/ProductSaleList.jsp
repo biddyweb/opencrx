@@ -2,7 +2,7 @@
 java.util.Iterator,
 java.util.List,
 org.opencrx.apps.store.objects.Product,
-org.opencrx.apps.utils.*"
+org.opencrx.apps.store.common.util.*"
 %>
  <%--
   Render a table which shows product sale list

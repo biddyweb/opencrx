@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.13 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.14 2010/04/27 12:16:11 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,7 @@ org.openmdx.base.query.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	Texts_1_0 texts = app.getTexts();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -376,7 +376,12 @@ org.openmdx.base.query.*
       PrintWriter pw = new PrintWriter(out);
       e0.printStackTrace(pw);
       out.println("</pre></p>");
-  }
+  	} finally {
+  		if(pm != null) {
+  			pm.close();
+  		}
+  	}
+
 %>
   <INPUT type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" />
 </body>

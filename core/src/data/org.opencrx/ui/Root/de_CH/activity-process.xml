@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:assignedTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Zuständigkeit</_item>
+                        <_item>Arbeitsschritt gemeldet von</_item>
                       </label>
                       <toolTip>
-                        <_item>Zuständigkeit</_item>
+                        <_item>Arbeitsschritt gemeldet von</_item>
                       </toolTip>
                     </_object>
                     <_content/>

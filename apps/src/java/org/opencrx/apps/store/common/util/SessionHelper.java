@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: SessionHelper.java,v 1.2 2009/02/15 18:06:15 wfro Exp $
+ * Name:        $Id: SessionHelper.java,v 1.5 2009/11/27 18:23:05 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:15 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,6 @@ import javax.servlet.http.HttpSession;
 
 import org.opencrx.apps.store.objects.Order;
 import org.opencrx.apps.store.objects.User;
-import org.opencrx.apps.utils.ApplicationContext;
 
 /**
  * Utility class for handling all Session stuff
@@ -129,13 +128,13 @@ public final class SessionHelper
 
     public final ApplicationContext getApplicationContext()
     {
-        final ApplicationContext context = (ApplicationContext) this.getSession().getAttribute( ApplicationContext.SESSION_OPENCRXCONTEXT );
+        final ApplicationContext context = (ApplicationContext) this.getSession().getAttribute( ApplicationContext.ID );
         return context;
     }
 
     public final void setApplicationContext( final ApplicationContext context )
     {
-        this.getSession().setAttribute( ApplicationContext.SESSION_OPENCRXCONTEXT, context );
+        this.getSession().setAttribute( ApplicationContext.ID, context );
     }
     
     public final boolean isAdmin()

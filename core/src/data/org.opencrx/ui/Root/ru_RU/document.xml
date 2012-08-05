@@ -44,6 +44,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment:document" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Документы (неактивные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Документы (неактивные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder" _operation="create">
                     <_object>
                       <label>
@@ -88,6 +106,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Позиции (неактивные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Позиции (неактивные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:name" _operation="create">
                     <_object>
                       <label>
@@ -121,6 +157,105 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Неактивные</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Объект неактивен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Позиция директории</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Позиция директории</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Актуально с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Актуально с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Актуально до</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Актуально до</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Вхождение основано на</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Вхождение основано на</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Неактивно</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Объект неактивен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document" _operation="create">
                     <_object>
                       <label>
@@ -143,13 +278,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Директории</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Директории</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:revision" _operation="create">
                     <_object>
                       <label>
-                        <_item>Переработки</_item>
+                        <_item>Версии</_item>
                       </label>
                       <toolTip>
-                        <_item>Переработки</_item>
+                        <_item>Версии</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +325,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>Запреты</_item>
+                        <_item>Блокировки</_item>
                       </label>
                       <toolTip>
-                        <_item>Запреты</_item>
+                        <_item>Блокировки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -495,6 +641,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Неактивен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Объект неактивен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Присвоение директории</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Присвоение директории</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name" _operation="create">
                     <_object>
                       <label>
@@ -542,10 +732,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:contentName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Имя содержимого</_item>
+                        <_item>Наименование содержимого</_item>
                       </label>
                       <toolTip>
-                        <_item>Имя содержимого</_item>
+                        <_item>Наименование содержимого</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -619,10 +809,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:ResourceIdentifier" _operation="create">
                     <_object>
                       <label>
-                        <_item>Идентефикатор ресурса</_item>
+                        <_item>Идентификатор ресурса</_item>
                       </label>
                       <toolTip>
-                        <_item>Идентефикатор ресурса</_item>
+                        <_item>Идентификатор ресурса</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -718,10 +908,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock" _operation="create">
                     <_object>
                       <label>
-                        <_item>Запрет документа</_item>
+                        <_item>Блокировка документа</_item>
                       </label>
                       <toolTip>
-                        <_item>Запрет документа</_item>
+                        <_item>Блокировка документа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -810,6 +1000,50 @@
                       </label>
                       <toolTip>
                         <_item>Версия</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:documentFolder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Директория</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Директория</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Активно с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Активно с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Активно по</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Активно по</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Неактивно</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Объект неактивен</_item>
                       </toolTip>
                     </_object>
                     <_content/>

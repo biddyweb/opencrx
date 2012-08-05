@@ -1,0 +1,19 @@
+#include "sql-definitions.tsql"
+
+ALTER TABLE OOCKE1_CALENDARFEED 
+	DROP_COLUMN_BEGIN
+		username
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_CALENDARFEED 
+	DROP_COLUMN_BEGIN
+		password
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_CALENDARFEED 
+	DROP_COLUMN_BEGIN
+		url
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

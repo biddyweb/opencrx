@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:isMemberOf" _operation="create">
                     <_object>
                       <label>
-                        <_item>Участник группы админ.-я</_item>
+                        <_item>Участник группы админ-я</_item>
                       </label>
                       <toolTip>
-                        <_item>Участник группы админ.-я</_item>
+                        <_item>Участник группы админ-я</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -443,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:Principal:lastLoginAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Прошлый вход в</_item>
+                        <_item>Последний вход в</_item>
                       </label>
                       <toolTip>
-                        <_item>Прошлый вход в</_item>
+                        <_item>Последний вход в</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -641,10 +641,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Permission:privilege" _operation="create">
                     <_object>
                       <label>
-                        <_item>Привелегия</_item>
+                        <_item>Привилегия</_item>
                       </label>
                       <toolTip>
-                        <_item>Привелегия</_item>
+                        <_item>Привилегия</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Apps, http://www.opencrx.org/
- * Name:        $Id: UserManager.java,v 1.4 2009/05/22 14:18:43 wfro Exp $
+ * Name:        $Id: UserManager.java,v 1.6 2009/11/27 18:23:05 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/22 14:18:43 $
+ * Date:        $Date: 2009/11/27 18:23:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,8 +60,8 @@ import java.util.List;
 import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.PrimaryKey;
+import org.opencrx.apps.store.common.util.ApplicationContext;
 import org.opencrx.apps.store.objects.User;
-import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.account1.cci2.ContactQuery;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.openmdx.base.exception.ServiceException;

@@ -1,12 +1,9 @@
 package org.opencrx.application.imap;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -17,49 +14,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.jdo.PersistenceManager;
-import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.UIDFolder;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MailDateFormat;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
-import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
-import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
-import org.opencrx.kernel.activity1.jmi1.EMail;
-import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
-import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
-import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
-import org.opencrx.kernel.backend.Addresses;
-import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.base.cci2.AuditEntryQuery;
 import org.opencrx.kernel.base.jmi1.AuditEntry;
 import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
-import org.opencrx.kernel.generic.jmi1.Media;
-import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.format.DateTimeFormat;
 
 public class IMAPFolderImpl extends Folder implements UIDFolder {
 
@@ -67,7 +45,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     public IMAPFolderImpl(
         String name,
         String username,
-        ActivitiesHelper activitiesHelper
+        ActivitiesFilterHelper activitiesHelper
     ) {
         super(null);
         this.name = name;
@@ -102,79 +80,6 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         );
     }
     
-    //-------------------------------------------------------------------------
-    protected String[] getInternetAddresses(
-        Address[] addresses
-    ) throws AddressException {
-        String internetAddresses[] = null;
-        if (addresses != null && addresses.length > 0) {
-            internetAddresses = new String[addresses.length];
-            for (int i = 0; i < addresses.length; i++) {
-                if (addresses[0] instanceof InternetAddress) {
-                    internetAddresses[i] = ((InternetAddress)addresses[i]).getAddress();
-                } 
-                else {
-                    InternetAddress temp = new InternetAddress(addresses[i].toString());
-                    internetAddresses[i] = temp.getAddress();
-                }
-            }
-        } 
-        else {
-            internetAddresses = new String[]{UNSPECIFIED_ADDRESS};
-        }
-        return internetAddresses;
-    }
-    
-    //-----------------------------------------------------------------------
-    protected String[] parseContentType(
-        String contentType
-    ) {
-        String[] result = new String[2];
-        Pattern pattern = Pattern.compile("([0-9a-zA-Z/\\+\\-\\.]+)(?:;(?:[ \\r\\n\\t]*)name(?:[^\\=]*)\\=\"(.*)\")?");
-        Matcher matcher = pattern.matcher(contentType);
-        if(matcher.find()) {
-            result[0] = matcher.group(1);
-            result[1] = matcher.group(2);
-        }
-        else {
-            result[0] = contentType;
-            result[1] = null;                            
-        }
-        return result;
-    }
-    
-    //-----------------------------------------------------------------------
-    protected void addMedia(
-        MimeMessage mimeMessage,
-        EMail emailActivity
-    ) throws IOException, MessagingException, ServiceException {
-        if(mimeMessage.getContent() instanceof MimeMultipart) {
-            MimeMultipart multipart = (MimeMultipart)mimeMessage.getContent();
-            for(int i = 1; i < multipart.getCount(); i++) {
-                MimeBodyPart part = (MimeBodyPart)multipart.getBodyPart(i);
-                String[] contentType = this.parseContentType(part.getContentType());
-                if(contentType[1] == null) contentType[1] = part.getContentID();
-                boolean found = false;
-                Collection<Media> medias = emailActivity.getMedia();
-                for(Media attachment: medias) {
-                    if((contentType[1] != null) && contentType[1].equals(attachment.getContentName())) {
-                        found = true;
-                        break;
-                    }
-                }
-                if(!found) {
-                    Activities.getInstance().addMedia(
-                        this.activitiesHelper.getPersistenceManager(),
-                        emailActivity,
-                        contentType[0],
-                        contentType[1],
-                        part.getInputStream()
-                    );
-                }
-            }
-        }
-    }
-    
     //-----------------------------------------------------------------------
     @Override
     public void appendMessages(
@@ -197,163 +102,21 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 PersistenceManager pm = this.activitiesHelper.getPersistenceManager();
                 String providerName = emailCreator.refGetPath().get(2);
                 String segmentName = emailCreator.refGetPath().get(4);
-                MailDateFormat mailDateFormat = new MailDateFormat();                
                 for(Message message: newMessages) {
                     MimeMessage mimeMessage = (MimeMessage)message;
                     try {
-                        List<org.opencrx.kernel.activity1.jmi1.Activity> activities = Activities.getInstance().lookupEmailActivity(
-                            pm,
-                            providerName,
-                            segmentName,
-                            mimeMessage.getMessageID()
-                        );
-                        EMail emailActivity = null;
-                        if(activities.isEmpty()) {
-                        	SysLog.trace("Create a new EMailActivity");
-                            pm.currentTransaction().begin();                            
-                            Activity1Package activityPkg = Utils.getActivityPackage(pm);
-                            NewActivityParams newActParam = activityPkg.createNewActivityParams(
-                                null, // description
-                                null, // detailedDescription
-                                null, // dueBy
-                                ICalendar.ICAL_TYPE_NA, // icalType
-                                mimeMessage.getSubject(),
-                                Activities.getInstance().getMessagePriority(message),
-                                null, // reportingContract
-                                null, // scheduledEnd
-                                null  // scheduledStart
-                            );
-                            NewActivityResult newActivityResult = emailCreator.newActivity(
-                                newActParam
-                            );
-                            pm.currentTransaction().commit();                  
-                            emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
-                            // Update activity step 1
-                            pm.currentTransaction().begin();
-                            String subject = mimeMessage.getSubject();                
-                            emailActivity.setMessageSubject(
-                                subject == null ? "" : subject
-                            );
-                            emailActivity.getExternalLink().clear();
-                            if(mimeMessage.getMessageID() != null) {
-                                emailActivity.getExternalLink().add(
-                                    mimeMessage.getMessageID()
-                                );
-                            }
-                            pm.currentTransaction().commit();
-                            // Update activity step 2
-                            // Append original email as media attachment
-                            String mimeMessageName = emailActivity.getActivityNumber().trim() + ".eml";
-                            ByteArrayOutputStream mimeMessageBytes = new ByteArrayOutputStream();
-                            ZipOutputStream mimeMessageZipped = new ZipOutputStream(mimeMessageBytes);
-                            mimeMessageZipped.putNextEntry(
-                                new ZipEntry(mimeMessageName)
-                            );
-                            mimeMessage.writeTo(mimeMessageZipped);
-                            mimeMessageZipped.close();
-                            Activities.getInstance().addMedia(
-                                pm, 
-                                emailActivity, 
-                                "application/zip", 
-                                mimeMessageName + ".zip", 
-                                new ByteArrayInputStream(mimeMessageBytes.toByteArray())
-                            );
-                            // Update activity step 3
-                            pm.currentTransaction().begin();
-                            String body = Activities.getInstance().getMessageBody(mimeMessage);
-                            emailActivity.setMessageBody(
-                                body == null ? "" : body
-                            );
-                            String[] date = mimeMessage.getHeader("Date");
-                            if(date.length > 0) {
-                                emailActivity.setSendDate(
-                                    mailDateFormat.parse(date[0])
-                                );
-                            }
-                            pm.currentTransaction().commit();
-                            // Add originator and recipients to a note
-                            Activities.getInstance().addNote(
-                                pm,
-                                emailActivity,
-                                "Recipients",
-                                Activities.getInstance().getRecipientsAsNoteText(
-                                    pm,
-                                    providerName,
-                                    segmentName,
-                                    this.getInternetAddresses(mimeMessage.getFrom()),
-                                    this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.TO)),
-                                    this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.CC)),
-                                    this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.BCC)),
-                                    this.isEMailAddressLookupCaseInsensitive,
-                                    this.isEMailAddressLookupIgnoreDisabled
-                                )
-                            );                  
-                            // Add headers as Note
-                            Activities.getInstance().addNote(
-                                pm,
-                                emailActivity,
-                                "Message-Header",
-                                MimeMessageImpl.getHeadersAsRFC822(
-                                     mimeMessage, 
-                                     null
-                                )
-                            );
-                            // Add attachments
-                            this.addMedia(
-                                mimeMessage, 
-                                emailActivity
-                            );
-                        }
-                        else {
-                            emailActivity = (EMail)activities.iterator().next();
-                        }
-                        // Add FROM as sender
-                        List<org.opencrx.kernel.account1.jmi1.EMailAddress> addresses = 
-                            Accounts.getInstance().lookupEmailAddress(
-                                pm,
-                                providerName,
-                                segmentName,
-                                this.getInternetAddresses(mimeMessage.getFrom())[0],
-                                this.isEMailAddressLookupCaseInsensitive,
-                                this.isEMailAddressLookupIgnoreDisabled                                
-                            );
-                        if(addresses.isEmpty()) {
-                            addresses = Accounts.getInstance().lookupEmailAddress(
-                                pm,
-                                providerName,
-                                segmentName,
-                                Addresses.UNASSIGNED_ADDRESS,
-                                this.isEMailAddressLookupCaseInsensitive,
-                                this.isEMailAddressLookupIgnoreDisabled                                
-                            );                            
-                        }
-                        EMailAddress from = null;
-                        if(!addresses.isEmpty()) {
-                            from = addresses.iterator().next();
-                            pm.currentTransaction().begin();
-                            emailActivity.setSender(from);
-                            pm.currentTransaction().commit();
-                        } 
-                        Activities.getInstance().addRecipientToEmailActivity(
-                            pm,
-                            providerName,
-                            segmentName,
-                            emailActivity,
-                            this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.TO)),
-                            Message.RecipientType.TO,
-                            this.isEMailAddressLookupCaseInsensitive,
-                            this.isEMailAddressLookupIgnoreDisabled                            
-                        );
-                        Activities.getInstance().addRecipientToEmailActivity(
-                            pm,
-                            providerName,
-                            segmentName,
-                            emailActivity,
-                            this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.CC)),
-                            Message.RecipientType.CC,
-                            this.isEMailAddressLookupCaseInsensitive,
-                            this.isEMailAddressLookupIgnoreDisabled                            
-                        );      
+                    	 Activities.getInstance().importMimeMessage(
+                    		providerName, 
+                    		segmentName, 
+                    		mimeMessage, 
+                    		emailCreator, 
+                            mimeMessage.getFrom(),
+                            mimeMessage.getRecipients(Message.RecipientType.TO),
+                            mimeMessage.getRecipients(Message.RecipientType.CC),
+                            mimeMessage.getRecipients(Message.RecipientType.BCC),
+                    		this.isEMailAddressLookupCaseInsensitive, 
+                    		this.isEMailAddressLookupIgnoreDisabled
+                    	);
                     }
                     catch (Exception e) {
                         try {
@@ -385,7 +148,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             new FileInputStream(indexFile)
                         )
                     );
-                    lastSynchronizedAt = DateFormat.getInstance().parse(reader.readLine());
+                    lastSynchronizedAt = DateTimeFormat.BASIC_UTC_FORMAT.parse(reader.readLine());
                     this.messageUIDs.clear();
                     this.messageXRIs.clear();
                     while(reader.ready()) {
@@ -506,7 +269,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
             // Write index
             try {
                 PrintStream out = new PrintStream(indexFile);
-                out.println(DateFormat.getInstance().format(new Date()));
+                out.println(DateTimeFormat.BASIC_UTC_FORMAT.format(new Date()));
                 for(Map.Entry<Long,String> entry: this.messageXRIs.entrySet()) {
                     out.println(Long.toString(entry.getKey()) + " " + entry.getValue());
                 }
@@ -763,7 +526,6 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static final String UNSPECIFIED_ADDRESS = "NO_ADDRESS_SPECIFIED";
     protected static final String INDEX_FILE_NAME = ".INDEX";
     protected static final long SYNCHRONIZE_REFRESH_RATE = 60000;
     public static final String MAILDIR_PROPERTY_NAME = "org.opencrx.maildir";
@@ -771,12 +533,12 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     public static final String EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME = "org.opencrx.eMailAddressLookupIgnoreDisabled";
     
     protected final String name;
-    protected final ActivitiesHelper activitiesHelper;
+    protected final ActivitiesFilterHelper activitiesHelper;
     protected final List<Long> messageUIDs = new ArrayList<Long>();
     protected final Map<Long,String> messageXRIs = new TreeMap<Long,String>();
     protected File folderDir;
 	protected boolean isEMailAddressLookupCaseInsensitive = true;
-	protected boolean isEMailAddressLookupIgnoreDisabled = false;
+	protected boolean isEMailAddressLookupIgnoreDisabled = true;
     protected long synchronizeNextAt = 0;
 
 }

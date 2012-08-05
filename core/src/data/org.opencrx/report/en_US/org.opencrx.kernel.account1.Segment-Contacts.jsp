@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.15 2009/08/26 12:12:27 wfro Exp $
+ * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.16 2010/04/27 13:27:46 wfro Exp $
  * Description: openCRX Contacts Report
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/26 12:12:27 $
+ * Date:        $Date: 2010/04/27 13:27:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -99,7 +99,7 @@ org.apache.poi.hssf.util.*
 <%
   ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
   ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  javax.jdo.PersistenceManager pm = view.getPersistenceManager();
+  javax.jdo.PersistenceManager pm = app.getNewPmData();
   Texts_1_0 texts = app.getTexts();
   Codes codes = app.getCodes();
 
@@ -296,4 +296,7 @@ org.apache.poi.hssf.util.*
 	  response.sendRedirect(
 		"../" + view.getEncodedHRef(downloadAction)
 	  );
+   if(pm != null) {
+	   pm.close();
+   }
 %>

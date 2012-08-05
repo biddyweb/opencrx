@@ -1,0 +1,7 @@
+#include "sql-definitions.tsql"
+
+DELETE FROM OOCKE1_CALENDARFEED_ WHERE object_id IN (SELECT object_id FROM OOCKE1_CALENDARFEED WHERE dtype = 'org:opencrx:kernel:home1:IcalFeed') COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+DELETE FROM OOCKE1_CALENDARFEED WHERE dtype = 'org:opencrx:kernel:home1:IcalFeed' COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

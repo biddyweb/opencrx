@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityWizard.jsp,v 1.14 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: CreateActivityWizard.jsp,v 1.16 2010/04/27 12:16:11 wfro Exp $
  * Description: CreateActivityWizard
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,7 +83,7 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
@@ -130,9 +130,18 @@ org.openmdx.base.naming.*
 	);
 	if(actionCreate) {
 	    String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
-	    org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator");
-	    org.opencrx.kernel.account1.jmi1.Contact reportingContact = (org.opencrx.kernel.account1.jmi1.Contact)formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact");
-	    org.opencrx.kernel.account1.jmi1.Account reportingAccount = (org.opencrx.kernel.account1.jmi1.Account)formValues.get("org:opencrx:kernel:activity1:Activity:reportingAccount");
+	    org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") != null ?
+	    	(org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator")
+	    	) : null;
+	    org.opencrx.kernel.account1.jmi1.Contact reportingContact = formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact") != null ?
+	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact")
+	    	) : null;
+	    org.opencrx.kernel.account1.jmi1.Account reportingAccount = formValues.get("org:opencrx:kernel:activity1:Activity:reportingAccount") != null ?
+	    	(org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
+	    		formValues.get("org:opencrx:kernel:activity1:Activity:reportingAccount")
+	    	) : null;
 	    Short priority = (Short)formValues.get("org:opencrx:kernel:activity1:Activity:priority");
 	    Date dueBy = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:dueBy");
 	    Date scheduledStart = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:scheduledStart");
@@ -180,12 +189,16 @@ org.openmdx.base.naming.*
 	    }
 	}
 	if(obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-	    formValues.put("org:opencrx:kernel:activity1:Activity:reportingContact", obj);
+	    formValues.put(
+	    	"org:opencrx:kernel:activity1:Activity:reportingContact", 
+	    	obj.refGetPath()
+	    );
 	}
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -230,4 +243,7 @@ org.openmdx.base.naming.*
 </script>
 <%
 p.close(false);
+if(pm != null) {
+	pm.close();
+}
 %>

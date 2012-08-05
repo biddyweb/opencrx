@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.67 2009/10/17 13:55:35 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.72 2010/04/29 15:02:44 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.67 $
+ * Revision:    $Revision: 1.72 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/17 13:55:35 $
+ * Date:        $Date: 2010/04/29 15:02:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -156,17 +156,12 @@ org.openmdx.base.text.conversion.*
 
 	public org.opencrx.kernel.document1.jmi1.Document findDocument(
 		String documentName,
-		org.opencrx.kernel.document1.jmi1.Segment segment,
-		javax.jdo.PersistenceManager pm
-	) {
-		org.opencrx.kernel.document1.cci2.DocumentQuery query =
-		    (org.opencrx.kernel.document1.cci2.DocumentQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.Document.class);
-		query.name().equalTo(documentName);
-		Collection documents = segment.getDocument(query);
-		if(!documents.isEmpty()) {
-			return (org.opencrx.kernel.document1.jmi1.Document)documents.iterator().next();
-		}
-		return null;
+		org.opencrx.kernel.document1.jmi1.Segment segment
+	) throws ServiceException {
+		return Documents.getInstance().findDocument(
+			documentName,
+			segment
+		);
 	}
 
 	public org.opencrx.kernel.home1.jmi1.QuickAccess findFavorite(
@@ -185,17 +180,12 @@ org.openmdx.base.text.conversion.*
 
 	public org.opencrx.kernel.document1.jmi1.DocumentFolder findDocumentFolder(
 		String documentFolderName,
-		org.opencrx.kernel.document1.jmi1.Segment segment,
-		javax.jdo.PersistenceManager pm
-	) {
-		org.opencrx.kernel.document1.cci2.DocumentFolderQuery query =
-		    (org.opencrx.kernel.document1.cci2.DocumentFolderQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
-		query.name().equalTo(documentFolderName);
-		Collection documentFolders = segment.getFolder(query);
-		if(!documentFolders.isEmpty()) {
-			return (org.opencrx.kernel.document1.jmi1.DocumentFolder)documentFolders.iterator().next();
-		}
-		return null;
+		org.opencrx.kernel.document1.jmi1.Segment segment
+	) throws ServiceException {
+		return Documents.getInstance().findDocumentFolder(
+			documentFolderName,
+			segment
+		);
 	}
 
 	public org.opencrx.kernel.account1.jmi1.AccountFilterGlobal initAccountFilter(
@@ -372,93 +362,35 @@ org.openmdx.base.text.conversion.*
 
 	public org.opencrx.kernel.document1.jmi1.DocumentFolder initDocumentFolder(
 		String documentFolderName,
-		javax.jdo.PersistenceManager pm,
 		org.opencrx.kernel.document1.jmi1.Segment segment,
-		List allUsers
-	) {
-		org.opencrx.kernel.document1.jmi1.DocumentFolder documentFolder = findDocumentFolder(
+		List<org.opencrx.security.realm1.jmi1.PrincipalGroup> allUsers
+	) throws ServiceException {
+		return Documents.getInstance().initDocumentFolder(
 			documentFolderName,
 			segment,
-			pm
+			allUsers
 		);
-		if(documentFolder != null) return documentFolder;
-		try {
-			pm.currentTransaction().begin();
-	  		documentFolder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
-	  		documentFolder.refInitialize(false, false);
-	  		documentFolder.setName(documentFolderName);
-	  		documentFolder.getOwningGroup().addAll(allUsers);
-	  		segment.addFolder(
-	  			false,
-	  			org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
-	  			documentFolder
-	  		);
-			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
-			new ServiceException(e).log();
-			try {
-				pm.currentTransaction().rollback();
-			} catch(Exception e0) {}
-		}
-		return documentFolder;
 	}
 
 	public org.opencrx.kernel.document1.jmi1.Document initDocument(
 		String documentName,
-		String documentFileName,
-		String documentMimeType,
+		URL revisionURL,
+		String revisionMimeType,
+		String revisionName,
 		org.opencrx.kernel.document1.jmi1.DocumentFolder documentFolder,
-		javax.jdo.PersistenceManager pm,
 		org.opencrx.kernel.document1.jmi1.Segment segment,
-		List allUsers
-	) {
-		org.opencrx.kernel.document1.jmi1.Document document = findDocument(
+		List<org.opencrx.security.realm1.jmi1.PrincipalGroup> allUsers
+	) throws ServiceException {
+		return Documents.getInstance().initDocument(
 			documentName,
+			documentName,
+			revisionURL,
+			revisionMimeType,
+			revisionName,
+			documentFolder,
 			segment,
-			pm
+			allUsers
 		);
-		if(document != null) return document;
-		try {
-			pm.currentTransaction().begin();
-			document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
-			document.refInitialize(false, false);
-			document.setName(documentName);
-			document.setTitle(documentName);
-			document.getOwningGroup().addAll(allUsers);
-			segment.addDocument(
-				false,
-				org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
-				document
-			);
-			org.opencrx.kernel.document1.jmi1.MediaContent documentRevision = pm.newInstance(org.opencrx.kernel.document1.jmi1.MediaContent.class);
-			documentRevision.refInitialize(false, false);
-			documentRevision.setContentName(documentFileName);
-			documentRevision.setContentMimeType(documentMimeType);
-			documentRevision.setContent(
-				org.w3c.cci2.BinaryLargeObjects.valueOf(
-					getServletContext().getResource("/documents/" + documentFileName)
-				)
-			);
-			documentRevision.getOwningGroup().addAll(allUsers);
-			document.addRevision(
-				false,
-				org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
-				documentRevision
-			);
-			document.setHeadRevision(documentRevision);
-			if(documentFolder != null) {
-				document.getFolder().add(documentFolder);
-			}
-			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
-			new ServiceException(e).log();
-			try {
-				pm.currentTransaction().rollback();
-			} catch(Exception e0) {}
-		}
-		return document;
 	}
 
 	public org.opencrx.kernel.home1.jmi1.ExportProfile initExportProfile(
@@ -663,7 +595,7 @@ org.openmdx.base.text.conversion.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
@@ -1328,25 +1260,24 @@ org.openmdx.base.text.conversion.*
 			// Mail Merge Templates
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolder = initDocumentFolder(
 				MAILMERGE_TEMPLATE_FOLDER_NAME,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateMailMergeLetter = initDocument(
 				MAILMERGE_TEMPLATE_NAME_LETTER,
-				"Template_MailMergeLetter.rtf",
+				getServletContext().getResource("/documents/Template_MailMergeLetter.rtf"),
 				"text/rtf",
+				MAILMERGE_TEMPLATE_NAME_LETTER,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateMailMergeEtiquette = initDocument(
 				MAILMERGE_TEMPLATE_NAME_LABEL,
-				"Template_MailMergeLabel.rtf",
+				getServletContext().getResource("/documents/Template_MailMergeLabel.rtf"),
 				"text/rtf",
+				MAILMERGE_TEMPLATE_NAME_LABEL,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
@@ -1354,61 +1285,57 @@ org.openmdx.base.text.conversion.*
 			// Contract Templates
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderOpportunity = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_OPPORTUNITY,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			initDocument(
 				CONTRACT_TEMPLATE_OPPORTUNITY,
-				"Template_Opportunity.rtf",
+				getServletContext().getResource("/documents/Template_Opportunity.rtf"),
 				"text/rtf",
+				CONTRACT_TEMPLATE_OPPORTUNITY,
 				templateFolderOpportunity,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderQuote = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_QUOTE,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			initDocument(
 				CONTRACT_TEMPLATE_QUOTE,
-				"Template_Quote.rtf",
+				getServletContext().getResource("/documents/Template_Quote.rtf"),
 				"text/rtf",
+				CONTRACT_TEMPLATE_QUOTE,
 				templateFolderQuote,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderSalesOrder = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_SALESORDER,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			initDocument(
 				CONTRACT_TEMPLATE_SALESORDER,
-				"Template_SalesOrder.rtf",
+				getServletContext().getResource("/documentsTemplate_SalesOrder.rtf"),
 				"text/rtf",
+				CONTRACT_TEMPLATE_SALESORDER,
 				templateFolderSalesOrder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderInvoice = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_INVOICE,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			initDocument(
 				CONTRACT_TEMPLATE_INVOICE,
-				"Template_Invoice.rtf",
+				getServletContext().getResource("/documents/Template_Invoice.rtf"),
 				"text/rtf",
+				CONTRACT_TEMPLATE_INVOICE,
 				templateFolderInvoice,
-				pm,
 				documentSegment,
 				allUsers
 			);
@@ -1416,61 +1343,60 @@ org.openmdx.base.text.conversion.*
 			// Report Templates
 			templateFolder = initDocumentFolder(
 				REPORT_TEMPLATE_FOLDER_NAME,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateContractList = initDocument(
 				REPORT_TEMPLATE_NAME_CONTRACT_LIST,
-				"Template_ContractList.xls",
+				getServletContext().getResource("/documents/Template_ContractList.xls"),
 				"application/x-excel",
+				REPORT_TEMPLATE_NAME_CONTRACT_LIST,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateContractWithPositionList = initDocument(
 				REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST,
-				"Template_ContractWithPositionList.xls",
+				getServletContext().getResource("/documents/Template_ContractWithPositionList.xls"),
 				"application/x-excel",
+				REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateActivityList = initDocument(
 				REPORT_TEMPLATE_NAME_ACTIVITY_LIST,
-				"Template_ActivityList.xls",
+				getServletContext().getResource("/documents/Template_ActivityList.xls"),
 				"application/x-excel",
+				REPORT_TEMPLATE_NAME_ACTIVITY_LIST,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateActivityWithFollowUpList = initDocument(
 				REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST,
-				"Template_ActivityListWithFollowups.xls",
+				getServletContext().getResource("/documents/Template_ActivityListWithFollowups.xls"),
 				"application/x-excel",
+				REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateAccountMemberList = initDocument(
 				REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST,
-				"Template_MemberList.xls",
+				getServletContext().getResource("/documents/Template_MemberList.xls"),
 				"application/x-excel",
+				REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
 			org.opencrx.kernel.document1.jmi1.Document templateAccountList = initDocument(
 				REPORT_TEMPLATE_NAME_ACCOUNT_LIST,
-				"Template_FilteredAccountList.xls",
+				getServletContext().getResource("/documents/Template_FilteredAccountList.xls"),
 				"application/x-excel",
+				REPORT_TEMPLATE_NAME_ACCOUNT_LIST,
 				templateFolder,
-				pm,
 				documentSegment,
 				allUsers
 			);
@@ -1785,47 +1711,47 @@ org.openmdx.base.text.conversion.*
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS, activitySegment) == null ? MISSING : OK %></td>
 				</tr>
 			</table>
 		</fieldset>
@@ -2047,57 +1973,57 @@ org.openmdx.base.text.conversion.*
 				</tr>
 				<tr>
 					<td><%= MAILMERGE_TEMPLATE_NAME_LETTER %></td>
-					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LETTER, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LETTER, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= MAILMERGE_TEMPLATE_NAME_LABEL %></td>
-					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LABEL, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LABEL, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td colspan="2"><h2>Contract Templates</h2></td>
 				</tr>
 				<tr>
 					<td><%= CONTRACT_TEMPLATE_OPPORTUNITY %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_OPPORTUNITY, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_OPPORTUNITY, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= CONTRACT_TEMPLATE_QUOTE %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_QUOTE, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_QUOTE, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= CONTRACT_TEMPLATE_SALESORDER %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_SALESORDER, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_SALESORDER, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= CONTRACT_TEMPLATE_INVOICE %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_INVOICE, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(CONTRACT_TEMPLATE_INVOICE, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td colspan="2"><h2>Report Templates</h2></td>
 				</tr>
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_CONTRACT_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_LIST, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_ACTIVITY_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_LIST, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_LIST, documentSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_LIST, documentSegment) == null ? MISSING : OK %></td>
 				</tr>
 			</table>
 		</fieldset>
@@ -2155,3 +2081,8 @@ org.openmdx.base.text.conversion.*
 </div> <!-- container -->
 </body>
 </html>
+<%
+if(pm != null) {
+	pm.close();
+}
+%>

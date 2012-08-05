@@ -201,9 +201,6 @@
                       <label>
                         <_item>Účet</_item>
                       </label>
-                      <toolTip>
-                        <_item>Účet</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -919,10 +916,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktualizácia vCard</_item>
+                        <_item>Aktualizácia vCard-y</_item>
                       </label>
                       <toolTip>
-                        <_item>Aktualizácia vCard</_item>
+                        <_item>Aktualizácia vCard-y</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -277,6 +277,7 @@
 						<void property="iconKey">
 							<string>filter_ok.gif</string>
 						</void>
+<!--
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
 								<void index="0">
@@ -291,6 +292,7 @@
 								</void>
 							</array>
 						</void>
+-->
 						<void property="condition">
 							<array class="org.openmdx.base.query.Condition" length="2">
 								<void index="0"> <!-- startedOn != null -->
@@ -345,6 +347,7 @@
 						<void property="iconKey">
 							<string>filter_notok.gif</string>
 						</void>
+<!--
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
 								<void index="0">
@@ -359,6 +362,7 @@
 								</void>
 							</array>
 						</void>
+-->
 						<void property="condition">
 							<array class="org.openmdx.base.query.Condition" length="2">
 								<void index="0"> <!-- startedOn != null -->

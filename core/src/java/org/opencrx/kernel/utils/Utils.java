@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.45 2009/09/29 16:41:36 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.46 2010/03/22 19:19:17 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.46 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/29 16:41:36 $
+ * Date:        $Date: 2010/03/22 19:19:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,9 +62,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.jdo.Constants;
@@ -73,6 +75,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
 
+import org.oasisopen.jmi1.RefContainer;
 import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
@@ -87,11 +90,17 @@ import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
 import org.openmdx.application.rest.ejb.DataManager_2ProxyFactory;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
+import org.openmdx.base.mof.cci.AggregationKind;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.base.text.conversion.UUIDConversion;
+import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.attribute.DateValue;
@@ -491,6 +500,82 @@ public class Utils {
     	return dateTimeFormat;
     }
     	
+    //-------------------------------------------------------------------------
+    public interface TraverseObjectTreeCallback {
+    
+    	public Object visit(
+    		RefObject_1_0 object,
+    		Object context
+    	) throws ServiceException;
+    	
+    }
+    
+    //-------------------------------------------------------------------------
+    public static String getUidAsString(
+    ) {
+        return UUIDConversion.toUID(uuidGenerator.next());        
+    }
+    
+    //-------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
+    public static Object traverseObjectTree(
+    	RefObject_1_0 object,
+        Set<String> referenceFilter,
+        TraverseObjectTreeCallback callback,
+        Object context
+    ) throws ServiceException {
+    	Object newContext = callback.visit(
+    		object,
+    		context
+    	);
+        Model_1_0 model = Model_1Factory.getModel();
+        Map<String,ModelElement_1_0> references = (Map)model.getElement(
+        	object.refClass().refMofId()
+        ).objGetValue("reference");
+        for(ModelElement_1_0 featureDef: references.values()) {
+            ModelElement_1_0 referencedEnd = model.getElement(
+                featureDef.objGetValue("referencedEnd")
+            );
+            boolean referenceIsCompositeAndChangeable = 
+                model.isReferenceType(featureDef) &&
+                AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
+                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();
+            boolean referenceIsSharedAndChangeable = 
+                model.isReferenceType(featureDef) &&
+                AggregationKind.SHARED.equals(referencedEnd.objGetValue("aggregation")) &&
+                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();            
+            // Only navigate changeable references which are either 'composite' or 'shared'
+            // Do not navigate references with aggregation 'none'.
+            if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
+                String referenceName = (String)featureDef.objGetValue("name");
+                boolean matches = referenceFilter == null;
+                if(!matches) {
+                    String qualifiedReferenceName = (String)featureDef.objGetValue("qualifiedName");
+                    matches =
+                        referenceFilter.contains(referenceName) ||
+                        referenceFilter.contains(qualifiedReferenceName);
+                }
+                if(matches) {   
+                	List<?> content = ((RefContainer)object.refGetValue(referenceName)).refGetAll(null);
+                    for(Object contained: content) {
+                        traverseObjectTree(
+                            (RefObject_1_0)contained,
+                            referenceFilter,
+                            callback,
+                            newContext
+                        );
+                    }
+                }
+            }
+        }	
+        return newContext;
+    }
+
+	//-------------------------------------------------------------------------
+    // Members
+	//-------------------------------------------------------------------------
+    private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
+    
 }
 
 //--- End of File -----------------------------------------------------------

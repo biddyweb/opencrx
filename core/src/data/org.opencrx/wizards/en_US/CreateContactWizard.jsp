@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: CreateContactWizard.jsp,v 1.24 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: CreateContactWizard.jsp,v 1.29 2010/04/27 12:16:11 wfro Exp $
  * Description: CreateContact wizard
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -87,16 +87,16 @@ org.openmdx.base.naming.*
 		);
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
 	String formName = "CreateContactForm";
 	String wizardName = "CreateContactWizard";
-	
+
 	// Get Parameters
 	String command = request.getParameter("Command");
-	if(command == null) command = "";	
+	if(command == null) command = "";
 	boolean actionSave = "OK".equals(command);
 	boolean actionCancel = "Cancel".equals(command);
 	boolean actionSearch = "Search".equals(command);
@@ -212,17 +212,18 @@ org.openmdx.base.naming.*
 	    List postalStreetBusiness = (List)formValues.get("org:opencrx:kernel:account1:Contact:address*Business!postalStreet");
 	    String emailHome = (String)formValues.get("org:opencrx:kernel:account1:Contact:address!emailAddress");
 	    String emailBusiness = (String)formValues.get("org:opencrx:kernel:account1:Account:address*Business!emailAddress");
+      final String wildcard = ".*";
 	    if(firstName != null) {
 	        hasQueryProperty = true;
-	        contactQuery.thereExistsFirstName().like("(?i).*" + firstName + ".*");
+	        contactQuery.thereExistsFirstName().like("(?i)" + wildcard + firstName + wildcard);
 	    }
 	    if(lastName != null) {
 	        hasQueryProperty = true;
-	        contactQuery.thereExistsLastName().like("(?i).*" + lastName + ".*");
+	        contactQuery.thereExistsLastName().like("(?i)" + wildcard + lastName + wildcard);
 	    }
 	    if(aliasName != null) {
 	        hasQueryProperty = true;
-	        contactQuery.thereExistsAliasName().like("(?i).*" + aliasName + ".*");
+	        contactQuery.thereExistsAliasName().like("(?i)" + wildcard + aliasName + wildcard);
 	    }
 	    String queryFilterClause = null;
 	    List stringParams = new ArrayList();
@@ -230,39 +231,40 @@ org.openmdx.base.naming.*
 	    if(phoneNumberMobile != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full = ?s" + stringParamIndex++ + ")";
-	        stringParams.add(phoneNumberMobile);
+	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full LIKE ?s" + stringParamIndex++ + ")";
+	        //queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full = ?s" + stringParamIndex++ + ")";
+	        stringParams.add(wildcard + phoneNumberMobile + wildcard);
 	    }
 	    if(phoneNumberHome != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full = ?s" + stringParamIndex++ + ")";
-	        stringParams.add(phoneNumberHome);
+	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full LIKE ?s" + stringParamIndex++ + ")";
+	        stringParams.add(wildcard + phoneNumberHome + wildcard);
 	    }
 	    if(phoneNumberBusiness != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full = ?s" + stringParamIndex++ + ")";
-	        stringParams.add(phoneNumberBusiness);
+	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full LIKE ?s" + stringParamIndex++ + ")";
+	        stringParams.add(wildcard + phoneNumberBusiness + wildcard);
 	    }
 	    if(postalCityHome != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
 	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.postal_city LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add("%" + postalCityHome + "%");
+	        stringParams.add(wildcard + postalCityHome + wildcard);
 	    }
 	    if(postalCityBusiness != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
 	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.postal_city LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add("%" + postalCityBusiness + "%");
+	        stringParams.add(wildcard + postalCityBusiness + wildcard);
 	    }
 	    if(postalStreetHome != null) {
 	        for(int i = 0; i < postalStreetHome.size(); i++) {
 		        hasQueryProperty = true;
 		        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
 		        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.postal_street_" + i + " LIKE ?s" + stringParamIndex++ + ")";
-		        stringParams.add("%" + postalStreetHome.get(i) + "%");
+		        stringParams.add(wildcard + postalStreetHome.get(i) + wildcard);
 	        }
 	    }
 	    if(postalStreetBusiness != null) {
@@ -270,20 +272,20 @@ org.openmdx.base.naming.*
 		        hasQueryProperty = true;
 		        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
 		        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.postal_street_" + i + " LIKE ?s" + stringParamIndex++ + ")";
-		        stringParams.add("%" + postalStreetBusiness.get(i) + "%");
+		        stringParams.add(wildcard + postalStreetBusiness.get(i) + wildcard);
 	        }
 	    }
 	    if(emailHome != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.email_address = ?s" + stringParamIndex++ + ")";
-	        stringParams.add(emailHome);
+	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.email_address LIKE ?s" + stringParamIndex++ + ")";
+	        stringParams.add(wildcard + emailHome + wildcard);
 	    }
 	    if(emailBusiness != null) {
 	        hasQueryProperty = true;
 	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.email_address = ?s" + stringParamIndex++ + ")";
-	        stringParams.add(emailBusiness);
+	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.email_address LIKE ?s" + stringParamIndex++ + ")";
+	        stringParams.add(wildcard + emailBusiness + wildcard);
 	    }
 	    if(queryFilterClause != null) {
 		    org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilter =
@@ -349,7 +351,9 @@ org.openmdx.base.naming.*
 		    );
 	    }
 	    pm.currentTransaction().commit();
-	    account = contact;
+        objectXri = contact.refMofId();
+
+      	account = contact;
 	    // Update Addresses
 	    pm.currentTransaction().begin();
 	    // Phone Business
@@ -446,7 +450,8 @@ org.openmdx.base.naming.*
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
-		obj
+		obj,
+		pm
 	);
 	ViewPort p = ViewPortFactory.openPage(
 		view,
@@ -458,7 +463,7 @@ org.openmdx.base.naming.*
 <form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" action="<%= servletPath %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-	<input type="Hidden" id="Command" name="Command" value="" />	
+	<input type="Hidden" id="Command" name="Command" value="" />
 	<table cellspacing="8" class="tableLayout">
 		<tr>
 			<td class="cellObject">
@@ -473,21 +478,21 @@ org.openmdx.base.naming.*
 %>
 					<div class="fieldGroupName">&nbsp;</div>
 				</div>
-				<input type="submit" class="abutton" name="Search" id="Search.Button" tabindex="9000" value="Search" onclick="javascript:$('Command').value=this.name" />
-				<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") %>', {evalScripts: true});" value="New Search" />
+				<input type="submit" class="abutton" name="Search" id="Search.Button" tabindex="9000" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('Command').value=this.name" />
+				<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
 <%
 				if(account != null) {
 %>
-					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") %>', {evalScripts: true});" value="Create Lead" />
-					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") %>', {evalScripts: true});" value="Create Contract" />
-					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") %>', {evalScripts: true});" value="Create Activity" />
-					<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9060" value="Apply Changes" onclick="javascript:$('Command').value=this.name;"/>
+					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
+					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
+					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
+					<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9060" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
 <%
 				}
 				else {
 				    if(matchingContacts != null) {
 %>
-						<input type="submit" class="abutton" name="Create" id="Create.Button" tabindex="9070" value="Create New" onclick="javascript:$('Command').value=this.name;"/>
+						<input type="submit" class="abutton" name="Create" id="Create.Button" tabindex="9070" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('Command').value=this.name;"/>
 <%
 
 				    }
@@ -518,7 +523,7 @@ org.openmdx.base.naming.*
 						    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getInstance().getMainAddresses(contact);
 %>
 							<tr class="gridTableRowFull">
-								<td><img style="cursor: pointer;" src="images/Contact.gif" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(contact.refMofId(), "UTF-8") %>', {evalScripts: true});"/></td>
+								<td><img style="cursor: pointer;" src="images/Contact.gif" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(contact.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});"/></td>
 								<td><%= contact.getFullName() == null ? "" : contact.getFullName() %></td>
 								<td><%= contact.getAliasName() == null ? "" : contact.getAliasName() %></td>
 								<td><%= new org.openmdx.portal.servlet.ObjectReference(addresses[Accounts.POSTAL_BUSINESS], app).getTitle() %></td>
@@ -549,5 +554,11 @@ org.openmdx.base.naming.*
 			}
 		});
 		Event.stop(event);
-	});		
+	});
 </script>
+<%
+p.close(false);
+if(pm != null) {
+	pm.close();
+}
+%>

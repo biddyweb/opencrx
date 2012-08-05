@@ -320,10 +320,24 @@
 														<backColor>inherit</backColor>
 														<iconKey>open.gif</iconKey>
 														<shortText>
-															<_item>on hold</_item>
+															<_item>on hold / pending</_item>
 														</shortText>
 														<longText>
-															<_item>[04] Open / on hold</_item>
+															<_item>[04]-a Open / on hold / pending</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="set">
+													<_object>
+														<color>inherit</color>
+														<backColor>inherit</backColor>
+														<iconKey>open.gif</iconKey>
+														<shortText>
+															<_item>on hold / in progress</_item>
+														</shortText>
+														<longText>
+															<_item>[04]-b Open / on hold / in progress</_item>
 														</longText>
 													</_object>
 													<_content/>

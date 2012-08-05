@@ -570,7 +570,6 @@
 											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500</dataBindingName>										
 											<active>true</active>
 											<spanRow>3</spanRow>
-											<columnBreak>true</columnBreak>
 											<multiplicity>3</multiplicity> <!-- can be increased if more lines are needed -->
 											<toolTip>
 												<_item>Address line(s)</_item>
@@ -581,7 +580,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>80</_item>
+												<_item>0</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -601,7 +600,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>90</_item>
+												<_item>10</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -620,7 +619,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>100</_item>
+												<_item>20</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -638,7 +637,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>110</_item>
+												<_item>30</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -656,7 +655,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>120</_item>
+												<_item>40</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -674,7 +673,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>130</_item>
+												<_item>50</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -732,6 +731,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:description">
                     <_object>
                       <active>true</active>
+											<spanRow>2</spanRow>
                       <toolTip>
                         <_item>Description</_item>
                       </toolTip>

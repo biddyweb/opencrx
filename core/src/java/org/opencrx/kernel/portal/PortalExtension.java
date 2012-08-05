@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.89 2009/10/25 17:15:33 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.97 2010/04/27 12:17:30 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.89 $
+ * Revision:    $Revision: 1.97 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/25 17:15:33 $
+ * Date:        $Date: 2010/04/27 12:17:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -110,7 +110,7 @@ import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.Autocompleter_1_0;
 import org.openmdx.portal.servlet.Codes;
-import org.openmdx.portal.servlet.DataBinding_1_0;
+import org.openmdx.portal.servlet.DataBinding;
 import org.openmdx.portal.servlet.DefaultPortalExtension;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ValueListAutocompleter;
@@ -225,8 +225,9 @@ public class PortalExtension
         }
         if(JDOHelper.isNew(refObj) || !JDOHelper.isPersistent(refObj)) {
             return "Untitled";
-        }
+        }        
         try {
+          PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
           Codes codes = application.getCodes();
           String language = localeAsString.substring(0, 2);
           DateFormat dateFormat = this.getDateFormat(language);
@@ -242,7 +243,7 @@ public class PortalExtension
           }
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.ProductBasePrice) {
               org.opencrx.kernel.product1.jmi1.ProductBasePrice obj = (org.opencrx.kernel.product1.jmi1.ProductBasePrice)refObj;
-              Map<Short,String> currencyTexts = codes.getLongText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", locale, true, true);
+              Map<Object,Object> currencyTexts = codes.getLongText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", locale, true, true);
               try {
                   return this.toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
               }
@@ -267,7 +268,7 @@ public class PortalExtension
               org.opencrx.kernel.activity1.jmi1.Activity activity = null;
               // In case of NO_PERMISSION
               try {
-                  activity = (org.opencrx.kernel.activity1.jmi1.Activity)application.getPmData().getObjectById(
+                  activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(
                       followUp.refGetPath().getParent().getParent()
                   );
                   activity.getName();
@@ -288,7 +289,7 @@ public class PortalExtension
               org.opencrx.kernel.account1.jmi1.AccountAddress address = member.getAddress();
               if(address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
                   org.opencrx.kernel.account1.jmi1.Account account = 
-                      (org.opencrx.kernel.account1.jmi1.Account)application.getPmData().getObjectById(
+                      (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
                           address.refGetPath().getParent().getParent()
                       );
                   return this.getTitle(address, locale, localeAsString, asShortTitle, application) + " / " + account.getFullName();
@@ -315,7 +316,7 @@ public class PortalExtension
                         	  return title;
                           }
                           else {
-	                          org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)application.getPmData().getObjectById(
+	                          org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)pm.getObjectById(
 	                              recipient.refGetPath().getParent().getParent()
 	                          );
 	                          String messageSubject = email.getMessageSubject() == null ? 
@@ -338,7 +339,7 @@ public class PortalExtension
                   }
                   if(address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
                       org.opencrx.kernel.account1.jmi1.Account account = 
-                          (org.opencrx.kernel.account1.jmi1.Account)application.getPmData().getObjectById(
+                          (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
                               address.refGetPath().getParent().getParent()
                           );
                       return this.getTitle(address, locale, localeAsString, asShortTitle, application) + " / " + account.getFullName();
@@ -386,10 +387,10 @@ public class PortalExtension
               return this.toS(refObj.refGetValue("lineItemNumber"));
           }
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.AbstractProduct) {
-              org.opencrx.kernel.product1.jmi1.AbstractProduct obj = (org.opencrx.kernel.product1.jmi1.AbstractProduct)refObj;
-              return obj.getProductNumber() == null || obj.getProductNumber().length() == 0 ? 
-            	  this.toS(obj.getName()) : 
-            		  this.toS(obj.getName() + " / " + obj.getProductNumber()); 
+              org.opencrx.kernel.product1.jmi1.AbstractProduct product = (org.opencrx.kernel.product1.jmi1.AbstractProduct)refObj;
+              return product.getProductNumber() == null || product.getProductNumber().length() == 0 || product.getProductNumber().equals(product.getName()) ? 
+            	  this.toS(product.getName()) : 
+            		  this.toS(product.getName() + " / " + product.getProductNumber()); 
           }
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PostalAddressable) {
               String address = "";
@@ -475,13 +476,7 @@ public class PortalExtension
                   return "Untitled"; 
               }
               else {
-                  String providerName = userHome.refGetPath().get(2);
-                  String segmentName = userHome.refGetPath().get(4);
-                  String link = 
-                      "<link rel='alternate' type='application/rss+xml' " +
-                      " href='/opencrx-news-" + providerName + "/news?id=" + providerName + "/" + segmentName + "&type=rss' " + 
-                      "title='" + userHome.refGetPath().getBase() + "@" + providerName + ":" + segmentName + "' />";
-                  return  link + this.getTitle(userHome.getContact(), locale, localeAsString, asShortTitle, application);
+                  return this.getTitle(userHome.getContact(), locale, localeAsString, asShortTitle, application);
               }
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
@@ -622,75 +617,12 @@ public class PortalExtension
     }
     
     //-------------------------------------------------------------------------
-    @Override
-    public List<Condition> getQuery(
-    	org.openmdx.ui1.jmi1.ValuedField field,
-    	String filterValue,
+    protected  List<Condition> getQueryConditions(
+    	String clause,
     	String queryFilterContext,
-    	int queryFilterStringParamCount,
-    	ApplicationContext application
+    	List<String> stringParams,
+    	ApplicationContext app
     ) {
-    	String qualifiedReferenceName = field.getQualifiedFeatureName();
-    	String clause = null;
-    	String s0 = "?s" + queryFilterStringParamCount++;
-    	String s1 = "?s" + queryFilterStringParamCount++;
-        if("org:opencrx:kernel:contract1:AbstractContract:salesRep".equals(qualifiedReferenceName)) {
-            clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))"; 
-        }
-        else if("org:opencrx:kernel:contract1:AbstractContract:customer".equals(qualifiedReferenceName)) {
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
-        }
-        else if("org:opencrx:kernel:contract1:AbstractContract:supplier".equals(qualifiedReferenceName)) {
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
-        }
-        else if("org:opencrx:kernel:activity1:Activity:assignedTo".equals(qualifiedReferenceName)) {
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
-        }        
-        else if("org:opencrx:kernel:product1:PriceListEntry:product".equals(qualifiedReferenceName)) {
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND (UPPER(p.name) LIKE UPPER(" + s0 + ") OR UPPER(p.name) LIKE " + s1 + "))";
-        }
-        else if("org:opencrx:kernel:home1:UserHome:contact".equals(qualifiedReferenceName)) {            
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.contact = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-        }
-        else if("org:opencrx:kernel:account1:AccountAssignment:account".equals(qualifiedReferenceName)) {            
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-        }
-        else if("org:opencrx:kernel:contract1:ContractRole:account".equals(qualifiedReferenceName)) {            
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-        }
-        else if("org:opencrx:kernel:account1:AccountMembership:accountFrom".equals(qualifiedReferenceName)) {            
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_from = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-        }
-        else if("org:opencrx:kernel:account1:AccountMembership:accountTo".equals(qualifiedReferenceName)) {            
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_to = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-        }
-        else if("org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedReferenceName)) {            
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-        }
-        else if("org:opencrx:kernel:activity1:AddressGroupMember:address".equals(qualifiedReferenceName)) {       
-        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a WHERE v.address = a.object_id AND (UPPER(a.postal_address_line_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_2) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_2) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE UPPER(" + s0 + ")))";  
-        }
-	    else if(field instanceof org.openmdx.ui1.jmi1.ObjectReferenceField) {
-            clause = "(" + qualifiedReferenceName.substring(qualifiedReferenceName.lastIndexOf(":") + 1) + " LIKE " + s0 + ")";
-        }
-	    else if("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull".equals(field.getQualifiedFeatureName())) {
-	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
-	    }
-	    else if("org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull".equals(field.getQualifiedFeatureName())) {
-	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_MOBILE + ")";
-	    }
-	    else if("org:opencrx:kernel:account1:Account:address*Business!emailAddress".equals(field.getQualifiedFeatureName())) {
-	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND (UPPER(a.email_address) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
-	    }
-	    else {
-            return super.getQuery(
-            	field, 
-            	filterValue, 
-            	queryFilterContext,
-            	queryFilterStringParamCount,
-            	application
-            );
-	    }
         List<Condition> conditions = new ArrayList<Condition>();
         conditions.add(
             new PiggyBackCondition(
@@ -704,15 +636,128 @@ public class PortalExtension
                 clause
             )                          
         );
-        String stringParam = application.getWildcardFilterValue(filterValue);                      
         conditions.add(
             new PiggyBackCondition(
                 queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM, 
-                stringParam.startsWith("(?i)") ? stringParam.substring(4) : stringParam,
-                stringParam.startsWith("(?i)") ? stringParam.substring(4).toUpperCase() : stringParam.toUpperCase()
+                (Object[])stringParams.toArray(new String[stringParams.size()])
             )                          
-        );
+        );    	
         return conditions;
+    }
+    
+    //-------------------------------------------------------------------------
+    @Override
+    public List<Condition> getQuery(
+    	org.openmdx.ui1.jmi1.ValuedField field,
+    	String filterValue,
+    	String queryFilterContext,
+    	int queryFilterStringParamCount,
+    	ApplicationContext app
+    ) {
+    	String qualifiedReferenceName = field.getQualifiedFeatureName();
+    	String clause = null;
+    	int paramCount = queryFilterStringParamCount;
+    	String s0 = "?s" + paramCount++;
+    	String s1 = "?s" + paramCount++;
+    	List<String> stringParams = new ArrayList<String>();
+        String stringParam = app.getWildcardFilterValue(filterValue); 
+        String stringParam0 = stringParam.startsWith("(?i)") ? stringParam.substring(4) : stringParam;
+        String stringParam1 = stringParam.startsWith("(?i)") ? stringParam.substring(4).toUpperCase() : stringParam.toUpperCase();
+        if("org:opencrx:kernel:contract1:AbstractContract:salesRep".equals(qualifiedReferenceName)) {
+            clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:contract1:AbstractContract:customer".equals(qualifiedReferenceName)) {
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:contract1:AbstractContract:supplier".equals(qualifiedReferenceName)) {
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:activity1:Activity:assignedTo".equals(qualifiedReferenceName)) {
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }        
+        else if("org:opencrx:kernel:product1:PriceListEntry:product".equals(qualifiedReferenceName)) {
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND (UPPER(p.name) LIKE UPPER(" + s0 + ") OR UPPER(p.name) LIKE " + s1 + "))";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:home1:UserHome:contact".equals(qualifiedReferenceName)) {            
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.contact = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:account1:AccountAssignment:account".equals(qualifiedReferenceName)) {            
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:contract1:ContractRole:account".equals(qualifiedReferenceName)) {            
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:account1:AccountMembership:accountFrom".equals(qualifiedReferenceName)) {            
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_from = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:account1:AccountMembership:accountTo".equals(qualifiedReferenceName)) {            
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_to = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedReferenceName)) {            
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:activity1:AddressGroupMember:address".equals(qualifiedReferenceName)) {       
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a WHERE v.address = a.object_id AND (UPPER(a.postal_address_line_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_2) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_2) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE UPPER(" + s0 + ")))";  
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+	    else if(field instanceof org.openmdx.ui1.jmi1.ObjectReferenceField) {
+            clause = "(" + qualifiedReferenceName.substring(qualifiedReferenceName.lastIndexOf(":") + 1) + " LIKE " + s0 + ")";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+	    else if("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull".equals(field.getQualifiedFeatureName())) {
+	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+	    }
+	    else if("org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull".equals(field.getQualifiedFeatureName())) {
+	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_MOBILE + ")";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+	    }
+	    else if("org:opencrx:kernel:account1:Account:address*Business!emailAddress".equals(field.getQualifiedFeatureName())) {
+	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND (UPPER(a.email_address) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+	    }
+	    else {
+            return super.getQuery(
+            	field, 
+            	filterValue, 
+            	queryFilterContext,
+            	queryFilterStringParamCount,
+            	app
+            );
+	    }
+        return this.getQueryConditions(
+        	clause, 
+        	queryFilterContext, 
+        	stringParams, 
+        	app
+        );
     }
     
     //-------------------------------------------------------------------------
@@ -917,14 +962,14 @@ public class PortalExtension
         if("org:opencrx:kernel:base:ExportItemParams:exportProfile".equals(qualifiedFeatureName)) {
             List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.base.jmi1.Exporter) {
-                PersistenceManager pm = application.getPmData();
+                PersistenceManager pm = JDOHelper.getPersistenceManager(context);
                 String providerName = context.refGetPath().get(2);
                 String segmentName = context.refGetPath().get(4);
                 String currentPrincipal = application.getUserHomeIdentity().getBase();
                 String adminPrincipal = SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName;
                 // Collect export profiles from current user
                 try {
-                    org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)application.getPmData().getObjectById(
+                    org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
                         new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + currentPrincipal)
                     );
                     org.opencrx.kernel.home1.cci2.ExportProfileQuery exportProfileQuery = Utils.getHomePackage(pm).createExportProfileQuery();
@@ -948,7 +993,7 @@ public class PortalExtension
                 // Collect shared export profiles from segment admin
                 try {
                     if(!currentPrincipal.equals(adminPrincipal)) {
-                        org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)application.getPmData().getObjectById(
+                        org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
                             new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + adminPrincipal)
                         );
                         org.opencrx.kernel.home1.cci2.ExportProfileQuery exportProfileQuery = Utils.getHomePackage(pm).createExportProfileQuery();
@@ -1063,6 +1108,7 @@ public class PortalExtension
             (value.indexOf("activity:") >= 0)
         ) {
             RefObject_1_0 object = ((ObjectView)p.getView()).getRefObject();
+            PersistenceManager pm = JDOHelper.getPersistenceManager(object);
             String providerName = object.refGetPath().get(2);
             String segmentName = object.refGetPath().get(4);
             RefPackage_1_0 rootPkg = (RefPackage_1_0)object.refOutermostPackage();            
@@ -1073,7 +1119,7 @@ public class PortalExtension
             Path activitySegmentIdentity = 
                 new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
-                (org.opencrx.kernel.activity1.jmi1.Segment)application.getPmData().getObjectById(activitySegmentIdentity);
+                (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(activitySegmentIdentity);
             int currentPos = 0;
             int newPos;
             while((newPos = value.indexOf("activity:", currentPos)) >= 0) {
@@ -1142,9 +1188,8 @@ public class PortalExtension
     
     //-------------------------------------------------------------------------
     @Override
-    public DataBinding_1_0 getDataBinding(
-        String dataBindingName,
-        ApplicationContext application
+    public DataBinding getDataBinding(
+        String dataBindingName
     ) {
         if((dataBindingName != null) && dataBindingName.startsWith(StringPropertyDataBinding.class.getName())) {
             return new StringPropertyDataBinding(
@@ -1217,21 +1262,20 @@ public class PortalExtension
             );
         }
         else if(FilteredActivitiesDataBinding.class.getName().equals(dataBindingName)) {
-            return new FilteredActivitiesDataBinding(application.getCurrentUserRole());
+            return new FilteredActivitiesDataBinding();
         }
         else if(FormattedNoteDataBinding.class.getName().equals(dataBindingName)) {
-            return new FormattedNoteDataBinding(application);
+            return new FormattedNoteDataBinding();
         }
         else if(FormattedFollowUpDataBinding.class.getName().equals(dataBindingName)) {
-            return new FormattedFollowUpDataBinding(application);
+            return new FormattedFollowUpDataBinding();
         }
         else if(DocumentDataBinding.class.getName().equals(dataBindingName)) {
             return new DocumentDataBinding();
         }
         else {
             return super.getDataBinding(
-                dataBindingName,
-                application
+                dataBindingName
             );
         }
     }
@@ -1248,7 +1292,7 @@ public class PortalExtension
             org.opencrx.kernel.home1.jmi1.SearchResult searchResult = (org.opencrx.kernel.home1.jmi1.SearchResult)result;
             if(searchResult.getObjectFinder() != null) {
                 RefObject_1_0 objectFinder = (RefObject_1_0)((RefPackage_1_0)target.refOutermostPackage()).refObject(
-                    searchResult.getObjectFinder().refMofId()
+                    searchResult.getObjectFinder().refGetPath()
                 );
                 return objectFinder;
             }

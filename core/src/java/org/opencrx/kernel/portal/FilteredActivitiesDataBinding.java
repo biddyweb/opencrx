@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.10 2009/04/29 08:32:14 wfro Exp $
+ * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.11 2010/02/04 11:25:39 wfro Exp $
  * Description: FilteredActivitiesDataBinding
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/29 08:32:14 $
+ * Date:        $Date: 2010/02/04 11:25:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,27 +72,37 @@ import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 
 public class FilteredActivitiesDataBinding extends DefaultDataBinding {
 
     //-----------------------------------------------------------------------
     public FilteredActivitiesDataBinding(
-        String userRole
     ) {
-        this.principalName = userRole.indexOf("@") > 0
-            ? userRole.substring(0, userRole.indexOf("@"))
-            : userRole;
     }
     
     //-----------------------------------------------------------------------
+    protected String getPrincipalName(
+    	ApplicationContext app
+    ) {
+    	String userRole = app.getCurrentUserRole(); 
+        return userRole.indexOf("@") > 0 ? 
+        	userRole.substring(0, userRole.indexOf("@")) : 
+        		userRole;
+    	   	
+    }
+    
+    //-----------------------------------------------------------------------
+    @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         if(qualifiedFeatureName.endsWith("!filteredActivity")) {
             String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
-            featureName = featureName.replace("${USER}", this.principalName);
+            featureName = featureName.replace("${USER}", this.getPrincipalName(app));
             String[] c = featureName.split("!");
             String providerName = ((RefObject_1_0)object).refGetPath().get(2);
             String segmentName = ((RefObject_1_0)object).refGetPath().get(4);
@@ -135,14 +145,16 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
                         if(!filters.isEmpty()) {
                             return super.getValue(
                                 filters.iterator().next(), 
-                                "filteredActivity"
+                                "filteredActivity",
+                                app
                             );                            
                         }
                     }
                     else {
                         return super.getValue(
                             groups.iterator().next(), 
-                            "filteredActivity"
+                            "filteredActivity",
+                            app
                         );
                     }
                 }
@@ -154,7 +166,8 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
                 if(!filters.isEmpty()) {
                     return super.getValue(
                         filters.iterator().next(), 
-                        "filteredActivity"
+                        "filteredActivity",
+                        app
                     );                                        
                 }                
             }
@@ -163,12 +176,12 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
         else {
             return super.getValue(
                 object, 
-                qualifiedFeatureName
+                qualifiedFeatureName,
+                app
             );
         }
     }
     
     //-----------------------------------------------------------------------
-    private final String principalName;
 
 }

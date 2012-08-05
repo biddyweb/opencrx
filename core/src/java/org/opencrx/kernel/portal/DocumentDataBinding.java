@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentDataBinding.java,v 1.1 2009/05/05 17:02:44 wfro Exp $
+ * Name:        $Id: DocumentDataBinding.java,v 1.2 2010/02/04 11:25:39 wfro Exp $
  * Description: FilteredActivitiesDataBinding
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/05 17:02:44 $
+ * Date:        $Date: 2010/02/04 11:25:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,6 +61,7 @@ import javax.jmi.reflect.RefObject;
 
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.naming.Path;
+import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 
 public class DocumentDataBinding extends DefaultDataBinding {
@@ -71,9 +72,11 @@ public class DocumentDataBinding extends DefaultDataBinding {
     }
     
     //-----------------------------------------------------------------------
+    @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
     	if(object instanceof RefObject_1_0) {
 	    	String providerName = ((RefObject_1_0)object).refGetPath().get(2);
@@ -85,13 +88,15 @@ public class DocumentDataBinding extends DefaultDataBinding {
 	    		);
 	    	return super.getValue(
 	    		documentSegment,
-	    		"org:opencrx:kernel:document1:Segment:document"
+	    		"org:opencrx:kernel:document1:Segment:document",
+	    		app
 	    	);
         }
         else {
             return super.getValue(
                 object, 
-                qualifiedFeatureName
+                qualifiedFeatureName,
+                app
             );
         }
     }

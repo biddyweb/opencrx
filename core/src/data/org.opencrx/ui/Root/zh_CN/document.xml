@@ -121,6 +121,105 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>禁用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>对象已禁用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>目录项</_item>
+                      </label>
+                      <toolTip>
+                        <_item>目录项</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文档</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文档</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>起始有效期</_item>
+                      </label>
+                      <toolTip>
+                        <_item>起始有效期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结束有效期</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结束有效期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>条目基于</_item>
+                      </label>
+                      <toolTip>
+                        <_item>条目基于</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>禁用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>对象已禁用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document" _operation="create">
                     <_object>
                       <label>
@@ -143,13 +242,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>属性集</_item>
+                        <_item>文件夹</_item>
                       </label>
                       <toolTip>
-                        <_item>属性集</_item>
+                        <_item>文件夹</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -161,6 +260,83 @@
                       </label>
                       <toolTip>
                         <_item>修订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>属性集</_item>
+                      </label>
+                      <toolTip>
+                        <_item>属性集</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>链接</_item>
+                      </label>
+                      <toolTip>
+                        <_item>链接</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>锁定</_item>
+                      </label>
+                      <toolTip>
+                        <_item>锁定</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:attachment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>媒体</_item>
+                      </label>
+                      <toolTip>
+                        <_item>媒体附件</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:parent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>上级</_item>
+                      </label>
+                      <toolTip>
+                        <_item>上级</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -271,6 +447,17 @@
                       </label>
                       <toolTip>
                         <_item>位置</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:qualifiedName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标识名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标识名称</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -414,6 +601,50 @@
                       </label>
                       <toolTip>
                         <_item>CMS元数据</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>禁用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>对象已禁用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>分配文件夹</_item>
+                      </label>
+                      <toolTip>
+                        <_item>分配文件夹</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -733,6 +964,50 @@
                       </label>
                       <toolTip>
                         <_item>版本</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:documentFolder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文件夹</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文件夹</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>起始有效期</_item>
+                      </label>
+                      <toolTip>
+                        <_item>起始有效期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结束有效期</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结束有效期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>禁用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>对象已禁用</_item>
                       </toolTip>
                     </_object>
                     <_content/>

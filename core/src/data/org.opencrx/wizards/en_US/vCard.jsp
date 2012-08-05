@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: vCard.jsp,v 1.7 2009/10/15 16:19:34 wfro Exp $
+ * Name:        $Id: vCard.jsp,v 1.9 2010/04/27 12:16:11 wfro Exp $
  * Description: create vCard(s)
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/15 16:19:34 $
+ * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -115,7 +115,7 @@ org.openmdx.kernel.log.*
       return;
 	}
 	Texts_1_0 texts = app.getTexts();
-	javax.jdo.PersistenceManager pm = app.getPmData();
+	javax.jdo.PersistenceManager pm = app.getNewPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -150,6 +150,14 @@ org.openmdx.kernel.log.*
    final String MIMETYPE_VCARD = "text/x-vcard";
    final String MIMETYPE_ZIP = "application/zip";
    final String MIMETYPE_TEXT = "text/plain";
+
+   final String ENCODING_UTF8 = "UTF-8";
+   final String ENCODING_ISO = "ISO-8859-1";
+   String defaultFileEncoding = ENCODING_UTF8;
+   if (request.getHeader("user-agent").toUpperCase().contains("WIN")) {
+       // client browser runs on Windows
+       defaultFileEncoding = ENCODING_ISO;
+   }
 
    NumberFormat formatter6 = new DecimalFormat("000000");
 
@@ -225,7 +233,7 @@ org.openmdx.kernel.log.*
     ) {
       isAccount = true;
       account = (org.opencrx.kernel.account1.jmi1.Account)obj;
-      downloadFileName = account.getFullName();
+      downloadFileName = account.getFullName() + "_encoding_" + defaultFileEncoding;
     }
 
     int counter = 0;
@@ -261,7 +269,7 @@ org.openmdx.kernel.log.*
              providerName + "_"
              + segmentName + "_"
              + (formatter6.format(counter)) + "_"
-             + account.getFullName();
+             + account.getFullName() + "_(encoding_" + defaultFileEncoding + ")";
         // note: zip encode cannot handle file names with special chars
         filename = org.opencrx.kernel.utils.Utils.toFilename(makeFileName(filename)) + ".vcf";
         filename = URLEncoder.encode(filename, "UTF-8");
@@ -278,7 +286,8 @@ org.openmdx.kernel.log.*
           try {
             zipos.putNextEntry(new ZipEntry(filename));
             if (account.getVcard() != null) {
-              zipos.write(account.getVcard().getBytes("UTF-8"));
+              //zipos.write(account.getVcard().getBytes("UTF-8"));
+              zipos.write(account.getVcard().getBytes(defaultFileEncoding));
             }
             zipos.closeEntry();
           }
@@ -292,7 +301,8 @@ org.openmdx.kernel.log.*
         } else {
           // create vCard file
           if (account.getVcard() != null) {
-            fileos.write(account.getVcard().getBytes("UTF-8"));
+            //fileos.write(account.getVcard().getBytes("UTF-8"));
+            fileos.write(account.getVcard().getBytes(defaultFileEncoding));
           }
           fileos.flush();
           fileos.close();
@@ -371,5 +381,9 @@ org.openmdx.kernel.log.*
     response.sendRedirect(
       request.getContextPath() + "/" + nextAction.getEncodedHRef()
     );
+  } finally {
+	  if(pm != null) {
+		  pm.close();
+	  }
   }
 %>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: utilities.xml,v 1.21 2009/07/12 20:29:02 wfro Exp $
+ * = Name:        $Id: utilities.xml,v 1.23 2010/04/19 00:16:32 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.21 $
- * = Date:        $Date: 2009/07/12 20:29:02 $
- * = Copyright:   (c) 2003-2004 CRIXP AG
+ * = Revision:    $Revision: 1.23 $
+ * = Date:        $Date: 2010/04/19 00:16:32 $
+ * = Copyright:   (c) 2003-2010 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -124,7 +124,8 @@
 			<arg value="${arg.sourceDir}"/>
 			<arg value="--targetDir"/>
 			<arg value="${arg.targetDir}"/>
-			<arg line="--locale=${arg.locale.list}"/>
+			<arg value="--locale"/>
+			<arg value="${arg.locale.list}"/>
 		</java>
 	</target>
 
@@ -160,7 +161,8 @@
 			<arg value="${arg.sourceDir}"/>
 			<arg value="--targetDir"/>
 			<arg value="${arg.targetDir}"/>
-			<arg line="--locale=${arg.locale.list}"/>
+			<arg value="--locale"/>
+			<arg value="${arg.locale.list}"/>
 		</java>
 	</target>
 
@@ -198,7 +200,8 @@
 			<arg value="${arg.targetDir}"/>
 			<arg value="--format"/>
 			<arg value="${arg.format}"/>
-			<arg line="--locale=${arg.locale.list}"/>
+			<arg value="--locale"/>
+			<arg value="${arg.locale.list}"/>
 		</java>
 	</target>
 
@@ -236,7 +239,8 @@
 			<arg value="${arg.targetDir}"/>
 			<arg value="--format"/>
 			<arg value="${arg.format}"/>
-			<arg line="--locale=${arg.locale.list}"/>
+			<arg value="--locale"/>
+			<arg value="${arg.locale.list}"/>
 		</java>
 	</target>
 

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Учетная запись</_item>
+                        <_item>Контакт</_item>
                       </label>
                       <toolTip>
-                        <_item>Учетные записи</_item>
+                        <_item>Контакт</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Учетные записи</_item>
+                        <_item>Контакты</_item>
                       </label>
                       <toolTip>
-                        <_item>Учетные записи</_item>
+                        <_item>Контакты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Субъект</_item>
+                        <_item>Контактное лицо</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект</_item>
+                        <_item>Контактное лицо</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -94,7 +94,7 @@
                         <_item>Код приветствия</_item>
                       </label>
                       <toolTip>
-                        <_item>Код приветствия лица</_item>
+                        <_item>Код приветствия контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -116,7 +116,7 @@
                         <_item>Имя</_item>
                       </label>
                       <toolTip>
-                        <_item>Имя субъекта</_item>
+                        <_item>Имя контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -127,7 +127,7 @@
                         <_item>Отчество</_item>
                       </label>
                       <toolTip>
-                        <_item>Отчество субъекта</_item>
+                        <_item>Отчество контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -138,7 +138,7 @@
                         <_item>Фамилия</_item>
                       </label>
                       <toolTip>
-                        <_item>Фамилия субъекта</_item>
+                        <_item>Фамилия контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -149,7 +149,7 @@
                         <_item>Суффикс</_item>
                       </label>
                       <toolTip>
-                        <_item>Суффикс субъекта</_item>
+                        <_item>Суффикс контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:nickName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Прозвище</_item>
+                        <_item>Псевдоним</_item>
                       </label>
                       <toolTip>
-                        <_item>Прозвище субъекта</_item>
+                        <_item>Псевдоним (прозвище) контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,7 +289,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
                     <_object>
                       <label>
-                        <_item>Предпочтительный метод</_item>
+                        <_item>Предпочтительный способ связи</_item>
                       </label>
                       <toolTip>
                         <_item>Предпочитаемый способ связи</_item>
@@ -300,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Язык, на котором разговаривает субъект</_item>
+                        <_item>Язык, на котором разговаривает контактное лицо</_item>
                       </label>
                       <toolTip>
-                        <_item>Предпочитаемый субъектом язык для переговоров</_item>
+                        <_item>Предпочитаемый язык для переговоров</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -314,7 +314,7 @@
                         <_item>Письменный язык</_item>
                       </label>
                       <toolTip>
-                        <_item>Предпочитаемый субъектом язык для переписки</_item>
+                        <_item>Предпочитаемый контактным лицом язык для переписки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -325,7 +325,7 @@
                         <_item>Нет электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Индикатор &quot;не посылать субъекту электронную почту&quot;</_item>
+                        <_item>Индикатор &quot;не посылать контактному лицу электронную почту&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -336,7 +336,7 @@
                         <_item>Не посылать почту</_item>
                       </label>
                       <toolTip>
-                        <_item>Индикатор &quot;Не посылать почту субъекту&quot;</_item>
+                        <_item>Индикатор &quot;Не посылать почту контактному лицу&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -358,7 +358,7 @@
                         <_item>Не звонить</_item>
                       </label>
                       <toolTip>
-                        <_item>Индикатор &quot;Субъекту не звонить&quot;</_item>
+                        <_item>Индикатор &quot;Контактному лицу не звонить&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -369,7 +369,7 @@
                         <_item>Не отправлять факс</_item>
                       </label>
                       <toolTip>
-                        <_item>Индикатор &quot;Факсов сбъекту не отправлять&quot;</_item>
+                        <_item>Индикатор &quot;Факсов контактному лицу не отправлять&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -380,7 +380,7 @@
                         <_item>Должность</_item>
                       </label>
                       <toolTip>
-                        <_item>Должность субъекта</_item>
+                        <_item>Должность контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -391,7 +391,7 @@
                         <_item>Обязанности</_item>
                       </label>
                       <toolTip>
-                        <_item>Обязанности субъекта</_item>
+                        <_item>Обязанности контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -443,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant" _operation="create">
                     <_object>
                       <label>
-                        <_item>Помощник субъекта</_item>
+                        <_item>Помощник контактного лица</_item>
                       </label>
                       <toolTip>
-                        <_item>Помощник субъекта</_item>
+                        <_item>Помощник контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -454,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:deputy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Заместитель субъекта</_item>
+                        <_item>Заместитель контактного лица</_item>
                       </label>
                       <toolTip>
-                        <_item>Заместитель субъекта</_item>
+                        <_item>Заместитель контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -468,7 +468,7 @@
                         <_item>Пол</_item>
                       </label>
                       <toolTip>
-                        <_item>Пол субъекта</_item>
+                        <_item>Пол контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -479,7 +479,7 @@
                         <_item>Семейное положение</_item>
                       </label>
                       <toolTip>
-                        <_item>Семейное положение субъекта</_item>
+                        <_item>Семейное положение контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -490,7 +490,7 @@
                         <_item>Дети</_item>
                       </label>
                       <toolTip>
-                        <_item>Кол-во детей субъекта</_item>
+                        <_item>Кол-во детей контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -512,7 +512,7 @@
                         <_item>Религия</_item>
                       </label>
                       <toolTip>
-                        <_item>Верование субъекта</_item>
+                        <_item>Вероисповедование контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -523,7 +523,7 @@
                         <_item>Образование</_item>
                       </label>
                       <toolTip>
-                        <_item>Образование субъекта</_item>
+                        <_item>Образование контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -534,7 +534,7 @@
                         <_item>Год. доход (валюта)</_item>
                       </label>
                       <toolTip>
-                        <_item>Годовой доход субъекта</_item>
+                        <_item>Годовой доход контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -545,7 +545,7 @@
                         <_item>Год. доход (сумма)</_item>
                       </label>
                       <toolTip>
-                        <_item>Годовой доход субъекта</_item>
+                        <_item>Годовой доход контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -556,7 +556,7 @@
                         <_item>Дата рождения</_item>
                       </label>
                       <toolTip>
-                        <_item>Дата рождения субъекта</_item>
+                        <_item>Дата рождения контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Дата годовщины</_item>
                       </label>
                       <toolTip>
-                        <_item>Дата годовщины субъекта</_item>
+                        <_item>Дата годовщины контактного лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -575,10 +575,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ид. управления</_item>
+                        <_item>Номер страхового свидетельства</_item>
                       </label>
                       <toolTip>
-                        <_item>Ид. управления</_item>
+                        <_item>Номер страхового свидетельства</_item>
                       </toolTip>
                     </_object>
                     <_content/>

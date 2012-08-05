@@ -2,7 +2,7 @@
 	path="/opencrx-core-CRX"
 	docBase="${catalina.home}/apps/opencrx-core-CRX/opencrx-core-CRX.war"
 >
-	<Realm  className="org.apache.catalina.realm.ExtendedJDBCRealm" 
+	<Realm  className="org.openmdx.catalina.realm.ExtendedJDBCRealm" 
 		debug="0"
 		digest="MD5"
 		digestEncoding="UTF-8"

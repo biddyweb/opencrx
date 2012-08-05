@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
                     <_object>
                       <toolTip>
-                        <_item>Фильтры счета</_item>
+                        <_item>Фильтры участников</_item>
                       </toolTip>
                       <label>
-                        <_item>Фильтры счета</_item>
+                        <_item>Фильтры участников отношений</_item>
                       </label>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отфильтрованная отчетность</_item>
+                        <_item>Отфильтрованные участники</_item>
                       </label>
                       <toolTip>
-                        <_item>Все отфильтрованные отчетности</_item>
+                        <_item>Все отфильтрованные участники отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Подсчитать отфильтрованные счета</_item>
+                        <_item>Подсчитать отфильтрованных участников</_item>
                       </label>
                       <toolTip>
-                        <_item>Подсчитать отфильтрованные счета</_item>
+                        <_item>Подсчитать отфильтрованных участников</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: тип отчетности</_item>
+                        <_item>Свойство фильтра: тип участника</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: тип отчетности</_item>
+                        <_item>Свойство фильтра: тип участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty:accountType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Типы отчетности</_item>
+                        <_item>Типы участников</_item>
                       </label>
                       <toolTip>
-                        <_item>Типы отчетности</_item>
+                        <_item>Типы участников отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: категория отчетности</_item>
+                        <_item>Свойство фильтра: категория участника</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: категория отчетности</_item>
+                        <_item>Свойство фильтра: категория участника отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty:accountCategory" _operation="create">
                     <_object>
                       <label>
-                        <_item>Категории отчетности</_item>
+                        <_item>Категории участников отношений</_item>
                       </label>
                       <toolTip>
-                        <_item>Категории отчетности</_item>
+                        <_item>Категории участников отношений</_item>
                       </toolTip>
                     </_object>
                     <_content/>

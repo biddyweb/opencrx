@@ -122,10 +122,10 @@
                   <org.openmdx.ui1.ElementDefinition name="Tab:900100:Group:1" _operation="create">
                     <_object>
                       <label>
-                        <_item>Личность</_item>
+                        <_item>Идентификатор</_item>
                       </label>
                       <toolTip>
-                        <_item>Личность</_item>
+                        <_item>Идентификатор</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -265,7 +265,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:ExtentCapable:identity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Личность</_item>
+                        <_item>Идентификатор</_item>
                       </label>
                       <toolTip>
                         <_item>Идентификация объекта</_item>
@@ -741,7 +741,7 @@
                         <_item>Заметки</_item>
                       </label>
                       <toolTip>
-                        <_item>Приложеные заметки</_item>
+                        <_item>Приложенные заметки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -763,7 +763,7 @@
                         <_item>Документы</_item>
                       </label>
                       <toolTip>
-                        <_item>Приложеннные документы</_item>
+                        <_item>Приложенные документы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -808,17 +808,6 @@
                       </label>
                       <toolTip>
                         <_item>Элементы наборов свойств</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:identity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Заголовок / Автор</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Заголовок / Автор</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1563,7 +1552,7 @@
                         <_item>Фильтр кванторов</_item>
                       </label>
                       <toolTip>
-                        <_item> Фильтра кванторов</_item>
+                        <_item>Фильтр кванторов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2077,10 +2066,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:triggeredBySubscription" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вызывается подпискою</_item>
+                        <_item>Вызывается подпиской</_item>
                       </label>
                       <toolTip>
-                        <_item>Вызывается подпискою</_item>
+                        <_item>Вызывается подпиской</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2242,10 +2231,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AlertSender:Pane:Op:Tab:sendAlert" _operation="create">
                     <_object>
                       <label>
-                        <_item>Послать тревогу</_item>
+                        <_item>Послать оповещение</_item>
                       </label>
                       <toolTip>
-                        <_item>Послать тревогу</_item>
+                        <_item>Послать оповещение</_item>
                       </toolTip>
                     </_object>
                     <_content/>

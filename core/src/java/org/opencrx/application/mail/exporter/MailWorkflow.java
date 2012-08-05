@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.12 2009/07/16 17:21:27 wfro Exp $
+ * Name:        $Id: MailWorkflow.java,v 1.17 2010/04/21 16:13:27 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/16 17:21:27 $
+ * Date:        $Date: 2010/04/21 16:13:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,7 +91,6 @@ import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 
 public abstract class MailWorkflow 
@@ -134,23 +133,28 @@ public abstract class MailWorkflow
         Message message,
         PersistenceManager pm,
         Path targetIdentity,
-        EMailAccount eMailAccount
+        EMailAccount eMailAccount,
+        String defaultReplyEMailAddress
     ) throws ServiceException {
         Address[] recipients = null;
         try {
             // from
             message.setFrom(
                 new InternetAddress(
-                    eMailAccount.getReplyEMailAddress() == null
-                        ? "noreply@localhost"
-                        :  eMailAccount.getReplyEMailAddress()
+                    eMailAccount.getReplyEMailAddress() == null ? 
+                    	defaultReplyEMailAddress == null ?
+                    		"noreply@localhost" :
+                    			defaultReplyEMailAddress :  
+                    				eMailAccount.getReplyEMailAddress()
                 )
             );
             // recipients
             recipients = InternetAddress.parse(
-                eMailAccount.getEMailAddress() == null
-                    ? "noreply@localhost"
-                    : eMailAccount.getEMailAddress()
+                eMailAccount.getEMailAddress() == null ? 
+                	defaultReplyEMailAddress == null ?
+                		"noreply@localhost" :
+                			defaultReplyEMailAddress : 
+                				eMailAccount.getEMailAddress()
             );
             message.setRecipients(
                 Message.RecipientType.TO,
@@ -180,7 +184,7 @@ public abstract class MailWorkflow
             pm.currentTransaction().begin();
             wfProcessInstance.addActionLog(
                 false,
-                UUIDs.getGenerator().next().toString(),
+                org.opencrx.kernel.backend.Workflows.getInstance().getUidAsString(),
                 logEntry
             );
             logEntry.setName(name);
@@ -194,6 +198,10 @@ public abstract class MailWorkflow
             } catch(Exception e0) {}
         }
     }
+    
+    //-----------------------------------------------------------------------
+    abstract boolean useSendMailSubjectPrefix(
+    );
     
     //-----------------------------------------------------------------------
     public void execute(
@@ -263,7 +271,8 @@ public abstract class MailWorkflow
                     pm,
                     target,
                     userHome,
-                    params
+                    params,
+                    this.useSendMailSubjectPrefix()
                 );
                 text = "ERROR: email not sent. No default email account\n" + text; 
             }
@@ -316,7 +325,8 @@ public abstract class MailWorkflow
                         message,
                         pm,
                         targetIdentity,
-                        eMailAccountUser
+                        eMailAccountUser,
+                        session.getProperty("mail.from")
                     );
                     if(recipients.length > 0) {
                         // subject
@@ -325,7 +335,8 @@ public abstract class MailWorkflow
                                 pm,
                                 target,
                                 userHome,
-                                params
+                                params,
+                                this.useSendMailSubjectPrefix()
                             )                
                         );    
                         // content
@@ -380,7 +391,7 @@ public abstract class MailWorkflow
             );
         }        
         catch(AuthenticationFailedException e) {
-        	SysLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
@@ -392,7 +403,7 @@ public abstract class MailWorkflow
             throw e0;
         }
         catch(AddressException e) {
-        	SysLog.warning("Can not send message to recipients (reason=AddressException)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=AddressException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
@@ -404,7 +415,7 @@ public abstract class MailWorkflow
             throw e0;
         }
         catch(MessagingException e) {
-        	SysLog.warning("Can not send message to recipients (reason=MessagingException)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=MessagingException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
@@ -416,7 +427,7 @@ public abstract class MailWorkflow
             throw e0;
         }
         catch(Exception e) {
-        	SysLog.warning("Can not send message to recipients (reason=Exception)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=Exception)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(

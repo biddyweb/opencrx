@@ -1,5 +1,4 @@
 <%@ page import="org.opencrx.apps.store.common.util.*,
-				 org.opencrx.apps.utils.*,
                  org.opencrx.apps.store.common.PrimaryKey,
                  org.opencrx.apps.store.common.IStandardObject,
                  org.opencrx.apps.store.manager.OrderManager,

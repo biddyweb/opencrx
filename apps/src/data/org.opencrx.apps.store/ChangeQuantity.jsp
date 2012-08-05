@@ -3,7 +3,6 @@
                  org.opencrx.apps.store.objects.OrderItem,
                  org.opencrx.apps.store.common.PrimaryKey,
                  org.opencrx.apps.store.common.util.*,
-                 org.opencrx.apps.utils.*,
                  org.opencrx.apps.store.manager.ProductManager,
                  org.opencrx.apps.store.objects.Product"%>
  <%--
@@ -38,7 +37,7 @@
 			if( null != item )
 			{
 				// 1.3.1 the value is the quantity
-				int quantity = Converter.getInteger( value );
+				int quantity = Integer.valueOf( value );
 	
 				// 1.3.2 Get the product in order to get the unit price of the product
 				Product product = productManager.get( item.getProductID() );

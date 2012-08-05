@@ -487,10 +487,10 @@
                     <_object>
                       <active>true</active>
                       <toolTip>
-                        <_item>Postal Address Home / Business</_item>
+                        <_item>Postal Address Business / Home</_item>
                       </toolTip>
                       <label>
-                        <_item>Postal Address Home / Business</_item>
+                        <_item>Postal Address Business / Home</_item>
                       </label>
                     </_object>
                     <_content/>
@@ -499,6 +499,7 @@
 										<_object>
 											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
 											<active>true</active>
+											<columnBreak>true</columnBreak>
 											<spanRow>3</spanRow>
 											<multiplicity>3</multiplicity> <!-- can be increased if more lines are needed -->
 											<toolTip>
@@ -510,7 +511,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>0</_item>
+												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -530,7 +531,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>10</_item>
+												<_item>90</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -548,7 +549,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>20</_item>
+												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -566,7 +567,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>30</_item>
+												<_item>110</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -584,7 +585,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>40</_item>
+												<_item>120</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -602,7 +603,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>50</_item>
+												<_item>130</_item>
 											</order>
 										</_object>
 										<_content/>

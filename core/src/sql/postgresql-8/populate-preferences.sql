@@ -529,14 +529,14 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 018, 'xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/calendarProfile/:*'
+    'preference/OOCKE1', 'PERSISTENCE:type', 018, 'xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/syncProfile/:*'
 ) ; 
 
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 019, 'xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/calendarProfile/:*/calendarFeed/:*'
+    'preference/OOCKE1', 'PERSISTENCE:type', 019, 'xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/syncProfile/:*/feed/:*'
 ) ; 
 
 
