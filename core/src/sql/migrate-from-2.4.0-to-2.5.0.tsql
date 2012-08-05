@@ -1,0 +1,13 @@
+#include "sql-definitions.tsql"
+
+UPDATE OOCKE1_WORKRECORD SET payment_type = 0 COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_WORKRECORD SET record_type = rate_type COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_WORKRECORD SET quantity = (1.0 * duration_hours) + (duration_minutes / 60.0) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_WORKRECORD SET quantity_uom = N'uom/CRX/Root/hour' COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

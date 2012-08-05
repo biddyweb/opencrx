@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExportMailWorkflow.java,v 1.6 2009/03/08 17:04:47 wfro Exp $
+ * Name:        $Id: ExportMailWorkflow.java,v 1.9 2009/04/21 16:54:05 wfro Exp $
  * Description: ExportMailWorkflow
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:47 $
+ * Date:        $Date: 2009/04/21 16:54:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,7 +75,6 @@ import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Notifications;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.layer.application.ByteArrayDataSource;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
@@ -92,7 +91,7 @@ public class ExportMailWorkflow
         Path targetIdentity,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
-        Map params
+        Map<String,Object> params
     ) throws ServiceException {
         String text = null;
         try {
@@ -101,7 +100,7 @@ public class ExportMailWorkflow
                 target = (ContextCapable)pm.getObjectById(targetIdentity);
             } 
             catch(Exception e) {}
-            text = Notifications.getNotificationText(
+            text = Notifications.getInstance().getNotificationText(
                 pm,
                 target,
                 wfProcessInstanceIdentity,
@@ -144,7 +143,7 @@ public class ExportMailWorkflow
                 nestedMessage.setSentDate(
                     new Date()
                 );
-                Activities.mapMessageRecipients(
+                Activities.getInstance().mapMessageRecipients(
                     emailActivity, 
                     nestedMessage
                 );

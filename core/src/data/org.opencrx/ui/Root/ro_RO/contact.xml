@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:nickName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Poreclă</_item>
+                        <_item>Pseudonim</_item>
                       </label>
                       <toolTip>
-                        <_item>Persoană&apos;s poreclă</_item>
+                        <_item>Persoană&apos;s pseudonim</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -172,6 +172,17 @@
                       </label>
                       <toolTip>
                         <_item>Telefon Privat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fax Privat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fax Privat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCode" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cod poştal</_item>
+                        <_item>Cod Poştal</_item>
                       </label>
                       <toolTip>
-                        <_item>Cod poştal</_item>
+                        <_item>Cod Poştal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -465,10 +476,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:familyStatus" _operation="create">
                     <_object>
                       <label>
-                        <_item>Statut civil</_item>
+                        <_item>Stare civilă</_item>
                       </label>
                       <toolTip>
-                        <_item>Persoană&apos;s statut civil</_item>
+                        <_item>Persoană&apos;s stare civilă</_item>
                       </toolTip>
                     </_object>
                     <_content/>

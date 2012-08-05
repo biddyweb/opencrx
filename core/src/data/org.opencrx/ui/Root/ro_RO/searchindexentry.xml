@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:searchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Caută Conturile/Adresele</_item>
+                        <_item>Caută Conturile / Adresele</_item>
                       </label>
                       <toolTip>
-                        <_item>Caută Conturile/Adresele</_item>
+                        <_item>Caută Conturile / Adresele</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
                     <_object>
                       <label>
-                        <_item>Caută adresele</_item>
+                        <_item>Caută Adresele</_item>
                       </label>
                       <toolTip>
-                        <_item>Caută adresele</_item>
+                        <_item>Caută Adresele</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere în Index pentru Cont/Adresă</_item>
+                        <_item>Introducere în Index pentru Cont / Adresă</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere în Index pentru Cont/Adresă</_item>
+                        <_item>Introducere în Index pentru Cont / Adresă</_item>
                       </toolTip>
                     </_object>
                     <_content/>

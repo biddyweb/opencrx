@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: CreateContactWizard.jsp,v 1.19 2009/02/10 20:51:52 wfro Exp $
+ * Name:        $Id: CreateContactWizard.jsp,v 1.21 2009/05/11 12:12:32 cmu Exp $
  * Description: CreateContact wizard
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/10 20:51:52 $
+ * Date:        $Date: 2009/05/11 12:12:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -92,7 +92,6 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	String formName = "CreateContactForm";
 	String wizardName = "CreateContactWizard";
 	
@@ -158,7 +157,7 @@ org.openmdx.application.log.*
 	    formValues.put("org:opencrx:kernel:account1:Contact:doNotPhone", contact.isDoNotPhone());
 	    formValues.put("org:opencrx:kernel:account1:Contact:birthdate", contact.getBirthdate());
 	    formValues.put("org:opencrx:kernel:account1:Account:description", contact.getDescription());
-	    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getMainAddresses(account);
+	    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getInstance().getMainAddresses(account);
 	    if(addresses[Accounts.PHONE_BUSINESS] != null) {
 	    	formValues.put("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull", ((org.opencrx.kernel.account1.jmi1.PhoneNumber)addresses[Accounts.PHONE_BUSINESS]).getPhoneNumberFull());
 	    }
@@ -346,7 +345,7 @@ org.openmdx.application.log.*
 	    if(actionCreate) {
 		    accountSegment.addAccount(
 		        false,
-		        UUIDConversion.toUID(uuids.next()),
+		        org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
 		        contact
 		    );
 	    }
@@ -517,7 +516,7 @@ org.openmdx.application.log.*
 					    int count = 0;
 						for(Iterator i = matchingContacts.iterator(); i.hasNext(); ) {
 						    org.opencrx.kernel.account1.jmi1.Contact contact = ( org.opencrx.kernel.account1.jmi1.Contact)i.next();
-						    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getMainAddresses(contact);
+						    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getInstance().getMainAddresses(contact);
 %>
 							<tr class="gridTableRowFull">
 								<td><img style="cursor: pointer;" src="images/Contact.gif" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(contact.refMofId(), "UTF-8") %>', {evalScripts: true});"/></td>

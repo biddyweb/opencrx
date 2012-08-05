@@ -28,7 +28,7 @@
                         <_item>Oportunităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>toate oportunităţile</_item>
+                        <_item>Toate Oportunităţile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Poziţii</_item>
                       </label>
                       <toolTip>
-                        <_item>Poziţii oportunitate</_item>
+                        <_item>Poziţii Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nume oportunitate</_item>
+                        <_item>Nume Oportunitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Nume oportunitate</_item>
+                        <_item>Nume Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:contractLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limbă oportunitate</_item>
+                        <_item>Limbă Oportunitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Limbă oportunitate</_item>
+                        <_item>Limbă Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Număr oportunitate</_item>
+                        <_item>Număr Oportunitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Număr oportunitate</_item>
+                        <_item>Număr Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:opportunitySource" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sursă oportunitate</_item>
+                        <_item>Sursă Oportunitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Sursă oportunitate</_item>
+                        <_item>Sursă Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Clasificare</_item>
                       </label>
                       <toolTip>
-                        <_item>Clasificare oportunitate</_item>
+                        <_item>Clasificare Oportunitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:Pane:Op:Tab:createQuote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Crează ofertă</_item>
+                        <_item>Crează Ofertă</_item>
                       </label>
                       <toolTip>
-                        <_item>Crează ofertă</_item>
+                        <_item>Crează Ofertă</_item>
                       </toolTip>
                     </_object>
                     <_content/>

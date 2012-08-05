@@ -2127,7 +2127,7 @@
       </contents>
     </eAnnotations>
     <ownedComment xmi:id="_INWTMN7NEdmKapscEl8OLg" annotatedElement="_3C7B8A60016D4D3238A3033A">
-      <body>$Id: org.opencrx.kernel.model1.emx,v 1.21 2009/03/09 11:50:08 wfro Exp $ 
+      <body>$Id: org.opencrx.kernel.model1.emx,v 1.22 2009/04/14 17:50:38 wfro Exp $ 
 
 Name: org::omex::model1
 
@@ -2199,7 +2199,7 @@ There are, and probably always will be, divergent views among industry leaders o
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B62E40010?w3c/w3c/string?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D4D33479300D5" name="qualifiedName" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D4D33479300D5" name="qualifiedName">
         <ownedComment xmi:id="_INonFd7NEdmKapscEl8OLg" annotatedElement="_3C7B8A60016D4D33479300D5">
           <body>Provides a unique name for the Element within the context of its outermost containing Package. The qualifiedName is a list of NameType values consisting of
 the names of the Element, its container, its containers container and so on until a non-contained element is reached. The first member of the list is the name

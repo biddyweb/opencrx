@@ -28,7 +28,7 @@
                         <_item>Poziţii</_item>
                       </label>
                       <toolTip>
-                        <_item>Poziţii ofertă</_item>
+                        <_item>Poziţii Ofertă</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,7 +58,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numele ofertei</_item>
+                        <_item>Numele Ofertei</_item>
                       </label>
                       <toolTip>
                         <_item>Ofertă&apos;s nume</_item>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:contractLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limba ofertei</_item>
+                        <_item>Limba Ofertei</_item>
                       </label>
                       <toolTip>
-                        <_item>Limba ofertei</_item>
+                        <_item>Limba Ofertei</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Număr ofertă</_item>
+                        <_item>Număr Ofertă</_item>
                       </label>
                       <toolTip>
-                        <_item>Număr ofertă</_item>
+                        <_item>Număr Ofertă</_item>
                       </toolTip>
                     </_object>
                     <_content/>

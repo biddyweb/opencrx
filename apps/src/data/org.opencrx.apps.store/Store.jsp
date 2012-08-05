@@ -33,14 +33,14 @@ org.openmdx.base.accessor.jmi.cci.RefPackage_1_0"
 
 						<!-- Begin .post -->
                         <a name="header"></a>
-						<H3 class="post-title">Online store for your daily needs</H4>
+						<H3 class="post-title">Online store for your daily needs</H3>
 
                         <!-- Show the category list here -->
                         <jsp:include page="CategoryList.jsp"  />
 
                         <!-- Show the product list here -->
                         <div class="post">
-                        <H4 class="post-title">Products</H3>
+                        <H4 class="post-title">Products</H4>
                         <jsp:include page="ProductList.jsp"  />
                         </div>
 

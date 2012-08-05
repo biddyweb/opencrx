@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.9 2009/01/06 13:16:55 wfro Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.12 2009/06/09 14:18:15 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:16:55 $
+ * Date:        $Date: 2009/06/09 14:18:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -96,7 +96,6 @@ org.openmdx.application.log.*
 	javax.jdo.PersistenceManager pm = app.getPmData();
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 
   Map allQualityCodes = codes.getLongText("org:opencrx:kernel:account1:AccountMembership:quality", app.getCurrentLocaleAsIndex(), true, true);
   Map qualityCodes = codes.getLongText("org:opencrx:kernel:account1:AccountMembership:quality", app.getCurrentLocaleAsIndex(), true, false);
@@ -161,7 +160,6 @@ org.openmdx.application.log.*
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%@page import="org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes"%>
 <html dir="<%= texts.getDir() %>">
 <head>
   <title>Relationships</title>
@@ -267,7 +265,7 @@ org.openmdx.application.log.*
    	        <tr>
             	<td class="label"><span class="nw"><%= app.getLabel(ACCOUNT_CLASS) %> #2: <font color="red">*</font></span></td>
 <%
-              String lookupId = org.openmdx.kernel.id.UUIDs.getGenerator().next().toString();
+              String lookupId = org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString();
               Action findAccountTargetObjectAction = Action.getFindObjectAction(accountTargetFinder, lookupId);
               String accountName = app.getLabel(ACCOUNT_CLASS);
 %>
@@ -436,7 +434,7 @@ org.openmdx.application.log.*
           org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilterDM1 =
               (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
           queryFilterDM1.setClause(
-            "(" + Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+            "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
             "( " +
             "v.member IN ( " +
             "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
@@ -483,7 +481,7 @@ org.openmdx.application.log.*
                 org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilterD1 =
                     (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
                 queryFilterD1.setClause(
-                    Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+                    org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
                 );
     			membershipQuery.thereExistsContext().equalTo(queryFilterD1);
       		for(Iterator m = memberships.iterator(); m.hasNext(); ) {
@@ -563,12 +561,12 @@ org.openmdx.application.log.*
 <%
   }
   catch (Exception ex) {
-    ServiceException e0 = new ServiceException(ex);
-    AppLog.warning("unexpected error", "Wizard " + wizardName);
-    AppLog.warning(e0.getMessage(), e0.getCause());
-    out.println("<p><b>!! Failed !!<br><br>The following exception occur:</b><br><br><pre>");
-    ex.printStackTrace(new PrintWriter(out));
-    out.println("</pre></p>");
+      ServiceException e0 = new ServiceException(ex);
+      e0.log();
+      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+      PrintWriter pw = new PrintWriter(out);
+      e0.printStackTrace(pw);
+      out.println("</pre></p>");
   }
 %>
       </div> <!-- content -->

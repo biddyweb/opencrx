@@ -33,8 +33,8 @@
 	<ejb-local-ref id="ejb_EntityManagerFactory">
 		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
 		<ejb-ref-type>Session</ejb-ref-type>
-		<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2LocalHome</local-home>
-		<local>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2_0Local</local>
+		<local-home>org.openmdx.application.persistence.ejb.EntityManagerFactory_2LocalHome</local-home>
+		<local>org.openmdx.application.persistence.ejb.EntityManagerFactory_2_0Local</local>
 		<ejb-link>gateway.jar#opencrx_core_CRX_EntityManagerFactory</ejb-link>
 	</ejb-local-ref>
 </web-app>

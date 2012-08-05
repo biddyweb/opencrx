@@ -711,7 +711,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 044, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 044, 'xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/workReportEntry/:*'
 )  
 GO
 
@@ -802,7 +802,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 057, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 057, 'xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/workReportEntry/:*'
 )  
 GO
 
@@ -1362,7 +1362,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 137, 'xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/workReportEntry/:*'
+    'preference/OOCKE1', 'PERSISTENCE:type', 137, 'xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/resource/:*/workReportEntry/:*'
 )  
 GO
 
@@ -2819,7 +2819,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 044, 'dummy44'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 044, 'workReportEntry5'
 )  
 GO
 
@@ -2910,7 +2910,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 057, 'dummy57'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 057, 'workReportEntry6'
 )  
 GO
 
@@ -12756,6 +12756,41 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 044, 'OOCKE1_WORKRECORD'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 044, 'OOCKE1_WORKRECORD_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 044, 'OOCKE1_JOIN_ACTCONTAINSWRE'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 044, 'activity'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 044, 'work_report_entry'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
     'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 045, 'OOCKE1_ACTIVITYFOLLOWUP'
 )  
 GO
@@ -12829,6 +12864,41 @@ VALUES(
     'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 053, 'base_price'
 )  
 GO  
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 057, 'OOCKE1_WORKRECORD'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 057, 'OOCKE1_WORKRECORD_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 057, 'OOCKE1_JOIN_SEGCONTAINSWRE'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 057, 'segment'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 057, 'work_report_entry'
+)  
+GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
@@ -12973,23 +13043,37 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 137, 'OOCKE1_TOBJ_WORKREPORTENTRY'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 137, 'OOCKE1_WORKRECORD'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 137, 'OOCKE1_TOBJ_WORKREPORTENTRY_'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 137, 'OOCKE1_WORKRECORD_'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 137, 'work_record'
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 137, 'OOCKE1_JOIN_RESCONTAINSWRE'
 )  
-GO  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 137, 'resource'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 137, 'work_report_entry'
+)  
+GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
@@ -13148,23 +13232,37 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 214, 'OOCKE1_TOBJ_WORKREPORTENTRY'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 214, 'OOCKE1_WORKRECORD'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 214, 'OOCKE1_TOBJ_WORKREPORTENTRY_'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 214, 'OOCKE1_WORKRECORD_'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 214, 'work_record'
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 214, 'OOCKE1_JOIN_ACTGCONTAINSWRE'
 )  
-GO  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 214, 'activity_group'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 214, 'work_report_entry'
+)  
+GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
@@ -13316,44 +13414,72 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 242, 'OOCKE1_TOBJ_WORKREPORTENTRY'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 242, 'OOCKE1_WORKRECORD'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 242, 'OOCKE1_TOBJ_WORKREPORTENTRY_'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 242, 'OOCKE1_WORKRECORD_'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 242, 'work_record'
-)  
-GO  
-
-INSERT INTO prefs_Preference 
-    (object_rid, object_oid, object_idx, string_value) 
-VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 243, 'OOCKE1_TOBJ_WORKREPORTENTRY'
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 242, 'OOCKE1_JOIN_ACTGCONTAINSWRE'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 243, 'OOCKE1_TOBJ_WORKREPORTENTRY_'
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 242, 'activity_group'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 243, 'work_record'
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 242, 'work_report_entry'
 )  
-GO  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 243, 'OOCKE1_WORKRECORD'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 243, 'OOCKE1_WORKRECORD_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 243, 'OOCKE1_JOIN_ACTGCONTAINSWRE'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 243, 'activity_group'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 243, 'work_report_entry'
+)  
+GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 

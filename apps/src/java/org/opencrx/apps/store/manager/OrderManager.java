@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderManager.java,v 1.2 2009/02/15 18:06:14 wfro Exp $
+ * Name:        $Id: OrderManager.java,v 1.5 2009/05/24 12:49:36 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:14 $
+ * Date:        $Date: 2009/05/24 12:49:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,9 +55,8 @@
  */
 package org.opencrx.apps.store.manager;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.jdo.Transaction;
 
@@ -68,6 +67,8 @@ import org.opencrx.apps.store.objects.Order;
 import org.opencrx.apps.store.objects.User;
 import org.opencrx.apps.utils.ApplicationContext;
 import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
+import org.opencrx.kernel.contract1.jmi1.SalesOrder;
+import org.openmdx.base.exception.ServiceException;
 
 /**
  * Manager for Order subsystem
@@ -105,48 +106,70 @@ public final class OrderManager
         final PrimaryKey userID
     ) {
         final Order order = new Order();
-
         order.setUserID(userID);
         order.setStatus(Order.STATUS_BUYING);
         order.setStartDate( new Date(System.currentTimeMillis()));
         order.setEndDate( new Date(System.currentTimeMillis()));
-
         // Get user's default address
         final UserManager userManager = new UserManager(this.context);
         final User user = userManager.get( userID );
         order.setAddress( user.getAddress() );
 
-        Transaction tx = this.context.getPersistenceManager().currentTransaction();       
-        tx.begin();
-        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-            this.context.getContractPackage().getSalesOrder().createSalesOrder();
-        salesOrder.refInitialize(false, false);
-        order.update(
-            salesOrder,
-            this.context
-        );
-        this.context.getContractSegment().addSalesOrder(
-            false,
-            order.getKey().getUuid(),
-            salesOrder
-        );
-        tx.commit();
-        return this.get(order.getKey());
+        Transaction tx = null;
+        try {
+	        tx = this.context.getPersistenceManager().currentTransaction();       
+	        tx.begin();
+	        SalesOrder salesOrder = this.context.getPersistenceManager().newInstance(SalesOrder.class);
+	        salesOrder.refInitialize(false, false);
+	        order.update(
+	            salesOrder,
+	            this.context
+	        );
+	        this.context.getContractSegment().addSalesOrder(
+	            false,
+	            order.getKey().getUuid(),
+	            salesOrder
+	        );
+	        tx.commit();
+	        return this.get(order.getKey());
+        }
+        catch(Exception e) {
+        	if(tx != null) {
+        		try {
+        			tx.rollback();
+        		}
+        		catch(Exception e0) {}
+        	}
+            new ServiceException(e).log();
+            return null;
+        }
     }
 
     //-----------------------------------------------------------------------
     public final void update(
         final Order newValue
     ) {
-        Transaction tx = this.context.getPersistenceManager().currentTransaction();       
-        tx.begin();
-        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-            this.context.getContractSegment().getSalesOrder(newValue.getKey().getUuid());
-        newValue.update(
-            salesOrder,
-            this.context
-        );
-        tx.commit();
+    	Transaction tx = null;
+    	try {
+	        tx = this.context.getPersistenceManager().currentTransaction();       
+	        tx.begin();
+	        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
+	            this.context.getContractSegment().getSalesOrder(newValue.getKey().getUuid());
+	        newValue.update(
+	            salesOrder,
+	            this.context
+	        );
+	        tx.commit();
+    	}
+    	catch(Exception e) {
+        	if(tx != null) {
+        		try {
+        			tx.rollback();
+        		}
+        		catch(Exception e0) {}
+        	}
+            new ServiceException(e).log();    		
+    	}
     }
 
     //-----------------------------------------------------------------------
@@ -155,14 +178,13 @@ public final class OrderManager
     ) {
         org.opencrx.kernel.account1.jmi1.Account customer =
             this.context.getAccountSegment().getAccount(userID.getUuid());
-        SalesOrderQuery query = this.context.getContractPackage().createSalesOrderQuery();
+        SalesOrderQuery query = (SalesOrderQuery)this.context.getPersistenceManager().newQuery(SalesOrder.class);
         query.thereExistsCustomer().equalTo(customer);
-        query.contractState().equalTo(new Short((short)430)/* on hold */);        
+        query.contractState().equalTo(new Short((short)400)/* buying */);        
         query.orderByCreatedAt().descending();
-        Collection salesOrders = this.context.getContractSegment().getSalesOrder(query);
+        List<SalesOrder> salesOrders = this.context.getContractSegment().getSalesOrder(query);
         if(!salesOrders.isEmpty()) {
-            org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-                (org.opencrx.kernel.contract1.jmi1.SalesOrder)salesOrders.iterator().next();
+            SalesOrder salesOrder = salesOrders.iterator().next();
             return new Order(salesOrder);
         }
         else {
@@ -179,7 +201,6 @@ public final class OrderManager
         order.setAddress( shippingAddress );
         order.setStatus( Order.STATUS_PENDING );
         this.update( order );
-
         return this.get( orderID );
     }
 
@@ -204,22 +225,19 @@ public final class OrderManager
     //-----------------------------------------------------------------------
     public final ObjectCollection getPendingOrders( 
     ) {
-        SalesOrderQuery query = this.context.getContractPackage().createSalesOrderQuery();
+        SalesOrderQuery query = (SalesOrderQuery)this.context.getPersistenceManager().newQuery(SalesOrder.class);
         query.contractState().equalTo(new Short((short)430)/* on hold */);
         query.name().like(Keys.STORE_SCHEMA + ".*");
-        ObjectCollection salesOrders = new ObjectCollection();
-        for(
-            Iterator i = this.context.getContractSegment().getSalesOrder(query).iterator();
-            i.hasNext();
-        ) {
-            org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = (org.opencrx.kernel.contract1.jmi1.SalesOrder)i.next();
+        ObjectCollection pendingSalesOrders = new ObjectCollection();
+        List<SalesOrder> salesOrders = this.context.getContractSegment().getSalesOrder(query);
+        for(SalesOrder salesOrder: salesOrders) {
             Order order = new Order(salesOrder);
-            salesOrders.put(
+            pendingSalesOrders.put(
                 order.getKey().toString(),
                 order
             );            
         }
-        return salesOrders;
+        return pendingSalesOrders;
     }
 
     //-----------------------------------------------------------------------

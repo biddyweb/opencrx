@@ -43,12 +43,12 @@
 			<env-entry>
 				<env-entry-name>KERNEL/INTERCEPTION</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1</env-entry-value>
+				<env-entry-value>org.openmdx.application.dataprovider.layer.interception.Standard_1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/TYPE</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.type.Strict_1</env-entry-value>
+				<env-entry-value>org.openmdx.application.dataprovider.layer.type.Strict_1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/APPLICATION</env-entry-name>
@@ -58,7 +58,7 @@
 			<env-entry>
 				<env-entry-name>KERNEL/MODEL</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.model.Standard_1</env-entry-value>
+				<env-entry-value>org.openmdx.application.dataprovider.layer.model.Standard_1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/PERSISTENCE</env-entry-name>
@@ -198,9 +198,9 @@
 		<container-transaction>
 			<method>
 				<ejb-name>opencrx_core_CRX_security_mandatory</ejb-name>
-				<method-name>createEntityProvider</method-name>
+				<method-name>execute</method-name>
 			</method>
-			<trans-attribute>Never</trans-attribute>
+			<trans-attribute>Required</trans-attribute>
 		</container-transaction>
 	</assembly-descriptor>
 </ejb-jar>

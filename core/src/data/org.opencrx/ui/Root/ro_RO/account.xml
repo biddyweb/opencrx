@@ -231,6 +231,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fax Profesional</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fax Profesional</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull" _operation="create">
                     <_object>
                       <label>
@@ -245,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefon altul</_item>
+                        <_item>Telefon (altul)</_item>
                       </label>
                       <toolTip>
-                        <_item>Telefon altul</_item>
+                        <_item>Telefon (altul)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Other!emailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>E-Mail altul</_item>
+                        <_item>E-Mail (altul)</_item>
                       </label>
                       <toolTip>
-                        <_item>E-Mail altul</_item>
+                        <_item>E-Mail (altul)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalStreet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Strada / Casuţa poştală</_item>
+                        <_item>Strada / Căsuţa Poştală</_item>
                       </label>
                       <toolTip>
-                        <_item>Strada / Casuţa poştală</_item>
+                        <_item>Strada / Căsuţa Poştală</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +333,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Business!postalCode" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cod poştal</_item>
+                        <_item>Cod Poştal</_item>
                       </label>
                       <toolTip>
-                        <_item>Cod poştal</_item>
+                        <_item>Cod Poştal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -696,10 +707,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateQuoteParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numele ofertei</_item>
+                        <_item>Numele Ofertei</_item>
                       </label>
                       <toolTip>
-                        <_item>Numele ofertei</_item>
+                        <_item>Numele Ofertei</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -773,10 +784,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateSalesOrderParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numele comenzii de vânzare</_item>
+                        <_item>Numele Comenzii de vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Numele comenzii de vânzare</_item>
+                        <_item>Numele Comenzii de vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -828,10 +839,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createInvoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Crează factura</_item>
+                        <_item>Crează Factură</_item>
                       </label>
                       <toolTip>
-                        <_item>Crează factura</_item>
+                        <_item>Crează Factură</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -850,10 +861,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateInvoiceParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numele facturii</_item>
+                        <_item>Numele Facturii</_item>
                       </label>
                       <toolTip>
-                        <_item>Numele facturii</_item>
+                        <_item>Numele Facturii</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.10 2009/01/17 23:06:55 wfro Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.11 2009/04/23 12:35:34 cmu Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/17 23:06:55 $
+ * Date:        $Date: 2009/04/23 12:35:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -298,19 +298,12 @@ org.openmdx.application.log.*
             try {
         	    accountAssignmentInventoryItem = (org.opencrx.kernel.building1.jmi1.AccountAssignmentInventoryItem)j.next();
             } catch (Exception e) {
+              //new ServiceException(e).log();
 %>
               <tr class="gridTableRow">
                 <td colspan="8">N/P</td>
               </tr>
 <%
-              //out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-              PrintWriter pw = new PrintWriter(out);
-              ServiceException e0 = new ServiceException(e);
-              //pw.println(e0.getMessage());
-              //pw.println(e0.getCause());
-              //out.println("</pre>");
-              AppLog.warning("Exception retrieving position", "Wizard " + FORM_ACTION);
-              AppLog.warning(e0.getMessage(), e0.getCause());
               continue;
             }
             shown++;
@@ -378,14 +371,12 @@ org.openmdx.application.log.*
       }
 	}
 	catch (Exception e) {
-    //out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-    PrintWriter pw = new PrintWriter(out);
-    ServiceException e0 = new ServiceException(e);
-    pw.println(e0.getMessage());
-    pw.println(e0.getCause());
-    out.println("</pre>");
-    AppLog.warning("Exception retrieving position", "Wizard " + FORM_ACTION);
-    AppLog.warning(e0.getMessage(), e0.getCause());
+      ServiceException e0 = new ServiceException(e);
+      e0.log();
+      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+      PrintWriter pw = new PrintWriter(out);
+      e0.printStackTrace(pw);
+      out.println("</pre></p>");
   }
 %>
   <INPUT type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" />

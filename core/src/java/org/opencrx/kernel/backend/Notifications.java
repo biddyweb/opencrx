@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Notifications.java,v 1.4 2009/03/08 17:04:51 wfro Exp $
+ * Name:        $Id: Notifications.java,v 1.13 2009/05/20 23:39:02 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:51 $
+ * Date:        $Date: 2009/05/20 23:39:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,6 +56,7 @@
 
 package org.opencrx.kernel.backend;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -67,36 +68,39 @@ import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.portal.servlet.Action;
 
-public class Notifications {
+public class Notifications extends AbstractImpl {
 
-    //-----------------------------------------------------------------------
-    public Notifications(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
-    
     //-------------------------------------------------------------------------
-    public static String getUidAsString(
-    ) {
-        return UUIDConversion.toUID(Notifications.uuidGenerator.next());        
-    }
-    
+	public static void register(
+	) {
+		registerImpl(new Notifications());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Notifications getInstance(
+	) throws ServiceException {
+		return getInstance(Notifications.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Notifications(
+	) {
+		
+	}
+	
     //-----------------------------------------------------------------------
-    public static String getNotificationText(
+    public String getNotificationText(
         PersistenceManager pm,
         ContextCapable target,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
-        Map params
+        Map<String,Object> params
     ) throws ServiceException {
+    	SimpleDateFormat dateFormat = Utils.getLocalizedDateFormat(userHome);
         String text = "#ERR";
-        String webAccessUrl = UserHomes.getWebAccessUrl(userHome);
+        String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
         Path targetIdentity = target == null ?
             null :
             target.refGetPath();
@@ -112,9 +116,9 @@ public class Notifications {
             );
         String subscriptionId = 
             (params.get("triggeredBySubscription") == null ? "N/A" : ((Path)params.get("triggeredBySubscription")).getBase());            
-        Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null
-            ? null
-            : new Action(
+        Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null ? 
+        	null : 
+        	new Action(
                 Action.EVENT_SELECT_OBJECT, 
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, wfProcessInstanceIdentity.toXri())    
@@ -122,9 +126,9 @@ public class Notifications {
                 "",
                 true
             );
-        Action selectTriggeredBySubscriptionAction =  params.get("triggeredBySubscription") == null
-            ? null
-            : new Action(
+        Action selectTriggeredBySubscriptionAction =  params.get("triggeredBySubscription") == null ? 
+        	null : 
+        	new Action(
                 Action.EVENT_SELECT_OBJECT,
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, ((Path)params.get("triggeredBySubscription")).toXri())
@@ -135,13 +139,17 @@ public class Notifications {
         // Alert specific text
         if(target instanceof org.opencrx.kernel.home1.jmi1.Alert) {
             org.opencrx.kernel.home1.jmi1.Alert alert = (org.opencrx.kernel.home1.jmi1.Alert)target;
+            ContextCapable referencedObj = null;
+            try {
+            	referencedObj = alert.getReference();
+            } catch(Exception e) {}
             if(
-                (alert.getReference() != null) && 
-                !(alert.getReference() instanceof org.opencrx.kernel.home1.jmi1.UserHome)
+                (referencedObj != null) && 
+                !(referencedObj instanceof org.opencrx.kernel.home1.jmi1.UserHome)
             ) {
-                text = Notifications.getNotificationText(
+                text = this.getNotificationText(
                     pm,
-                    alert.getReference(),
+                    referencedObj,
                     wfProcessInstanceIdentity,
                     userHome,
                     params
@@ -167,9 +175,9 @@ public class Notifications {
             (target instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)
         ) {
             org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
-            org.opencrx.kernel.activity1.jmi1.Activity activity = target instanceof org.opencrx.kernel.activity1.jmi1.Activity
-                ? (org.opencrx.kernel.activity1.jmi1.Activity)target
-                : (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(target.refMofId()).getParent().getParent());
+            org.opencrx.kernel.activity1.jmi1.Activity activity = target instanceof org.opencrx.kernel.activity1.jmi1.Activity ? 
+            	(org.opencrx.kernel.activity1.jmi1.Activity)target : 
+            	(org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(target.refMofId()).getParent().getParent());
             org.opencrx.kernel.account1.jmi1.Contact reportingContact = activity.getReportingContact();
             org.opencrx.kernel.account1.jmi1.Account reportingAccount = activity.getReportingAccount();
             org.opencrx.kernel.account1.jmi1.Contact assignedTo = activity.getAssignedTo();                
@@ -218,15 +226,21 @@ public class Notifications {
             text += "Status:                     " + (activityState == null ? "N/A" : activityState.getName()) + "\n";
             text += "Last transition:            " + (lastTransition == null ? "N/A" : lastTransition.getName()) + "\n";
             text += "=======================================================================\n";
+            text += "Scheduled start:            " + (activity.getScheduledStart() == null ? "N/A" : dateFormat.format(activity.getScheduledStart())) + "\n";
+            text += "Scheduled end:              " + (activity.getScheduledEnd() == null ? "N/A" : dateFormat.format(activity.getScheduledEnd())) + "\n";
+            text += "Due by:                     " + (activity.getDueBy() == null ? "N/A" : dateFormat.format(activity.getDueBy())) + "\n";
+            text += "Actual start:               " + (activity.getActualStart() == null ? "N/A" : dateFormat.format(activity.getActualStart())) + "\n";
+            text += "Actual end:                 " + (activity.getActualEnd() == null ? "N/A" : dateFormat.format(activity.getActualEnd())) + "\n";
+            text += "=======================================================================\n";
             text += "Date Submitted:             " + activity.getCreatedAt() + "\n";
             text += "Last Modified:              " + activity.getModifiedAt() + "\n";
             text += "=======================================================================\n";
             String activityName = activity.getName();
             String activityDescription = activity.getDescription();
             String activityDetailedDescription = activity.getDetailedDescription();
-            String messageBody = activity instanceof org.opencrx.kernel.activity1.jmi1.EMail
-                ? ((org.opencrx.kernel.activity1.jmi1.EMail)activity).getMessageBody()
-                : null;
+            String messageBody = activity instanceof org.opencrx.kernel.activity1.jmi1.EMail ? 
+            	((org.opencrx.kernel.activity1.jmi1.EMail)activity).getMessageBody() : 
+            	null;
             text += "Summary:\n";
             text += (activityName == null ? "N/A" : activityName) + "\n\n";
             text += "Description:\n";
@@ -273,11 +287,11 @@ public class Notifications {
     }
             
     //-----------------------------------------------------------------------
-    public static String getNotificationSubject(
+    public String getNotificationSubject(
         PersistenceManager pm,
         ContextCapable target,
         UserHome userHome,  
-        Map params
+        Map<String,Object> params
     ) throws ServiceException {
         Path userHomeIdentity = userHome.refGetPath();
         String title = null;
@@ -287,7 +301,7 @@ public class Notifications {
         String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null ? 
             "[" + userHome.refGetPath().get(2) + ":" + userHome.refGetPath().get(4) + "]" : 
             userHome.getSendMailSubjectPrefix();
-        String webAccessUrl = UserHomes.getWebAccessUrl(userHome);
+        String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
         if(
             (target != null) && 
             ((params.get("confidential") == null) || !((Boolean)params.get("confidential")).booleanValue())
@@ -305,7 +319,7 @@ public class Notifications {
                         (alert.getReference() != null) &&
                         !(alert.getReference() instanceof org.opencrx.kernel.home1.jmi1.UserHome)
                     ) {
-                        title = Notifications.getNotificationSubject(
+                        title = this.getNotificationSubject(
                             pm, 
                             alert.getReference(), 
                             userHome, 
@@ -366,8 +380,6 @@ public class Notifications {
     public static final short CAN_NOT_CHANGE_PASSWORD = 5;
     public static final short MISSING_OLD_PASSWORD = 6;
 
-    private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
-    protected final Backend backend;
 }
 
 //--- End of File -----------------------------------------------------------

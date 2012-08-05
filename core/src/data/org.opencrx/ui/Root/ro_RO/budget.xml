@@ -17,7 +17,18 @@
                         <_item>Previziune</_item>
                       </label>
                       <toolTip>
-                        <_item>toate previziunile</_item>
+                        <_item>Toate Previziunile</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedBudget" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bugete</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bugete</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +39,7 @@
                         <_item>Bugete</_item>
                       </label>
                       <toolTip>
-                        <_item>toate bugetele</_item>
+                        <_item>Toate Bugetele</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.17 2009/03/08 17:04:51 wfro Exp $
+ * Name:        $Id: SecureObject.java,v 1.27 2009/06/01 16:56:03 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:51 $
+ * Date:        $Date: 2009/06/01 16:56:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,68 +55,175 @@
  */
 package org.opencrx.kernel.backend;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 
+import org.oasisopen.jmi1.RefContainer;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
-import org.openmdx.application.log.AppLog;
-import org.openmdx.application.mof.cci.AggregationKind;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
+import org.openmdx.base.mof.cci.AggregationKind;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 
-public class SecureObject {
+public class SecureObject extends AbstractImpl {
 
+    //-------------------------------------------------------------------------
+	public static void register(
+	) {
+		registerImpl(new SecureObject());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static SecureObject getInstance(
+	) throws ServiceException {
+		return getInstance(SecureObject.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected SecureObject(
+	) {
+		
+	}
+	
     //-----------------------------------------------------------------------
-    public SecureObject(
-        Backend backend,
-        DataproviderObject args
-    ) {
-        this(
-            backend,
-            (Path)args.values("user").get(0),
-            Arrays.asList((Path)args.values("group").get(0)),
-            ((Number)args.values("group").get(0)).shortValue(),
-            ((Number)args.values("accessLevelBrowse").get(0)).shortValue(),
-            ((Number)args.values("accessLevelUpdate").get(0)).shortValue(),
-            ((Number)args.values("accessLevelDelete").get(0)).shortValue()
-        );
+    static class SetOwningUserMarshaller implements Marshaller {
+    	
+    	public SetOwningUserMarshaller(
+    		org.opencrx.security.realm1.jmi1.User user    		
+    	) {
+    		this.user = user;
+    	}
+    	
+        public Object marshal(Object s) throws ServiceException {
+            if(s instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+            	org.opencrx.kernel.base.jmi1.SecureObject obj = (org.opencrx.kernel.base.jmi1.SecureObject)s;
+            	if(this.user != null) {
+            		obj.setOwningUser(this.user);
+            	}
+            }
+            return s;
+        }
+
+        public Object unmarshal(Object s) {
+          throw new UnsupportedOperationException();
+        }
+        
+        private final org.opencrx.security.realm1.jmi1.User user;
+        
     }
+
+    static class AddOwningGroupMarshaller implements Marshaller {
+
+    	public AddOwningGroupMarshaller(
+    		org.opencrx.security.realm1.jmi1.PrincipalGroup group
+    	) {
+    		this.group = group;
+    	}
+        public Object marshal(Object s) throws ServiceException {
+            if(s instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+            	org.opencrx.kernel.base.jmi1.SecureObject obj = (org.opencrx.kernel.base.jmi1.SecureObject)s;
+            	if(!obj.getOwningGroup().contains(this.group)) {
+            		obj.getOwningGroup().add(this.group);
+            	}
+            }
+            return s;
+        }
+        
+        public Object unmarshal(Object s) {
+          throw new UnsupportedOperationException();
+        }
+    	
+        private final org.opencrx.security.realm1.jmi1.PrincipalGroup group;
+    }
+
+    static class ReplaceOwningGroupMarshaller implements Marshaller {
     
-    //-----------------------------------------------------------------------
-    public SecureObject(
-        Backend backend,
-        Path paramUserIdentity,
-        List<Path> paramGroupIdentity,
-        Short paramMode,
-        Short paramAccessLevelBrowse,
-        Short paramAccessLevelUpdate,
-        Short paramAccessLevelDelete
-    ) {
-        this.backend = backend;
-        this.paramUserIdentity = paramUserIdentity;
-        this.paramGroupsIdentity = paramGroupIdentity;
-        this.paramMode = paramMode;
-        this.paramAccessLevelBrowse = paramAccessLevelBrowse;
-        this.paramAccessLevelUpdate = paramAccessLevelUpdate;
-        this.paramAccessLevelDelete = paramAccessLevelDelete;
+    	public ReplaceOwningGroupMarshaller(
+    		List<org.opencrx.security.realm1.jmi1.PrincipalGroup> groups
+    	) {
+    		this.groups = groups;
+    	}
+    	
+        public Object marshal(Object s) throws ServiceException {
+            if(s instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+            	org.opencrx.kernel.base.jmi1.SecureObject obj = (org.opencrx.kernel.base.jmi1.SecureObject)s;
+            	obj.getOwningGroup().clear();
+            	obj.getOwningGroup().addAll(this.groups);
+            }
+            return s;
+        }
+        public Object unmarshal(Object s) {
+          throw new UnsupportedOperationException();
+        }
+
+        private final List<org.opencrx.security.realm1.jmi1.PrincipalGroup> groups;
+    	
+    }
+
+    static class RemoveOwningGroupMarshaller implements Marshaller {
+    	
+    	public RemoveOwningGroupMarshaller(
+    		org.opencrx.security.realm1.jmi1.PrincipalGroup group    		
+    	) {
+    		this.group = group;
+    	}
+    	
+        public Object marshal(Object s) throws ServiceException {
+            if(s instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+            	org.opencrx.kernel.base.jmi1.SecureObject obj = (org.opencrx.kernel.base.jmi1.SecureObject)s;
+            	obj.getOwningGroup().remove(this.group);
+            }
+            return s;
+        }
+        public Object unmarshal(Object s) {
+          throw new UnsupportedOperationException();
+        }
+
+        private final org.opencrx.security.realm1.jmi1.PrincipalGroup group;
+        
+    }
+
+    static class SetAccessLevelMarshaller implements Marshaller {
+    	
+    	public SetAccessLevelMarshaller(
+    		short accessLevelBrowse,
+    		short accessLevelUpdate,
+    		short accessLevelDelete
+    	) {
+    		this.accessLevelBrowse = accessLevelBrowse;
+    		this.accessLevelUpdate = accessLevelUpdate;
+    		this.accessLevelDelete = accessLevelDelete;
+    		
+    	}
+    	
+        public Object marshal(Object s) throws ServiceException {
+            if(s instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+            	org.opencrx.kernel.base.jmi1.SecureObject obj = (org.opencrx.kernel.base.jmi1.SecureObject)s;        
+            	obj.setAccessLevelBrowse(this.accessLevelBrowse);
+            	obj.setAccessLevelUpdate(this.accessLevelUpdate);
+            	obj.setAccessLevelDelete(this.accessLevelDelete);
+            }
+	        return s;
+        }
+        public Object unmarshal(Object s) {
+          throw new UnsupportedOperationException();
+        }
+
+		private final short accessLevelBrowse;
+		private final short accessLevelUpdate;
+		private final short accessLevelDelete;
+        
     }
     
     //-------------------------------------------------------------------------
-    public static org.openmdx.security.realm1.jmi1.Principal findPrincipal(
+    public org.openmdx.security.realm1.jmi1.Principal findPrincipal(
         String name,
         org.openmdx.security.realm1.jmi1.Realm realm,
         javax.jdo.PersistenceManager pm
@@ -132,7 +239,7 @@ public class SecureObject {
     }
 
     //-------------------------------------------------------------------------
-    public static org.openmdx.security.realm1.jmi1.Realm getRealm(
+    public org.openmdx.security.realm1.jmi1.Realm getRealm(
         javax.jdo.PersistenceManager pm,
         String providerName,
         String segmentName
@@ -143,20 +250,20 @@ public class SecureObject {
     }
 
     //-----------------------------------------------------------------------
-    public static PrincipalGroup initPrincipalGroup(
+    public PrincipalGroup initPrincipalGroup(
         String groupName,
         PersistenceManager pm,
         String providerName,
         String segmentName
     ) {
         Realm1Package realmPkg = Utils.getRealmPackage(pm);
-        org.openmdx.security.realm1.jmi1.Realm realm = SecureObject.getRealm(
+        org.openmdx.security.realm1.jmi1.Realm realm = this.getRealm(
             pm, 
             providerName, 
             segmentName
         );
         PrincipalGroup principalGroup = null;
-        if((principalGroup = (PrincipalGroup)SecureObject.findPrincipal(groupName, realm, pm)) != null) {
+        if((principalGroup = (PrincipalGroup)this.findPrincipal(groupName, realm, pm)) != null) {
             return principalGroup;            
         }        
         pm.currentTransaction().begin();
@@ -172,103 +279,45 @@ public class SecureObject {
         return principalGroup;
     }
                 
-    //-------------------------------------------------------------------------
-    public DataproviderObject_1_0 getUser(
-        String principalName
-    ) throws ServiceException {
-        
-        // principal
-        DataproviderObject_1_0 principal = null;
-        try {
-            principal = this.backend.getDelegatingRequests().addGetRequest(
-                this.backend.getRealmIdentity().getDescendant(new String[]{"principal", principalName}),
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );
-        }
-        catch(ServiceException e) {
-            AppLog.warning("principal not found", principalName);
-            e.log();
-        }
-
-        // user
-        if((principal == null) || (principal.values("subject").size() == 0)) {
-            AppLog.warning("user for principal not defined", principal);
-            return null;
-        }
-        Path userIdentity = (Path)principal.values("subject").get(0);
-        DataproviderObject_1_0 user = null;
-        try {
-            user = this.backend.getDelegatingRequests().addGetRequest(
-                userIdentity,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );
-        }
-        catch(ServiceException e) {
-            AppLog.warning("user for principal not found", principal + "; user=" + userIdentity);
-            e.log();
-        }            
-        return user;
-    }
-    
     //-----------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     public void applyAcls(
-        DataproviderObject_1_0 obj,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
         Marshaller marshaller,
         Short mode,
         String reportText,
         List<String> report
     ) {
         try {
-            // apply acls to obj
-            DataproviderObject modifiedObj = this.backend.retrieveObjectForModification(
-                obj.path()
-            );
-            modifiedObj.clearValues("owningUser").addAll(obj.values("owningUser"));
-            modifiedObj.clearValues("owningGroup").addAll(obj.values("owningGroup"));            
-            marshaller.marshal(modifiedObj);
-            report.add(reportText);
-           
+            marshaller.marshal(obj);
+            report.add(reportText);           
             if((mode != null) && (mode.intValue() == MODE_RECURSIVE)) {
-                // apply acls to object's content
-                Map references = (Map)this.backend.getModel().getElement(
-                    obj.values(SystemAttributes.OBJECT_CLASS).get(0)
+            	Model_1_0 model = Model_1Factory.getModel();
+                Map<String,ModelElement_1_0> references = (Map)model.getElement(
+                    obj.refClass().refMofId()
                 ).objGetValue("reference");
-                for(
-                    Iterator i = references.values().iterator();
-                    i.hasNext();
-                ) {
-                    ModelElement_1_0 featureDef = (ModelElement_1_0)i.next();
-                    ModelElement_1_0 referencedEnd = this.backend.getModel().getElement(
+                for(ModelElement_1_0 featureDef: references.values()) {
+                    ModelElement_1_0 referencedEnd = model.getElement(
                         featureDef.objGetValue("referencedEnd")
                     );
                     if(
-                        this.backend.getModel().isReferenceType(featureDef) &&
+                        model.isReferenceType(featureDef) &&
                         AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
                         ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue()
                     ) {
-                        String reference = (String)featureDef.objGetValue("name");
-                        Path referencePath = obj.path().getChild(reference);
-                        List content = this.backend.getDelegatingRequests().addFindRequest(
-                            referencePath,
-                            null,
-                            AttributeSelectors.ALL_ATTRIBUTES,
-                            0,
-                            Integer.MAX_VALUE,
-                            Directions.ASCENDING
-                        );
-                        for(
-                            Iterator j = content.iterator();
-                            j.hasNext();
-                        ) {
-                            this.applyAcls(
-                                (DataproviderObject)j.next(),
-                                marshaller,
-                                mode,
-                                reportText,
-                                report
-                            );
+                        String referenceName = (String)featureDef.objGetValue("name");
+                        RefContainer container = (RefContainer)obj.refGetValue(referenceName);
+                        List<?> content = container.refGetAll(null);
+                        for(Object contained: content) {
+                        	if(contained instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+                        		this.applyAcls(
+	                                (org.opencrx.kernel.base.jmi1.SecureObject)contained,
+	                                marshaller,
+	                                mode,
+	                                reportText,
+	                                report
+	                            );
+                        	}
                         }
                     }
                 }
@@ -282,46 +331,17 @@ public class SecureObject {
     
     //-----------------------------------------------------------------------
     public void setOwningUser(
-        Path secureObjectIdentity,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
+        org.opencrx.security.realm1.jmi1.User user,
+        short mode,
         List<String> report
-    ) throws ServiceException {
-        this.setOwningUser(
-            this.backend.retrieveObject(
-                secureObjectIdentity
-            ),
-            report
-        );
-    }
-    
-    //-----------------------------------------------------------------------
-    public void setOwningUser(
-        DataproviderObject_1_0 obj,
-        List<String> report
-    ) throws ServiceException {        
-        this.applyAcls(
+    ) throws ServiceException {   
+    	this.applyAcls(
             obj,
-            new Marshaller() {
-                public Object marshal(Object s) throws ServiceException {
-                    if(s instanceof DataproviderObject) {
-                        DataproviderObject obj = (DataproviderObject)s;
-                        Path userIdentity = SecureObject.this.paramUserIdentity;
-                        if((userIdentity == null) && !obj.values(SystemAttributes.CREATED_BY).isEmpty()) {
-                            DataproviderObject_1_0 user = SecureObject.this.getUser((String)obj.values(SystemAttributes.CREATED_BY).get(0));
-                            if(user != null) {
-                                userIdentity = user.path();                
-                            }
-                        }
-                        if(userIdentity != null) {
-                            obj.clearValues("owningUser").add(userIdentity);
-                        }
-                    }
-                    return s;
-                }
-                public Object unmarshal(Object s) {
-                  throw new UnsupportedOperationException();
-                }
-            },
-            this.paramMode,
+            new SetOwningUserMarshaller(
+        		user
+        	),
+            mode,
             "setOwningUser",
             report
         );
@@ -329,45 +349,17 @@ public class SecureObject {
     
     //-----------------------------------------------------------------------
     public void addOwningGroup(
-        Path secureObjectIdentity,
-        List<String> report
-    ) throws ServiceException {
-        this.addOwningGroups(
-            this.backend.retrieveObject(
-                secureObjectIdentity
-            ), 
-            report
-        );
-    }
-    
-    //-----------------------------------------------------------------------
-    public void addOwningGroups(
-        DataproviderObject_1_0 obj,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
+    	org.opencrx.security.realm1.jmi1.PrincipalGroup group,
+    	short mode,
         List<String> report
     ) throws ServiceException {        
-        this.applyAcls(
+    	this.applyAcls(
             obj,
-            new Marshaller() {
-                public Object marshal(Object s) throws ServiceException {
-                    if(s instanceof DataproviderObject) {
-                        List<Object> groups = ((DataproviderObject)s).values("owningGroup");
-                        for(Path owningGroupIdentity: SecureObject.this.paramGroupsIdentity) {
-                            if(owningGroupIdentity != null) {
-                                if(!groups.contains(owningGroupIdentity)) {
-                                    ((DataproviderObject)s).values("owningGroup").add(
-                                        owningGroupIdentity
-                                    );
-                                }
-                            }
-                        }
-                    }
-                    return s;
-                }
-                public Object unmarshal(Object s) {
-                  throw new UnsupportedOperationException();
-                }
-            },
-            this.paramMode,
+            new AddOwningGroupMarshaller(
+            	group
+            ),
+            mode,
             "addOwningGroup",
             report
         );
@@ -375,46 +367,17 @@ public class SecureObject {
             
     //-----------------------------------------------------------------------
     public void replaceOwningGroups(
-        Path secureObjectIdentity,
-        List<String> report
-    ) throws ServiceException {
-        this.replaceOwningGroups(
-            this.backend.retrieveObject(
-                secureObjectIdentity
-            ), 
-            report
-        );
-    }
-        
-    //-----------------------------------------------------------------------
-    public void replaceOwningGroups(
-        DataproviderObject_1_0 obj,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
+    	List<org.opencrx.security.realm1.jmi1.PrincipalGroup> groups,
+    	short mode,
         List<String> report
     ) throws ServiceException {        
-        this.applyAcls(
+    	this.applyAcls(
             obj,
-            new Marshaller() {
-                public Object marshal(Object s) throws ServiceException {
-                    if(s instanceof DataproviderObject) {
-                        List<Object> groups = ((DataproviderObject)s).values("owningGroup");
-                        groups.clear();
-                        for(Path owningGroupIdentity: SecureObject.this.paramGroupsIdentity) {
-                            if(owningGroupIdentity != null) {
-                                if(!groups.contains(owningGroupIdentity)) {
-                                    ((DataproviderObject)s).values("owningGroup").add(
-                                        owningGroupIdentity
-                                    );
-                                }
-                            }
-                        }
-                    }
-                    return s;
-                }
-                public Object unmarshal(Object s) {
-                  throw new UnsupportedOperationException();
-                }
-            },
-            this.paramMode,
+            new ReplaceOwningGroupMarshaller(
+            	groups
+            ),
+            mode,
             "replaceOwningGroup",
             report
         );
@@ -422,42 +385,17 @@ public class SecureObject {
             
     //-----------------------------------------------------------------------
     public void removeOwningGroup(
-        Path secureObjectIdentity,
-        List<String> report
-    ) throws ServiceException {
-        this.removeOwningGroup(
-            this.backend.retrieveObject(
-                secureObjectIdentity
-            ), 
-            report
-        );
-    }
-        
-    //-----------------------------------------------------------------------
-    public void removeOwningGroup(
-        DataproviderObject_1_0 obj,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
+    	org.opencrx.security.realm1.jmi1.PrincipalGroup group,
+    	short mode,
         List<String> report
     ) throws ServiceException {        
-        this.applyAcls(
+    	this.applyAcls(
             obj,
-            new Marshaller() {
-                public Object marshal(Object s) throws ServiceException {
-                    if(s instanceof DataproviderObject) {
-                        for(Path owningGroupIdentity: SecureObject.this.paramGroupsIdentity) {
-                            if(owningGroupIdentity != null) {
-                                ((DataproviderObject)s).values("owningGroup").remove(
-                                    owningGroupIdentity
-                                );
-                            }
-                        }
-                    }
-                    return s;
-                }
-                public Object unmarshal(Object s) {
-                  throw new UnsupportedOperationException();
-                }
-            },
-            this.paramMode,
+            new RemoveOwningGroupMarshaller(
+            	group
+            ),
+            mode,
             "removeOwningGroup",
             report
         );
@@ -465,28 +403,16 @@ public class SecureObject {
 
     //-----------------------------------------------------------------------
     public void removeAllOwningGroup(
-        Path secureObjectIdentity,
-        List<String> report
-    ) throws ServiceException {
-        this.removeAllOwningGroup(
-            this.backend.retrieveObject(
-                secureObjectIdentity
-            ), 
-            report
-        );
-    }
-            
-    //-----------------------------------------------------------------------
-    public void removeAllOwningGroup(
-        DataproviderObject_1_0 obj,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
+    	short mode,
         List<String> report
     ) throws ServiceException {        
-        this.applyAcls(
+    	this.applyAcls(
             obj,
             new Marshaller() {
                 public Object marshal(Object s) throws ServiceException {
-                    if(s instanceof DataproviderObject) {
-                        ((DataproviderObject)s).clearValues("owningGroup");
+                    if(s instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+                        ((org.opencrx.kernel.base.jmi1.SecureObject)s).getOwningGroup().clear();
                     }
                     return s;
                 }
@@ -494,7 +420,7 @@ public class SecureObject {
                   throw new UnsupportedOperationException();
                 }
             },
-            this.paramMode,
+            mode,
             "removeAllOwningGroup",
             report
         );
@@ -502,70 +428,47 @@ public class SecureObject {
         
     //-----------------------------------------------------------------------
     public void setAccessLevel(
-        Path secureObjectIdentity,
-        List<String> report
-    ) throws ServiceException {
-        this.setAccessLevel(
-            this.backend.retrieveObject(
-                secureObjectIdentity
-            ), 
-            report
-        );
-    }
-            
-    //-----------------------------------------------------------------------
-    public void setAccessLevel(
-        DataproviderObject_1_0 obj,
+    	org.opencrx.kernel.base.jmi1.SecureObject obj,
+    	short accessLevelBrowse,
+    	short accessLevelUpdate,
+    	short accessLevelDelete,
+    	short mode,
         List<String> report
     ) throws ServiceException {        
-        this.applyAcls(
+    	this.applyAcls(
             obj,
-            new Marshaller() {
-                public Object marshal(Object s) throws ServiceException {
-                    Number accessLevelBrowse = SecureObject.this.paramAccessLevelBrowse;
-                    if((accessLevelBrowse != null) && (accessLevelBrowse.intValue() > 0)) {
-                        ((DataproviderObject)s).clearValues("accessLevelBrowse").add(
-                            accessLevelBrowse
-                        );
-                    }
-                    Number accessLevelUpdate = SecureObject.this.paramAccessLevelUpdate;
-                    if((accessLevelUpdate != null) && (accessLevelUpdate.intValue() > 0)) {
-                        ((DataproviderObject)s).clearValues("accessLevelUpdate").add(
-                            accessLevelUpdate
-                        );
-                    }
-                    Number accessLevelDelete = SecureObject.this.paramAccessLevelDelete;
-                    if((accessLevelDelete != null) && (accessLevelDelete.intValue() > 0)) {
-                        ((DataproviderObject)s).clearValues("accessLevelDelete").add(
-                            accessLevelDelete
-                        );
-                    }
-                    return s;
-                }
-                public Object unmarshal(Object s) {
-                  throw new UnsupportedOperationException();
-                }
-            },
-            this.paramMode,
+            new SetAccessLevelMarshaller(
+            	accessLevelBrowse,
+            	accessLevelUpdate,
+            	accessLevelDelete
+            ),
+            mode,
             "setAccessLevel",
             report
         );
     }
-            
+
+    //-------------------------------------------------------------------------
+    public Path getLoginRealmIdentity(
+    	String providerName
+    ) {
+    	return SecureObject.getRealmIdentity(providerName, "Default");
+    }
+    
+    //-------------------------------------------------------------------------
+    public static Path getRealmIdentity(
+    	String providerName,
+    	String realmName
+    ) {
+        return new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + realmName);
+    }
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     public static final int MODE_LOCAL = 0;
     public static final int MODE_RECURSIVE = 1;
-    
-    private final Backend backend;
-    private final Path paramUserIdentity;
-    private final List<Path> paramGroupsIdentity;
-    private final Short paramAccessLevelBrowse;
-    private final Short paramAccessLevelUpdate;
-    private final Short paramAccessLevelDelete;
-    private final Short paramMode;
-    
+        
 }
 
 //--- End of File -----------------------------------------------------------

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SimpleMimeMessage.java,v 1.2 2009/03/08 17:04:54 wfro Exp $
+ * Name:        $Id: SimpleMimeMessage.java,v 1.5 2009/04/21 16:59:58 wfro Exp $
  * Description: SimpleMimeMessage
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:54 $
+ * Date:        $Date: 2009/04/21 16:59:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,9 +55,7 @@
  */
 package org.opencrx.application.mail.importer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,13 +70,11 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import org.opencrx.kernel.backend.Activities;
-import org.openmdx.application.log.AppLog;
+import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.id.UUIDs;
 
 /**
@@ -96,7 +92,7 @@ public class SimpleMimeMessage {
      */
     public SimpleMimeMessage(
         MimeMessage theMessage
-    ) throws MessagingException, IOException {
+    ) throws MessagingException, IOException, ServiceException {
         this(theMessage, false);
     }
 
@@ -116,7 +112,7 @@ public class SimpleMimeMessage {
     public SimpleMimeMessage(
         MimeMessage theMessage,
         boolean initAttributes
-    ) throws MessagingException, IOException {
+    ) throws MessagingException, IOException, ServiceException {
         this.mimeMsg = theMessage;
         if(initAttributes) {
             this.getDate();
@@ -160,6 +156,7 @@ public class SimpleMimeMessage {
      * 
      * @return the concatenated header elements of the message
      */
+    @SuppressWarnings("unchecked")
     public String getAllHeaderLinesAsString(
     ) throws MessagingException {
         if(this.headerLines == null) {
@@ -190,9 +187,9 @@ public class SimpleMimeMessage {
      * @return
      */
     public String getBody(
-    ) throws MessagingException, IOException {
+    ) throws MessagingException, IOException, ServiceException {
         if (this.messageBody == null) {
-            this.messageBody = Activities.getMessageBody(this.mimeMsg);
+            this.messageBody = Activities.getInstance().getMessageBody(this.mimeMsg);
         }
         return this.messageBody;
     }
@@ -357,8 +354,8 @@ public class SimpleMimeMessage {
    * @return the subject of the message
    */
   public short getPriority(
-  ) throws MessagingException {
-      return Activities.getMessagePriority(this.mimeMsg);
+  ) throws MessagingException, ServiceException {
+      return Activities.getInstance().getMessagePriority(this.mimeMsg);
   }
 
   //-------------------------------------------------------------------------  
@@ -401,7 +398,8 @@ public class SimpleMimeMessage {
    * 
    * @return      collection of the attachments or null otherwise
    */
-  public Collection getContents(
+  @SuppressWarnings("unchecked")
+public Collection getContents(
   ) {
       return this.content.isEmpty()
       ? null
@@ -415,7 +413,8 @@ public class SimpleMimeMessage {
    * 
    * @return      collection of the text attachments or null otherwise
    */
-  public Collection getTextContents(
+  @SuppressWarnings("unchecked")
+public Collection getTextContents(
   ) {
       ArrayList textContents = new ArrayList();
       if(!this.content.isEmpty()) {
@@ -439,7 +438,8 @@ public class SimpleMimeMessage {
    * 
    * @return      collection of the binary attachments or null otherwise
    */
-  public Collection getBinaryContents(
+  @SuppressWarnings("unchecked")
+public Collection getBinaryContents(
   ) {
       ArrayList binaryContents = new ArrayList();
       if(this.content.size() > 0) {
@@ -460,7 +460,8 @@ public class SimpleMimeMessage {
   /* (non-Javadoc)
    * @see java.lang.Object#toString()
    */
-  public String toString(
+  @SuppressWarnings("unchecked")
+public String toString(
   ) {
       StringBuffer buffer = new StringBuffer();
       try {
@@ -570,82 +571,6 @@ public class SimpleMimeMessage {
   }
 
   //-------------------------------------------------------------------------
-  private void parsePart(
-      MimeBodyPart part,
-      String partSection
-  ) throws MessagingException, IOException {
-      Object partContent = part.getContent();
-      String partContentType = part.getContentType();
-
-      if(partContentType.startsWith("text/")) {      
-          String disposition = part.getDisposition();
-          if(
-              ((disposition == null) || DISPOSITION_INLINE.equalsIgnoreCase(disposition)) && 
-              (this.messageBody == null)
-          ) {
-              this.messageBody = (String)partContent;
-          }
-          else {
-              this.content.add(
-                  new MessageContent(
-                      part.getContentID(), 
-                      partSection,
-                      partContentType, 
-                      partContent            
-                  )
-              );
-          }
-      }
-      else if(partContent instanceof MimeMessage) {
-          SimpleMimeMessage nestedMsg = new SimpleMimeMessage((MimeMessage)partContent, true);
-          this.content.add(
-              new MessageContent(
-                  part.getFileName(), 
-                  partSection,
-                  partContentType, 
-                  nestedMsg
-              )
-          );
-          this.containsNestedMessageAttachment = true;
-          AppLog.trace("attached MimeMessage imported", part.getFileName());
-      }
-      else if (partContent instanceof MimeMultipart) {
-          MimeMultipart multipart = (MimeMultipart)partContent;
-          for(int i = 0; i < multipart.getCount(); i++ ) {
-              this.parsePart(
-                  (MimeBodyPart)multipart.getBodyPart(i), 
-                  partSection + "." + (i + 1)
-              );
-          }
-      }
-      else {
-          InputStream is = null;                
-          if(partContent instanceof InputStream) {
-              is = (InputStream) partContent;
-          }
-          else {
-              is = part.getInputStream();
-          }
-          ByteArrayOutputStream bos = new ByteArrayOutputStream();
-          int readByte = is.read();
-          while (readByte != -1) {
-              bos.write(readByte);
-              readByte = is.read();
-          }
-          this.content.add(
-              new MessageContent(
-                  part.getFileName(), 
-                  partSection,
-                  partContentType, 
-                  bos.toByteArray()
-              )
-          );
-          AppLog.trace("attachment of type", partContentType);
-          AppLog.trace("attachment file name", part.getFileName());
-      }
-  }
-
-  //-------------------------------------------------------------------------
   /**
    * Extracts the recipients of the given type of the message and cache it locally.
    * 
@@ -702,7 +627,7 @@ public class SimpleMimeMessage {
   private String messageBody = null;
   
   /* parts of some binary type */
-  private List content = new ArrayList();
+  private List<Object> content = new ArrayList<Object>();
 
   /* all header lines */
   private String headerLines = null;

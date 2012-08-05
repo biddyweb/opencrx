@@ -14,36 +14,126 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityTracker" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktivitäten-Tracker</_item>
+                        <_item>Alle Tracker</_item>
                       </label>
                       <toolTip>
-                        <_item>alle Aktivitäten-Tracker</_item>
+                        <_item>Alle Tracker</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityTracker" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Tracker</_item>
+														</toolTip>
+														<label>
+															<_item>Tracker</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Tracker (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>Tracker (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCategory" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kategorien</_item>
+                        <_item>Alle Kategorien</_item>
                       </label>
                       <toolTip>
-                        <_item>Kategorien</_item>
+                        <_item>Alle Kategorien</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCategory" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Kategorien</_item>
+														</toolTip>
+														<label>
+															<_item>Kategorien</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Kategorien (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>Kategorien (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityMilestone" _operation="create">
                     <_object>
                       <label>
-                        <_item>Meilensteine</_item>
+                        <_item>Alle Meilensteine</_item>
                       </label>
                       <toolTip>
-                        <_item>Meilensteine</_item>
+                        <_item>Alle Meilensteine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityMilestone" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Meilensteine</_item>
+														</toolTip>
+														<label>
+															<_item>Meilensteine</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Meilensteine (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>Meilensteine (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:filteredActivity" _operation="create">
                     <_object>
                       <label>
@@ -102,10 +192,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:workReportEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Arbeitsrapport</_item>
+                        <_item>Arbeits-/Spesenrapporte</_item>
                       </label>
                       <toolTip>
-                        <_item>Arbeitsrapport</_item>
+                        <_item>Arbeits-/Spesenrapporte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -254,18 +344,18 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcTotalQuantity">
 										<_object>
 											<toolTip>
-												<_item>Effektiven Aufwand Berechnen</_item>
+												<_item>Totalmenge gemäss Arbeits-/Spesenrapporte berechnen</_item>
 											</toolTip>
 											<label>
-												<_item>Effektiven Aufwand Berechnen</_item>
+												<_item>Totalmenge gemäss Arbeits-/Spesenrapporte berechnen</_item>
 											</label>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:in">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcTotalQuantity:Group:in">
 										<_object>
 											<toolTip>
 												<_item>Eingabe</_item>
@@ -276,7 +366,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:result">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcTotalQuantity:Group:result">
 										<_object>
 											<toolTip>
 												<_item>Resultat</_item>
@@ -287,28 +377,6 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortHours" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh (Aufwand effektiv)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh (Aufwand effektiv)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (Aufwand effektiv)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (Aufwand effektiv)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
 
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:refreshItems" _operation="create">
                     <_object>

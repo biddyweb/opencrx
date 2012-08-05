@@ -19,7 +19,7 @@
 												<_item>org:opencrx:kernel:account1:CreditLimit:creditCurrency</_item>
 												<_item>org:opencrx:kernel:account1:ContractOverview:contractCurrency</_item>
 												<_item>org:opencrx:kernel:account1:CreateLeadParams:contractCurrency</_item>
-												<_item>org:opencrx:kernel:activity1:AbstractWorkRecord:billingCurrency</_item>
+												<_item>org:opencrx:kernel:activity1:WorkAndExpenseRecord:billingCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:FilteredWorkRecord:billingCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:WorkReportEntry:billingCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:Resource:rateCurrency</_item>
@@ -28,6 +28,10 @@
 												<_item>org:opencrx:kernel:contract1:AbstractCreditLimit:creditCurrency</_item>
 												<_item>org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency</_item>
 												<_item>org:opencrx:kernel:product1:AbstractPriceLevel:priceCurrency</_item>
+												<_item>org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:rateCurrency</_item>
+												<_item>org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:rateCurrency</_item>
+												<_item>org:opencrx:kernel:activity1:ResourceAddExpenseRecordParams:rateCurrency</_item>
+												<_item>org:opencrx:kernel:activity1:ResourceAddWorkRecordParams:rateCurrency</_item>
 											</name>
 										</_object>
 										<_content>

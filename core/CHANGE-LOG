@@ -9,6 +9,114 @@
 
 
 ==============================================================================
+Version 2.5.0                                                       2009-06-08
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10008468
+      Final PrincipalGroups. Add flag to mark PrincipalGroups as final. Access 
+      level deep does not calculate subgroups for final principal groups. isFinal
+      can therefore be used to fine-control the behaviour of access level deep.
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008468
+      Final PrincipalGroups. Add flag to mark PrincipalGroups as final. The access
+      control plugin does not subgroups for final principal groups in case of
+      accessLevelBrowse=access level deep. 
+       
+      CR10008467
+      Work and Expense record. Extend existing work record so that expenses 
+      can be stored as well. Wizard CreateWorkAndExpenseRecord which allows
+      user-friendly management of work and expense records. 
+            
+      CR10007950
+      Migrate application plugin to openMDX 2 architecture. Backend classes
+      in package org.opencrx.kernel.backend are fully rewritten. The backend
+      now uses the typed jmi1 openCRX API instead of the deprecated, generic 
+      openMDX 1 RequestCollection/DataproviderObject API. A backend is now 
+      organized as library. The methods can be used in wizards, portal 
+      extensions, data bindings or backend extensions. beClass.getInstance(), 
+      e.g. Accounts.getInstance() allows an easy-to-use lookup. The standard 
+      backend classes can be overriden by user-defined implementations.
+      This way the standard openCRX business-logic can easily be adapted and
+      extended.
+      
+      A user-defined backend class can be added as follows:
+      
+      1. Write a class which extends one of the standard backend classes, 
+      e.g. Accounts as follows:
+      
+      package com.mycompany.opencrx.backend;
+
+      public class Accounts extends org.opencrx.kernel.backend.Accounts {
+
+	    public static void register(
+	    ) {
+		    registerImpl(new com.mycompany.opencrx.backend.Accounts());
+	    }
+	
+        protected Accounts(
+        ) {
+        }
+        
+        ...
+      }
+
+      2. Extend the standard Configuration class and register your backend 
+      class as follows:
+
+      package com.mycompany.opencrx.backend;
+            
+      public class Configuration extends org.opencrx.kernel.aop2.Configuration {
+
+	    public Configuration(
+        ) {
+		   super();
+		   com.mycompany.opencrx.backend.Accounts.register();
+	    }
+	
+      }
+              
+      3. Register the configuration class in 
+      src/ear/opencrx-core-CRX.ear/gateway.jar/META-INF/ejb-jar.xml. This can
+      be done by adapting the entry configuration.class.name in the
+      build.properties file.
+      
+      
+      CR10008417
+      Replace openMDX/Log by SLF4J / JDK Logger. The sub-project openMDX/Log is
+      not used anymore by openCRX. Tomcat+OpenEJB can therefore be configured
+      as follows:
+      * Option -Dorg.openmdx.log.config.filename can be removed and corresponding
+        log properties file can be removed
+      * Update CATALINA_HOME/bin/tomcat-juli.jar from openmdx/jre-1.5/core/lib
+      * Update CATALINA_HOME/lib/openmdx-base.jar from openmdx/jre-1.5/core/lib
+      * Add slf4j-jdk14-1.5.6.jar to CATALINA_HOME/lib
+      * Remove slf4j-openmdx1.jar from CATALINA_HOME/lib
+      * Adapt log configuration in CATALINA_HOME/conf/logging.properties to your needs
+      * Remove LogConsoleServlet from customized web.xml
+            
+2.1.  FIXED BUGS
+      
+      SF329844
+      So I did a post with the following settings:  
+      POST http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/7wmWgCjdEd6ri3Nu6Dapag/member 
+      <?xml version="1.0"?> 
+      <org.opencrx.kernel.account1.Member> 
+        <name>MyName</name> 
+        <account>xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/NI7XwEIBEd29BeMf4vj8cA</account> 
+      </org.opencrx.kernel.account1.Member> 
+      NI7XwEIBEd29BeMf4vj8cA should become a member of 7wmWgCjdEd6ri3Nu6Dapag. 
+      Anyway, I get a server error, without using the account argument all is fine.      
+
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
 Version 2.4.1                                                       2009-03-23
 ==============================================================================
 

@@ -14,9 +14,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -60,8 +60,6 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.uses.org.apache.commons.collections.MapUtils;
-import org.openmdx.uses.org.apache.commons.collections.map.ListOrderedMap;
 
 public class IMAPFolderImpl extends Folder implements UIDFolder {
 
@@ -77,6 +75,16 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         	IMAPFolderImpl.getMailDir(username),
             name.replace(":", "~")
         );
+        if(System.getProperty(EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE_PROPERTY_NAME) != null) {
+        	this.isEMailAddressLookupCaseInsensitive = Boolean.valueOf(
+        		System.getProperty(EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE_PROPERTY_NAME)
+        	);
+        }
+        if(System.getProperty(EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME) != null) {
+        	this.isEMailAddressLookupIgnoreDisabled = Boolean.valueOf(
+        		System.getProperty(EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME)
+        	);
+        }
         this.folderDir.mkdirs();
         this.activitiesHelper = activitiesHelper;        
     }
@@ -139,7 +147,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     protected void addMedia(
         MimeMessage mimeMessage,
         EMail emailActivity
-    ) throws IOException, MessagingException {
+    ) throws IOException, MessagingException, ServiceException {
         if(mimeMessage.getContent() instanceof MimeMultipart) {
             MimeMultipart multipart = (MimeMultipart)mimeMessage.getContent();
             for(int i = 1; i < multipart.getCount(); i++) {
@@ -155,7 +163,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                     }
                 }
                 if(!found) {
-                    Activities.addMedia(
+                    Activities.getInstance().addMedia(
                         this.activitiesHelper.getPersistenceManager(),
                         emailActivity,
                         contentType[0],
@@ -193,7 +201,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 for(Message message: newMessages) {
                     MimeMessage mimeMessage = (MimeMessage)message;
                     try {
-                        List<org.opencrx.kernel.activity1.jmi1.Activity> activities = Activities.lookupEmailActivity(
+                        List<org.opencrx.kernel.activity1.jmi1.Activity> activities = Activities.getInstance().lookupEmailActivity(
                             pm,
                             providerName,
                             segmentName,
@@ -210,7 +218,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                                 null, // dueBy
                                 ICalendar.ICAL_TYPE_NA, // icalType
                                 mimeMessage.getSubject(),
-                                Activities.getMessagePriority(message),
+                                Activities.getInstance().getMessagePriority(message),
                                 null, // reportingContract
                                 null, // scheduledEnd
                                 null  // scheduledStart
@@ -243,7 +251,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             );
                             mimeMessage.writeTo(mimeMessageZipped);
                             mimeMessageZipped.close();
-                            Activities.addMedia(
+                            Activities.getInstance().addMedia(
                                 pm, 
                                 emailActivity, 
                                 "application/zip", 
@@ -252,7 +260,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             );
                             // Update activity step 3
                             pm.currentTransaction().begin();
-                            String body = Activities.getMessageBody(mimeMessage);
+                            String body = Activities.getInstance().getMessageBody(mimeMessage);
                             emailActivity.setMessageBody(
                                 body == null ? "" : body
                             );
@@ -264,11 +272,11 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             }
                             pm.currentTransaction().commit();
                             // Add originator and recipients to a note
-                            Activities.addNote(
+                            Activities.getInstance().addNote(
                                 pm,
                                 emailActivity,
                                 "Recipients",
-                                Activities.getRecipientsAsNoteText(
+                                Activities.getInstance().getRecipientsAsNoteText(
                                     pm,
                                     providerName,
                                     segmentName,
@@ -276,11 +284,12 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                                     this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.TO)),
                                     this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.CC)),
                                     this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.BCC)),
-                                    CASE_INSENSITIVE_ADDRESS_LOOKUP
+                                    this.isEMailAddressLookupCaseInsensitive,
+                                    this.isEMailAddressLookupIgnoreDisabled
                                 )
                             );                  
                             // Add headers as Note
-                            Activities.addNote(
+                            Activities.getInstance().addNote(
                                 pm,
                                 emailActivity,
                                 "Message-Header",
@@ -300,20 +309,22 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                         }
                         // Add FROM as sender
                         List<org.opencrx.kernel.account1.jmi1.EMailAddress> addresses = 
-                            Accounts.lookupEmailAddress(
+                            Accounts.getInstance().lookupEmailAddress(
                                 pm,
                                 providerName,
                                 segmentName,
                                 this.getInternetAddresses(mimeMessage.getFrom())[0],
-                                CASE_INSENSITIVE_ADDRESS_LOOKUP
+                                this.isEMailAddressLookupCaseInsensitive,
+                                this.isEMailAddressLookupIgnoreDisabled                                
                             );
                         if(addresses.isEmpty()) {
-                            addresses = Accounts.lookupEmailAddress(
+                            addresses = Accounts.getInstance().lookupEmailAddress(
                                 pm,
                                 providerName,
                                 segmentName,
                                 Addresses.UNASSIGNED_ADDRESS,
-                                CASE_INSENSITIVE_ADDRESS_LOOKUP
+                                this.isEMailAddressLookupCaseInsensitive,
+                                this.isEMailAddressLookupIgnoreDisabled                                
                             );                            
                         }
                         EMailAddress from = null;
@@ -323,23 +334,25 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             emailActivity.setSender(from);
                             pm.currentTransaction().commit();
                         } 
-                        Activities.addRecipientToEmailActivity(
+                        Activities.getInstance().addRecipientToEmailActivity(
                             pm,
                             providerName,
                             segmentName,
                             emailActivity,
                             this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.TO)),
                             Message.RecipientType.TO,
-                            CASE_INSENSITIVE_ADDRESS_LOOKUP
+                            this.isEMailAddressLookupCaseInsensitive,
+                            this.isEMailAddressLookupIgnoreDisabled                            
                         );
-                        Activities.addRecipientToEmailActivity(
+                        Activities.getInstance().addRecipientToEmailActivity(
                             pm,
                             providerName,
                             segmentName,
                             emailActivity,
                             this.getInternetAddresses(mimeMessage.getRecipients(Message.RecipientType.CC)),
                             Message.RecipientType.CC,
-                            CASE_INSENSITIVE_ADDRESS_LOOKUP
+                            this.isEMailAddressLookupCaseInsensitive,
+                            this.isEMailAddressLookupIgnoreDisabled                            
                         );      
                     }
                     catch (Exception e) {
@@ -373,7 +386,8 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                         )
                     );
                     lastSynchronizedAt = DateFormat.getInstance().parse(reader.readLine());
-                    this.messageIds.clear();
+                    this.messageUIDs.clear();
+                    this.messageXRIs.clear();
                     while(reader.ready()) {
                         String l = reader.readLine();
                         String[] ids = l.split(" ");
@@ -383,8 +397,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             lastSynchronizedAt = null;
                             break;
                         }
-                        this.messageIds.put(
-                            Long.parseLong(ids[0]),
+                        Long uid = Long.parseLong(ids[0]);
+                        this.messageUIDs.add(uid);
+                        this.messageXRIs.put(
+                            uid,
                             ids[1]
                         ); 
                     }
@@ -402,7 +418,8 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 query.activityNumber().isNonNull();            
                 query.orderByActivityNumber().ascending();
                 if(lastSynchronizedAt == null) {
-                    this.messageIds.clear();
+                	this.messageUIDs.clear();
+                	this.messageXRIs.clear();
                 }
                 else {
                     query.modifiedAt().greaterThan(lastSynchronizedAt);
@@ -413,7 +430,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                     Long uid = Long.valueOf(activity.getActivityNumber().trim());                    
                     try {
                         MimeMessageImpl mimeMessage = new MimeMessageImpl();
-                        InputStream originalMessageStream = Activities.mapToMessage(
+                        InputStream originalMessageStream = Activities.getInstance().mapToMessage(
                             (org.opencrx.kernel.activity1.jmi1.EMail)activity, 
                             mimeMessage
                         );
@@ -433,8 +450,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             mimeMessage.setUid(uid);
                             mimeMessage.writeTo(out);
                         }
-                        out.close();                            
-                        this.messageIds.put(
+                        out.close();             
+                        this.messageUIDs.add(uid);
+                        this.messageXRIs.put(
                             uid,
                             activity.refMofId()
                         );                     
@@ -463,7 +481,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             if(auditEntry instanceof ObjectRemovalAuditEntry) {
                                 // Lookup entry which matches the removed activity's xri.
                                 // Update index and remove message file
-                                for(Map.Entry<Long,String> entry: this.messageIds.entrySet()) {
+                                for(Map.Entry<Long,String> entry: this.messageXRIs.entrySet()) {
                                     if(auditEntry.getAuditee().equals(entry.getValue())) {
                                         File mimeMessageFile = new File(
                                             this.folderDir, 
@@ -473,7 +491,8 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                                             mimeMessageFile.delete();
                                         } 
                                         catch(Exception e) {}
-                                        this.messageIds.remove(entry.getKey());
+                                        this.messageUIDs.remove(entry.getKey());
+                                        this.messageXRIs.remove(entry.getKey());
                                         break;
                                     }
                                 }
@@ -488,7 +507,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
             try {
                 PrintStream out = new PrintStream(indexFile);
                 out.println(DateFormat.getInstance().format(new Date()));
-                for(Map.Entry<Long,String> entry: this.messageIds.entrySet()) {
+                for(Map.Entry<Long,String> entry: this.messageXRIs.entrySet()) {
                     out.println(Long.toString(entry.getKey()) + " " + entry.getValue());
                 }
                 out.close();
@@ -549,9 +568,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     ) throws MessagingException {
         if(this.activitiesHelper != null) {
             this.synchronizeMailDir();
-            Long uid = messageNumber <= this.messageIds.size()
-                ? (Long)((ListOrderedMap)this.messageIds).get(messageNumber - 1)
-                : null;
+            Long uid = messageNumber <= this.messageUIDs.size() ? 
+            	this.messageUIDs.get(messageNumber - 1) : 
+            	null;
             if(uid != null) {
                 File mimeMessageFile = new File(this.folderDir, uid + ".eml");
                 try {
@@ -576,7 +595,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     ) throws MessagingException {
         if(this.activitiesHelper != null) {
             this.synchronizeMailDir();
-            return this.messageIds.size();
+            return this.messageUIDs.size();
         }
         else {
             return 0;
@@ -677,7 +696,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 MimeMessageImpl mimeMessage = new MimeMessageImpl(in);
                 in.close();
                 mimeMessage.setUid(uid);
-                int messageIndex = ((ListOrderedMap)this.messageIds).indexOf(uid);
+                int messageIndex = this.messageUIDs.indexOf(uid);
                 if(messageIndex != -1) {
                     mimeMessage.setMessageNumber(messageIndex + 1);
                 }
@@ -705,7 +724,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         List<Message> result = new ArrayList<Message>();
         if(this.activitiesHelper != null) {
             this.synchronizeMailDir();
-            for(Long uid: this.messageIds.keySet()) {
+            for(Long uid: this.messageXRIs.keySet()) {
                 if(uid >= start && uid <= end) {
                     result.add(this.getMessageByUID(uid));
                 }
@@ -744,16 +763,20 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static final boolean CASE_INSENSITIVE_ADDRESS_LOOKUP = true;
     protected static final String UNSPECIFIED_ADDRESS = "NO_ADDRESS_SPECIFIED";
     protected static final String INDEX_FILE_NAME = ".INDEX";
     protected static final long SYNCHRONIZE_REFRESH_RATE = 60000;
     public static final String MAILDIR_PROPERTY_NAME = "org.opencrx.maildir";
+    public static final String EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE_PROPERTY_NAME = "org.opencrx.eMailAddressLookupCaseInsensitive";
+    public static final String EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME = "org.opencrx.eMailAddressLookupIgnoreDisabled";
     
     protected final String name;
     protected final ActivitiesHelper activitiesHelper;
-    protected final Map<Long,String> messageIds = MapUtils.orderedMap(new HashMap<Long,String>());
+    protected final List<Long> messageUIDs = new ArrayList<Long>();
+    protected final Map<Long,String> messageXRIs = new TreeMap<Long,String>();
     protected File folderDir;
+	protected boolean isEMailAddressLookupCaseInsensitive = true;
+	protected boolean isEMailAddressLookupIgnoreDisabled = false;
     protected long synchronizeNextAt = 0;
 
 }

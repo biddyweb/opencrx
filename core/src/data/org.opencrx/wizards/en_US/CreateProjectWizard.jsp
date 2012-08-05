@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateProjectWizard.jsp,v 1.11 2009/03/25 10:14:50 wfro Exp $
+ * Name:        $Id: CreateProjectWizard.jsp,v 1.13 2009/05/11 12:12:33 cmu Exp $
  * Description: CreateProjectWizard
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/25 10:14:50 $
+ * Date:        $Date: 2009/05/11 12:12:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,7 +89,6 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	String formName = "CreateActivityTrackerForm";
 	String wizardName = "CreateProjectWizard.jsp";
 
@@ -145,16 +144,16 @@ org.openmdx.application.log.*
 	        (name.length() > 0)
 	    ) {
 			org.opencrx.security.realm1.jmi1.PrincipalGroup usersGroup =
-				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
+				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
 					"Users",
-					org.opencrx.kernel.backend.SecureObject.getRealm(
+					org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
 						pm,
 						providerName,
 						segmentName
 					),
 					pm
 				);	    	
-	        org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.initActivityTracker(
+	        org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.getInstance().initActivityTracker(
 	            name,
 	            Arrays.asList(usersGroup),
 	            pm,
@@ -162,12 +161,12 @@ org.openmdx.application.log.*
 	            segmentName
 	        );
 	    	// ActivityCreator Incident
-	    	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.initActivityCreator(
+	    	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_INCIDENTS,
-		    	Activities.initActivityType(
+		    	Activities.getInstance().initActivityType(
 		    	    Activities.ACTIVITY_CREATOR_NAME_INCIDENTS,
 		    	    Activities.ACTIVITY_CLASS_INCIDENT,
-		    	    Activities.findActivityProcess(
+		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
@@ -183,12 +182,12 @@ org.openmdx.application.log.*
 	    	    segmentName
 	    	);
 	    	// ActivityCreator Meeting
-	    	Activities.initActivityCreator(
+	    	Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
-		    	Activities.initActivityType(
+		    	Activities.getInstance().initActivityType(
 		    	    Activities.ACTIVITY_TYPE_NAME_MEETINGS,
 		    	    Activities.ACTIVITY_CLASS_MEETING,
-		    	    Activities.findActivityProcess(
+		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
@@ -204,12 +203,12 @@ org.openmdx.application.log.*
 	    	    segmentName
 	    	);
 	    	// ActivityCreator Task
-	    	Activities.initActivityCreator(
+	    	Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_TASKS,
-		    	Activities.initActivityType(
+		    	Activities.getInstance().initActivityType(
 		    	    Activities.ACTIVITY_TYPE_NAME_TASKS,
 		    	    Activities.ACTIVITY_CLASS_TASK,
-		    	    Activities.findActivityProcess(
+		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
@@ -225,12 +224,12 @@ org.openmdx.application.log.*
 	    	    segmentName
 	    	);
 	    	// ActivityCreator E-Mail
-	    	Activities.initActivityCreator(
+	    	Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_EMAILS,
-		    	Activities.initActivityType(
+		    	Activities.getInstance().initActivityType(
 		    	    Activities.ACTIVITY_TYPE_NAME_EMAILS,
 		    	    Activities.ACTIVITY_CLASS_EMAIL,
-		    	    Activities.findActivityProcess(
+		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_EMAILS,
 		    	        activitySegment,
 		    	        pm

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.7 2009/03/08 17:04:49 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.18 2009/06/01 16:56:03 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:49 $
+ * Date:        $Date: 2009/06/01 16:56:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,324 +56,150 @@
 package org.opencrx.kernel.backend;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
-import org.openmdx.application.mof.cci.Multiplicities;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jmi.reflect.RefObject;
+import javax.resource.cci.MappedRecord;
+
+import org.oasisopen.cci2.QualifierType;
+import org.oasisopen.jmi1.RefContainer;
+import org.openmdx.application.dataprovider.cci.JmiHelper;
+import org.openmdx.application.dataprovider.importer.XmlImporter;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.jmi1.BasicObject;
-import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.naming.Path;
-import org.openmdx.compatibility.base.dataprovider.importer.xml.XmlImporter;
-import org.openmdx.kernel.exception.BasicException;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
 
-public class Importer {
+public class Importer extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    static class NullOutputStream
-        extends OutputStream {
-
-        public NullOutputStream() {            
-        }        
-        public void close() throws IOException {
-        }
-        public void flush() throws IOException {
-        }
-        public void write(byte[] b, int off, int len) throws IOException {
-        }
-        public void write(byte[] b) throws IOException {
-        }
-        public void write(int b) throws IOException {
-        }
-    }
-    
+	public static void register(
+	) {
+		registerImpl(new Importer());
+	}
+	
     //-------------------------------------------------------------------------
-    public Importer(
-        Backend backend,
-        RequestCollection target,
-        RequestCollection reader
-    ) {
-        this.backend = backend;
-        this.target = target;
-        this.reader = reader;
-    }
+	public static Importer getInstance(
+	) throws ServiceException {
+		return getInstance(Importer.class);
+	}
 
+	//-------------------------------------------------------------------------
+	protected Importer(
+	) {
+		
+	}
+	
     //-------------------------------------------------------------------------
-    public Importer(
-        Backend backend,
-        RequestCollection reader
-    ) {
-        this.backend = backend;
-        this.target = null;
-        this.reader = reader;
-    }
-
-    //---------------------------------------------------------------------------
-    public void removeForeignAndDerivedAttributes(
-      DataproviderObject object
-    ) throws ServiceException {   
-
-      // remove derived attributes but not SystemAttributes
-      ModelElement_1_0 typeDef = this.backend.getModel().getElement(object.values(SystemAttributes.OBJECT_CLASS).get(0));
-      if(this.backend.getModel().isClassType(typeDef)) {
-        Map<String,ModelElement_1_0> attributeDefs = this.backend.getModel().getAttributeDefs(
-          typeDef, false, true
-        );
-        for(
-          Iterator i = object.attributeNames().iterator();
-          i.hasNext();
-        ) {
-          boolean isDerived = false;
-          boolean isChangeable = true;
-          boolean isForeign = true;
-          
-          String featureName = (String)i.next();
-          
-          // ignore namespaces
-          if(featureName.indexOf(':') < 0) {
-            ModelElement_1_0 featureDef = attributeDefs.get(featureName);
-            
-            if (featureDef != null) {
-                isDerived = 
-                  (!featureDef.objGetList("isDerived").isEmpty()) && 
-                  ((Boolean)featureDef.objGetValue("isDerived")).booleanValue();
-                isChangeable = 
-                  (!featureDef.objGetList("isChangeable").isEmpty()) && 
-                  ((Boolean)featureDef.objGetValue("isChangeable")).booleanValue();          
-                isForeign = false;
-            }
-            boolean isSystemAttribute = 
-                 SystemAttributes.OBJECT_CLASS.equals(featureName)
-              || SystemAttributes.CREATED_AT.equals(featureName)
-              || SystemAttributes.MODIFIED_AT.equals(featureName)
-              || SystemAttributes.CREATED_BY.equals(featureName)
-              || SystemAttributes.MODIFIED_BY.equals(featureName);
-
-            if((isDerived || !isChangeable || isForeign) && !isSystemAttribute) {
-              i.remove();
-            }
-          }
-        }
-      }
-    }
-    
-    //-------------------------------------------------------------------------
-    public BasicObject importItem(
+    public RefObject importItem(
         byte[] item,
         short locale,
-        String targetSegment,
+        BasicObject targetSegment,
         List<String> errors,
         List<String> report
-    ) throws ServiceException {
-        ImportHandler importer = new ImportHandler(
-            this.target,
-            this.reader,
-            targetSegment,
-            errors,
-            report
+    ) throws ServiceException {    	    	
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(targetSegment);
+        Map<Path,MappedRecord> data = new LinkedHashMap<Path,MappedRecord>();
+        XmlImporter importer = new XmlImporter(
+            data,
+            false
         );
         importer.process(
-            new InputStream[]{new ByteArrayInputStream(item)}
+        	new InputStream[]{new ByteArrayInputStream(item)}
         );
-        DataproviderObject importedObject = importer.getMainObject();
-        return importedObject == null
-            ? null
-            : (BasicObject)this.backend.getDelegatingPkg().refObject(importedObject.path().toXri());
+        // Load objects in multiple runs in order to resolve object dependencies.       
+        Map<Path,RefObject> loadedObjects = new HashMap<Path,RefObject>();
+        for(int runs = 0; runs < 5; runs++) {
+            int kk = 0;
+            for(MappedRecord entry: data.values()) {
+                // create new entries, update existing
+                try {
+                    RefObject_1_0 existing = null;
+                    try {
+                        existing = (RefObject_1_0)pm.getObjectById(
+                            ObjectHolder_2Facade.getPath(entry)
+                        );
+                    }
+                    catch(Exception e) {}
+                    if(existing != null) {
+                        loadedObjects.put(
+                            existing.refGetPath(), 
+                            existing
+                        );                                    
+                        JmiHelper.toRefObject(
+                            entry,
+                            existing,
+                            loadedObjects, // object cache
+                            pm,
+                            true, // replace values
+                            true // remove trailing empty string
+                        );
+                    }
+                    else {
+                        String qualifiedClassName = ObjectHolder_2Facade.getObjectClass(entry);
+                        String packageName = qualifiedClassName.substring(0, qualifiedClassName.lastIndexOf(':'));
+                        RefObject_1_0 newEntry = (RefObject_1_0)(pm.getObjectById(
+                            Authority.class,
+                            "xri://@openmdx*" + packageName.replace(":", ".")
+                        )).refImmediatePackage().refClass(qualifiedClassName).refCreateInstance(null);
+                        newEntry.refInitialize(false, false);
+                        JmiHelper.toRefObject(
+                            entry,
+                            newEntry,
+                            loadedObjects, // object cache
+                            pm,
+                            true, // replace values
+                            true // remove trailing empty string
+                        );
+                        Path entryPath = ObjectHolder_2Facade.getPath(entry);
+                        Path parentIdentity = entryPath.getParent().getParent();
+                        RefObject_1_0 parent = null;
+                        try {
+                            parent = loadedObjects.containsKey(parentIdentity) ? 
+                            	(RefObject_1_0)loadedObjects.get(parentIdentity) : 
+                            	(RefObject_1_0)pm.getObjectById(parentIdentity);
+                        } 
+                        catch(Exception e) {}
+                        if(parent != null) {
+                            RefContainer container = (RefContainer)parent.refGetValue(
+                            	entryPath.get(entryPath.size() - 2)
+                            );
+                            container.refAdd(
+                                QualifierType.REASSIGNABLE,
+                                entryPath.get(entryPath.size() - 1), 
+                                newEntry
+                            );
+                        }                                    
+                        loadedObjects.put(
+                        	entryPath, 
+                            newEntry
+                        );                                    
+                    }
+                }
+                catch(Exception e) {
+                    new ServiceException(e).log();
+                    System.out.println("STATUS: " + e.getMessage() + " (for more info see log)");
+                }
+                kk++;
+            }
+        }
+        return loadedObjects.isEmpty() ?
+        	null :
+        	loadedObjects.values().iterator().next();
     }
   
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     public static final String MIME_TYPE = "text/xml";
-    protected static final Path REALM_PATTERN = new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/Root/realm/:*");
-    protected final Backend backend;
-    protected final RequestCollection target;
-    protected final RequestCollection reader;
-
-    //-------------------------------------------------------------------------
-    class ImportHandler extends XmlImporter {
-      
-        public ImportHandler(
-            RequestCollection target,
-            RequestCollection reader,
-            String targetSegment,
-            List<String> errors,
-            List<String> report
-        ) throws ServiceException {
-            super(target, reader, false, true);
-            this.targetSegment = targetSegment;
-            this.errors = errors;
-            this.report = report;
-        }
-
-        private void addError(
-            String message
-        ) {
-            if(this.errors.size() < 5) {
-                this.errors.add(message);
-            }
-        }
-            
-        private void addError(
-            SAXParseException e
-        ) {
-            this.addError("[" + this.getLocationString(e) + "]: " + e.getMessage());
-        }
-            
-        public void beginObject(
-            DataproviderObject object, 
-            String operation
-        ) throws ServiceException {
-            if(
-                (object.path().size() > 5) &&
-                ((this.mainObject == null) || (object.path().size() < this.mainObject.path().size()))
-            ) {
-                this.mainObject = object;
-            }
-        }
-    
-        public void endObject(
-            DataproviderObject object, 
-            String operation
-        ) throws ServiceException {
-            try {
-                if(!"null".equals(operation)) {
-                    // Remap all paths to target segment:
-                    // <ul>
-                    //   <li>data can only be imported to segment of invoking user
-                    //   <li>XMLs for a specific segment can easily be imported into other segments without modification
-                    // </ul>
-                    if(
-                        (object.path().size() > 4) &&
-                        !this.targetSegment.equals(object.path().get(4))
-                    ) {
-                        object.path().setTo(
-                          object.path().getPrefix(4).getChild(this.targetSegment).getDescendant(object.path().getSuffix(5))
-                        );
-                    }
-                    // Remap segment of all path values except for Root segment (Root segment
-                    // is used for shared objects such as Users, Uoms)
-                    for(Iterator i = object.attributeNames().iterator(); i.hasNext(); ) {
-                        List values = object.values((String)i.next());
-                        for(Iterator j = values.iterator(); j.hasNext(); ) {
-                            Object value = j.next();
-                            if(value instanceof Path) {
-                                Path p = (Path)value;
-                                // Fix realm for owning groups and users
-                                if(p.getPrefix(Importer.REALM_PATTERN.size()).isLike(Importer.REALM_PATTERN)) {
-                                    p.setTo(
-                                        p.getPrefix(6).getChild(this.targetSegment).getDescendant(p.getSuffix(7))
-                                    );                                   
-                                }
-                                else if(!this.targetSegment.equals(((Path)value).get(4))) {
-                                    if(p.size() > 4) {
-                                        p.setTo(
-                                            p.getPrefix(4).getChild(this.targetSegment).getDescendant(p.getSuffix(5))
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    try {
-                        // verify object to be replaced
-                        DataproviderObject test = new DataproviderObject(
-                            Importer.this.backend.retrieveObjectForModification(
-                                object.path()
-                            )
-                        );
-                        test.addClones(
-                            object,
-                            true
-                        );
-                        Importer.this.backend.getModel().verifyObject(
-                            test,
-                            test.values(SystemAttributes.OBJECT_CLASS).get(0),
-                            Multiplicities.SINGLE_VALUE,
-                            "create".equals(operation)
-                        );
-                        
-                        // replace
-                        Importer.this.removeForeignAndDerivedAttributes(object);                
-                        Importer.this.backend.retrieveObjectForModification(
-                            object.path()
-                        ).addClones(
-                            object,
-                            true
-                        );
-                    } 
-                    catch(Exception e) {
-                        Importer.this.backend.getModel().verifyObject(
-                            object,
-                            object.values(SystemAttributes.OBJECT_CLASS).get(0),
-                            Multiplicities.SINGLE_VALUE,
-                            "create".equals(operation)
-                        );
-                        Importer.this.removeForeignAndDerivedAttributes(object);                
-                        Importer.this.target.addCreateRequest(object);
-                    }
-                    this.report.add(operation);
-                }
-            }
-            catch(ServiceException e) {
-                e.log(); // log for administrators
-                this.addError(e.getMessage() + " at object " + object.path());
-            }
-        }
-        
-        public void error(
-          SAXParseException e
-        ) throws SAXException {
-            this.addError(e);
-            super.error(e);
-        }
-
-        public void fatalError(
-            SAXParseException e
-        ) throws SAXException {
-            this.addError(e);
-            super.fatalError(e);
-        }
-
-        public void warning(
-            SAXParseException e
-        ) {
-            this.report.add(e.getMessage());
-            super.warning(e);
-        }
-        
-        public void process(
-            InputStream[] is
-        ) {
-            try {
-                super.process(is);
-            }
-            catch(ServiceException e) {
-                BasicException be = e.getCause(null);
-                this.errors.add(be.getDescription() + " (" + Arrays.asList(be.getParameters()) + ")");
-            }
-        }
-        
-        public DataproviderObject getMainObject(
-        ) {
-          return this.mainObject;
-        }
-        
-        private DataproviderObject mainObject = null;
-        private final String targetSegment;
-        private final List<String> errors;
-        private final List<String> report;
-    }
     
 }
 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.43 2009/03/09 15:43:50 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.63 2009/06/05 09:20:12 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.63 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/09 15:43:50 $
+ * Date:        $Date: 2009/06/05 09:20:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,6 +68,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -78,16 +79,32 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
+import org.opencrx.kernel.activity1.jmi1.Absence;
+import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
+import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
+import org.opencrx.kernel.activity1.jmi1.AbstractPhoneCallRecipient;
 import org.opencrx.kernel.activity1.jmi1.Activity;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
+import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.EMail;
+import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
+import org.opencrx.kernel.activity1.jmi1.ExternalActivity;
+import org.opencrx.kernel.activity1.jmi1.Incident;
+import org.opencrx.kernel.activity1.jmi1.IncidentParty;
+import org.opencrx.kernel.activity1.jmi1.Mailing;
+import org.opencrx.kernel.activity1.jmi1.MailingRecipient;
+import org.opencrx.kernel.activity1.jmi1.Meeting;
+import org.opencrx.kernel.activity1.jmi1.MeetingParty;
+import org.opencrx.kernel.activity1.jmi1.PhoneCall;
+import org.opencrx.kernel.activity1.jmi1.Task;
+import org.opencrx.kernel.activity1.jmi1.TaskParty;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.collection.SparseList;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
@@ -96,88 +113,40 @@ import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
-public class ICalendar {
+public class ICalendar extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    public ICalendar(
-        Backend backend
-    ) {
-        this.backend = backend;
-        this.partyMetadata = new HashMap<String, String[]>();
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Absence", null
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:EMail", new String[]{"org:opencrx:kernel:activity1:EMailRecipient", "emailRecipient"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:ExternalActivity", null
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Fax", new String[]{"org:opencrx:kernel:activity1:FaxRecipient", "faxRecipient"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Incident", new String[]{"org:opencrx:kernel:activity1:IncidentParty", "incidentParty"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Mailing", new String[]{"org:opencrx:kernel:activity1:MailingRecipient", "mailingRecipient"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Meeting", new String[]{"org:opencrx:kernel:activity1:MeetingParty", "meetingParty"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:SalesVisit", new String[]{"org:opencrx:kernel:activity1:MeetingParty", "meetingParty"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Mms", new String[]{"org:opencrx:kernel:activity1:MmsRecipient", "mmsRecipient"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:PhoneCall", new String[]{"org:opencrx:kernel:activity1:PhoneCallRecipient", "phoneCallRecipient"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Sms", new String[]{"org:opencrx:kernel:activity1:SmsRecipient", "smsRecipient"}
-        );
-        this.partyMetadata.put(
-            "org:opencrx:kernel:activity1:Task", new String[]{"org:opencrx:kernel:activity1:TaskParty", "taskParty"}
-        );        
-    }
-
+	public static void register(
+	) {
+		registerImpl(new ICalendar());
+	}
+	
     //-------------------------------------------------------------------------
-    private Short numberAsShort(
-        Object number
-    ) {
-        return new Short(((Number)number).shortValue());
-    }
+	public static ICalendar getInstance(		
+	) throws ServiceException {
+		return getInstance(ICalendar.class);
+	}
 
+	//-------------------------------------------------------------------------
+	protected ICalendar(
+	) {
+		
+	}
+	
     //-------------------------------------------------------------------------
     public String getPrimaryEMailAddress(
-        Path contact
+        Account account
     ) throws ServiceException {
-        List addresses = this.backend.getDelegatingRequests().addFindRequest(
-            contact.getChild("address"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
+        Collection<AccountAddress> addresses = account.getAddress();
         String emailAddress = null;
-        for(Iterator i = addresses.iterator(); i.hasNext(); ) {
-            DataproviderObject_1_0 address = (DataproviderObject_1_0)i.next();
-            String addressClass = (String)address.values(SystemAttributes.OBJECT_CLASS).get(0);
-            List usage = new ArrayList();
-            for(Iterator j = address.values("usage").iterator(); j.hasNext(); ) {
-                usage.add(
-                    this.numberAsShort(j.next())
-                );
-            }
-            if("org:opencrx:kernel:account1:EMailAddress".equals(addressClass)) {
-                List adr = address.values("emailAddress");
-                if((emailAddress == null) && !adr.isEmpty()) {
-                    emailAddress = (String)adr.get(0);
+        for(AccountAddress address: addresses) {
+            if(address instanceof EMailAddress) {
+                String adr = ((EMailAddress)address).getEmailAddress();
+                if((emailAddress == null) && (adr != null)) {
+                    emailAddress = adr;
                 }
-                if((adr.size() > 0) && (usage.contains(USAGE_EMAIL_PRIMARY))) {
-                    emailAddress = (String)adr.get(0);
+                if((adr != null) && (address.getUsage().contains(USAGE_EMAIL_PRIMARY))) {
+                    emailAddress = adr;
                 }
             }
         }
@@ -201,28 +170,66 @@ public class ICalendar {
     }
 
     //-------------------------------------------------------------------------
-    /**
-     * Update existing ical (activity.ical) with new activity values and return 
-     * merged ical. 
-     */
     public String mergeIcal(
-        DataproviderObject_1_0 activity,
+        Activity activity,
         String sourceIcal,
         List<String> statusMessage
     ) throws ServiceException {
-        short icalType = ((Number)activity.values("icalType").get(0)).shortValue();
-        if((icalType == ICAL_TYPE_NA) && !activity.values("lastAppliedCreator").isEmpty()) {
-            DataproviderObject_1_0 activityCreator = this.backend.retrieveObject(
-                (Path)activity.values("lastAppliedCreator").get(0)
-            );
-            if(!activityCreator.values("icalType").isEmpty()) {
-                icalType = ((Number)activityCreator.values("icalType").get(0)).shortValue();
-            }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+        short icalType = activity.getIcalType();
+        if(icalType == ICAL_TYPE_NA) {
+        	// Try to derive get icalType from sourceICal
+        	if((sourceIcal != null) && (sourceIcal.indexOf("BEGIN:VEVENT") > 0)) {
+        		icalType = ICAL_TYPE_VEVENT;
+        	}
+        	else if((sourceIcal != null) && (sourceIcal.indexOf("BEGIN:VTODO") > 0)) {
+        		icalType = ICAL_TYPE_VTODO;
+        	}
+        	// If still undefined, try to derive from last applied creator
+        	else {
+	            ActivityCreator activityCreator = null;
+	            try {
+	            	activityCreator = activity.getLastAppliedCreator();
+	            }
+	            catch(Exception e) {} // don't care if creator can not be accessed
+	            if(
+	            	(activityCreator != null) && 
+	            	(activityCreator.getIcalType() != ICAL_TYPE_NA)
+	            ) {
+	                icalType = activityCreator.getIcalType();
+	            }
+	            else {
+	            	if(activity instanceof Absence) {
+	            		icalType = ICAL_TYPE_VEVENT;
+	            	}
+	            	else if(activity instanceof EMail) {
+	            		icalType = ICAL_TYPE_VEVENT;
+	            	}
+	            	else if(activity instanceof ExternalActivity) {
+	            		icalType = ICAL_TYPE_VEVENT;
+	            	}
+	            	else if(activity instanceof Incident) {
+	            		icalType = ICAL_TYPE_VTODO;
+	            	}
+	            	else if(activity instanceof Mailing) {
+	            		icalType = ICAL_TYPE_VEVENT;
+	            	}
+	            	else if(activity instanceof Meeting) {
+	            		icalType = ICAL_TYPE_VEVENT;
+	            	}
+	            	else if(activity instanceof PhoneCall) {
+	            		icalType = ICAL_TYPE_VEVENT;
+	            	}
+	            	else if(activity instanceof Task) {
+	            		icalType = ICAL_TYPE_VTODO;
+	            	}
+	            }
+        	}
         }
         // DTSTART
         String dtStart = null;
-        if(!activity.values("scheduledStart").isEmpty()) {
-            dtStart = (String)activity.values("scheduledStart").get(0);
+        if(activity.getScheduledStart() != null) {
+            dtStart = DateFormat.getInstance().format(activity.getScheduledStart());
         }
         else {
             // ical requires DTSTART. Set DTSTART to beginning of year 
@@ -232,47 +239,44 @@ public class ICalendar {
         }
         // DTEND
         String dtEnd = null;
-        if(!activity.values("scheduledEnd").isEmpty()) {
-            dtEnd = (String)activity.values("scheduledEnd").get(0);
+        if(activity.getScheduledEnd() != null) {
+            dtEnd = DateFormat.getInstance().format(activity.getScheduledEnd());
         }
         // DUE
         String dueBy = null;
-        if(!activity.values("dueBy").isEmpty()) {
-            dueBy = (String)activity.values("dueBy").get(0);
+        if(activity.getDueBy() != null) {
+            dueBy = DateFormat.getInstance().format(activity.getDueBy());
         }
         // COMPLETED
         String completed = null;
-        if(!activity.values("actualEnd").isEmpty()) {
-            completed = (String)activity.values("actualEnd").get(0);
+        if(activity.getActualEnd() != null) {
+            completed = DateFormat.getInstance().format(activity.getActualEnd());
         }
         // LAST-MODIFIED
         String lastModified = DateFormat.getInstance().format(new Date());
         // PRIORITY
-        Number priority = null;
-        if(!activity.values("priority").isEmpty()) {
-            priority = (Number)activity.values("priority").get(0);
-        }
+        Number priority = activity.getPriority();
         // SUMMARY (append activity number)
-        String summary = activity.values("name").isEmpty() ? 
+        String summary = activity.getName() == null ? 
             "" : 
-            (String)activity.values("name").get(0);
-        summary += activity.values("activityNumber").isEmpty() ? 
+            activity.getName();
+        summary += activity.getActivityNumber() == null ? 
             "" : 
-            LINE_COMMENT_INDICATOR + " #" + activity.values("activityNumber").get(0);            
+            LINE_COMMENT_INDICATOR + " #" + activity.getActivityNumber();            
         // DESCRIPTION
-        String description = activity.values("description").isEmpty() ? 
+        String description = activity.getDescription() == null ? 
             "" : 
-            (String)activity.values("description").get(0);
+            activity.getDescription();
         // LOCATION
-        String location = activity.values("location").isEmpty() ? 
+        String location = activity.getLocation() == null ? 
             "" : 
-            (String)activity.values("location").get(0);
+            activity.getLocation();
         // STATUS
         String status = null;
         // VTODO
         if(icalType == ICAL_TYPE_VTODO) {
-            Number percentComplete = (Number)activity.values("percentComplete").get(0);
-            Boolean isDisabled = (Boolean)activity.values("disabled").get(0);
+            Number percentComplete = activity.getPercentComplete();
+            Boolean isDisabled = activity.isDisabled();
             if(isDisabled != null && isDisabled.booleanValue()) {
                 status = "CANCELLED";
             }
@@ -290,8 +294,8 @@ public class ICalendar {
         }
         // VEVENT
         else {
-            Number percentComplete = (Number)activity.values("percentComplete").get(0);
-            Boolean isDisabled = (Boolean)activity.values("disabled").get(0);
+            Number percentComplete = activity.getPercentComplete();
+            Boolean isDisabled = activity.isDisabled();
             if(isDisabled != null && isDisabled.booleanValue()) {
                 status = "CANCELLED";
             }
@@ -306,61 +310,77 @@ public class ICalendar {
         }
         // Attendees
         List<String> attendees = new ArrayList<String>();
-        String activityClass = (String)activity.values(SystemAttributes.OBJECT_CLASS).get(0);
-        String[] partyMetadata = this.partyMetadata.get(activityClass);
-        if(partyMetadata != null) {
-            List participants = this.backend.getDelegatingRequests().addFindRequest(
-                activity.path().getChild(partyMetadata[1]),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-            for(Iterator i = participants.iterator(); i.hasNext(); ) {
-                DataproviderObject_1_0 participant = (DataproviderObject_1_0)i.next();
-                if(!participant.values("party").isEmpty()) {
-                    try {
-                        DataproviderObject_1_0 party = this.backend.retrieveObject(
-                            (Path)participant.values("party").get(0)
+        List<AbstractActivityParty> participants = new ArrayList<AbstractActivityParty>();
+        if(activity instanceof EMail) {
+        	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Incident) {
+        	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Mailing) {
+        	Collection<MailingRecipient> c = ((Mailing)activity).getMailingRecipient();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Meeting) {
+        	Collection<MeetingParty> c = ((Meeting)activity).getMeetingParty();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof PhoneCall) {
+        	Collection<AbstractPhoneCallRecipient> c = ((PhoneCall)activity).getPhoneCallRecipient();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Task) {
+        	Collection<TaskParty> c = ((Task)activity).getTaskParty();
+        	participants.addAll(c);
+        }
+        for(AbstractActivityParty participant: participants) {
+        	RefObject_1_0 party = null;
+        	try {
+        		party = (RefObject_1_0)participant.refGetValue("party");
+        	}
+        	catch(Exception e) {}
+            if(party != null) {
+                try {
+                    Account account = null;
+                    String emailAddress = null;
+                    // Party is Contact
+                    if(party instanceof Account) {
+                        account = (Account)party;
+                        emailAddress = this.getPrimaryEMailAddress(
+                            account
                         );
-                        DataproviderObject_1_0 contact = null;
-                        String emailAddress = null;
-                        // Party is Contact
-                        if(this.backend.isContact(party)) {
-                            contact = party;
-                            emailAddress = this.getPrimaryEMailAddress(
-                                party.path()
-                            );
+                    }
+                    // Party is address
+                    else if(party instanceof EMailAddress) {
+                        account = (Account)pm.getObjectById(
+                            party.refGetPath().getParent().getParent()
+                        );
+                        emailAddress = ((EMailAddress)party).getEmailAddress();
+                    }
+                    String partyType = participant.getPartyType() == PARTY_TYPE_OPTIONAL ? 
+                    	"OPT-PARTICIPANT" : 
+                    	"REQ-PARTICIPANT";
+                    if(emailAddress != null) {
+                        String fullName = account == null ?
+                        	null :
+                        	account.getFullName();
+                        if(fullName == null) {
+                            attendees.add(
+                                ";CN=" + emailAddress + ";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
+                            );          
                         }
-                        // Party is address
                         else {
-                            contact = this.backend.retrieveObject(
-                                party.path().getPrefix((party.path().size() - 2))
-                            );
-                            emailAddress = (String)party.values("emailAddress").get(0);
-                        }
-                        String partyType = !participant.values("partyType").isEmpty() && ((Number)participant.values("partyType").get(0)).intValue() == PARTY_TYPE_OPTIONAL 
-                            ? "OPT-PARTICIPANT"
-                            : "REQ-PARTICIPANT";
-                        String fullName = contact.values("fullName").size() == 0 ? null : (String)contact.values("fullName").get(0);
-                        if(emailAddress != null) {
-                            if(fullName == null) {
-                                attendees.add(
-                                    ";CN=" + emailAddress + ";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
-                                );          
-                            }
-                            else {
-                                attendees.add(
-                                    ";CN=\"" + fullName + " (" + emailAddress + ")\";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
-                                );            
-                            }
+                            attendees.add(
+                                ";CN=\"" + fullName + " (" + emailAddress + ")\";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
+                            );            
                         }
                     }
-                    catch(ServiceException e) {
-                        if(e.getExceptionCode() != BasicException.Code.AUTHORIZATION_FAILURE) {
-                            throw e;
-                        }
+                }
+                catch(ServiceException e) {
+                    if(e.getExceptionCode() != BasicException.Code.AUTHORIZATION_FAILURE) {
+                        throw e;
                     }
                 }
             }
@@ -368,9 +388,9 @@ public class ICalendar {
         
         // ORGANIZER
         String organizerEmailAddress = null;
-        if(!activity.values("assignedTo").isEmpty()) {
+        if(activity.getAssignedTo() != null) {
             organizerEmailAddress = this.getPrimaryEMailAddress(
-                (Path)activity.values("assignedTo").get(0)
+                activity.getAssignedTo()
             );
         }
         // Return if data is missing
@@ -381,7 +401,7 @@ public class ICalendar {
             // Empty template
             UUID uid = null;
             try {
-                uid = UUIDConversion.fromString(activity.path().getBase());
+                uid = UUIDConversion.fromString(activity.refGetPath().getBase());
             }
             catch(Exception e) {
                 uid = UUIDs.getGenerator().next();
@@ -611,7 +631,7 @@ public class ICalendar {
     }
 
     //-----------------------------------------------------------------------
-    public static void removeProprietaryProperties(
+    public void removeProprietaryProperties(
         Map<String,String> ical
     ) {
         for(Iterator<String> i = ical.keySet().iterator(); i.hasNext(); ) {
@@ -656,7 +676,7 @@ public class ICalendar {
     }
         
     //-------------------------------------------------------------------------
-    public static Map<String,String> parseICal(
+    public Map<String,String> parseICal(
         BufferedReader reader,
         StringBuilder ical
     ) throws IOException {
@@ -717,7 +737,7 @@ public class ICalendar {
                         if(icalFields.containsKey(currentName)) {
                             icalFields.put(
                                 currentName,
-                                icalFields.get(currentName) + line.substring(1).replace("\\", "")
+                                icalFields.get(currentName) + line.substring(1).replace("\\n", "\n").replace("\\", "")
                             );
                         }
                         else if((pos = line.indexOf(":")) >= 0) {
@@ -727,7 +747,7 @@ public class ICalendar {
                             }
                             icalFields.put(
                                 currentName,
-                                line.substring(pos + 1).replace("\\", "")
+                                line.substring(pos + 1).replace("\\n", "\n").replace("\\", "")
                             );                            
                         }
                     }
@@ -735,7 +755,7 @@ public class ICalendar {
                         currentName = "ATTENDEE[" + nAttendees + "]";
                         icalFields.put(
                             currentName,
-                            line.substring("ATTENDEE".length()).replace("\\", "")
+                            line.substring("ATTENDEE".length()).replace("\\n", "\n").replace("\\", "")
                         );
                         nAttendees++;
                     }
@@ -746,7 +766,7 @@ public class ICalendar {
                         }
                         icalFields.put(
                             currentName,
-                            line.substring(pos + 1).replace("\\", "")
+                            line.substring(pos + 1).replace("\\n", "\n").replace("\\", "")
                         );
                     }
                     else {
@@ -755,25 +775,36 @@ public class ICalendar {
                 }
             }                 
         }      
-        ICalendar.removeProprietaryProperties(icalFields);
+        this.removeProprietaryProperties(icalFields);
         return icalFields;
     }
     
     //-------------------------------------------------------------------------
     public BasicObject importItem(
         byte[] item,
-        Path activityIdentity,
+        Activity activity,
         short locale,
         List<String> errors,
-        List<String> report
+        List<String> report,
+        boolean isEMailAddressLookupCaseInsensitive,
+        boolean isEMailAddressLookupIgnoreDisabled
     ) throws ServiceException {
-        Path accountSegmentIdentity =
-            new Path(new String[]{"org:opencrx:kernel:account1", "provider", activityIdentity.get(2), "segment", activityIdentity.get(4)});        
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
+    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+    			new Path(new String[]{
+    				"org:opencrx:kernel:account1", 
+    				"provider", 
+    				activity.refGetPath().get(2), 
+    				"segment", 
+    				activity.refGetPath().get(4)
+    			})
+    		);
         try {
             InputStream is = new ByteArrayInputStream(item);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             StringBuilder ical = new StringBuilder();
-            Map<String,String> icalFields = ICalendar.parseICal(
+            Map<String,String> icalFields = this.parseICal(
                 reader,
                 ical
             );
@@ -781,11 +812,13 @@ public class ICalendar {
             return this.importItem(
                 ical.toString(),
                 icalFields,
-                activityIdentity,
-                accountSegmentIdentity,
+                activity,
+                accountSegment,
                 locale,
                 errors,
-                report
+                report,
+                isEMailAddressLookupCaseInsensitive,
+                isEMailAddressLookupIgnoreDisabled                
             );
         }
         catch(IOException e) {
@@ -797,8 +830,7 @@ public class ICalendar {
     //-------------------------------------------------------------------------
     private BasicObject getAttendeeAsContact(
         String attendeeAsString,
-        VCard vcards,
-        Path contactSegmentPath,
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         short locale,
         List<String> report
     ) {
@@ -810,9 +842,9 @@ public class ICalendar {
         String emailPrefInternet = attendeeAsString.substring(pos + 7);
         vcard.put("EMAIL;PREF;INTERNET", emailPrefInternet);
         try {
-            return vcards.updateAccount(
+            return VCard.getInstance().updateAccount(
                 vcard,
-                contactSegmentPath,
+                accountSegment,
                 locale,
                 report
             );
@@ -823,7 +855,7 @@ public class ICalendar {
     }
 
     //-------------------------------------------------------------------------
-    protected String getUtcDateTime(
+    protected Date getUtcDate(
         String dateTime,
         SimpleDateFormat dateTimeFormatter
     ) throws ParseException {
@@ -842,7 +874,7 @@ public class ICalendar {
         else {
             date = dateTimeFormatter.parse(dateTime);
         }
-        return DateFormat.getInstance().format(date);
+        return date;
     }
     
     //-------------------------------------------------------------------------
@@ -860,16 +892,16 @@ public class ICalendar {
     public Activity importItem(
         String ical,
         Map<String,String> fields,
-        Path activityIdentity,
-        Path accountSegmentIdentity,
+        Activity activity,
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         short locale,
         List<String> errors,
-        List<String> report
+        List<String> report,
+        boolean isEMailAddressLookupCaseInsensitive,
+        boolean isEMailAddressLookupIgnoreDisabled
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
         // Prepare attendees
-        VCard vcards = new VCard(
-            this.backend
-        );
         List<EMailAddress> attendees = new ArrayList<EMailAddress>();
         List<Short> attendeeRoles = new ArrayList<Short>();
         int count = 0;
@@ -881,20 +913,20 @@ public class ICalendar {
             ) {
                 BasicObject attendee = this.getAttendeeAsContact(
                     attendeeAsString,
-                    vcards,
-                    accountSegmentIdentity,
+                    accountSegment,
                     locale,
                     report
                 );
                 if(attendee != null) {
                 	int pos = attendeeAsString.indexOf("MAILTO:");
                     String emailPrefInternet = attendeeAsString.substring(pos + 7);                	
-                	List<EMailAddress> emailAddresses = this.backend.getAccounts().lookupEmailAddress(
-                		JDOHelper.getPersistenceManager(attendee), 
-                		activityIdentity.get(2), 
-                		activityIdentity.get(4), 
-                		emailPrefInternet, 
-                		true
+                	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+                		pm, 
+                		activity.refGetPath().get(2), 
+                		activity.refGetPath().get(4), 
+                		emailPrefInternet,
+                        isEMailAddressLookupCaseInsensitive,
+                        isEMailAddressLookupIgnoreDisabled
                 	);
                 	if(!emailAddresses.isEmpty()) {
                 		attendees.add(
@@ -929,18 +961,14 @@ public class ICalendar {
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(DATETIME_FORMAT);
         dateTimeFormatter.setLenient(false);
         dateTimeFormatter.setTimeZone(tz);        
-        // Retrieve activity for modification
-        DataproviderObject activity = this.backend.retrieveObjectForModification(
-            activityIdentity
-        );
         // externalLink
         boolean hasIcalUid = false;
-        SparseList<Object> externalLinks = activity.values("externalLink");
+        List<String> externalLinks = activity.getExternalLink();
         String icalUid = fields.get("UID") == null ? 
-        	activity.path().getBase() : 
+        	activity.refGetPath().getBase() : 
         	fields.get("UID");
         for(int i = 0; i < externalLinks.size(); i++) {
-            if(((String)externalLinks.get(i)).startsWith(ICAL_SCHEMA)) {
+            if((externalLinks.get(i)).startsWith(ICAL_SCHEMA)) {
                 externalLinks.set(
                     i,
                     ICAL_SCHEMA + icalUid
@@ -958,8 +986,8 @@ public class ICalendar {
         String s = fields.get("DTSTART");
         if((s != null) && (s.length() > 0)) {
             try {
-                activity.clearValues("scheduledStart").add(
-                    this.getUtcDateTime(
+                activity.setScheduledStart(
+                	this.getUtcDate(
                         s,
                         dateTimeFormatter
                     )
@@ -972,8 +1000,8 @@ public class ICalendar {
         s = fields.get("DTEND");
         if((s != null) && (s.length() > 0)) {
             try {
-                activity.clearValues("scheduledEnd").add(
-                    this.getUtcDateTime(
+                activity.setScheduledEnd(
+                	this.getUtcDate(
                         s, 
                         dateTimeFormatter
                     )
@@ -986,8 +1014,8 @@ public class ICalendar {
         s = fields.get("DUE");
         if((s != null) && (s.length() > 0)) {
             try {
-                activity.clearValues("dueBy").add(
-                    this.getUtcDateTime(
+                activity.setDueBy(
+                	this.getUtcDate(
                         s, 
                         dateTimeFormatter
                     )
@@ -1000,8 +1028,8 @@ public class ICalendar {
         s = fields.get("COMPLETED");
         if((s != null) && (s.length() > 0)) {
             try {
-                activity.clearValues("actualEnd").add(
-                    this.getUtcDateTime(
+                activity.setActualEnd(
+                	this.getUtcDate(
                         s, 
                         dateTimeFormatter
                     )
@@ -1012,7 +1040,7 @@ public class ICalendar {
             }
         }
         else {
-            activity.clearValues("actualEnd");            
+            activity.setActualEnd(null);            
         }
         s = fields.get("PRIORITY");
         if((s != null) && (s.length() > 0)) {
@@ -1029,7 +1057,7 @@ public class ICalendar {
                     case 8: priority = 2; break; // normal
                     case 9: priority = 1; break; // low
                 }
-                activity.clearValues("priority").add(new Integer(priority));
+                activity.setPriority(new Short((short)priority));
             } 
             catch(Exception e) {
                 errors.add("PRIORITY (" + s + ")");
@@ -1046,7 +1074,7 @@ public class ICalendar {
             if(name.length() > 1000) {
                 name = name.substring(0, 1000);
             }
-            activity.clearValues("name").add(name);
+            activity.setName(name);
         }
         s = fields.get("DESCRIPTION");
         if((s != null) && (s.length() > 0)) {
@@ -1064,94 +1092,144 @@ public class ICalendar {
             if(description.length() > 1000) {
                 description = description.substring(0, 1000);
             }
-            activity.clearValues("description").add(description);
+            activity.setDescription(description);
         }
         s = fields.get("LOCATION");
         if((s != null) && (s.length() > 0)) {
-            activity.clearValues("location").add(
-                this.fromICalString(s)
+            activity.setLocation(
+            	this.fromICalString(s)
             );
         }
         s = fields.get("ORGANIZER");
         if((s != null) && (s.length() > 0)) {
             BasicObject organizer = this.getAttendeeAsContact(
-                s.startsWith("MAILTO:") 
-                    ?  s 
-                    : "MAILTO:" + s,
-                vcards,
-                accountSegmentIdentity,
+                s.startsWith("MAILTO:") ?  
+                	s : 
+                	"MAILTO:" + s,
+                accountSegment,
                 locale,
                 report
             );
             if(organizer != null) {
-                activity.clearValues("assignedTo").add(
-                    organizer.refGetPath()
+                activity.setAssignedTo(
+                    (Contact)organizer
                 );
             }
         }
         // ical
-        activity.clearValues("ical").add(ical);
-        
+        activity.setIcal(ical);        
         if(!errors.isEmpty()) {
             return null;
         }        
         report.add("Update activity");
-        // Update parties
-        String activityClass = (String)activity.values(SystemAttributes.OBJECT_CLASS).get(0);
-        String[] partyMetadata = this.partyMetadata.get(activityClass);
-        if(partyMetadata != null) {
-            List<DataproviderObject_1_0> parties = this.backend.getDelegatingRequests().addFindRequest(
-                activity.path().getChild(partyMetadata[1]),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING      
-            );
-            List<Path> existingParties = new ArrayList<Path>();
-            for(DataproviderObject_1_0 party : parties) {
-            	if(!party.values("party").isEmpty()) {
+        // Get activity's parties
+        List<AbstractActivityParty> participants = new ArrayList<AbstractActivityParty>();
+        if(activity instanceof EMail) {
+        	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Incident) {
+        	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Mailing) {
+        	Collection<MailingRecipient> c = ((Mailing)activity).getMailingRecipient();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Meeting) {
+        	Collection<MeetingParty> c = ((Meeting)activity).getMeetingParty();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof PhoneCall) {
+        	Collection<AbstractPhoneCallRecipient> c = ((PhoneCall)activity).getPhoneCallRecipient();
+        	participants.addAll(c);
+        }
+        else if(activity instanceof Task) {
+        	Collection<TaskParty> c = ((Task)activity).getTaskParty();
+        	participants.addAll(c);
+        }
+        List<Path> existingParties = new ArrayList<Path>();
+        for(AbstractActivityParty participant: participants) {
+        	try {
+        		if(participant.refGetValue("party") != null) {
 	                existingParties.add(
-	                    (Path)party.values("party").get(0)
-	                );
-            	}
-            }
-            boolean isEMailActivity = "org:opencrx:kernel:activity1:EMail".equals(activityClass);
-            // Create new parties
-            for(int i = 0; i < attendees.size(); i++) {
-                EMailAddress attendee = attendees.get(i);
-                Path attendeeIdentity = isEMailActivity ? 
-                	attendee.refGetPath() : 
-                	attendee.refGetPath().getParent().getParent();
-                if(!existingParties.contains(attendeeIdentity)) {
-                    DataproviderObject party = new DataproviderObject(
-                        activity.path().getDescendant(new String[]{partyMetadata[1], this.backend.getUidAsString()})
+	                    ((RefObject_1_0)participant.refGetValue("party")).refGetPath()
+	                );        			
+        		}
+        	}
+        	catch(Exception e) {}
+        }
+        // Add attendees
+        int ii = 0;
+        for(EMailAddress attendee: attendees) {
+            if(activity instanceof EMail) {
+            	Path partyIdentity = attendee.refGetPath();
+                if(!existingParties.contains(partyIdentity)) {
+                	EMailRecipient participant = pm.newInstance(EMailRecipient.class);
+                    participant.refInitialize(false, false);
+                	participant.setPartyType((short)PARTY_TYPE_NA);
+                    participant.setParty(attendee);
+                    ((EMail)activity).addEmailRecipient(
+                    	false,
+                    	this.getUidAsString(),
+                    	participant
                     );
-                    party.values(SystemAttributes.OBJECT_CLASS).add(partyMetadata[0]);
-                    if(
-                        "org:opencrx:kernel:activity1:Meeting".equals(activityClass) ||
-                        "org:opencrx:kernel:activity1:SalesVisit".equals(activityClass)
-                    ) {
-                        party.clearValues("partyType").add(
-                            attendeeRoles.get(i)                            
-                        );                        
-                    }
-                    else {
-                        party.clearValues("partyType").add(
-                            new Short((short)PARTY_TYPE_NA)
-                        );
-                    }
-                    party.clearValues("party").add(attendeeIdentity);
-                    this.backend.getDelegatingRequests().addCreateRequest(
-                        party
-                    );
-                    report.add("Create party");
                 }
             }
+            else if(activity instanceof Incident) {
+            	Path partyIdentity = attendee.refGetPath().getParent().getParent();
+                if(!existingParties.contains(partyIdentity)) {
+	            	IncidentParty participant = pm.newInstance(IncidentParty.class);
+	                participant.refInitialize(false, false);
+	            	participant.setPartyType((short)PARTY_TYPE_NA);
+	                participant.setParty((Account)pm.getObjectById(partyIdentity));
+	                ((Incident)activity).addIncidentParty(
+	                	false,
+	                	this.getUidAsString(),
+	                	participant
+	                );
+                }
+            }
+            else if(activity instanceof Mailing) {
+            	// Can not map to party. Mailings need postal addresses 
+            	// whereas ICal attendees are E-mail addresses
+            }
+            else if(activity instanceof Meeting) {
+            	Path partyIdentity = attendee.refGetPath().getParent().getParent();
+                if(!existingParties.contains(partyIdentity)) {
+	            	MeetingParty participant = pm.newInstance(MeetingParty.class);
+	                participant.refInitialize(false, false);
+	                participant.setPartyType(attendeeRoles.get(ii));                            
+	                participant.setParty((Account)pm.getObjectById(partyIdentity));
+	                ((Meeting)activity).addMeetingParty(
+	                	false,
+	                	this.getUidAsString(),
+	                	participant
+	                );
+                }
+            }
+            else if(activity instanceof PhoneCall) {
+            	// Can not map to party. PhoneCalls need phone numbers 
+            	// whereas ICal attendees are E-mail addresses
+            }
+            else if(activity instanceof Task) {
+            	Path partyIdentity = attendee.refGetPath().getParent().getParent();
+                if(!existingParties.contains(partyIdentity)) {
+	            	TaskParty participant = pm.newInstance(TaskParty.class);
+	                participant.refInitialize(false, false);
+	            	participant.setPartyType((short)PARTY_TYPE_NA);
+	                participant.setParty((Account)pm.getObjectById(partyIdentity));
+	                ((Task)activity).addTaskParty(
+	                	false,
+	                	this.getUidAsString(),
+	                	participant
+	                );
+                }
+            }
+            ii++;
+            report.add("Create party");
         }
-        return activity == null ? 
-            null : 
-            (Activity)this.backend.getDelegatingPkg().refObject(activity.path().toXri());
+        return activity;
     }
 
     //-------------------------------------------------------------------------
@@ -1172,9 +1250,6 @@ public class ICalendar {
     public static final short ICAL_TYPE_VTODO = 2;
     public static final short ICAL_TYPE_VEVENT = 1;
     public static final short ICAL_TYPE_NA = 0;
-
-    protected final Backend backend;
-    protected final Map<String, String[]> partyMetadata;
     
 }
 

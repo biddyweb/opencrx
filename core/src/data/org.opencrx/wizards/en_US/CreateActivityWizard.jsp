@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityWizard.jsp,v 1.8 2009/02/10 17:39:44 wfro Exp $
+ * Name:        $Id: CreateActivityWizard.jsp,v 1.11 2009/05/11 12:12:32 cmu Exp $
  * Description: CreateActivityWizard
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/10 17:39:44 $
+ * Date:        $Date: 2009/05/11 12:12:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,13 +88,12 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	String formName = "CreateActivityForm";
 	String wizardName = "CreateActivityWizard.jsp";
 
 	// Get Parameters
 	String command = request.getParameter("Command");
-	if(command == null) command = "";					
+	if(command == null) command = "";
 	boolean actionCreate = "OK".equals(command);
 	boolean actionCancel = "Cancel".equals(command);
 
@@ -113,7 +112,7 @@ org.openmdx.application.log.*
 	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:Segment">
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:createActivity">
--->	
+-->
 <%
 	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
 	org.openmdx.portal.servlet.control.FormControl form = new org.openmdx.portal.servlet.control.FormControl(
@@ -134,6 +133,7 @@ org.openmdx.application.log.*
 	    String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
 	    org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator");
 	    org.opencrx.kernel.account1.jmi1.Contact reportingContact = (org.opencrx.kernel.account1.jmi1.Contact)formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact");
+	    org.opencrx.kernel.account1.jmi1.Account reportingAccount = (org.opencrx.kernel.account1.jmi1.Account)formValues.get("org:opencrx:kernel:activity1:Activity:reportingAccount");
 	    Short priority = (Short)formValues.get("org:opencrx:kernel:activity1:Activity:priority");
 	    Date dueBy = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:dueBy");
 	    Date scheduledStart = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:scheduledStart");
@@ -161,6 +161,13 @@ org.openmdx.application.log.*
 			);
 			pm.currentTransaction().begin();
 			org.opencrx.kernel.activity1.jmi1.NewActivityResult result = activityCreator.newActivity(params);
+			pm.currentTransaction().commit();
+			org.opencrx.kernel.activity1.jmi1.Activity newActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(result.getActivity().refGetPath());
+			pm.currentTransaction().begin();
+			newActivity.setMisc1(misc1);
+			newActivity.setMisc2(misc2);
+			newActivity.setMisc3(misc3);
+			newActivity.setReportingAccount(reportingAccount);
 			pm.currentTransaction().commit();
 			session.setAttribute(wizardName, null);
 			Action nextAction = new ObjectReference(
@@ -191,7 +198,7 @@ org.openmdx.application.log.*
 <form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-	<input type="hidden" id="Command" name="Command" value="" />				
+	<input type="hidden" id="Command" name="Command" value="" />
 	<table cellspacing="8" class="tableLayout">
 		<tr>
 			<td class="cellObject">
@@ -220,7 +227,7 @@ org.openmdx.application.log.*
 			}
 		});
 		Event.stop(event);
-	});		
+	});
 </script>
 <%
 p.close(false);

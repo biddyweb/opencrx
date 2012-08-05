@@ -8,11 +8,52 @@
 			token="&lt;!-- @@OPENCRX_JDBC@@ --&gt;"
 			value="&lt;Resource id=&quot;jdbc_opencrx_CRX&quot; type=&quot;DataSource&quot;&gt;&#xD;&#xA;
 JdbcDriver org.hsqldb.jdbcDriver&#xD;&#xA;
-JdbcUrl jdbc:hsqldb:hsql://127.0.0.1:@@HSQLDB_PORT@@/CRX_2_4&#xD;&#xA;
+JdbcUrl jdbc:hsqldb:hsql://127.0.0.1:@@HSQLDB_PORT@@/CRX_2_5&#xD;&#xA;
 UserName sa&#xD;&#xA;
 Password manager99&#xD;&#xA;
 JtaManaged true&#xD;&#xA;
-&lt;/Resource&gt;&#xD;&#xA;"/>
+&lt;/Resource&gt;&#xD;&#xA;
+&#xD;&#xA;
+&lt;!--&#xD;&#xA;
+&lt;Resource id=&quot;jdbc_opencrx_CRX&quot; type=&quot;DataSource&quot;&gt;&#xD;&#xA;
+ JdbcDriver org.postgresql.Driver&#xD;&#xA;
+ JdbcUrl jdbc:postgresql://localhost/CRX_2_5&#xD;&#xA;
+ UserName postgres&#xD;&#xA;
+ Password manager99&#xD;&#xA;
+ JtaManaged true&#xD;&#xA;
+&lt;/Resource&gt;&#xD;&#xA;
+--&gt;&#xD;&#xA;
+&#xD;&#xA;
+&lt;!--&#xD;&#xA;
+&lt;Resource id=&quot;jdbc_opencrx_CRX&quot; type=&quot;DataSource&quot;&gt;&#xD;&#xA;
+ JdbcDriver oracle.jdbc.driver.OracleDriver&#xD;&#xA;
+ JdbcUrl jdbc:oracle:thin:@127.0.0.1:1521:XE&#xD;&#xA;
+ UserName CRX_2_5&#xD;&#xA;
+ Password manager99&#xD;&#xA;
+ JtaManaged true&#xD;&#xA;
+&lt;/Resource&gt;&#xD;&#xA;
+--&gt;&#xD;&#xA;
+&#xD;&#xA;
+&lt;!--&#xD;&#xA;
+&lt;Resource id=&quot;jdbc_opencrx_CRX&quot; type=&quot;DataSource&quot;&gt;&#xD;&#xA;
+ JdbcDriver com.ibm.db2.jcc.DB2Driver&#xD;&#xA;
+ JdbcUrl jdbc:db2://127.0.0.1:50000/CRX_2_5&#xD;&#xA;
+ UserName db2inst1&#xD;&#xA;
+ Password manager99&#xD;&#xA;
+ JtaManaged true&#xD;&#xA;
+&lt;/Resource&gt;&#xD;&#xA;
+--&gt;&#xD;&#xA;
+&#xD;&#xA;
+&lt;!--&#xD;&#xA;
+&lt;Resource id=&quot;jdbc_opencrx_CRX&quot; type=&quot;DataSource&quot;&gt;&#xD;&#xA;
+ JdbcDriver com.microsoft.sqlserver.jdbc.SQLServerDriver&#xD;&#xA;
+ JdbcUrl jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX_2_5;selectMethod=cursor&#xD;&#xA;
+ UserName sa&#xD;&#xA;
+ Password manager99&#xD;&#xA;
+ JtaManaged true&#xD;&#xA;
+&lt;/Resource&gt;&#xD;&#xA;
+--&gt;&#xD;&#xA;
+"/>
 
 		<replace 
 			file="@@INSTALLDIR@@/apache-tomcat-6/conf/openejb.xml" 

@@ -502,10 +502,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalStreet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Strada / Cutia poştală</_item>
+                        <_item>Strada / Cutia Poştală</_item>
                       </label>
                       <toolTip>
-                        <_item>Strada / Cutia poştală</_item>
+                        <_item>Strada / Cutia Poştală</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -513,10 +513,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCode" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cod poştal</_item>
+                        <_item>Cod Poştal</_item>
                       </label>
                       <toolTip>
-                        <_item>Cod poştal</_item>
+                        <_item>Cod Poştal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -568,10 +568,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalStreetNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Strada numărul (opţional)</_item>
+                        <_item>Numărul (opţional)</_item>
                       </label>
                       <toolTip>
-                        <_item>Strada numărul (opţional)</_item>
+                        <_item>Numărul (opţional)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

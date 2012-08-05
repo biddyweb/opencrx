@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: ResponseHelper.java,v 1.1 2009/02/14 17:22:42 wfro Exp $
+ * Name:        $Id: ResponseHelper.java,v 1.2 2009/05/21 11:00:22 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/14 17:22:42 $
+ * Date:        $Date: 2009/05/21 11:00:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,11 +82,8 @@ public final class ResponseHelper
     public static final String MONTHLY_SALE__REPORT_JSP = "MonthlySale.jsp";
     public static final String CATEGORY_SALE_REPORT_JSP = "CategorySale.jsp";
 
-    private final HttpServletResponse _response;
-
     public ResponseHelper( final HttpServletResponse _response )
     {
-        this._response = _response;
     }
 
     public final String shopUrl( final PrimaryKey categoryID )

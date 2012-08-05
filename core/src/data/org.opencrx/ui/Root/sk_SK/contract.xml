@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:assignedAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridelenie Účtu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridelenie Účtu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:competitor" _operation="create">
                     <_object>
                       <label>
@@ -40,6 +51,28 @@
                       </label>
                       <toolTip>
                         <_item>Aktivity</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepojené s</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepojené s</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstupné prepojenie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstupné prepojenie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -192,6 +225,9 @@
                       <label>
                         <_item>Stav</_item>
                       </label>
+                      <shortLabel>
+                        <_item> </_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Stav</_item>
                       </toolTip>
@@ -396,6 +432,138 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:linkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Platný od</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Platný od</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Platný do</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Platný do</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výstupné prepojenie na Zmluvu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výstupné prepojenie na Zmluvu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepojenie na zmluvu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepojenie na zmluvu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstupné prepojenie na Zmluvu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstupné prepojenie na Zmluvu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepojené na Zmluvu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepojené na Zmluvu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepojené zo Zmluvy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepojené zo Zmluvy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridelenie Účtu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridelenie Účtu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract:accountRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridelenie Účtu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rola</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition" _operation="create">
                     <_object>
                       <label>
@@ -491,6 +659,17 @@
                       </label>
                       <toolTip>
                         <_item>Merná jednotka (cena)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:ignoreProductConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rola</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ignorovať nastavenie produktu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -682,6 +861,45 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:getPositionAmountsScript" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ignorovať nastavenie produktu</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Skript Pozície</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Suma Skriptov Pozície</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:getContractAmountsScript" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Suma Skriptov Zmluvy</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Skripty Zmluvy</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Suma Skriptov Zmluvy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getPositionAmounts" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Suma Skriptov Pozície</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zístkať Sumu Pozícií</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getPositionAmounts:Group:in" _operation="create">
                     <_object>
                       <label>
@@ -777,6 +995,17 @@
                       </label>
                       <toolTip>
                         <_item>Stavové hlásenie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getContractAmounts" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Získať Sumu Zmlúv</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Získať Sumu Zmlúv</_item>
                       </toolTip>
                     </_object>
                     <_content/>

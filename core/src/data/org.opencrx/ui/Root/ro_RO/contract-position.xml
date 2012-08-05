@@ -167,10 +167,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:lineItemNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Număr POS</_item>
+                        <_item>POS #</_item>
                       </label>
                       <toolTip>
-                        <_item>Numărul liniei</_item>
+                        <_item>Numărul liniei produsului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -442,10 +442,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:taxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Taxă</_item>
+                        <_item>Taxă (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Taxă</_item>
+                        <_item>Taxă (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -464,10 +464,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:closeProbability" _operation="create">
                     <_object>
                       <label>
-                        <_item>Probabilitate de Vânzare %</_item>
+                        <_item>Probabilitate de vânzare %</_item>
                       </label>
                       <toolTip>
-                        <_item>Probabilitate de Vânzare %</_item>
+                        <_item>Probabilitate de vânzare %</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -475,10 +475,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:closeProbability" _operation="create">
                     <_object>
                       <label>
-                        <_item>Probabilitate de Vânzare %</_item>
+                        <_item>Probabilitate de vânzare %</_item>
                       </label>
                       <toolTip>
-                        <_item>Probabilitate de Vânzare %</_item>
+                        <_item>Probabilitate de vânzare %</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -486,10 +486,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition:estimatedCloseDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dată estimată de Vânzare</_item>
+                        <_item>Dată estimată de vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Dată estimată de Vânzare</_item>
+                        <_item>Dată estimată de vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -497,10 +497,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuotePosition:estimatedCloseDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dată estimată de Vânzare</_item>
+                        <_item>Dată estimată de vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Dată estimată de Vânzare</_item>
+                        <_item>Dată estimată de vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -734,10 +734,10 @@
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>Tip de taxă de vânzare</_item>
+                              <_item>Tip de taxă (TVA)</_item>
                             </label>
                             <toolTip>
-                              <_item>Tip de taxă de vânzare</_item>
+                              <_item>Tip de taxă (TVA)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -836,10 +836,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numele aplicaţiei</_item>
+                        <_item>Numele Aplicaţiei</_item>
                       </label>
                       <toolTip>
-                        <_item>Numele aplicaţiei</_item>
+                        <_item>Numele Aplicaţiei</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: OpenCrxDatabase_1.java,v 1.3 2008/12/26 22:07:34 wfro Exp $
+ * Name:        $Id: OpenCrxDatabase_1.java,v 1.4 2009/05/26 14:45:49 wfro Exp $
  * Description: openCRX persistence plugin for security provider
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/26 22:07:34 $
+ * Date:        $Date: 2009/05/26 14:45:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,7 @@
  */
 package org.opencrx.security.layer.persistence;
 
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
 
 public class OpenCrxDatabase_1 extends Database_1 {
 

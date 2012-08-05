@@ -17,7 +17,7 @@
                         <_item>Procese activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>toate procesele activităţii</_item>
+                        <_item>Toate Procesele activităţii</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -138,7 +138,7 @@
                         <_item>Statut proces</_item>
                       </label>
                       <toolTip>
-                        <_item>toate statuturile proceselor</_item>
+                        <_item>Toate Statuturile proceselor</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -149,7 +149,7 @@
                         <_item>Tranziţii</_item>
                       </label>
                       <toolTip>
-                        <_item>toate tranziţiile</_item>
+                        <_item>Toate Tranziţiile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tranziţie proces activitate</_item>
+                        <_item>Tranziţie Proces activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Tranziţie proces activitate</_item>
+                        <_item>Tranziţie Proces activitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -237,7 +237,7 @@
                         <_item>Acţiuni</_item>
                       </label>
                       <toolTip>
-                        <_item>toate acţiunile</_item>
+                        <_item>Toate Acţiunile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetActualStartAction:resetToNull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Resetează ca nedefinit</_item>
+                        <_item>Re-Stabilește ca nedefinit</_item>
                       </label>
                       <toolTip>
-                        <_item>Resetează ca nedefinit</_item>
+                        <_item>Re-Stabilește ca nedefinit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetActualEndAction:resetToNull" _operation="create">
                     <_object>
                       <label>
-                        <_item>Resetează ca nedefinit</_item>
+                        <_item>Re-Stabilește ca nedefinit</_item>
                       </label>
                       <toolTip>
-                        <_item>Resetează ca nedefinit</_item>
+                        <_item>Re-Stabilește ca nedefinit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -509,10 +509,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkedActivityFollowUpAction:activityLinkType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip legatură activitate</_item>
+                        <_item>Tip de legatură activitate</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip legatură activitate</_item>
+                        <_item>Tip de legatură activitate</_item>
                       </toolTip>
                     </_object>
                     <_content/>

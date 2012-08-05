@@ -15,9 +15,11 @@
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:depot1:DepotReference:depotUsage</_item>
-												<_item>org:opencrx:kernel:activity1:AbstractWorkRecord:depotSelector</_item>
-												<_item>org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:depotSelector</_item>
-												<_item>org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:depotSelector</_item>
+												<_item>org:opencrx:kernel:activity1:WorkAndExpenseRecord:depotSelector</_item>
+												<_item>org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:depotSelector</_item>
+												<_item>org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:depotSelector</_item>
+												<_item>org:opencrx:kernel:activity1:ResourceAddExpenseRecordParams:depotSelector</_item>
+												<_item>org:opencrx:kernel:activity1:ResourceAddWorkRecordParams:depotSelector</_item>
 											</name>
 										</_object>
 										<_content>

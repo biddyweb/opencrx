@@ -728,6 +728,9 @@
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Warehouse" _operation="create">
                     <_object>
+                      <label>
+                        <_item>Sklad</_item>
+                      </label>
                       <toolTip>
                         <_item>Sklad</_item>
                       </toolTip>
@@ -1374,6 +1377,9 @@
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:singleBooking" _operation="create">
                     <_object>
+                      <label>
+                        <_item>Rezervácie</_item>
+                      </label>
                       <toolTip>
                         <_item>Rezervácie</_item>
                       </toolTip>
@@ -1541,6 +1547,9 @@
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimple" _operation="create">
                     <_object>
+                      <label>
+                        <_item>Konečné saldo</_item>
+                      </label>
                       <toolTip>
                         <_item>Konečné saldo</_item>
                       </toolTip>

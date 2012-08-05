@@ -84,9 +84,9 @@
 %>
             <tr>
                 <td align="left" valign="top" rowspan="2"><img src="pics/<%=product.getPictureFile()%>" border="0"></td>
-                <td align="left" valign="top" ><%=product.getTitle()%></dd>
-                <td align="center" valign="top" ><%=Converter.getString( product.getUnitPrice() )%>/-</dd>
-                <td align="center" valign="top" ><%=( product.isAvailable() ? "Available" : "Unavailable" )%></dd>
+                <td align="left" valign="top" ><%=product.getTitle()%></td>
+                <td align="center" valign="top" ><%=Converter.getString( product.getUnitPrice() )%>/-</td>
+                <td align="center" valign="top" ><%=( product.isAvailable() ? "Available" : "Unavailable" )%></td>
             </tr>
 
             <tr>
@@ -154,12 +154,12 @@
 <form method="post" accept-charset="utf-8">
 <%= requestHelper.actionType( ACTION_TYPE ) %>
 Add/Edit Product:<br>
-Title: <input type="text" name=<%= Product.PROP_TITLE %> value="<%= productTitle%>" ><br>
-Available: <input type="checkbox" name=<%= Product.PROP_IS_AVAILABLE %> value="<%= isAvailable %>" ><br>
-Price: <input type="text" name=<%= Product.PROP_UNIT_PRICE %> value="<%= unitPrice %>" ><br>
+Title: <input type="text" name="<%= Product.PROP_TITLE %>" value="<%= productTitle%>" ><br>
+Available: <input type="checkbox" name="<%= Product.PROP_IS_AVAILABLE %>" value="<%= isAvailable %>" ><br>
+Price: <input type="text" name="<%= Product.PROP_UNIT_PRICE %>" value="<%= unitPrice %>" ><br>
 Description:<br>
-<textarea name=<%= Product.PROP_DETAILS %> ><%= details %></textarea><br>
-Picture File Name: <input type="text" name=<%= Product.PROP_PICTURE_FILE %> value="<%= pictureFileName %>" ><br>
+<textarea name="<%= Product.PROP_DETAILS %>" ><%= details %></textarea><br>
+Picture File Name: <input type="text" name="<%= Product.PROP_PICTURE_FILE %>" value="<%= pictureFileName %>" ><br>
 <input type="submit" name="<%= RequestHelper.ACTION %>" value="<%= action %>" >
 </form>
 </div>

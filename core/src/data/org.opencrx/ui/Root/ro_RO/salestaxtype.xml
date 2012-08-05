@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipuri de TVA</_item>
+                        <_item>Tipuri de Taxe (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipuri de TVA</_item>
+                        <_item>Tipuri de Taxe (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SalesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipul de TVA</_item>
+                        <_item>Tipul de Taxă (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipul de TVA</_item>
+                        <_item>Tipul de Taxă (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SalesTaxType:rate" _operation="create">
                     <_object>
                       <label>
-                        <_item>TVA în %</_item>
+                        <_item>Taxa (TVA) în %</_item>
                       </label>
                       <toolTip>
-                        <_item>TVA în %</_item>
+                        <_item>Taxa (TVA) în %</_item>
                       </toolTip>
                     </_object>
                     <_content/>

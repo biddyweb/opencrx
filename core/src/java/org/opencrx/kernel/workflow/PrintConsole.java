@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PrintConsole.java,v 1.14 2009/01/06 13:00:22 wfro Exp $
+ * Name:        $Id: PrintConsole.java,v 1.17 2009/04/22 14:54:00 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:00:22 $
+ * Date:        $Date: 2009/04/22 14:54:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,27 +57,24 @@ package org.opencrx.kernel.workflow;
 
 import java.util.Map;
 
-import org.opencrx.kernel.backend.Backend;
-import org.opencrx.kernel.backend.SynchWorkflow_1_0;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.base.naming.Path;
+import org.opencrx.kernel.backend.SynchWorkflow_2_0;
+import org.opencrx.kernel.base.jmi1.WorkflowTarget;
+import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ContextCapable;
 
 public class PrintConsole 
-    implements SynchWorkflow_1_0 {
+    implements SynchWorkflow_2_0 {
 
-    /* (non-Javadoc)
-     * @see org.opencrx.kernel.layer.application.Workflow_1_0#execute(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0, org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0, org.opencrx.kernel.layer.application.OpenCrxKernel_1, org.openmdx.compatibility.base.dataprovider.cci.RequestCollection)
-     */
-    public void execute(
-        DataproviderObject_1_0 userHome,
-        Path targetObjectIdentity,
-        Map params,
-        Path wfProcessInstanceIdentity,
-        Backend plugin
-    ) {
+	 public void execute(
+        WorkflowTarget wfTarget,
+        ContextCapable targetObject,
+        Map<String,Object> params,
+        WfProcessInstance wfProcessInstance
+    ) throws ServiceException {
         System.out.println("executing workflow " + this.getClass().getName());
-        System.out.println("target=" + targetObjectIdentity);
-        System.out.println("wfProcessInstance=" + wfProcessInstanceIdentity);
+        System.out.println("target=" + targetObject);
+        System.out.println("wfProcessInstance=" + wfProcessInstance);
         System.out.println("params=" + params);
     }
 

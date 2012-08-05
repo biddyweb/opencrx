@@ -32,7 +32,7 @@
                               <_item>AUD</_item>
                             </shortText>
                             <longText>
-                              <_item>AUD [Australský Dolar]</_item>
+                              <_item>AUD [Australský Dolár]</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -43,7 +43,7 @@
                               <_item>CAD</_item>
                             </shortText>
                             <longText>
-                              <_item>CAD [Kanadský Dolar]</_item>
+                              <_item>CAD [Kanadský Dolár]</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -55,17 +55,6 @@
                             </shortText>
                             <longText>
                               <_item>CNY [Jüan Renminbi]</_item>
-                            </longText>
-                          </_object>
-                          <_content/>
-                        </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="978" _operation="create">
-                          <_object>
-                            <shortText>
-                              <_item>EUR</_item>
-                            </shortText>
-                            <longText>
-                              <_item>EUR [Euro]</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -87,7 +76,7 @@
                               <_item>JPY</_item>
                             </shortText>
                             <longText>
-                              <_item>JPY [Jen]</_item>
+                              <_item>JPY [Japonský Jen]</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -120,7 +109,29 @@
                               <_item>USD</_item>
                             </shortText>
                             <longText>
-                              <_item>USD [US Dolar]</_item>
+                              <_item>USD [US Dolár]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="946" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>RON</_item>
+                            </shortText>
+                            <longText>
+                              <_item>RON [Rumunský lev]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="978" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>EUR</_item>
+                            </shortText>
+                            <longText>
+                              <_item>EUR [Euro]</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -131,7 +142,7 @@
                               <_item>BRL</_item>
                             </shortText>
                             <longText>
-                              <_item>BRL [Pravá brazilská]</_item>
+                              <_item>BRL [Brazílsky real]</_item>
                             </longText>
                           </_object>
                           <_content/>

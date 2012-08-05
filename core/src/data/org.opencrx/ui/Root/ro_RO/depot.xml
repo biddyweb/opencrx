@@ -28,7 +28,7 @@
                         <_item>Entităţi Depozit</_item>
                       </label>
                       <toolTip>
-                        <_item>toate entităţile depozit</_item>
+                        <_item>Toate Entităţile Depozit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Relaţii</_item>
                       </label>
                       <toolTip>
-                        <_item>toate relaţiile</_item>
+                        <_item>Toate Relaţiile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -50,7 +50,7 @@
                         <_item>Tip Depozit</_item>
                       </label>
                       <toolTip>
-                        <_item>toate tipurile de depozit</_item>
+                        <_item>Toate Tipurile de Depozit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -61,7 +61,7 @@
                         <_item>Rezervare Combinată</_item>
                       </label>
                       <toolTip>
-                        <_item>toate rezervările combinate</_item>
+                        <_item>Toate Rezervările Combinate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Depozit</_item>
                       </label>
                       <toolTip>
-                        <_item>toate depozitele</_item>
+                        <_item>Toate Depozitele</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -116,7 +116,7 @@
                         <_item>Grup de Depozite</_item>
                       </label>
                       <toolTip>
-                        <_item>toate grupurile de depozite</_item>
+                        <_item>Toate Grupurile de Depozite</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -138,7 +138,7 @@
                         <_item>Perioadă de Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>toate perioadele de rezervare</_item>
+                        <_item>Toate Perioadele de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -149,7 +149,7 @@
                         <_item>Text Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>toate textele de rezervare</_item>
+                        <_item>Toate Textele de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:bookingType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -454,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:origin" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sursa</_item>
+                        <_item>Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>Sursa</_item>
+                        <_item>Origine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -476,10 +476,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContext" _operation="create">
                     <_object>
                       <label>
-                        <_item>Surse</_item>
+                        <_item>Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>Surse</_item>
+                        <_item>Origine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -509,10 +509,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originId" _operation="create">
                     <_object>
                       <label>
-                        <_item>ID Sursă</_item>
+                        <_item>Identificator Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>ID Sursă</_item>
+                        <_item>Identificator Origine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -597,10 +597,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:bookingType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -784,10 +784,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:depotType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Depozit</_item>
+                        <_item>Tip de Depozit</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Depozit</_item>
+                        <_item>Tip de Depozit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1092,10 +1092,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:closingBookingTypeThreshold" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limită de confirmare Tip Rezervare</_item>
+                        <_item>Limită de confirmare Tip de Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>Limită de confirmare Tip Rezervare</_item>
+                        <_item>Limită de confirmare Tip de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1603,10 +1603,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference:holderQualifiesPosition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Poziţie Calificare Proprietar</_item>
+                        <_item>Poziţie Calificare Depozitar</_item>
                       </label>
                       <toolTip>
-                        <_item>Poziţie Calificare Proprietar</_item>
+                        <_item>Poziţie Calificare Depozitar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1933,10 +1933,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:origin" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sursă</_item>
+                        <_item>Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>Sursă</_item>
+                        <_item>Origine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2010,10 +2010,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPositionName:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2120,10 +2120,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:bookingType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2131,10 +2131,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:origin" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sursă</_item>
+                        <_item>Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>Sursă</_item>
+                        <_item>Origine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2175,10 +2175,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByProduct:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2285,10 +2285,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:bookingType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Rezervare</_item>
+                        <_item>Tip de Rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2296,10 +2296,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:origin" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sursă</_item>
+                        <_item>Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>Sursă</_item>
+                        <_item>Origine</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2340,10 +2340,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:closePeriod:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2384,10 +2384,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2417,10 +2417,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:assertReports:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2428,10 +2428,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:AssertReportsParams:bookingStatusThreshold" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limită de confirmare Rezervare</_item>
+                        <_item>Limită de confirmare rezervare</_item>
                       </label>
                       <toolTip>
-                        <_item>Limită de confirmare Rezervare</_item>
+                        <_item>Limită de confirmare rezervare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2450,10 +2450,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:openDepot" _operation="create">
                     <_object>
                       <label>
-                        <_item>Depozit Deschis</_item>
+                        <_item>Depozit deschis</_item>
                       </label>
                       <toolTip>
-                        <_item>Depozit Deschis</_item>
+                        <_item>Depozit deschis</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2461,10 +2461,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:openDepot:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2516,10 +2516,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:depotType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Depozit</_item>
+                        <_item>Tip de Depozit</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Depozit</_item>
+                        <_item>Tip de Depozit</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2593,10 +2593,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:assertReports:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2626,10 +2626,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:openDepotPosition:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2758,10 +2758,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:closeDepot:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2824,10 +2824,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:Pane:Op:Tab:closeDepotPosition:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

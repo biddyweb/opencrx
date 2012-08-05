@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendMailWorkflow.java,v 1.4 2009/03/05 17:26:34 wfro Exp $
+ * Name:        $Id: SendMailWorkflow.java,v 1.6 2009/04/21 16:54:05 wfro Exp $
  * Description: SendMailWorkflow
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/05 17:26:34 $
+ * Date:        $Date: 2009/04/21 16:54:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,7 +88,7 @@ public class SendMailWorkflow
             if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
                 org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
                     (org.opencrx.kernel.activity1.jmi1.EMail)targetObject;
-                recipients = Activities.mapMessageRecipients(
+                recipients = Activities.getInstance().mapMessageRecipients(
                     emailActivity, 
                     message
                 );
@@ -109,7 +109,7 @@ public class SendMailWorkflow
         Path targetIdentity,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
-        Map params
+        Map<String,Object> params
     ) throws ServiceException {
         String text = null;
         try {
@@ -117,7 +117,7 @@ public class SendMailWorkflow
             if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
                 org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
                     (org.opencrx.kernel.activity1.jmi1.EMail)targetObject;
-                Activities.mapMessageContent(
+                Activities.getInstance().mapMessageContent(
                     emailActivity,
                     message
                 );

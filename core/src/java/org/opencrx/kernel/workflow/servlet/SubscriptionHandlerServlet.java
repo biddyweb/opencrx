@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.51 2009/03/08 17:04:52 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.55 2009/06/09 14:10:35 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.51 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:52 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -94,7 +94,6 @@ import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.mof.cci.Model_1_3;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.id.UUIDs;
@@ -114,7 +113,6 @@ public class SubscriptionHandlerServlet
     ) throws ServletException {
 
         super.init(config);
-        this.model = Utils.getModel();
         // data connection
         try {
             this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
@@ -151,10 +149,10 @@ public class SubscriptionHandlerServlet
             return true;
         }
         for(
-            Iterator i = subscription.getEventType().iterator();
+            Iterator<Short> i = subscription.getEventType().iterator();
             i.hasNext();
         ) {
-            Short e = new Short(((Number)i.next()).shortValue());
+            Short e = i.next();
             if((e != null) && (eventType.compareTo(e) == 0)) {
                 return true;
             }
@@ -163,6 +161,7 @@ public class SubscriptionHandlerServlet
     }
     
     //-----------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     private boolean testFilterValue(
         String filterName,
         String filterValue,
@@ -275,7 +274,7 @@ public class SubscriptionHandlerServlet
         
         // Prepare filter names and filter values
         List<String> filterNames = new ArrayList<String>();
-        List filterValues = new ArrayList();
+        List<Set<String>> filterValues = new ArrayList<Set<String>>();
         if((subscription.getFilterName0() != null) && (subscription.getFilterName0().length() > 0)) {
             filterNames.add(subscription.getFilterName0());
             filterValues.add(subscription.getFilterValue0());
@@ -300,10 +299,10 @@ public class SubscriptionHandlerServlet
         boolean acceptsMessage = true;
         for(int i = 0; i < filterNames.size(); i++) {     
             boolean acceptsValues = false;
-            for(Iterator j = ((Set)filterValues.get(i)).iterator(); j.hasNext(); ) {
+            for(Iterator<String> j = filterValues.get(i).iterator(); j.hasNext(); ) {
                 acceptsValues |= this.testFilterValue(
-                    (String)filterNames.get(i),
-                    (String)j.next(),
+                    filterNames.get(i),
+                    j.next(),
                     auditee
                 );
             }
@@ -417,7 +416,7 @@ public class SubscriptionHandlerServlet
                     AppLog.error(e0.getMessage(), e0.getCause());
                 }
                 if(
-                    (markAsVisistedReply != null) ||
+                    (markAsVisistedReply != null) &&
                     (markAsVisistedReply.getVisitStatus() == 0)
                 ) {
                     List<Subscription> subscriptions = this.findSubscriptions(
@@ -465,11 +464,13 @@ public class SubscriptionHandlerServlet
                                         try {
                                             pm.currentTransaction().begin();
                                             userHome.executeWorkflow(params);
+                                            // executeWorkflow touches userHome in separate uow. Prevent concurrent modification exception                                            
+                                            pm.refresh(userHome);
                                             pm.currentTransaction().commit();
                                         }
                                         catch(Exception e) {
-                                            AppLog.warning("Can not execute workflow", performAction.getName() + "; home=" + userHome.refMofId());
-                                            AppLog.warning(e.getMessage(), e.getCause());
+                                            AppLog.warning("Execution of workflow FAILED", performAction.getName() + "; home=" + userHome.refMofId() + "; message=" + e.getMessage());
+                                            AppLog.detail(e.getMessage(), e.getCause());
                                             try {
                                                 pm.currentTransaction().rollback();
                                             } 
@@ -507,7 +508,7 @@ public class SubscriptionHandlerServlet
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );
-            Workflows.initWorkflows(
+            Workflows.getInstance().initWorkflows(
                 pm,
                 providerName,
                 segmentName                
@@ -669,7 +670,6 @@ public class SubscriptionHandlerServlet
     private PersistenceManagerFactory persistenceManagerFactory = null;
     private final List<String> runningSegments = new ArrayList<String>();
     private long startedAt = System.currentTimeMillis();
-    private Model_1_3 model = null;
 }
 
 //--- End of File -----------------------------------------------------------

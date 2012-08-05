@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunität</_item>
+                        <_item>Verkaufschance</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunität</_item>
+                        <_item>Verkaufschance</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunitäten</_item>
+                        <_item>Verkaufschancen</_item>
                       </label>
                       <toolTip>
-                        <_item>alle Opportunitäten</_item>
+                        <_item>alle Verkaufschancen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Positionen</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunitätspositionen</_item>
+                        <_item>Verkaufschancenpositionen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunitätsname</_item>
+                        <_item>Name der Verkaufschance</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunitätsname</_item>
+                        <_item>Name der Verkaufschance</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:contractLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunitätssprache</_item>
+                        <_item>Sprache</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunitätssprache</_item>
+                        <_item>Sprache</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunitätsnummer</_item>
+                        <_item>Verkaufschancennummer</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunitätsnummer</_item>
+                        <_item>Verkaufschancennummer</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:opportunitySource" _operation="create">
                     <_object>
                       <label>
-                        <_item>Herkunft der Opportunität</_item>
+                        <_item>Herkunft der Verkaufschance</_item>
                       </label>
                       <toolTip>
-                        <_item>Herkunft der Opportunität</_item>
+                        <_item>Herkunft der Verkaufschance</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Bewertung</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunitätsbeurteilung</_item>
+                        <_item>Verkaufschancenbeurteilung</_item>
                       </toolTip>
                     </_object>
                     <_content/>

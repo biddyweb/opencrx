@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateContractWizard.jsp,v 1.16 2009/02/13 18:02:18 wfro Exp $
+ * Name:        $Id: CreateContractWizard.jsp,v 1.19 2009/06/09 14:18:15 wfro Exp $
  * Description: CreateContractWizard
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/13 18:02:18 $
+ * Date:        $Date: 2009/06/09 14:18:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -93,7 +93,6 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	String formName = "CreateContractForm";
 	String wizardName = "CreateContractWizard.jsp";
 
@@ -260,7 +259,7 @@ org.openmdx.application.log.*
 	        new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName)
 	    );
 	    if(pricingRule == null) {
-	        pricingRule = Products.findPricingRule(Products.PRICING_RULE_NAME_LOWEST_PRICE, productSegment, pm);
+	        pricingRule = Products.getInstance().findPricingRule(Products.PRICING_RULE_NAME_LOWEST_PRICE, productSegment, pm);
 	        if(pricingRule != null) {
 	            formValues.put(
 	                "org:opencrx:kernel:contract1:AbstractContract:pricingRule",
@@ -272,7 +271,7 @@ org.openmdx.application.log.*
 	    org.opencrx.kernel.contract1.jmi1.CalculationRule calcRule =
 	        (org.opencrx.kernel.contract1.jmi1.CalculationRule)formValues.get("org:opencrx:kernel:contract1:AbstractContract:calcRule");
 	    if(calcRule == null) {
-	        calcRule = Contracts.findCalculationRule(Contracts.CALCULATION_RULE_NAME_DEFAULT, contractSegment, pm);
+	        calcRule = Contracts.getInstance().findCalculationRule(Contracts.CALCULATION_RULE_NAME_DEFAULT, contractSegment, pm);
 	        if(calcRule != null) {
 	            formValues.put(
 	                "org:opencrx:kernel:contract1:AbstractContract:calcRule",
@@ -457,7 +456,7 @@ org.openmdx.application.log.*
 				contract.setName(name.replace("?", "P"));
 				contractSegment.addOpportunity(
 				    false,
-				    UUIDConversion.toUID(uuids.next()),
+				    org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 				    (org.opencrx.kernel.contract1.jmi1.Opportunity)contract
 				);
 			}
@@ -466,7 +465,7 @@ org.openmdx.application.log.*
 				contract.setName(name.replace("?", "Q"));
 				contractSegment.addQuote(
 				    false,
-				    UUIDConversion.toUID(uuids.next()),
+				    org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 				    (org.opencrx.kernel.contract1.jmi1.Quote)contract
 				);
 			}
@@ -476,7 +475,7 @@ org.openmdx.application.log.*
 				((org.opencrx.kernel.contract1.jmi1.SalesOrder)contract).setSubmitDate(new Date());
 				contractSegment.addSalesOrder(
 				    false,
-				    UUIDConversion.toUID(uuids.next()),
+				    org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 				    (org.opencrx.kernel.contract1.jmi1.SalesOrder)contract
 				);
 			}
@@ -485,7 +484,7 @@ org.openmdx.application.log.*
 				contract.setName(name.replace("?", "I"));
 				contractSegment.addInvoice(
 				    false,
-				    UUIDConversion.toUID(uuids.next()),
+				    org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 				    (org.opencrx.kernel.contract1.jmi1.Invoice)contract
 				);
 			}
@@ -512,12 +511,12 @@ org.openmdx.application.log.*
 			pm.currentTransaction().begin();
 			contract.addAddress(
 			    false,
-			    UUIDConversion.toUID(uuids.next()),
+			    org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 			    shippingAddress
 			);
 			contract.addAddress(
 			    false,
-			    UUIDConversion.toUID(uuids.next()),
+			    org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 			    billingAddress
 			);
 			pm.currentTransaction().commit();
@@ -544,7 +543,7 @@ org.openmdx.application.log.*
 					    pm.currentTransaction().commit();
 					    if(pricePerUnit != null) {
 						    org.opencrx.kernel.contract1.jmi1.ContractPosition position = result.getPosition();
-						    position.refRefresh();
+						    pm.refresh(position);
 						    pm.currentTransaction().begin();
 							position.setPricePerUnit(app.parseNumber(pricePerUnit));
 							pm.currentTransaction().commit();

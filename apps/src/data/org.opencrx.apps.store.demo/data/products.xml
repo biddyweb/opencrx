@@ -138,6 +138,8 @@
                                             <detailedDescription></detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>mustang.png</description>
+                                            <itemNumber>0</itemNumber>
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -169,6 +171,8 @@
                                             <detailedDescription></detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>mercedes-slk.png</description>
+                                            <itemNumber>0</itemNumber>    
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -200,6 +204,8 @@
                                             <detailedDescription>Audi R8</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>audi-r8.png</description>
+                                            <itemNumber>0</itemNumber>
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                                                                                                                    
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -231,6 +237,8 @@
                                             <detailedDescription>Cat 1 Description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat1.gif</description>
+                                            <itemNumber>0</itemNumber>
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                                                                                                                    
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -262,6 +270,8 @@
                                             <detailedDescription>Cat 2 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat2.gif</description>
+                                            <itemNumber>0</itemNumber>
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                                                                                                                    
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -293,6 +303,8 @@
                                             <detailedDescription>Cat 3 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat3.gif</description>
+                                            <itemNumber>0</itemNumber>
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                                                                                                                    
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -324,6 +336,8 @@
                                             <detailedDescription>Cat 4 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat4.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -355,6 +369,8 @@
                                             <detailedDescription>Cat 5 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat5.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -386,6 +402,8 @@
                                             <detailedDescription>Cat 6 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat6.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -417,6 +435,8 @@
                                             <detailedDescription>Cat 7 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat7.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -448,6 +468,8 @@
                                             <detailedDescription>Cat 8 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat8.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -479,6 +501,8 @@
                                             <detailedDescription>Cat 9 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat9.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -510,6 +534,8 @@
                                             <detailedDescription>Cat 10 description</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cat10.gif</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -541,6 +567,8 @@
                                             <detailedDescription>Speyside&apos;s finest 1965 - 40 Year Old. Single Cask Single Malt.</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>malt-Ballindalloch-box-393_000.jpg</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -574,6 +602,8 @@
 2 x 20cl / 40% Vol</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>cognac-boxs-1823.jpg</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -605,6 +635,8 @@
                                             <detailedDescription>25 year old Single malt whisky</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>ardbeg-534-box.jpg</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>
@@ -636,6 +668,8 @@
                                             <detailedDescription>Ardbeg 1975 Limited Edition - 30 Year Old</detailedDescription>
                                             <defaultUom>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Standard/uom/Piece</defaultUom>
                                             <description>malt-Ardbeg-box-614_000.jpg</description>
+                                            <itemNumber>0</itemNumber>                                            
+                                            <minMaxQuantityHandling>0</minMaxQuantityHandling>                                                                                                                                                                            
                                         </_object>
                                         <_content>
                                             <basePrice>

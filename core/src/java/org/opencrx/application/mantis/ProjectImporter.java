@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProjectImporter.java,v 1.17 2009/03/08 17:04:54 wfro Exp $
+ * Name:        $Id: ProjectImporter.java,v 1.19 2009/05/16 22:20:00 wfro Exp $
  * Description: openCRX Mantis Importer
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:54 $
+ * Date:        $Date: 2009/05/16 22:20:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,9 +68,9 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -81,7 +81,10 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
+import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
 import org.opencrx.kernel.activity1.jmi1.Incident;
 import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
@@ -91,8 +94,8 @@ import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
@@ -134,7 +137,7 @@ public class ProjectImporter {
         int userId,
         org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg,
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
-        List errors
+        List<String> errors
     ) throws SQLException, ServiceException {
         if(userId == 0) {
             return null;
@@ -148,18 +151,18 @@ public class ProjectImporter {
             rs = s.getResultSet();
             while(rs.next()) {
                 String email = rs.getString("email");
-                List emails = new ArrayList();
+                List<String> emails = new ArrayList<String>();
                 StringTokenizer tokenizer = new StringTokenizer(email, ";", false);
                 while(tokenizer.hasMoreTokens()) {
                     emails.add(tokenizer.nextToken());
                 }
                 ResourceQuery resourceQuery = activityPkg.createResourceQuery();
                 resourceQuery.thereExistsDescription().equalTo(
-                    (String[])emails.toArray(new String[emails.size()])
+                    emails.toArray(new String[emails.size()])
                 );
-                List resources = activitySegment.getResource(resourceQuery);
+                List<Resource> resources = activitySegment.getResource(resourceQuery);
                 if(resources.size() == 1) {
-                    Resource resource = (Resource)resources.iterator().next();
+                    Resource resource = resources.iterator().next();
                     if(resource.getContact() == null) {
                         errors.add(
                             "Resource has no assigned contact: " + email
@@ -204,8 +207,8 @@ public class ProjectImporter {
         String processTransitionName,
         String bugCategoryNames,
         String fileBaseDir,
-        List errors,
-        List report
+        List<String> errors,
+        List<String> report
     ) {
         try {
               
@@ -213,7 +216,7 @@ public class ProjectImporter {
             if((bugCategoryNames == null) || (bugCategoryNames.length() == 0)) {
                 bugCategoryNames = "documentation, bug, software bug, hardware bug, feature request, note, question, task, installation, application form";
             }
-            List bugCategories = new ArrayList();
+            List<String> bugCategories = new ArrayList<String>();
             StringTokenizer tokenizer = new StringTokenizer(bugCategoryNames, ",;", false);
             while(tokenizer.hasMoreTokens()) {
                 bugCategories.add(
@@ -222,7 +225,7 @@ public class ProjectImporter {
             }
             
             // severities
-            Map severities = new HashMap();
+            Map<Integer,Integer> severities = new HashMap<Integer,Integer>();
             severities.put(new Integer(70), new Integer(5));
             severities.put(new Integer(60), new Integer(4));
             severities.put(new Integer(50), new Integer(4));
@@ -230,7 +233,7 @@ public class ProjectImporter {
             severities.put(new Integer(10), new Integer(1));
 
             // activityStates
-            Map activityStates = new HashMap();
+            Map<Integer,Integer> activityStates = new HashMap<Integer,Integer>();
             activityStates.put(new Integer(90), new Integer(2110));
             activityStates.put(new Integer(80), new Integer(120));
         
@@ -248,10 +251,10 @@ public class ProjectImporter {
             activityCreatorFilter.name().equalTo(
                 new String[]{activityCreatorName}
             );            
-            List activityCreators = activitySegment.getActivityCreator(activityCreatorFilter);
+            List<ActivityCreator> activityCreators = activitySegment.getActivityCreator(activityCreatorFilter);
             org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = null;
             if(activityCreators.size() == 1) {
-                activityCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)activityCreators.iterator().next();
+                activityCreator = activityCreators.iterator().next();
             }
             else {
                 errors.add(
@@ -266,10 +269,10 @@ public class ProjectImporter {
             processTransitionFilter.name().equalTo(
                 new String[]{processTransitionName}
             );            
-            List processTransitions = activityCreator.getActivityType().getControlledBy().getTransition(processTransitionFilter);
+            List<ActivityProcessTransition> processTransitions = activityCreator.getActivityType().getControlledBy().getTransition(processTransitionFilter);
             org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition processTransition = null;
             if(processTransitions.size() == 1) {
-                processTransition = (org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition)processTransitions.iterator().next();
+                processTransition = processTransitions.iterator().next();
             }
             else {
                 errors.add(
@@ -286,7 +289,7 @@ public class ProjectImporter {
             NumberFormat idFormatter = new DecimalFormat("0000000");
             
             // mantis_project_table
-            List includeProjectIds = new ArrayList();
+            List<Integer> includeProjectIds = new ArrayList<Integer>();
             System.out.println("mantis_project_table");
             s = this.conn.prepareStatement("SELECT * FROM mantis_project_table");
             s.executeQuery();
@@ -353,7 +356,7 @@ public class ProjectImporter {
                     activityFilter.thereExistsMisc1().equalTo(
                         "mantis:" + activityId
                     );
-                    List activities = activitySegment.getActivity(activityFilter);
+                    List<Activity> activities = activitySegment.getActivity(activityFilter);
                     if(activities.isEmpty()) {
                         System.out.println("Creating incident " + activityId);
                         this.pm.currentTransaction().begin();
@@ -554,8 +557,8 @@ public class ProjectImporter {
                         pm.currentTransaction().commit();
                         // Remove all assigned resources
                         pm.currentTransaction().begin();
-                        for(Iterator i = incident.getAssignedResource().iterator(); i.hasNext(); ) {
-                            ResourceAssignment assignment = (ResourceAssignment)i.next();
+                        Collection<ResourceAssignment> assignments = incident.getAssignedResource();
+                        for(ResourceAssignment assignment: assignments) {
                             assignment.refDelete();
                         }
                         pm.currentTransaction().commit();                                                

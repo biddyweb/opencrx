@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MailMerge.jsp,v 1.23 2009/02/09 13:29:07 wfro Exp $
+ * Name:        $Id: MailMerge.jsp,v 1.25 2009/06/09 14:18:15 wfro Exp $
  * Description: mail merge addresses of group's members --> RTF document
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/09 13:29:07 $
+ * Date:        $Date: 2009/06/09 14:18:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -306,6 +306,7 @@ org.openmdx.application.log.*
       return;
     }
     if (actionCancel || !hasTemplates) {
+    	 if (!hasTemplates) {System.out.println("no templates");}
          Action nextAction = new ObjectReference(
            (RefObject_1_0)pm.getObjectById(new Path(objectXri)),
            app
@@ -319,7 +320,7 @@ org.openmdx.application.log.*
    // Get template
    org.opencrx.kernel.document1.jmi1.MediaContent mediaContent =
       (org.opencrx.kernel.document1.jmi1.MediaContent)pm.getObjectById(new Path(templateXri));
-   mediaContent.refRefresh();
+   pm.refresh(mediaContent);
    InputStream content = mediaContent.getContent().getContent();
    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
    int b;

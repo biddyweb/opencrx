@@ -44,6 +44,42 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activity" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>活动</_item>
+                            </label>
+                            <toolTip>
+                              <_item>活动</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activity" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>活动(禁用)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>活动(禁用)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityType" _operation="create">
                     <_object>
                       <label>
@@ -233,39 +269,6 @@
                       </label>
                       <toolTip>
                         <_item>负责人</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc1" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>杂项 #1</_item>
-                      </label>
-                      <toolTip>
-                        <_item>杂项 #1</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc2" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>杂项 #2</_item>
-                      </label>
-                      <toolTip>
-                        <_item>杂项 #2</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc3" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>杂项 #3</_item>
-                      </label>
-                      <toolTip>
-                        <_item>杂项 #3</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -475,6 +478,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>杂项 #1</_item>
+                      </label>
+                      <toolTip>
+                        <_item>杂项 #1</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>杂项 #2</_item>
+                      </label>
+                      <toolTip>
+                        <_item>杂项 #2</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>杂项 #3</_item>
+                      </label>
+                      <toolTip>
+                        <_item>杂项 #3</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:detailedDescription" _operation="create">
                     <_object>
                       <label>
@@ -486,35 +522,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHhMm" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (实际工作小时)</_item>
+                        <_item>hh mm (估计时间)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (实际工作小时)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (实际工作分钟)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (实际工作分钟)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHhMm" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh mm (实际工作时间)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh mm (实际工作时间)</_item>
+                        <_item>hh mm (估计时间)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -537,17 +551,6 @@
                       </label>
                       <toolTip>
                         <_item>mm (估计分钟)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHhMm" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh mm (估计时间)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh mm (估计时间)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1113,18 +1116,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord" _operation="create">
                     <_object>
                       <label>
-                        <_item>添加工作记录</_item>
+                        <_item>添加支出记录</_item>
                       </label>
                       <toolTip>
-                        <_item>添加工作记录</_item>
+                        <_item>添加支出记录</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>输入</_item>
@@ -1135,73 +1138,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:recordType" _operation="create">
                     <_object>
                       <label>
-                        <_item>名称</_item>
+                        <_item>记录类型</_item>
                       </label>
                       <toolTip>
-                        <_item>名称</_item>
+                        <_item>记录类型</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>描述</_item>
-                      </label>
-                      <toolTip>
-                        <_item>描述</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:startAt" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>开始时间</_item>
-                      </label>
-                      <toolTip>
-                        <_item>开始时间</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:endAt" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>结束时间</_item>
-                      </label>
-                      <toolTip>
-                        <_item>结束时间</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationHours" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh (周期小时)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh (周期小时)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (周期分钟)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (周期分钟)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:resource" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:resource" _operation="create">
                     <_object>
                       <label>
                         <_item>资源</_item>
@@ -1212,35 +1160,398 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:rateType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>比率类型</_item>
+                        <_item>名称</_item>
                       </label>
                       <toolTip>
-                        <_item>比率类型</_item>
+                        <_item>名称</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>仓库选择</_item>
+                        <_item>描述</_item>
                       </label>
                       <toolTip>
-                        <_item>仓库选择</_item>
+                        <_item>描述</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>起始时间/起始值</_item>
+                      </label>
+                      <toolTip>
+                        <_item>起始时间/起始值</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结束时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结束时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>数量</_item>
+                      </label>
+                      <toolTip>
+                        <_item>数量</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:quantityUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>单位</_item>
+                      </label>
+                      <toolTip>
+                        <_item>单位</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:rate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>比率(每单位)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>比率(每单位)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:rateCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>货币</_item>
+                      </label>
+                      <toolTip>
+                        <_item>货币</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:paymentType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>支付类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>支付类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:isBillable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>是否可记账</_item>
+                      </label>
+                      <toolTip>
+                        <_item>是否可记账</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:isReimbursable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>是否可偿还</_item>
+                      </label>
+                      <toolTip>
+                        <_item>是否可偿还</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>库存选择器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>库存选择器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>结果</_item>
                       </label>
                       <toolTip>
                         <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>添加工作记录</_item>
+                      </label>
+                      <toolTip>
+                        <_item>添加工作记录</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:recordType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>记录类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>记录类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>资源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>资源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>起始时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>起始时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结束时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结束时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:durationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>小时(工作周期)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>小时(工作周期)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:durationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>分钟(工作周期)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>分钟(工作周期)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:rate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>比率(每小时)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>比率(每小时)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:rateCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>货币</_item>
+                      </label>
+                      <toolTip>
+                        <_item>货币</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:isBillable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>是否可记账</_item>
+                      </label>
+                      <toolTip>
+                        <_item>是否可记账</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>库存选择器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>库存选择器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:calcTotalQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>根据工作/支出记录计算总数</_item>
+                      </label>
+                      <toolTip>
+                        <_item>根据工作/支出记录计算总数</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:calcTotalQuantity:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityParams:recordType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>记录类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>记录类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>起始时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>起始时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结束时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结束时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:calcTotalQuantity:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityResult:totalQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>总数</_item>
+                      </label>
+                      <toolTip>
+                        <_item>总数</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityResult:quantityUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>单位</_item>
+                      </label>
+                      <toolTip>
+                        <_item>单位</_item>
                       </toolTip>
                     </_object>
                     <_content/>

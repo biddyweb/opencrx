@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.8 2008/10/01 00:28:29 wfro Exp $
+ * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.10 2009/04/29 08:32:14 wfro Exp $
  * Description: FilteredActivitiesDataBinding
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:29 $
+ * Date:        $Date: 2009/04/29 08:32:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.kernel.portal;
 import java.util.Collections;
 import java.util.List;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 
@@ -71,7 +72,6 @@ import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_1;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 
 public class FilteredActivitiesDataBinding extends DefaultDataBinding {
@@ -96,7 +96,7 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
             String[] c = featureName.split("!");
             String providerName = ((RefObject_1_0)object).refGetPath().get(2);
             String segmentName = ((RefObject_1_0)object).refGetPath().get(4);
-            PersistenceManager pm = ((RefPackage_1_1)object.refOutermostPackage()).refPersistenceManager();
+            PersistenceManager pm = JDOHelper.getPersistenceManager(object);
             org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(

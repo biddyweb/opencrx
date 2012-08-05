@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: NewsServlet.java,v 1.7 2009/03/06 19:11:01 wfro Exp $
+ * Name:        $Id: NewsServlet.java,v 1.10 2009/05/10 17:36:57 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/06 19:11:01 $
+ * Date:        $Date: 2009/05/10 17:36:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,8 +57,8 @@ package org.opencrx.application.news;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -77,6 +77,7 @@ import org.opencrx.kernel.home1.cci2.AlertQuery;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.id.UUIDs;
@@ -198,63 +199,70 @@ public class NewsServlet extends HttpServlet {
                         "    <generator>" + NewsServlet.class.getName() + "</generator>\n" +
                         "    <title>Alerts " + req.getUserPrincipal().getName() + "@" + providerName + ":" + segmentName + "</title>\n" +
                         "    <description>Alerts " + req.getUserPrincipal().getName() + "@" + providerName + ":" + segmentName + "</description>\n" +
-                        "    <link>" + XMLEncoder.encode(UserHomes.getWebAccessUrl(userHome)) + "</link>\n" +
+                        "    <link>" + XMLEncoder.encode(UserHomes.getInstance().getWebAccessUrl(userHome)) + "</link>\n" +
                         "    <pubDate>" + new Date() + "</pubDate>\n" +
                         "    <lastBuildDate>" + (alerts.isEmpty() ? new Date() : alerts.iterator().next().getModifiedAt()) + "</lastBuildDate>\n"
                     );     
                     int count = 0;
                     for(org.opencrx.kernel.home1.jmi1.Alert alert: alerts) {
-                        String title = Notifications.getNotificationSubject(
-                            pm, 
-                            alert, 
-                            userHome, 
-                            Collections.EMPTY_MAP
-                        );
-                        String text = Notifications.getNotificationText(
-                            pm, 
-                            alert, 
-                            null, 
-                            userHome, 
-                            Collections.EMPTY_MAP
-                        );
-                        Action selectReferencedObjectAction = 
-                            new Action(
-                                Action.EVENT_SELECT_OBJECT, 
-                                new Action.Parameter[]{
-                                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, alert.getReference().refGetPath().toXri())
-                                },
-                                "",
-                                true
-                            );         
-                        String linkReferencedObject = 
-                            UserHomes.getWebAccessUrl(userHome) + 
-                            "?event=" + Action.EVENT_SELECT_OBJECT + 
-                            "&parameter=" + selectReferencedObjectAction.getParameter();
-                        Action selectAlertAction = 
-                            new Action(
-                                Action.EVENT_SELECT_OBJECT, 
-                                new Action.Parameter[]{
-                                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, alert.refGetPath().toXri())
-                                },
-                                "",
-                                true
-                            );         
-                        String linkAlert = 
-                            UserHomes.getWebAccessUrl(userHome) + 
-                            "?event=" + Action.EVENT_SELECT_OBJECT + 
-                            "&parameter=" + selectAlertAction.getParameter();
-                        p.write(
-                            "    <item>\n" +
-                            "      <title>" + XMLEncoder.encode(title) + "</title>\n" +
-                            "      <link>" + XMLEncoder.encode(linkReferencedObject) + "</link>\n" +
-                            "      <guid>" + XMLEncoder.encode(linkAlert) + "</guid>\n" +
-                            "      <category>Alerts</category>\n" +
-                            "      <pubDate>" + alert.getModifiedAt() + "</pubDate>\n" +
-                            "      <description>" + XMLEncoder.encode(text.replace("\n", "<br />")) + "</description>\n" +
-                            "    </item>\n"
-                        );
-                        count++;
-                        if(count > max) break;
+                    	ContextCapable reference = null;
+                    	try {
+                    		reference = alert.getReference();
+                    	}
+                    	catch(Exception e) {}
+                    	if(reference != null) {
+	                        String title = Notifications.getInstance().getNotificationSubject(
+	                            pm, 
+	                            alert, 
+	                            userHome, 
+	                            new HashMap<String,Object>()
+	                        );
+	                        String text = Notifications.getInstance().getNotificationText(
+	                            pm, 
+	                            alert, 
+	                            null, 
+	                            userHome, 
+	                            new HashMap<String,Object>()
+	                        );
+	                        Action selectReferencedObjectAction = 
+	                            new Action(
+	                                Action.EVENT_SELECT_OBJECT, 
+	                                new Action.Parameter[]{
+	                                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, reference.refGetPath().toXri())
+	                                },
+	                                "",
+	                                true
+	                            );         
+	                        String linkReferencedObject = 
+	                            UserHomes.getInstance().getWebAccessUrl(userHome) + 
+	                            "?event=" + Action.EVENT_SELECT_OBJECT + 
+	                            "&parameter=" + selectReferencedObjectAction.getParameter();
+	                        Action selectAlertAction = 
+	                            new Action(
+	                                Action.EVENT_SELECT_OBJECT, 
+	                                new Action.Parameter[]{
+	                                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, alert.refGetPath().toXri())
+	                                },
+	                                "",
+	                                true
+	                            );         
+	                        String linkAlert = 
+	                            UserHomes.getInstance().getWebAccessUrl(userHome) + 
+	                            "?event=" + Action.EVENT_SELECT_OBJECT + 
+	                            "&parameter=" + selectAlertAction.getParameter();
+	                        p.write(
+	                            "    <item>\n" +
+	                            "      <title>" + XMLEncoder.encode(title) + "</title>\n" +
+	                            "      <link>" + XMLEncoder.encode(linkReferencedObject) + "</link>\n" +
+	                            "      <guid>" + XMLEncoder.encode(linkAlert) + "</guid>\n" +
+	                            "      <category>Alerts</category>\n" +
+	                            "      <pubDate>" + alert.getModifiedAt() + "</pubDate>\n" +
+	                            "      <description>" + XMLEncoder.encode(text.replace("\n", "<br />")) + "</description>\n" +
+	                            "    </item>\n"
+	                        );
+	                        count++;
+	                        if(count > max) break;
+                    	}
                     }
                     p.write("  </channel>\n");
                     p.write("</rss>\n");

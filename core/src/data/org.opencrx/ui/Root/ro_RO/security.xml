@@ -462,6 +462,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:isFinal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Grup de Bază</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Grup de Bază</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:subject" _operation="create">
                     <_object>
                       <label>
@@ -1015,10 +1026,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:Pane:Op:Tab:set:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1037,10 +1048,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:Pane:Op:Tab:set:token" _operation="create">
                     <_object>
                       <label>
-                        <_item>Token</_item>
+                        <_item>Identificator</_item>
                       </label>
                       <toolTip>
-                        <_item>Token</_item>
+                        <_item>Identificator</_item>
                       </toolTip>
                     </_object>
                     <_content/>

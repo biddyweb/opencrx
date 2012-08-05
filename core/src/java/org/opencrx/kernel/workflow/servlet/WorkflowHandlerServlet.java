@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.34 2009/03/08 17:04:52 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.38 2009/06/09 14:10:35 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.38 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:52 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +63,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletConfig;
@@ -81,7 +82,6 @@ import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.mof.cci.Model_1_3;
 import org.openmdx.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.id.UUIDs;
@@ -101,7 +101,6 @@ public class WorkflowHandlerServlet
     ) throws ServletException {
 
         super.init(config);
-        this.model = Utils.getModel();
         // data connection
         try {
             this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
@@ -113,9 +112,9 @@ public class WorkflowHandlerServlet
 
     //-----------------------------------------------------------------------
     private boolean executeWorkflow(
-        PersistenceManager pm,        
         WfProcessInstance wfInstance
-    ) {      
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(wfInstance);
         AppLog.info("Execute", wfInstance.getProcess().getName());        
         try {
             String workflowName = wfInstance.getProcess().getName();
@@ -144,7 +143,7 @@ public class WorkflowHandlerServlet
                     pm.currentTransaction().begin();
                     userHome.executeWorkflow(params);
                     pm.currentTransaction().commit();
-                    wfInstance.refRefresh();
+                    pm.refresh(wfInstance);
                     // Successful execution if workflow was started (and completed)
                     return wfInstance.getStartedOn() != null;
                 }
@@ -161,7 +160,7 @@ public class WorkflowHandlerServlet
             // Asynchronous workflow
             else {
                 ASynchWorkflow_1_0 workflow = null;            
-                Class workflowClass = null;
+                Class<?> workflowClass = null;
                 try {
                     workflowClass = Classes.getApplicationClass(
                         workflowName
@@ -172,7 +171,7 @@ public class WorkflowHandlerServlet
                     return false;          
                 }
                 // Look up constructor
-                Constructor workflowConstructor = null;
+                Constructor<?> workflowConstructor = null;
                 try {
                     workflowConstructor = workflowClass.getConstructor(new Class[]{});
                 }
@@ -200,8 +199,7 @@ public class WorkflowHandlerServlet
                     return false;         
                 }  
                 workflow.execute(
-                    wfInstance,
-                    pm
+                    wfInstance
                 );
                 AppLog.info("SUCCESS");
                 return true;
@@ -229,7 +227,7 @@ public class WorkflowHandlerServlet
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );
-            Workflows.initWorkflows(
+            Workflows.getInstance().initWorkflows(
                 pm,
                 providerName,
                 segmentName                
@@ -267,11 +265,11 @@ public class WorkflowHandlerServlet
                     ((wfInstance.getLastActivityOn() == null ? 0L : wfInstance.getLastActivityOn().getTime()) + retryDelayMillis < new Date().getTime())
                 ) {
                     boolean success = this.executeWorkflow(
-                        pm,
                         wfInstance
                     );
                     if(success) {
                         try {
+                        	pm.refresh(wfInstance);
                             pm.currentTransaction().begin();
                             wfInstance.setStartedOn(new Date());
                             wfInstance.setFailed(Boolean.FALSE);
@@ -335,9 +333,9 @@ public class WorkflowHandlerServlet
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            System.out.println("Exception occured " + e.getMessage() + ". Continuing");
-            AppLog.warning("Exception occured " + e.getMessage() + ". Continuing");
-            AppLog.warning(e.getMessage(), e.getCause());
+            System.out.println("Exception occured " + e0.getMessage() + ". Continuing");
+            AppLog.warning("Exception occured " + e0.getMessage() + ". Continuing");
+            AppLog.detail(e0.getMessage(), e0.getCause());
         }
     }    
 
@@ -416,7 +414,6 @@ public class WorkflowHandlerServlet
     private PersistenceManagerFactory persistenceManagerFactory = null;
     private final Set<String> runningSegments = new HashSet<String>();
     private long startedAt = System.currentTimeMillis();
-    private Model_1_3 model = null;
 }
 
 //--- End of File -----------------------------------------------------------

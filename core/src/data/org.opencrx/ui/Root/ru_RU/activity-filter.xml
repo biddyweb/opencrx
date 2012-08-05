@@ -143,18 +143,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Подсчитать действительные усилия</_item>
+                        <_item>Вычислить общее количество из записей Работ/Затрат</_item>
                       </label>
                       <toolTip>
-                        <_item>Подсчитать действительные усилия</_item>
+                        <_item>Вычислить общее количество из записей Работ/Затрат</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Ввод</_item>
@@ -165,7 +165,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Результат</_item>

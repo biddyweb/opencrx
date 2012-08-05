@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.7 2009/03/08 17:04:47 wfro Exp $
+ * Name:        $Id: MailWorkflow.java,v 1.10 2009/05/14 09:01:57 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:47 $
+ * Date:        $Date: 2009/05/14 09:01:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,9 +59,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.mail.Address;
 import javax.mail.AuthenticationFailedException;
@@ -105,7 +105,7 @@ public abstract class MailWorkflow
         Path targetIdentity,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
-        Map params
+        Map<String,Object> params
     ) throws ServiceException {
         ContextCapable targetObject = null;
         try {
@@ -114,7 +114,7 @@ public abstract class MailWorkflow
         catch(Exception e) {}
         String text = null;
         try {
-            text = Notifications.getNotificationText(
+            text = Notifications.getInstance().getNotificationText(
                 pm,
                 targetObject,
                 wfProcessInstanceIdentity,
@@ -197,22 +197,18 @@ public abstract class MailWorkflow
     
     //-----------------------------------------------------------------------
     public void execute(
-        WfProcessInstance wfProcessInstance,
-        PersistenceManager pm
-    ) throws ServiceException {
-        
+        WfProcessInstance wfProcessInstance
+    ) throws ServiceException {        
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(wfProcessInstance);
         Address[] recipients = null;
         Transport transport = null;
         try {             
             Path wfProcessInstanceIdentity = new Path(wfProcessInstance.refMofId());
             
             // Parameters
-            Map params = new HashMap();
-            for(
-                Iterator i = wfProcessInstance.getProperty().iterator();
-                i.hasNext();
-            ) {
-                Property p = (Property)i.next();
+            Map<String,Object> params = new HashMap<String,Object>();
+            Collection<Property> properties = wfProcessInstance.getProperty();
+            for(Property p: properties) {
                 if(p instanceof StringProperty) {
                     params.put(
                         p.getName(),
@@ -250,13 +246,9 @@ public abstract class MailWorkflow
             } catch(Exception e) {}
             
             // Find default email account
-            Collection eMailAccounts = userHome.getEMailAccount();
+            Collection<EMailAccount> eMailAccounts = userHome.getEMailAccount();
             EMailAccount eMailAccountUser = null;
-            for(
-                Iterator i = eMailAccounts.iterator();
-                i.hasNext();
-            ) {
-                EMailAccount obj = (EMailAccount)i.next();
+            for(EMailAccount obj: eMailAccounts) {
                 if((obj.isDefault() != null) && obj.isDefault().booleanValue()) {
                    eMailAccountUser = obj;
                    break;
@@ -267,7 +259,7 @@ public abstract class MailWorkflow
             
             // can not send
             if(eMailAccountUser == null) {
-                subject = "ERROR: " + Notifications.getNotificationSubject(
+                subject = "ERROR: " + Notifications.getInstance().getNotificationSubject(
                     pm,
                     target,
                     userHome,
@@ -284,11 +276,8 @@ public abstract class MailWorkflow
                     ((mailServiceName == null) || (mailServiceName.length() == 0)) &&
                     wfProcessInstance.getProcess() != null
                 ) {
-                    for(
-                        Iterator i = wfProcessInstance.getProcess().getProperty().iterator(); 
-                        i.hasNext(); 
-                    ) {
-                        org.opencrx.kernel.base.jmi1.Property property = (org.opencrx.kernel.base.jmi1.Property)i.next();
+                	properties = wfProcessInstance.getProcess().getProperty();
+                    for(Property property: properties) {
                         if((MailWorkflow.OPTION_MAIL_SERVICE_NAME).equals(property.getName())) {
                             mailServiceName = ((org.opencrx.kernel.base.jmi1.StringProperty)property).getStringValue();
                             break;
@@ -332,7 +321,7 @@ public abstract class MailWorkflow
                     if(recipients.length > 0) {
                         // subject
                         message.setSubject(
-                            subject = Notifications.getNotificationSubject(
+                            subject = Notifications.getInstance().getNotificationSubject(
                                 pm,
                                 target,
                                 userHome,

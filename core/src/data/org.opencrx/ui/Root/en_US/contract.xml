@@ -580,6 +580,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Pricing status</_item>
 											</toolTip>
@@ -654,6 +655,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalSalesCommission">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Sales commission</_item>
 											</toolTip>
@@ -672,6 +674,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Total base amount</_item>
 											</toolTip>
@@ -689,6 +692,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalDiscountAmount">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Total discount</_item>
 											</toolTip>
@@ -706,6 +710,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmount">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Total (excl. tax)</_item>
 											</toolTip>
@@ -723,6 +728,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalTaxAmount">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Total tax</_item>
 											</toolTip>
@@ -740,6 +746,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmountIncludingTax">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Total (incl. tax)</_item>
 											</toolTip>

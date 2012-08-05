@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.3 2009/01/06 13:00:22 wfro Exp $
+ * Name:        $Id: ComponentConfigHelper.java,v 1.5 2009/06/09 14:10:35 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:00:22 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,8 +55,9 @@
  */
 package org.opencrx.kernel.utils;
 
-import java.util.Iterator;
+import java.util.Collection;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
@@ -125,10 +126,11 @@ public class ComponentConfigHelper {
         String name,
         org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(componentConfiguration);
         org.opencrx.kernel.base.jmi1.StringProperty value = null;
         for(int i = 0; i < 1; i++) {
-            for(Iterator j = componentConfiguration.getProperty().iterator(); j.hasNext(); ) {
-                org.opencrx.kernel.base.jmi1.Property p = (org.opencrx.kernel.base.jmi1.Property)j.next();
+        	Collection<org.opencrx.kernel.base.jmi1.Property> properties = componentConfiguration.getProperty();
+            for(org.opencrx.kernel.base.jmi1.Property p: properties) {
                 if(
                     p.getName().equals(name) &&
                     (p instanceof org.opencrx.kernel.base.jmi1.StringProperty)
@@ -138,7 +140,7 @@ public class ComponentConfigHelper {
                 }
             }
             if(value == null) {
-                componentConfiguration.refRefresh();
+                pm.refresh(componentConfiguration);
             }
             else {
                 break;

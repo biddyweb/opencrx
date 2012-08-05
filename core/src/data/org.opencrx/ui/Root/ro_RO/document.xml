@@ -787,10 +787,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference" _operation="create">
                     <_object>
                       <label>
-                        <_item>Referinţă suport de stocare</_item>
+                        <_item>Referinţă atașament media</_item>
                       </label>
                       <toolTip>
-                        <_item>Referinţă suport de stocare</_item>
+                        <_item>Referinţă atașament media</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -798,10 +798,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>Suport de stocare</_item>
+                        <_item>Atașament media</_item>
                       </label>
                       <toolTip>
-                        <_item>Suport de stocare</_item>
+                        <_item>Atașament media</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -963,10 +963,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Conţinut media</_item>
+                        <_item>Atașament media</_item>
                       </label>
                       <toolTip>
-                        <_item>Conţinut media</_item>
+                        <_item>Atașament media</_item>
                       </toolTip>
                     </_object>
                     <_content/>

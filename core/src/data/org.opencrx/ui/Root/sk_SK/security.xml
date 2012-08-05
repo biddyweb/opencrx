@@ -462,6 +462,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:isFinal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Základná skupina</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Základná skupina</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:subject" _operation="create">
                     <_object>
                       <label>

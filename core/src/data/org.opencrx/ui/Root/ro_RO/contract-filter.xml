@@ -17,7 +17,7 @@
                         <_item>Filtre Contracte</_item>
                       </label>
                       <toolTip>
-                        <_item>toate filtrele contractelor</_item>
+                        <_item>Toate filtrele Contractelor</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -61,7 +61,7 @@
                         <_item>Parametri Filtru</_item>
                       </label>
                       <toolTip>
-                        <_item>toţi parametrii filtrului</_item>
+                        <_item>Toţi Parametrii filtrului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -72,7 +72,7 @@
                         <_item>Contracte filtrate</_item>
                       </label>
                       <toolTip>
-                        <_item>toate contractele filtrate</_item>
+                        <_item>Toate Contractele filtrate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:Pane:Op:Tab:countFilteredContract:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesRepFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietăţi de filtrare Reprezentanţi Vânzări</_item>
+                        <_item>Proprietăţi de filtrare Reprezentanţi de Vânzări</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietăţi de filtrare Reprezentanţi Vânzări</_item>
+                        <_item>Proprietăţi de filtrare Reprezentanţi de Vânzări</_item>
                       </toolTip>
                     </_object>
                     <_content/>

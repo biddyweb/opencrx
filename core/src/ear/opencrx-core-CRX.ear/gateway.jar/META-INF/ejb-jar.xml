@@ -4,26 +4,152 @@
 	<enterprise-beans>
 		<session id="opencrx_core_CRX_EntityManagerFactory">
 			<ejb-name>opencrx_core_CRX_EntityManagerFactory</ejb-name>
-			<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2LocalHome</local-home>
-			<local>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2_0Local</local>
-			<ejb-class>org.openmdx.application.dataprovider.transport.ejb.server.EntityManagerFactory_2Bean</ejb-class>
+			<local-home>org.openmdx.application.persistence.ejb.EntityManagerFactory_2LocalHome</local-home>
+			<local>org.openmdx.application.persistence.ejb.EntityManagerFactory_2_0Local</local>
+			<ejb-class>org.openmdx.application.persistence.ejb.EntityManagerFactory_2Bean</ejb-class>
 			<session-type>Stateless</session-type>
-			<transaction-type>Container</transaction-type>			
+			<transaction-type>Container</transaction-type>
+			<!-- EntityManager for Layer Standard -->			
 			<env-entry>
 				<env-entry-name>EntityManager/plugIn[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>OpenCRX</env-entry-value>
+				<env-entry-value>Standard</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>EntityManager/OpenCRX/modelPackage[0]</env-entry-name>
+				<env-entry-name>EntityManager/Standard/userObject[0]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>Configuration</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/Configuration/class</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.aop2.Configuration</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/Configuration/passwordEncodingAlgorithm</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>MD5</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/Configuration/EMailAddressLookupCaseInsensitive</env-entry-name>
+				<env-entry-type>java.lang.Boolean</env-entry-type>
+				<env-entry-value>true</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/Configuration/EMailAddressLookupIgnoreDisabled</env-entry-name>
+				<env-entry-type>java.lang.Boolean</env-entry-type>
+				<env-entry-value>false</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:home1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>EntityManager/OpenCRX/packageImpl[0]</env-entry-name>
+				<env-entry-name>EntityManager/Standard/packageImpl[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org.opencrx.kernel.home1.aop2</env-entry-value>
 			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[1]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:depot1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[1]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.depot1.aop2</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[2]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:activity1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[2]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.activity1.aop2</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[3]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:base</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[3]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.base.aop2</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[4]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:admin1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[4]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.admin1.aop2</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[5]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:address1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[5]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.address1.aop2</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[6]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:account1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[6]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.account1.aop2</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[7]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:contract1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[7]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.contract1.aop2</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[8]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:product1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[8]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.product1.aop2</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[9]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:model1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[9]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.model1.aop2</env-entry-value>
+			</env-entry>	
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/modelPackage[10]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:generic</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/Standard/packageImpl[10]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.generic.aop2</env-entry-value>
+			</env-entry>								
 			<env-entry>
 				<env-entry-name>PersistenceManager/Multithreaded</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
@@ -35,130 +161,195 @@
 				<env-entry-value>Manager</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[0]</env-entry-name>
+				<env-entry-name>PersistenceManager/xriPattern[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.account1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.account1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[1]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[0]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[1]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.activity1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.activity1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[2]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[1]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[2]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.building1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.building1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[3]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[2]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[3]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.code1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.code1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[4]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[3]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[4]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.contract1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.contract1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[5]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[4]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>			
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[5]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.document1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.document1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[6]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[5]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[6]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.forecast1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.forecast1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[7]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[6]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[7]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.home1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.home1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[8]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[7]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[8]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.product1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.product1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[9]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[8]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[9]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.uom1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.uom1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[10]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[9]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[10]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.workflow1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.workflow1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[11]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[10]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[11]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.reservation1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.reservation1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[12]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[11]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[12]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.admin1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.admin1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[13]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[12]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[13]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.model1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.model1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[14]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[13]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[14]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.depot1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.kernel.depot1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[15]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[14]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[0]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[15]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.security.realm1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.openmdx.security.realm1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[16]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[15]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[1]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[16]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.security.identity1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.opencrx.security.identity1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[17]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[16]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[1]</env-entry-value>
+			</env-entry>						
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[17]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.security.authorization1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.openmdx.security.authorization1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[18]</env-entry-name>
+			  <env-entry-name>PersistenceManager/restProvider[17]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[1]</env-entry-value>
+			</env-entry>									
+			<env-entry>
+				<env-entry-name>PersistenceManager/xriPattern[18]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.security.authentication1</env-entry-value>
+				<env-entry-value>xri://@openmdx*org.openmdx.security.authentication1/($...)</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/INTERCEPTION</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.application.dataprovider.spi.DelegatingLayer_0</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/TYPE</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.application.dataprovider.spi.DelegatingLayer_0</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/APPLICATION</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.runtime1.layer.application.Explorer_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/MODEL</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.application.dataprovider.spi.DelegatingLayer_0</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/PERSISTENCE</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.persistence.delegation.Delegation_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>APPLICATION/runtimeSegment</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.compatibility.runtime1/provider/CRX/segment/Root</env-entry-value>
-			</env-entry>
+			  <env-entry-name>PersistenceManager/restProvider[18]</env-entry-name>
+			  <env-entry-type>java.lang.String</env-entry-type>
+			  <env-entry-value>ejb/dataprovider[1]</env-entry-value>
+			</env-entry>									
 			<ejb-local-ref id="dataprovider_0">
 				<ejb-ref-name>ejb/dataprovider[0]</ejb-ref-name>
 				<ejb-ref-type>Session</ejb-ref-type>
@@ -171,297 +362,26 @@
 				<ejb-ref-type>Session</ejb-ref-type>
 				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
 				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_2">
-				<ejb-ref-name>ejb/dataprovider[2]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_3">
-				<ejb-ref-name>ejb/dataprovider[3]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_4">
-				<ejb-ref-name>ejb/dataprovider[4]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_5">
-				<ejb-ref-name>ejb/dataprovider[5]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_6">
-				<ejb-ref-name>ejb/dataprovider[6]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_7">
-				<ejb-ref-name>ejb/dataprovider[7]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_8">
-				<ejb-ref-name>ejb/dataprovider[8]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_9">
-				<ejb-ref-name>ejb/dataprovider[9]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_10">
-				<ejb-ref-name>ejb/dataprovider[10]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_11">
-				<ejb-ref-name>ejb/dataprovider[11]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_12">
-				<ejb-ref-name>ejb/dataprovider[12]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_13">
-				<ejb-ref-name>ejb/dataprovider[13]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_14">
-				<ejb-ref-name>ejb/dataprovider[14]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>kernel.jar#opencrx_core_CRX_kernel_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_15">
-				<ejb-ref-name>ejb/dataprovider[15]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_16">
-				<ejb-ref-name>ejb/dataprovider[16]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_17">
-				<ejb-ref-name>ejb/dataprovider[17]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_18">
-				<ejb-ref-name>ejb/dataprovider[18]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
 				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
 			</ejb-local-ref>
 		</session>
-		<session id="opencrx_core_CRX_Gateway">
-			<ejb-name>opencrx_core_CRX_Gateway</ejb-name>
-			<home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1Home</home>
-			<remote>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Remote</remote>
-			<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-			<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-	  		<ejb-class>org.openmdx.application.dataprovider.transport.ejb.transaction.Gateway_1Bean</ejb-class>
-			<session-type>Stateless</session-type>
+		<session id="opencrx_core_CRX_EntityManagerFactoryAccessor">
+			<ejb-name>opencrx_core_CRX_EntityManagerFactoryAccessor</ejb-name>
+			<home>org.openmdx.application.rest.ejb.Connection_2Home</home>
+			<remote>org.openmdx.application.rest.ejb.Connection_2_0Remote</remote>
+			<ejb-class>org.openmdx.application.persistence.ejb.EntityManagerFactory_2AccessorBean</ejb-class>
+			<session-type>Stateful</session-type>
 			<transaction-type>Container</transaction-type>
-			<env-entry>
-			  <env-entry-name>KERNEL/namespaceId</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>Gateway</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[0]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.account1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[1]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.activity1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[2]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.building1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[3]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.code1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[4]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.contract1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[5]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.document1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[6]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.forecast1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[7]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.home1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[8]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.product1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[9]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.uom1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[10]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.workflow1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[11]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.reservation1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[12]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.admin1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[13]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.model1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[14]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.kernel.depot1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[15]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.security.realm1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[16]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.opencrx.security.identity1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[17]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.security.authorization1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/exposedPath[18]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri://@openmdx*org.openmdx.security.authentication1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[0]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:w3c</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[1]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:base</env-entry-value>
-			</env-entry>		
-			<env-entry>
-			  <env-entry-name>KERNEL/INTERCEPTION</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.interception.Entity_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>KERNEL/TYPE</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.type.Standard_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>KERNEL/APPLICATION</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>org.openmdx.application.dataprovider.spi.Layer_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>KERNEL/MODEL</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>org.openmdx.application.dataprovider.spi.Layer_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>KERNEL/PERSISTENCE</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.persistence.delegation.Entity_1</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>APPLICATION/disableRouter</env-entry-name>
-			  <env-entry-type>java.lang.Boolean</env-entry-type>
-			  <env-entry-value>true</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>PERSISTENCE/retrievalSize</env-entry-name>
-			  <env-entry-type>java.lang.Integer</env-entry-type>
-			  <env-entry-value>25</env-entry-value>
-			</env-entry>
-			<env-entry>
-			  <env-entry-name>PERSISTENCE/Multithreaded</env-entry-name>
-			  <env-entry-type>java.lang.String</env-entry-type>
-			  <env-entry-value>false</env-entry-value>
-			</env-entry>
 			<ejb-local-ref id="EntityManagerFactory_Ref">
-				<ejb-ref-name>ejb/dataprovider[0]</ejb-ref-name>
+				<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
 				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2_0Local</local>
+				<local-home>org.openmdx.application.persistence.ejb.EntityManagerFactory_2LocalHome</local-home>
+				<local>org.openmdx.application.persistence.ejb.EntityManagerFactory_2_0Local</local>
 				<ejb-link>gateway.jar#opencrx_core_CRX_EntityManagerFactory</ejb-link>
 			</ejb-local-ref>
-		</session>
+		</session>		
 	</enterprise-beans>
-		<assembly-descriptor>
+	<assembly-descriptor>
 		<container-transaction>
 			<method>
 				<ejb-name>opencrx_core_CRX_EntityManagerFactory</ejb-name>
@@ -492,10 +412,10 @@
 		</container-transaction>
 		<container-transaction>
 			<method>
-				<ejb-name>opencrx_core_CRX_Gateway</ejb-name>
-				<method-name>*</method-name>
+				<ejb-name>opencrx_core_CRX_EntityManagerFactoryAccessor</ejb-name>
+				<method-name>execute</method-name>
 			</method>
-			<trans-attribute>Never</trans-attribute>
+			<trans-attribute>Required</trans-attribute>
 		</container-transaction>
 	</assembly-descriptor>	
 </ejb-jar>

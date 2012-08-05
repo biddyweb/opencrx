@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxServer</shortName>
     <fullName>openCRX Server</fullName>
-    <version>2.4.1</version>
+    <version>2.5.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-server/installer/opencrx-server/README</readmeFile>
     <licenseFile>../../image/opencrx-server/installer/opencrx-server/LICENSE</licenseFile>
@@ -46,43 +46,43 @@
                     <windowsPath>${installdir}/bin/</windowsPath>
                 </shortcut>
                 <shortcut>
-                    <comment>HSQLDB Console (${hsqldb_port})</comment>
-                    <exec>${installdir}/data/crx_2_4/startdbmanager.sh</exec>
+                    <comment>Start ${product_fullname} HSQLDB Console ${product_version} (${hsqldb_port})</comment>
+                    <exec>${installdir}/data/crx_2_5/startdbmanager.sh</exec>
                     <icon>${installdir}/data/hsqldb.ico</icon>
-                    <name>HSQLDB Console (${hsqldb_port})</name>
-                    <path>${installdir}/data/crx_2_4/</path>
+                    <name>Start ${product_fullname} HSQLDB Console ${product_version} (${hsqldb_port})</name>
+                    <path>${installdir}/data/crx_2_5/</path>
                     <platforms>all</platforms>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_4/startdbmanager.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_5/startdbmanager.bat</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
                     <windowsIcon>${installdir}/data/hsqldb.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_4/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_5/</windowsPath>
                 </shortcut>
                 <shortcut>
-                    <comment>Start HSQLDB (${hsqldb_port})</comment>
-                    <exec>${installdir}/data/crx_2_4/startdb.sh START</exec>
+                    <comment>Start ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</comment>
+                    <exec>${installdir}/data/crx_2_5/startdb.sh START</exec>
                     <icon>${installdir}/data/hsqldb.ico</icon>
-                    <name>Start HSQLDB (${hsqldb_port})</name>
-                    <path>${installdir}/data/crx_2_4/</path>
+                    <name>Start ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</name>
+                    <path>${installdir}/data/crx_2_5/</path>
                     <platforms>all</platforms>
                     <runInTerminal>1</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_4/startdb.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_5/startdb.bat</windowsExec>
                     <windowsExecArgs>START</windowsExecArgs>
                     <windowsIcon>${installdir}/data/hsqldb.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_4/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_5/</windowsPath>
                 </shortcut>
                 <shortcut>
-                    <comment>Stop HSQLDB (${hsqldb_port})</comment>
-                    <exec>${installdir}/data/crx_2_4/startdb.sh STOP</exec>
+                    <comment>Stop ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</comment>
+                    <exec>${installdir}/data/crx_2_5/startdb.sh STOP</exec>
                     <icon>${installdir}/data/hsqldb.ico</icon>
-                    <name>Stop HSQLDB (${hsqldb_port})</name>
-                    <path>${installdir}/data/crx_2_4/</path>
+                    <name>Stop ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</name>
+                    <path>${installdir}/data/crx_2_5/</path>
                     <platforms>all</platforms>
                     <runInTerminal>1</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_4/startdb.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_5/startdb.bat</windowsExec>
                     <windowsExecArgs>STOP</windowsExecArgs>
                     <windowsIcon>${installdir}/data/hsqldb.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_4/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_5/</windowsPath>
                 </shortcut>
             </desktopShortcutList>
             <folderList>
@@ -206,31 +206,31 @@
                     <windowsPath>${installdir}/bin/</windowsPath>
                 </startMenuShortcut>
                 <startMenuShortcut>
-                    <comment>HSQLDB Console (${hsqldb_port})</comment>
-                    <name>HSQLDB Console (${hsqldb_port})</name>
+                    <comment>Start ${product_fullname} HSQLDB Console ${product_version} (${hsqldb_port})</comment>
+                    <name>Start ${product_fullname} HSQLDB Console ${product_version} (${hsqldb_port})</name>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_4/startdbmanager.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_5/startdbmanager.bat</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
                     <windowsIcon>${installdir}/data/hsqldb.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_4/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_5/</windowsPath>
                 </startMenuShortcut>
                 <startMenuShortcut>
-                    <comment>Start HSQLDB (${hsqldb_port})</comment>
-                    <name>Start HSQLDB (${hsqldb_port})</name>
+                    <comment>Start ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</comment>
+                    <name>Start ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</name>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_4/startdb.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_5/startdb.bat</windowsExec>
                     <windowsExecArgs>START</windowsExecArgs>
                     <windowsIcon>${installdir}/data/hsqldb.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_4/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_5/</windowsPath>
                 </startMenuShortcut>
                 <startMenuShortcut>
-                    <comment>Stop HSQLDB (${hsqldb_port})</comment>
-                    <name>Stop HSQLDB (${hsqldb_port})</name>
+                    <comment>Stop ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</comment>
+                    <name>Stop ${product_fullname} HSQLDB ${product_version} (${hsqldb_port})</name>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_4/startdb.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_5/startdb.bat</windowsExec>
                     <windowsExecArgs>STOP</windowsExecArgs>
                     <windowsIcon>${installdir}/data/hsqldb.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_4/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_5/</windowsPath>
                 </startMenuShortcut>
             </startMenuShortcutList>
         </component>

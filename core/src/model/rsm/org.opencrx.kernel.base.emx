@@ -2142,24 +2142,6 @@
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_3CzIIil_EdywXdAHn-NS-w" x="726" y="11164"/>
         </children>
         <styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_y5hlsYmxEdqT-YHfpV38vQ"/>
-        <edges xmi:id="_3fhrQRvoEdyil9rtoHqsOA" element="_3fhrQBvoEdyil9rtoHqsOA" source="_74O1sBuMEdyil9rtoHqsOA" target="_dhTOsBvoEdyil9rtoHqsOA">
-          <children xmi:id="_3fhrRBvoEdyil9rtoHqsOA" type="NameLabel">
-            <children xmi:id="_3fhrRhvoEdyil9rtoHqsOA" type="Stereotype" element="_3fhrQBvoEdyil9rtoHqsOA"/>
-            <children xmi:id="_3fhrRxvoEdyil9rtoHqsOA" type="Name" element="_3fhrQBvoEdyil9rtoHqsOA"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_3fhrRRvoEdyil9rtoHqsOA" y="-185"/>
-          </children>
-          <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_3fhrQhvoEdyil9rtoHqsOA" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_3fhrQxvoEdyil9rtoHqsOA" points="[-1879, -2461, 1614, 1878]$[-1879, -2937, 1614, 1402]"/>
-        </edges>
-        <edges xmi:id="_5WSYkBvoEdyil9rtoHqsOA" element="_5WJOoBvoEdyil9rtoHqsOA" source="_2aiOUImxEdqT-YHfpV38vQ" target="_dhTOsBvoEdyil9rtoHqsOA">
-          <children xmi:id="_5WSYkxvoEdyil9rtoHqsOA" type="NameLabel">
-            <children xmi:id="_5WSYlRvoEdyil9rtoHqsOA" type="Stereotype" element="_5WJOoBvoEdyil9rtoHqsOA"/>
-            <children xmi:id="_5WSYlhvoEdyil9rtoHqsOA" type="Name" element="_5WJOoBvoEdyil9rtoHqsOA"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_5WSYlBvoEdyil9rtoHqsOA" y="-185"/>
-          </children>
-          <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_5WSYkRvoEdyil9rtoHqsOA" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_5WSYkhvoEdyil9rtoHqsOA" points="[1614, -1270, -1588, 1878]$[1614, -1746, -1588, 1402]"/>
-        </edges>
         <edges xmi:id="_suy3MB2WEdyPsfP_gjYckQ" type="NoteAttachment" source="_74O1sBuMEdyil9rtoHqsOA" target="_rTJ_oB2WEdyPsfP_gjYckQ">
           <styles xmi:type="notation:ConnectorStyle" xmi:id="_suy3MR2WEdyPsfP_gjYckQ" lineColor="3342489"/>
           <element xsi:nil="true"/>
@@ -2521,7 +2503,6 @@
       <eAnnotations xmi:id="_7FY48BuLEdyil9rtoHqsOA" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <details xmi:id="_fRImgBuZEdyil9rtoHqsOA" key="root"/>
       </eAnnotations>
-      <generalization xmi:id="_3fhrQBvoEdyil9rtoHqsOA" general="_dhKEwBvoEdyil9rtoHqsOA"/>
       <ownedAttribute xmi:id="_V-I5gBuLEdyil9rtoHqsOA" name="clause">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B62E40010?w3c/w3c/string?"/>
       </ownedAttribute>
@@ -3100,7 +3081,6 @@
       <eAnnotations xmi:id="_GrWKYImyEdqT-YHfpV38vQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <details xmi:id="_c918UBvoEdyil9rtoHqsOA" key="root"/>
       </eAnnotations>
-      <generalization xmi:id="_5WJOoBvoEdyil9rtoHqsOA" general="_dhKEwBvoEdyil9rtoHqsOA"/>
       <ownedAttribute xmi:id="_QE9kYG5DEdq2_7SCieKOqA" name="filterOperator">
         <type xmi:type="uml:Class" href="org.opencrx.emx#_3C7B8A60016D40747CF6015D?org.opencrx/opencrx/code?"/>
       </ownedAttribute>

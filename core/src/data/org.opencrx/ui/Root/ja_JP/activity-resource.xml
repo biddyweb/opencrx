@@ -506,18 +506,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:Pane:Attr:Tab:0:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>請求</_item>
-                      </label>
-                      <toolTip>
-                        <_item>請求</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:name" _operation="create">
                     <_object>
                       <label>
                         <_item>名称</_item>
@@ -528,7 +517,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:description" _operation="create">
                     <_object>
                       <label>
                         <_item>説明</_item>
@@ -539,7 +528,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:pauseDurationHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:pauseDurationHours" _operation="create">
                     <_object>
                       <label>
                         <_item>中断時間(時)</_item>
@@ -550,7 +539,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:pauseDurationMinutes" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:pauseDurationMinutes" _operation="create">
                     <_object>
                       <label>
                         <_item>中断時間(分)</_item>
@@ -561,7 +550,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:durationCalculationMode" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:durationCalculationMode" _operation="create">
                     <_object>
                       <label>
                         <_item>期間計算</_item>
@@ -572,7 +561,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:startedAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:startedAt" _operation="create">
                     <_object>
                       <label>
                         <_item>開始</_item>
@@ -583,7 +572,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:endedAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:endedAt" _operation="create">
                     <_object>
                       <label>
                         <_item>終了</_item>
@@ -594,7 +583,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:durationHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:durationHours" _operation="create">
                     <_object>
                       <label>
                         <_item>時間(時)</_item>
@@ -605,7 +594,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:durationMinutes" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:durationMinutes" _operation="create">
                     <_object>
                       <label>
                         <_item>時間(分)</_item>
@@ -616,7 +605,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:rateType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:rateType" _operation="create">
                     <_object>
                       <label>
                         <_item>賃率タイプ</_item>
@@ -627,7 +616,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:rate" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:rate" _operation="create">
                     <_object>
                       <label>
                         <_item>時給</_item>
@@ -638,7 +627,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:billingCurrency" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:billingCurrency" _operation="create">
                     <_object>
                       <label>
                         <_item>通貨</_item>
@@ -649,7 +638,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:billableAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:billableAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>合計</_item>
@@ -660,7 +649,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:isBillable" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:isBillable" _operation="create">
                     <_object>
                       <label>
                         <_item>請求対象</_item>
@@ -671,7 +660,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:depotSelector" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:depotSelector" _operation="create">
                     <_object>
                       <label>
                         <_item>デポセレクター</_item>
@@ -682,13 +671,35 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:workCb" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:workCb" _operation="create">
                     <_object>
                       <label>
                         <_item>作業工数ブッキング</_item>
                       </label>
                       <toolTip>
                         <_item>作業工数ブッキング</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクティビティ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクティビティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkAndExpenseRecord:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リソース</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リソース</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -913,7 +924,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkAndExpenseRecord" _operation="create">
                     <_object>
                       <label>
                         <_item>作業記録追加</_item>
@@ -924,7 +935,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:AddWorkAndExpenseRecord:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>入力</_item>
@@ -935,7 +946,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:name" _operation="create">
                     <_object>
                       <label>
                         <_item>名称</_item>
@@ -946,7 +957,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:description" _operation="create">
                     <_object>
                       <label>
                         <_item>説明</_item>
@@ -957,7 +968,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:startAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:startAt" _operation="create">
                     <_object>
                       <label>
                         <_item>開始</_item>
@@ -968,7 +979,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:endAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:endAt" _operation="create">
                     <_object>
                       <label>
                         <_item>終了</_item>
@@ -979,7 +990,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:durationHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:durationHours" _operation="create">
                     <_object>
                       <label>
                         <_item>時間(時)</_item>
@@ -990,7 +1001,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:durationMinutes" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:durationMinutes" _operation="create">
                     <_object>
                       <label>
                         <_item>時間(分)</_item>
@@ -1001,7 +1012,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:activity" _operation="create">
                     <_object>
                       <label>
                         <_item>アクティビティ</_item>
@@ -1012,7 +1023,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:rateType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:rateType" _operation="create">
                     <_object>
                       <label>
                         <_item>賃率タイプ</_item>
@@ -1023,7 +1034,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkAndExpenseRecordParams:depotSelector" _operation="create">
                     <_object>
                       <label>
                         <_item>デポセレクター</_item>
@@ -1034,7 +1045,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkAndExpenseRecord:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>結果</_item>

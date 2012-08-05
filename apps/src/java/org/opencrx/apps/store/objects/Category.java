@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Category.java,v 1.2 2009/02/15 18:06:14 wfro Exp $
+ * Name:        $Id: Category.java,v 1.3 2009/05/21 10:59:38 wfro Exp $
  * Description: Category
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:14 $
+ * Date:        $Date: 2009/05/21 10:59:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,7 +58,7 @@ package org.opencrx.apps.store.objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Iterator;
+import java.util.Collection;
 
 import org.opencrx.apps.store.common.IStandardObject;
 import org.opencrx.apps.store.common.PrimaryKey;
@@ -93,11 +93,8 @@ public final class Category implements IStandardObject
         this.Key = new PrimaryKey(classification.refGetPath().getBase(), false);
         this.Title = classification.getDescription();
         this.ParentID = new PrimaryKey("", false);
-        for(
-            Iterator i = classification.getRelationship().iterator();
-            i.hasNext();
-        ) {
-            ProductClassificationRelationship relationship = (ProductClassificationRelationship)i.next();
+        Collection<ProductClassificationRelationship> relationships = classification.getRelationship();
+        for(ProductClassificationRelationship relationship: relationships) {
             if(relationship.getRelationshipTo() != null) {
                 ProductClassification parent = relationship.getRelationshipTo();
                 if(!(Keys.STORE_SCHEMA + CATEGORY_NAME_PRODUCTS).equals(parent.getName())) {

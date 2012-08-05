@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: iCal.jsp,v 1.1 2009/02/16 19:19:59 cmu Exp $
+ * Name:        $Id: iCal.jsp,v 1.2 2009/05/11 12:12:33 cmu Exp $
  * Description: create vCard(s)
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/16 19:19:59 $
+ * Date:        $Date: 2009/05/11 12:12:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -202,7 +202,7 @@ org.openmdx.application.log.*
 <%
    // Prepare
     org.opencrx.kernel.activity1.jmi1.Activity activity = null;
-    String location = UUIDs.getGenerator().next().toString();
+    String location = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
     String filename = "---";
     String downloadFileName = "---";
     FileOutputStream fileos = null;

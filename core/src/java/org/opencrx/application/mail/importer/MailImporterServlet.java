@@ -1,11 +1,11 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.8 2009/03/08 17:04:54 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.13 2009/05/08 17:18:42 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.8 $
+   * Revision:    $Revision: 1.13 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2009/03/08 17:04:54 $
+   * Date:        $Date: 2009/05/08 17:18:42 $
    * ====================================================================
    *
    * This software is published under the BSD license
@@ -75,6 +75,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
+import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
@@ -97,7 +98,6 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 
 /**
  * The EMailImporterServlet imports E-Mails from a configured Mail server
@@ -180,11 +180,12 @@ public class MailImporterServlet
      * @param rootPkg          The root package to be used for this request
      * @param emailActivity    The openCRX EMailActivity currently in process
      */
+    @SuppressWarnings("unchecked")
     private void addMedia(
         SimpleMimeMessage mimeMsg,
         PersistenceManager pm,
         EMail emailActivity
-    ) throws MessagingException {
+    ) throws MessagingException, ServiceException {
         // add attachments to email
         // if the email already contains attachments as media, only
         // those attachments not already contained in the email
@@ -208,7 +209,7 @@ public class MailImporterServlet
                         else {                            
                             // add the attachment
                             try {
-                                Activities.addMedia(
+                                Activities.getInstance().addMedia(
                                     pm,
                                     emailActivity,
                                     content.getContentType(),
@@ -227,7 +228,7 @@ public class MailImporterServlet
                 else {
                     // add the attachment
                     try {
-                        Activities.addMedia(
+                        Activities.getInstance().addMedia(
                             pm,
                             emailActivity,
                             content.getContentType(),
@@ -260,11 +261,11 @@ public class MailImporterServlet
         String segmentName,
         String creatorCriteria,
         SimpleMimeMessage mimeMessage,
-        boolean caseInsensitiveAddressLookup
+        MailImporterConfig config
     ) throws ServiceException {
 
         try {
-            List activities = Activities.lookupEmailActivity(
+            List<Activity> activities = Activities.getInstance().lookupEmailActivity(
                 pm,
                 providerName,
                 segmentName,
@@ -321,16 +322,17 @@ public class MailImporterServlet
       
                 // Add FROM as sender
                 String fromAddress = mimeMessage.getFrom()[0];
-                List addresses = Accounts.lookupEmailAddress(
+                List<org.opencrx.kernel.account1.jmi1.EMailAddress> addresses = Accounts.getInstance().lookupEmailAddress(
                     pm,
                     providerName,
                     segmentName,
                     fromAddress,
-                    caseInsensitiveAddressLookup
+                    config.isEMailAddressLookupCaseInsensitive(),
+                    config.isEMailAddressLookupIgnoreDisabled()
                 );
                 EMailAddress from = null;
                 if (addresses.size() == 1) {
-                    from = (EMailAddress) addresses.iterator().next();
+                    from = addresses.iterator().next();
                     pm.currentTransaction().begin();
                     emailActivity.setSender(from);
                     pm.currentTransaction().commit();
@@ -340,30 +342,32 @@ public class MailImporterServlet
                         + addresses.size() + " addresses");
                 }
                 // Handle recipients
-                Activities.addRecipientToEmailActivity(
+                Activities.getInstance().addRecipientToEmailActivity(
                     pm,
                     providerName,
                     segmentName,
                     emailActivity,
                     mimeMessage.getRecipients(),
                     Message.RecipientType.TO,
-                    caseInsensitiveAddressLookup
+                    config.isEMailAddressLookupCaseInsensitive(),
+                    config.isEMailAddressLookupIgnoreDisabled()
                 );
-                Activities.addRecipientToEmailActivity(
+                Activities.getInstance().addRecipientToEmailActivity(
                     pm,
                     providerName,
                     segmentName,
                     emailActivity,
                     mimeMessage.getRecipients(Message.RecipientType.CC),
                     Message.RecipientType.CC,
-                    caseInsensitiveAddressLookup
+                    config.isEMailAddressLookupCaseInsensitive(),
+                    config.isEMailAddressLookupIgnoreDisabled()                    
                 );      
                 // add originator and recipients to a note
-                Activities.addNote(
+                Activities.getInstance().addNote(
                     pm,
                     emailActivity,
                     "Recipients",
-                    Activities.getRecipientsAsNoteText(
+                    Activities.getInstance().getRecipientsAsNoteText(
                         pm,
                         providerName,
                         segmentName,
@@ -371,12 +375,13 @@ public class MailImporterServlet
                         mimeMessage.getRecipients(Message.RecipientType.TO),
                         mimeMessage.getRecipients(Message.RecipientType.CC),
                         mimeMessage.getRecipients(Message.RecipientType.BCC),
-                        caseInsensitiveAddressLookup
+                        config.isEMailAddressLookupCaseInsensitive(),
+                        config.isEMailAddressLookupIgnoreDisabled()                        
                     )
                 );
       
                 // add EMail headers as Note
-                Activities.addNote(
+                Activities.getInstance().addNote(
                     pm,
                     emailActivity,
                     "Message-Header",
@@ -436,7 +441,7 @@ public class MailImporterServlet
     ) {
         try {
             Activity1Package activityPkg = Utils.getActivityPackage(pm);
-            org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(
                 pm, 
                 providerName, 
                 segmentName
@@ -448,8 +453,8 @@ public class MailImporterServlet
                 query.name().equalTo(
                     criteria
                 );
-                for(Iterator i = activitySegment.getActivityCreator(query).iterator(); i.hasNext(); ) {
-                    ActivityCreator creator = (ActivityCreator)i.next();
+                List<ActivityCreator> activityCreators = activitySegment.getActivityCreator(query);
+                for(ActivityCreator creator: activityCreators) {
                     if((creator.getActivityType() != null) && (creator.getActivityType().getActivityClass() == Activities.ACTIVITY_CLASS_EMAIL)) {
                         emailCreator = creator;
                         break;
@@ -469,12 +474,13 @@ public class MailImporterServlet
     }
     
     //-----------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     private void importNestedMessages(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         SimpleMimeMessage message,
-        MailImporterConfig mailImporterConfig
+        MailImporterConfig config
     ) {        
         AppLog.info("Importing Message (" + providerName + "/" + segmentName + "): ", message);
         String messageId = "NA";
@@ -497,7 +503,7 @@ public class MailImporterServlet
                             segmentName,
                             message.getSubject(),
                             (SimpleMimeMessage)content.getContent(),
-                            mailImporterConfig.getCaseInsensitiveAddressLookup()
+                            config
                         );
                     }
                     catch(Exception e) {
@@ -529,13 +535,13 @@ public class MailImporterServlet
                     );
                 }
             }
-            if(successful && mailImporterConfig.deleteImportedMessages()) {
+            if(successful && config.deleteImportedMessages()) {
                 // Delete message after successful import
                 message.markAsDeleted();
             }
         }
         else {
-            if(mailImporterConfig.deleteImportedMessages()) {
+            if(config.deleteImportedMessages()) {
                 message.markAsDeleted();
             }
             this.notifyAdmin(
@@ -545,7 +551,7 @@ public class MailImporterServlet
                 Activities.PRIORITY_LOW,
                 "Message does not contain nested messages",
                 "",
-                new String[]{messageId, "delete=" + mailImporterConfig.deleteImportedMessages()}
+                new String[]{messageId, "delete=" + config.deleteImportedMessages()}
             );
         }
     }
@@ -562,17 +568,17 @@ public class MailImporterServlet
                 UUIDs.getGenerator().next().toString()
             );
             System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
-            Workflows.initWorkflows(
+            Workflows.getInstance().initWorkflows(
                 pm,
                 providerName,
                 segmentName
             );
-            ActivityProcess emailActivityProcess = Activities.initEmailProcess(
+            ActivityProcess emailActivityProcess = Activities.getInstance().initEmailProcess(
                 pm,
                 providerName,
                 segmentName
             );
-            ActivityType emailActivityType = Activities.initActivityType(
+            ActivityType emailActivityType = Activities.getInstance().initActivityType(
                 org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
                 org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_EMAIL,
                 emailActivityProcess,
@@ -580,14 +586,14 @@ public class MailImporterServlet
                 providerName,
                 segmentName
             );
-            ActivityGroup emailActivityTracker = Activities.initActivityTracker(
+            ActivityGroup emailActivityTracker = Activities.getInstance().initActivityTracker(
                 org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS, 
                 null,
                 pm, 
                 providerName, 
                 segmentName
             );
-            Activities.initActivityCreator(
+            Activities.getInstance().initActivityCreator(
                 org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, 
                 emailActivityType,
                 Arrays.asList(emailActivityTracker),
@@ -739,11 +745,9 @@ public class MailImporterServlet
     private static final String WORKFLOW_NAME = "MailImporter";
     private static final String COMMAND_EXECUTE = "/execute";
     
-    private static final UUIDGenerator uuidGenerator = UUIDs.getGenerator();
-
     private PersistenceManagerFactory persistenceManagerFactory = null;
 
-    private final List runningSegments = new ArrayList();
+    private final List<String> runningSegments = new ArrayList<String>();
 
 }
 

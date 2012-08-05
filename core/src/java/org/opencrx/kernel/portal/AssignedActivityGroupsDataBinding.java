@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AssignedActivityGroupsDataBinding.java,v 1.3 2008/10/01 00:28:29 wfro Exp $
+ * Name:        $Id: AssignedActivityGroupsDataBinding.java,v 1.4 2009/04/23 17:52:06 wfro Exp $
  * Description: AssignedActivityGroupsDataBinding
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:29 $
+ * Date:        $Date: 2009/04/23 17:52:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -71,7 +71,7 @@ public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
     ) {
         if(object instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
             org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)object;
-            List<org.opencrx.kernel.activity1.jmi1.ActivityGroup> groups = new ArrayList();
+            List<org.opencrx.kernel.activity1.jmi1.ActivityGroup> groups = new ArrayList<org.opencrx.kernel.activity1.jmi1.ActivityGroup>();
             Collection<org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment> assignments = activity.getAssignedGroup();
             for(org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignment: assignments) {
                 if(assignment.getActivityGroup() != null) {

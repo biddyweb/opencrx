@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.47 2009/03/08 17:04:51 wfro Exp $
+ * Name:        $Id: Products.java,v 1.74 2009/06/08 09:21:19 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.47 $
+ * Revision:    $Revision: 1.74 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:51 $
+ * Date:        $Date: 2009/06/08 09:21:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,57 +59,85 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
+import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.ContractPosition;
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery;
+import org.opencrx.kernel.product1.cci2.PriceListEntryQuery;
+import org.opencrx.kernel.product1.cci2.ProductBasePriceQuery;
+import org.opencrx.kernel.product1.cci2.ProductQuery;
+import org.opencrx.kernel.product1.jmi1.AbstractFilterProduct;
+import org.opencrx.kernel.product1.jmi1.AbstractPriceLevel;
+import org.opencrx.kernel.product1.jmi1.CategoryFilterProperty;
+import org.opencrx.kernel.product1.jmi1.ConfiguredProduct;
+import org.opencrx.kernel.product1.jmi1.DefaultSalesTaxTypeFilterProperty;
+import org.opencrx.kernel.product1.jmi1.DisabledFilterProperty;
+import org.opencrx.kernel.product1.jmi1.DiscountPriceModifier;
+import org.opencrx.kernel.product1.jmi1.LinearPriceModifier;
+import org.opencrx.kernel.product1.jmi1.PriceListEntry;
+import org.opencrx.kernel.product1.jmi1.PriceModifier;
+import org.opencrx.kernel.product1.jmi1.PriceUomFilterProperty;
 import org.opencrx.kernel.product1.jmi1.PricingRule;
+import org.opencrx.kernel.product1.jmi1.Product;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
+import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
+import org.opencrx.kernel.product1.jmi1.ProductClassificationFilterProperty;
+import org.opencrx.kernel.product1.jmi1.ProductConfiguration;
+import org.opencrx.kernel.product1.jmi1.ProductConfigurationType;
+import org.opencrx.kernel.product1.jmi1.ProductFilterProperty;
+import org.opencrx.kernel.product1.jmi1.ProductPhasePriceLevel;
+import org.opencrx.kernel.product1.jmi1.ProductQueryFilterProperty;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.w3c.spi2.Datatypes;
 
-public class Products {
-
-    //-----------------------------------------------------------------------
-    public Products(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
+public class Products extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    public static class PriceLevelMarshaller
+	public static void register(
+	) {
+		registerImpl(new Products());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Products getInstance(
+	) throws ServiceException {
+		return getInstance(Products.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Products(
+	) {
+		
+	}
+	
+    //-------------------------------------------------------------------------
+    public class PriceLevelMarshaller
         implements Marshaller {
 
         public PriceLevelMarshaller(
@@ -124,18 +152,18 @@ public class Products {
            this.validTo = validTo;           
         }
         
-        public Object marshal(Object s) throws ServiceException {
-            DataproviderObject priceLevel = new DataproviderObject(
-                (DataproviderObject_1_0)s
-            );
+        public Object marshal(
+        	Object s
+        ) throws ServiceException {
+            AbstractPriceLevel priceLevel = PersistenceHelper.clone((AbstractPriceLevel)s);
             if(
-                (priceLevel.values("name").get(0) != null) && 
+                (priceLevel.getName() != null) && 
                 (this.nameReplacementRegex != null) && 
                 (this.nameReplacementValue != null)
             ) {
-                String name = (String)priceLevel.values("name").get(0);
+                String name = priceLevel.getName();
                 if(name != null) {
-                    priceLevel.clearValues("name").add(
+                    priceLevel.setName(
                         name.replaceAll(
                             this.nameReplacementRegex, 
                             this.nameReplacementValue
@@ -144,17 +172,17 @@ public class Products {
                 }
             }
             if(this.validFrom != null) {
-                priceLevel.clearValues("validFrom").add(
-                    DateFormat.getInstance().format(this.validFrom)
+                priceLevel.setValidFrom(
+                    this.validFrom
                 );
             }
-            priceLevel.clearValues("validTo");
+            priceLevel.setValidTo(null);
             if(this.validTo != null) {
-                priceLevel.values("validTo").add(
-                     DateFormat.getInstance().format(this.validTo)
+                priceLevel.setValidTo(
+                     this.validTo
                 );
             }
-            priceLevel.clearValues("isFinal").add(
+            priceLevel.setFinal(
                 Boolean.FALSE
             );
             return priceLevel;                       
@@ -172,7 +200,7 @@ public class Products {
     }
     
     //-------------------------------------------------------------------------
-    public static class ProductPhasePriceLevelMarshaller
+    public class ProductPhasePriceLevelMarshaller
         implements Marshaller {
 
         public ProductPhasePriceLevelMarshaller(
@@ -185,18 +213,18 @@ public class Products {
            this.productPhaseKey = productPhaseKey;
         }
         
-        public Object marshal(Object s) throws ServiceException {
-            DataproviderObject priceLevel = new DataproviderObject(
-                (DataproviderObject_1_0)s
-            );
+        public Object marshal(
+        	Object s
+        ) throws ServiceException {
+            ProductPhasePriceLevel priceLevel = PersistenceHelper.clone((ProductPhasePriceLevel)s);
             if(
-                (priceLevel.values("name").get(0) != null) && 
+                (priceLevel.getName() != null) && 
                 (this.nameReplacementRegex != null) && 
                 (this.nameReplacementValue != null)
             ) {
-                String name = (String)priceLevel.values("name").get(0);
+                String name = priceLevel.getName();
                 if(name != null) {
-                    priceLevel.clearValues("name").add(
+                    priceLevel.setName(
                         name.replaceAll(
                             this.nameReplacementRegex, 
                             this.nameReplacementValue
@@ -205,11 +233,11 @@ public class Products {
                 }
             }
             if(this.productPhaseKey != null) {
-                priceLevel.clearValues("productPhase").add(
+                priceLevel.setProductPhaseKey(
                     this.productPhaseKey
                 );
             }
-            priceLevel.clearValues("isFinal").add(
+            priceLevel.setFinal(
                 Boolean.FALSE
             );
             return priceLevel;                       
@@ -226,7 +254,7 @@ public class Products {
     }
     
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.product1.jmi1.PricingRule findPricingRule(
+    public org.opencrx.kernel.product1.jmi1.PricingRule findPricingRule(
         String name,
         org.opencrx.kernel.product1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
@@ -244,7 +272,7 @@ public class Products {
     /**
      * @return Returns the product segment.
      */
-    public static org.opencrx.kernel.product1.jmi1.Segment getProductSegment(
+    public org.opencrx.kernel.product1.jmi1.Segment getProductSegment(
         PersistenceManager pm,
         String providerName,
         String segmentName
@@ -256,7 +284,7 @@ public class Products {
     }
 
     //-----------------------------------------------------------------------
-    public static PricingRule initPricingRule(
+    public PricingRule initPricingRule(
         String pricingRuleName,
         String description,
         String getPriceLevelScript,
@@ -266,13 +294,13 @@ public class Products {
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
         Product1Package productPkg = Utils.getProductPackage(pm);
-        org.opencrx.kernel.product1.jmi1.Segment productSegment = Products.getProductSegment(
+        org.opencrx.kernel.product1.jmi1.Segment productSegment = this.getProductSegment(
             pm, 
             providerName, 
             segmentName
         );
         PricingRule pricingRule = null;
-        if((pricingRule = Products.findPricingRule(pricingRuleName, productSegment, pm)) != null) {
+        if((pricingRule = this.findPricingRule(pricingRuleName, productSegment, pm)) != null) {
             return pricingRule;            
         }                
         pm.currentTransaction().begin();
@@ -300,585 +328,513 @@ public class Products {
      * @return number of cloned configurations
      */
     public int cloneProductConfigurationSet(
-        Path fromIdentity,
-        Path toIdentity,
+    	org.opencrx.kernel.product1.jmi1.ProductConfigurationSet from,
+        ContractPosition to,
         boolean cloneDefaultOnly,
         boolean updateCurrentConfig
     ) throws ServiceException {
-        List configurations = this.backend.getDelegatingRequests().addFindRequest(
-            fromIdentity.getChild("configuration"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        for(
-            Iterator i = configurations.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 configuration = (DataproviderObject_1_0)i.next();
-            if(
+    	Collection<ProductConfiguration> configurations = from.getConfiguration();
+    	for(ProductConfiguration configuration: configurations) {
+            if(            	
                 !cloneDefaultOnly ||                    
-                ((configuration.values("isDefault").size() > 0) && ((Boolean)configuration.values("isDefault").get(0)).booleanValue())
+                ((configuration.isDefault() != null) && configuration.isDefault().booleanValue())
             ) {
-                this.backend.getCloneable().cloneAndUpdateReferences(
-                    configuration,
-                    toIdentity.getChild("configuration"),
-                    null,
-                    "property",
-                    true,
-                    AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES
-                );
+            	Cloneable.getInstance().cloneObject(
+            		configuration, 
+            		to, 
+            		"configuration", 
+            		null, 
+            		null
+            	);
             }
         }
         // configType
-        DataproviderObject_1_0 from = this.backend.retrieveObject(fromIdentity);
-        DataproviderObject to = this.backend.retrieveObjectForModification(
-            toIdentity
-        );
-        to.clearValues("configType").addAll(
-            from.values("configType")
-        );
-        
-        // currentConfig
-        if(updateCurrentConfig) {
-            // Set current configuration to default config
-            configurations = this.backend.getDelegatingRequests().addFindRequest(
-                toIdentity.getChild("configuration"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-            Path defaultConfigurationIdentity = null;   
-            for(
-                Iterator i = configurations.iterator();
-                i.hasNext();
-            ) {
-                DataproviderObject_1_0 configuration = (DataproviderObject_1_0)i.next();
-                if((configuration.values("isDefault").size() > 0) && ((Boolean)configuration.values("isDefault").get(0)).booleanValue()) {
-                    defaultConfigurationIdentity = configuration.path();
-                    break;
-                }
-            }
-            if(defaultConfigurationIdentity != null) {
-                to.clearValues("currentConfig").add(defaultConfigurationIdentity);
-            }
+    	if(to instanceof ConfiguredProduct) {
+	        ((ConfiguredProduct)to).setConfigType(
+	            from.getConfigType()
+	        );
+	        // currentConfig
+	        if(updateCurrentConfig) {
+	        	configurations = ((ConfiguredProduct)to).getConfiguration();
+	            ProductConfiguration defaultConfiguration = null;   
+	            for(ProductConfiguration configuration: configurations) {
+	                if((configuration.isDefault() != null) && configuration.isDefault().booleanValue()) {
+	                    defaultConfiguration = configuration;
+	                    break;
+	                }
+	            }
+	            if(defaultConfiguration != null) {
+	                ((ConfiguredProduct)to).setCurrentConfig(
+	                	defaultConfiguration
+	                );
+	            }
+	        }
         }
         return configurations.size();
     }
     
     //-------------------------------------------------------------------------
     public void setConfigurationType(
-        Path productIdentity,
-        Path configurationTypeSetIdentity
+        org.opencrx.kernel.product1.jmi1.Product product,
+        org.opencrx.kernel.product1.jmi1.ProductConfigurationTypeSet configurationTypeSet
     ) throws ServiceException {
-        this.backend.removeAll(
-            productIdentity.getChild("configuration"),
-            null,
-            0,
-            Integer.MAX_VALUE,
-            new HashSet()
-        );
-        List configurationTypes = this.backend.getDelegatingRequests().addFindRequest(
-            configurationTypeSetIdentity.getChild("configurationType"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        Map objectMarshallers = new HashMap();
-        objectMarshallers.put(
-            "org:opencrx:kernel:product1:ProductConfigurationType",
-            new Marshaller() {
-                public Object marshal(Object s) throws ServiceException {
-                    DataproviderObject configuration = new DataproviderObject(
-                        (DataproviderObject_1_0)s
-                    );
-                    configuration.clearValues(
-                        SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:product1:ProductConfiguration"
-                    );
-                    return configuration;                       
-                }
-                public Object unmarshal(Object s) {
-                    throw new UnsupportedOperationException();
-                }
-            }
-        );
-        for(
-            Iterator i = configurationTypes.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 configurationType = (DataproviderObject_1_0)i.next();
-            DataproviderObject configuration =
-                this.backend.getCloneable().cloneAndUpdateReferences(
-                    configurationType,
-                    productIdentity.getChild("configuration"),
-                    objectMarshallers,
-                    "property",
-                    true,
-                    AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES
-                );
-            configuration = this.backend.retrieveObjectForModification(
-                configuration.path()
-            );
-            configuration.clearValues("configType").add(
-                configurationType.path()
-            );
-        }
-        DataproviderObject modifiedProduct = this.backend.retrieveObjectForModification(
-            productIdentity
-        );
-        modifiedProduct.clearValues("configType").add(
-             configurationTypeSetIdentity
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(product);
+    	Collection<ProductConfiguration> productConfigurations = product.getConfiguration();
+    	for(ProductConfiguration configuration: productConfigurations) {
+    		configuration.refDelete();
+    	}
+    	Collection<ProductConfigurationType> configurationTypes = configurationTypeSet.getConfigurationType();
+    	for(ProductConfigurationType configurationType: configurationTypes) {
+    		ProductConfiguration configuration = pm.newInstance(ProductConfiguration.class);
+    		configuration.refInitialize(false, false);
+    		configuration.setDefault(configurationType.isDefault());
+    		configuration.setName(configurationType.getName());
+    		configuration.setDescription(configurationType.getDescription());
+    		configuration.setValidFrom(configurationType.getValidFrom());
+    		configuration.setValidTo(configurationType.getValidTo());
+    		configuration.setConfigType(configurationType);
+    		product.addConfiguration(
+    			false,
+    			this.getUidAsString(),
+    			configuration
+    		);
+    		Collection<org.opencrx.kernel.base.jmi1.Property> properties = configurationType.getProperty();
+    		for(org.opencrx.kernel.base.jmi1.Property property: properties) {
+    			Cloneable.getInstance().cloneObject(
+    				property, 
+    				configuration, 
+    				"property", 
+    				null, 
+    				""
+    			);
+    		}    		
+    	}
+        product.setConfigType(
+             configurationTypeSet
         );
     }
     
     //-------------------------------------------------------------------------
     public void unsetConfigurationType(
-        Path bundledProdcutIdentity
+        org.opencrx.kernel.product1.jmi1.ProductConfigurationSet productConfigurationSet
     ) throws ServiceException {
-        DataproviderObject modifiedProduct = this.backend.retrieveObjectForModification(
-            bundledProdcutIdentity
-        );
-        modifiedProduct.clearValues("configType");
-        modifiedProduct.clearValues("currentConfig");
-        // Remove existing configuration
-        this.backend.removeAll(
-            bundledProdcutIdentity.getChild("configuration"),
-            null,
-            0,
-            Integer.MAX_VALUE,
-            new HashSet()
-        );        
+    	productConfigurationSet.setConfigType(null);
+    	if(productConfigurationSet instanceof ConfiguredProduct) {
+    		((ConfiguredProduct)productConfigurationSet).setCurrentConfig(null);
+    	}
+    	Collection<ProductConfiguration> configurations = productConfigurationSet.getConfiguration();
+    	for(ProductConfiguration configuration: configurations) {
+    		configuration.refDelete();
+    	}
     }
     
     //-------------------------------------------------------------------------
-    public FilterProperty[] getProductFilterProperties(
-        Path productFilterIdentity,
+    public void unsetConfigurationType(
+        org.opencrx.kernel.product1.jmi1.ProductConfiguration productConfiguration
+    ) throws ServiceException {
+    	productConfiguration.setConfigType(null);
+    	Collection<org.opencrx.kernel.base.jmi1.Property> properties = productConfiguration.getProperty();
+    	for(org.opencrx.kernel.base.jmi1.Property property: properties) {
+    		property.refDelete();
+    	}
+    }
+    
+    //-------------------------------------------------------------------------
+    public ProductQuery getFilteredProductQuery(
+        AbstractFilterProduct productFilter,
+        ProductQuery query,
         boolean forCounting
     ) throws ServiceException {
-        List<DataproviderObject_1_0> filterProperties = this.backend.getDelegatingRequests().addFindRequest(
-            productFilterIdentity.getChild("productFilterProperty"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            null,
-            0, 
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-        boolean hasQueryFilterClause = false;        
-        for(
-            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 filterProperty = i.next();
-            String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
-
-            Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);
-            
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(productFilter);
+        Collection<ProductFilterProperty> filterProperties = productFilter.getProductFilterProperty();
+        boolean hasQueryFilterClause = false;
+        for(ProductFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
             if((isActive != null) && isActive.booleanValue()) {
                 // Query filter
-                if("org:opencrx:kernel:product1:ProductQueryFilterProperty".equals(filterPropertyClass)) {     
-                    String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-                    // Clause and class
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                            FilterOperators.PIGGY_BACK,
-                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
-                        )
+                if(filterProperty instanceof ProductQueryFilterProperty) {
+                	ProductQueryFilterProperty p = (ProductQueryFilterProperty)filterProperty;
+                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+                	queryFilter.setClause(
+                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
+                	);
+                    queryFilter.setStringParam(
+                    	p.getStringParam()
                     );
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                            FilterOperators.PIGGY_BACK,
-                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
-                        )
+                    queryFilter.setIntegerParam(
+                    	p.getIntegerParam()
                     );
-                    // stringParam
-                    List<Object> values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDecimalParam(
+                    	p.getDecimalParam()
                     );
-                    // integerParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setBooleanParam(
+                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
                     );
-                    // decimalParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateParam(
+                    	p.getDateParam()
                     );
-                    // booleanParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateTimeParam(
+                    	p.getDateTimeParam()
                     );
-                    // dateParam
-                    values = new ArrayList<Object>();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
-                    );
-                    // dateTimeParam
-                    values = new ArrayList<Object>();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(Date.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    query.thereExistsContext().equalTo(
+                    	queryFilter
                     );
                     hasQueryFilterClause = true;
                 }
                 // Attribute filter
-                else {
+                else if(filterProperty instanceof AttributeFilterProperty) {
+                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
                     // Get filterOperator, filterQuantor
-                    short filterOperator = filterProperty.values("filterOperator").size() == 0
-                        ? FilterOperators.IS_IN
-                        : ((Number)filterProperty.values("filterOperator").get(0)).shortValue();
-                    filterOperator = filterOperator == 0
-                        ? FilterOperators.IS_IN
-                        : filterOperator;
-                    short filterQuantor = filterProperty.values("filterQuantor").size() == 0
-                        ? Quantors.THERE_EXISTS
-                        : ((Number)filterProperty.values("filterQuantor").get(0)).shortValue();
-                    filterQuantor = filterQuantor == 0
-                        ? Quantors.THERE_EXISTS
-                        : filterQuantor;
+                    short operator = attributeFilterProperty.getFilterOperator();
+                    operator = operator == 0 ? 
+                    	FilterOperators.IS_IN : 
+                    	operator;
+                    short quantor = attributeFilterProperty.getFilterQuantor();
+                    quantor = quantor == 0 ? 
+                    	Quantors.THERE_EXISTS : 
+                    	quantor;   
                     
-                    if("org:opencrx:kernel:product1:ProductClassificationFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "classification",
-                                filterOperator,
-                                filterProperty.values("classification").toArray()
-                            )
-                        );
+                    if(filterProperty instanceof PriceUomFilterProperty) {
+                    	PriceUomFilterProperty p = (PriceUomFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllPriceUom().elementOf(p.getPriceUom()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllPriceUom().notAnElementOf(p.getPriceUom()); 
+	                					break;
+	                				default:
+	                					query.forAllPriceUom().elementOf(p.getPriceUom()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsPriceUom().elementOf(p.getPriceUom()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsPriceUom().notAnElementOf(p.getPriceUom()); 
+	                					break;
+	                				default:
+	                					query.thereExistsPriceUom().elementOf(p.getPriceUom()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
+                	}
+                    else if(filterProperty instanceof CategoryFilterProperty) {
+                    	CategoryFilterProperty p = (CategoryFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllCategory().elementOf(p.getCategory()); 
+	                					break;
+	                				case FilterOperators.IS_LIKE:
+	                					query.forAllCategory().like(p.getCategory()); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.forAllCategory().greaterThan(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.forAllCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.forAllCategory().lessThan(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.forAllCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllCategory().notAnElementOf(p.getCategory()); 
+	                					break;
+	                				case FilterOperators.IS_UNLIKE:
+	                					query.forAllCategory().unlike(p.getCategory()); 
+	                					break;
+	                				default:
+	                					query.forAllCategory().elementOf(p.getCategory()); 
+	                					break;
+	                			}
+	                			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsCategory().elementOf(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_LIKE: 
+                    					query.thereExistsCategory().like(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsCategory().greaterThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsCategory().lessThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsCategory().notAnElementOf(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_UNLIKE: 
+                    					query.thereExistsCategory().unlike(p.getCategory()); 
+                    					break;
+                    				default:
+                    					query.thereExistsCategory().elementOf(p.getCategory()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "salesTaxType",
-                                filterOperator,
-                                filterProperty.values("salesTaxType").toArray()                    
-                            )
-                        );
+                    else if(filterProperty instanceof ProductClassificationFilterProperty) {
+                    	ProductClassificationFilterProperty p = (ProductClassificationFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllClassification().elementOf(p.getClassification()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllClassification().notAnElementOf(p.getClassification()); 
+	                					break;
+	                				default:
+	                					query.forAllClassification().elementOf(p.getClassification()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsClassification().elementOf(p.getClassification()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsClassification().notAnElementOf(p.getClassification()); 
+	                					break;
+	                				default:
+	                					query.thereExistsClassification().elementOf(p.getClassification()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:product1:CategoryFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "category",
-                                filterOperator,
-                                filterProperty.values("category").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof DefaultSalesTaxTypeFilterProperty) {
+                    	DefaultSalesTaxTypeFilterProperty p = (DefaultSalesTaxTypeFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllSalesTaxType().elementOf(p.getSalesTaxType()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllSalesTaxType().notAnElementOf(p.getSalesTaxType()); 
+	                					break;
+	                				default:
+	                					query.forAllSalesTaxType().elementOf(p.getSalesTaxType()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsSalesTaxType().elementOf(p.getSalesTaxType()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsSalesTaxType().notAnElementOf(p.getSalesTaxType()); 
+	                					break;
+	                				default:
+	                					query.thereExistsSalesTaxType().elementOf(p.getSalesTaxType()); 
+	                					break;
+	                			}
+	                			break;
+                    	}                    	
                     }
-                    else if("org:opencrx:kernel:product1:PriceUomFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "priceUom",
-                                filterOperator,
-                                filterProperty.values("priceUom").toArray()
-                            )
-                        );
-                    }
-                    else if("org:opencrx:kernel:product1:DisabledFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "disabled",
-                                filterOperator,
-                                filterProperty.values("disabled").toArray()
-                            )
-                        );
-                    }
+                    else if(filterProperty instanceof DisabledFilterProperty) {
+                    	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.forAllDisabled().equalTo(!p.isDisabled());	                						
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
+                	}
                 }
             }
-        }        
-        if(!hasQueryFilterClause && forCounting) {
-            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-            // Clause and class
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                    FilterOperators.PIGGY_BACK,
-                    new Object[]{
-                        Database_1_Attributes.HINT_COUNT + "(1=1)"
-                    }
-                )
-            );
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.PIGGY_BACK,
-                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
-                )
-            );            
-        }        
-        return filter.toArray(new FilterProperty[filter.size()]);
-    }
-
-    //-------------------------------------------------------------------------    
-    public List getPriceListEntries(
-        DataproviderObject_1_0 priceLevel,
-        boolean applyPriceFilter
-    ) throws ServiceException {
-        List priceFilter = new ArrayList();
-        priceFilter.add(
-            new FilterProperty(
-                Quantors.THERE_EXISTS,
-                "priceLevel",
-                FilterOperators.IS_IN,
-                priceLevel.path()                    
-            )
-        );
-        if(applyPriceFilter) {
-            if(!priceLevel.values("priceCurrency").isEmpty()) {
-                priceFilter.add(
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "priceCurrency",
-                        FilterOperators.IS_IN,
-                        priceLevel.values("priceCurrency").toArray()                    
-                    )
-                );                
-            }
-            if(!priceLevel.values("priceUsage").isEmpty()) {
-                priceFilter.add(
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "usage",
-                        FilterOperators.IS_IN,
-                        priceLevel.values("priceUsage").toArray()            
-                    )
-                );                
-            }
         }
-        return this.backend.getDelegatingRequests().addFindRequest(
-            priceLevel.path().getPrefix(5).getChild("priceListEntry"),
-            (FilterProperty[])priceFilter.toArray(new FilterProperty[priceFilter.size()]),
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            BATCHING_MODE_SIZE,
-            Directions.ASCENDING            
-        );        
+        if(!hasQueryFilterClause && forCounting) {
+        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+        	queryFilter.setClause(
+        		Database_1_Attributes.HINT_COUNT + "(1=1)"
+        	);
+        	query.thereExistsContext().equalTo(
+        		queryFilter
+        	);
+        }
+        return query;
     }
     
     //-------------------------------------------------------------------------    
-    public List findPrices(
-        DataproviderObject_1_0 priceLevel,
-        boolean useBasedOnPriceLevel,
-        Path productIdentity
+    public List<PriceListEntry> getPriceListEntries(
+    	AbstractPriceLevel priceLevel,
+        boolean applyPriceFilter
     ) throws ServiceException {
-        List priceFilter = new ArrayList();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);
+    	PriceListEntryQuery priceListEntryQuery = (PriceListEntryQuery)pm.newQuery(PriceListEntry.class);
+    	priceListEntryQuery.thereExistsPriceLevel().equalTo(priceLevel);
+        if(applyPriceFilter) {
+        	priceListEntryQuery.priceCurrency().equalTo(priceLevel.getPriceCurrency());        	
+            if(!priceLevel.getPriceUsage().isEmpty()) {
+                priceListEntryQuery.thereExistsUsage().elementOf(
+                	priceLevel.getPriceUsage()
+                );
+            }
+        }
+        org.opencrx.kernel.product1.jmi1.Segment productSegment =
+        	(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+        		priceLevel.refGetPath().getPrefix(5)
+        	);
+        return productSegment.getPriceListEntry(priceListEntryQuery);
+    }
+    
+    //-------------------------------------------------------------------------    
+    public List<ProductBasePrice> findPrices(
+        Product product,
+        AbstractPriceLevel priceLevel,
+        boolean useBasedOnPriceLevel
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(product);
+    	ProductBasePriceQuery priceQuery = (ProductBasePriceQuery)pm.newQuery(ProductBasePrice.class);
         // Get basedOn price level if useBasedOnPriceLevel==true
-        priceLevel = useBasedOnPriceLevel && !priceLevel.values("basedOn").isEmpty()
-            ? this.backend.retrieveObjectFromDelegation((Path)priceLevel.values("basedOn").get(0))
-            : priceLevel;
-                    
+        priceLevel = useBasedOnPriceLevel && (priceLevel.getBasedOn() != null) ? 
+        	priceLevel.getBasedOn() : 
+        	priceLevel;                    
         // filter on priceCurrency if defined
-        if((priceLevel != null) && !priceLevel.values("priceCurrency").isEmpty()) {
-            priceFilter.add(
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "priceCurrency",
-                    FilterOperators.IS_IN,
-                    priceLevel.values("priceCurrency").toArray()                    
-                )
-            );
-        }
+        priceQuery.priceCurrency().equalTo(
+        	priceLevel.getPriceCurrency()
+        );
         // filter on priceUsage if defined
-        if((priceLevel != null) && !priceLevel.values("priceUsage").isEmpty()) {
-            priceFilter.add(
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "usage",
-                    FilterOperators.IS_IN,
-                    priceLevel.values("priceUsage").toArray()                    
-                )
-            );
+        if((priceLevel != null) && !priceLevel.getPriceUsage().isEmpty()) {
+        	priceQuery.thereExistsUsage().elementOf(
+        		priceLevel.getPriceUsage()
+        	);
         }
-        // filter on priceLevel if defined
         if(priceLevel != null) {
-            priceFilter.add(
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "priceLevel",
-                    FilterOperators.IS_IN,
-                    priceLevel.path()                    
-                )
-            );            
+        	priceQuery.thereExistsPriceLevel().equalTo(
+        		priceLevel
+        	);
         }
-        return this.backend.getDelegatingRequests().addFindRequest(
-            productIdentity.getChild("basePrice"),
-            (FilterProperty[])priceFilter.toArray(new FilterProperty[priceFilter.size()]),
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            BATCHING_MODE_SIZE,
-            Directions.ASCENDING            
-        );        
+        return product.getBasePrice(priceQuery);
     }
 
     //-------------------------------------------------------------------------
     public int clonePriceLevel(
-        Path priceLevelIdentity,
+        AbstractPriceLevel priceLevel,
         Short processingMode,
         Map<String,Marshaller> priceLevelMarshallers
     ) throws ServiceException {
-        DataproviderObject_1_0 priceLevel = this.backend.retrieveObject(
-            priceLevelIdentity
-        );
-        List allPriceLevels = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevelIdentity.getParent(), 
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0, 
-            BATCHING_MODE_SIZE,
-            Directions.ASCENDING
-        );
-        Set dependentPriceLevels = this.getDependentPriceLevels(
-            priceLevelIdentity, 
-            allPriceLevels
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);
+    	org.opencrx.kernel.product1.jmi1.Segment productSegment =
+    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+    			priceLevel.refGetPath().getParent().getParent()
+    		);
+        List<AbstractPriceLevel> dependentPriceLevels = this.getDependentPriceLevels(
+            priceLevel, 
+            true
         );
         if(
             (processingMode == PROCESSING_MODE_CLONE_PRICELEVEL_NO_PRICES) ||
             (processingMode == PROCESSING_MODE_CLONE_PRICELEVEL_INCLUDE_PRICES)
         ) {
             // Mapping <source price level identity, cloned price level identity>
-            Map clonedIdentities = new HashMap();
+            Map<Path,AbstractPriceLevel> clonedLevels = new HashMap<Path,AbstractPriceLevel>();
             // Clone price level
-            DataproviderObject_1_0 clonedPriceLevel = this.backend.getCloneable().cloneAndUpdateReferences(
-                priceLevel, 
-                priceLevelIdentity.getParent(), 
-                priceLevelMarshallers, 
-                "priceModifier, accountFilterProperty, assignedAccount, productFilterProperty", 
-                false,
-                AttributeSelectors.ALL_ATTRIBUTES
+            AbstractPriceLevel clonedPriceLevel = (AbstractPriceLevel)Cloneable.getInstance().cloneObject(
+            	priceLevel, 
+            	productSegment, 
+            	"priceLevel", 
+            	priceLevelMarshallers, 
+            	"priceModifier, accountFilterProperty, assignedAccount, productFilterProperty"
             );
-            clonedIdentities.put(
-                priceLevelIdentity, 
-                clonedPriceLevel.path()
+            clonedLevels.put(
+                priceLevel.refGetPath(), 
+                clonedPriceLevel
             );            
             // Clone dependent price levels
-            for(Iterator i = dependentPriceLevels.iterator(); i.hasNext(); ) {
-                DataproviderObject_1_0 dependentPriceLevel = (DataproviderObject_1_0)i.next();
-                DataproviderObject_1_0 clonedDependentPriceLevel = this.backend.getCloneable().cloneAndUpdateReferences(
-                    dependentPriceLevel, 
-                    priceLevelIdentity.getParent(), 
-                    priceLevelMarshallers, 
-                    "priceModifier, accountFilterProperty, assignedAccount, productFilterProperty", 
-                    false,
-                    AttributeSelectors.ALL_ATTRIBUTES
-                );     
-                clonedIdentities.put(
-                    dependentPriceLevel.path(), 
-                    clonedDependentPriceLevel.path()
+            for(AbstractPriceLevel dependentPriceLevel: dependentPriceLevels) {
+            	AbstractPriceLevel clonedDependentPriceLevel = (AbstractPriceLevel)Cloneable.getInstance().cloneObject(
+                	dependentPriceLevel, 
+                	productSegment, 
+                	"priceLevel", 
+                	priceLevelMarshallers, 
+                	"priceModifier, accountFilterProperty, assignedAccount, productFilterProperty"
+                );
+                clonedLevels.put(
+                    dependentPriceLevel.refGetPath(), 
+                    clonedDependentPriceLevel
                 );
             }
             // Update priceLevel.basedOn references
-            for(Iterator i = clonedIdentities.values().iterator(); i.hasNext(); ) {
-                DataproviderObject_1_0 level = this.backend.retrieveObjectFromDelegation(
-                    (Path)i.next()
-                );
+            for(AbstractPriceLevel level: clonedLevels.values()) {
                 if(
-                    !level.values("basedOn").isEmpty() &&
-                    clonedIdentities.keySet().contains(level.values("basedOn").get(0))
+                    (level.getBasedOn() != null) &&
+                    clonedLevels.keySet().contains(level.getBasedOn().refGetPath())
                 ) {
-                    DataproviderObject modifiedLevel = this.backend.retrieveObjectForModification(
-                        level.path()
-                    );
-                    Path cloneIdentity = (Path)clonedIdentities.get(level.values("basedOn").get(0));
-                    modifiedLevel.clearValues("basedOn").add(
-                        cloneIdentity
-                    );
+                	AbstractPriceLevel clonedLevel = clonedLevels.get(level.getBasedOn().refGetPath());
+                    level.setBasedOn(clonedLevel);
                 }                
             }
             // Clone prices if price level is basic price level
             if(
                 (processingMode == PROCESSING_MODE_CLONE_PRICELEVEL_INCLUDE_PRICES) &&
-                priceLevel.values("baseOn").isEmpty()
+                (priceLevel.getBasedOn() == null) 
             ) {
-                List priceListEntries = this.getPriceListEntries(
+                List<PriceListEntry> priceListEntries = this.getPriceListEntries(
                     priceLevel,
                     true
                 );
-                for(
-                    Iterator i = priceListEntries.iterator(); 
-                    i.hasNext(); 
-                ) {
-                    DataproviderObject_1_0 priceListEntry = (DataproviderObject_1_0)i.next();
-                    DataproviderObject_1_0 price = this.backend.retrieveObjectFromDelegation(
-                        (Path)priceListEntry.values("basePrice").get(0)
-                    );
-                    DataproviderObject clonedPrice = new DataproviderObject(
-                        price.path().getParent().getChild(this.backend.getUidAsString())
-                    );
-                    clonedPrice.addClones(
-                        price,
-                        true
-                    );
-                    clonedPrice.clearValues("priceLevel").add(
-                        clonedPriceLevel.path()
-                    );
-                    this.backend.getDelegatingRequests().addCreateRequest(
-                        clonedPrice
-                    );
+                for(PriceListEntry priceListEntry: priceListEntries) {
+                	org.opencrx.kernel.product1.jmi1.ProductBasePrice price = priceListEntry.getBasePrice();
+                	// Do not clone disabled prices
+                	if((price.isDisabled() == null) || !price.isDisabled().booleanValue()) {
+	                	org.opencrx.kernel.product1.jmi1.Product product = 
+	                		(org.opencrx.kernel.product1.jmi1.Product)pm.getObjectById(
+	                			price.refGetPath().getParent().getParent()
+	                		);
+	                	// Do not clone prices for disabled products 
+	                	if((product.isDisabled() == null) || !product.isDisabled().booleanValue()) {
+		                	org.opencrx.kernel.product1.jmi1.ProductBasePrice clonedPrice = PersistenceHelper.clone(price);
+		                	clonedPrice.getPriceLevel().clear();
+		                	clonedPrice.getPriceLevel().add(
+		                		clonedPriceLevel
+		                	);
+		                	product.addBasePrice(
+		                		false,
+		                		this.getUidAsString(),
+		                		clonedPrice
+		                	);
+	                	}
+                	}
                 }
             }
         }
@@ -887,7 +843,7 @@ public class Products {
 
     //-------------------------------------------------------------------------
     public int clonePriceLevel(
-        Path priceLevelIdentity,
+        org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel,
         Short processingMode,
         String nameReplacementRegex,
         String nameReplacementValue,
@@ -905,7 +861,7 @@ public class Products {
             )
         );
         return this.clonePriceLevel(
-            priceLevelIdentity, 
+            priceLevel, 
             processingMode, 
             priceLevelMarshallers
         );
@@ -913,7 +869,7 @@ public class Products {
     
     //-------------------------------------------------------------------------
     public int cloneProductPhasePriceLevel(
-        Path priceLevelIdentity,
+        org.opencrx.kernel.product1.jmi1.ProductPhasePriceLevel priceLevel,
         Short processingMode,
         String nameReplacementRegex,
         String nameReplacementValue,
@@ -929,45 +885,46 @@ public class Products {
             )
         );
         return this.clonePriceLevel(
-            priceLevelIdentity, 
+            priceLevel, 
             processingMode, 
             priceLevelMarshallers
         );
     }
     
     //-------------------------------------------------------------------------
-    public Set getDependentPriceLevels(
-        Path priceLevelIdentity,
-        List allPriceLevels
+    public List<AbstractPriceLevel> getDependentPriceLevels(
+        AbstractPriceLevel priceLevel,
+        boolean recursive
     ) throws ServiceException {
-        Set dependentPriceLevels = new HashSet();
-        for(Iterator i = allPriceLevels.iterator(); i.hasNext(); ) {
-            DataproviderObject_1_0 currentLevel = (DataproviderObject_1_0)i.next();
-            if(
-                !currentLevel.values("basedOn").isEmpty() &&
-                currentLevel.values("basedOn").get(0).equals(priceLevelIdentity)
-            ) {
-                dependentPriceLevels.add(currentLevel);
-                dependentPriceLevels.addAll(
-                    this.getDependentPriceLevels(
-                        currentLevel.path(),
-                        allPriceLevels
-                    )
-                );
-            }
+    	Set<AbstractPriceLevel> dependentPriceLevels = new HashSet<AbstractPriceLevel>();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);
+        org.opencrx.kernel.product1.jmi1.Segment productSegment =
+        	(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+        		priceLevel.refGetPath().getPrefix(5)
+        	);
+        AbstractPriceLevelQuery priceLevelQuery = (AbstractPriceLevelQuery)pm.newQuery(AbstractPriceLevel.class);
+        priceLevelQuery.thereExistsBasedOn().equalTo(priceLevel);        
+        List<AbstractPriceLevel> levels = productSegment.getPriceLevel(priceLevelQuery);
+        dependentPriceLevels.addAll(levels);
+        if(recursive) {
+	        for(AbstractPriceLevel level: levels) {
+	        	dependentPriceLevels.addAll(
+	        		this.getDependentPriceLevels(
+	        			level,
+	        			true
+	        		)
+	        	);
+	        }
         }
-        return dependentPriceLevels;
+        return new ArrayList<AbstractPriceLevel> (dependentPriceLevels);
     }
     
     //-------------------------------------------------------------------------
     public int calculatePrices(
-        Path priceLevelIdentity,
+        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
         Short processingMode,
         Date includeProductsModifiedSince
     ) throws ServiceException {
-        DataproviderObject_1_0 priceLevel = this.backend.retrieveObject(
-            priceLevelIdentity
-        );
         if(processingMode == PROCESSING_MODE_TEST) {
             return this.calculatePrices(
                 priceLevel, 
@@ -983,27 +940,21 @@ public class Products {
             );            
         }
         else if(processingMode == PROCESSING_MODE_PROCESS_INCLUDE_DEPENDENT) {
-            List allPriceLevels = this.backend.getDelegatingRequests().addFindRequest(
-                priceLevel.path().getParent(), 
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0, 
-                BATCHING_MODE_SIZE,
-                Directions.ASCENDING
-            );
-            Set dependentPriceLevels = this.getDependentPriceLevels(
-                priceLevel.path(),
-                allPriceLevels
-            );
-            dependentPriceLevels.add(priceLevel);
-            int numberProcessed = 0;
-            for(Iterator i = dependentPriceLevels.iterator(); i.hasNext(); ) {
-                DataproviderObject_1_0 dependentPriceLevel = (DataproviderObject_1_0)i.next();
+            int numberProcessed = this.calculatePrices(
+                priceLevel, 
+                false,
+                includeProductsModifiedSince
+            );                                        	            
+        	List<AbstractPriceLevel> dependentPriceLevels = this.getDependentPriceLevels(
+                priceLevel,
+                false
+            );        	
+            for(AbstractPriceLevel dependentPriceLevel: dependentPriceLevels) {
                 numberProcessed += this.calculatePrices(
                     dependentPriceLevel, 
-                    false,
+                    PROCESSING_MODE_PROCESS_INCLUDE_DEPENDENT,
                     includeProductsModifiedSince
-                );                            
+                );                                        	
             }
             return numberProcessed;
         }
@@ -1011,75 +962,46 @@ public class Products {
     }
     
     //-------------------------------------------------------------------------
-    private boolean isEqualAttributeValue(
-        DataproviderObject_1_0 o1,
-        DataproviderObject_1_0 o2,
-        String attributeName
-    ) {
-        if(
-            (o1.getValues(attributeName) == null) ||
-            (o2.getValues(attributeName) == null)
-        ) {
-            return o1.getValues(attributeName) == o2.getValues(attributeName);
-        }
-        if(
-            (o1.values(attributeName).get(0) == null) ||
-            (o2.values(attributeName).get(0) == null)
-        ) {
-            return o1.values(attributeName).get(0) == o2.values(attributeName).get(0);
-        }
-        if(o1.values(attributeName) instanceof Comparable) {
-            return ((Comparable)o1.values(attributeName).get(0)).compareTo(o2.values(attributeName).get(0)) == 0;
-        }
-        else {
-            return o1.values(attributeName).equals(o2.values(attributeName));            
-        }        
-    }
-    
-    //-------------------------------------------------------------------------
     private void applyPriceModifiers(
-        DataproviderObject modifiedPrice,
-        List priceModifiers
+        ProductBasePrice modifiedPrice,
+        Collection<PriceModifier> priceModifiers
     ) {
-        BigDecimal quantityFromPrice = (BigDecimal)modifiedPrice.values("quantityFrom").get(0);
-        BigDecimal quantityToPrice = (BigDecimal)modifiedPrice.values("quantityTo").get(0);
-        for(
-            Iterator k = priceModifiers.iterator();
-            k.hasNext();
-        ) {
-            DataproviderObject_1_0 priceModifier = (DataproviderObject_1_0)k.next();
-            BigDecimal quantityFromModifier = (BigDecimal)priceModifier.values("quantityFrom").get(0);
+        BigDecimal quantityFromPrice = modifiedPrice.getQuantityFrom();
+        BigDecimal quantityToPrice = modifiedPrice.getQuantityTo();
+        for(PriceModifier priceModifier: priceModifiers) {
+            BigDecimal quantityFromModifier = priceModifier.getQuantityFrom();
             quantityFromModifier = quantityFromModifier == null ? quantityFromPrice : quantityFromModifier;
-            BigDecimal quantityToModifier = (BigDecimal)priceModifier.values("quantityTo").get(0);
+            BigDecimal quantityToModifier = priceModifier.getQuantityTo();
             quantityToModifier = quantityToModifier == null ? quantityToPrice : quantityToModifier;
             // Apply modifier if quantity range is larger than the price quantity range
             if(
                 ((quantityFromModifier == null) || (quantityFromPrice == null) || (quantityFromModifier.compareTo(quantityFromPrice) <= 0)) &&
                 ((quantityToModifier == null) || (quantityToPrice == null) || (quantityToModifier.compareTo(quantityToPrice) >= 0))
             ) {
-                String modifierType = (String)priceModifier.values(SystemAttributes.OBJECT_CLASS).get(0);
-                if("org:opencrx:kernel:product1:DiscountPriceModifier".equals(modifierType)) {
-                    boolean discountIsPercentageModifier =
-                        !priceModifier.values("discountIsPercentage").isEmpty() && 
-                        ((Boolean)priceModifier.values("discountIsPercentage").get(0)).booleanValue();
+                if(priceModifier instanceof DiscountPriceModifier) {
+                	DiscountPriceModifier discountPriceModifier = (DiscountPriceModifier)priceModifier;
+                    boolean discountIsPercentageModifier = 
+                    	(discountPriceModifier.isDiscountIsPercentage() != null) && 
+                    	discountPriceModifier.isDiscountIsPercentage().booleanValue();
                     boolean discountIsPercentagePrice =
-                        !modifiedPrice.values("discountIsPercentage").isEmpty() && 
-                        ((Boolean)modifiedPrice.values("discountIsPercentage").get(0)).booleanValue();
+                        (modifiedPrice.isDiscountIsPercentage() != null) && 
+                        modifiedPrice.isDiscountIsPercentage().booleanValue();
                     if(discountIsPercentageModifier == discountIsPercentagePrice) {
-                        modifiedPrice.clearValues("discount").addAll(
-                            priceModifier.values("discount")
+                        modifiedPrice.setDiscount(
+                            discountPriceModifier.getDiscount()
                         );
                     }
                 }
-                else if("org:opencrx:kernel:product1:LinearPriceModifier".equals(modifierType)) {
-                    BigDecimal priceMultiplier = (BigDecimal)priceModifier.values("priceMultiplier").get(0);
-                    priceMultiplier = priceMultiplier == null ? new BigDecimal(0) : priceMultiplier;
-                    BigDecimal priceOffset = (BigDecimal)priceModifier.values("priceOffset").get(0);
-                    priceOffset = priceOffset == null ? new BigDecimal(0) : priceOffset;
-                    BigDecimal roundingFactor = (BigDecimal)priceModifier.values("roundingFactor").get(0);
-                    roundingFactor = roundingFactor == null ? new BigDecimal(1) : roundingFactor;
-                    BigDecimal price = (BigDecimal)modifiedPrice.values("price").get(0);
-                    price = price == null ? new BigDecimal(0) : price;
+                else if(priceModifier instanceof LinearPriceModifier) {
+                	LinearPriceModifier linearPriceModifier = (LinearPriceModifier)priceModifier;
+                    BigDecimal priceMultiplier = linearPriceModifier.getPriceMultiplier();
+                    priceMultiplier = priceMultiplier == null ? BigDecimal.ZERO : priceMultiplier;
+                    BigDecimal priceOffset = linearPriceModifier.getPriceOffset();
+                    priceOffset = priceOffset == null ? BigDecimal.ZERO : priceOffset;
+                    BigDecimal roundingFactor = linearPriceModifier.getRoundingFactor();
+                    roundingFactor = roundingFactor == null ? BigDecimal.ONE : roundingFactor;
+                    BigDecimal price = modifiedPrice.getPrice();
+                    price = price == null ? BigDecimal.ZERO : price;
                     price = 
                         new BigDecimal(
                             price.multiply(priceMultiplier).multiply(roundingFactor).add(
@@ -1090,7 +1012,7 @@ public class Products {
                         ).add(
                             priceOffset
                         );
-                    modifiedPrice.clearValues("price").add(price);
+                    modifiedPrice.setPrice(price);
                 }
             }
         }        
@@ -1098,147 +1020,118 @@ public class Products {
     
     //-------------------------------------------------------------------------
     public int calculatePrices(
-        DataproviderObject_1_0 priceLevel,
+        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
         boolean testOnly,
         Date includeProductsModifiedSince
     ) throws ServiceException {
-        if(
-            ((!priceLevel.values("isFinal").isEmpty()) && 
-            ((Boolean)priceLevel.values("isFinal").get(0)).booleanValue()) 
-        ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);
+        if(priceLevel.isFinal()) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
                 "Operation is not allowed for final price level.",
-                new BasicException.Parameter("param0", priceLevel.path())
+                new BasicException.Parameter("param0", priceLevel)
             );                                                                
         }
         // No calculation required for base price levels
-        boolean isBasePriceLevel = priceLevel.values("basedOn").isEmpty();
-        List priceModifiers = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevel.path().getChild("priceModifier"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            BATCHING_MODE_SIZE,
-            Directions.ASCENDING
-        );            
+        boolean isBasePriceLevel = priceLevel.getBasedOn() == null;
+        Collection<PriceModifier> priceModifiers = priceLevel.getPriceModifier();
         // Get all products matching the product filter
-        List productFilter = new ArrayList();
+        ProductQuery productQuery = (ProductQuery)pm.newQuery(Product.class);
         if(includeProductsModifiedSince != null) {
-            productFilter.add(
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    SystemAttributes.MODIFIED_AT,
-                    FilterOperators.IS_GREATER_OR_EQUAL,
-                    DateFormat.getInstance().format(includeProductsModifiedSince)
-                )
-            );
-        }        
-        productFilter.addAll(
-            Arrays.asList(
-                this.getProductFilterProperties(
-                    priceLevel.path(),
-                    false
-                )
-            )
+        	productQuery.modifiedAt().greaterThanOrEqualTo(includeProductsModifiedSince);
+        }
+        productQuery = this.getFilteredProductQuery(
+        	priceLevel,
+        	productQuery,
+        	false	
         );
-        List filteredProducts = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevel.path().getPrefix(5).getChild("product"),
-            (FilterProperty[])productFilter.toArray(new FilterProperty[productFilter.size()]),
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            BATCHING_MODE_SIZE,
-            Directions.ASCENDING
-        );
+        org.opencrx.kernel.product1.jmi1.Segment productSegment =
+        	(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+        		priceLevel.refGetPath().getParent().getParent()
+        	);        		
+        List<Product> filteredProducts = productSegment.getProduct(productQuery);
         int numberProcessed = 0;
         // Iterate all matching products and calculate prices
-        for(
-            Iterator i = filteredProducts.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 product = (DataproviderObject_1_0)i.next();
-            Path productIdentity = new Path((String)product.values(SystemAttributes.OBJECT_IDENTITY).get(0));            
-            List basedOnPrices = this.findPrices(
+        for(Product product: filteredProducts) {
+            List<ProductBasePrice> basedOnPrices = this.findPrices(
+                product,
                 priceLevel,
-                !isBasePriceLevel, // useBasedOnPriceLevel
-                productIdentity
+                !isBasePriceLevel // useBasedOnPriceLevel
             );
-            List existingPrices = this.findPrices(
+            List<ProductBasePrice> existingPrices = this.findPrices(
+                product,
                 priceLevel, 
-                false, 
-                productIdentity
+                false
             );
-            for(
-                Iterator j = basedOnPrices.iterator(); 
-                j.hasNext(); 
-            ) {
-                DataproviderObject_1_0 basePrice = (DataproviderObject_1_0)j.next();
+            // Collect new prices and add after iteration to avoid ConcurrentModificationException on iterator
+            List<ProductBasePrice> newPrices = new ArrayList<ProductBasePrice>();
+            for(ProductBasePrice basePrice: basedOnPrices) {
                 if(!testOnly) {
                     // If no price modifiers are defined do not create new price objects. 
                     // Only add the price level to the existing price. A copy can be enforced
                     // by adding a 1:1 price modifier, e.g. a LinearPriceModifier with priceMultiplier=1.0 and
                     // priceOffset=0.0.
                     if(priceModifiers.isEmpty()) {
-                        DataproviderObject modifiedBasePrice = this.backend.retrieveObjectForModification(
-                            basePrice.path()
-                        );
-                        List priceLevels = modifiedBasePrice.values("priceLevel");
-                        if(!priceLevels.contains(priceLevel.path())) {
-                            priceLevels.add(priceLevel.path());
+                        List<AbstractPriceLevel> priceLevels = basePrice.getPriceLevel();
+                        if(!priceLevels.contains(priceLevel)) {
+                            priceLevels.add(priceLevel);
                         }
                     }
                     // Create new price and apply price modifiers
                     else {
-                        DataproviderObject newPrice = new DataproviderObject(
-                            basePrice.path().getParent().getChild(this.backend.getUidAsString())
-                        );
-                        newPrice.addClones(
-                            basePrice,
-                            true
-                        );
+                        ProductBasePrice newPrice = PersistenceHelper.clone(basePrice);
                         this.applyPriceModifiers(
                             newPrice, 
                             priceModifiers
                         );
-                        newPrice.clearValues("priceLevel").add(
-                            priceLevel.path()
-                        );
-                        newPrice.clearValues("priceCurrency").addAll(
-                            priceLevel.values("priceCurrency")
-                        );
-                        
+                        newPrice.getPriceLevel().clear();
+                        newPrice.getPriceLevel().add(priceLevel);
+                        newPrice.setPriceCurrency(priceLevel.getPriceCurrency());
                         // Create new price if no price for price level exists
                         if(existingPrices.isEmpty()) {
-                            this.backend.getDelegatingRequests().addCreateRequest(
-                                newPrice
-                            );
+                        	newPrices.add(
+                        		newPrice
+                        	);
                         }
                         // Update existing prices
                         else {
-                            for(Iterator k = existingPrices.iterator(); k.hasNext(); ) {
-                                DataproviderObject_1_0 existingPrice = (DataproviderObject_1_0)k.next();
+                            for(ProductBasePrice existingPrice: existingPrices) {
                                 // Compare price, discount, discountIsPercentage, quantityFrom, quantityTo
                                 boolean priceIsEqual = true;
-                                priceIsEqual &= this.isEqualAttributeValue(existingPrice, newPrice, "price");
-                                priceIsEqual &= this.isEqualAttributeValue(existingPrice, newPrice, "discount");
-                                priceIsEqual &= this.isEqualAttributeValue(existingPrice, newPrice, "quantityFrom");
-                                priceIsEqual &= this.isEqualAttributeValue(existingPrice, newPrice, "quantityTo");
-                                priceIsEqual &= this.isEqualAttributeValue(existingPrice, newPrice, "discountIsPercentage");
+                                priceIsEqual &= Utils.areEqual(existingPrice.getPrice(), newPrice.getPrice());
+                                priceIsEqual &= Utils.areEqual(existingPrice.getDiscount(), newPrice.getDiscount());
+                                priceIsEqual &= Utils.areEqual(existingPrice.getQuantityFrom(), newPrice.getQuantityFrom());
+                                priceIsEqual &= Utils.areEqual(existingPrice.getQuantityTo(), newPrice.getQuantityTo());
+                                priceIsEqual &= Utils.areEqual(existingPrice.isDiscountIsPercentage(), newPrice.isDiscountIsPercentage());
                                 if(!priceIsEqual) {
-                                    DataproviderObject modifiedBasePrice = this.backend.retrieveObjectForModification(
-                                        existingPrice.path()
-                                    );
-                                    modifiedBasePrice.clearValues("price").addAll(newPrice.values("price"));
-                                    modifiedBasePrice.clearValues("discount").addAll(newPrice.values("discount"));
-                                    modifiedBasePrice.clearValues("quantityFrom").addAll(newPrice.values("quantityFrom"));
-                                    modifiedBasePrice.clearValues("quantityTo").addAll(newPrice.values("quantityTo"));
-                                    modifiedBasePrice.clearValues("discountIsPercentage").addAll(newPrice.values("discountIsPercentage"));
+                                	// Update price if it is not shared with another price level
+                                	if(existingPrice.getPriceLevel().size() == 1) {
+	                                	existingPrice.setPrice(newPrice.getPrice());
+	                                	existingPrice.setDiscount(newPrice.getDiscount());
+	                                	existingPrice.setQuantityFrom(newPrice.getQuantityFrom());
+	                                	existingPrice.setQuantityTo(newPrice.getQuantityTo());
+	                                	existingPrice.setDiscountIsPercentage(newPrice.isDiscountIsPercentage());
+                                	}
+                                	// Remove price level from existing price and create new price
+                                	else {
+                                		existingPrice.getPriceLevel().remove(priceLevel);
+                                		newPrices.add(
+                                			newPrice
+                                		);
+                                	}
                                 }
                             }
                         }
                     }
                 }
+            }
+            for(ProductBasePrice newPrice: newPrices) {
+            	product.addBasePrice(
+            		false,
+            		this.getUidAsString(),
+            		newPrice
+            	);                                		
             }
             numberProcessed++;
         }
@@ -1247,111 +1140,56 @@ public class Products {
     
     //-------------------------------------------------------------------------
     public int removePrices(
-        Path priceLevelIdentity,
-        boolean removePrices
+        AbstractPriceLevel priceLevel
     ) throws ServiceException {
-        DataproviderObject_1_0 priceLevel = this.backend.retrieveObject(
-            priceLevelIdentity
-        );
-        if(
-            ((priceLevel.values("isFinal").size() > 0) && 
-            ((Boolean)priceLevel.values("isFinal").get(0)).booleanValue())
-        ) {
+        if(priceLevel.isFinal()) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
                 "Operation is not allowed for final price level.",
-                new BasicException.Parameter("param0", priceLevelIdentity)
+                new BasicException.Parameter("param0", priceLevel)
             );                                                                
         }
-        List priceListEntries = this.getPriceListEntries(
+        List<PriceListEntry> priceListEntries = this.getPriceListEntries(
             priceLevel,
             false
         );
-        // Collect identities of prices 
-        // * to be removed or 
-        // * unlinked (remove reference to price level) from price level
-        List priceIdentitiesToBeRemoved = new ArrayList();
-        List priceIdentitiesToBeUnlinked = new ArrayList();
         int numberProcessed = 0;
-        for(
-            Iterator i = priceListEntries.iterator(); 
-            i.hasNext(); 
-        ) {
-            DataproviderObject_1_0 priceListEntry = (DataproviderObject_1_0)i.next();
-            if(
-                removePrices && 
-                (priceListEntry.values("basePrice").size() > 0)
-            ) {
-                if(priceListEntry.values("priceLevel").size() > 1) {
-                    priceIdentitiesToBeUnlinked.add(
-                        priceListEntry.values("basePrice").get(0)
-                    );
-                }
-                else {
-                    priceIdentitiesToBeRemoved.add(
-                        priceListEntry.values("basePrice").get(0)
-                    );                    
-                }
-            }    
-            numberProcessed++;
-        }
-        // Remove prices
-        for(
-            Iterator i = priceIdentitiesToBeRemoved.iterator();
-            i.hasNext();
-        ) {
-            this.backend.removeObject((Path)i.next());
-        }
-        // Unlink prices
-        for(
-            Iterator i = priceIdentitiesToBeUnlinked.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject price = this.backend.retrieveObjectForModification(
-                (Path)i.next()
-            );
-            price.values("priceLevel").remove(
-                priceLevel.path()
-            );
+        for(PriceListEntry priceListEntry: priceListEntries) {
+        	if(priceListEntry.getBasePrice() != null) {
+        		ProductBasePrice basePrice = priceListEntry.getBasePrice();
+        		basePrice.getPriceLevel().remove(priceLevel);
+        		if(basePrice.getPriceLevel().isEmpty()) {
+        			basePrice.refDelete();
+        		}
+        		numberProcessed++;
+        	}
         }
         return numberProcessed;
     }
     
     //-------------------------------------------------------------------------
     public int removePrices(
-        Path priceLevelIdentity,
+        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
         Short processingMode        
     ) throws ServiceException {
         int numberProcessed = 0;
         if(processingMode == PROCESSING_MODE_PROCESS) {
             numberProcessed = this.removePrices(
-                priceLevelIdentity, 
-                true
+                priceLevel 
             );
         }
         else if(processingMode == PROCESSING_MODE_PROCESS_INCLUDE_DEPENDENT) {
-            this.removePrices(
-                priceLevelIdentity, 
+        	this.removePrices(
+                priceLevel 
+            );
+            List<AbstractPriceLevel> dependentPriceLevels = this.getDependentPriceLevels(
+                priceLevel, 
                 true
             );
-            List allPriceLevels = this.backend.getDelegatingRequests().addFindRequest(
-                priceLevelIdentity.getParent(), 
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0, 
-                BATCHING_MODE_SIZE,
-                Directions.ASCENDING
-            );
-            Set dependentPriceLevels = this.getDependentPriceLevels(
-                priceLevelIdentity, 
-                allPriceLevels
-            );
-            for(Iterator i = dependentPriceLevels.iterator(); i.hasNext(); ) {
-                DataproviderObject_1_0 dependentPriceLevel = (DataproviderObject_1_0)i.next();
-                this.removePrices(
-                    dependentPriceLevel.path(), 
-                    true
+            for(AbstractPriceLevel dependentPriceLevel: dependentPriceLevels) {
+            	this.removePrices(
+                    dependentPriceLevel 
                 );
             }
             numberProcessed = 1 + dependentPriceLevels.size();
@@ -1361,51 +1199,43 @@ public class Products {
     
     //-------------------------------------------------------------------------
     public int removePriceLevels(
-        Path priceLevelIdentity,
-        Short processingMode
+        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
+        Short processingMode,
+        boolean preDelete
     ) throws ServiceException {
         int numberProcessed = 0;
         if(processingMode == PROCESSING_MODE_PROCESS) {
             // Remove prices of price level (no dependent)
-            this.removePrices(
-                priceLevelIdentity, 
+        	this.removePrices(
+                priceLevel, 
                 processingMode
             );
-            this.removePriceLevel(
-                priceLevelIdentity,
-                true
+        	this.removePriceLevel(
+                priceLevel,
+                preDelete
             );
             numberProcessed = 1;
         }
         else if(processingMode == PROCESSING_MODE_PROCESS_INCLUDE_DEPENDENT) {
-            // Remove prices of price level and dependent
-            this.removePrices(
-                priceLevelIdentity, 
-                processingMode
-            );
-            this.removePriceLevel(
-                priceLevelIdentity,
+            List<AbstractPriceLevel> dependentPriceLevels = this.getDependentPriceLevels(
+                priceLevel, 
                 false
             );
-            List allPriceLevels = this.backend.getDelegatingRequests().addFindRequest(
-                priceLevelIdentity.getParent(), 
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0, 
-                BATCHING_MODE_SIZE,
-                Directions.ASCENDING
-            );
-            Set dependentPriceLevels = this.getDependentPriceLevels(
-                priceLevelIdentity, 
-                allPriceLevels
-            );
-            for(Iterator i = dependentPriceLevels.iterator(); i.hasNext(); ) {
-                DataproviderObject_1_0 dependentPriceLevel = (DataproviderObject_1_0)i.next();
-                this.removePriceLevel(
-                    dependentPriceLevel.path(),
+            for(AbstractPriceLevel dependentPriceLevel: dependentPriceLevels) {
+            	this.removePriceLevels(
+                    dependentPriceLevel,
+                    processingMode,
                     false
                 );                
             }
+        	this.removePrices(
+                priceLevel, 
+                PROCESSING_MODE_PROCESS
+            );
+        	this.removePriceLevel(
+                priceLevel,
+                preDelete
+            );
             numberProcessed = 1 + dependentPriceLevels.size();
         }
         return numberProcessed;
@@ -1413,118 +1243,73 @@ public class Products {
     
     //-------------------------------------------------------------------------
     public int createInitialPrices(
-        Path priceLevelIdentity,
+        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
         Short processingMode,
-        Path priceUomIdentity,
+        org.opencrx.kernel.uom1.jmi1.Uom priceUom,
         Date includeProductsCreatedSince
     ) throws ServiceException {
-        DataproviderObject_1_0 priceLevel = this.backend.retrieveObject(
-            priceLevelIdentity
-        );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);    	
         // Price level must not be final
-        if(
-            !priceLevel.values("isFinal").isEmpty() && 
-            ((Boolean)priceLevel.values("isFinal").get(0)).booleanValue()                
-        ) {
+        if(priceLevel.isFinal()) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
                 "Operation is not allowed for final price level.",
-                new BasicException.Parameter("param0", priceLevel.path())
+                new BasicException.Parameter("param0", priceLevel)
             );                                                                
         }
-        // Price level must have price currency
-        if(priceLevel.values("priceCurrency").isEmpty()) {
-            throw new ServiceException(
-                OpenCrxException.DOMAIN,
-                OpenCrxException.PRODUCT_PRICE_LEVEL_MUST_HAVE_CURRENCY,
-                "Price level must have price uom and price currency.",
-                new BasicException.Parameter("param0", priceLevel.path())
-            );                                                                
-        }
-        // Get price modifiers
-        List priceModifiers = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevel.path().getChild("priceModifier"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            BATCHING_MODE_SIZE,
-            Directions.ASCENDING
-        );                        
+        // Get price modifiers        
+        Collection<PriceModifier> priceModifiers = priceLevel.getPriceModifier();
         // Get all products matching the product filter
-        List productFilter = new ArrayList();
+        ProductQuery productQuery = (ProductQuery)pm.newQuery(Product.class);
         if(includeProductsCreatedSince != null) {
-            productFilter.add(
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    SystemAttributes.MODIFIED_AT,
-                    FilterOperators.IS_GREATER_OR_EQUAL,
-                    DateFormat.getInstance().format(includeProductsCreatedSince)
-                )
-            );
+        	productQuery.modifiedAt().greaterThanOrEqualTo(
+        		includeProductsCreatedSince
+        	);
         }
-        productFilter.addAll(
-            Arrays.asList(
-                this.getProductFilterProperties(
-                    priceLevel.path(),
-                    false
-                )
-            )
+        productQuery = this.getFilteredProductQuery(
+        	priceLevel,
+        	productQuery,
+        	false
         );
-        List products = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevel.path().getPrefix(5).getChild("product"),
-            (FilterProperty[])productFilter.toArray(new FilterProperty[productFilter.size()]),
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
+        org.opencrx.kernel.product1.jmi1.Segment productSegment =
+        	(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+        		priceLevel.refGetPath().getPrefix(5)
+        	);
+        List<Product> products = productSegment.getProduct(productQuery);
         int numberProcessed = 0;
-        for(
-            Iterator i = products.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 product = (DataproviderObject_1_0)i.next();
-            Path productIdentity = new Path((String)product.values(SystemAttributes.OBJECT_IDENTITY).get(0));
-            List basePrices = this.findPrices(
+        for(Product product: products) {
+            List<ProductBasePrice> basePrices = this.findPrices(
+                product,
                 priceLevel,
-                false,
-                productIdentity
+                false
             );
             if(basePrices.isEmpty()) {
-                DataproviderObject basePrice = new DataproviderObject(
-                    productIdentity.getDescendant(new String[]{"basePrice", this.backend.getUidAsString()})
+                ProductBasePrice basePrice = pm.newInstance(ProductBasePrice.class);
+                basePrice.refInitialize(false, false);
+                basePrice.getPriceLevel().add(
+                    priceLevel
                 );
-                basePrice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:product1:ProductBasePrice");
-                basePrice.values("priceLevel").add(
-                    priceLevel.path()
+                basePrice.getUsage().addAll(
+                    priceLevel.getPriceUsage()
                 );
-                basePrice.values("usage").addAll(
-                    priceLevel.values("priceUsage")
+                basePrice.setPrice(BigDecimal.ZERO);                
+                basePrice.setPriceCurrency(
+                    priceLevel.getPriceCurrency()
                 );
-                basePrice.values("price").add(
-                    new BigDecimal(0)
-                );
-                basePrice.values("priceCurrency").addAll(
-                    priceLevel.values("priceCurrency")
-                );
-                basePrice.values("discount").add(
-                    new BigDecimal(0)
-                );
-                basePrice.values("discountIsPercentage").add(
-                    Boolean.FALSE
-                );
-                if(priceUomIdentity != null) {
-                    basePrice.values("uom").add(priceUomIdentity);
-                }
+                basePrice.setDiscount(BigDecimal.ZERO);
+                basePrice.setDiscountIsPercentage(Boolean.FALSE);
+                basePrice.setUom(priceUom);
                 this.applyPriceModifiers(
                     basePrice, 
                     priceModifiers
                 );
                 if(processingMode == PROCESSING_MODE_PROCESS) {
-                    this.backend.getDelegatingRequests().addCreateRequest(
-                        basePrice
-                    );
+                	product.addBasePrice(
+                		false,
+                		this.getUidAsString(),
+                		basePrice
+                	);
                 }
                 numberProcessed++;
             }
@@ -1541,16 +1326,14 @@ public class Products {
         BigDecimal quantity,
         Date pricingDate
     ) throws ServiceException {
-        String script = (pricingRule.getGetPriceLevelScript() == null) || (pricingRule.getGetPriceLevelScript().length() == 0)
-            ? PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE
-            : pricingRule.getGetPriceLevelScript().intern();
-        org.opencrx.kernel.product1.jmi1.Product1Package productPkg = 
-            (org.opencrx.kernel.product1.jmi1.Product1Package)this.backend.getDelegatingPkg().refPackage(
-                org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
-            );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(pricingRule);
+        String script = (pricingRule.getGetPriceLevelScript() == null) || (pricingRule.getGetPriceLevelScript().length() == 0) ? 
+        	PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE : 
+        	pricingRule.getGetPriceLevelScript().intern();
+        org.opencrx.kernel.product1.jmi1.Product1Package productPkg = Utils.getProductPackage(pm); 
         try {
-            Map<String,Class> pricingRules = threadLocalPricingRules.get();
-            Class c = pricingRules.get(script);
+            Map<String,Class<?>> pricingRules = threadLocalPricingRules.get();
+            Class<?> c = pricingRules.get(script);
             if(c == null) {
                 pricingRules.put(
                    script, 
@@ -1573,7 +1356,7 @@ public class Products {
                 (org.opencrx.kernel.product1.jmi1.GetPriceLevelResult)m.invoke(
                     null, 
                     new Object[] {
-                        this.backend.getLocalPkg(),
+                        Utils.getProductPackage(pm).refOutermostPackage(),
                         pricingRule,
                         contract,
                         product,
@@ -1636,89 +1419,77 @@ public class Products {
 
     //-------------------------------------------------------------------------
     public boolean hasDependentPriceLevels(
-        Path priceLevelIdentity
+        AbstractPriceLevel priceLevel
     ) throws ServiceException {
-        List dependentPriceLevels = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevelIdentity.getParent(),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "basedOn",
-                    FilterOperators.IS_IN,
-                    new Object[]{priceLevelIdentity}
-                )
-            }
-        );
-        return !dependentPriceLevels.isEmpty();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);
+    	org.opencrx.kernel.product1.jmi1.Segment productSegment =
+    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+    			priceLevel.refGetPath().getPrefix(5)
+    		);
+    	AbstractPriceLevelQuery priceLevelQuery = (AbstractPriceLevelQuery)pm.newQuery(AbstractPriceLevel.class);
+    	priceLevelQuery.thereExistsBasedOn().equalTo(
+    		priceLevel
+    	);
+    	List<AbstractPriceLevel> levels = productSegment.getPriceLevel(priceLevelQuery);
+    	for(AbstractPriceLevel level: levels) {
+    		if(!JDOHelper.isDeleted(level)) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     //-------------------------------------------------------------------------
     public void removePriceLevel(
-        Path priceLevelIdentity,
-        boolean checkDependencies
+        AbstractPriceLevel priceLevel,
+        boolean preDelete
     ) throws ServiceException {
-        if(checkDependencies && this.hasDependentPriceLevels(priceLevelIdentity)) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);
+    	org.opencrx.kernel.product1.jmi1.Segment productSegment =
+    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+    			priceLevel.refGetPath().getPrefix(5)
+    		);    	
+        if(this.hasDependentPriceLevels(priceLevel)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_BASEDON_PRICE_LEVEL,
                 "Can not delete price level. Other price levels are based on this price level.",
-                new BasicException.Parameter("param0", priceLevelIdentity)
+                new BasicException.Parameter("param0", priceLevel.getName())
             );                                                                            
         }
         // Check for prices which are assigned to price level
-        List priceListEntries = this.backend.getDelegatingRequests().addFindRequest(
-            priceLevelIdentity.getPrefix(5).getChild("priceListEntry"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "priceLevel",
-                    FilterOperators.IS_IN,
-                    new Object[]{priceLevelIdentity}
-                    
-                )
-            }
-        );
+        PriceListEntryQuery priceListEntryQuery = (PriceListEntryQuery)pm.newQuery(PriceListEntry.class);
+        priceListEntryQuery.thereExistsPriceLevel().equalTo(priceLevel);
+        List<PriceListEntry> priceListEntries = productSegment.getPriceListEntry(priceListEntryQuery);
         if(!priceListEntries.isEmpty()) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_PRICE_LEVEL_HAVING_PRICES,
                 "Can not delete price level. Price level has assigned prices.",
-                new BasicException.Parameter("param0", priceLevelIdentity)
+                new BasicException.Parameter("param0", priceLevel.getName())
             );                                                                                        
         }
-        DataproviderObject_1_0 priceLevel = this.backend.retrieveObjectFromDelegation(priceLevelIdentity);
-        if(
-            !priceLevel.values("isFinal").isEmpty() && 
-            ((Boolean)priceLevel.values("isFinal").get(0)).booleanValue()
-        ) {
-            throw new ServiceException(
-                OpenCrxException.DOMAIN,
-                OpenCrxException.PRODUCT_OPERATION_NOT_ALLOWED_FOR_FINAL_PRICE_LEVEL,
-                "Can not delete final price level.",
-                new BasicException.Parameter("param0", priceLevel.path())
-            );                                                                                                    
+        if(!preDelete) {
+        	priceLevel.refDelete();
         }
-        this.backend.removeObject(
-            priceLevel.path()
-        );
     }
     
     //-------------------------------------------------------------------------
     public int countFilteredProduct(
-        Path productFilterIdentity
+        org.opencrx.kernel.product1.jmi1.AbstractFilterProduct productFilter
     ) throws ServiceException {
-        List products = this.backend.getDelegatingRequests().addFindRequest(
-            productFilterIdentity.getPrefix(5).getChild("product"),
-            this.getProductFilterProperties(
-                productFilterIdentity,
-                true
-            ),
-            AttributeSelectors.NO_ATTRIBUTES,
-            null,
-            0, 
-            1,
-            Directions.ASCENDING
-        );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(productFilter);
+    	org.opencrx.kernel.product1.jmi1.Segment productSegment =
+    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+    			productFilter.refGetPath().getPrefix(5)
+    		);    	    	
+    	ProductQuery productQuery = (ProductQuery)pm.newQuery(Product.class);
+    	productQuery = this.getFilteredProductQuery(
+    		productFilter,
+    		productQuery,
+    		true
+    	);
+        List<Product> products = productSegment.getProduct(productQuery);
         return products.size();
     }
         
@@ -1803,9 +1574,9 @@ public class Products {
                               customerFiltered = (candidate.getFilteredAccount(accountFilter).size() > 0);
                               if (customer != null) {
                                   // check whether there exists an accountAssignment
-                                  for(java.util.Iterator j = candidate.getAssignedAccount().iterator(); j.hasNext(); ) {
+                            	  Collection<org.opencrx.kernel.product1.jmi1.AccountAssignment> accountAssignments = candidate.getAssignedAccount();
+                                  for(org.opencrx.kernel.product1.jmi1.AccountAssignment accountAssignment: accountAssignments) {
                                       try {
-                                        org.opencrx.kernel.product1.jmi1.AccountAssignment accountAssignment = (org.opencrx.kernel.product1.jmi1.AccountAssignment)j.next();
                                         boolean assignmentValidFromMatches = (accountAssignment.getValidFrom() == null) || (accountAssignment.getValidFrom().compareTo(pricingDate) <= 0);
                                         boolean assignmentValidToMatches = (accountAssignment.getValidTo() == null) || (accountAssignment.getValidTo().compareTo(pricingDate) >= 0);
                                         if (
@@ -1830,8 +1601,8 @@ public class Products {
                                 System.out.println("customer is " + (customer == null ? "undefined" : "") + (customerFiltered ? "filtered " : "") + (customerAssigned ? "assigned" : ""));
                               }
                               // test whether candidate price level defines lower price
-                              for(java.util.Iterator j = product.getBasePrice().iterator(); j.hasNext(); ) {
-                                  org.opencrx.kernel.product1.jmi1.AbstractProductPrice basePrice = (org.opencrx.kernel.product1.jmi1.AbstractProductPrice)j.next();
+                              Collection<org.opencrx.kernel.product1.jmi1.ProductBasePrice> basePrices = product.getBasePrice();
+                              for(org.opencrx.kernel.product1.jmi1.ProductBasePrice basePrice: basePrices) {
                                   boolean quantityFromMatches = (quantity == null) || (basePrice.getQuantityFrom() == null) || basePrice.getQuantityFrom().compareTo(quantity) <= 0;
                                   boolean quantityToMatches = (quantity == null) || (basePrice.getQuantityTo() == null) || basePrice.getQuantityTo().compareTo(quantity) >= 0;
                                   boolean priceUomMatches = (basePrice.getUom() == null)  || priceUom.equals(basePrice.getUom());
@@ -1943,13 +1714,11 @@ public class Products {
     "    );\n" +
     "}//</pre>";        
     
-    protected static final ThreadLocal<Map<String,Class>> threadLocalPricingRules = new ThreadLocal<Map<String,Class>>() {
-        protected synchronized Map<String,Class> initialValue() {
-            return new IdentityHashMap<String,Class>();
+    protected static final ThreadLocal<Map<String,Class<?>>> threadLocalPricingRules = new ThreadLocal<Map<String,Class<?>>>() {
+        protected synchronized Map<String,Class<?>> initialValue() {
+            return new java.util.IdentityHashMap<String,Class<?>>();
         }         
     };
-    
-    protected final Backend backend;
     
 }
 

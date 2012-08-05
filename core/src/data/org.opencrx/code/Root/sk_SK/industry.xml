@@ -351,7 +351,7 @@
                               <_item>PJ</_item>
                             </shortText>
                             <longText>
-                              <_item>Poisťovanie</_item>
+                              <_item>Poisťovníctvo</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -451,6 +451,39 @@
                             </shortText>
                             <longText>
                               <_item>Lekárnictvo</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Zásielkový predaj</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Zásielkový predaj</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Veľkoobchod</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Veľkoobchod</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Lodná preprava</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Lodná preprava</_item>
                             </longText>
                           </_object>
                           <_content/>

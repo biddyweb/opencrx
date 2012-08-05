@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.27 2009/02/10 16:34:26 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.33 2009/06/01 22:12:17 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.33 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/10 16:34:26 $
+ * Date:        $Date: 2009/06/01 22:12:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,6 +68,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipInputStream;
 
+import javax.resource.ResourceException;
+import javax.resource.cci.MappedRecord;
+
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.layer.persistence.jdo.ObjectIdBuilder;
 import org.opencrx.kernel.text.ExcelToText;
@@ -75,30 +78,27 @@ import org.opencrx.kernel.text.OpenOfficeToText;
 import org.opencrx.kernel.text.PDFToText;
 import org.opencrx.kernel.text.RTFToText;
 import org.opencrx.kernel.text.WordToText;
-import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderReplyContexts;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
-import org.openmdx.application.dataprovider.cci.Directions;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
-import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.AttributeSpecifier;
+import org.openmdx.base.query.Directions;
 import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.kernel.text.StringBuilders;
+import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
 
 /**
  * This plugin creates audit entries for modified objects.
@@ -166,30 +166,40 @@ public class Indexed_1 extends Database_1 {
     }
     
     //-------------------------------------------------------------------------
-    private DataproviderObject createResult(
+    private MappedRecord createResult(
       DataproviderRequest request,
       String structName
-    ) {
-      DataproviderObject result = new DataproviderObject(
-        request.path().getDescendant(
-          new String[]{ "reply", super.uidAsString()}
-        )
-      );
-      result.clearValues(SystemAttributes.OBJECT_CLASS).add(
-        structName
-      );
-      return result;
+    ) throws ServiceException {
+    	try {
+	    	MappedRecord result = ObjectHolder_2Facade.newInstance(
+		        request.path().getDescendant(
+		          new String[]{ "reply", super.uidAsString()}
+		        ),
+		        structName
+	    	).getDelegate();
+	    	return result;
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
 
     //-------------------------------------------------------------------------
     private Set<String> getKeywords(
-        DataproviderObject_1_0 obj
-    ) {
+    	MappedRecord obj
+    ) throws ServiceException {
+    	ObjectHolder_2Facade objFacade;
+        try {
+	        objFacade = ObjectHolder_2Facade.newInstance(obj);
+        }
+        catch (ResourceException e) {
+        	throw new ServiceException(e);
+        }
         Set<String> keywords = new HashSet<String>();
         for(String attribute: INDEXED_ATTRIBUTES) {
-            if(obj.attributeNames().contains(attribute)) {
+            if(objFacade.getValue().keySet().contains(attribute)) {
                 for(
-                    Iterator j = obj.values(attribute).iterator(); 
+                    Iterator<Object> j = objFacade.attributeValues(attribute).iterator(); 
                     j.hasNext(); 
                 ) {
                     Object value = j.next();
@@ -199,8 +209,8 @@ public class Indexed_1 extends Database_1 {
                         text = new StringReader((String)value);
                     }
                     else if(value instanceof InputStream) {
-                        String contentName = (String)obj.values(attribute + "Name").get(0);
-                        String contentMimeType = (String)obj.values(attribute + "MimeType").get(0);
+                        String contentName = (String)objFacade.attributeValues(attribute + "Name").get(0);
+                        String contentMimeType = (String)objFacade.attributeValues(attribute + "MimeType").get(0);
                         if(contentName != null) { 
                             // text/rtf
                             if(
@@ -319,14 +329,14 @@ public class Indexed_1 extends Database_1 {
                                         ch = text.read();
                                     }
                                 }
-                                CharSequence keyword = StringBuilders.newStringBuilder();
+                                StringBuilder keyword = new StringBuilder();
                                 boolean isKeyword = false;
                                 while(
                                     (ch != -1) && 
                                     (!isXml || (isXml && ch != '<')) &&
                                     Character.isLetterOrDigit((char)ch) || (ch == '-') || (ch == '_')                                    
                                 ) {
-                                    StringBuilders.asStringBuilder(keyword).append((char)ch);
+                                    keyword.append((char)ch);
                                     ch = text.read();        
                                     isKeyword = true;
                                 }
@@ -351,9 +361,9 @@ public class Indexed_1 extends Database_1 {
 
     //-------------------------------------------------------------------------
     public boolean isAccountAddress(
-        DataproviderObject_1_0 object
+    	MappedRecord object
     ) throws ServiceException {
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
+        String objectClass = ObjectHolder_2Facade.getObjectClass(object);
         return this.getModel().isSubtypeOf(
             objectClass,
             "org:opencrx:kernel:account1:AccountAddress"
@@ -363,78 +373,84 @@ public class Indexed_1 extends Database_1 {
     //-----------------------------------------------------------------------
     private void updateIndexEntry(
         ServiceHeader header,
-        DataproviderObject_1_0 indexed
+        MappedRecord indexed
     ) throws ServiceException {
-        DataproviderObject indexEntry = new DataproviderObject(
-            indexed.path().getPrefix(5).getDescendant(new String[]{"indexEntry", super.uidAsString()})
-        );
-        indexEntry.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:base:IndexEntry"
-        );
-        indexEntry.values("indexedObject").add(
-            indexed.path()
-        );
-        Set keywords = this.getKeywords(
-            indexed
-        );
-        // AccountAddress: add keywords of account
-        if(this.isAccountAddress(indexed)) {
-            keywords.addAll(
-                this.getKeywords(
-                    super.get(
-                        header,
-                        new DataproviderRequest(
-                            new DataproviderObject(indexed.path().getPrefix(indexed.path().size() - 2)),
-                            DataproviderOperations.OBJECT_RETRIEVAL,
-                            AttributeSelectors.ALL_ATTRIBUTES,
-                            null
-                        )             
-                    ).getObject()                    
-                )
-            );
-        }
-        indexEntry.values("keywords").add(
-            keywords.toString()
-        );
-        indexEntry.values(SystemAttributes.MODIFIED_AT).addAll(
-            indexed.values(SystemAttributes.MODIFIED_AT)
-        );
-        indexEntry.values(SystemAttributes.MODIFIED_BY).addAll(
-            indexed.values(SystemAttributes.MODIFIED_BY)
-        );
-        indexEntry.values(SystemAttributes.CREATED_AT).addAll(
-            indexed.values(SystemAttributes.MODIFIED_AT)
-        );
-        indexEntry.values(SystemAttributes.CREATED_BY).addAll(
-            indexed.values(SystemAttributes.MODIFIED_BY)
-        );
-        indexEntry.values("owner").addAll(
-            indexed.values("owner")
-        );
-        indexEntry.values("accessLevelBrowse").addAll(
-            indexed.values("accessLevelBrowse")
-        );
-        indexEntry.values("accessLevelUpdate").add(
-            new Short(SecurityKeys.ACCESS_LEVEL_NA)
-        );
-        indexEntry.values("accessLevelDelete").add(
-            new Short(SecurityKeys.ACCESS_LEVEL_NA)
-        );                
-        // Create entry
-        try {
-            super.create(
-                header,
-                new DataproviderRequest(
-                    indexEntry,
-                    DataproviderOperations.OBJECT_CREATION,
-                    AttributeSelectors.NO_ATTRIBUTES,
-                    null
-                )
-            );
-        }
-        catch(ServiceException e) {
-            e.log();
-        }
+    	try {
+	    	Path indexedPath = ObjectHolder_2Facade.getPath(indexed);
+	    	ObjectHolder_2Facade indexedFacade = ObjectHolder_2Facade.newInstance(indexed);
+	    	MappedRecord indexEntry = ObjectHolder_2Facade.newInstance(
+	            ObjectHolder_2Facade.getPath(indexed).getPrefix(5).getDescendant(new String[]{"indexEntry", super.uidAsString()}),
+	            "org:opencrx:kernel:base:IndexEntry"
+	        ).getDelegate();
+	    	ObjectHolder_2Facade indexEntryFacade = ObjectHolder_2Facade.newInstance(indexEntry);
+	        indexEntryFacade.attributeValues("indexedObject").add(
+	            indexedPath
+	        );
+	        Set<String> keywords = this.getKeywords(
+	            indexed
+	        );
+	        // AccountAddress: add keywords of account
+	        if(this.isAccountAddress(indexed)) {
+	            keywords.addAll(
+	                this.getKeywords(
+	                    super.get(
+	                        header,
+	                        new DataproviderRequest(
+	                            ObjectHolder_2Facade.newInstance(indexedPath.getPrefix(indexedPath.size() - 2)).getDelegate(),
+	                            DataproviderOperations.OBJECT_RETRIEVAL,
+	                            AttributeSelectors.ALL_ATTRIBUTES,
+	                            null
+	                        )             
+	                    ).getObject()                    
+	                )
+	            );
+	        }
+	        indexEntryFacade.attributeValues("keywords").add(
+	            keywords.toString()
+	        );
+	        indexEntryFacade.attributeValues(SystemAttributes.MODIFIED_AT).addAll(
+	            indexedFacade.attributeValues(SystemAttributes.MODIFIED_AT)
+	        );
+	        indexEntryFacade.attributeValues(SystemAttributes.MODIFIED_BY).addAll(
+	            indexedFacade.attributeValues(SystemAttributes.MODIFIED_BY)
+	        );
+	        indexEntryFacade.attributeValues(SystemAttributes.CREATED_AT).addAll(
+	        	indexedFacade.attributeValues(SystemAttributes.MODIFIED_AT)
+	        );
+	        indexEntryFacade.attributeValues(SystemAttributes.CREATED_BY).addAll(
+	        	indexedFacade.attributeValues(SystemAttributes.MODIFIED_BY)
+	        );
+	        indexEntryFacade.attributeValues("owner").addAll(
+	        	indexedFacade.attributeValues("owner")
+	        );
+	        indexEntryFacade.attributeValues("accessLevelBrowse").addAll(
+	        	indexedFacade.attributeValues("accessLevelBrowse")
+	        );
+	        indexEntryFacade.attributeValues("accessLevelUpdate").add(
+	            new Short(SecurityKeys.ACCESS_LEVEL_NA)
+	        );
+	        indexEntryFacade.attributeValues("accessLevelDelete").add(
+	            new Short(SecurityKeys.ACCESS_LEVEL_NA)
+	        );                
+	        // Create entry
+	        try {
+	            super.create(
+	                header,
+	                new DataproviderRequest(
+	                    indexEntry,
+	                    DataproviderOperations.OBJECT_CREATION,
+	                    AttributeSelectors.NO_ATTRIBUTES,
+	                    null
+	                )
+	            );
+	        }
+	        catch(ServiceException e) {
+	            e.log();
+	        }
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------
@@ -442,73 +458,82 @@ public class Indexed_1 extends Database_1 {
         ServiceHeader header,
         DataproviderRequest request
     ) throws ServiceException {
-        Path reference = request.path().getParent();
-        if("indexEntry".equals(reference.getBase())) {            
-            DataproviderObject indexEntry = super.get(
-                header,
-                new DataproviderRequest(
-                    new DataproviderObject(
-                        request.path().getPrefix(5).getDescendant(new String[]{"indexEntry", request.path().getBase()})
-                    ),
-                    DataproviderOperations.OBJECT_RETRIEVAL,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    null
-                )
-            ).getObject();            
-            DataproviderObject mappedIndexEntry = new DataproviderObject(
-                request.path()
-            );
-            mappedIndexEntry.addClones(
-                indexEntry,
-                true
-            );
-            return new DataproviderReply(
-                mappedIndexEntry
-            );
-        }
-        else {
-            return super.get(
-                header, 
-                request
-            );
-        }
+    	try {
+	        Path reference = request.path().getParent();
+	        if("indexEntry".equals(reference.getBase())) {            
+	        	MappedRecord indexEntry = super.get(
+	                header,
+	                new DataproviderRequest(
+	                    ObjectHolder_2Facade.newInstance(
+	                        request.path().getPrefix(5).getDescendant(new String[]{"indexEntry", request.path().getBase()})
+	                    ).getDelegate(),
+	                    DataproviderOperations.OBJECT_RETRIEVAL,
+	                    AttributeSelectors.ALL_ATTRIBUTES,
+	                    null
+	                )
+	            ).getObject();            
+	        	MappedRecord mappedIndexEntry = ObjectHolder_2Facade.newInstance(
+	                request.path()
+	            ).getDelegate();
+	            ObjectHolder_2Facade.getValue(mappedIndexEntry).putAll(
+	                ObjectHolder_2Facade.getValue(indexEntry)
+	            );
+	            return new DataproviderReply(
+	                mappedIndexEntry
+	            );
+	        }
+	        else {
+	            return super.get(
+	                header, 
+	                request
+	            );
+	        }
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------
-    protected DataproviderObject[] findIndexEntries(
+    protected MappedRecord[] findIndexEntries(
         ServiceHeader header,
         Path objectIdentity,
         FilterProperty[] attributeFilter,
         AttributeSpecifier[] attributeSpecifier
     ) throws ServiceException {
-        // Find index entries assigned to requesting object,
-        // request.path().getParent() IS_IN indexedObject of index entry
-        List filterProperties = attributeFilter == null
-            ? new ArrayList()
-            : new ArrayList(Arrays.asList(attributeFilter));
-        filterProperties.add(
-            new FilterProperty(
-                Quantors.THERE_EXISTS,
-                "indexedObject",
-                FilterOperators.IS_IN,
-                objectIdentity
-            )
-        );
-        return super.find(
-            header,
-            new DataproviderRequest(
-                new DataproviderObject(
-                     objectIdentity.getPrefix(5).getChild("indexEntry")
-                ),
-                DataproviderOperations.ITERATION_START,
-                (FilterProperty[])filterProperties.toArray(new FilterProperty[filterProperties.size()]),
-                0, 
-                Integer.MAX_VALUE,
-                Directions.ASCENDING,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                attributeSpecifier
-            )
-        ).getObjects();        
+    	try {
+	        // Find index entries assigned to requesting object,
+	        // request.path().getParent() IS_IN indexedObject of index entry
+	        List<FilterProperty> filterProperties = attributeFilter == null ? 
+	        	new ArrayList<FilterProperty>() :
+	        	new ArrayList<FilterProperty>(Arrays.asList(attributeFilter));
+	        filterProperties.add(
+	            new FilterProperty(
+	                Quantors.THERE_EXISTS,
+	                "indexedObject",
+	                FilterOperators.IS_IN,
+	                objectIdentity
+	            )
+	        );
+	        return super.find(
+	            header,
+	            new DataproviderRequest(
+	                ObjectHolder_2Facade.newInstance(
+	                     objectIdentity.getPrefix(5).getChild("indexEntry")
+	                ).getDelegate(),
+	                DataproviderOperations.ITERATION_START,
+	                filterProperties.toArray(new FilterProperty[filterProperties.size()]),
+	                0, 
+	                Integer.MAX_VALUE,
+	                Directions.ASCENDING,
+	                AttributeSelectors.ALL_ATTRIBUTES,
+	                attributeSpecifier
+	            )
+	        ).getObjects();
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------
@@ -516,63 +541,65 @@ public class Indexed_1 extends Database_1 {
         ServiceHeader header,
         DataproviderRequest request
     ) throws ServiceException {
-        // If indexEntry is segment do not rewrite find request. Otherwise filter
-        // index entries with indexedObject = requested reference
-        if(
-            (request.path().size() > 6) &&
-            "indexEntry".equals(request.path().getBase())
-        ) {            
-            DataproviderObject[] indexEntries = this.findIndexEntries(
-                header, 
-                request.path().getParent(), 
-                request.attributeFilter(), 
-                request.attributeSpecifier()
-            );
-            // Remap index entries so that the parent of the mapped
-            // index entries is the requesting object, i.e. the indexed object
-            List mappedIndexEntries = new ArrayList();
-            for(
-                int i = 0; 
-                i < indexEntries.length; 
-                i++
-            ) {
-                DataproviderObject mappedIndexEntry = new DataproviderObject(
-                    request.path().getChild(indexEntries[i].path().getBase())
-                );
-                mappedIndexEntry.addClones(
-                    indexEntries[i],
-                    true
-                );
-                mappedIndexEntries.add(
-                    mappedIndexEntry
-                );
-            }
-            
-            // reply
-            DataproviderReply reply = new DataproviderReply(
-                mappedIndexEntries
-            );
-            reply.context(
-                DataproviderReplyContexts.HAS_MORE
-            ).set(0, Boolean.FALSE);
-            reply.context(
-                DataproviderReplyContexts.TOTAL
-            ).set(
-                0, 
-                new Integer(mappedIndexEntries.size())
-            );
-            reply.context(DataproviderReplyContexts.ATTRIBUTE_SELECTOR).set(
-                0,
-                new Short(request.attributeSelector())
-            );
-            return reply;            
-        }
-        else {
-            return super.find(
-                header, 
-                request
-            );
-        }
+    	try {
+	        // If indexEntry is segment do not rewrite find request. Otherwise filter
+	        // index entries with indexedObject = requested reference
+	        if(
+	            (request.path().size() > 6) &&
+	            "indexEntry".equals(request.path().getBase())
+	        ) {            
+	        	MappedRecord[] indexEntries = this.findIndexEntries(
+	                header, 
+	                request.path().getParent(), 
+	                request.attributeFilter(), 
+	                request.attributeSpecifier()
+	            );
+	            // Remap index entries so that the parent of the mapped
+	            // index entries is the requesting object, i.e. the indexed object
+	            List<MappedRecord> mappedIndexEntries = new ArrayList<MappedRecord>();
+	            for(
+	                int i = 0; 
+	                i < indexEntries.length; 
+	                i++
+	            ) {
+	            	MappedRecord mappedIndexEntry = ObjectHolder_2Facade.cloneObject(indexEntries[i]);
+	            	ObjectHolder_2Facade.newInstance(mappedIndexEntry).setPath(
+	                    request.path().getChild(ObjectHolder_2Facade.getPath(indexEntries[i]).getBase())
+	                );
+	                mappedIndexEntries.add(
+	                    mappedIndexEntry
+	                );
+	            }
+	            
+	            // reply
+	            DataproviderReply reply = new DataproviderReply(
+	                mappedIndexEntries
+	            );
+	            reply.context(
+	                DataproviderReplyContexts.HAS_MORE
+	            ).set(0, Boolean.FALSE);
+	            reply.context(
+	                DataproviderReplyContexts.TOTAL
+	            ).set(
+	                0, 
+	                new Integer(mappedIndexEntries.size())
+	            );
+	            reply.context(DataproviderReplyContexts.ATTRIBUTE_SELECTOR).set(
+	                0,
+	                new Short(request.attributeSelector())
+	            );
+	            return reply;            
+	        }
+	        else {
+	            return super.find(
+	                header, 
+	                request
+	            );
+	        }
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------
@@ -580,160 +607,170 @@ public class Indexed_1 extends Database_1 {
         ServiceHeader header,
         DataproviderRequest request
     ) throws ServiceException {
-        // Remove index entries of object to be removed
-        if(request.path().size() > 5) {
-            DataproviderObject[] indexEntries = this.findIndexEntries(
-                 header, 
-                 request.path(), 
-                 null, 
-                 null
-            );
-            for(int i = 0; i < indexEntries.length; i++) {
-                super.remove(
-                    header, 
-                    new DataproviderRequest(
-                        new DataproviderObject(
-                            indexEntries[i]
-                       ),
-                       DataproviderOperations.OBJECT_REMOVAL,
-                       AttributeSelectors.NO_ATTRIBUTES,
-                       null
-                    )
-                );
-            }
-        }
-        return super.remove(
-            header, 
-            request
-        );
+    	try {
+	        // Remove index entries of object to be removed
+	        if(request.path().size() > 5) {
+	        	MappedRecord[] indexEntries = this.findIndexEntries(
+	                 header, 
+	                 request.path(), 
+	                 null, 
+	                 null
+	            );
+	            for(int i = 0; i < indexEntries.length; i++) {
+	                super.remove(
+	                    header, 
+	                    new DataproviderRequest(
+	                        ObjectHolder_2Facade.newInstance(
+	                            indexEntries[i]
+	                       ).getDelegate(),
+	                       DataproviderOperations.OBJECT_REMOVAL,
+	                       AttributeSelectors.NO_ATTRIBUTES,
+	                       null
+	                    )
+	                );
+	            }
+	        }
+	        return super.remove(
+	            header, 
+	            request
+	        );
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------
-    protected DataproviderObject otherOperation(
+    protected MappedRecord otherOperation(
         ServiceHeader header,
         DataproviderRequest request,
         String operation, 
         Path replyPath
     ) throws ServiceException {
-        if("updateIndex".equals(operation)) {
-            Path indexedIdentity = request.path().getPrefix(request.path().size() - 2);
-            int numberOfIndexedObjects = 0;
-            // At segment level update all objects to be indexed (up to a batch size)
-            if(indexedIdentity.size() == 5) {
-                for(Path type: this.indexableTypes) {
-                    // Type must be composite to indexed segment
-                    if(
-                        ":*".equals(type.get(0)) ||
-                        type.get(0).equals(indexedIdentity.get(0))
-                    ) {
-                        Path concreteType = new Path("");
-                        for(int i = 0; i < type.size(); i++) {
-                            // authority
-                            if(i == 0) {
-                                concreteType.add(indexedIdentity.get(0));
-                            }
-                            // provider name
-                            else if(i == 2) {
-                                concreteType.add(indexedIdentity.get(2));
-                            }
-                            // segment name
-                            else if(i == 4) {
-                                concreteType.add(indexedIdentity.get(4));
-                            }
-                            else {
-                                concreteType.add(type.get(i));
-                            }
-                        }
-                        String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.uidAsString() + ":";
-                        DataproviderRequest queryIsNotIndexed = new DataproviderRequest(
-                            new DataproviderObject(indexedIdentity.getChild("extent")),
-                            DataproviderOperations.ITERATION_START,
-                            new FilterProperty[]{
-                                new FilterProperty(
-                                    Quantors.THERE_EXISTS,
-                                    SystemAttributes.OBJECT_IDENTITY,
-                                    FilterOperators.IS_LIKE,
-                                    new Object[]{
-                                        concreteType.toUri()
-                                    }
-                                ),
-                                // All objects which do not have an up-to-date index entry
-                                new FilterProperty(
-                                    Quantors.PIGGY_BACK,
-                                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                                    FilterOperators.PIGGY_BACK,
-                                    new Object[]{
-                                        "NOT EXISTS (SELECT 0 FROM OOCKE1_INDEXENTRY e WHERE v.object_id = e.indexed_object AND v.modified_at <= e.created_at)"
-                                    }
-                                ),
-                                new FilterProperty(
-                                    Quantors.PIGGY_BACK,
-                                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                                    FilterOperators.PIGGY_BACK,
-                                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
-                                )
-                            },
-                            0,
-                            BATCH_SIZE,
-                            Directions.ASCENDING,
-                            AttributeSelectors.ALL_ATTRIBUTES,
-                            null
-                        );
-                        DataproviderObject[] objectsToBeIndexed = super.find(
-                            header, 
-                            queryIsNotIndexed
-                        ).getObjects();
-                        for(int i = 0; i < objectsToBeIndexed.length; i++) {
-                            try {
-                                this.updateIndexEntry(
-                                    header, 
-                                    objectsToBeIndexed[i]
-                                );
-                                numberOfIndexedObjects++;
-                            }
-                            catch(Exception e) {
-                                AppLog.warning("Can not index", objectsToBeIndexed[i]);
-                                AppLog.info(e.getMessage(), e.getCause());
-                            }
-                        }
-                    }
-                }
-            }
-            // Index object
-            else {
-                DataproviderObject indexed = super.get(
-                    header,
-                    new DataproviderRequest(
-                        new DataproviderObject(indexedIdentity),
-                        DataproviderOperations.OBJECT_RETRIEVAL,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        null
-                    )             
-                ).getObject();
-                this.updateIndexEntry(
-                    header,
-                    indexed
-                );
-                numberOfIndexedObjects++;
-            }
-            DataproviderObject reply = this.createResult(
-                request,
-                "org:opencrx:kernel:base:UpdateIndexResult"
-            );
-            reply.values("numberOfIndexedObjects").add(
-                new Integer(numberOfIndexedObjects)
-            );
-            return reply;
-        }
-        // Delegate
-        else {
-            return super.otherOperation(
-                header,
-                request,
-                operation,
-                replyPath
-            );
-        }
+    	try {
+	        if("updateIndex".equals(operation)) {
+	            Path indexedIdentity = request.path().getPrefix(request.path().size() - 2);
+	            int numberOfIndexedObjects = 0;
+	            // At segment level update all objects to be indexed (up to a batch size)
+	            if(indexedIdentity.size() == 5) {
+	                for(Path type: this.indexableTypes) {
+	                    // Type must be composite to indexed segment
+	                    if(
+	                        ":*".equals(type.get(0)) ||
+	                        type.get(0).equals(indexedIdentity.get(0))
+	                    ) {
+	                        Path concreteType = new Path("");
+	                        for(int i = 0; i < type.size(); i++) {
+	                            // authority
+	                            if(i == 0) {
+	                                concreteType.add(indexedIdentity.get(0));
+	                            }
+	                            // provider name
+	                            else if(i == 2) {
+	                                concreteType.add(indexedIdentity.get(2));
+	                            }
+	                            // segment name
+	                            else if(i == 4) {
+	                                concreteType.add(indexedIdentity.get(4));
+	                            }
+	                            else {
+	                                concreteType.add(type.get(i));
+	                            }
+	                        }
+	                        String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.uidAsString() + ":";
+	                        DataproviderRequest queryIsNotIndexed = new DataproviderRequest(
+	                            ObjectHolder_2Facade.newInstance(indexedIdentity.getChild("extent")).getDelegate(),
+	                            DataproviderOperations.ITERATION_START,
+	                            new FilterProperty[]{
+	                                new FilterProperty(
+	                                    Quantors.THERE_EXISTS,
+	                                    SystemAttributes.OBJECT_IDENTITY,
+	                                    FilterOperators.IS_LIKE,
+	                                    new Object[]{
+	                                        concreteType.toUri()
+	                                    }
+	                                ),
+	                                // All objects which do not have an up-to-date index entry
+	                                new FilterProperty(
+	                                    Quantors.PIGGY_BACK,
+	                                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                                    FilterOperators.PIGGY_BACK,
+	                                    new Object[]{
+	                                        "NOT EXISTS (SELECT 0 FROM OOCKE1_INDEXENTRY e WHERE v.object_id = e.indexed_object AND v.modified_at <= e.created_at)"
+	                                    }
+	                                ),
+	                                new FilterProperty(
+	                                    Quantors.PIGGY_BACK,
+	                                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
+	                                    FilterOperators.PIGGY_BACK,
+	                                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+	                                )
+	                            },
+	                            0,
+	                            BATCH_SIZE,
+	                            Directions.ASCENDING,
+	                            AttributeSelectors.ALL_ATTRIBUTES,
+	                            null
+	                        );
+	                        MappedRecord[] objectsToBeIndexed = super.find(
+	                            header, 
+	                            queryIsNotIndexed
+	                        ).getObjects();
+	                        for(int i = 0; i < objectsToBeIndexed.length; i++) {
+	                            try {
+	                                this.updateIndexEntry(
+	                                    header, 
+	                                    objectsToBeIndexed[i]
+	                                );
+	                                numberOfIndexedObjects++;
+	                            }
+	                            catch(Exception e) {
+	                                AppLog.warning("Can not index", objectsToBeIndexed[i]);
+	                                AppLog.info(e.getMessage(), e.getCause());
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	            // Index object
+	            else {
+	            	MappedRecord indexed = super.get(
+	                    header,
+	                    new DataproviderRequest(
+	                        ObjectHolder_2Facade.newInstance(indexedIdentity).getDelegate(),
+	                        DataproviderOperations.OBJECT_RETRIEVAL,
+	                        AttributeSelectors.ALL_ATTRIBUTES,
+	                        null
+	                    )             
+	                ).getObject();
+	                this.updateIndexEntry(
+	                    header,
+	                    indexed
+	                );
+	                numberOfIndexedObjects++;
+	            }
+	            MappedRecord reply = this.createResult(
+	                request,
+	                "org:opencrx:kernel:base:UpdateIndexResult"
+	            );
+	            ObjectHolder_2Facade.newInstance(reply).attributeValues("numberOfIndexedObjects").add(
+	                new Integer(numberOfIndexedObjects)
+	            );
+	            return reply;
+	        }
+	        // Delegate
+	        else {
+	            return super.otherOperation(
+	                header,
+	                request,
+	                operation,
+	                replyPath
+	            );
+	        }
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-----------------------------------------------------------------------

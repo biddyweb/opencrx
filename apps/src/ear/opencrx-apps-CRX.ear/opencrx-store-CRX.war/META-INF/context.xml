@@ -3,10 +3,10 @@
 	docBase="${catalina.home}/apps/opencrx-apps-CRX/opencrx-store-CRX.war"
 >
 	<Ejb 
-		name="ejb/data" 
+		name="ejb/EntityManagerFactory" 
 		type="Session"
-		home="org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1Home" 
-		remote="org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Remote"
-		deploymentid="opencrx_core_CRX_Gateway"
+		home="org.openmdx.application.rest.ejb.Connection_2Home"
+		remote="org.openmdx.application.rest.ejb.Connection_2_0Remote"
+		deploymentid="opencrx_core_CRX_EntityManagerFactoryAccessor"
 	/>	
 </Context>

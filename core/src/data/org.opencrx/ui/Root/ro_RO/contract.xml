@@ -17,7 +17,7 @@
                         <_item>Procesul de Vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>toate procesele de vânzare</_item>
+                        <_item>Toate Procesele de Vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -366,10 +366,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalSalesCommission" _operation="create">
                     <_object>
                       <label>
-                        <_item>Comisioane de vânzări</_item>
+                        <_item>Comision pentru vânzare</_item>
                       </label>
                       <toolTip>
-                        <_item>Comisioane de vânzări</_item>
+                        <_item>Comision pentru vânzare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -817,10 +817,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule" _operation="create">
                     <_object>
                       <label>
-                        <_item>Reguli de calcul</_item>
+                        <_item>Regulă de calcul</_item>
                       </label>
                       <toolTip>
-                        <_item>Reguli de calcul</_item>
+                        <_item>Regulă de calcul</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -977,10 +977,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetPositionAmountsResult:statusCode" _operation="create">
                     <_object>
                       <label>
-                        <_item>Statut cod</_item>
+                        <_item>Cod statut</_item>
                       </label>
                       <toolTip>
-                        <_item>Statut cod</_item>
+                        <_item>Cod statut</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1043,10 +1043,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsParams:positionBaseAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Total de bază</_item>
+                        <_item>Total de Bază</_item>
                       </label>
                       <toolTip>
-                        <_item>Total de bază</_item>
+                        <_item>Total de Bază</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1065,10 +1065,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsParams:positionTaxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>TVA totală</_item>
+                        <_item>Total  Taxe (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>TVA totală</_item>
+                        <_item>Total  Taxe (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1120,10 +1120,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalBaseAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Total de bază</_item>
+                        <_item>Total de Bază</_item>
                       </label>
                       <toolTip>
-                        <_item>Total de bază</_item>
+                        <_item>Total de Bază</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1142,10 +1142,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalTaxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>TVA total</_item>
+                        <_item>Total Taxe (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>TVA total</_item>
+                        <_item>Total Taxe (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1153,10 +1153,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Total (exclusiv taxe)</_item>
+                        <_item>Total (exclusiv TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Total (exclusiv taxe)</_item>
+                        <_item>Total (exclusiv TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1164,10 +1164,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GetContractAmountsResult:totalAmountIncludingTax" _operation="create">
                     <_object>
                       <label>
-                        <_item>Total (inclusiv taxe)</_item>
+                        <_item>Total (inclusiv TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Total (inclusiv taxe)</_item>
+                        <_item>Total (inclusiv TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

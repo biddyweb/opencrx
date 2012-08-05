@@ -3742,7 +3742,7 @@
             <layoutConstraint xmi:type="notation:Location" xmi:id="_W14yQAi7Ed6oA6YRo2H_jw" y="1058"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_IzWjed7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="None"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_IzWjet7NEdmKapscEl8OLg" points="[6535, -5397, -10557, -900]$[14632, -5397, -2460, -900]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_IzWjet7NEdmKapscEl8OLg" points="[6572, -3501, -10528, 1014]$[14617, -3501, -2483, 1014]"/>
         </edges>
         <edges xmi:id="_IzWjrt7NEdmKapscEl8OLg" element="_3C7B8A60016D409FDECE032A" source="_IzQcpt7NEdmKapscEl8OLg" target="_IzKWAN7NEdmKapscEl8OLg">
           <children xmi:id="_IzWjsd7NEdmKapscEl8OLg" type="NameLabel">
@@ -3886,7 +3886,7 @@
             <layoutConstraint xmi:type="notation:Location" xmi:id="_OpwFMS6REdqsENVVEajvdA" y="1058"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_OpwFES6REdqsENVVEajvdA" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_OpwFEi6REdqsENVVEajvdA" points="[6535, -3624, -10557, 873]$[14632, -3624, -2460, 873]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_OpwFEi6REdqsENVVEajvdA" points="[6572, -5177, -10528, -662]$[14617, -5177, -2483, -662]"/>
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_OqOmMC6REdqsENVVEajvdA" id="anchor50"/>
         </edges>
         <edges xmi:id="_XuEmcEv3EdqPqv9AK0JcmA" element="_XtHkMEv3EdqPqv9AK0JcmA" source="_IzQcpt7NEdmKapscEl8OLg" target="_HKW8gEv3EdqPqv9AK0JcmA">
@@ -6118,7 +6118,7 @@
             </children>
             <layoutConstraint xmi:type="notation:Location" xmi:id="_o4nFO-t_EdqdDP0PdRn1Lw" y="1058"/>
           </children>
-          <children xmi:id="_o4nFP-t_EdqdDP0PdRn1Lw" type="FromRoleLabel" element="_o3FbIet_EdqdDP0PdRn1Lw">
+          <children xmi:id="_o4nFP-t_EdqdDP0PdRn1Lw" visible="false" type="FromRoleLabel" element="_o3FbIet_EdqdDP0PdRn1Lw">
             <eAnnotations xmi:id="_o4nFQet_EdqdDP0PdRn1Lw" source="FromConstraintLabel"/>
             <children xmi:id="_o4nFQut_EdqdDP0PdRn1Lw" type="FromConstraintCompartment" element="_o3FbIet_EdqdDP0PdRn1Lw">
               <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_o4nFQ-t_EdqdDP0PdRn1Lw"/>
@@ -6299,7 +6299,7 @@
             </children>
             <layoutConstraint xmi:type="notation:Location" xmi:id="_1fEvDeuCEdqdDP0PdRn1Lw" y="1058"/>
           </children>
-          <children xmi:id="_1fEvEeuCEdqdDP0PdRn1Lw" type="FromRoleLabel" element="_1eT6AeuCEdqdDP0PdRn1Lw">
+          <children xmi:id="_1fEvEeuCEdqdDP0PdRn1Lw" visible="false" type="FromRoleLabel" element="_1eT6AeuCEdqdDP0PdRn1Lw">
             <eAnnotations xmi:id="_1fEvE-uCEdqdDP0PdRn1Lw" source="FromConstraintLabel"/>
             <children xmi:id="_1fEvFOuCEdqdDP0PdRn1Lw" type="FromConstraintCompartment" element="_1eT6AeuCEdqdDP0PdRn1Lw">
               <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_1fEvFeuCEdqdDP0PdRn1Lw"/>
@@ -6806,7 +6806,7 @@
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_FvHanTL4Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
           <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_2aWBEImxEdqT-YHfpV38vQ?base/base/AttributeFilterProperty?"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvHanjL4Ed2JO9aiVMWzRg" x="6421" y="10104" height="1243"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvHanjL4Ed2JO9aiVMWzRg" x="4018" y="10224" height="1243"/>
         </children>
         <children xmi:id="_FvHanzL4Ed2JO9aiVMWzRg">
           <children xmi:id="_FvHaoDL4Ed2JO9aiVMWzRg" type="ImageCompartment">
@@ -6829,7 +6829,7 @@
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_FvHarDL4Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" italic="true" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
           <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D4155CD91035D?base/base/SecureObject?"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvHarTL4Ed2JO9aiVMWzRg" x="1027" y="6713" width="3340" height="1270"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvHarTL4Ed2JO9aiVMWzRg" x="4505" y="5274" width="3340" height="1270"/>
         </children>
         <children xmi:id="_FvHarjL4Ed2JO9aiVMWzRg">
           <children xmi:id="_FvHarzL4Ed2JO9aiVMWzRg" type="ImageCompartment">
@@ -6852,7 +6852,7 @@
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_FvHauzL4Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" italic="true" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
           <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.base.emx#_3C7B8A60016D3FB3D6450214?base/base/BasicObject?"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvHavDL4Ed2JO9aiVMWzRg" x="4447" y="6712" width="3222" height="1269"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvHavDL4Ed2JO9aiVMWzRg" x="6607" y="6785" width="3222" height="1269"/>
         </children>
         <children xmi:id="_FvkGgDL4Ed2JO9aiVMWzRg">
           <children xmi:id="_FvkGgTL4Ed2JO9aiVMWzRg" type="ImageCompartment">
@@ -6875,7 +6875,7 @@
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_FvkGjTL4Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
           <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_-8O5kBuJEdyil9rtoHqsOA?base/base/QueryFilterProperty?"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvkGjjL4Ed2JO9aiVMWzRg" x="14019" y="10209"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FvkGjjL4Ed2JO9aiVMWzRg" x="12584" y="10640"/>
         </children>
         <children xmi:id="_IDsFQDL4Ed2JO9aiVMWzRg" element="_H7fLgDL4Ed2JO9aiVMWzRg">
           <children xmi:id="_IDsFQzL4Ed2JO9aiVMWzRg" type="ImageCompartment">
@@ -7163,6 +7163,29 @@
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_6w1V0TL8Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="13369343" lineColor="3342489" showStereotype="Text"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6w1V0jL8Ed2JO9aiVMWzRg" x="22542" y="16774"/>
         </children>
+        <children xmi:id="_rZ7CQCNnEd6yWaGB7IkMWA">
+          <children xmi:id="_rZ8QYCNnEd6yWaGB7IkMWA" type="ImageCompartment">
+            <layoutConstraint xmi:type="notation:Size" xmi:id="_rZ8QYSNnEd6yWaGB7IkMWA" width="1320" height="1320"/>
+          </children>
+          <children xmi:id="_rZ83cCNnEd6yWaGB7IkMWA" type="Stereotype"/>
+          <children xmi:id="_rZ9egCNnEd6yWaGB7IkMWA" type="Name"/>
+          <children xmi:id="_rZ9egSNnEd6yWaGB7IkMWA" type="Parent"/>
+          <children xmi:id="_rZ-FkCNnEd6yWaGB7IkMWA" visible="false" type="AttributeCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_rZ-FkSNnEd6yWaGB7IkMWA"/>
+          </children>
+          <children xmi:id="_rZ-FkiNnEd6yWaGB7IkMWA" visible="false" type="OperationCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_rZ-FkyNnEd6yWaGB7IkMWA"/>
+          </children>
+          <children xmi:id="_rZ-soCNnEd6yWaGB7IkMWA" visible="false" type="SignalCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_rZ-soSNnEd6yWaGB7IkMWA"/>
+          </children>
+          <children xmi:id="_rZ_TsCNnEd6yWaGB7IkMWA" visible="false" type="StructureCompartment">
+            <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_rZ_TsSNnEd6yWaGB7IkMWA"/>
+          </children>
+          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_rZ7CQSNnEd6yWaGB7IkMWA" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" showStereotype="Text"/>
+          <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_dhKEwBvoEdyil9rtoHqsOA?base/base/AbstractFilterProperty?"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rZ7CQiNnEd6yWaGB7IkMWA" x="1060" y="6819" height="1207"/>
+        </children>
         <styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_Acj70TL4Ed2JO9aiVMWzRg"/>
         <edges xmi:id="_b5kDgDL4Ed2JO9aiVMWzRg" element="_b40coDL4Ed2JO9aiVMWzRg" source="_IDsFQDL4Ed2JO9aiVMWzRg" target="_Vwd-UDL4Ed2JO9aiVMWzRg">
           <children xmi:id="_b5tNcTL4Ed2JO9aiVMWzRg" type="NameLabel">
@@ -7243,7 +7266,7 @@
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_1MuJ1DL4Ed2JO9aiVMWzRg" y="-185"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_1MuJ0TL4Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_1MuJ0jL4Ed2JO9aiVMWzRg" points="[-60, -25, 675, 265]$[-672, -284, 63, 6]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_1MuJ0jL4Ed2JO9aiVMWzRg" points="[-2016, -475, -197, 2606]$[-2016, -2446, -197, 635]"/>
         </edges>
         <edges xmi:id="_1zw7sTL4Ed2JO9aiVMWzRg" element="_1zw7sDL4Ed2JO9aiVMWzRg" source="_yNPg8DL4Ed2JO9aiVMWzRg" target="_FvHarjL4Ed2JO9aiVMWzRg">
           <children xmi:id="_1zw7tDL4Ed2JO9aiVMWzRg" type="NameLabel">
@@ -7324,7 +7347,7 @@
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Kcvx5DL5Ed2JO9aiVMWzRg" y="-185"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_Kcvx4TL5Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Kcvx4jL5Ed2JO9aiVMWzRg" points="[-688, -635, 4392, 2778]$[-688, -2778, 4392, 635]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Kcvx4jL5Ed2JO9aiVMWzRg" points="[-1303, -475, 3427, 2938]$[-1303, -2938, 3427, 475]"/>
         </edges>
         <edges xmi:id="_LI2p8DL5Ed2JO9aiVMWzRg" element="_LItgADL5Ed2JO9aiVMWzRg" source="_HSifsDL5Ed2JO9aiVMWzRg" target="_FvkGgDL4Ed2JO9aiVMWzRg">
           <children xmi:id="_LI2p8zL5Ed2JO9aiVMWzRg" type="NameLabel">
@@ -7351,7 +7374,7 @@
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_STqq1DL5Ed2JO9aiVMWzRg" y="-185"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_STqq0TL5Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_STqq0jL5Ed2JO9aiVMWzRg" points="[80, -662, -3492, 2698]$[80, -2725, -3492, 635]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_STqq0jL5Ed2JO9aiVMWzRg" points="[-1689, -475, -5437, 2889]$[-1689, -2889, -5437, 475]"/>
         </edges>
         <edges xmi:id="_dMl8MTL5Ed2JO9aiVMWzRg" element="_dMl8MDL5Ed2JO9aiVMWzRg" source="_XQ6A4DL5Ed2JO9aiVMWzRg" target="_Ojm5kDL5Ed2JO9aiVMWzRg">
           <children xmi:id="_dMl8NDL5Ed2JO9aiVMWzRg" type="NameLabel">
@@ -7613,6 +7636,15 @@
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_9u-h8TL8Ed2JO9aiVMWzRg" fontName="Arial" fontHeight="11" routing="Tree" lineColor="3342489" showStereotype="Text"/>
           <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_9u-h8jL8Ed2JO9aiVMWzRg" points="[0, 0, 3, 31]$[0, -7, 3, 24]"/>
+        </edges>
+        <edges xmi:id="_zA0iMCNnEd6yWaGB7IkMWA" element="_zAvCoCNnEd6yWaGB7IkMWA" source="_yNPg8DL4Ed2JO9aiVMWzRg" target="_rZ7CQCNnEd6yWaGB7IkMWA">
+          <children xmi:id="_zA1JQCNnEd6yWaGB7IkMWA" type="NameLabel">
+            <children xmi:id="_zA1wUCNnEd6yWaGB7IkMWA" type="Stereotype"/>
+            <children xmi:id="_zA1wUSNnEd6yWaGB7IkMWA" type="Name"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zA1JQSNnEd6yWaGB7IkMWA" y="-121"/>
+          </children>
+          <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_zA0iMSNnEd6yWaGB7IkMWA" fontName="Sans" routing="Rectilinear" lineColor="2763429" showStereotype="Text"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_zA0iMiNnEd6yWaGB7IkMWA" points="[-5472, -414, -23, 1356]$[-5472, -1451, -23, 319]"/>
         </edges>
       </contents>
       <contents xmi:type="notation:Diagram" xmi:id="_CFK4YDL4Ed2JO9aiVMWzRg" type="Class" name="ContractFilterGlobal">
@@ -8642,9 +8674,9 @@
       </ownedRule>
       <generalization xmi:id="_3C7B8A60016D3F40E30D019B" general="_3C7B8A60016D3F40D53501B3"/>
       <ownedAttribute xmi:id="_3C7B8A60016D3F40E3620003" name="submitStatus">
-        <type xmi:type="uml:Class" href="models.emx#_3C7B8A60016D40747CF6015D?models/org/opencrx/code?"/>
+        <type xmi:type="uml:Class" href="org.opencrx.emx#_3C7B8A60016D40747CF6015D?org.opencrx/opencrx/code?"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_H59dOt7NEdmKapscEl8OLg" value="1"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H59dOd7NEdmKapscEl8OLg"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H59dOd7NEdmKapscEl8OLg" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_3C7B8A60016D3F40E3680124" name="submitDate">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B630802BB?w3c/w3c/dateTime?"/>
@@ -8756,7 +8788,7 @@
       <generalization xmi:id="_XtHkMEv3EdqPqv9AK0JcmA">
         <general xmi:type="uml:Class" href="org.opencrx.kernel.depot1.emx#_3C7B8A60016D42964FD10360?depot1/depot1/BookingOrigin?"/>
       </generalization>
-      <ownedAttribute xmi:id="_3C7B8A60016D3F4FF6D8026C" name="lineItemNumber" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D3F4FF6D8026C" name="lineItemNumber">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631401F0?w3c/w3c/long?"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_3C7B8A60016D3F4FF6B000B6" name="name">
@@ -9104,22 +9136,22 @@
       <ownedAttribute xmi:id="_3C7B8A60016D3F4FE622017A" name="contractCurrency">
         <type xmi:type="uml:Class" href="org.opencrx.emx#_3C7B8A60016D40747CF6015D?org.opencrx/opencrx/code?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D3F40100101EC" name="totalBaseAmount" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D3F40100101EC" name="totalBaseAmount">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631E003C?w3c/w3c/decimal?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D3F40100D037A" name="totalDiscountAmount" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D3F40100D037A" name="totalDiscountAmount">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631E003C?w3c/w3c/decimal?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D3F40103300B7" name="totalAmount" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D3F40103300B7" name="totalAmount">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631E003C?w3c/w3c/decimal?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D3F40101F005F" name="totalTaxAmount" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D3F40101F005F" name="totalTaxAmount">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631E003C?w3c/w3c/decimal?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D3F493FB2024B" name="totalAmountIncludingTax" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D3F493FB2024B" name="totalAmountIncludingTax">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631E003C?w3c/w3c/decimal?"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_3C7B8A60016D40E96179014F" name="totalSalesCommission" isReadOnly="true">
+      <ownedAttribute xmi:id="_3C7B8A60016D40E96179014F" name="totalSalesCommission">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B631E003C?w3c/w3c/decimal?"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_3C7B8A60016D3F401074035A" name="paymentTerms">
@@ -9177,7 +9209,7 @@
           <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3CC6A34B0011?w3c/w3c/integer?"/>
         </qualifier>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_iXoL4Iq9EdqT-YHfpV38vQ" name="pricingState" isReadOnly="true">
+      <ownedAttribute xmi:id="_iXoL4Iq9EdqT-YHfpV38vQ" name="pricingState">
         <type xmi:type="uml:Class" href="org.opencrx.emx#_3C7B8A60016D40747CF6015D?org.opencrx/opencrx/code?"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_6UsLQItoEdqT-YHfpV38vQ" name="pricingDate">
@@ -9195,14 +9227,14 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dVqroLTzEdqWRp5yUrj13w" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dVklALTzEdqWRp5yUrj13w"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_o3FbIet_EdqdDP0PdRn1Lw" name="positionModification" type="_mPwMgOt_EdqdDP0PdRn1Lw" isReadOnly="true" aggregation="composite" association="_o3FbIOt_EdqdDP0PdRn1Lw">
+      <ownedAttribute xmi:id="_o3FbIet_EdqdDP0PdRn1Lw" name="positionModification" type="_mPwMgOt_EdqdDP0PdRn1Lw" aggregation="composite" association="_o3FbIOt_EdqdDP0PdRn1Lw">
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_o3XvAut_EdqdDP0PdRn1Lw" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_o3XvAet_EdqdDP0PdRn1Lw"/>
         <qualifier xmi:id="_0SjY4Ot_EdqdDP0PdRn1Lw" name="id" visibility="private">
           <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B62E40010?w3c/w3c/string?"/>
         </qualifier>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_1eT6AeuCEdqdDP0PdRn1Lw" name="removedPosition" type="_FkOqIOuCEdqdDP0PdRn1Lw" isReadOnly="true" aggregation="composite" association="_1eT6AOuCEdqdDP0PdRn1Lw">
+      <ownedAttribute xmi:id="_1eT6AeuCEdqdDP0PdRn1Lw" name="removedPosition" type="_FkOqIOuCEdqdDP0PdRn1Lw" aggregation="composite" association="_1eT6AOuCEdqdDP0PdRn1Lw">
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_1eT6BOuCEdqdDP0PdRn1Lw" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1eT6A-uCEdqdDP0PdRn1Lw"/>
         <qualifier xmi:id="__T-XkOuCEdqdDP0PdRn1Lw" name="id" visibility="private">
@@ -10271,6 +10303,9 @@
       </generalization>
       <generalization xmi:id="_1zw7sDL4Ed2JO9aiVMWzRg">
         <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.base.emx#_3C7B8A60016D3FB3D6450214?base/base/BasicObject?"/>
+      </generalization>
+      <generalization xmi:id="_zAvCoCNnEd6yWaGB7IkMWA">
+        <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_dhKEwBvoEdyil9rtoHqsOA?base/base/AbstractFilterProperty?"/>
       </generalization>
     </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_3hlIYDL4Ed2JO9aiVMWzRg" name="ContractFilterHasFilterProperty" memberEnd="_3hlIYTL4Ed2JO9aiVMWzRg _3hlIYjL4Ed2JO9aiVMWzRg">

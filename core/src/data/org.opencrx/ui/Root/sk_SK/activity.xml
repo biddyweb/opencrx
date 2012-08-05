@@ -44,6 +44,42 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activity" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Aktivity</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Aktivity</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activity" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Aktivity (zablokované)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Aktivity (zablokované)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityType" _operation="create">
                     <_object>
                       <label>
@@ -113,7 +149,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:workReportEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>P</_item>
+                        <_item>Pracovný záznam</_item>
                       </label>
                       <toolTip>
                         <_item>Pracovný záznam</_item>
@@ -190,6 +226,14 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Attr:Tab:0:Group:40" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:name" _operation="create">
                     <_object>
                       <label>
@@ -233,39 +277,6 @@
                       </label>
                       <toolTip>
                         <_item>Priradené k</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc1" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rozličné #1</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rozličné #1</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc2" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rozličné #2</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rozličné #2</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc3" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rozličné #3</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rozličné #3</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -481,6 +492,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rozličné #1</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rozličné #1</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rozličné #2</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rozličné #2</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rozličné #3</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rozličné #3</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:detailedDescription" _operation="create">
                     <_object>
                       <label>
@@ -492,35 +536,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHhMm" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (skutočne vydaný čas)</_item>
+                        <_item>hh mm (hlavný odhad spotreby času)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (skutočne vydaný čas)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (skutočne vydaný čas)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (skutočne vydaný čas)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHhMm" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh mm (skutočne vydaný čas)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh mm (skutočne vydaný čas)</_item>
+                        <_item>hh mm (hlavný odhad spotreby času)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -547,17 +569,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHhMm" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh mm (hlavný odhad spotreby času)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh mm (hlavný odhad spotreby času)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:totalVotes" _operation="create">
                     <_object>
                       <label>
@@ -576,6 +587,17 @@
                       </label>
                       <toolTip>
                         <_item>Naposledy použité tvorcom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ iCal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -822,17 +844,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importovať iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importovať iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -866,29 +877,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importovať iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importovať iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importovať iCal</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importovať iCal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
                         <_item>Importovať iCal</_item>
@@ -1141,18 +1130,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pridanie pracovného záznamu</_item>
+                        <_item>Pridať záznam Výdavku</_item>
                       </label>
                       <toolTip>
-                        <_item>Pridanie pracovného záznamu</_item>
+                        <_item>Pridať záznam Výdavku</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -1163,7 +1152,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:recordType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ záznamu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ záznamu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zdroj</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zdroj</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:name" _operation="create">
                     <_object>
                       <label>
                         <_item>Meno</_item>
@@ -1174,7 +1185,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:description" _operation="create">
                     <_object>
                       <label>
                         <_item>Popis</_item>
@@ -1185,90 +1196,376 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:startAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:startAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Začiatok o</_item>
+                        <_item>Začať / dátum</_item>
                       </label>
                       <toolTip>
-                        <_item>Začiatok o</_item>
+                        <_item>Začať / dátum</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:endAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:endAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Koniec o</_item>
+                        <_item>Skončiť</_item>
                       </label>
                       <toolTip>
-                        <_item>Koniec o</_item>
+                        <_item>Skončiť</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:quantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (pracovná doba)</_item>
+                        <_item>Množstvo</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (pracovná doba)</_item>
+                        <_item>Množstvo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationMinutes" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:quantityUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (pracovná doba)</_item>
+                        <_item>Jednotka</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (pracovná doba)</_item>
+                        <_item>Jednotka</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:resource" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:rate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Zdroje</_item>
+                        <_item>Sadzba (za Jednotku)</_item>
                       </label>
                       <toolTip>
-                        <_item>Zdroje</_item>
+                        <_item>Sadzba (za Jednotku)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:rateType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:rateCurrency" _operation="create">
                     <_object>
                       <label>
-                        <_item>Typ hodinovej sadzby</_item>
+                        <_item>Mena</_item>
                       </label>
                       <toolTip>
-                        <_item>Typ hodinovej sadzby</_item>
+                        <_item>Mena</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:paymentType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selektor depotu</_item>
+                        <_item>Druh platby</_item>
                       </label>
                       <toolTip>
-                        <_item>Selektor depotu</_item>
+                        <_item>Druh platby</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:isBillable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Je účtovateľné</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Je účtovateľné</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:isReimbursable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Je refundovateľné</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Je refundovateľné</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výber skladu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výber skladu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Výsledok</_item>
                       </label>
                       <toolTip>
                         <_item>Výsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridať pracovný záznam</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridať pracovný záznam</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:recordType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ záznamu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ záznamu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zdroj</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zdroj</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Začiatok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Začiatok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Koniec</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Koniec</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:durationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hodiny (pracovný čas)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hodiny (pracovný čas)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:durationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Minúty (pracovný čas)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Minúty (pracovný čas)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:rate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sadzba (za hodinu)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sadzba (za hodinu)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:rateCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mena</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mena</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:isBillable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Je účtovateľné</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Je účtovateľné</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výber skladu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výber skladu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:calcTotalQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vypočítať Celkové množstvo na Prácu / Záznamy výdajov</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vypočítať Celkové množstvo na Prácu / Záznamy výdajov</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:calcTotalQuantity:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityParams:recordType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ záznamu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ záznamu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Začiatok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Začiatok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Koniec</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Koniec</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:calcTotalQuantity:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityResult:totalQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Celkové množstvo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Celkové množstvo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcTotalQuantityResult:quantityUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Merná jednotka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Merná jednotka</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1471,6 +1768,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description" _operation="create">
                     <_object>
                       <label>
@@ -1640,17 +1948,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Splatnosť do</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Splatnosť do</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority" _operation="create">
                     <_object>
                       <label>
@@ -1662,6 +1959,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:icalType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Splatnosť do</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Splatnosť do</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact" _operation="create">
                     <_object>
                       <label>
@@ -1669,39 +1988,6 @@
                       </label>
                       <toolTip>
                         <_item>Kontakt pre hlásenie</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Skupina aktivity</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Skupina aktivity</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Zdroj</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Zdroj</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Úloha zdroja</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Úloha zdroja</_item>
                       </toolTip>
                     </_object>
                     <_content/>

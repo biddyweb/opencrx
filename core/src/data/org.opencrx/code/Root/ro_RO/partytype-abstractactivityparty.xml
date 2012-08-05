@@ -249,10 +249,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Participant (required)</_item>
+                              <_item>Participant (necesar)</_item>
                             </shortText>
                             <longText>
-                              <_item>Participant (required)</_item>
+                              <_item>Participant (necesar)</_item>
                             </longText>
                           </_object>
                           <_content/>

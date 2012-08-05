@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Apps, http://www.opencrx.org/
- * Name:        $Id: UserManager.java,v 1.2 2009/02/15 18:06:14 wfro Exp $
+ * Name:        $Id: UserManager.java,v 1.4 2009/05/22 14:18:43 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:14 $
+ * Date:        $Date: 2009/05/22 14:18:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,13 +55,15 @@
  */
 package org.opencrx.apps.store.manager;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.PrimaryKey;
 import org.opencrx.apps.store.objects.User;
 import org.opencrx.apps.utils.ApplicationContext;
+import org.opencrx.kernel.account1.cci2.ContactQuery;
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.openmdx.base.exception.ServiceException;
 
 public final class UserManager
@@ -77,11 +79,11 @@ public final class UserManager
     public final boolean create(
         final User newValue
     ) {
+    	Transaction tx = null;
         try {
-            Transaction tx = this.context.getPersistenceManager().currentTransaction();       
+            tx = this.context.getPersistenceManager().currentTransaction();       
             tx.begin();
-            org.opencrx.kernel.account1.jmi1.Contact contact = 
-                this.context.getAccountPackage().getContact().createContact();
+            Contact contact = this.context.getPersistenceManager().newInstance(Contact.class);
             contact.refInitialize(false, false);
             newValue.update(
                 contact, 
@@ -96,6 +98,12 @@ public final class UserManager
             return true;
         }
         catch(Exception e) {
+        	if(tx != null) {
+        		try {
+        			tx.rollback();
+        		}
+        		catch(Exception e0) {}
+        	}
             new ServiceException(e).log();
             return false;
         }
@@ -105,12 +113,23 @@ public final class UserManager
     public final void delete(
         final PrimaryKey key
     ) {
-        Transaction tx = this.context.getPersistenceManager().currentTransaction();       
-        tx.begin();
-        org.opencrx.kernel.account1.jmi1.Contact contact = 
-            (org.opencrx.kernel.account1.jmi1.Contact)this.context.getAccountSegment().getAccount(key.getUuid());
-        contact.refDelete();
-        tx.commit();
+    	Transaction tx = null;
+    	try {
+	        tx = this.context.getPersistenceManager().currentTransaction();       
+	        tx.begin();
+	        Contact contact = (Contact)this.context.getAccountSegment().getAccount(key.getUuid());
+	        contact.refDelete();
+	        tx.commit();
+    	}
+    	catch(Exception e) {
+        	if(tx != null) {
+        		try {
+        			tx.rollback();
+        		}
+        		catch(Exception e0) {}
+        	}
+            new ServiceException(e).log();    		
+    	}
     }
 
     //-----------------------------------------------------------------------
@@ -118,8 +137,7 @@ public final class UserManager
         final PrimaryKey key
     ) {
         if(key.toString().length() > 0) {
-            org.opencrx.kernel.account1.jmi1.Contact contact = 
-                (org.opencrx.kernel.account1.jmi1.Contact)this.context.getAccountSegment().getAccount(key.getUuid());
+            Contact contact = (Contact)this.context.getAccountSegment().getAccount(key.getUuid());
             return new User(contact);
         }
         else {
@@ -131,8 +149,7 @@ public final class UserManager
     public final User get(
         final String key
     ) {
-        org.opencrx.kernel.account1.jmi1.Contact contact = 
-            (org.opencrx.kernel.account1.jmi1.Contact)this.context.getAccountSegment().getAccount(key);
+        Contact contact = (Contact)this.context.getAccountSegment().getAccount(key);
         return new User(contact);
     }
 
@@ -140,16 +157,28 @@ public final class UserManager
     public final User update(
         final User newValue
     ) {
-        Transaction tx = this.context.getPersistenceManager().currentTransaction();       
-        tx.begin();
-        org.opencrx.kernel.account1.jmi1.Contact contact = 
-            (org.opencrx.kernel.account1.jmi1.Contact)this.context.getAccountSegment().getAccount(newValue.getKey().getUuid());
-        newValue.update(
-            contact,
-            this.context
-        );
-        tx.commit();
-        return this.get(newValue.getKey());
+    	Transaction tx = null;
+    	try {
+	        tx = this.context.getPersistenceManager().currentTransaction();       
+	        tx.begin();
+	        Contact contact = (Contact)this.context.getAccountSegment().getAccount(newValue.getKey().getUuid());
+	        newValue.update(
+	            contact,
+	            this.context
+	        );
+	        tx.commit();
+	        return this.get(newValue.getKey());
+    	}
+    	catch(Exception e) {
+        	if(tx != null) {
+        		try {
+        			tx.rollback();
+        		}
+        		catch(Exception e0) {}
+        	}
+            new ServiceException(e).log();
+            return null;
+    	}
     }
 
     //-----------------------------------------------------------------------
@@ -158,18 +187,15 @@ public final class UserManager
         final String password
     ) {
         final User user = this.getUserByName(userName);
-
         // no user found by user name
         if (null == user)
             return false;
 
         // user found, match password
-        if (user.getPassword().equals(password))
-        {
+        if (user.getPassword().equals(password)) {
             return true;
         }
-        else
-        {
+        else {
             return false;
         }
     }
@@ -178,13 +204,12 @@ public final class UserManager
     public final User getUserByName(
         final String name
     ) {
-        org.opencrx.kernel.account1.cci2.ContactQuery query =
-            this.context.getAccountPackage().createContactQuery();
+        ContactQuery query = (ContactQuery)this.context.getPersistenceManager().newQuery(Contact.class);
         query.thereExistsAliasName().like(name);
-        Collection contacts = this.context.getAccountSegment().getAccount(query);
+        List<Contact> contacts = this.context.getAccountSegment().getAccount(query);
         if(!contacts.isEmpty()) {
             return new User(
-                (org.opencrx.kernel.account1.jmi1.Contact)contacts.iterator().next()
+                contacts.iterator().next()
             );
         }
         else {

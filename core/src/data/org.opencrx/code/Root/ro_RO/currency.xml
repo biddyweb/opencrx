@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>N/A</_item>
+                              <_item>Indisponibil</_item>
                             </shortText>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item> Indisponibil</_item>
                             </longText>
                           </_object>
                           <_content/>

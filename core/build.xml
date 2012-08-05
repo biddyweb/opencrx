@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.376 2009/03/20 18:15:52 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.382 2009/06/15 15:25:59 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.376 $
- * = Date:        $Date: 2009/03/20 18:15:52 $
+ * = Revision:    $Revision: 1.382 $
+ * = Date:        $Date: 2009/06/15 15:25:59 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.4.1"/>
+	<property name="openmdx.version" value="2.5.0"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -109,21 +109,6 @@
 		    </not>
 		    <not>
 		      <isset property="openmdx.portal.available.option.2"/>
-		    </not>
-			</and>
-	  </condition>
-	</fail>
-	<!-- Check existence of openmdx/log -->
-	<available file="../opt/openmdx-${openmdx.version}/log/build.xml" property="openmdx.log.available.option.1"/>
-	<available file="../../openmdx-${openmdx.version}/log/build.xml" property="openmdx.log.available.option.2"/>				
-	<fail message="openmdx-log-${openmdx.version} missing. Download from http://sourceforge.net/projects/openmdx and expand to directory 'opt' as described in README.">
-	  <condition>
-	    <and>
-		    <not>
-		      <isset property="openmdx.log.available.option.1"/>
-		    </not>
-		    <not>
-		      <isset property="openmdx.log.available.option.2"/>
 		    </not>
 			</and>
 	  </condition>
@@ -183,7 +168,6 @@
 	</path>
 	<path id="utilities.bin.classpath">
 		<path refid="project.lib.classpath"/>
-		<pathelement location="${openmdx.home}/${build.target.platform}/log/lib/slf4j-openmdx1.jar"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-kernel.jar"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-extension.jar"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-base.jar"/>
@@ -262,6 +246,7 @@
 			<replacestring from="opencrx-vcard-CRX" to="opencrx-vcard-${web.application.name}"/>			
 			<replacestring from="opencrx-news-CRX" to="opencrx-news-${web.application.name}"/>			
 			<replacestring from="opencrx-rest-CRX" to="opencrx-rest-${web.application.name}"/>			
+			<replacestring from="org.opencrx.kernel.aop2.Configuration" to="${configuration.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1" to="${kernel.interception.plugin.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.type.Strict_1" to="${kernel.type.plugin.class.name}"/>
 			<replacestring from="org.opencrx.kernel.layer.application.OpenCrxKernel_1" to="${kernel.application.plugin.class.name}"/>
@@ -843,10 +828,6 @@
 			<zipfileset dir="../lowagie/${build.target.platform}/itext" prefix="WEB-INF">
 				<include name="lib/**/*.jar"/>
 			</zipfileset>
-			<!-- include openmdx-log-console -->
-			<zipfileset src="${openmdx.home}/${build.target.platform}/log/deployment-unit/openmdx-log-console.war">
-				<include name="**/*"/>
-			</zipfileset>
 			<!-- include openmdx-inspector -->
 			<zipfileset src="${openmdx.home}/${build.target.platform}/portal/deployment-unit/openmdx-inspector.war">
 				<include name="**/*"/>
@@ -1184,11 +1165,10 @@
 			<packageset dir="${basedir}/src/java"/>
 			<packageset dir="${build.dir}/src/java"/>
 			<classpath refid="project.bin.classpath"/>
-			<link href="http://java.sun.com/j2se/1.3/docs/api/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/j2se/"/>
-			<link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/" offline="true" packagelistLoc="${opencrx.home}/core/etc/javadoc/j2ee/"/>
-			<link href="http://www.junit.org/junit/javadoc/3.8.1/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/junit/"/>
-			<link href="http://jakarta.apache.org/velocity/api/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/velocity/"/>
-			<link href="http://www.openmdx.org/openmdx/core/1.5/java/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/openmdx/"/>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/j2se/"/>
+			<link href="http://java.sun.com/javaee/5/docs/api/" offline="true" packagelistLoc="${opencrx.home}/core/etc/javadoc/j2ee/"/>
+			<link href="http://junit.org/junit/javadoc/4.5/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/junit/"/>
+			<link href="http://www.openmdx.org/openmdx/core/2.5/java-jre-1.5/" offline="true" packagelistLoc="${openmdx.home}/core/etc/javadoc/openmdx/"/>
 			<group>
 				<title>${project.specification.title} Accounts</title>
 				<package name="org.opencrx.kernel.account1.*"/>
@@ -1320,7 +1300,7 @@ ${build.dir}/doc/api/index.html
 		<echo>***           !!! USE ONLY FOR openCRX 1.9.0+                                !!!              ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** In case of failure see log for details. The log configuration is located at               ***</echo>
-		<echo>*** etc/log/SysLog.log.properties)                                                            ***</echo>
+		<echo>*** etc/log/logging.properties)                                                               ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** Specify options with:                                                                     ***</echo>
 		<echo>*** -Dformat.source="openmdx1|openmdx2"   source database schema format                       ***</echo>
@@ -1377,7 +1357,7 @@ ${build.dir}/doc/api/index.html
 			<sysproperty key="user.region" value="US"/>
 			<sysproperty key="file.encoding" value="Cp1252"/>
 			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
-			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
+			<sysproperty key="java.util.logging.config.file" value="etc/log/logging.properties"/>
 			<sysproperty key="formatSource" value="${format.source}"/>
 			<sysproperty key="formatTarget" value="${format.target}"/>
 			<sysproperty key="kernel.startFromDbObject" value="${kernel.start.with.table}"/>

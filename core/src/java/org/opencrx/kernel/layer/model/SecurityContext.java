@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.27 2009/02/20 21:44:49 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.34 2009/06/13 18:47:42 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/20 21:44:49 $
+ * Date:        $Date: 2009/06/13 18:47:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,6 +55,7 @@
  */
 package org.opencrx.kernel.layer.model;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,19 +63,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.resource.ResourceException;
+import javax.resource.cci.MappedRecord;
+
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Orders;
 import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.AttributeSpecifier;
 import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
+import org.openmdx.base.query.Orders;
 import org.openmdx.base.query.Quantors;
+import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
 import org.openmdx.kernel.exception.BasicException;
 
 /**
@@ -99,21 +103,28 @@ public class SecurityContext {
     }
     
     //-------------------------------------------------------------------------
-    private Set getAllSubgroups(
+    private Set<String> getAllSubgroups(
         Path groupIdentity
     ) throws ServiceException {
-        Set subgroups = new HashSet();
+        Set<String> subgroups = new HashSet<String>();
         subgroups.add(
             this.plugin.getQualifiedPrincipalName(groupIdentity)
         );
-        for(Iterator i = this.groups.values().iterator(); i.hasNext(); ) {
-            DataproviderObject_1_0 group = (DataproviderObject_1_0)i.next();
-            if(group.values("isMemberOf").contains(groupIdentity)) {
+        for(Iterator<MappedRecord> i = this.groups.values().iterator(); i.hasNext(); ) {
+        	MappedRecord group = i.next();
+        	ObjectHolder_2Facade groupFacade;
+            try {
+	            groupFacade = ObjectHolder_2Facade.newInstance(group);
+            }
+            catch (ResourceException e) {
+            	throw new ServiceException(e);
+            }
+            if(groupFacade.attributeValues("isMemberOf").contains(groupIdentity)) {
                 subgroups.addAll(
-                    this.getAllSubgroups(group.path())
+                    this.getAllSubgroups(groupFacade.getPath())
                 );
                 subgroups.add(
-                    this.plugin.getQualifiedPrincipalName(group.path())
+                    this.plugin.getQualifiedPrincipalName(groupFacade.getPath())
                 );
             }
         }
@@ -121,11 +132,18 @@ public class SecurityContext {
     }
     
     //-------------------------------------------------------------------------
-    private Set getAllSupergroups(
+    private Set<String> getAllSupergroups(
         Path groupIdentity
     ) throws ServiceException {
-        Set supergroups = new HashSet();
-        DataproviderObject_1_0 group = (DataproviderObject_1_0)this.groups.get(groupIdentity);
+        Set<String> supergroups = new HashSet<String>();
+        MappedRecord group = this.groups.get(groupIdentity);
+        ObjectHolder_2Facade groupFacade;
+        try {
+	        groupFacade = ObjectHolder_2Facade.newInstance(group);
+        }
+        catch (ResourceException e) {
+        	throw new ServiceException(e);
+        }
         if(group == null) {
             AppLog.error("Can not find group in group list", "group=" + groupIdentity + "; groups=" + this.groups);
         }
@@ -133,7 +151,7 @@ public class SecurityContext {
             supergroups.add(
                 this.plugin.getQualifiedPrincipalName(groupIdentity)
             );
-            for(Iterator i = group.values("isMemberOf").iterator(); i.hasNext(); ) {
+            for(Iterator<Object> i = groupFacade.attributeValues("isMemberOf").iterator(); i.hasNext(); ) {
                 supergroups.addAll(
                     this.getAllSupergroups((Path)i.next())
                 );
@@ -146,16 +164,17 @@ public class SecurityContext {
     /**
      * Assert the existence of the specified principal in the principals cache. 
      */
+    @SuppressWarnings("unchecked")
     private void assertPrincipals(
         String principalName,
         boolean checkGroups
     ) throws ServiceException {
-        RequestCollection delegation = this.plugin.getRunAsRootDelegation();
-        DataproviderObject_1_0 principal = null;
+        RequestCollection securityProviderConnection = this.plugin.getSecurityProviderConnection();
+        MappedRecord principal = null;
         try {
             // Already present in cache
             if(this.principals.get(principalName) == null) {
-                principal = delegation.addGetRequest(
+                principal = securityProviderConnection.addGetRequest(
                     this.realmIdentity.getDescendant(new String[]{"principal", principalName})
                 );            
                 this.principals.put(
@@ -168,11 +187,10 @@ public class SecurityContext {
             // Remove principal if not found
             this.principals.remove(principalName);
         }
-        AppLog.info("principal cache size", new Integer(this.principals.size()));
-        
+        AppLog.detail("principal cache size", new Integer(this.principals.size()));        
         if(checkGroups) {
             // Cache principal groups
-            List principalGroups = delegation.addFindRequest(
+            List<MappedRecord> principalGroups = securityProviderConnection.addFindRequest(
                 this.realmIdentity.getChild("principal"),
                 new FilterProperty[]{
                     new FilterProperty(
@@ -187,55 +205,79 @@ public class SecurityContext {
                 Integer.MAX_VALUE,
                 Orders.ASCENDING
             );
-            this.groups = new HashMap();
+            this.groups = new HashMap<Path,MappedRecord>();
             for(
-                Iterator i = principalGroups.iterator(); 
+                Iterator<MappedRecord> i = principalGroups.iterator(); 
                 i.hasNext(); 
             ) {
-                DataproviderObject_1_0 principalGroup = (DataproviderObject_1_0)i.next();
+            	MappedRecord principalGroup = i.next();
                 this.groups.put(
-                    principalGroup.path(),
+                    ObjectHolder_2Facade.getPath(principalGroup),
                     principalGroup
                 );
             }            
             // Update group hierarchy
-            this.subgroups = new HashMap();
-            this.supergroups = new HashMap();
-            for(Iterator i = this.groups.keySet().iterator(); i.hasNext(); ) {
-                Path groupIdentity = (Path)i.next();
-                this.subgroups.put(
-                    this.plugin.getQualifiedPrincipalName(groupIdentity),
-                    this.getAllSubgroups(groupIdentity)
-                );
+            this.subgroups = new HashMap<String,Set<String>>();
+            this.supergroups = new HashMap<String,Set<String>>();
+            for(Iterator<Map.Entry<Path,MappedRecord>> i = this.groups.entrySet().iterator(); i.hasNext(); ) {
+            	Map.Entry<Path,MappedRecord> e = i.next();
+                Path groupIdentity = e.getKey();
+                MappedRecord group = e.getValue();
+                ObjectHolder_2Facade groupFacade;
+                try {
+	                groupFacade = ObjectHolder_2Facade.newInstance(group);
+                }
+                catch (ResourceException e0) {
+                	throw new ServiceException(e0);
+                }
                 this.supergroups.put(
                     this.plugin.getQualifiedPrincipalName(groupIdentity),
                     this.getAllSupergroups(groupIdentity)
                 );
+                // Do not calculate subgroups for final groups
+            	if(!groupFacade.attributeValues("isFinal").isEmpty() && ((Boolean)groupFacade.attributeValue("isFinal")).booleanValue()) {
+	                this.subgroups.put(
+	                    this.plugin.getQualifiedPrincipalName(groupIdentity),
+	                    Collections.EMPTY_SET
+	                );
+            	}
+            	else {
+	                this.subgroups.put(
+	                    this.plugin.getQualifiedPrincipalName(groupIdentity),
+	                    this.getAllSubgroups(groupIdentity)
+	                );            		
+            	}
             }
         }
     }
     
     //-------------------------------------------------------------------------
-    protected DataproviderObject_1_0 getPrincipal(
+    protected MappedRecord getPrincipal(
         String principalName
     ) throws ServiceException {
         
-        DataproviderObject_1_0 principal = this.principals == null
+    	MappedRecord principal = this.principals == null
             ? null
-            : (DataproviderObject_1_0)this.principals.get(principalName);
+            : (MappedRecord)this.principals.get(principalName);
 
         // Refresh subjects
         if( 
             (principal == null) ||
             (System.currentTimeMillis() > this.securityRealmCheckAt)
         ) { 
-            RequestCollection delegation = this.plugin.getRunAsRootDelegation();            
-            DataproviderObject_1_0 realm = delegation.addGetRequest(
+            RequestCollection securityProviderConnection = this.plugin.getSecurityProviderConnection();            
+            MappedRecord realm = securityProviderConnection.addGetRequest(
                 this.realmIdentity,                
                 AttributeSelectors.ALL_ATTRIBUTES,
                 new AttributeSpecifier[]{}                        
             );
-            String securityRealmModifiedAt = (String)realm.values(SystemAttributes.MODIFIED_AT).get(0);
+            String securityRealmModifiedAt;
+            try {
+	            securityRealmModifiedAt = (String)ObjectHolder_2Facade.newInstance(realm).attributeValue(SystemAttributes.MODIFIED_AT);
+            }
+            catch (ResourceException e) {
+            	throw new ServiceException(e);
+            }
             this.assertPrincipals(               
                 principalName,
                 securityRealmModifiedAt.compareTo(this.securityRealmModifiedAt) != 0
@@ -245,7 +287,7 @@ public class SecurityContext {
         }
         
 	    if(principal == null) {
-            principal = (DataproviderObject_1_0)this.principals.get(principalName);
+            principal = this.principals.get(principalName);
             if(principal == null) {
     	        AppLog.warning("principal not found", principalName);
     	        throw new ServiceException(
@@ -261,7 +303,7 @@ public class SecurityContext {
     }
 
     //-------------------------------------------------------------------------
-    protected DataproviderObject_1_0 getUserHome(
+    protected MappedRecord getUserHome(
         Path principalIdentity
     ) throws ServiceException {
         String providerName = principalIdentity.get(2);
@@ -275,20 +317,21 @@ public class SecurityContext {
     }
     
     //-------------------------------------------------------------------------
-    protected DataproviderObject_1_0 getPrimaryGroup(
-        DataproviderObject_1_0 principal
+    protected MappedRecord getPrimaryGroup(
+    	MappedRecord principal
     ) throws ServiceException {
+    	Path principalPath = ObjectHolder_2Facade.getPath(principal);
         try {
-            DataproviderObject_1_0 userHome = this.getUserHome(principal.path());
-            Path userGroupIdentity = (Path)userHome.values("primaryGroup").get(0);
-            return userGroupIdentity == null
-                ? this.getPrincipal(principal.path().getBase() + "." + SecurityKeys.USER_SUFFIX)
-                : this.getPrincipal(userGroupIdentity.getBase());
+        	MappedRecord userHome = this.getUserHome(principalPath);
+            Path userGroupIdentity = (Path)ObjectHolder_2Facade.newInstance(userHome).attributeValue("primaryGroup");
+            return userGroupIdentity == null ? 
+            	this.getPrincipal(principalPath.getBase() + "." + SecurityKeys.USER_SUFFIX) : 
+            	this.getPrincipal(userGroupIdentity.getBase());
         }
         // In case the principal does not have a user home
         // which defines the primary group fallback to user principal
         catch(Exception e) {
-            return this.getPrincipal(principal.path().getBase() + "." + SecurityKeys.USER_SUFFIX);
+            return this.getPrincipal(principalPath.getBase() + "." + SecurityKeys.USER_SUFFIX);
         }
     }
     
@@ -298,48 +341,56 @@ public class SecurityContext {
      * the assigned to the same subject as the given principal and is of type
      * PrincipalGroup. The owningGroup of a openCRX object is a PrincipalGroup.
      */
-    protected DataproviderObject_1_0 getGroup(
-        DataproviderObject_1_0 principal
+    @SuppressWarnings("unchecked")
+    protected MappedRecord getGroup(
+    	MappedRecord principal
     ) throws ServiceException {
-        DataproviderObject_1_0 group = (DataproviderObject_1_0)this.groupMapping.get(principal.path());
+    	Path principalPath = ObjectHolder_2Facade.getPath(principal);    	
+    	MappedRecord group = this.groupMapping.get(principalPath);
         if(group == null) {
-            RequestCollection delegation = this.plugin.getRunAsRootDelegation();            
-            List owningGroups = delegation.addFindRequest(
-                this.realmIdentity.getChild("principal"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "subject",
-                        FilterOperators.IS_IN,
-                        new Object[]{
-                            principal.values("subject").get(0)
-                        }
-                    ),
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        SystemAttributes.OBJECT_CLASS,
-                        FilterOperators.IS_IN,
-                        new Object[]{
-                            "org:opencrx:security:realm1:User"
-                        }
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Orders.ASCENDING
-            );
+            RequestCollection securityProviderConnection = this.plugin.getSecurityProviderConnection();            
+            List<MappedRecord> owningGroups;
+            try {
+	            owningGroups = securityProviderConnection.addFindRequest(
+	                this.realmIdentity.getChild("principal"),
+	                new FilterProperty[]{
+	                    new FilterProperty(
+	                        Quantors.THERE_EXISTS,
+	                        "subject",
+	                        FilterOperators.IS_IN,
+	                        new Object[]{
+	                            ObjectHolder_2Facade.newInstance(principal).attributeValue("subject")
+	                        }
+	                    ),
+	                    new FilterProperty(
+	                        Quantors.THERE_EXISTS,
+	                        SystemAttributes.OBJECT_CLASS,
+	                        FilterOperators.IS_IN,
+	                        new Object[]{
+	                            "org:opencrx:security:realm1:User"
+	                        }
+	                    )
+	                },
+	                AttributeSelectors.ALL_ATTRIBUTES,
+	                0,
+	                Integer.MAX_VALUE,
+	                Orders.ASCENDING
+	            );
+            }
+            catch (ResourceException e) {
+            	throw new ServiceException(e);
+            }
             if(owningGroups.isEmpty()) {
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.NOT_FOUND, 
                     "Undefined user for principal",
-                    new BasicException.Parameter("principal", principal.path())
+                    new BasicException.Parameter("principal", principalPath)
                 );                    
             }
-            group = (DataproviderObject_1_0)owningGroups.iterator().next();
+            group = owningGroups.iterator().next();
             this.groupMapping.put(
-                principal.path(),
+            	principalPath,
                 group
             );
         }
@@ -350,35 +401,42 @@ public class SecurityContext {
     /**
      * Return set of qualified names of subgroups of specified group subject. 
      */
-    protected Set getSubgroups(
+    protected Set<String> getSubgroups(
         String qualifiedPrincipalName
     ) throws ServiceException {
-        Set subgroups = (Set)this.subgroups.get(qualifiedPrincipalName);
-        return subgroups == null
-            ? new HashSet()
-            : subgroups;
+        Set<String> subgroups = this.subgroups.get(qualifiedPrincipalName);
+        return subgroups == null ? 
+        	new HashSet<String>() : 
+        	subgroups;
     }
     
     //-------------------------------------------------------------------------
     /**
      * Return set of qualified names of subgroups of specified group subject. 
      */
-    protected Set getSupergroups(
+    protected Set<String> getSupergroups(
         String qualifiedPrincipalName
     ) throws ServiceException {
-        Set supergroups = (Set)this.supergroups.get(qualifiedPrincipalName);
-        return supergroups == null
-            ? new HashSet()
-            : supergroups;
+        Set<String> supergroups = this.supergroups.get(qualifiedPrincipalName);
+        return supergroups == null ? 
+        	new HashSet<String>() : 
+        	supergroups;
     }
     
     //-------------------------------------------------------------------------
     protected Set<String> getMemberships(
-        DataproviderObject_1_0 principal,
-        DataproviderObject_1_0 user,
+    	MappedRecord principal,
+    	MappedRecord user,
         short accessLevel,
         boolean useExtendedAccessLevelBasic
-    ) {
+    ) throws ServiceException {
+    	ObjectHolder_2Facade principalFacade;
+        try {
+	        principalFacade = ObjectHolder_2Facade.newInstance(principal);
+        }
+        catch (ResourceException e) {
+        	throw new ServiceException(e);
+        }
         // GLOBAL
         if(!this.isActive || (accessLevel == SecurityKeys.ACCESS_LEVEL_GLOBAL)) {
             return null;
@@ -388,16 +446,16 @@ public class SecurityContext {
             // PRIVATE --> grant requesting user access to all owned objects
             if(accessLevel >= SecurityKeys.ACCESS_LEVEL_PRIVATE) {
                 allowedPrincipals.add(
-                    this.plugin.getQualifiedPrincipalName(principal.path())
+                    this.plugin.getQualifiedPrincipalName(principalFacade.getPath())
                 );
 	            allowedPrincipals.add(
-	                this.plugin.getQualifiedPrincipalName(user.path())
+	                this.plugin.getQualifiedPrincipalName(ObjectHolder_2Facade.getPath(user))
 	            );
             }
             // BASIC, DEEP --> all direct subgroups, supergroups 
             if((accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) || (accessLevel == SecurityKeys.ACCESS_LEVEL_BASIC)) {
 	            if(useExtendedAccessLevelBasic) {
-	                for(Iterator i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
+	                for(Iterator<Object> i = principalFacade.attributeValues("isMemberOf").iterator(); i.hasNext(); ) {
 	                    Path groupIdentity = (Path)i.next();
 	                    allowedPrincipals.addAll(
 	                        this.getSubgroups(this.plugin.getQualifiedPrincipalName(groupIdentity))
@@ -405,7 +463,7 @@ public class SecurityContext {
 	                }	                
 	            }
                 // Add all supergroups
-	            for(Iterator<Object> i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
+	            for(Iterator<Object> i = principalFacade.attributeValues("isMemberOf").iterator(); i.hasNext(); ) {
 	                Path groupIdentity = (Path)i.next();
 	                allowedPrincipals.addAll(
 	                    this.getSupergroups(this.plugin.getQualifiedPrincipalName(groupIdentity))
@@ -415,13 +473,13 @@ public class SecurityContext {
             // DEEP --> all subgroups of direct and supergroups
             if(accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) {
 	            // All subgroups of all supergroups
-	            for(Iterator<String> i = new HashSet(allowedPrincipals).iterator(); i.hasNext(); ) {
+	            for(Iterator<String> i = new HashSet<String>(allowedPrincipals).iterator(); i.hasNext(); ) {
 	                allowedPrincipals.addAll(
 	                    this.getSubgroups(i.next())
 	                );
 	            }
                 // ... and their supergroups
-                for(Iterator<String> i = new HashSet(allowedPrincipals).iterator(); i.hasNext(); ) {
+                for(Iterator<String> i = new HashSet<String>(allowedPrincipals).iterator(); i.hasNext(); ) {
                     allowedPrincipals.addAll(
                         this.getSupergroups(i.next())
                     );
@@ -433,9 +491,9 @@ public class SecurityContext {
             return allowedPrincipals;
         }
         // member of Root:Administrators --> access level global
-        return allowedPrincipals.contains(SecurityKeys.ROOT_ADMINISTRATORS_GROUP)
-            ? null
-            : allowedPrincipals;
+        return allowedPrincipals.contains(SecurityKeys.ROOT_ADMINISTRATORS_GROUP) ? 
+        	null : 
+        	allowedPrincipals;
     }
         
     //-----------------------------------------------------------------------
@@ -446,20 +504,20 @@ public class SecurityContext {
     private final AccessControl_1 plugin;
     private final Path realmIdentity;
     
-    private Map principals = new HashMap();
-    private Map groups = null;
+    private Map<String,MappedRecord> principals = new HashMap<String,MappedRecord>();
+    private Map<Path,MappedRecord> groups = null;
     private boolean isActive = true;
     private long securityRealmCheckAt = 0;
     private String securityRealmModifiedAt = "";
     
     // Cache for group membership with qualified group name as key
     // and list of subgroups as values.
-    private Map subgroups = null;
-    private Map supergroups = null;
+    private Map<String,Set<String>> subgroups = null;
+    private Map<String,Set<String>> supergroups = null;
     
     // principal -> principal group. Key is principal path,
     // value is principal group path
-    private final Map groupMapping = new HashMap();
+    private final Map<Path,MappedRecord> groupMapping = new HashMap<Path,MappedRecord>();
 
 }
 

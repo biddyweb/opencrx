@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:Segment:Pane:Op:Tab:createAdministrator:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:Segment:Pane:Op:Tab:importLoginPrincipals:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -43,61 +43,121 @@
 /* openMDX (http://www.openmdx.org/)                                         */
 /*                                                                           */
 DROP VIEW OOCKE1_JOIN_ACCTHASPROD
+GO
 DROP VIEW OOCKE1_JOIN_ACCTHASASSACT
+GO
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSACT
+GO
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSFLUP
+GO
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSNOTE
+GO
 DROP VIEW OOCKE1_JOIN_CBHASBK
+GO
 DROP VIEW OOCKE1_JOIN_CLFCLASSIFIESTELT
+GO
 DROP VIEW OOCKE1_JOIN_CPOSHASPOSMOD
+GO
 DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEP
+GO
 DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEPG
+GO
 DROP VIEW OOCKE1_JOIN_DEPPOSHASSBK
+GO
 DROP VIEW OOCKE1_JOIN_DEPPOSHASBK
+GO
 DROP VIEW OOCKE1_JOIN_ENTITYCONTAINSDEP
+GO
 DROP VIEW OOCKE1_JOIN_FLDCONTAINSFLD
+GO
 DROP VIEW OOCKE1_JOIN_HOMEHASASSACT
+GO
 DROP VIEW OOCKE1_JOIN_NSCONTAINSELT
+GO
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM
+GO
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSFAC
+GO
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_
+GO
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE
+GO
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE_
+GO
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY
+GO
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY_
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1
+GO
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_
+GO
 DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM
+GO
 DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM_
+GO
 DROP VIEW OOCKE1_TOBJ_LNKITEMLNKFROM
+GO
 DROP VIEW OOCKE1_TOBJ_LNKITEMLNKFROM_
+GO
 DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY
+GO
 DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY_
+GO
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY
+GO
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_
+GO
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY
+GO
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_
-DROP VIEW OOCKE1_TOBJ_WORKREPORTENTRY
-DROP VIEW OOCKE1_TOBJ_WORKREPORTENTRY_
+GO
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR
+GO
 DROP VIEW OOCKE1_JOIN_ACCTHASASSCONTR
+GO
 DROP VIEW OOCKE1_JOIN_ACCTHASASSBUDGET
+GO
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSBU
+GO
 DROP VIEW OOCKE1_JOIN_BUHASADR
+GO
 DROP VIEW OOCKE1_JOIN_IITEMHASBOOKING
+GO
 DROP VIEW OOCKE1_JOIN_RESHASASSIGNEDACT
+GO
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSADR
+GO
 DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY
+GO
 DROP VIEW OOMSE2_TOBJ_USERS
+GO
 DROP VIEW OOMSE2_TOBJ_ROLES
+GO
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK
+GO
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASSBK
+GO
 DROP VIEW OOCKE1_JOIN_FILTERINCLDESCONTR
+GO
+DROP VIEW OOCKE1_JOIN_RESCONTAINSWRE
+GO
+DROP VIEW OOCKE1_JOIN_ACTCONTAINSWRE
+GO
+DROP VIEW OOCKE1_JOIN_ACTGCONTAINSWRE
+GO
+DROP VIEW OOCKE1_JOIN_SEGCONTAINSWRE
+GO
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSACT AS
 SELECT
     act.object_id AS assigned_activity,
@@ -108,9 +168,7 @@ INNER JOIN
     OOCKE1_ACCOUNT acc
 ON
     act.assigned_to = acc.object_id
-
 UNION
-
 SELECT
     act.object_id AS assigned_activity,
     adr.p$$parent AS account
@@ -120,9 +178,7 @@ INNER JOIN
     OOCKE1_ADDRESS adr
 ON
     adr.object_id = act.sender
-
 UNION
-
 SELECT
     p0.p$$parent AS assigned_activity,
     acc.object_id AS account
@@ -132,9 +188,7 @@ INNER JOIN
     OOCKE1_ACCOUNT acc
 ON
     acc.object_id = p0.party
-
 UNION
-
 SELECT
     p0.p$$parent AS assigned_activity,
     adr.p$$parent AS account
@@ -144,9 +198,7 @@ INNER JOIN
     OOCKE1_ADDRESS adr
 ON
     adr.object_id = p0.party
-
 UNION
-
 SELECT
     act.object_id AS assigned_activity,
     c0.customer AS account
@@ -156,6 +208,27 @@ INNER JOIN
     OOCKE1_CONTRACT c0
 ON
     act.contract = c0.object_id
+UNION
+SELECT
+    act.object_id AS assigned_activity,
+    acc.object_id AS account
+FROM
+    OOCKE1_ACTIVITY act
+INNER JOIN
+    OOCKE1_ACCOUNT acc
+ON
+    act.rep_contact = acc.object_id
+UNION
+SELECT
+    act.object_id AS assigned_activity,
+    acc.object_id AS account
+FROM
+    OOCKE1_ACTIVITY act
+INNER JOIN
+    OOCKE1_ACCOUNT acc
+ON
+    act.rep_acct = acc.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_ACCTHASPROD AS
 SELECT DISTINCT
     p.object_id AS product,
@@ -166,12 +239,14 @@ WHERE
     cp.product = p.object_id AND
     cp.p$$parent = c.object_id AND
     c.customer = a.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSACT AS
 SELECT
     ga.p$$parent AS filtered_activity,
     ga.activity_group AS activity_group
 FROM
     OOCKE1_ACTIVITYGROUPASS ga
+GO
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSFLUP AS
 SELECT
     f.object_id AS follow_up,
@@ -186,6 +261,7 @@ INNER JOIN
     OOCKE1_ACTIVITYGROUP g
 ON
     ga.activity_group = g.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSNOTE AS
 SELECT
     n.object_id AS activity_note,
@@ -200,6 +276,7 @@ INNER JOIN
     OOCKE1_ACTIVITYGROUP g
 ON
     ga.activity_group = g.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_CBHASBK AS
 SELECT
     b.object_id AS booking,
@@ -210,6 +287,7 @@ INNER JOIN
     OOCKE1_COMPOUNDBOOKING cb
 ON
     b.cb = cb.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_CLFCLASSIFIESTELT AS
 SELECT
     c.object_id AS classifier,
@@ -220,6 +298,7 @@ INNER JOIN
     OOCKE1_MODELELEMENT e
 ON
     c.object_id = e.type
+GO
 CREATE VIEW OOCKE1_JOIN_CPOSHASPOSMOD AS
 SELECT
     p.object_id AS position,
@@ -230,6 +309,7 @@ INNER JOIN
     OOCKE1_CONTRACTPOSMOD pm
 ON
     p.object_id = pm.involved
+GO
 CREATE VIEW OOCKE1_JOIN_DEPGCONTAINSDEP AS
 SELECT
     d.object_id AS depot,
@@ -240,6 +320,7 @@ INNER JOIN
     OOCKE1_DEPOTGROUP dg
 ON
     d.depot_group = dg.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_DEPGCONTAINSDEPG AS
 SELECT
     dg.object_id AS depot_group,
@@ -250,18 +331,21 @@ INNER JOIN
     OOCKE1_DEPOTGROUP dgp
 ON
     dg.p$$parent = dgp.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_DEPPOSHASBK AS
 SELECT
     b.object_id AS booking,
     b.position AS depot_position
 FROM
     OOCKE1_BOOKING b
+GO
 CREATE VIEW OOCKE1_JOIN_DEPPOSHASSBK AS
 SELECT
     b.object_id AS simple_booking,
     b.position AS depot_position
 FROM
     OOCKE1_SIMPLEBOOKING b
+GO
 CREATE VIEW OOCKE1_JOIN_ENTITYCONTAINSDEP AS
 SELECT
     dh.p$$parent AS entity,
@@ -272,6 +356,7 @@ INNER JOIN
     OOCKE1_DEPOTHOLDER dh
 ON
     d.p$$parent = dh.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_FLDCONTAINSFLD AS
 SELECT
     f.object_id AS folder,
@@ -282,6 +367,7 @@ INNER JOIN
     OOCKE1_DOCUMENTFOLDER fp
 ON
     f.parent = fp.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_HOMEHASASSACT AS
 SELECT
     a.object_id AS assigned_activity,
@@ -292,9 +378,7 @@ INNER JOIN
     OOCKE1_USERHOME h0
 ON
     a.assigned_to = h0.contact
-
 UNION
-
 SELECT
     a.object_id AS assigned_activity,
     h0.object_id AS user_home
@@ -308,9 +392,7 @@ INNER JOIN
     OOCKE1_USERHOME h0
 ON
     adr.p$$parent = h0.contact
-
 UNION
-
 SELECT
     a.object_id AS assigned_activity,
     h0.object_id AS user_home
@@ -324,9 +406,7 @@ INNER JOIN
     OOCKE1_ACTIVITY a
 ON
     p0.p$$parent = a.object_id
-
 UNION
-
 SELECT
     a.object_id AS assigned_activity,
     h0.object_id AS user_home
@@ -344,6 +424,27 @@ INNER JOIN
     OOCKE1_USERHOME h0
 ON
     adr.p$$parent = h0.contact
+UNION
+SELECT
+    a.object_id AS assigned_activity,
+    h0.object_id AS user_home
+FROM
+    OOCKE1_ACTIVITY a
+INNER JOIN
+    OOCKE1_USERHOME h0
+ON
+    a.rep_contact = h0.contact
+UNION
+SELECT
+    a.object_id AS assigned_activity,
+    h0.object_id AS user_home
+FROM
+    OOCKE1_ACTIVITY a
+INNER JOIN
+    OOCKE1_USERHOME h0
+ON
+    a.rep_acct = h0.contact
+GO
 CREATE VIEW OOCKE1_JOIN_IITEMHASBOOKING AS
 SELECT
     b.object_id AS booking,
@@ -354,6 +455,7 @@ INNER JOIN
     OOCKE1_BOOKING b
 ON
     b.origin = i.object_id
+GO
 CREATE VIEW OOCKE1_JOIN_NSCONTAINSELT AS
 SELECT
     n.object_id AS namespace,
@@ -364,6 +466,8 @@ INNER JOIN
     OOCKE1_MODELELEMENT e
 ON
     e.container = n.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_RESHASASSIGNEDACT AS
 SELECT
     a.object_id AS assigned_activity,
@@ -378,6 +482,8 @@ INNER JOIN
     OOCKE1_RESOURCE r
 ON
     ra.resrc = r.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSADR AS
 SELECT
     adr.object_id AS address,
@@ -388,6 +494,8 @@ INNER JOIN
     OOCKE1_ACCOUNT act
 ON
     adr.p$$parent = act.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSFAC AS
 SELECT
     f.object_id AS facility,
@@ -414,6 +522,8 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bu1
 ON
    bu2.p$$parent = bu1.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_HOMEHASASSCONTR AS
 SELECT
     c.object_id AS assigned_contract,
@@ -452,6 +562,8 @@ INNER JOIN
     OOCKE1_USERHOME h
 ON
     ass.account = h.contact
+GO
+
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSCONTR AS
 SELECT
     c.object_id AS assigned_contract,
@@ -498,6 +610,8 @@ INNER JOIN
     OOCKE1_ACCOUNTASSIGNMENT ass
 ON
     ass.p$$parent = c.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSBUDGET AS
 SELECT
     b.object_id AS assigned_budget,
@@ -508,6 +622,8 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     b.account = a.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_BUHASADR AS
 SELECT
     adr.object_id AS assigned_address,
@@ -518,6 +634,8 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bu
 ON
     adr.building = bu.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSBU AS
 SELECT
     b.object_id AS building_unit,
@@ -540,12 +658,16 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bp
 ON
     b.p$$parent = bp.object_id
+GO
+
 CREATE VIEW OOCKE1_JOIN_ACTGISCREATEDBY AS
 SELECT
     ac.activity_group AS activity_group,
     ac.object_id AS activity_creator
 FROM
     OOCKE1_ACTIVITYCREATOR_ ac
+GO
+
 CREATE VIEW OOCKE1_JOIN_DEPREPITMHASBK AS
 SELECT
     ip.object_id AS item_position,
@@ -567,6 +689,8 @@ ON
     b.value_date >= bp.period_starts_at AND
     ((b.value_date < bp.period_ends_at_exclusive) OR (bp.period_ends_at_exclusive IS NULL)) AND
     ((b.booking_status >= r.booking_status_threshold) OR (r.booking_status_threshold = 0) OR (r.booking_status_threshold IS NULL))
+GO
+
 CREATE VIEW OOCKE1_JOIN_DEPREPITMHASSBK AS
 SELECT
     ip.object_id AS item_position,
@@ -588,6 +712,8 @@ ON
     b.value_date >= bp.period_starts_at AND
     ((b.value_date < bp.period_ends_at_exclusive) OR (bp.period_ends_at_exclusive IS NULL)) AND
     ((b.booking_status >= r.booking_status_threshold) OR (r.booking_status_threshold = 0) OR (r.booking_status_threshold IS NULL))
+GO
+
 CREATE VIEW OOCKE1_JOIN_FILTERINCLDESCONTR AS
 SELECT
     f.object_id AS contract_filter,
@@ -598,6 +724,64 @@ INNER JOIN
     OOCKE1_CONTRACT c
 ON
     (1=1)
+GO
+
+CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSWRE AS
+SELECT
+  ga.activity_group AS activity_group,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id
+INNER JOIN
+  OOCKE1_ACTIVITYGROUPASS ga
+ON
+  ga.p$$parent = ra.p$$parent
+GO
+
+CREATE VIEW OOCKE1_JOIN_ACTCONTAINSWRE AS
+SELECT
+  ra.p$$parent AS activity,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id
+GO
+
+CREATE VIEW OOCKE1_JOIN_SEGCONTAINSWRE AS
+SELECT
+  a.p$$parent AS segment,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id
+INNER JOIN
+  OOCKE1_ACTIVITY a
+ON
+  ra.p$$parent = a.object_id
+GO
+
+CREATE VIEW OOCKE1_JOIN_RESCONTAINSWRE AS
+SELECT
+  ra.resrc AS resource,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
 SELECT
 
@@ -629,6 +813,8 @@ FROM
 WHERE
     l.link_to = a.object_id AND
     l.object_id = l.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ AS
 SELECT
     object_id,
@@ -639,6 +825,8 @@ SELECT
     dtype
 FROM
     OOCKE1_ACTIVITYLINK_
+GO
+
 CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM AS
 SELECT
 
@@ -678,6 +866,8 @@ FROM
 WHERE
     l.link_to = c.object_id AND
     l.object_id = l.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM_ AS
 SELECT
     object_id,
@@ -688,6 +878,8 @@ SELECT
     dtype
 FROM
     OOCKE1_CONTRACTLINK_
+GO
+
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE AS
 SELECT
 
@@ -791,6 +983,8 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.customer = a.object_id)
+GO
+
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE_ AS
 SELECT
     object_id,
@@ -801,6 +995,8 @@ SELECT
     'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype
 FROM
     OOCKE1_CONTRACT_
+GO
+
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY AS
 SELECT
 
@@ -865,6 +1061,8 @@ SELECT
     dfa.object_id AS based_on
 FROM
     OOCKE1_DOCUMENTFOLDERASS dfa
+GO
+
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY_ AS
 SELECT
     object_id,
@@ -887,6 +1085,8 @@ SELECT
     'org:opencrx:kernel:document1:DocumentFolderEntry' AS dtype
 FROM
     OOCKE1_DOCUMENTFOLDERASS_ dfa_
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 AS
 SELECT
     ass.account AS account,
@@ -901,6 +1101,8 @@ SELECT
     ass.account AS p$$parent
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 AS
 SELECT
     ass0.p$$parent AS account,
@@ -923,6 +1125,8 @@ INNER JOIN
     OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
 ON
     ass0.p$$parent = ass.account
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 AS
 SELECT
     ass0.p$$parent AS account,
@@ -945,6 +1149,8 @@ INNER JOIN
     OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
 ON
     ass0.p$$parent = ass.account
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 AS
 SELECT
     ass0.p$$parent AS account,
@@ -967,6 +1173,8 @@ INNER JOIN
     OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
 ON
     ass0.p$$parent = ass.account
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
 
@@ -1053,6 +1261,8 @@ FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 WHERE
     ass0.dtype = 'org:opencrx:kernel:account1:Member'
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
 SELECT DISTINCT
 
@@ -1340,6 +1550,8 @@ WHERE
     ass0.dtype = 'org:opencrx:kernel:account1:Member'
 
 
+GO
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ AS
 SELECT
     ass_.object_id,
@@ -1356,6 +1568,8 @@ INNER JOIN
     OOCKE1_ACCOUNTASSIGNMENT ass
 ON
    ass_.object_id = ass.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM AS
 SELECT
 
@@ -1494,6 +1708,8 @@ FROM
     OOCKE1_LINKABLEITEMLINK l
 WHERE
     l.link_to LIKE 'inventoryItem/%'
+GO
+
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM_ AS
 SELECT
     object_id,
@@ -1504,6 +1720,8 @@ SELECT
     dtype
 FROM
     OOCKE1_LINKABLEITEMLINK_
+GO
+
 CREATE VIEW OOCKE1_TOBJ_PRICELISTENTRY AS
 SELECT
     bp.object_id AS object_id,
@@ -1539,6 +1757,8 @@ INNER JOIN
     OOCKE1_PRODUCT p
 ON
     bp.p$$parent = p.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_PRICELISTENTRY_ AS
 SELECT
     bp_.object_id,
@@ -1556,6 +1776,8 @@ INNER JOIN
     OOCKE1_PRODUCTBASEPRICE bp
 ON
     bp_.object_id = bp.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY AS
 SELECT
 
@@ -1650,6 +1872,8 @@ INNER JOIN
     OOCKE1_PROPERTYSET ps
 ON
     p.p$$parent = ps.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_ AS
 SELECT
     object_id,
@@ -1660,6 +1884,8 @@ SELECT
     dtype
 FROM
     OOCKE1_PROPERTY_
+GO
+
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY AS
 SELECT
 
@@ -1723,6 +1949,8 @@ INNER JOIN
     OOCKE1_ADDRESS adr
 ON
     adr.p$$parent = act.object_id
+GO
+
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ AS
 SELECT
     object_id,
@@ -1733,232 +1961,8 @@ SELECT
     dtype
 FROM
     OOCKE1_ACCOUNT_
-CREATE VIEW OOCKE1_TOBJ_WORKREPORTENTRY AS
-SELECT
+GO
 
-
-
-    REPLACE(a.p$$parent, 'activities/', 'workReportEntry1/') + '/' + REPLACE(w.object_id, '/', ':')
-
-
-
-    AS object_id,
-    a.p$$parent AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype,
-    w.modified_at,
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse,
-    w.access_level_update,
-    w.access_level_delete,
-    w.owner_,
-    w.name,
-    w.description,
-    w.started_at,
-    w.ended_at,
-    w.duration_hours,
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( STR(w.duration_hours) + ':' + STR(w.duration_minutes, 2, 0) + CHAR(39) ) AS duration_hh_mm,
-    w.pause_duration_hours,
-    w.pause_duration_minutes,
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( STR(w.pause_duration_hours) + ':' + STR(w.pause_duration_minutes, 2, 0) + CHAR(39) ) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-
-UNION ALL
-
-SELECT
-
-
-
-    REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry2/'), 'activityCategory/', 'workReportEntry2/'), 'activityMilestone/', 'workReportEntry2/') + '/' + REPLACE(w.object_id, '/', ':')
-
-
-
-    AS object_id,
-    ga.activity_group AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype,
-    w.modified_at,
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse,
-    w.access_level_update,
-    w.access_level_delete,
-    w.owner_,
-    w.name,
-    w.description,
-    w.started_at,
-    w.ended_at,
-    w.duration_hours,
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( STR(w.duration_hours) + ':' + STR(w.duration_minutes, 2, 0) + CHAR(39) ) AS duration_hh_mm,
-    w.pause_duration_hours,
-    w.pause_duration_minutes,
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( STR(w.pause_duration_hours) + ':' + STR(w.pause_duration_minutes, 2, 0) + CHAR(39) ) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-INNER JOIN
-    OOCKE1_ACTIVITYGROUPASS ga
-ON
-   (a.object_id = ga.p$$parent) AND
-   (ga.activity_group IS NOT NULL)
-
-UNION ALL
-
-SELECT
-
-
-
-    REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry3/'), 'activityCategory/', 'workReportEntry3/'), 'activityMilestone/', 'workReportEntry3/') + '/' + REPLACE(w.object_id, '/', ':')
-
-
-
-    AS object_id,
-    ga.activity_group AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype,
-    w.modified_at,
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse,
-    w.access_level_update,
-    w.access_level_delete,
-    w.owner_,
-    w.name,
-    w.description,
-    w.started_at,
-    w.ended_at,
-    w.duration_hours,
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( STR(w.duration_hours) + ':' + STR(w.duration_minutes, 2, 0) + CHAR(39) ) AS duration_hh_mm,
-    w.pause_duration_hours,
-    w.pause_duration_minutes,
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( STR(w.pause_duration_hours) + ':' + STR(w.pause_duration_minutes, 2, 0) + CHAR(39) ) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-INNER JOIN
-    OOCKE1_ACTIVITYGROUPASS ga
-ON
-   (a.object_id = ga.p$$parent) AND
-   (ga.activity_group IS NOT NULL)
-
-UNION ALL
-
-SELECT
-
-
-
-    REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry4/'), 'activityCategory/', 'workReportEntry4/'), 'activityMilestone/', 'workReportEntry4/') + '/' + REPLACE(w.object_id, '/', ':')
-
-
-
-    AS object_id,
-    ga.activity_group AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype,
-    w.modified_at,
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse,
-    w.access_level_update,
-    w.access_level_delete,
-    w.owner_,
-    w.name,
-    w.description,
-    w.started_at,
-    w.ended_at,
-    w.duration_hours,
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( STR(w.duration_hours) + ':' + STR(w.duration_minutes, 2, 0) + CHAR(39) ) AS duration_hh_mm,
-    w.pause_duration_hours, w.pause_duration_minutes,
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( STR(w.pause_duration_hours) + ':' + STR(w.pause_duration_minutes, 2, 0) + CHAR(39) ) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-INNER JOIN
-    OOCKE1_ACTIVITYGROUPASS ga
-ON
-   (a.object_id = ga.p$$parent) AND
-   (ga.activity_group IS NOT NULL)
-CREATE VIEW OOCKE1_TOBJ_WORKREPORTENTRY_ AS
-SELECT
-    object_id,
-    idx,
-    created_by,
-    modified_by,
-    owner,
-    dtype
-FROM
-    OOCKE1_WORKRECORD_
 CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
     p.name AS principal_name,
@@ -1969,6 +1973,8 @@ INNER JOIN
     OOMSE2_CREDENTIAL c
 ON
     p.credential = c.object_id
+GO
+
 CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
     p.name AS principal_name,
@@ -1983,3 +1989,4 @@ WHERE
     (pn.is_member_of = pg.object_id) AND
     (pg.granted_role = r.object_id) AND
     (p.object_id LIKE 'principal/%/Root/Default/%')
+GO

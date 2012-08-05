@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setOwningUser" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setează utilizatorul proprietar</_item>
+                        <_item>Configurează utilizatorul proprietar</_item>
                       </label>
                       <toolTip>
-                        <_item>Setează utilizatorul proprietar</_item>
+                        <_item>Configurează utilizatorul proprietar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setAccessLevel" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setează nivelul de acces</_item>
+                        <_item>Configurează nivelul de acces</_item>
                       </label>
                       <toolTip>
-                        <_item>Setează nivelul de acces</_item>
+                        <_item>Configurează utilizatorul proprietar</_item>
                       </toolTip>
                     </_object>
                     <_content/>

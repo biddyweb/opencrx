@@ -3,7 +3,10 @@
 <openmdxjdo>
   <package name="org.opencrx.kernel.activity1.jpa3">
     <class name="Segment">
-		<inheritance strategy="SINGLE_TABLE"/>        
+		<inheritance strategy="SINGLE_TABLE"/>
+    	<field name="workReportEntry" visibility="cci">
+			<join table="OOCKE1_JOIN_SEGCONTAINSWRE"/>
+		</field>			        
 	</class>
   </package>
 </openmdxjdo>

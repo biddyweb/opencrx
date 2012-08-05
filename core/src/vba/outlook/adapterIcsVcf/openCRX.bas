@@ -1,11 +1,11 @@
 Attribute VB_Name = "openCRX"
 '* ====================================================================
 '* Project:     opencrx, http://www.opencrx.org/
-'* Name:        $Id: openCRX.bas,v 1.3 2009/03/22 18:58:07 cmu Exp $
+'* Name:        $Id: openCRX.bas,v 1.8 2009/06/03 13:53:28 cmu Exp $
 '* Description: Outlook ICS Importer/Exporter
-'* Revision:    $Revision: 1.3 $
+'* Revision:    $Revision: 1.8 $
 '* Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-'* Date:        $Date: 2009/03/22 18:58:07 $
+'* Date:        $Date: 2009/06/03 13:53:28 $
 '* ====================================================================
 '*
 '* This software is published under the BSD license
@@ -84,7 +84,7 @@ Const PROPERTY_URL = "URL:"
 Const PROPERTY_UID = "UID:"
 Const PROPERTY_DTSTART = "DTSTART"
 Const PROPERTY_DTEND = "DTEND"
-Const PROPERTY_DUE = "DUE:"
+Const PROPERTY_DUE = "DUE"
 Const PROPERTY_LAST_MODIFIED = "LAST-MODIFIED:"
 Const PROPERTY_LOCATION = "LOCATION:"
 Const PROPERTY_DTSTAMP = "DTSTAMP:"
@@ -95,12 +95,16 @@ Const PROPERTY_ORGANIZER = "ORGANIZER:"
 Const PROPERTY_PRIORITY = "PRIORITY:"
 Const PROPERTY_STATUS = "STATUS:"
 Const PROPERTY_CATEGORIES = "CATEGORIES:"
+Const PROPERTY_COMPLETED = "COMPLETED:"
+Const PROPERTY_PERCENT_COMPLETE = "PERCENT-COMPLETE:"
 Const PROPERTY_ATTENDEE = "ATTENDEE;"
 Const ROLE_REQ_PARTICIPANT = "ROLE=REQ-PARTICIPANT"
 Const ROLE_OPT_PARTICIPANT = "ROLE=OPT-PARTICIPANT"
+Const ENTRY_SENTINEL_LAST_MODIFIED = PROPERTY_LAST_MODIFIED & "19000101T000000Z"
 'contacts only
 Const PROPERTY_REV = "REV:"
 Const PROPERTY_FULLNAME = "FN:"
+Const PROPERTY_N = "N:"
 Const PROPERTY_ORG = "ORG:"
 Const PROPERTY_TITLE = "TITLE:"
 Const PROPERTY_BIRTHDAY = "BDAY:"
@@ -115,7 +119,6 @@ Const PROPERTY_URL_WORK = "URL;WORK:"
 Const PROPERTY_URL_HOME = "URL;HOME:"
 Const PROPERTY_EMAIL_PREF_INTERNET = "EMAIL;PREF;INTERNET:"
 Const PROPERTY_EMAIL_INTERNET = "EMAIL;INTERNET:"
-
 
 Const TAG_RRULE = "RRULE:FREQ="
 Const FREQ_SECONDLY = "SECONDLY"
@@ -152,9 +155,12 @@ Const QP = ";ENCODING=QUOTED-PRINTABLE:"
 
 Const OPENCRX_TAG_BEGIN = "<openCRX>"
 Const OPENCRX_TAG_END = "</openCRX>"
-Const OPENCRX_TAG_UID = "UID="
+Const OPENCRX_TAG_UID = "uid="
 Const OPENCRX_TAG_LAST_DOWNLOAD = "last_download="
 Const OPENCRX_TAG_LAST_UPLOAD = "last_upload="
+Const OPENCRX_TAG_URL = "url="
+Const OPENCRX_TAG_USER = "user="
+Const OPENCRX_TAG_PASSWORD = "password="
 Const OPENCRX_PRIO_HIGH = 3
 Const OPENCRX_PRIO_NORMAL = 6
 Const OPENCRX_PRIO_LOW = 9
@@ -196,58 +202,77 @@ Private Const CP_UTF8 = 65001
 
 Private Declare Function GetTempPath Lib "kernel32" Alias "GetTempPathA" (ByVal nBufferLength As Long, ByVal lpBuffer As String) As Long
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-Private Declare Function GetTimeZoneInformation Lib "kernel32" (lpTimeZoneInformation As TIME_ZONE_INFORMATION) As Long
+Private Declare Function GetTimeZoneInformation Lib "kernel32" ( _
+    lpTimeZoneInformation As TIME_ZONE_INFORMATION) As Long
+Private Declare Function TzSpecificLocalTimeToSystemTime Lib "kernel32.dll" ( _
+    ByRef lpTimeZone As TIME_ZONE_INFORMATION, _
+    ByRef lpLocalTime As SYSTEMTIME, _
+    ByRef lpUniversalTime As SYSTEMTIME) As Long
+Private Declare Function SystemTimeToTzSpecificLocalTime Lib "kernel32.dll" ( _
+    ByRef lpTimeZone As TIME_ZONE_INFORMATION, _
+    ByRef lpUniversalTime As SYSTEMTIME, _
+    ByRef lpLocalTime As SYSTEMTIME) As Long
 Private Declare Function MultiByteToWideChar Lib "kernel32" ( _
     ByVal CodePage As Long, ByVal dwFlags As Long, _
     ByVal lpMultiByteStr As Long, ByVal cchMultiByte As Long, _
     ByVal lpWideCharStr As Long, ByVal cchWideChar As Long) As Long
-Private Declare Function WideCharToMultiByteBuf Lib "Kernel32.dll" Alias "WideCharToMultiByte" ( _
+Private Declare Function WideCharToMultiByteBuf Lib "kernel32.dll" Alias "WideCharToMultiByte" ( _
     ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As Long, _
     ByVal cchWideChar As Long, ByRef lpMultiByteStr As Any, ByVal cbMultiByte As Long, _
     ByVal lpDefaultChar As String, ByRef lpUsedDefaultChar As Long) As Long
 
+Function SystemTimeToVBTime(SysTime As SYSTEMTIME) As Date
+    With SysTime
+        SystemTimeToVBTime = DateSerial(.wYear, .wMonth, .wDay) + _
+                TimeSerial(.wHour, .wMinute, .wSecond)
+    End With
+End Function
+
+Function VBTimeToSystemTime(d As Date) As SYSTEMTIME
+    With VBTimeToSystemTime
+        .wYear = Year(d)
+        .wMonth = Month(d)
+        .wDay = Day(d)
+        .wHour = Hour(d)
+        .wMinute = Minute(d)
+        .wSecond = Second(d)
+    End With
+End Function
+
 Public Function toLocalTime(d As Date, TimeZone As String) As Date
 'translate date/time from passed time zone to local time zone
-'source of code: http://www.schmidks.de/tools.aspx
-    Dim nRet As Long
-    Dim tz As TIME_ZONE_INFORMATION
-    Dim BiasLocal As Long
-    Dim BiasOther As Long
 
-    'get the bias of the local time zone
-    nRet = GetTimeZoneInformation(tz)
-    If nRet = TIME_ZONE_ID_INVALID Then
+'additional information:
+'  http://msdn.microsoft.com/en-us/library/ms725473(VS.85).aspx
+'  TzSpecificLocalTimeToSystemTime  at http://msdn.microsoft.com/en-us/library/ms725485(VS.85).aspx
+'  SystemTimeToTzSpecificLocalTime at http://msdn.microsoft.com/en-us/library/ms724949(VS.85).aspx
+
+    Dim tz As TIME_ZONE_INFORMATION
+    Dim localTimeSYS As SYSTEMTIME
+
+    If GetTimeZoneInformation(tz) = TIME_ZONE_ID_INVALID Then
         'leave time unchanged
         Debug.Print "Invalid time zone"
         toLocalTime = d
+    Else
+        Call SystemTimeToTzSpecificLocalTime(tz, VBTimeToSystemTime(d), localTimeSYS)
+        toLocalTime = SystemTimeToVBTime(localTimeSYS)
     End If
-    BiasLocal = (tz.Bias + IIf(nRet = TIME_ZONE_ID_DAYLIGHT, tz.DaylightBias, tz.StandardBias)) / 60
-    'get the bias of the other time zone
-    BiasOther = getTimeZoneBias(TimeZone)
-    'transform time
-    toLocalTime = d - BiasLocal / 24 - BiasOther / 24
 End Function
 
 Public Function toUtcTime(d As Date) As Date
 'translate date/time from passed time zone to local time zone
-'source of code: http://www.schmidks.de/tools.aspx
-    Dim nRet As Long
     Dim tz As TIME_ZONE_INFORMATION
-    Dim BiasLocal As Long
-    Dim BiasOther As Long
+    Dim utcTimeSYS As SYSTEMTIME
 
-    'get the bias of the local time zone
-    nRet = GetTimeZoneInformation(tz)
-    If nRet = TIME_ZONE_ID_INVALID Then
+    If GetTimeZoneInformation(tz) = TIME_ZONE_ID_INVALID Then
         'leave time unchanged
         Debug.Print "Invalid time zone"
         toUtcTime = d
+    Else
+        Call TzSpecificLocalTimeToSystemTime(tz, VBTimeToSystemTime(d), utcTimeSYS)
+        toUtcTime = SystemTimeToVBTime(utcTimeSYS)
     End If
-    BiasLocal = (tz.Bias + IIf(nRet = TIME_ZONE_ID_DAYLIGHT, tz.DaylightBias, tz.StandardBias)) / 60
-    'get the bias of UTC is 0
-    BiasOther = 0
-    'transform time
-    toUtcTime = d + BiasLocal / 24
 End Function
 
 Private Function getTimeZoneBias(TimeZone As String) As Long
@@ -600,6 +625,19 @@ Sub createOrUpdateEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFo
             olAppt.Importance = olImportanceLow
     End Select
 
+    Select Case getProperty(sEvent, PROPERTY_SENSITIVITY)
+        Case "PUBLIC"
+            olAppt.Sensitivity = olNormal
+        Case "CONFIDENTIAL"
+            olAppt.Sensitivity = olConfidential
+        Case "PRIVATE"
+            olAppt.Sensitivity = olPrivate
+        Case "PERSONAL"
+            olAppt.Sensitivity = olPersonal
+        Case Else
+            olAppt.Sensitivity = olNormal
+    End Select
+    
     Call addAttendees(sEvent, olAppt)
     Call addRecurrence(sEvent, olAppt)
 
@@ -614,6 +652,9 @@ Sub createOrUpdateEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFo
 End Sub
 
 Sub createOrUpdateTask(ByVal sTask As String, calendarFolder As Outlook.MAPIFolder)
+'
+' see http://msdn.microsoft.com/en-us/library/bb177256.aspx for TaskProperties
+'
     Dim olTask As Outlook.TaskItem
     Dim items As Outlook.items
     Dim sFilter As String
@@ -641,30 +682,37 @@ Sub createOrUpdateTask(ByVal sTask As String, calendarFolder As Outlook.MAPIFold
     olTask.ReminderSet = False 'prevent alerts for imported items
     olTask.Subject = getProperty(sTask, PROPERTY_SUMMARY)
     olTask.Body = getProperty(sTask, PROPERTY_DESCRIPTION)
-    olTask.Location = getProperty(sTask, PROPERTY_LOCATION)
+    'olTask.Location = getProperty(sTask, PROPERTY_LOCATION)
     olTask.Mileage = getProperty(sTask, PROPERTY_UID)  'this is a hack, but makes search much easier
-    olTask.Start = getTime(sTask, PROPERTY_DTSTART)
-    olTask.End = getTime(sTask, PROPERTY_DTEND)
-
+    olTask.StartDate = getTime(sTask, PROPERTY_DTSTART)
+    'do not use DateCompleted as Outlook 2007 manages this field in a combined fashion with
+    'the Complete property!!!
+    'olTask.DateCompleted = getTime(sTask, PROPERTY_DTEND)
+    olTask.DueDate = getTime(sTask, PROPERTY_DUE)
+    
     ' Outlook categories see http://msdn.microsoft.com/en-us/library/bb175161.aspx
     olTask.Categories = getProperty(sTask, PROPERTY_CATEGORIES)
 
     Select Case getProperty(sTask, PROPERTY_STATUS)
         Case "TENTATIVE"
-            olTask.BusyStatus = olTentative
+            olTask.Status = olTaskNotStarted
         Case "CONFIRMED"
-            olTask.BusyStatus = olBusy
+            olTask.Status = olTaskInProgress
         Case "CANCELLED"
-            olTask.BusyStatus = olFree
+            olTask.Status = olTaskDeferred
         Case "NEEDS-ACTION"
-            olTask.BusyStatus = olBusy
+            olTask.Status = olTaskWaiting
         Case "IN-PROCESS"
-            olTask.BusyStatus = olBusy
+            olTask.Status = olTaskInProgress
         Case "COMPLETED"
-            olTask.BusyStatus = olFree
+            olTask.Status = olTaskComplete
         Case Else
-            olTask.BusyStatus = olBusy
+            olTask.Status = olTaskInProgress
     End Select
+
+    If getProperty(sTask, PROPERTY_PERCENT_COMPLETE) <> "" Then
+        olTask.PercentComplete = getProperty(sTask, PROPERTY_PERCENT_COMPLETE)
+    End If
 
     Select Case getProperty(sTask, PROPERTY_PRIORITY)
         Case "1"
@@ -687,6 +735,19 @@ Sub createOrUpdateTask(ByVal sTask As String, calendarFolder As Outlook.MAPIFold
             olTask.Importance = olImportanceLow
     End Select
 
+    Select Case getProperty(sTask, PROPERTY_SENSITIVITY)
+        Case "PUBLIC"
+            olTask.Sensitivity = olNormal
+        Case "CONFIDENTIAL"
+            olTask.Sensitivity = olConfidential
+        Case "PRIVATE"
+            olTask.Sensitivity = olPrivate
+        Case "PERSONAL"
+            olTask.Sensitivity = olPersonal
+        Case Else
+            olTask.Sensitivity = olNormal
+    End Select
+    
     Call addAttendeesTask(sTask, olTask)
     Call addRecurrenceTask(sTask, olTask)
 
@@ -710,6 +771,7 @@ Sub createOrUpdateContact(ByVal sContact As String, contactFolder As Outlook.MAP
     Dim sFilter As String
     Dim oRecipient As recipient
     Dim adr As Variant
+    Dim n As Variant
 
     sContact = Replace(sContact, vbCrLf, EOL)       'CRLF to EOL
     sContact = Replace(sContact, vbLf, EOL)         'LF to EOL
@@ -749,7 +811,16 @@ Sub createOrUpdateContact(ByVal sContact As String, contactFolder As Outlook.MAP
     olContact.Body = getProperty(sContact, PROPERTY_DESCRIPTION)
     olContact.Mileage = getProperty(sContact, PROPERTY_UID)  'this is a hack, but makes search much easier
     olContact.Birthday = getTime(sContact, PROPERTY_BIRTHDAY)
-    olContact.FullName = getProperty(sContact, PROPERTY_FULLNAME) 'see http://msdn.microsoft.com/en-us/library/bb220076.aspx
+    
+    n = getPropertyN(sContact, PROPERTY_N)
+    olContact.LastName = n(0)
+    olContact.FirstName = n(1)
+    olContact.MiddleName = n(2)
+    olContact.Title = n(3)
+    olContact.Suffix = n(4)
+
+    'note that the parsing of FullName depends on Outlook configuration, i.e. don't use!
+    'olContact.FullName = getProperty(sContact, PROPERTY_FULLNAME) 'see http://msdn.microsoft.com/en-us/library/bb220076.aspx
     olContact.CompanyName = getProperty(sContact, PROPERTY_ORG)
     olContact.JobTitle = getProperty(sContact, PROPERTY_TITLE)
     Select Case getProperty(sContact, PROPERTY_PRIORITY)
@@ -847,7 +918,7 @@ Sub importICS(ByVal filename As String, calendarFolder As Outlook.MAPIFolder, By
             sEvent = extractVContent(sCalendar, True, TAG_VEVENT_BEGIN, TAG_VEVENT_END)
             If sEvent <> "" Then
                 If (counter = 1) Then
-                  Call getEventUID(sEvent, UID)
+                  Call getEventUID(sEvent, UID) 'get UID of sentinel event [openCRX]
                 Else
                   Call createOrUpdateEvent(sEvent, calendarFolder)
                 End If
@@ -935,7 +1006,7 @@ End Function
 
 Function formatIcalDateTime(d As Date) As String
     'Format: YYYYMMDDTHHMMSSZ, e.g. 20080207T182000Z
-    formatIcalDateTime = VBA.Format(d, "YYYYMMDD") & "T" & VBA.Format(d, "HHMMSS")
+    formatIcalDateTime = VBA.Format(d, "YYYYMMDD") & "T" & VBA.Format(d, "HHMMSS") & "Z"
 End Function
 
 Function makePropertyStr(ByVal str As String) As String
@@ -1212,8 +1283,11 @@ Function buildVEVENT(ByVal olAppt As AppointmentItem) As String
     'Write out the record for this appointment
     strVevent = TAG_VEVENT_BEGIN & vbLf
 
+    If IsNull(olAppt.Mileage) Or Len(olAppt.Mileage) = 0 Then
+        olAppt.Mileage = olAppt.EntryID
+    End If
     If Not IsNull(olAppt.Mileage) And Len(olAppt.Mileage) > 0 Then
-        strVevent = strVevent & wrapText(PROPERTY_UID & makePropertyStr(olAppt.Mileage)) & vbLf
+        strVevent = strVevent & PROPERTY_UID & makePropertyStr(olAppt.Mileage) & vbLf
     End If
 
     If olAppt.IsRecurring Then
@@ -1224,8 +1298,12 @@ Function buildVEVENT(ByVal olAppt As AppointmentItem) As String
         strVevent = strVevent & PROPERTY_SENSITIVITY & "PUBLIC" & vbLf
     ElseIf olAppt.Sensitivity = olConfidential Then
         strVevent = strVevent & PROPERTY_SENSITIVITY & "CONFIDENTIAL" & vbLf
-    Else
+    ElseIf olAppt.Sensitivity = olPrivate Then
         strVevent = strVevent & PROPERTY_SENSITIVITY & "PRIVATE" & vbLf
+    ElseIf olAppt.Sensitivity = olPersonal Then
+        strVevent = strVevent & PROPERTY_SENSITIVITY & "PERSONAL" & vbLf
+    Else
+        strVevent = strVevent & PROPERTY_SENSITIVITY & "PUBLIC" & vbLf
     End If
 
     If olAppt.AllDayEvent Then
@@ -1287,12 +1365,15 @@ Function buildVTODO(ByVal olTask As TaskItem) As String
     Dim posOpening As Long, posClosing As Long
 
     'Write out the record for this appointment
-    strVtask = TAG_VEVENT_BEGIN & vbLf
+    strVtask = TAG_VTODO_BEGIN & vbLf
 
     On Error Resume Next
 
+    If IsNull(olTask.Mileage) Or Len(olTask.Mileage) = 0 Then
+        olTask.Mileage = olTask.EntryID
+    End If
     If Not IsNull(olTask.Mileage) And Len(olTask.Mileage) > 0 Then
-        strVtask = strVtask & wrapText(PROPERTY_UID & makePropertyStr(olTask.Mileage)) & vbLf
+        strVtask = strVtask & PROPERTY_UID & makePropertyStr(olTask.Mileage) & vbLf
     End If
 
     If olTask.IsRecurring Then
@@ -1303,13 +1384,28 @@ Function buildVTODO(ByVal olTask As TaskItem) As String
         strVtask = strVtask & PROPERTY_SENSITIVITY & "PUBLIC" & vbLf
     ElseIf olTask.Sensitivity = olConfidential Then
         strVtask = strVtask & PROPERTY_SENSITIVITY & "CONFIDENTIAL" & vbLf
-    Else
+    ElseIf olTask.Sensitivity = olPrivate Then
         strVtask = strVtask & PROPERTY_SENSITIVITY & "PRIVATE" & vbLf
+    ElseIf olTask.Sensitivity = olPersonal Then
+        strVtask = strVtask & PROPERTY_SENSITIVITY & "PERSONAL" & vbLf
+    Else
+        strVtask = strVtask & PROPERTY_SENSITIVITY & "PUBLIC" & vbLf
     End If
 
     strVtask = strVtask & _
-               PROPERTY_DTSTART & ":" & formatIcalDate(olTask.Start) & vbLf & _
-               PROPERTY_DTEND & ":" & formatIcalDate(olTask.End) & vbLf
+               PROPERTY_DTSTART & ":" & formatIcalDate(olTask.StartDate) & vbLf & _
+               PROPERTY_DUE & ":" & formatIcalDate(olTask.DueDate) & vbLf
+               'do NOT set this property as Outlook 2007 manages DateCompleted
+               'in combination with Complete!!!
+               'PROPERTY_DTEND & ":" & formatIcalDate(olTask.DateCompleted) & vbLf &
+
+    If olTask.PercentComplete > 0 Then
+        strVtask = strVtask & PROPERTY_PERCENT_COMPLETE & olTask.PercentComplete & vbLf
+    End If
+    If olTask.Complete Then
+        strVtask = strVtask & PROPERTY_COMPLETED & formatIcalDate(olTask.DateCompleted) & vbLf
+    End If
+
 
     strVtask = strVtask & _
                 PROPERTY_LAST_MODIFIED & formatIcalDate(olTask.LastModificationTime) & vbLf
@@ -1322,8 +1418,8 @@ Function buildVTODO(ByVal olTask As TaskItem) As String
         strVtask = strVtask & wrapText(PROPERTY_DESCRIPTION & makePropertyStr(olTask.Body)) & vbLf
     End If
 
-    If Not IsNull(olAppt.Categories) And Len(olAppt.Categories) Then
-        strVevent = strVevent & PROPERTY_CATEGORIES & Replace(olAppt.Categories, ", ", ",") & vbLf
+    If Not IsNull(olTask.Categories) And Len(olTask.Categories) Then
+        strVtask = strVtask & PROPERTY_CATEGORIES & Replace(olTask.Categories, ", ", ",") & vbLf
     End If
 
     If olTask.Importance = olImportanceNormal Then
@@ -1336,7 +1432,7 @@ Function buildVTODO(ByVal olTask As TaskItem) As String
     strVtask = strVtask & buildATTENDEEs(olTask.RequiredAttendees, ROLE_REQ_PARTICIPANT, olTask.Recipients)
     strVtask = strVtask & buildATTENDEEs(olTask.OptionalAttendees, ROLE_OPT_PARTICIPANT, olTask.Recipients)
 
-    strVtask = strVtask & TAG_VEVENT_END & vbLf
+    strVtask = strVtask & TAG_VTODO_END & vbLf
     buildVTODO = strVtask
 
 End Function
@@ -1365,7 +1461,7 @@ Function exportICS(calendarFolder As Outlook.MAPIFolder, ByRef UID As String, By
                 "METHOD:PUBLISH" & vbLf & _
                 TAG_VEVENT_BEGIN & vbLf & _
                 PROPERTY_UID & UID & vbLf & _
-                "CLASS:PUBLIC" & vbLf & _
+                ENTRY_SENTINEL_LAST_MODIFIED & vbLf & _
                 TAG_VEVENT_END & vbLf
 
     If (calendarFolder.DefaultItemType = olAppointmentItem) Then
@@ -1423,8 +1519,10 @@ End Function
 Function getDayOfWeekMask(ByRef rrule As String) As OlDaysOfWeek
     Dim res As OlDaysOfWeek
 
-    res = 0
-    If Len(rrule) > 0 Then
+    If Len(rrule) = 0 Then
+        res = olMonday Or olTuesday Or olWednesday Or olThursday Or olFriday Or olSaturday Or olSunday
+    Else
+        res = 0
         If InStr(rrule, WEEKDAY_MO) > 0 Then res = res Or olMonday
         If InStr(rrule, WEEKDAY_TU) > 0 Then res = res Or olTuesday
         If InStr(rrule, WEEKDAY_WE) > 0 Then res = res Or olWednesday
@@ -1495,14 +1593,14 @@ Sub addRecurrence(ByRef sEvent As String, ByRef item As AppointmentItem)
         posFREQend = InStr(posFREQstart + 1, resultValue, ";")
         freq = Mid(resultValue, posFREQstart, posFREQend - posFREQstart)
 
-
         untilDate = getRecProperty(resultValue, RRULE_KW_UNTIL)
         If Len(untilDate) = 15 Then
             untilDate = untilDate & "Z"
             'should now be of format YYYYMMDDTHHMMSSZ
-        Else
+        ElseIf Len(untilDate) <> 16 Then
             untilDate = ""
         End If
+        
         count = getRecProperty(resultValue, RRULE_KW_COUNT)
 
         interval = getRecProperty(resultValue, RRULE_KW_INTERVAL)
@@ -1530,7 +1628,8 @@ Sub addRecurrence(ByRef sEvent As String, ByRef item As AppointmentItem)
 
         If freq = FREQ_DAILY Then
             rPattern.RecurrenceType = olRecursDaily
-            rPattern.DayOfWeekMask = getDayOfWeekMask(byday)
+            ' DayOfWeekMask cannot be set for daily
+            'rPattern.DayOfWeekMask = getDayOfWeekMask(byday)
             If (interval >= "0") And (interval < "9") Then
                 'only 1 digit allowed
                 rPattern.interval = Val(interval)
@@ -1557,12 +1656,22 @@ Sub addRecurrence(ByRef sEvent As String, ByRef item As AppointmentItem)
            'but Outlook would support
            'olRecursMonthNth and olRecursYearNth
            '
-
         End If
 
         If Len(untilDate) > 0 Then
-            On Error GoTo clearEndDate
-            rPattern.PatternEndDate = timeStampToDateValue(untilDate)
+            rPattern.NoEndDate = False
+            If InStr(untilDate, "T235959") > 0 Then
+                'The end date/time should be marked as 12:00am on the last day. When this is
+                'parsed by php-ical, the last day of the sequence is missed. The MS Outlook
+                'code has the same bug/issue.  To fix this, change the end time from
+                '11:59:59 pm to 12:00 am.
+                untilDate = Replace(untilDate, "T235959", "T000000")
+                On Error GoTo clearEndDate
+                rPattern.PatternEndDate = timeStampToDateValue(untilDate) + 1
+            Else
+                On Error GoTo clearEndDate
+                rPattern.PatternEndDate = timeStampToDateValue(untilDate)
+            End If
             GoTo continueEndDate
 clearEndDate:
             rPattern.NoEndDate = True
@@ -1573,7 +1682,7 @@ continueEndDate:
         If Len(count) > 0 Then
             rPattern.Occurrences = Val(count)
         End If
-
+        
         posSearch = posClosing
         posOpening = InStr(posSearch, sEvent, TAG_RRULE)
         posClosing = InStr(posOpening + 1, sEvent, EOL)
@@ -1668,8 +1777,8 @@ LocalError:
     On Error Resume Next
 End Sub
 
-Sub addRecurrenceTask(ByRef sEvent As String, ByRef item As TaskItem)
-    ' retrieve recurrence rule by parsing sEvent
+Sub addRecurrenceTask(ByRef sTask As String, ByRef item As TaskItem)
+    ' retrieve recurrence rule by parsing sTask
     ' note that this is just a start (see RFC2445 for what is missing here...)
     On Error GoTo LocalError
     Dim resultValue As String
@@ -1685,17 +1794,17 @@ Sub addRecurrenceTask(ByRef sEvent As String, ByRef item As TaskItem)
     item.ClearRecurrencePattern
     resultValue = ""
     posSearch = 1
-    posOpening = InStr(posSearch, sEvent, TAG_RRULE)
-    posClosing = InStr(posOpening + 1, sEvent, EOL)
+    posOpening = InStr(posSearch, sTask, TAG_RRULE)
+    posClosing = InStr(posOpening + 1, sTask, EOL)
     While (posOpening > 0)
         'found recurrence rule
         Set rPattern = item.GetRecurrencePattern()
 
         posFrom = posOpening + Len(TAG_RRULE)
         If posClosing > 0 Then
-            resultValue = Mid(sEvent, posFrom, posClosing - posFrom)
+            resultValue = Mid(sTask, posFrom, posClosing - posFrom)
         Else
-            resultValue = Mid(sEvent, posFrom)
+            resultValue = Mid(sTask, posFrom)
         End If
         'resultvalue now should contain one recurrence rule:
         'WEEKLY;INTERVAL=1;BYDAY=TH
@@ -1708,9 +1817,10 @@ Sub addRecurrenceTask(ByRef sEvent As String, ByRef item As TaskItem)
         If Len(untilDate) = 15 Then
             untilDate = untilDate & "Z"
             'should now be of format YYYYMMDDTHHMMSSZ
-        Else
+        ElseIf Len(untilDate) <> 16 Then
             untilDate = ""
         End If
+        
         count = getRecProperty(resultValue, RRULE_KW_COUNT)
 
         interval = getRecProperty(resultValue, RRULE_KW_INTERVAL)
@@ -1738,7 +1848,8 @@ Sub addRecurrenceTask(ByRef sEvent As String, ByRef item As TaskItem)
 
         If freq = FREQ_DAILY Then
             rPattern.RecurrenceType = olRecursDaily
-            rPattern.DayOfWeekMask = getDayOfWeekMask(byday)
+            ' DayOfWeekMask cannot be set for daily
+            'rPattern.DayOfWeekMask = getDayOfWeekMask(byday)
             If (interval >= "0") And (interval < "9") Then
                 'only 1 digit allowed
                 rPattern.interval = Val(interval)
@@ -1769,8 +1880,19 @@ Sub addRecurrenceTask(ByRef sEvent As String, ByRef item As TaskItem)
         End If
 
         If Len(untilDate) > 0 Then
-            On Error GoTo clearEndDate
-            rPattern.PatternEndDate = timeStampToDateValue(untilDate)
+            rPattern.NoEndDate = False
+            If InStr(untilDate, "T235959") > 0 Then
+                'The end date/time should be marked as 12:00am on the last day. When this is
+                'parsed by php-ical, the last day of the sequence is missed. The MS Outlook
+                'code has the same bug/issue.  To fix this, change the end time from
+                '11:59:59 pm to 12:00 am.
+                untilDate = Replace(untilDate, "T235959", "T000000")
+                On Error GoTo clearEndDate
+                rPattern.PatternEndDate = timeStampToDateValue(untilDate) + 1
+            Else
+                On Error GoTo clearEndDate
+                rPattern.PatternEndDate = timeStampToDateValue(untilDate)
+            End If
             GoTo continueEndDate
 clearEndDate:
             rPattern.NoEndDate = True
@@ -1781,10 +1903,10 @@ continueEndDate:
         If Len(count) > 0 Then
             rPattern.Occurrences = Val(count)
         End If
-
+        
         posSearch = posClosing
-        posOpening = InStr(posSearch, sEvent, TAG_RRULE)
-        posClosing = InStr(posOpening + 1, sEvent, EOL)
+        posOpening = InStr(posSearch, sTask, TAG_RRULE)
+        posClosing = InStr(posOpening + 1, sTask, EOL)
     Wend
 
 LocalError:
@@ -1792,8 +1914,8 @@ LocalError:
     rPattern = Nothing
 End Sub
 
-Sub addAttendeesTask(ByRef sEvent As String, ByRef item As TaskItem)
-    ' retrieve attendees by parsing sEvent
+Sub addAttendeesTask(ByRef sTask As String, ByRef item As TaskItem)
+    ' retrieve attendees by parsing sTask
     On Error GoTo LocalError
     Dim resultValue As String
     Dim posOpening As Long, posClosing As Long, posFrom As Long, posTo  As Long
@@ -1803,15 +1925,15 @@ Sub addAttendeesTask(ByRef sEvent As String, ByRef item As TaskItem)
 
     resultValue = ""
     posSearch = 1
-    posOpening = InStr(posSearch, sEvent, PROPERTY_ATTENDEE)
-    posClosing = InStr(posOpening + 1, sEvent, EOL)
+    posOpening = InStr(posSearch, sTask, PROPERTY_ATTENDEE)
+    posClosing = InStr(posOpening + 1, sTask, EOL)
     While (posOpening > 0)
         'found attendee
         posFrom = posOpening + Len(PROPERTY_ATTENDEE)
         If posClosing > 0 Then
-            resultValue = Mid(sEvent, posFrom, posClosing - posFrom)
+            resultValue = Mid(sTask, posFrom, posClosing - posFrom)
         Else
-            resultValue = Mid(sEvent, posFrom)
+            resultValue = Mid(sTask, posFrom)
         End If
         'resultvalue now should contain one attendee:
         'ATTENDEE;CN="Quality Assurance (qa@opencrx.org)";ROLE=REQ-PARTICIPANT;RSVP=TRUE:MAILTO:qa@opencrx.org
@@ -1826,8 +1948,8 @@ Sub addAttendeesTask(ByRef sEvent As String, ByRef item As TaskItem)
             oRecipient.Type = olCC
         End If
         posSearch = posClosing
-        posOpening = InStr(posSearch, sEvent, PROPERTY_ATTENDEE)
-        posClosing = InStr(posOpening + 1, sEvent, EOL)
+        posOpening = InStr(posSearch, sTask, PROPERTY_ATTENDEE)
+        posClosing = InStr(posOpening + 1, sTask, EOL)
     Wend
 
 LocalError:
@@ -1869,25 +1991,31 @@ Private Function getPropertyADR(ByRef sItem As String, ByVal propertyName) As St
     ' retrieve first property with matching name by parsing sItem
     ' note that we must deal with section 4.1 of RFC 2445 (unfolding wrapped text)
     On Error GoTo LocalErrorADR
+    Const HIGHVALUE = 7
     Dim posOpening As Long, posClosing As Long, posFrom As Long, posTo As Long
     Dim quit As Boolean
     Dim adr As String
     Dim idx As Integer
     Dim resultValue() As String
+    '  Example: ADR;WORK;ENCODING=QUOTED-PRINTABLE:;;Mr. Jim T. Jones-357=0D=0Ac/o CRIXP Corp.=0D=0ATechnoparkstr. 1;Zürich;;8005;Swi
     ' (0) = empty
     ' (1) = empty
     ' (2) = street
     ' (3) = city
-    ' (4) = zip / postal code
-    ' (5) = country
+    ' (4) = state
+    ' (5) = zip/postalCode
     ' (6) = country
-    ' (7) = country
+    ' (7) = empty
     idx = -1
-    ReDim resultValue(0 To 7)
+    ReDim resultValue(0 To HIGHVALUE)
     resultValue(0) = ""
 
     adr = ""
     posOpening = InStr(sItem, propertyName)
+    While (posOpening > 0) And (Mid(sItem, posOpening - 1, 1) <> EOL)
+        'dismiss matches in the middle of a line!
+        posOpening = InStr(posOpening + 1, sItem, propertyName)
+    Wend
     If (posOpening > 0) Then
         'contains property
         posClosing = InStr(posOpening, sItem, EOL)
@@ -1906,7 +2034,7 @@ Private Function getPropertyADR(ByRef sItem As String, ByVal propertyName) As St
     End If
 
     posOpening = InStr(adr, ";")
-    While (posOpening > 0) And (idx < 7)
+    While (posOpening > 0) And (idx < HIGHVALUE)
       idx = idx + 1
       resultValue(idx) = Left(adr, posOpening - 1)
       resultValue(idx) = Replace(resultValue(idx), "\\", "\") 'escaped chars as per section 4.3.11 RFC 2445
@@ -1927,6 +2055,75 @@ Private Function getPropertyADR(ByRef sItem As String, ByVal propertyName) As St
 LocalErrorADR:
     On Error Resume Next
     getPropertyADR = resultValue
+End Function
+
+Private Function getPropertyN(ByRef sItem As String, ByVal propertyName) As String()
+    ' retrieve first property with matching name by parsing sItem
+    ' note that we must deal with section 4.1 of RFC 2445 (unfolding wrapped text)
+    On Error GoTo LocalErrorN
+    Const HIGHVALUE = 5
+    Dim posOpening As Long, posClosing As Long, posFrom As Long, posTo As Long
+    Dim quit As Boolean
+    Dim n As String
+    Dim idx As Integer
+    Dim resultValue() As String
+    ' openCRX: n = lastName + ";" + firstName + ";"+ middleName + ";" + (salutation == null ? "" : salutation) + ";" + suffix;
+    ' Example: N:Jones-357;Jim;T.;Mr.;
+    ' (0) = lastName
+    ' (1) = firstName
+    ' (2) = middleName
+    ' (3) = salutation
+    ' (4) = suffix
+    ' (5) = empty
+    idx = -1
+    ReDim resultValue(0 To HIGHVALUE)
+    resultValue(0) = ""
+
+    n = ""
+    posOpening = InStr(sItem, propertyName)
+    While (posOpening > 0) And (Mid(sItem, posOpening - 1, 1) <> EOL)
+        'dismiss matches in the middle of a line!
+        posOpening = InStr(posOpening + 1, sItem, propertyName)
+    Wend
+    If (posOpening > 0) Then
+        'contains property
+        posClosing = InStr(posOpening, sItem, EOL)
+        posFrom = posOpening + Len(propertyName)
+        If posClosing > 0 Then
+            n = Mid(sItem, posFrom, posClosing - posFrom)
+        Else
+            n = Mid(sItem, posFrom)
+        End If
+    End If
+    If InStr(1, n, QP) Then
+      'contains quote-printable property
+      'remove ;ENCODING=QUOTED-PRINTABLE:
+      n = Mid(n, Len(QP) + 1, Len(n) - Len(QP))
+      n = Replace(n, "=0D=0A", vbCrLf) 'eol
+    End If
+
+    posOpening = InStr(n, ";")
+    While (posOpening > 0) And (idx < HIGHVALUE)
+      idx = idx + 1
+      resultValue(idx) = Left(n, posOpening - 1)
+      resultValue(idx) = Replace(resultValue(idx), "\\", "\") 'escaped chars as per section 4.3.11 RFC 2445
+      resultValue(idx) = Replace(resultValue(idx), "\;", ";") 'escaped chars as per section 4.3.11 RFC 2445
+      resultValue(idx) = Replace(resultValue(idx), "\,", ",") 'escaped chars as per section 4.3.11 RFC 2445
+      resultValue(idx) = Trim(resultValue(idx))
+      n = Mid(n, posOpening + 1)
+      posOpening = InStr(n, ";")
+    Wend
+    If Len(n) > 0 Then
+      idx = idx + 1
+      resultValue(idx) = n
+    End If
+
+    getPropertyN = resultValue
+    Exit Function
+
+LocalErrorN:
+    On Error Resume Next
+    getPropertyN = resultValue
 End Function
 
 Private Function extractVContent(ByRef vcalendar As String, ByVal deleteExtracted, ByVal beginTag As String, ByVal endTag As String) As String
@@ -1963,10 +2160,10 @@ Function getConnectionInfo(info As String, ByRef URL As String, ByRef user As St
     UID = ""
     lines = Split(Trim(info), vbCrLf)
     For Each line In lines
-        If InStr(Trim(line), "url=") > 0 Then URL = Split(Trim(line), "url=")(1)
-        If InStr(Trim(line), "user=") > 0 Then user = Split(Trim(line), "user=")(1)
-        If InStr(Trim(line), "password=") > 0 Then password = Split(Trim(line), "password=")(1)
-        If InStr(Trim(line), "uid=") > 0 Then UID = Split(Trim(line), "uid=")(1)
+        If InStr(Trim(line), OPENCRX_TAG_URL) > 0 Then URL = Split(Trim(line), OPENCRX_TAG_URL)(1)
+        If InStr(Trim(line), OPENCRX_TAG_USER) > 0 Then user = Split(Trim(line), OPENCRX_TAG_USER)(1)
+        If InStr(Trim(line), OPENCRX_TAG_PASSWORD) > 0 Then password = Split(Trim(line), OPENCRX_TAG_PASSWORD)(1)
+        If InStr(Trim(line), OPENCRX_TAG_UID) > 0 Then UID = Split(Trim(line), OPENCRX_TAG_UID)(1)
     Next
     If (URL = "") Or (user = "") Or (password = "") Then
         getConnectionInfo = False
@@ -2015,6 +2212,7 @@ Function updateUID(ByVal info As String, ByVal UID As String, ByVal tag As Strin
     Dim line As Variant
     Dim locatedUID As Boolean
     Dim i As Integer
+    Dim isfirst As Boolean
 
     locatedUID = False
     lines = Split(Trim(info), vbCrLf)
@@ -2029,6 +2227,16 @@ Function updateUID(ByVal info As String, ByVal UID As String, ByVal tag As Strin
     If Not locatedUID Then
       'add tag with UID
       info = info & vbCrLf & tag & UID
+    Else
+        isfirst = True
+        For Each line In lines
+            If isfirst Then
+                info = line
+                isfirst = False
+            Else
+                info = info & vbCrLf & line
+            End If
+        Next
     End If
     updateUID = info
 End Function

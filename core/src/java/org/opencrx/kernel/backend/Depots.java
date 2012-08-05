@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.22 2009/02/20 21:44:45 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.40 2009/06/01 16:56:03 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.40 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/20 21:44:45 $
+ * Date:        $Date: 2009/06/01 16:56:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,78 +56,83 @@
 package org.opencrx.kernel.backend;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.depot1.cci2.BookingPeriodQuery;
+import org.opencrx.kernel.depot1.cci2.BookingTextQuery;
+import org.opencrx.kernel.depot1.cci2.CompoundBookingQuery;
+import org.opencrx.kernel.depot1.cci2.CreditBookingQuery;
+import org.opencrx.kernel.depot1.cci2.DepotPositionQuery;
+import org.opencrx.kernel.depot1.cci2.DepotQuery;
+import org.opencrx.kernel.depot1.cci2.DepotReportItemPositionQuery;
+import org.opencrx.kernel.depot1.cci2.DepotReportQuery;
+import org.opencrx.kernel.depot1.cci2.ProductDepotPositionQuery;
+import org.opencrx.kernel.depot1.cci2.SimpleBookingQuery;
+import org.opencrx.kernel.depot1.cci2.SingleBookingQuery;
+import org.opencrx.kernel.depot1.jmi1.BookingOrigin;
+import org.opencrx.kernel.depot1.jmi1.BookingPeriod;
+import org.opencrx.kernel.depot1.jmi1.BookingText;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
+import org.opencrx.kernel.depot1.jmi1.CreditBooking;
+import org.opencrx.kernel.depot1.jmi1.DebitBooking;
 import org.opencrx.kernel.depot1.jmi1.Depot;
+import org.opencrx.kernel.depot1.jmi1.DepotEntity;
+import org.opencrx.kernel.depot1.jmi1.DepotGroup;
+import org.opencrx.kernel.depot1.jmi1.DepotHolder;
 import org.opencrx.kernel.depot1.jmi1.DepotPosition;
+import org.opencrx.kernel.depot1.jmi1.DepotReport;
+import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
+import org.opencrx.kernel.depot1.jmi1.DepotType;
+import org.opencrx.kernel.depot1.jmi1.ProductDepotPosition;
+import org.opencrx.kernel.depot1.jmi1.SimpleBooking;
+import org.opencrx.kernel.depot1.jmi1.SingleBooking;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.product1.jmi1.Product;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
-import org.openmdx.application.dataprovider.cci.Orders;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.exception.BasicException;
 
-public class Depots {
+public class Depots extends AbstractImpl {
 
-    //-----------------------------------------------------------------------
-    public Depots(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
+    //-------------------------------------------------------------------------
+	public static void register(
+	) {
+		registerImpl(new Depots());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Depots getInstance(
+	) throws ServiceException {
+		return getInstance(Depots.class);
+	}
 
-    //-----------------------------------------------------------------------
-    private String stripWhitespaces(
-        String s
-    ) {
-        String stripped = "";
-        for(int i = 0; i < s.length(); i++) {
-            if(!Character.isWhitespace(s.charAt(i))) {
-                stripped += s.charAt(i);
-            }
-        }
-        return stripped;
-    }
-    
+	//-------------------------------------------------------------------------
+	protected Depots(
+	) {
+		
+	}
+	
     //-----------------------------------------------------------------------
     public void testForOpenPosition(
         Date valueDate,
         short bookingType,
-        Path positionIdentity
+        DepotPosition depotPosition
     ) throws ServiceException {
-        
-        List bookingPeriods = this.backend.getDelegatingRequests().addFindRequest(
-            positionIdentity.getPrefix(7).getChild("bookingPeriod"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );                
-        DataproviderObject_1_0 depot = this.backend.retrieveObject(positionIdentity.getParent().getParent());  
-        String depotNumber = (String)depot.values("depotNumber").get(0);
-        DataproviderObject_1_0 depotPosition = this.backend.retrieveObject(positionIdentity);  
-        String positionName = (String)depotPosition.values("name").get(0);
-        
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotPosition);
+        DepotEntity depotEntity = (DepotEntity)pm.getObjectById(depotPosition.refGetPath().getPrefix(7));
+        Collection<BookingPeriod> bookingPeriods = depotEntity.getBookingPeriod();
+        Depot depot = (Depot)pm.getObjectById(depotPosition.refGetPath().getParent().getParent());  
+        String depotNumber = depot.getDepotNumber();
+        String positionName = depotPosition.getName();        
         // Check for depot position isLocked
-        if(
-            (depotPosition.values("isLocked").size() > 0) && 
-            ((Boolean)depotPosition.values("isLocked").get(0)).booleanValue()
-        ) {
+        if(depotPosition.isLocked()) { 
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_IS_LOCKED,
@@ -138,8 +143,8 @@ public class Depots {
         }
         // Check for closing date of depot position
         if(
-            !depotPosition.values("closingDate").isEmpty() && 
-            (valueDate.compareTo(this.backend.parseDate((String)depotPosition.values("closingDate").get(0))) >= 0) 
+            (depotPosition.getClosingDate() != null) && 
+            (valueDate.compareTo(depotPosition.getClosingDate()) >= 0) 
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -147,13 +152,13 @@ public class Depots {
                 "Depot position is closed",
                 new BasicException.Parameter("param0", depotNumber),
                 new BasicException.Parameter("param1", positionName),
-                new BasicException.Parameter("param2", depotPosition.values("closingDate").get(0))
+                new BasicException.Parameter("param2", depotPosition.getClosingDate())
             );
         }
         // Check for opening date of depot position
         if(
-            !depotPosition.values("openingDate").isEmpty() && 
-            (valueDate.compareTo(this.backend.parseDate((String)depotPosition.values("openingDate").get(0))) < 0) 
+            (depotPosition.getOpeningDate() != null) && 
+            (valueDate.compareTo(depotPosition.getOpeningDate()) < 0) 
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -161,15 +166,11 @@ public class Depots {
                 "Depot position is not open",
                 new BasicException.Parameter("param0", depotNumber),
                 new BasicException.Parameter("param1", positionName),
-                new BasicException.Parameter("param2", depotPosition.values("openingDate").get(0))
+                new BasicException.Parameter("param2", depotPosition.getOpeningDate())
             );
-        }
-        
+        }        
         // Check for depot isLocked
-        if(
-            !depot.values("isLocked").isEmpty() && 
-            ((Boolean)depot.values("isLocked").get(0)).booleanValue()
-        ) {
+        if(depot.isLocked()) { 
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_IS_LOCKED,
@@ -179,39 +180,35 @@ public class Depots {
         }
         // Check for closing date of depot
         if(
-            !depot.values("closingDate").isEmpty() && 
-            (valueDate.compareTo(this.backend.parseDate((String)depot.values("closingDate").get(0))) >= 0) 
+            (depot.getClosingDate() != null) && 
+            (valueDate.compareTo(depot.getClosingDate()) >= 0) 
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_IS_CLOSED_CAN_NOT_BOOK,
                 "Depot is closed",
                 new BasicException.Parameter("param0", depotNumber),
-                new BasicException.Parameter("param1", depot.values("closingDate").get(0))
+                new BasicException.Parameter("param1", depot.getClosingDate())
             );
         }
         // Check for opening date of depot
         if(
-            !depot.values("openingDate").isEmpty() && 
-            (valueDate.compareTo(this.backend.parseDate((String)depot.values("openingDate").get(0))) < 0) 
+            (depot.getOpeningDate() != null) && 
+            (valueDate.compareTo(depot.getOpeningDate()) < 0) 
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_IS_NOT_OPEN,
                 "Depot is not open",
                 new BasicException.Parameter("param0", depotNumber),
-                new BasicException.Parameter("param1", depot.values("openingDate").get(0))                
+                new BasicException.Parameter("param1", depot.getOpeningDate())                
             );
         }
         // Find booking period matching value date
-        DataproviderObject_1_0 bookingPeriod = null;
-        for(
-            Iterator i = bookingPeriods.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 period = (DataproviderObject_1_0)i.next();
-            Date periodStartsAt = this.backend.parseDate((String)period.values("periodStartsAt").get(0));
-            Date periodEndsAtExclusive = this.backend.parseDate((String)period.values("periodEndsAtExclusive").get(0));            
+        BookingPeriod bookingPeriod = null;
+        for(BookingPeriod period: bookingPeriods) {
+            Date periodStartsAt = period.getPeriodStartsAt();
+            Date periodEndsAtExclusive = period.getPeriodEndsAtExclusive();            
             if(
                 ((periodStartsAt == null) || (valueDate.compareTo(periodStartsAt) >= 0)) &&
                 ((periodEndsAtExclusive == null) || (valueDate.compareTo(periodEndsAtExclusive) < 0))
@@ -228,11 +225,11 @@ public class Depots {
                 new BasicException.Parameter("param0", valueDate)
             );
         }
-        String bookingPeriodName = (String)bookingPeriod.values("name").get(0);        
+        String bookingPeriodName = bookingPeriod.getName();        
         // Check for non-final booking period
         if(
-            (bookingPeriod.values("isFinal").size() > 0) && 
-            ((Boolean)bookingPeriod.values("isFinal").get(0)).booleanValue()
+            (bookingPeriod.isFinal() != null) &&  
+            bookingPeriod.isFinal().booleanValue()
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -243,55 +240,37 @@ public class Depots {
         }               
         // Check for non-closed booking period
         if(
-            (bookingPeriod.values("isClosed").size() > 0) && 
-            ((Boolean)bookingPeriod.values("isClosed").get(0)).booleanValue() &&
-            (bookingPeriod.values("closingBookingTypeThreshold").size() > 0) &&
-            bookingType <= ((Number)bookingPeriod.values("closingBookingTypeThreshold").get(0)).intValue() 
+            (bookingPeriod.isClosed() != null) && 
+            bookingPeriod.isClosed().booleanValue() &&
+            (bookingType <= bookingPeriod.getClosingBookingTypeThreshold()) 
         ) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_BOOKING_PERIOD_IS_CLOSED,
                 "Booking period is closed",
                 new BasicException.Parameter("param0", bookingPeriodName),
-                new BasicException.Parameter("param1", bookingPeriod.values("closingBookingTypeThreshold").get(0))
+                new BasicException.Parameter("param1", bookingPeriod.getClosingBookingTypeThreshold())
             );
         }
     }
     
     //-----------------------------------------------------------------------
     public void testForBalance(
-        Path compoundBookingIdentity,
-        BigDecimal balance
+        CompoundBooking cb,
+        BigDecimal balance,
+        PersistenceManager pm
     ) throws ServiceException {
-        List creditBookings = this.backend.getDelegatingRequests().addFindRequest(
-            compoundBookingIdentity.getPrefix(compoundBookingIdentity.size()-2).getChild("booking"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.IS_IN,
-                    "org:opencrx:kernel:depot1:CreditBooking"
-                ),
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "cb",
-                    FilterOperators.IS_IN,
-                    compoundBookingIdentity
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+        		cb.refGetPath().getParent().getParent()
+        	);
+    	CreditBookingQuery creditBookingQuery = (CreditBookingQuery)pm.newQuery(CreditBooking.class);
+    	creditBookingQuery.thereExistsCb().equalTo(cb);
+    	List<CreditBooking> creditBookings = depotSegment.getBooking(creditBookingQuery);
         BigDecimal compoundBalance = new BigDecimal(0);
-        for(
-            Iterator i = creditBookings.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 booking = (DataproviderObject_1_0)i.next();
+    	for(CreditBooking booking: creditBookings) {
             compoundBalance = compoundBalance.add(
-                (BigDecimal)booking.values("quantityCredit").get(0)
+                booking.getQuantityCredit()
             );
         }
         if(compoundBalance.compareTo(balance) != 0) {
@@ -306,68 +285,70 @@ public class Depots {
     }
     
     //-----------------------------------------------------------------------
-    public DataproviderObject_1_0 createCreditDebitBooking(
-        Path depotEntityIdentity,
+    public CompoundBooking createCreditDebitBooking(
+        DepotEntity depotEntity,
         Date valueDate,
         short bookingType,
         BigDecimal quantity,
         String bookingTextName,
-        Path bookingTextIdentity,
-        Path positionCreditIdentity,
-        Path positionDebitIdentity,
-        Path productConfigurationSetIdentity,
-        Path originIdentity,
-        Path reversalOf
+        BookingText bookingText,
+        DepotPosition positionCredit,
+        DepotPosition positionDebit,
+        BookingOrigin originIdentity,
+        CompoundBooking reversalOf,
+        List<String> errors
     ) throws ServiceException {        
         return this.createCompoundBooking(
-            depotEntityIdentity,
+            depotEntity,
             valueDate,
             bookingType,
             new BigDecimal[]{quantity},
             new String[]{bookingTextName},
-            new Path[]{bookingTextIdentity},
-            new Path[]{positionCreditIdentity},
-            new Path[]{positionDebitIdentity},
-            new Path[]{productConfigurationSetIdentity},
-            new Path[]{originIdentity},
-            reversalOf
+            new BookingText[]{bookingText},
+            new DepotPosition[]{positionCredit},
+            new DepotPosition[]{positionDebit},
+            new BookingOrigin[]{originIdentity},
+            reversalOf,
+            errors
         );
     }
     
     //-----------------------------------------------------------------------
-    public DataproviderObject_1_0 createCompoundBooking(
-        Path depotEntityIdentity,
+    public CompoundBooking createCompoundBooking(
+        DepotEntity depotEntity,
         Date valueDate,
         short bookingType,
         BigDecimal[] quantities,
         String[] bookingTextNames,
-        Path[] bookingTextIdentities,
-        Path[] creditPositionIdentities,
-        Path[] debitPositionIdentities,
-        Path[] productConfigurationSetIdentities,
-        Path[] originIdentities,
-        Path reversalOf
+        BookingText[] bookingTexts,
+        DepotPosition[] creditPositions,
+        DepotPosition[] debitPositions,
+        BookingOrigin[] origins,
+        CompoundBooking reversalOf,
+        List<String> errors
     ) throws ServiceException {
-
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotEntity);    	
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+        		depotEntity.refGetPath().getParent().getParent()
+        	);    	
         // Set default valueDate to current date
         if(valueDate == null) {
             valueDate = new Date();
-        }
-        
+        }        
         // Assert open positions
-        for(int i = 0; i < creditPositionIdentities.length; i++) {
-            this.testForOpenPosition(
+        for(int i = 0; i < creditPositions.length; i++) {
+        	this.testForOpenPosition(
                 valueDate,
                 bookingType,
-                creditPositionIdentities[i] 
+                creditPositions[i]
             );
-            this.testForOpenPosition(
+        	this.testForOpenPosition(
                 valueDate,
                 bookingType,
-                debitPositionIdentities[i] 
+                debitPositions[i]
             );
-        }
-        
+        }        
         // Test for matching balance
         BigDecimal balance = new BigDecimal(0);
         for(int i = 0; i < quantities.length; i++) {
@@ -381,37 +362,21 @@ public class Depots {
             balance = balance.add(quantities[i]);
         }
         if(reversalOf != null) {
-            this.testForBalance(
+        	this.testForBalance(
                 reversalOf,
-                balance
+                balance,
+                pm
             );
-        }
-        
+        }        
         // bookingText
-        DataproviderObject_1_0[] bookingTexts = new DataproviderObject_1_0[bookingTextNames.length];     
         for(int i = 0; i < bookingTextNames.length; i++) {             
-            if((bookingTextIdentities != null) && (bookingTextIdentities[i] != null)) {
-                bookingTexts[i] = this.backend.retrieveObject(bookingTextIdentities[i]);
-            }
-            else {
+            if(bookingTexts[i] == null) {
                 if(bookingTextNames[i] != null) {
-                    List texts = this.backend.getDelegatingRequests().addFindRequest(
-                        depotEntityIdentity.getChild("bookingText"),
-                        new FilterProperty[]{
-                            new FilterProperty(
-                                Quantors.THERE_EXISTS,
-                                "name",
-                                FilterOperators.IS_IN,
-                                bookingTextNames[i]                            
-                            )
-                        },
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING                    
-                    );
-                    if(texts.size() > 0) {
-                        bookingTexts[i] = (DataproviderObject_1_0)texts.get(0);
+                	BookingTextQuery bookingTextQuery = (BookingTextQuery)pm.newQuery(BookingText.class);
+                	bookingTextQuery.name().equalTo(bookingTextNames[i]);
+                	List<BookingText> texts = depotEntity.getBookingText(bookingTextQuery);
+                    if(!texts.isEmpty()) {
+                        bookingTexts[i] = texts.iterator().next();
                     }
                 }            
             }
@@ -424,13 +389,7 @@ public class Depots {
             }
         }
         // creditPositions
-        DataproviderObject_1_0[] creditPositions = new DataproviderObject_1_0[creditPositionIdentities.length];
-        for(int i = 0; i < creditPositionIdentities.length; i++) {
-            if(creditPositionIdentities[i] != null) {
-                creditPositions[i] = this.backend.retrieveObject(
-                    creditPositionIdentities[i]
-                );
-            }
+        for(int i = 0; i < creditPositions.length; i++) {
             if(creditPositions[i] == null) {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
@@ -440,13 +399,7 @@ public class Depots {
             }
         }
         // debitPositions
-        DataproviderObject_1_0[] debitPositions = new DataproviderObject_1_0[debitPositionIdentities.length];
-        for(int i = 0; i < debitPositionIdentities.length; i++) {
-            if(debitPositionIdentities[i] != null) {
-                debitPositions[i] = this.backend.retrieveObject(
-                    debitPositionIdentities[i]
-                );
-            }
+        for(int i = 0; i < debitPositions.length; i++) {
             if(debitPositions[i] == null) {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
@@ -458,318 +411,231 @@ public class Depots {
         // Position name
         for(int i = 0; i < creditPositions.length; i++) {
             if(
-                (creditPositions[i].values("name").get(0) == null) ||
-                (debitPositions[i].values("name").get(0) == null) ||
-                !creditPositions[i].values("name").get(0).equals(debitPositions[i].values("name").get(0))
+                (creditPositions[i].getName() == null) ||
+                (debitPositions[i].getName() == null) ||
+                !creditPositions[i].getName().equals(debitPositions[i].getName())
             ) {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_POSITION_NAME_MISMATCH,
                    "position names debit/credit do not match",
-                   new BasicException.Parameter("param0", creditPositions[i].values("name").get(0)),
-                   new BasicException.Parameter("param1", debitPositions[i].values("name").get(0))
+                   new BasicException.Parameter("param0", creditPositions[i].getName()),
+                   new BasicException.Parameter("param1", debitPositions[i].getName())
                );                            
             }
         }
-        // Value date
         if(valueDate == null) {
             valueDate = new Date();
         }
         Date bookingDate = new Date();
-
-        // Create compound booking
-        DataproviderObject compoundBooking = new DataproviderObject(
-            depotEntityIdentity.getPrefix(
-                depotEntityIdentity.size()-2
-            ).getDescendant(
-                new String[]{"cb", this.backend.getUidAsString()}
-            )
-        );
-        compoundBooking.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:depot1:CompoundBooking"
-        );
-        // name
-        String positionName0 = (String)creditPositions[0].values("name").get(0);            
-        
+        // Create compound booking        
+        CompoundBooking compoundBooking = pm.newInstance(CompoundBooking.class);
+        compoundBooking.refInitialize(false, false);
+        String positionName0 = creditPositions[0].getName();                    
         // depotCredit
-        DataproviderObject_1_0 depotCredit0 = this.backend.retrieveObject(
-            creditPositions[0].path().getPrefix(creditPositions[0].path().size()-2)
+        Depot depotCredit0 = (Depot)pm.getObjectById(
+            creditPositions[0].refGetPath().getParent().getParent()
         );
-        String depotNumberCredit0 = (String)depotCredit0.values("depotNumber").get(0);
-
+        String depotNumberCredit0 = depotCredit0.getDepotNumber();
         // depotDebit
-        DataproviderObject_1_0 depotDebit0 = this.backend.retrieveObject(
-            debitPositions[0].path().getPrefix(debitPositions[0].path().size()-2)
+        Depot depotDebit0 = (Depot)pm.getObjectById(
+            debitPositions[0].refGetPath().getParent().getParent()
         );
-        String depotNumberDebit0 = (String)depotDebit0.values("depotNumber").get(0);        
-        if(
-            (bookingTexts[0].values("creditFirst").get(0) == null) ||
-            !((Boolean)bookingTexts[0].values("creditFirst").get(0)).booleanValue()
-        ) {
-            compoundBooking.values("name").add(
-                depotNumberCredit0 + " " + bookingTexts[0].values("cbNameInfix1").get(0) + " " + positionName0 + " " + bookingTexts[0].values("cbNameInfix2").get(0) + " " + depotNumberDebit0  
+        String depotNumberDebit0 = depotDebit0.getDepotNumber();        
+        if(!bookingTexts[0].isCreditFirst()) {
+            compoundBooking.setName(
+                depotNumberCredit0 + " " + bookingTexts[0].getCbNameInfix1() + " " + positionName0 + " " + bookingTexts[0].getCbNameInfix2() + " " + depotNumberDebit0  
             );
         }
         else {
-            compoundBooking.values("name").add(
-                depotNumberDebit0 + " " + bookingTexts[0].values("cbNameInfix1").get(0) + " " + positionName0 + " " + bookingTexts[0].values("cbNameInfix2").get(0) + " " + depotNumberCredit0 
+            compoundBooking.setName(
+                depotNumberDebit0 + " " + bookingTexts[0].getCbNameInfix1() + " " + positionName0 + " " + bookingTexts[0].getCbNameInfix2() + " " + depotNumberCredit0 
             );            
         }
-        compoundBooking.values("bookingType").add(new Short(bookingType));
-        compoundBooking.values("bookingStatus").add(new Short(BOOKING_STATUS_PENDING));
-        compoundBooking.values("bookingDate").add(
-            DateFormat.getInstance().format(bookingDate)
-        );
+        compoundBooking.setBookingType(new Short(bookingType));
+        compoundBooking.setBookingStatus(new Short(BOOKING_STATUS_PENDING));
+        compoundBooking.setBookingDate(bookingDate);
         if(reversalOf != null) {            
-            compoundBooking.values("reversalOf").add(reversalOf);
+            compoundBooking.setReversalOf(reversalOf);
         }
         // Create compound booking
-        this.backend.getDelegatingRequests().addCreateRequest(
-            compoundBooking
-        );
-            
+        depotSegment.addCb(
+        	true,
+        	this.getUidAsString(),
+        	compoundBooking
+        );            
         // Create bookings
         for(
             int i = 0;
             i < creditPositions.length;
             i++
         ) {
-            String positionName = (String)creditPositions[i].values("name").get(0);            
-            
+            String positionName = creditPositions[i].getName();                        
             // depotCredit
-            DataproviderObject_1_0 depotCredit = this.backend.retrieveObject(
-                creditPositions[i].path().getPrefix(creditPositions[i].path().size()-2)
+            Depot depotCredit = (Depot)pm.getObjectById(
+                creditPositions[i].refGetPath().getParent().getParent()
             );
-            String depotNumberCredit = (String)depotCredit.values("depotNumber").get(0);
-    
+            String depotNumberCredit = depotCredit.getDepotNumber();    
             // depotDebit
-            DataproviderObject_1_0 depotDebit = this.backend.retrieveObject(
-                debitPositions[i].path().getPrefix(debitPositions[i].path().size()-2)
+            Depot depotDebit = (Depot)pm.getObjectById(
+                debitPositions[i].refGetPath().getParent().getParent()
             );
-            String depotNumberDebit = (String)depotDebit.values("depotNumber").get(0);
-    
+            String depotNumberDebit = depotDebit.getDepotNumber();    
             // Create credit booking
-            DataproviderObject bookingCredit = new DataproviderObject(
-                depotEntityIdentity.getPrefix(
-                    depotEntityIdentity.size()-2
-                ).getDescendant(
-                    new String[]{"booking", this.backend.getUidAsString()}
-                )
+            CreditBooking bookingCredit = pm.newInstance(CreditBooking.class);
+            bookingCredit.refInitialize(false, false);
+            bookingCredit.setName(
+                depotNumberCredit + " " + bookingTexts[i].getCreditBookingNameInfix() + " " + positionName
             );
-            bookingCredit.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:depot1:CreditBooking"
-            );
-            bookingCredit.values("name").add(
-                depotNumberCredit + " " + bookingTexts[i].values("creditBookingNameInfix").get(0) + " " + positionName
-            );
-            bookingCredit.values("quantityCredit").add(quantities[i]);
-            bookingCredit.values("valueDate").add(
-                DateFormat.getInstance().format(valueDate)
-            );
-            bookingCredit.values("bookingType").add(new Short(bookingType));
-            bookingCredit.values("bookingStatus").add(new Short(BOOKING_STATUS_PENDING));
-            bookingCredit.values("bookingDate").add(
-                DateFormat.getInstance().format(bookingDate)
-            );
-            bookingCredit.values("cb").add(compoundBooking.path());
-            bookingCredit.values("position").add(creditPositions[i].path());
-            if(originIdentities[i] != null) {
-                bookingCredit.values("origin").add(originIdentities[i]);
+            bookingCredit.setQuantityCredit(quantities[i]);
+            bookingCredit.setValueDate(valueDate);
+            bookingCredit.setBookingType(new Short(bookingType));
+            bookingCredit.setBookingStatus(new Short(BOOKING_STATUS_PENDING));
+            bookingCredit.setBookingDate(bookingDate);
+            bookingCredit.setCb(compoundBooking);
+            bookingCredit.setPosition(creditPositions[i]);
+            if(origins[i] != null) {
+                bookingCredit.setOrigin(origins[i]);
             }
-            this.backend.getDelegatingRequests().addCreateRequest(bookingCredit);
-            
-            // Clone product configurations
-            if(productConfigurationSetIdentities[i] != null) {
-                this.backend.getProducts().cloneProductConfigurationSet(
-                    productConfigurationSetIdentities[i],
-                    bookingCredit.path(),
-                    false,
-                    false                    
-                );
-            }
-            
+            depotSegment.addBooking(
+            	false,
+            	this.getUidAsString(),
+            	bookingCredit
+            );
             // Create debit booking
-            DataproviderObject bookingDebit = new DataproviderObject(
-                depotEntityIdentity.getPrefix(
-                    depotEntityIdentity.size()-2
-                ).getDescendant(
-                    new String[]{"booking", this.backend.getUidAsString()}
-                )
+            DebitBooking bookingDebit = pm.newInstance(DebitBooking.class);
+            bookingDebit.refInitialize(false, false);
+            bookingDebit.setName(
+                depotNumberDebit + " " + bookingTexts[i].getDebitBookingNameInfix() + " " + positionName
             );
-            bookingDebit.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:depot1:DebitBooking"
+            bookingDebit.setQuantityDebit(quantities[i]);
+            bookingDebit.setValueDate(valueDate);
+            bookingDebit.setBookingType(new Short(bookingType));
+            bookingDebit.setBookingStatus(new Short(BOOKING_STATUS_PENDING));
+            bookingDebit.setBookingDate(bookingDate);
+            bookingDebit.setCb(compoundBooking);
+            bookingDebit.setPosition(debitPositions[i]);
+            if(origins != null) {
+                bookingDebit.setOrigin(origins[i]);
+            }
+            depotSegment.addBooking(
+            	false,
+            	this.getUidAsString(),
+            	bookingDebit
             );
-            bookingDebit.values("name").add(
-                depotNumberDebit + " " + bookingTexts[i].values("debitBookingNameInfix").get(0) + " " + positionName
-            );
-            bookingDebit.values("quantityDebit").add(quantities[i]);
-            bookingDebit.values("valueDate").add(
-                DateFormat.getInstance().format(valueDate)
-            );
-            bookingDebit.values("bookingType").add(new Short(bookingType));
-            bookingDebit.values("bookingStatus").add(new Short(BOOKING_STATUS_PENDING));
-            bookingDebit.values("bookingDate").add(
-                DateFormat.getInstance().format(bookingDate)
-            );
-            bookingDebit.values("cb").add(compoundBooking.path());
-            bookingDebit.values("position").add(debitPositions[i].path());
-            if(originIdentities[i] != null) {
-                bookingDebit.values("origin").add(originIdentities[i]);
-            }            
-            this.backend.getDelegatingRequests().addCreateRequest(bookingDebit);
-        }
-        
+        }        
         return compoundBooking;
     }
     
     //-----------------------------------------------------------------------
-    public DataproviderObject_1_0 getAndCreateDepotPosition(
-        Path depotEntityIdentity,
+    public DepotPosition getAndCreateDepotPosition(
+        DepotEntity depotEntity,
         String depotNumber,
-        Path depotIdentity,
+        Depot depot,
         String positionName,
-        Path productIdentity,
+        Product product,
         Date openingDate
     ) throws ServiceException {
-        DataproviderObject_1_0 depot = null;
-        if(depotIdentity != null) {
-            depot = this.backend.retrieveObject(depotIdentity);
-        }
-        else {
-            if(depotNumber == null) {
-               throw new ServiceException(
-                   OpenCrxException.DOMAIN,
-                   OpenCrxException.DEPOT_MISSING_DEPOT_NUMBER,
-                   "Missing depot number"
-               );                                        
-            }
-            List depots = this.backend.getDelegatingRequests().addFindRequest(
-                depotEntityIdentity.getPrefix(5).getChild("extent"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        SystemAttributes.OBJECT_IDENTITY,
-                        FilterOperators.IS_LIKE,
-                        depotEntityIdentity.getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})
-                    ),                        
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "depotNumber",
-                        FilterOperators.IS_IN,
-                        depotNumber                            
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING                    
-            );
-            if(!depots.isEmpty()) {
-                depot = (DataproviderObject_1_0)depots.iterator().next();
-            }
-            else {
-               throw new ServiceException(
-                   OpenCrxException.DOMAIN,
-                   OpenCrxException.DEPOT_DEPOT_NOT_FOUND,
-                   "Depot not found",
-                   new BasicException.Parameter("param0", depotNumber)
-               );                                        
-            }
-        }
-        List depotPositions = this.backend.getDelegatingRequests().addFindRequest(
-            depot.path().getChild("position"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "name",
-                    FilterOperators.IS_IN,
-                    positionName                            
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );
-        if(depotPositions.size() > 0) {
-            return (DataproviderObject_1_0)depotPositions.iterator().next();
-        }
-        // On-demand creation of position
-        else {
-            if(
-                (depot.values("allowPositionAutoCreate").size() > 0) &&
-                ((Boolean)depot.values("allowPositionAutoCreate").get(0)).booleanValue()
-            ) {
-                DataproviderObject params = new DataproviderObject(new Path("xri:@openmdx:*"));
-                params.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:OpenDepotPositionParams"
-                );
-                params.values("name").add(positionName);
-                if(productIdentity != null) {
-                    params.values("product").add(productIdentity);
-                }
-                if(openingDate != null) {
-                    params.values("openingDate").add(DateFormat.getInstance().format(openingDate));
-                }
-                params.values("isLocked").add(Boolean.FALSE);
-                return this.openDepotPosition(
-                    depot,
-                    params
-                );
-            }
-            else {
-                return null;
-            }
-        }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotEntity);    	
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+        		depotEntity.refGetPath().getParent().getParent()
+        	);    	
+    	if(depot == null) {
+	        if(depotNumber == null) {
+	           throw new ServiceException(
+	               OpenCrxException.DOMAIN,
+	               OpenCrxException.DEPOT_MISSING_DEPOT_NUMBER,
+	               "Missing depot number"
+	           );                                        
+	        }
+	        DepotQuery depotQuery = (DepotQuery)pm.newQuery(Depot.class);
+	        depotQuery.identity().like(
+	        	depotEntity.refGetPath().getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"}).toXRI()        	
+	        );
+	        depotQuery.depotNumber().equalTo(depotNumber);
+	        List<Depot> depots = depotSegment.getExtent(depotQuery);
+	        if(!depots.isEmpty()) {
+	            depot = depots.iterator().next();
+	        }
+	        else {
+	           throw new ServiceException(
+	               OpenCrxException.DOMAIN,
+	               OpenCrxException.DEPOT_DEPOT_NOT_FOUND,
+	               "Depot not found",
+	               new BasicException.Parameter("param0", depotNumber)
+	           );                                        
+	        }
+    	}
+    	DepotPositionQuery depotPositionQuery = (DepotPositionQuery)pm.newQuery(DepotPosition.class);
+    	depotPositionQuery.name().equalTo(positionName);
+    	List<DepotPosition> depotPositions = depot.getPosition(depotPositionQuery);
+	    if(!depotPositions.isEmpty()) {
+	        return depotPositions.iterator().next();
+	    }
+	    // On-demand creation of position
+	    else {
+	        if(depot.isAllowPositionAutoCreate()) {
+	        	return this.openDepotPosition(
+	        		depot, 
+	        		positionName, 
+	        		null, 
+	        		openingDate, 
+	        		null, 
+	        		product, 
+	        		Boolean.FALSE 
+	        	);
+	        }
+	        else {
+	            return null;
+	        }
+	    }
     }
     
     //-----------------------------------------------------------------------
     public CompoundBooking createBookingByPosition(
-        Path depotEntityIdentity,
+        DepotEntity depotEntity,
         Date valueDate,
         short bookingType,
         BigDecimal quantity,
         String bookingTextName,
-        Path bookingTextIdentity,
-        Path positionCreditIdentity,
-        Path positionDebitIdentity,
-        Path originIdentity,
-        Path reversalOfIdentity,
+        BookingText bookingText,
+        DepotPosition positionCredit,
+        DepotPosition positionDebit,
+        BookingOrigin origin,
+        CompoundBooking reversalOf,
         List<String> errors
     ) throws ServiceException {
-        DataproviderObject_1_0 compoundBooking = this.createCreditDebitBooking(                
-            depotEntityIdentity,
+        return this.createCreditDebitBooking(                
+            depotEntity,
             valueDate,
             bookingType,
             quantity,
             bookingTextName,
-            bookingTextIdentity,
-            positionCreditIdentity,
-            positionDebitIdentity,
-            null,
-            reversalOfIdentity,
-            reversalOfIdentity
+            bookingText,
+            positionCredit,
+            positionDebit,
+            origin,
+            reversalOf,
+            errors
         );
-        return compoundBooking == null
-            ? null
-            : (CompoundBooking)this.backend.getDelegatingPkg().refObject(compoundBooking.path().toXri());
     }
     
     //-----------------------------------------------------------------------
     public CompoundBooking createBookingByProduct(
-        Path depotEntityIdentity,
+        DepotEntity depotEntity,
         Date valueDate,
         short bookingType,
         BigDecimal quantity,
         String bookingTextName,
-        Path bookingTextIdentity,
+        BookingText bookingText,
         Product product,
         String depotNumberCredit,
-        Path depotCreditIdentity,
+        Depot depotCredit,
         String depotNumberDebit,
-        Path depotDebitIdentity,
-        Path originIdentity,
-        Path reversalOfIdentity,
+        Depot depotDebit,
+        BookingOrigin origin,
+        CompoundBooking reversalOf,
         List<String> errors
     ) throws ServiceException {
         if(product == null) {
@@ -779,15 +645,15 @@ public class Depots {
                "Missing product"
            );                                    
         }
-        String positionName = product.getProductNumber() != null
-            ? product.getProductNumber()
-            : product.getName();            
-        DataproviderObject_1_0 positionCredit = this.getAndCreateDepotPosition(
-            depotEntityIdentity,
+        String positionName = product.getProductNumber() != null ? 
+        	product.getProductNumber() : 
+        	product.getName();            
+        DepotPosition positionCredit = this.getAndCreateDepotPosition(
+            depotEntity,
             depotNumberCredit,
-            depotCreditIdentity,
+            depotCredit,
             positionName,
-            product.refGetPath(),
+            product,
             valueDate
         );
         if(positionCredit == null) {
@@ -797,12 +663,12 @@ public class Depots {
                "Can not get/create credit depot position"
            );                                                
         }
-        DataproviderObject_1_0 positionDebit = this.getAndCreateDepotPosition(
-            depotEntityIdentity,
+        DepotPosition positionDebit = this.getAndCreateDepotPosition(
+            depotEntity,
             depotNumberDebit,
-            depotDebitIdentity,
+            depotDebit,
             positionName,
-            product.refGetPath(),
+            product,
             valueDate
         );
         if(positionDebit == null) {
@@ -812,45 +678,42 @@ public class Depots {
                "Can not get/create debit depot position"
            );                                                
         }
-        DataproviderObject_1_0 compoundBooking = this.createCreditDebitBooking(
-            depotEntityIdentity,
+        return this.createCreditDebitBooking(
+            depotEntity,
             valueDate,
             bookingType,
             quantity,            
             bookingTextName,
-            bookingTextIdentity,
-            positionCredit.path(),
-            positionDebit.path(),
-            null,
-            originIdentity,
-            reversalOfIdentity
+            bookingText,
+            positionCredit,
+            positionDebit,
+            origin,
+            reversalOf,
+            errors
         );
-        return compoundBooking == null
-            ? null
-            : (CompoundBooking)this.backend.getDelegatingPkg().refObject(compoundBooking.path().toXri());
     }
     
     //-----------------------------------------------------------------------
     public CompoundBooking createBookingByPositionName(
-        Path depotEntityIdentity,
+        DepotEntity depotEntity,
         Date valueDate,
         short bookingType,
         BigDecimal quantity,
         String bookingTextName,
-        Path bookingTextIdentity,
+        BookingText bookingText,
         String positionName,
         String depotNumberCredit,
-        Path depotCreditIdentity,
+        Depot depotCredit,
         String depotNumberDebit,
-        Path depotDebitIdentity,
-        Path originIdentity,
-        Path reversalOfIdentity,
+        Depot depotDebit,
+        BookingOrigin origin,
+        CompoundBooking reversalOf,
         List<String> errors
     ) throws ServiceException {
-        DataproviderObject_1_0 positionCredit = this.getAndCreateDepotPosition(
-            depotEntityIdentity,
+        DepotPosition positionCredit = this.getAndCreateDepotPosition(
+            depotEntity,
             depotNumberCredit,
-            depotCreditIdentity,
+            depotCredit,
             positionName,
             null,
             valueDate
@@ -862,10 +725,10 @@ public class Depots {
                "Can not get/create credit depot position"
            );                                                
         }
-        DataproviderObject_1_0 positionDebit = this.getAndCreateDepotPosition(
-            depotEntityIdentity,
+        DepotPosition positionDebit = this.getAndCreateDepotPosition(
+            depotEntity,
             depotNumberDebit,
-            depotDebitIdentity,
+            depotDebit,
             positionName,
             null,
             valueDate
@@ -877,56 +740,43 @@ public class Depots {
                "Can not get/create debit depot position"
            );                                                
         }
-        DataproviderObject_1_0 compoundBooking = this.createCreditDebitBooking(
-            depotEntityIdentity,
+        return this.createCreditDebitBooking(
+            depotEntity,
             valueDate,
             bookingType,
             quantity,            
             bookingTextName,
-            bookingTextIdentity,
-            positionCredit.path(),
-            positionDebit.path(),
-            null,
-            originIdentity,
-            reversalOfIdentity
+            bookingText,
+            positionCredit,
+            positionDebit,
+            origin,
+            reversalOf,
+            errors
         );
-        return compoundBooking == null
-            ? null
-            : (CompoundBooking)this.backend.getDelegatingPkg().refObject(compoundBooking.path().toXri());
     }
     
     //-----------------------------------------------------------------------
     public void refreshReport(
-        Path depotIdentity,
-        DataproviderObject_1_0 report,
-        DataproviderObject_1_0 reportPreviousPeriod
+        Depot depot,
+        DepotReport report,
+        DepotReport reportPreviousPeriod
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depot);
+    	org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+    		(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+    			depot.refGetPath().getPrefix(5)
+    		);
         // Refresh only only draft reports
-        if(
-            (report.values("isDraft").size() > 0) &&
-            ((Boolean)report.values("isDraft").get(0)).booleanValue()
-        ) {
-            this.backend.removeAll(
-                report.path().getChild("itemPosition"),
-                null,
-                0,
-                Integer.MAX_VALUE,                
-                null
-            );
-            DataproviderObject_1_0 bookingPeriod = this.backend.retrieveObject(
-                (Path)report.values("bookingPeriod").get(0)
-            );
-            String periodStartsAt = (String)bookingPeriod.values("periodStartsAt").get(0);
+        if(report.isDraft()) {
+        	Collection<DepotReportItemPosition> itemPositions = report.getItemPosition();
+        	for(DepotReportItemPosition itemPosition: itemPositions) {
+        		itemPosition.refDelete();        		
+        	}        	
+            BookingPeriod bookingPeriod = report.getBookingPeriod();
+            Date periodStartsAt = bookingPeriod.getPeriodStartsAt();
             // Create a position item for all depot positions
-            List<DataproviderObject_1_0> positions =  this.backend.getDelegatingRequests().addFindRequest(
-                depotIdentity.getChild("position"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-            for(DataproviderObject_1_0 position: positions) {
+            Collection<DepotPosition> positions =  depot.getPosition();
+            for(DepotPosition position: positions) {
                 // Set beginning of report balances to end of period balances of previous report 
                 BigDecimal balanceBop = null;
                 BigDecimal balanceDebitBop = null;
@@ -936,30 +786,18 @@ public class Depots {
                 BigDecimal balanceSimple = null;
                 BigDecimal balanceSimpleBop = null;
                 if(reportPreviousPeriod != null) {
-                    List<DataproviderObject_1_0> items = this.backend.getDelegatingRequests().addFindRequest(
-                        reportPreviousPeriod.path().getChild("itemPosition"),
-                        new FilterProperty[]{
-                            new FilterProperty(
-                                Quantors.THERE_EXISTS,
-                                "position",
-                                FilterOperators.IS_IN,
-                                position.path()
-                            )
-                        },
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );
+                	DepotReportItemPositionQuery itemPositionQuery = (DepotReportItemPositionQuery)pm.newQuery(DepotReportItemPosition.class);
+                	itemPositionQuery.thereExistsPosition().equalTo(position);
+                	List<DepotReportItemPosition> items = reportPreviousPeriod.getItemPosition(itemPositionQuery);
                     if(!items.isEmpty()) {
-                        DataproviderObject_1_0 itemPosition = items.iterator().next();
-                        balanceBop = (BigDecimal)itemPosition.values("balance").get(0);                        
-                        balanceCreditBop = (BigDecimal)itemPosition.values("balanceCredit").get(0);
-                        balanceDebitBop = (BigDecimal)itemPosition.values("balanceDebit").get(0);
-                        balanceCredit = (BigDecimal)itemPosition.values("balanceCredit").get(0);
-                        balanceDebit = (BigDecimal)itemPosition.values("balanceDebit").get(0);
-                        balanceSimpleBop = (BigDecimal)itemPosition.values("balanceSimple").get(0);                                                
-                        balanceSimple = (BigDecimal)itemPosition.values("balanceSimple").get(0);
+                        DepotReportItemPosition itemPosition = items.iterator().next();
+                        balanceBop = itemPosition.getBalance();                        
+                        balanceCreditBop = itemPosition.getBalanceCredit();
+                        balanceDebitBop = itemPosition.getBalanceDebit();
+                        balanceCredit = itemPosition.getBalanceCredit();
+                        balanceDebit = itemPosition.getBalanceDebit();
+                        balanceSimpleBop = itemPosition.getBalanceSimple();                                                
+                        balanceSimple = itemPosition.getBalanceSimple();
                     }
                 }
                 balanceBop = balanceBop == null ? new BigDecimal(0) : balanceBop;
@@ -970,177 +808,119 @@ public class Depots {
                 balanceSimpleBop = balanceSimpleBop == null ? new BigDecimal(0) : balanceSimpleBop;
                 balanceSimple = balanceSimple == null ? new BigDecimal(0) : balanceSimple;
                 // Create depot report item for position
-                DataproviderObject itemPosition = new DataproviderObject(
-                    report.path().getDescendant(new String[]{"itemPosition", this.backend.getUidAsString()})
+                DepotReportItemPosition itemPosition = pm.newInstance(DepotReportItemPosition.class);
+                itemPosition.setPositionName(position.getName());
+                itemPosition.setValueDate(periodStartsAt);
+                itemPosition.setPosition(position);
+                itemPosition.setBalanceBop(balanceBop);
+                itemPosition.setBalanceCreditBop(balanceCreditBop);
+                itemPosition.setBalanceDebitBop(balanceDebitBop);
+                itemPosition.setBalanceSimpleBop(balanceSimpleBop);
+                report.addItemPosition(
+                	false,
+                	this.getUidAsString(),
+                	itemPosition
                 );
-                itemPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:DepotReportItemPosition"
-                );
-                itemPosition.values("positionName").addAll(
-                    position.values("name")
-                );
-                itemPosition.values("valueDate").add(periodStartsAt);
-                itemPosition.values("position").add(position.path());
-                itemPosition.values("balanceBop").add(balanceBop);
-                itemPosition.values("balanceCreditBop").add(balanceCreditBop);
-                itemPosition.values("balanceDebitBop").add(balanceDebitBop);
-                itemPosition.values("balanceSimpleBop").add(balanceSimpleBop);
-                // Create it
-                this.backend.getDelegatingRequests().addCreateRequest(itemPosition);
-
                 // Get single bookings for this position item
-                List<DataproviderObject_1_0> singleBookings = this.backend.getDelegatingRequests().addFindRequest(
-                    itemPosition.path().getChild("singleBooking"),
-                    null,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    null,
-                    0,
-                    Integer.MAX_VALUE,
-                    Directions.ASCENDING
-                );                                    
-                // Get simple bookings for this position item
-                List<DataproviderObject_1_0> simpleBookings = this.backend.getDelegatingRequests().addFindRequest(
-                    itemPosition.path().getChild("simpleBooking"),
-                    null,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    null,
-                    0,
-                    Integer.MAX_VALUE,
-                    Directions.ASCENDING
-                );                    
+                SingleBookingQuery singleBookingQuery = (SingleBookingQuery)pm.newQuery(SingleBooking.class);
+                singleBookingQuery.thereExistsPosition().equalTo(position);                
+                List<SingleBooking> singleBookings = depotSegment.getBooking(singleBookingQuery);
                 // Sum up single bookings
-                for(DataproviderObject_1_0 singleBooking: singleBookings) {
+                for(SingleBooking singleBooking: singleBookings) {
                     // Credit booking
-                    if("org:opencrx:kernel:depot1:CreditBooking".equals(singleBooking.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-                        BigDecimal quantityCredit = (BigDecimal)singleBooking.values("quantityCredit").get(0);
+                    if(singleBooking instanceof CreditBooking) {
+                        BigDecimal quantityCredit = ((CreditBooking)singleBooking).getQuantityCredit();
                         balanceCredit = balanceCredit.add(quantityCredit);
                     }
                     // Debit booking
-                    else {
-                        BigDecimal quantityDebit = (BigDecimal)singleBooking.values("quantityDebit").get(0);
+                    else if(singleBooking instanceof DebitBooking) {
+                        BigDecimal quantityDebit = ((DebitBooking)singleBooking).getQuantityDebit();
                         balanceDebit = balanceDebit.add(quantityDebit);
                     }
                 }
+                // Get simple bookings for this position item
+                SimpleBookingQuery simpleBookingQuery = (SimpleBookingQuery)pm.newQuery(SimpleBooking.class);
+                simpleBookingQuery.thereExistsPosition().equalTo(position);
+                List<SimpleBooking> simpleBookings = itemPosition.getSimpleBooking(simpleBookingQuery);
                 // Sum up simple bookings
-                for(DataproviderObject_1_0 simpleBooking: simpleBookings) {
-                    BigDecimal quantity = (BigDecimal)simpleBooking.values("quantity").get(0);
+                for(SimpleBooking simpleBooking: simpleBookings) {
+                    BigDecimal quantity = simpleBooking.getQuantity();
                     balanceSimple = balanceSimple.add(quantity);
                 }
                 // Update balances
-                itemPosition = this.backend.retrieveObjectForModification(
-                    itemPosition.path()
-                );
-                itemPosition.values("balance").add(balanceCredit.subtract(balanceDebit));
-                itemPosition.values("balanceCredit").add(balanceCredit);
-                itemPosition.values("balanceDebit").add(balanceDebit);
-                itemPosition.values("balanceSimple").add(balanceSimple);
+                itemPosition.setBalance(balanceCredit.subtract(balanceDebit));
+                itemPosition.setBalanceCredit(balanceCredit);
+                itemPosition.setBalanceDebit(balanceDebit);
+                itemPosition.setBalanceSimple(balanceSimple);
             }            
         }
     }
     
     //-----------------------------------------------------------------------
     public void assertReports(
-        Path depotIdentity,
+        Depot depot,
         short bookingStatusThreshold
     ) throws ServiceException {
-        
-        // Get booking periods
-        List bookingPeriods = this.backend.getDelegatingRequests().addFindRequest(
-                depotIdentity.getPrefix(7).getChild("bookingPeriod"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            new AttributeSpecifier[]{
-                new AttributeSpecifier("periodStartsAt", 0, Orders.ASCENDING)
-            },
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depot);    	
+        DepotEntity depotEntity = (DepotEntity)pm.getObjectById(
+        	depot.refGetPath().getPrefix(7)
         );
-        DataproviderObject_1_0 reportPreviousPeriod = null;
-        DataproviderObject_1_0 latestReport = null;
-        
+        BookingPeriodQuery bookingPeriodQuery = (BookingPeriodQuery)pm.newQuery(BookingPeriod.class);
+        bookingPeriodQuery.orderByPeriodStartsAt().ascending();
+        List<BookingPeriod> bookingPeriods = depotEntity.getBookingPeriod(bookingPeriodQuery);
+        DepotReport reportPreviousPeriod = null;
+        DepotReport latestReport = null;        
         // Assert report for each booking period
-        for(
-            Iterator i = bookingPeriods.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 bookingPeriod = (DataproviderObject_1_0)i.next();
-            List reports = this.backend.getDelegatingRequests().addFindRequest(
-                depotIdentity.getChild("report"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "bookingPeriod",
-                        FilterOperators.IS_IN,
-                        bookingPeriod.path()
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            ); 
-            DataproviderObject_1_0 report = null;
+        for(BookingPeriod bookingPeriod: bookingPeriods) {
+        	DepotReportQuery depotReportQuery = (DepotReportQuery)pm.newQuery(DepotReport.class);
+        	depotReportQuery.thereExistsBookingPeriod().equalTo(bookingPeriod);
+        	List<DepotReport> reports = depot.getReport(depotReportQuery);
+            DepotReport report = null;
             if(!reports.isEmpty()) {
-                report = (DataproviderObject_1_0)reports.iterator().next();
+                report = reports.iterator().next();
             }
             else {
-                DataproviderObject newReport = new DataproviderObject(
-                    depotIdentity.getDescendant(new String[]{"report", this.backend.getUidAsString()})
-                );
-                newReport.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:DepotReport"
-                );
-                newReport.values("name").addAll(
-                    bookingPeriod.values("name")
-                );
-                newReport.values("description").addAll(
-                    bookingPeriod.values("description")
-                );
-                newReport.values("isDraft").add(
-                    Boolean.TRUE
-                );
-                newReport.values("bookingStatusThreshold").add(
-                    new Short(bookingStatusThreshold)
-                );
-                newReport.values("bookingPeriod").add(
-                    bookingPeriod.path()
-                );                
-                this.backend.getDelegatingRequests().addCreateRequest(
-                    newReport
+                DepotReport newReport = pm.newInstance(DepotReport.class);
+                newReport.setName(bookingPeriod.getName());
+                newReport.setDescription(bookingPeriod.getDescription());
+                newReport.setDraft(Boolean.TRUE);
+                newReport.setBookingStatusThreshold(new Short(bookingStatusThreshold));
+                newReport.setBookingPeriod(bookingPeriod);
+                depot.addReport(
+                	false,
+                	this.getUidAsString(),
+                	newReport
                 );
                 report = newReport;
             }
             // Latest report
-            String currentDate = DateFormat.getInstance().format(new Date());
+            Date currentDate = new Date();
             if(
-               (currentDate.compareTo(((String)bookingPeriod.values("periodStartsAt").get(0))) >= 0) &&
-               ((bookingPeriod.values("periodEndsAtExclusive").size() == 0) || (currentDate.compareTo(((String)bookingPeriod.values("periodEndsAtExclusive").get(0))) < 0))
+               (currentDate.compareTo(bookingPeriod.getPeriodStartsAt()) >= 0) &&
+               ((bookingPeriod.getPeriodEndsAtExclusive() == null) || (currentDate.compareTo(bookingPeriod.getPeriodEndsAtExclusive()) < 0))
             ) {
                 latestReport = report;
             }
             // Refresh
             this.refreshReport(
-                depotIdentity,
+                depot,
                 report,
                 reportPreviousPeriod
             );            
             reportPreviousPeriod = report;
         }
         if(latestReport != null) {
-            DataproviderObject modifiableDepot = this.backend.retrieveObjectForModification(
-                depotIdentity
-            );
-            modifiableDepot.clearValues("latestReport").add(latestReport.path());
+            depot.setLatestReport(latestReport);
         }
     }
     
     //-----------------------------------------------------------------------
     public CompoundBooking cancelCompoundBooking(
-        CompoundBooking compoundBooking,
+        CompoundBooking cb,
         List<String> errors
     ) throws ServiceException {
-        boolean isProcessed = compoundBooking.getBookingStatus() == BOOKING_STATUS_PROCESSED;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(cb);    	
+        boolean isProcessed = cb.getBookingStatus() == BOOKING_STATUS_PROCESSED;
         if(!isProcessed) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1148,9 +928,9 @@ public class Depots {
                 "Booking status must be processed. Cancel is not allowed."
             );                                                
         }
-        short bookingType = compoundBooking.getBookingType() > 0
-            ? compoundBooking.getBookingType()
-            : BOOKING_TYPE_STANDARD;
+        short bookingType = cb.getBookingType() > 0 ? 
+        	cb.getBookingType() : 
+        	BOOKING_TYPE_STANDARD;
         // Can not cancel reversal bookings
         if(bookingType == BOOKING_TYPE_REVERSAL) {
             throw new ServiceException(
@@ -1160,114 +940,83 @@ public class Depots {
             );                        
         }
         // Check whether compound booking already has a reversal booking
-        List compoundBookings = this.backend.getDelegatingRequests().addFindRequest(
-            compoundBooking.refGetPath().getParent(),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "reversalOf",
-                    FilterOperators.IS_IN,
-                    compoundBooking.refGetPath()
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+        		cb.refGetPath().getParent().getParent()
+        	);
+        CompoundBookingQuery cbQuery = (CompoundBookingQuery)pm.newQuery(CompoundBooking.class);
+        cbQuery.thereExistsReversalOf().equalTo(cb);
+        List<CompoundBooking> compoundBookings = depotSegment.getCb(cbQuery);
         if(!compoundBookings.isEmpty()) {
-            DataproviderObject_1_0 reversal = (DataproviderObject_1_0)compoundBookings.iterator().next();
+        	CompoundBooking reversal = compoundBookings.iterator().next();
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_ALREADY_HAS_REVERSAL_BOOKING,
                 "Compound booking already cancelled",
-                new BasicException.Parameter("param0", reversal.values("name").get(0) + " / " + reversal.values("bookingDate").get(0))
+                new BasicException.Parameter("param0", reversal.getName() + " / " + reversal.getBookingDate())
             );                                    
         }
-
         // Create cancel compound booking
-        DataproviderObject cancelCompoundBooking = new DataproviderObject(
-            compoundBooking.refGetPath().getParent().getChild(this.backend.getUidAsString())
-        );
-        cancelCompoundBooking.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:depot1:CompoundBooking"
-        );        
-        if(compoundBooking.getName() != null) {
-            cancelCompoundBooking.values("name").add(compoundBooking.getName());
+        CompoundBooking cancelCb = pm.newInstance(CompoundBooking.class);
+        cancelCb.refInitialize(false, false);
+        if(cb.getName() != null) {
+            cancelCb.setName(cb.getName());
         }
-        if(compoundBooking.getDescription() != null) {
-            cancelCompoundBooking.values("description").add(compoundBooking.getDescription());
+        if(cb.getDescription() != null) {
+            cancelCb.setDescription(cb.getDescription());
         }
-        cancelCompoundBooking.values("bookingDate").add(DateFormat.getInstance().format(new Date()));
-        cancelCompoundBooking.values("bookingType").add(new Short(BOOKING_TYPE_REVERSAL));
-        cancelCompoundBooking.values("bookingStatus").add(new Short(BOOKING_STATUS_PENDING));
-        cancelCompoundBooking.values("reversalOf").add(compoundBooking.refGetPath());
-        this.backend.getDelegatingRequests().addCreateRequest(
-            cancelCompoundBooking
+        cancelCb.setBookingDate(new Date());
+        cancelCb.setBookingType(new Short(BOOKING_TYPE_REVERSAL));
+        cancelCb.setBookingStatus(new Short(BOOKING_STATUS_PENDING));
+        cancelCb.setReversalOf(cb);
+        depotSegment.addCb(
+        	false,
+        	this.getUidAsString(),
+        	cancelCb
         );
-
         // Create cancel bookings
-        List bookings = this.backend.getDelegatingRequests().addFindRequest(
-            compoundBooking.refGetPath().getPrefix(compoundBooking.refGetPath().size()-2).getChild("booking"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "cb",
-                    FilterOperators.IS_IN,
-                    compoundBooking.refGetPath()
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );
-        for(
-            Iterator i = bookings.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 booking = (DataproviderObject_1_0)i.next();
-            DataproviderObject cancelBooking = new DataproviderObject(
-                booking.path().getParent().getChild(this.backend.getUidAsString())
-            );
-            if("org:opencrx:kernel:depot1:CreditBooking".equals(booking.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-                cancelBooking.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:DebitBooking"
-                );
-                cancelBooking.values("quantityDebit").addAll(booking.values("quantityCredit"));
-            }
-            else if("org:opencrx:kernel:depot1:DebitBooking".equals(booking.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-                cancelBooking.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:CreditBooking"
-                );
-                cancelBooking.values("quantityCredit").addAll(booking.values("quantityDebit"));                
-            }
-            cancelBooking.values("name").addAll(booking.values("name"));
-            cancelBooking.values("description").addAll(booking.values("description"));
-            cancelBooking.values("valueDate").addAll(booking.values("valueDate"));
-            cancelBooking.values("bookingDate").add(DateFormat.getInstance().format(new Date()));
-            cancelBooking.values("position").addAll(booking.values("position"));
-            this.testForOpenPosition(
-                this.backend.parseDate((String)cancelBooking.values("valueDate").get(0)),
+        SingleBookingQuery singleBookingQuery = (SingleBookingQuery)pm.newInstance(SingleBooking.class);
+        singleBookingQuery.thereExistsCb().equalTo(cb);
+        List<SingleBooking> bookings = depotSegment.getBooking(singleBookingQuery);
+        for(SingleBooking booking: bookings) {
+        	SingleBooking cancelBooking = null;
+        	if(booking instanceof CreditBooking) {
+        		cancelBooking = pm.newInstance(DebitBooking.class);
+        		cancelBooking.refInitialize(false, false);
+        		((DebitBooking)cancelBooking).setQuantityDebit(((CreditBooking)booking).getQuantityCredit());
+        	}
+        	else if(booking instanceof DebitBooking){
+        		cancelBooking = pm.newInstance(CreditBooking.class);
+        		cancelBooking.refInitialize(false, false);
+        		((CreditBooking)cancelBooking).setQuantityCredit(((DebitBooking)booking).getQuantityDebit());
+        	}
+        	cancelBooking.setName(booking.getName());
+        	cancelBooking.setDescription(booking.getDescription());
+        	cancelBooking.setValueDate(booking.getValueDate());
+        	cancelBooking.setBookingDate(new Date());
+        	cancelBooking.setPosition(booking.getPosition());
+        	this.testForOpenPosition(
+                cancelBooking.getValueDate(),
                 BOOKING_TYPE_REVERSAL,
-                (Path)cancelBooking.values("position").get(0)
+                cancelBooking.getPosition()
             );
-            cancelBooking.values("bookingType").add(new Short(BOOKING_TYPE_REVERSAL));
-            cancelBooking.values("bookingStatus").add(new Short(BOOKING_STATUS_PENDING));
-            cancelBooking.values("cb").add(cancelCompoundBooking.path());
-            this.backend.getDelegatingRequests().addCreateRequest(
-                cancelBooking
+            cancelBooking.setBookingType(new Short(BOOKING_TYPE_REVERSAL));
+            cancelBooking.setBookingStatus(new Short(BOOKING_STATUS_PENDING));
+            cancelBooking.setCb(cancelCb);
+            depotSegment.addBooking(
+            	false,
+            	this.getUidAsString(),
+            	cancelBooking
             );
         }
-        return cancelCompoundBooking == null
-            ? null
-            : (CompoundBooking)this.backend.getDelegatingPkg().refObject(cancelCompoundBooking.path().toXri());
+        return cancelCb;
     }
 
     //-----------------------------------------------------------------------
     public void acceptCompoundBooking(
         CompoundBooking compoundBooking
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(compoundBooking);    	
         boolean isPending = compoundBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
         if(!isPending) {
             throw new ServiceException(
@@ -1276,18 +1025,17 @@ public class Depots {
                 "Booking status must be pending. Accept is not allowed."
             );                                                
         }
-        String acceptedBy = (String)this.backend.getServiceHeader().getPrincipalChain().get(0) + " @ " + DateFormat.getInstance().format(new Date());
-        DataproviderObject modifiedCompoundBooking = this.backend.retrieveObjectForModification(
-            compoundBooking.refGetPath()
-        );
-        modifiedCompoundBooking.values("acceptedBy").add(acceptedBy);
+        List<String> principals = UserObjects.getPrincipalChain(pm);
+        String acceptedBy = principals.isEmpty() ? "NA" : principals.get(0) + " @ " + DateFormat.getInstance().format(new Date());
+        compoundBooking.getAcceptedBy().add(acceptedBy);
     }
     
     //-----------------------------------------------------------------------
     public void finalizeCompoundBooking(
-        CompoundBooking compoundBooking
+        CompoundBooking cb
     ) throws ServiceException {
-        boolean isPending = compoundBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(cb);    	
+        boolean isPending = cb.getBookingStatus() == BOOKING_STATUS_PENDING;
         if(!isPending) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1295,53 +1043,37 @@ public class Depots {
                 "Booking status must be pending. Finalize is not allowed."
             );                                                
         }
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+        		cb.refGetPath().getParent().getParent()
+        	);        
         // Process bookings
-        List bookings = this.backend.getDelegatingRequests().addFindRequest(
-            compoundBooking.refGetPath().getPrefix(compoundBooking.refGetPath().size()-2).getChild("booking"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "cb",
-                    FilterOperators.IS_IN,
-                    compoundBooking.refGetPath()
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );
-        for(
-            Iterator i = bookings.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 booking = (DataproviderObject_1_0)i.next();
-            this.testForOpenPosition(
-                this.backend.parseDate((String)booking.values("valueDate").get(0)),
-                ((Number)booking.values("bookingType").get(0)).shortValue(),
-                (Path)booking.values("position").get(0)
+        SingleBookingQuery singleBookingQuery = (SingleBookingQuery)pm.newQuery(SingleBooking.class);
+        singleBookingQuery.thereExistsCb().equalTo(cb);
+        List<SingleBooking> bookings = depotSegment.getBooking(singleBookingQuery);
+        for(SingleBooking booking: bookings) {
+        	this.testForOpenPosition(
+                booking.getValueDate(),
+                booking.getBookingType(),
+                booking.getPosition()
             );
-            DataproviderObject finalizedBooking = this.backend.retrieveObjectForModification(
-                booking.path()
-            );
-            finalizedBooking.clearValues("bookingStatus").add(new Short(BOOKING_STATUS_PROCESSED));
+            booking.setBookingStatus(new Short(BOOKING_STATUS_PROCESSED));
         }
-        // Process compound booking
-        DataproviderObject finalizedCompoundBooking = this.backend.retrieveObjectForModification(
-            compoundBooking.refGetPath()
-        );
-        finalizedCompoundBooking.clearValues("bookingStatus").add(new Short(BOOKING_STATUS_PROCESSED));        
+        cb.setBookingStatus(new Short(BOOKING_STATUS_PROCESSED));        
     }
 
     //-----------------------------------------------------------------------
     public void removeCompoundBooking(
-        Path compoundBookingIdentity
+        CompoundBooking compoundBooking,
+        boolean preDelete
     ) throws ServiceException {
-        DataproviderObject_1_0 compoundBooking = this.backend.retrieveObject(compoundBookingIdentity);
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(compoundBooking);    	
+    	org.opencrx.kernel.depot1.jmi1.Segment depotSegment = 
+    		(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(
+    			compoundBooking.refGetPath().getPrefix(5)
+    		);
         // isPending
-        boolean isPending = compoundBooking.values("bookingStatus").size() > 0
-            ? ((Number)compoundBooking.values("bookingStatus").get(0)).shortValue() == BOOKING_STATUS_PENDING
-            : false;
+        boolean isPending = compoundBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
         if(!isPending) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1350,9 +1082,7 @@ public class Depots {
             );                                                
         }
         // isLocked
-        boolean isLocked = compoundBooking.values("isLocked").size() > 0
-            ? ((Boolean)compoundBooking.values("isLocked").get(0)).booleanValue()
-            : false;
+        boolean isLocked = compoundBooking.isLocked();
         if(isLocked) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1361,50 +1091,23 @@ public class Depots {
             );                                                
         }
         // Delete bookings
-        List bookings = this.backend.getDelegatingRequests().addFindRequest(
-            compoundBookingIdentity.getPrefix(compoundBookingIdentity.size()-2).getChild("booking"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "cb",
-                    FilterOperators.IS_IN,
-                    compoundBookingIdentity
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
-        );
-        List bookingIdentities = new ArrayList(); 
-        for(
-            Iterator i = bookings.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 booking = (DataproviderObject_1_0)i.next();
-            bookingIdentities.add(booking.path());
+        SingleBookingQuery bookingQuery = (SingleBookingQuery)pm.newQuery(SingleBooking.class);
+        bookingQuery.thereExistsCb().equalTo(compoundBooking);
+        List<SingleBooking> bookings = depotSegment.getBooking(bookingQuery);
+        for(SingleBooking booking: bookings) {
+        	booking.refDelete();
         }
-        for(
-            Iterator i = bookingIdentities.iterator();
-            i.hasNext();
-        ) {
-            Path bookingIdentity = (Path)i.next();
-            this.backend.removeObject(bookingIdentity);
+        if(!preDelete) {
+        	compoundBooking.refDelete();
         }
-        
-        // Delete compound booking
-        this.backend.removeObject(compoundBookingIdentity);       
     }
 
     //-----------------------------------------------------------------------
     public void removeSimpleBooking(
-        Path simpleBookingIdentity
+        SimpleBooking simpleBooking,
+        boolean preDelete
     ) throws ServiceException {
-        DataproviderObject_1_0 simpleBooking = this.backend.retrieveObject(simpleBookingIdentity);
-        // isPending
-        boolean isPending = simpleBooking.values("bookingStatus").size() > 0
-            ? ((Number)simpleBooking.values("bookingStatus").get(0)).shortValue() == BOOKING_STATUS_PENDING
-            : false;
+        boolean isPending = simpleBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
         if(!isPending) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1412,153 +1115,159 @@ public class Depots {
                 "Booking status is not pending. Delete is not allowed."
             );                                                
         }
-        // Delete simple booking
-        this.backend.removeObject(simpleBookingIdentity);       
+        if(!preDelete) {
+        	simpleBooking.refDelete();
+        }
     }
 
     //-----------------------------------------------------------------------
     public void removeSingleBooking(
-        Path bookingIdentity
+        SingleBooking singleBooking,
+        boolean preDelete
     ) throws ServiceException {
-        throw new ServiceException(
-            OpenCrxException.DOMAIN,
-            OpenCrxException.DEPOT_CAN_NOT_REMOVE_BOOKING,
-            "Can not delete bookings"
-        );                                                
+        boolean isPending = singleBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
+        if(!isPending) {
+            throw new ServiceException(
+                OpenCrxException.DOMAIN,
+                OpenCrxException.BOOKING_STATUS_MUST_BE_PENDING,
+                "Booking status is not pending. Delete is not allowed."
+            );                                                
+        }
+        if(!preDelete) {
+        	singleBooking.refDelete();
+        }
     }
 
     //-----------------------------------------------------------------------
     public boolean hasBookings(
-        Path bookingElementIdentity
+        Path bookingElementIdentity,
+        PersistenceManager pm
     ) throws ServiceException {
-        Path segmentIdentity = bookingElementIdentity.getPrefix(5);
-        Path positionPattern = new Path(
+        Path depotSegmentIdentity = bookingElementIdentity.getPrefix(5);
+        Path identityPattern = new Path(
             "xri:@openmdx:org.opencrx.kernel.depot1" + 
             "/provider/" + bookingElementIdentity.get(2) + 
             "/segment/" + bookingElementIdentity.get(4) +
             "/entity/" + bookingElementIdentity.get(6)
         );        
-        positionPattern.add("depotHolder");
+        identityPattern.add("depotHolder");
         if(bookingElementIdentity.size() > 8) {
-            positionPattern.add(bookingElementIdentity.get(8));
-            positionPattern.add("depot");
+            identityPattern.add(bookingElementIdentity.get(8));
+            identityPattern.add("depot");
             if(bookingElementIdentity.size() > 10) {               
-                positionPattern.add(bookingElementIdentity.get(10));
-                positionPattern.add("position");
+                identityPattern.add(bookingElementIdentity.get(10));
+                identityPattern.add("position");
                 if(bookingElementIdentity.size() > 12) {               
-                    positionPattern.add(bookingElementIdentity.get(12));
+                    identityPattern.add(bookingElementIdentity.get(12));
                 }
                 else {
-                    positionPattern.add("%");                    
+                    identityPattern.add(":*");                    
                 }
             }
             else {
-                positionPattern.add("%");
+                identityPattern.add(":*");
             }
         }
         else {
-            positionPattern.add("%");
+            identityPattern.add(":*");
         }
-        List bookings = this.backend.getDelegatingRequests().addFindRequest(
-            segmentIdentity.getPrefix(5).getChild("extent"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "identity",
-                    FilterOperators.IS_LIKE,
-                    segmentIdentity.getDescendant(
-                        new String[]{"booking", ":*"}
-                    )
-                ),
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "position",
-                    FilterOperators.IS_LIKE,
-                    positionPattern
-                )
-            },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING                    
+        SingleBookingQuery bookingQuery = (SingleBookingQuery)pm.newQuery(SingleBooking.class);
+        bookingQuery.identity().like(
+        	depotSegmentIdentity.getDescendant(
+                new String[]{"booking", ":*"}
+            ).toXRI()
         );
-        return bookings.size() > 0;
+        bookingQuery.thereExistsPosition().elementOf(
+        	identityPattern
+        );
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment =
+        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(depotSegmentIdentity);
+        List<SingleBooking> bookings = depotSegment.getExtent(bookingQuery);
+        return !bookings.isEmpty();
     }
     
     //-----------------------------------------------------------------------
     public void removeDepotEntity(
-        Path depotEntityIdentity
+        DepotEntity depotEntity,
+        boolean preDelete
     ) throws ServiceException {
-        if(this.hasBookings(depotEntityIdentity)) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotEntity);    	
+        if(this.hasBookings(depotEntity.refGetPath(), pm)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_ENTITY_HAS_BOOKINGS,
                 "Depot entity has bookings."
             );                                                                        
         }
-        this.backend.removeObject(
-            depotEntityIdentity
-        );
+        if(!preDelete) {
+        	depotEntity.refDelete();
+        }
     }
     
     //-----------------------------------------------------------------------
-    public void removeDepotContract(
-        Path depotContractIdentity
+    public void removeDepotHolder(
+        DepotHolder depotHolder,
+        boolean preDelete
     ) throws ServiceException {
-        if(this.hasBookings(depotContractIdentity)) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotHolder);    	
+        if(this.hasBookings(depotHolder.refGetPath(), pm)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_CONTRACT_HAS_BOOKINGS,
                 "Depot entity has bookings."
             );                                                                        
         }
-        this.backend.removeObject(
-            depotContractIdentity
-        );
+        if(!preDelete) {
+        	depotHolder.refDelete();
+        }
     }
     
     //-----------------------------------------------------------------------
     public void removeDepot(
-        Path depotIdentity
+        Depot depot,
+        boolean preDelete
     ) throws ServiceException {
-        if(this.hasBookings(depotIdentity)) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depot);    	
+        if(this.hasBookings(depot.refGetPath(), pm)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_HAS_BOOKINGS,
                 "Depot entity has bookings."
             );                                                                        
         }
-        this.backend.removeObject(
-            depotIdentity
-        );
+        if(!preDelete) {
+        	depot.refDelete();
+        }
     }
     
     //-----------------------------------------------------------------------
     public void removeDepotPosition(
-        Path depotPositionIdentity
+        DepotPosition depotPosition,
+        boolean preDelete
     ) throws ServiceException {
-        if(this.hasBookings(depotPositionIdentity)) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotPosition);    	
+        if(this.hasBookings(depotPosition.refGetPath(), pm)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_HAS_BOOKINGS,
                 "Depot entity has bookings."
             );                                                                        
         }
-        this.backend.removeObject(
-            depotPositionIdentity
-        );
+        if(!preDelete) {
+        	depotPosition.refDelete();
+        }
     }
     
     //-----------------------------------------------------------------------
     public Depot openDepot(
-        Path depotHolderIdentity,
+        DepotHolder depotHolder,
         String name,
         String description,
         String depotNumber,
         Date openingDate,
-        Path depotTypeIdentity,
-        Path depotGroupIdentity,
-        List errors
+        DepotType depotType,
+        DepotGroup depotGroup,
+        List<String> errors
     ) throws ServiceException {
         if(depotNumber == null) {
             throw new ServiceException(
@@ -1567,47 +1276,43 @@ public class Depots {
                 "Depot number is required."
             );                                                            
         }
-        String depotNumberWithoutWhitespaces = this.stripWhitespaces(depotNumber);
-        DataproviderObject depot = new DataproviderObject(
-            depotHolderIdentity.getDescendant(new String[]{"depot", depotNumberWithoutWhitespaces.replace('/', ':')})            
-        );
-        depot.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:depot1:Depot"
-        );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotHolder);        
+        Depot depot = pm.newInstance(Depot.class);
+        depot.refInitialize(false, false);
         if(name != null) {
-            depot.values("name").add(name);
+            depot.setName(name);
         }
         if(description != null) {
-            depot.values("description").add(description);
+            depot.setDescription(description);
         }
-        depot.values("depotNumber").add(depotNumber);        
-        depot.values("openingDate").add(
-            openingDate == null
-                ? DateFormat.getInstance().format(new Date())
-                : DateFormat.getInstance().format(openingDate)
+        depot.setDepotNumber(depotNumber);        
+        depot.setOpeningDate(
+            openingDate == null ? 
+            	new Date() : 
+            	openingDate
         );
-        if(depotTypeIdentity != null) {
-            depot.values("depotType").add(depotTypeIdentity);
+        if(depotType != null) {
+            depot.getDepotType().add(depotType);
         }
-        if(depotGroupIdentity != null) {
-            depot.values("depotGroup").add(depotGroupIdentity);
+        if(depotGroup != null) {
+            depot.setDepotGroup(depotGroup);
         }
-        depot.values("isDefault").add(Boolean.FALSE);
-        depot.values("isLocked").add(Boolean.FALSE);
-        depot.values("allowPositionAutoCreate").add(Boolean.FALSE);
-        this.backend.createObject(
-            depot
+        depot.setDefault(Boolean.FALSE);
+        depot.setLocked(Boolean.FALSE);
+        depot.setAllowPositionAutoCreate(Boolean.FALSE);
+        depotHolder.addDepot(
+        	false,
+        	this.getUidAsString(),
+        	depot
         );
-        return depot == null
-            ? null
-            : (Depot)this.backend.getDelegatingPkg().refObject(depot.path().toXri());
+        return depot;
     }
     
     //-----------------------------------------------------------------------
     public void closeDepot(
         Depot depot,
         Date closingDate,
-        List errors
+        List<String> errors
     ) throws ServiceException {
         if(depot.getClosingDate() != null) {
             throw new ServiceException(
@@ -1616,289 +1321,90 @@ public class Depots {
                 "Depot is closed. Can not close."
             );                                                                        
         }
-        DataproviderObject closedDepot = this.backend.retrieveObjectForModification(
-            depot.refGetPath()
-        );
-        closedDepot.clearValues("isLocked").add(Boolean.TRUE);
-        closedDepot.clearValues("closingDate").add(
-            closingDate == null
-                ? DateFormat.getInstance().format(new Date())
-                : DateFormat.getInstance().format(closingDate)
+        depot.setLocked(Boolean.TRUE);
+        depot.setClosingDate(
+            closingDate == null ? 
+            	new Date() : 
+            	closingDate
         );        
     }
     
     //-----------------------------------------------------------------------
-    public DataproviderObject_1_0 openDepotPosition(
-        DataproviderObject_1_0 depot,
-        DataproviderObject_1_0 params
-    ) throws ServiceException {
-        String depotPositionQualifier = params.values("qualifier").size() > 0
-            ? (String)params.values("qualifier").get(0)
-            : null;
-        Path productRoleIdentity = params.values("productRole").size() > 0
-            ? (Path)params.values("productRole").get(0)
-            : null;        
-        Path productIdentity = params.values("product").size() > 0
-            ? (Path)params.values("product").get(0)
-            : null;
-        String positionName = params.values("name").size() > 0
-            ? (String)params.values("name").get(0)
-            : null;
-        String positionDescription = params.values("description").size() > 0
-            ? (String)params.values("description").get(0)
-            : null;
-        Date openingDate = params.values("openingDate").size() == 0
-            ? new Date()
-            : this.backend.parseDate((String)params.values("openingDate").get(0));            
-        Boolean isLocked = params.values("isLocked").size() == 0
-            ? Boolean.FALSE
-            : (Boolean)params.values("isLocked").get(0);            
-        return this.openDepotPosition(
-            depot,
-            positionName,
-            positionDescription,
-            openingDate,
-            depotPositionQualifier,
-            productRoleIdentity,
-            productIdentity,
-            isLocked
-        );
-    }
-    
-    //-----------------------------------------------------------------------
     public DepotPosition openDepotPosition(
-        Path depotIdentity,
+        Depot depot,
         String positionName,
         String positionDescription,
         Date openingDate,
         String depotPositionQualifier,
-        Path basedOnIdentity,
-        Path productIdentity,
+        Product product,
         Boolean isLocked
     ) throws ServiceException {
-        DataproviderObject_1_0 depotPosition = this.openDepotPosition(
-            this.backend.retrieveObject(
-                depotIdentity
-            ),
-            positionName,
-            positionDescription, 
-            openingDate, 
-            depotPositionQualifier, 
-            basedOnIdentity, 
-            productIdentity, 
-            isLocked
-        );
-        return depotPosition == null
-            ? null
-            : (DepotPosition)this.backend.getDelegatingPkg().refObject(depotPosition.path().toXri());
-    }
-    
-    //-----------------------------------------------------------------------
-    public DataproviderObject_1_0 openDepotPosition(
-        DataproviderObject_1_0 depot,
-        String positionName,
-        String positionDescription,
-        Date openingDate,
-        String depotPositionQualifier,
-        Path basedOnProductIdentity,
-        Path productIdentity,
-        Boolean isLocked
-    ) throws ServiceException {
-        DataproviderObject depotPosition = new DataproviderObject(
-            depot.path().getDescendant(new String[]{"position", this.backend.getUidAsString()})            
-        );
-        DataproviderObject_1_0 basedOnProduct = null; 
-        DataproviderObject_1_0 product = null; 
-        if(basedOnProductIdentity != null) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(depot);    	
+    	DepotPosition depotPosition = null;
+        if(product != null) {
             // Check whether position with given productRole already
             // exists. If yes, do not create new position.
-            List positions = null;
+            List<ProductDepotPosition> positions = null;
             if(depotPositionQualifier == null) {
-                positions = this.backend.getDelegatingRequests().addFindRequest(
-                    depot.path().getChild("position"),
-                    new FilterProperty[]{
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,
-                            "basedOn",
-                            FilterOperators.IS_IN,
-                            basedOnProductIdentity
-                        )
-                    },
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    0,
-                    Integer.MAX_VALUE,
-                    Directions.ASCENDING                    
-                );
+            	ProductDepotPositionQuery depotPositionQuery = (ProductDepotPositionQuery)pm.newQuery(DepotPosition.class);
+            	depotPositionQuery.thereExistsProduct().equalTo(product);
+            	positions = depot.getPosition(depotPositionQuery);
             }
             // qualifier and productRole must match
             else {
-                positions = this.backend.getDelegatingRequests().addFindRequest(
-                    depot.path().getChild("position"),
-                    new FilterProperty[]{
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,
-                            "basedOn",
-                            FilterOperators.IS_IN,
-                            basedOnProductIdentity
-                        ),
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,
-                            "qualifier",
-                            FilterOperators.IS_IN,
-                            depotPositionQualifier
-                        )
-                    },
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    0,
-                    Integer.MAX_VALUE,
-                    Directions.ASCENDING                    
-                );                
+            	ProductDepotPositionQuery depotPositionQuery = (ProductDepotPositionQuery)pm.newQuery(DepotPosition.class);
+            	depotPositionQuery.thereExistsProduct().equalTo(product);
+            	depotPositionQuery.thereExistsQualifier().equalTo(depotPositionQualifier);
+            	positions = depot.getPosition(depotPositionQuery);
             }
-            if(positions.size() > 0) {
-                return (DataproviderObject_1_0)positions.iterator().next();
+            if(!positions.isEmpty()) {
+                return positions.iterator().next();
             }
-            basedOnProduct = this.backend.retrieveObject(
-                basedOnProductIdentity
-            );
+            depotPosition = pm.newInstance(ProductDepotPosition.class);
+            ((ProductDepotPosition)depotPosition).setProduct(product);
+        	depotPosition.refInitialize(false, false);
         }
-        // Set class depending on supplied product and productRole
-        if(basedOnProduct == null) {
-            if(productIdentity != null) { 
-                // Check whether position with given product already
-                // exists. If yes, do not create new position.
-                List positions = null;
-                if(depotPositionQualifier == null) {
-                    positions = this.backend.getDelegatingRequests().addFindRequest(
-                        depot.path().getChild("position"),
-                        new FilterProperty[]{
-                            new FilterProperty(
-                                Quantors.THERE_EXISTS,
-                                "product",
-                                FilterOperators.IS_IN,
-                                productIdentity
-                            )
-                        },
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING                    
-                    );
-                }
-                else {
-                    positions = this.backend.getDelegatingRequests().addFindRequest(
-                        depot.path().getChild("position"),
-                        new FilterProperty[]{
-                            new FilterProperty(
-                                Quantors.THERE_EXISTS,
-                                "product",
-                                FilterOperators.IS_IN,
-                                productIdentity
-                            ),
-                            new FilterProperty(
-                                Quantors.THERE_EXISTS,
-                                "qualifier",
-                                FilterOperators.IS_IN,
-                                depotPositionQualifier
-                            )
-                        },
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING                    
-                    );                    
-                }
-                if(positions.size() > 0) {
-                    return (DataproviderObject_1_0)positions.iterator().next();
-                }
-                product = this.backend.retrieveObject(
-                    productIdentity
-                );
-                depotPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:ProductDepotPosition"
-                );
-                depotPosition.values("product").add(product.path());
-            }
-            else {
-                depotPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:depot1:DepotPosition"
-                );                
-            }
-        }
-        else if("org:opencrx:kernel:product1:ProductOffering".equals(basedOnProduct.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-            depotPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:depot1:ProductOfferingDepotPosition"
-            );
-        }
-        else if("org:opencrx:kernel:product1:ProductBundle".equals(basedOnProduct.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-            depotPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:depot1:ProductBundleDepotPosition"
-            );
-        }
-        else if("org:opencrx:kernel:product1:ComplexProductBundle".equals(basedOnProduct.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-            depotPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:depot1:ComplexProductBundleDepotPosition"
-            );
-        }
-        else if("org:opencrx:kernel:product1:BundledProduct".equals(basedOnProduct.values(SystemAttributes.OBJECT_CLASS).get(0))) {
-            depotPosition.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:depot1:BundledProductDepotPosition"
-            );
-        }
-        
+        else {
+        	depotPosition = pm.newInstance(DepotPosition.class);
+        	depotPosition.refInitialize(false, false);
+        }        
         // In case a depot position qualifier is specified, set name to productNumber + " #" + depotPositionQualifier.
         String name = 
-            positionName != null
-                ? positionName
-                : product != null
-                    ? (String)product.values("productNumber").get(0)
-                    : basedOnProduct != null
-                        ? (String)basedOnProduct.values("productNumber").get(0)
-                        : "";
+            positionName != null ? 
+            	positionName : 
+            	product != null ? 
+        			product.getProductNumber() : 
+        			""; 
         if(depotPositionQualifier != null) {
-            depotPosition.values("qualifier").add(depotPositionQualifier);
+            depotPosition.setQualifier(depotPositionQualifier);
             name += " #" + depotPositionQualifier;
         }            
-        depotPosition.values("name").add(name);
-        // Set path qualifier to name (remove blanks and replace / by :
-        String nameWithoutWhitspaces = this.stripWhitespaces(name);
-        if(nameWithoutWhitspaces.length() > 0) {
-            depotPosition.path().setTo(
-                depotPosition.path().getParent().getChild(nameWithoutWhitspaces.replace('/', ':'))
-            );
-        }
+        depotPosition.setName(name);
         // description
-        depotPosition.values("description").add(
-            positionDescription != null
-                ? positionDescription
-                : product != null
-                    ? product.values("description").get(0)
-                    : basedOnProduct != null
-                        ? basedOnProduct.values("description").get(0)
-                        : ""
+        depotPosition.setDescription(
+            positionDescription != null ? 
+            	positionDescription : 
+            		product != null ? 
+            			product.getDescription() : 
+                        ""
         );
-        depotPosition.values("basedOn").add(basedOnProductIdentity);
         if(openingDate != null) {
-            depotPosition.values("openingDate").add(
-                DateFormat.getInstance().format(openingDate)
-            );
+            depotPosition.setOpeningDate(openingDate);
         }
-        depotPosition.values("isLocked").add(isLocked);
-        try {
-            return this.backend.retrieveObjectFromDelegation(depotPosition.path());
-        }
-        catch(ServiceException e) {
-            this.backend.createObject(
-                depotPosition
-            );
-            return depotPosition;
-        }
+        depotPosition.setLocked(isLocked);
+        depot.addPosition(
+        	false,
+        	this.getUidAsString(),
+        	depotPosition
+        );
+        return depotPosition;
     }
     
     //-----------------------------------------------------------------------
     public void closeDepotPosition(       
         DepotPosition depotPosition,
         Date closingDate,
-        List errors
+        List<String> errors
     ) throws ServiceException {
         if(depotPosition.getClosingDate() != null) {
             throw new ServiceException(
@@ -1907,23 +1413,20 @@ public class Depots {
                 "Depot position is closed. Can not close."
             );                                                                        
         }
-        DataproviderObject closedDepotPosition = this.backend.retrieveObjectForModification(
-            depotPosition.refGetPath()
-        );
-        closedDepotPosition.clearValues("isLocked").add(Boolean.TRUE);
-        closedDepotPosition.clearValues("closingDate").add(
-            closingDate == null
-                ? DateFormat.getInstance().format(new Date())
-                : DateFormat.getInstance().format(closingDate)
+        depotPosition.setLocked(Boolean.TRUE);
+        depotPosition.setClosingDate(
+            closingDate == null ? 
+            	new Date() : 
+            	closingDate
         );        
     }
     
     //-----------------------------------------------------------------------
     public void lockCompoundBooking(
-        CompoundBooking compoundBooking,
+        CompoundBooking cb,
         short lockingReason
     ) throws ServiceException {
-        boolean isPending = compoundBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
+        boolean isPending = cb.getBookingStatus() == BOOKING_STATUS_PENDING;
         if(!isPending) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1931,23 +1434,16 @@ public class Depots {
                 "Booking status is not pending. Locking is not allowed."
             );                                                
         }
-        DataproviderObject modifiedCompoundBooking = this.backend.retrieveObjectForModification(
-            compoundBooking.refGetPath()
-        );
-        modifiedCompoundBooking.clearValues("isLocked").add(Boolean.TRUE);
-        modifiedCompoundBooking.clearValues("lockingReason").add(
-            new Short(lockingReason)
-        );
-        modifiedCompoundBooking.clearValues("lockModifiedAt").add(
-            DateFormat.getInstance().format(new Date())
-        );
+        cb.setLocked(Boolean.TRUE);
+        cb.setLockingReason(new Short(lockingReason));
+        cb.setLockModifiedAt(new Date());
     }
     
     //-----------------------------------------------------------------------
     public void unlockCompoundBooking(
-        CompoundBooking compoundBooking
+        CompoundBooking cb
     ) throws ServiceException {
-        boolean isPending = compoundBooking.getBookingStatus() == BOOKING_STATUS_PENDING;
+        boolean isPending = cb.getBookingStatus() == BOOKING_STATUS_PENDING;
         if(!isPending) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1955,16 +1451,9 @@ public class Depots {
                 "Booking status is not pending. Unlocking is not allowed."
             );                                                
         }
-        DataproviderObject modifiedCompoundBooking = this.backend.retrieveObjectForModification(
-            compoundBooking.refGetPath()
-        );
-        modifiedCompoundBooking.clearValues("isLocked").add(Boolean.FALSE);
-        modifiedCompoundBooking.clearValues("lockingReason").add(
-            new Short((short)0)
-        );
-        modifiedCompoundBooking.clearValues("lockModifiedAt").add(
-            DateFormat.getInstance().format(new Date())
-        );
+        cb.setLocked(Boolean.FALSE);
+        cb.setLockingReason(new Short((short)0));
+        cb.setLockModifiedAt(new Date());
     }
     
     //-----------------------------------------------------------------------
@@ -1985,8 +1474,6 @@ public class Depots {
     // Work effort
     public static final short DEPOT_USAGE_WORK_EFFORT = 10;
     
-    protected final Backend backend;
-        
 }
 
 //--- End of File -----------------------------------------------------------

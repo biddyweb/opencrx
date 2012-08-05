@@ -25,7 +25,7 @@
 									<org.openmdx.ui1.FormFieldGroupDefinition name="Main">
 										<_object>
 											<label>
-												<_item>Description</_item>
+												<_item>&amp;nbsp;</_item>
 											</label>
 											<order>10</order>
 											<columnBreakAtElement>

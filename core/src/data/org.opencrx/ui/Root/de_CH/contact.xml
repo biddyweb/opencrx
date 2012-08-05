@@ -177,6 +177,17 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Fax Privat</_item>
+											</toolTip>
+											<label>
+												<_item>Fax Privat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress" _operation="create">
 										<_object>
 											<toolTip>

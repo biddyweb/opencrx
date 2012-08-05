@@ -94,6 +94,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:cb">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Compound Bookings</_item>
 											</toolTip>
@@ -113,6 +114,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:booking">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Bookings</_item>
 											</toolTip>
@@ -1163,6 +1165,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:depot">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Depots</_item>
 											</toolTip>
@@ -1322,6 +1325,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:position">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Positions</_item>
 											</toolTip>
@@ -1358,6 +1362,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:report">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Reports</_item>
 											</toolTip>
@@ -2170,6 +2175,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:itemPosition">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Position Items</_item>
 											</toolTip>

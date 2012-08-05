@@ -6,8 +6,8 @@
 			<local-jndi-name>org.opencrx.core.CRX.EntityManagerFactory</local-jndi-name>
 		</session>
 		<session>
-			<ejb-name>opencrx_core_CRX_Gateway</ejb-name>
-			<jndi-name>org.opencrx.core.CRX.Gateway</jndi-name>
-		</session>
+			<ejb-name>opencrx_core_CRX_EntityManagerFactoryAccessor</ejb-name>
+			<jndi-name>org.opencrx.core.CRX.EntityManagerFactoryAccessor</jndi-name>
+		</session>		
 	</enterprise-beans>
 </openejb-jar>

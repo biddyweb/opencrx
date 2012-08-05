@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ChartValue.java,v 1.4 2009/01/14 00:03:29 wfro Exp $
+ * Name:        $Id: ChartValue.java,v 1.6 2009/04/23 17:52:06 wfro Exp $
  * Description: ChartValue class
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/14 00:03:29 $
+ * Date:        $Date: 2009/04/23 17:52:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -129,7 +129,7 @@ public class ChartValue
 		        BufferedReader reader = new BufferedReader(
                     new InputStreamReader(new ByteArrayInputStream(os.toByteArray()))
                 );
-		        Map data = new HashMap();
+		        Map<String,String> data = new HashMap<String,String>();
 		        String line = null;
 		        while((line = reader.readLine()) != null) {
 		          if(line.indexOf(":") >= 0) {
@@ -147,7 +147,7 @@ public class ChartValue
                 p.write("<span style=\"color:#FFFFFF;\">.</span>");
 		
 		        // get chart data
-		        int nCharts = new Integer(data.get("COUNT").toString().trim()).intValue();
+		        int nCharts = new Integer((data.get("COUNT") == null ? "0" : data.get("COUNT")).toString().trim()).intValue();
 		        for(int chartIndex = 0; chartIndex < nCharts; chartIndex++) {
 		            String chartName = "CHART[" + chartIndex + "]";
 		            String chartType = data.get(chartName + ".TYPE") + "";

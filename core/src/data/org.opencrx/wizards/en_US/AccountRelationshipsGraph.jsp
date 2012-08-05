@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.9 2009/01/06 13:16:55 wfro Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.10 2009/06/09 14:18:15 wfro Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:16:55 $
+ * Date:        $Date: 2009/06/09 14:18:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -246,7 +246,7 @@ org.openmdx.application.log.*
   			// HINT_DBOBJECT allows to qualify the DbObject to use.
   			// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
         queryFilter.setClause(
-          "(" + Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+          "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
           "( " +
           "v.member IN ( " +
           "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
@@ -294,7 +294,7 @@ org.openmdx.application.log.*
 			// HINT_DBOBJECT allows to qualify the DbObject to use.
 			// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
       queryFilter.setClause(
-        Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+    		  org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
       );
 			membershipQuery.thereExistsContext().equalTo(queryFilter);
 			memberships = account.getAccountMembership(membershipQuery);
@@ -388,8 +388,7 @@ org.openmdx.application.log.*
 		//System.out.println("JSON1=" + json);
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
-<%@page import="org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes"%><html>
+<html>
 <head>
 	<title>Relationships Graph</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">

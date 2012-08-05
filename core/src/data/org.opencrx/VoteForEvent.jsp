@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.8 2009/03/20 15:13:50 cmu Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.12 2009/06/09 12:47:48 cmu Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.8 $
+ * Revision:	$Revision: 1.12 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2009/03/20 15:13:50 $
+ * Date:		$Date: 2009/06/09 12:47:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -238,7 +238,7 @@ java.text.*"
 	String localeStr = (app == null
 		?	((request.getHeader("accept-language") == null || request.getHeader("accept-language").length()<5)
 				? null
-				: request.getHeader("accept-language").substring(0,2) + "_" + request.getHeader("accept-language").substring(3,5)
+				: request.getHeader("accept-language").substring(0,2) + "_" + request.getHeader("accept-language").substring(3)
 			)
 		: app.getCurrentLocaleAsString()
 	);
@@ -271,6 +271,7 @@ java.text.*"
 
 	// Get parameters
 	boolean actionVote = request.getParameter("Vote") != null;
+	boolean actionRemoveVote = request.getParameter("RemoveVote") != null;
 	boolean hasVoted = actionVote || ((request.getParameter("hasVoted") != null) && (request.getParameter("hasVoted").length() > 0));
 	String id = request.getParameter("id");
 	String[] ids = id == null ?
@@ -298,7 +299,7 @@ java.text.*"
 	} catch(Exception e) {}
 	org.opencrx.kernel.account1.jmi1.EMailAddress userEMailAddress = null;
 	if((userHome != null) && (userHome.getContact() != null)) {
-		org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = org.opencrx.kernel.backend.Accounts.getMainAddresses(
+		org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = org.opencrx.kernel.backend.Accounts.getInstance().getMainAddresses(
 			userHome.getContact()
 		);
 		userEMailAddress = (org.opencrx.kernel.account1.jmi1.EMailAddress)addresses[org.opencrx.kernel.backend.Accounts.MAIL_HOME];
@@ -327,10 +328,13 @@ java.text.*"
 		} catch(Exception e) {}
 	}
 
+	boolean allowVoting = false;
+	boolean allowEdit = false;
+
 	// Get schedule
 	Map formValues = new HashMap();
 	List selectedDates = new ArrayList();
-	if(activity != null) {
+	if(activity != null && activity instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
 		org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)activity;
 		for(Iterator i = email.getNote().iterator(); i.hasNext(); ) {
 			org.opencrx.kernel.generic.jmi1.Note note = (org.opencrx.kernel.generic.jmi1.Note)i.next();
@@ -394,18 +398,19 @@ java.text.*"
 				}
 			}
 		}
-	}
-	if(actionVote) {
-		String voter = request.getParameter("voter");
+
+		String voter = request.getParameter("voter") != null
+			? request.getParameter("voter")
+			: retrievedVoter;
+		org.opencrx.kernel.activity1.jmi1.ActivityVote vote = null;
+
 		if(
 			(voter != null) &&
-			(voter.length() > 0) &&
-			(activity instanceof org.opencrx.kernel.activity1.jmi1.EMail)
+			(voter.length() > 0)
 		) {
 			voter = voter.trim();
-			org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)activity;
 			Boolean isClosedGroupPoll = (Boolean)formValues.get("isClosedGroupPoll");
-			boolean allowVoting =
+			allowVoting =
 				(isClosedGroupPoll == null) ||
 				!isClosedGroupPoll ||
 				isMemberOfRecipients(pm, email, voter);
@@ -413,69 +418,104 @@ java.text.*"
 				org.opencrx.kernel.activity1.cci2.ActivityVoteQuery voteQuery =
 					(org.opencrx.kernel.activity1.cci2.ActivityVoteQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityVote.class);
 				voteQuery.name().equalTo(voter);
-				org.opencrx.kernel.activity1.jmi1.ActivityVote vote = null;
 				if(!email.getVote(voteQuery).isEmpty()) {
 					vote = (org.opencrx.kernel.activity1.jmi1.ActivityVote)email.getVote(voteQuery).iterator().next();
 				}
-				boolean allowEdit =
+				allowEdit =
 					(voteId != null && vote != null && voteId.equals(vote.refGetPath().getBase()))  ||
 					userIsOwnerOfEMailAddress(pm, userHome, voter);
-				if(
-					allowEdit ||
-					(vote == null)
-				) {
-					pm.currentTransaction().begin();
-					if(vote == null) {
-						vote = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityVote.class);
-					  	vote.refInitialize(false, false);
-						email.addVote(
-							false,
-							UUIDConversion.toUID(uuids.next()),
-							vote
-						);
-						vote.getOwningGroup().addAll(
-							email.getOwningGroup()
-						);
-					}
-					vote.setName(voter);
-					Properties votes = new Properties();
-					Enumeration parameterNames = request.getParameterNames();
-					Boolean isLimitTo1Poll = (Boolean)formValues.get("isLimitTo1Poll");
-					Integer maxVotesPerParticipant = (isLimitTo1Poll != null && isLimitTo1Poll)
-						? 1
-						: null;
+			}
+		}
 
-					int voteCounter = 0;
-					while(parameterNames.hasMoreElements()) {
-						String parameterName = (String)parameterNames.nextElement();
-						if(parameterName.startsWith("vote.")) {
-							String value = request.getParameter(parameterName);
-							if((!"0".equals(value)) && (maxVotesPerParticipant == null || voteCounter < maxVotesPerParticipant)) {
-								votes.put(
-									parameterName.substring(5),
-									value
-								);
-								voteCounter++;
-							}
+		if(actionVote || actionRemoveVote) {
+			if (
+				actionRemoveVote &&
+				allowEdit
+			) {
+				// remove existing vote
+				pm.currentTransaction().begin();
+				vote.refDelete();
+				try {
+					pm.currentTransaction().commit();
+				}
+				catch(Exception e) {
+					try {
+						pm.currentTransaction().rollback();
+					} catch(Exception e1) {}
+					new org.openmdx.base.exception.ServiceException(e).log();
+				}
+				voteId = null;
+				hasVoted = false;
+				allowEdit = false;
+				retrievedVoter = null;
+				/*
+				String providerName = ids.length > 0 ? ids[0] : null;
+				String segmentName = ids.length > 1 ? ids[1] : null;
+				String activityId = ids.length > 2 ? ids[2] : null;
+				String voteId = ids.length > 3 ? ids[3] : null;
+				*/
+
+			}
+
+			if(
+				actionVote &&
+				allowVoting &&
+				(allowEdit || (vote == null))
+			) {
+				pm.currentTransaction().begin();
+				if(vote == null) {
+					// create new vote
+					vote = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityVote.class);
+					vote.refInitialize(false, false);
+					email.addVote(
+						false,
+						UUIDConversion.toUID(uuids.next()),
+						vote
+					);
+					vote.getOwningGroup().addAll(
+						email.getOwningGroup()
+					);
+				}
+				// update existing (or newly created) vote
+				vote.setName(voter);
+				Properties votes = new Properties();
+				Enumeration parameterNames = request.getParameterNames();
+				Boolean isLimitTo1Poll = (Boolean)formValues.get("isLimitTo1Poll");
+				Integer maxVotesPerParticipant = (isLimitTo1Poll != null && isLimitTo1Poll)
+					? 1
+					: null;
+
+				int voteCounter = 0;
+				while(parameterNames.hasMoreElements()) {
+					String parameterName = (String)parameterNames.nextElement();
+					if(parameterName.startsWith("vote.")) {
+						String value = request.getParameter(parameterName);
+						if(/* (!"0".equals(value)) && */ (maxVotesPerParticipant == null || voteCounter < maxVotesPerParticipant)) {
+							votes.put(
+								parameterName.substring(5),
+								value
+							);
+							voteCounter++;
 						}
 					}
-					ByteArrayOutputStream os = new ByteArrayOutputStream();
-					votes.storeToXML(os, voter);
-					os.close();
-					vote.setDescription(
-						new String(os.toByteArray(), "UTF-8")
-					);
+				}
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				votes.storeToXML(os, voter);
+				os.close();
+				vote.setDescription(
+					new String(os.toByteArray(), "UTF-8")
+				);
+				try {
+					pm.currentTransaction().commit();
+					voteId = vote.refGetPath().getBase();
+					id = providerName + "/" + segmentName + "/" + activityId + "/" + voteId;
+					allowEdit = true;
+				}
+				catch(Exception e) {
 					try {
-						pm.currentTransaction().commit();
-						voteId = vote.refGetPath().getBase();
-						id = providerName + "/" + segmentName + "/" + activityId + "/" + voteId;
-					}
-					catch(Exception e) {
-						try {
-							pm.currentTransaction().rollback();
-						} catch(Exception e1) {}
-						new org.openmdx.base.exception.ServiceException(e).log();
-					}
+						pm.currentTransaction().rollback();
+					} catch(Exception e1) {}
+					new org.openmdx.base.exception.ServiceException(e).log();
 				}
 			}
 		}
@@ -587,7 +627,7 @@ java.text.*"
 				  <form id="<%= WIZARD_NAME %>" name="<%= WIZARD_NAME %>" method="post" accept-charset="UTF-8" action="<%= servletPath %>">
 						<input type="hidden" id="id" name="id" value="<%= id %>" />
 						<input type="hidden" id="tzoffset" name="tzoffset" value="<%= tzoffset %>" />
-						<input type="submit" id="locale" name="locale" value="<%= localeStr %>" style="display:none;" />
+						<input type="hidden" id="locale" name="locale" value="<%= localeStr %>" style="display:none;" />
 						<input type="text" id="hasVoted" name="hasVoted" value="<%= hasVoted ? "hasVoted" : "" %>" style="display:none;" />
 						<!-- Votes -->
 						<fieldset>
@@ -724,6 +764,7 @@ java.text.*"
  									<td colspan="<%= nSlots %>">
 										<input type="text" size="40" <%= hasVoted ? "readonly" : "" %> maxlength="<%= MAXLEN_EMAILADDRESS %>" name="voter" id="voter" value="<%= request.getParameter("voter") == null ? (retrievedVoter == null ? ((userEMailAddress != null) && (userEMailAddress.getEmailAddress() != null) ? userEMailAddress.getEmailAddress() : "") : retrievedVoter) : request.getParameter("voter") %>" />
 										<input id="Vote.Button" name="Vote" type="submit" <%= hasVoted ? "disabled" : "class=\"abutton\"" %> tabindex="<%= tabIndex++ %>" value="<%= bundle.get("VoteLabel") %>" />
+										<input id="RemoveVote.Button" name="RemoveVote" type="submit" <%= hasVoted && allowEdit ? "" : "style='display:none;'" %> class="abutton" tabindex="<%= tabIndex++ %>" value="<%= bundle.get("RemoveVoteLabel") %>" />
  									</td>
  								</tr>
  							</table>
@@ -737,7 +778,7 @@ java.text.*"
 						<div>&nbsp;</div>
 <%
 						if(voteId != null) {
-							String link = request.getRequestURL() + "?id=" + id;
+							String link = request.getRequestURL() + "?id=" + id + "&locale=" + localeStr;
 							String emailAddress = request.getParameter("voter") == null ? (retrievedVoter == null ? ((userEMailAddress != null) && (userEMailAddress.getEmailAddress() != null) ? userEMailAddress.getEmailAddress() : "") : retrievedVoter) : request.getParameter("voter");
 							String subject = java.net.URLEncoder.encode(bundle.get("VoteForLabel") + ": " + (activity == null || activity.getName() == null ? "NA" : activity.getName()), "UTF-8").replace("+", "%20");
 							String body = java.net.URLEncoder.encode(link, "UTF-8").replace("+", "%20");

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.54 2009/01/17 20:54:08 wfro Exp $
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.56 2009/06/09 14:10:35 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.54 $
+ * Revision:    $Revision: 1.56 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/17 20:54:08 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,6 +64,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -71,6 +72,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -83,7 +85,6 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.mof.cci.Model_1_3;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
@@ -134,7 +135,7 @@ public class WorkflowControllerServlet
        implements Runnable {
         
         public WorkflowMonitor(
-            List monitoredWorkflowServlets
+            List<WorkflowServletConfig> monitoredWorkflowServlets
         ) {
             this.monitoredWorkflowServlets = monitoredWorkflowServlets;
         }
@@ -142,12 +143,12 @@ public class WorkflowControllerServlet
         public void run(
         ) {
             // List all monitored paths
-            List paths = new ArrayList();
+            List<String> paths = new ArrayList<String>();
             for(
-                Iterator i = this.monitoredWorkflowServlets.iterator();
+                Iterator<WorkflowServletConfig> i = this.monitoredWorkflowServlets.iterator();
                 i.hasNext();
             ) {
-                WorkflowServletConfig monitoredWorkflowServlet = (WorkflowServletConfig)i.next();
+                WorkflowServletConfig monitoredWorkflowServlet = i.next();
                 paths.add(monitoredWorkflowServlet.getPath());
             }                
             System.out.println(new Date().toString() + ": WorkflowController: monitoring " + paths);
@@ -155,10 +156,10 @@ public class WorkflowControllerServlet
             while(true) {                
                 try {
                     for(
-                        Iterator i = this.monitoredWorkflowServlets.iterator();
+                        Iterator<WorkflowServletConfig> i = this.monitoredWorkflowServlets.iterator();
                         i.hasNext();
                     ) {
-                        WorkflowServletConfig monitoredWorkflowServlet = (WorkflowServletConfig)i.next();
+                        WorkflowServletConfig monitoredWorkflowServlet = i.next();
                         URL monitoredURL = WorkflowControllerServlet.this.getWorkflowServletURL(
                             monitoredWorkflowServlet.getPath()
                         );
@@ -201,7 +202,7 @@ public class WorkflowControllerServlet
             }            
         }
         
-        private final List monitoredWorkflowServlets;
+        private final List<WorkflowServletConfig> monitoredWorkflowServlets;
         
     }
     
@@ -262,7 +263,6 @@ public class WorkflowControllerServlet
     ) throws ServletException {
 
         super.init(config);
-        this.model = Utils.getModel();
         String providerName = new Path(this.getInitParameter("realmSegment")).get(2);
         PersistenceManager pm = null;
         try {
@@ -381,9 +381,9 @@ public class WorkflowControllerServlet
         }
         
         // Get set of segments to be monitored
-        Set segmentNames = new HashSet();
+        Set<String> segmentNames = new HashSet<String>();
         try {
-            Set excludeRealms = new HashSet();
+            Set<String> excludeRealms = new HashSet<String>();
             for(int ii = 0; ii < 100; ii++) {
                 if(this.getInitParameter("excludeRealm[" + ii + "]") != null) {
                     excludeRealms.add(
@@ -395,8 +395,8 @@ public class WorkflowControllerServlet
                 (org.openmdx.security.realm1.jmi1.Segment)pm.getObjectById(
                     new Path(this.getInitParameter("realmSegment"))
                 );
-            for(Iterator i = realmSegment.getRealm().iterator(); i.hasNext(); ) {
-                org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)i.next();
+            Collection<org.openmdx.security.realm1.jmi1.Realm> realms = realmSegment.getRealm();
+            for(org.openmdx.security.realm1.jmi1.Realm realm: realms) {
                 if(!excludeRealms.contains(realm.getName())) {
                     segmentNames.add(realm.getName());
                 }
@@ -408,10 +408,10 @@ public class WorkflowControllerServlet
         
         // Create a path to be monitored from each configured path and provider/segment
         try {
-            this.workflowServlets = new ArrayList();
-            this.monitoredWorkflowServlets = new ArrayList();
-            for(Iterator j = segmentNames.iterator(); j.hasNext(); ) {
-                String segmentName = (String)j.next();
+            this.workflowServlets = new ArrayList<WorkflowServletConfig>();
+            this.monitoredWorkflowServlets = new ArrayList<WorkflowServletConfig>();
+            for(Iterator<String> j = segmentNames.iterator(); j.hasNext(); ) {
+                String segmentName = j.next();
                 int ii = 0;
                 while(this.getInitParameter("path[" + ii + "]") != null) {
                     String path = this.getInitParameter("path[" + ii + "]");
@@ -453,9 +453,10 @@ public class WorkflowControllerServlet
         String name
     ) {
         String value = null;
+        PersistenceManager pm = JDOHelper.getPersistenceManager(this.componentConfiguration);
         for(int i = 0; i < 1; i++) {
-            for(Iterator j = this.componentConfiguration.getProperty().iterator(); j.hasNext(); ) {
-                org.opencrx.kernel.base.jmi1.Property p = (org.opencrx.kernel.base.jmi1.Property)j.next();
+        	Collection<org.opencrx.kernel.base.jmi1.Property> properties = this.componentConfiguration.getProperty();
+            for(org.opencrx.kernel.base.jmi1.Property p: properties) {
                 if(
                     p.getName().equals(name) &&
                     (p instanceof org.opencrx.kernel.base.jmi1.StringProperty)
@@ -465,7 +466,7 @@ public class WorkflowControllerServlet
                 }
             }
             if(value == null) {
-                this.componentConfiguration.refRefresh();
+                pm.refresh(this.componentConfiguration);
             }
             else {
                 break;
@@ -493,10 +494,10 @@ public class WorkflowControllerServlet
         // Add/remove to activeURLs
         if(COMMAND_START.equals(req.getPathInfo())) {
             for(
-                Iterator i = this.workflowServlets.iterator();
+                Iterator<WorkflowServletConfig> i = this.workflowServlets.iterator();
                 i.hasNext();
             ) {
-                WorkflowServletConfig servletConfig = (WorkflowServletConfig)i.next();
+                WorkflowServletConfig servletConfig = i.next();
                 if(URLEncoder.encode(servletConfig.getPath(), "UTF-8").equals(req.getQueryString())) {
                     this.monitoredWorkflowServlets.add(servletConfig);
                     break;
@@ -508,10 +509,10 @@ public class WorkflowControllerServlet
                 URLDecoder.decode(req.getQueryString(), "UTF-8")
             );
             for(
-                Iterator i = this.monitoredWorkflowServlets.iterator();
+                Iterator<WorkflowServletConfig> i = this.monitoredWorkflowServlets.iterator();
                 i.hasNext();
             ) {
-                WorkflowServletConfig controlledWorkflow = (WorkflowServletConfig)i.next();
+                WorkflowServletConfig controlledWorkflow = i.next();
                 URL url = this.getWorkflowServletURL(
                     controlledWorkflow.getPath()
                 );
@@ -530,10 +531,10 @@ public class WorkflowControllerServlet
         out.println("<h2>openCRX Workflow Controller</h2>");
         out.println("<table>");
         for(
-            Iterator i = this.workflowServlets.iterator();
+            Iterator<WorkflowServletConfig> i = this.workflowServlets.iterator();
             i.hasNext();
         ) {
-            WorkflowServletConfig servletConfig = (WorkflowServletConfig)i.next();
+            WorkflowServletConfig servletConfig = i.next();
             boolean active = this.monitoredWorkflowServlets.contains(servletConfig);
             out.println("<tr>");
             out.println("<td>" + servletConfig.getPath() + "</td><td><a href=\"" + req.getContextPath() + req.getServletPath() + (active ? "/stop" : "/start") + "?" + URLEncoder.encode(servletConfig.getPath(), "UTF-8") + "\">" + (active ? "Turn Off" : "Turn On") + "</a></td>");
@@ -585,10 +586,9 @@ public class WorkflowControllerServlet
     public static final String OPTION_PINGRATE = "pingrate";
     public static final String OPTION_EXECUTION_PERIOD = "executionPeriod";
     
-    private List workflowServlets = null;
-    private List monitoredWorkflowServlets = null;
+    private List<WorkflowServletConfig> workflowServlets = null;
+    private List<WorkflowServletConfig> monitoredWorkflowServlets = null;
     private org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
-    private Model_1_3 model = null;
 }
 
 //--- End of File -----------------------------------------------------------

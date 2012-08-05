@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.15 2009/03/08 17:04:51 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.26 2009/04/22 14:54:00 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:51 $
+ * Date:        $Date: 2009/04/22 14:54:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,51 +58,64 @@ package org.opencrx.kernel.backend;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
-import org.opencrx.kernel.base.jmi1.Subscription;
+import org.opencrx.application.mail.exporter.ExportMailWorkflow;
+import org.opencrx.application.mail.exporter.SendMailNotificationWorkflow;
+import org.opencrx.application.mail.exporter.SendMailWorkflow;
+import org.opencrx.kernel.base.jmi1.BooleanProperty;
+import org.opencrx.kernel.base.jmi1.DecimalProperty;
+import org.opencrx.kernel.base.jmi1.IntegerProperty;
+import org.opencrx.kernel.base.jmi1.Property;
+import org.opencrx.kernel.base.jmi1.StringProperty;
+import org.opencrx.kernel.base.jmi1.UriProperty;
+import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Orders;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 
-public class Workflows {
+public class Workflows extends AbstractImpl {
 
+    //-------------------------------------------------------------------------
+	public static void register(
+	) {
+		registerImpl(new Workflows());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Workflows getInstance(
+	) throws ServiceException {
+		return getInstance(Workflows.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Workflows(
+	) {
+		
+	}
+	
     //-----------------------------------------------------------------------
-    public Workflows(
-        Backend backend
-    ) throws ServiceException {
-        this.delegation = new RequestCollection(
-            backend.context.header, 
-            backend.context.router
-        );
-        this.backend = backend;
-    }
-                
-    //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.workflow1.jmi1.Segment getWorkflowSegment(
+    public org.opencrx.kernel.workflow1.jmi1.Segment getWorkflowSegment(
         PersistenceManager pm,
         String providerName,
         String segmentName
@@ -113,7 +126,7 @@ public class Workflows {
     }
     
     //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.workflow1.jmi1.Topic findTopic(
+    public org.opencrx.kernel.workflow1.jmi1.Topic findTopic(
         String name,
         org.opencrx.kernel.workflow1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
@@ -128,7 +141,7 @@ public class Workflows {
     }
 
     //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.workflow1.jmi1.WfProcess findWfProcess(
+    public org.opencrx.kernel.workflow1.jmi1.WfProcess findWfProcess(
         String name,
         org.opencrx.kernel.workflow1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
@@ -143,7 +156,7 @@ public class Workflows {
     }
         
     //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.workflow1.jmi1.Topic initTopic(
+    public org.opencrx.kernel.workflow1.jmi1.Topic initTopic(
         PersistenceManager pm,
         Workflow1Package workflowPackage,
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
@@ -181,7 +194,7 @@ public class Workflows {
     }
     
     //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.workflow1.jmi1.WfProcess initWorkflow(
+    public org.opencrx.kernel.workflow1.jmi1.WfProcess initWorkflow(
         PersistenceManager pm,
         Workflow1Package workflowPackage,
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
@@ -231,52 +244,52 @@ public class Workflows {
     }
     
     //-----------------------------------------------------------------------
-    public static void initWorkflows(
+    public void initWorkflows(
         PersistenceManager pm,
         String providerName,
         String segmentName
     ) throws ServiceException {
         Workflow1Package workflowPackage = Utils.getWorkflowPackage(pm);
-        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getWorkflowSegment(
+        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = this.getWorkflowSegment(
             pm, 
             providerName, 
             segmentName
         );
         // ExportMailWorkflow 
-        Workflows.initWorkflow(
+        this.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
             WORKFLOW_EXPORT_MAIL,
-            org.opencrx.mail.workflow.ExportMailWorkflow.class.getName(),
+            ExportMailWorkflow.class.getName(),
             "Export mails",
             Boolean.FALSE,
             null
         );        
         // SendMailWorkflow
-        Workflows.initWorkflow(
+        this.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
             WORKFLOW_SEND_MAIL,
-            org.opencrx.mail.workflow.SendMailWorkflow.class.getName(),
+            SendMailWorkflow.class.getName(),
             "Send mails",
             Boolean.FALSE,
             null
         );        
         // SendMailNotificationWorkflow
-        WfProcess sendMailNotificationWorkflow = Workflows.initWorkflow(
+        WfProcess sendMailNotificationWorkflow = this.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
             WORKFLOW_SEND_MAIL_NOTIFICATION,
-            org.opencrx.mail.workflow.SendMailNotificationWorkflow.class.getName(),
+            SendMailNotificationWorkflow.class.getName(),
             "Send mail notifications",
             Boolean.FALSE,
             null
         );        
         // SendAlert
-        WfProcess sendAlertWorkflow = Workflows.initWorkflow(
+        WfProcess sendAlertWorkflow = this.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -287,7 +300,7 @@ public class Workflows {
             null
         );        
         // PrintConsole
-        Workflows.initWorkflow(
+        this.initWorkflow(
             pm,
             workflowPackage,
             workflowSegment,
@@ -303,7 +316,7 @@ public class Workflows {
         WfProcess[] sendMailNotificationsActions = new WfProcess[]{
             sendMailNotificationWorkflow
         };
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -313,7 +326,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -323,7 +336,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/followUp/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -333,7 +346,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -343,7 +356,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/booking/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -353,7 +366,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/competitor/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -363,7 +376,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/cb/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -373,7 +386,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -383,7 +396,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -393,7 +406,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -403,7 +416,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -413,7 +426,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/product/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -423,7 +436,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -433,7 +446,7 @@ public class Workflows {
             "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*",
             sendAlertActions
         );
-        Workflows.initTopic(
+        this.initTopic(
             pm,
             workflowPackage,
             workflowSegment,
@@ -447,158 +460,100 @@ public class Workflows {
         
     //-------------------------------------------------------------------------
     public WfProcessInstance executeWorkflow(
-        Path workflowTargetIdentity,
-        Path wfProcessIdentity,
-        Path targetObjectIdentity,
+        WorkflowTarget wfTarget,
+        WfProcess wfProcess,
+        ContextCapable targetObject,
         String targetObjectXri,
         String triggeredByEventId,
-        Subscription triggeredBySubscription,
-        Number triggeredByEventType
+        org.opencrx.kernel.base.jmi1.Subscription triggeredBySubscription,
+        Integer triggeredByEventType
     ) throws ServiceException {
-        DataproviderObject_1_0 wfProcessInstance = this.executeWorkflow(
-            this.backend.retrieveObject(
-                workflowTargetIdentity
-            ),
-            wfProcessIdentity, 
-            targetObjectIdentity, 
-            targetObjectXri, 
-            triggeredByEventId, 
-            triggeredBySubscription == null ? null : triggeredBySubscription.refGetPath(), 
-            triggeredByEventType
-        );
-        return wfProcessInstance == null
-            ? null
-            : (WfProcessInstance)this.backend.getDelegatingPkg().refObject(wfProcessInstance.path().toXri());
-    }
-
-    //-------------------------------------------------------------------------
-    /**
-     * Execute workflow and execute workflow instance identity.
-     * 
-     * @return the updated / created process instance.
-     */
-    public DataproviderObject_1_0 executeWorkflow(
-        DataproviderObject_1_0 userHome,
-        Path wfProcessIdentity,
-        Path targetObjectPath,
-        String targetObjectXri,
-        String triggeredByEventId,
-        Path triggeredBySubscription,
-        Number triggeredByEventType
-    ) throws ServiceException {
-
-        // Workflow
-        if(wfProcessIdentity == null) {
+        if(wfProcess == null) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_MISSING_WORKFLOW,
                 "Missing workflow"
             );                                                                
         }
-        DataproviderObject_1_0 wfProcess = this.delegation.addGetRequest(
-            wfProcessIdentity,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            new AttributeSpecifier[]{}
-        );
-        String workflowName = (String)wfProcess.values("name").get(0);
-        boolean isSynchronous = 
-            (wfProcess.values("isSynchronous").get(0) != null) && 
-            ((Boolean)wfProcess.values("isSynchronous").get(0)).booleanValue();        
-
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(wfTarget);        
+        boolean isSynchronous = wfProcess.isSynchronous() == null ?
+        	false :
+        	wfProcess.isSynchronous().booleanValue();
         // Target
-        if((targetObjectPath == null) && (targetObjectXri == null)) {
+        if((targetObject == null) && (targetObjectXri == null)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_MISSING_TARGET,
                 "Missing target object"
             );                                                                
         }
-        Path targetObjectIdentity = targetObjectPath != null
-            ? targetObjectPath
-            : new Path(targetObjectXri);
-        
+        Path targetObjectIdentity = targetObject == null ?
+        	new Path(targetObjectXri) :
+        	targetObject.refGetPath();
+        targetObject = targetObject == null ?
+        	(ContextCapable)pm.getObjectById(targetObjectIdentity) :
+        	targetObject;
         // Create workflow instance
         Path wfInstanceIdentity = 
-            userHome.path().getDescendant(
+            wfTarget.refGetPath().getDescendant(
                 new String[]{
                     "wfProcessInstance", 
-                    triggeredByEventId == null
-                        ? this.backend.getUidAsString()
-                        : triggeredByEventId
+                    triggeredByEventId == null ? 
+                    	this.getUidAsString() : 
+                    	triggeredByEventId
                 }
             );            
-        DataproviderObject_1_0 wfInstance = null;
+        WfProcessInstance wfInstance = null;
         // Try to execute workflow in context of existing workflow instance
         try {
-            try {
-                wfInstance = this.backend.retrieveObjectFromDelegation(
-                    wfInstanceIdentity
-                );
-            }
-            catch(ServiceException e) {
-                wfInstance = new DataproviderObject(wfInstanceIdentity);
-                wfInstance.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:WfProcessInstance");
-                wfInstance.values("stepCounter").add(new Integer(0));
-                wfInstance.values("process").add(wfProcess.path());
-                wfInstance.values("targetObject").add(targetObjectIdentity.toXri());            
-                wfInstance.values("failed").add(Boolean.FALSE);
-                this.delegation.addCreateRequest(
-                    (DataproviderObject)wfInstance
-                );
+        	wfInstance = (WfProcessInstance)pm.getObjectById(wfInstanceIdentity);
+        }
+        catch(Exception e) {}
+        if(wfInstance == null) {
+        	wfInstance = pm.newInstance(WfProcessInstance.class);
+        	wfInstance.refInitialize(false, false);
+            wfInstance.setStepCounter(new Integer(0));
+            wfInstance.setProcess(wfProcess);
+            wfInstance.setTargetObject(targetObjectIdentity.toXri());            
+            wfInstance.setFailed(Boolean.FALSE);
+            if(wfTarget instanceof UserHome) {
+	            ((UserHome)wfTarget).addWfProcessInstance(
+	            	false, 
+	            	this.getUidAsString(),
+	            	wfInstance
+	            );
             }
         }
-        catch(ServiceException e) {
-            new ServiceException(e).log();
-            throw new ServiceException(
-                OpenCrxException.DOMAIN,
-                OpenCrxException.WORKFLOW_CAN_NOT_CREATE_PROCESS_INSTANCE,
-                "Can not get or create process instance",
-                new BasicException.Parameter("param0", workflowName),
-                new BasicException.Parameter("param1", e.getMessage())
-            );
-        }        
         // Add parameters of executeWorkflow() operation to property set of WfProcessInstance
         if(triggeredBySubscription != null) {
-            DataproviderObject property = new DataproviderObject(
-                wfInstance.path().getDescendant(new String[]{"property", this.backend.getUidAsString()})
-            );
-            property.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:base:UriProperty"
-            );
-            property.values("name").add(
-                "triggeredBySubscription"
-            );            
-            property.values("uriValue").add(
-                triggeredBySubscription.toXri()
-            );
-            this.delegation.addCreateRequest(
-                property
+            UriProperty property = pm.newInstance(UriProperty.class);
+            property.refInitialize(false, false);
+            property.setName("triggeredBySubscription");
+            property.setUriValue(triggeredBySubscription.refGetPath().toXri());
+            wfInstance.addProperty(
+            	false,
+            	this.getUidAsString(),
+            	property
             );
         }
         if(triggeredByEventType != null) {
-            DataproviderObject property = new DataproviderObject(
-                wfInstance.path().getDescendant(new String[]{"property", this.backend.getUidAsString()})
-            );
-            property.values(SystemAttributes.OBJECT_CLASS).add(
-                "org:opencrx:kernel:base:IntegerProperty"
-            );
-            property.values("name").add(
-                "triggeredByEventType"
-            );            
-            property.values("integerValue").add(
-                triggeredByEventType
-            );
-            this.delegation.addCreateRequest(
-                property
+            IntegerProperty property = pm.newInstance(IntegerProperty.class);
+            property.refInitialize(false, false);
+            property.setName("triggeredByEventType");
+            property.setIntegerValue(triggeredByEventType.intValue());
+            wfInstance.addProperty(
+            	false,
+            	this.getUidAsString(),
+            	property
             );
         }                
         // Execute workflow if synchronous  
         if(isSynchronous) {
-            SynchWorkflow_1_0 workflow = null;            
-            Class workflowClass = null;
+            SynchWorkflow_2_0 workflow = null;            
+            Class<?> workflowClass = null;
             try {
                 workflowClass = Classes.getApplicationClass(
-                    workflowName
+                    wfProcess.getName()
                 );
             }
             catch(ClassNotFoundException e) {
@@ -607,12 +562,12 @@ public class Workflows {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_NO_IMPLEMENTATION,
                     "implementation not found",
-                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
             // Look up constructor
-            Constructor workflowConstructor = null;
+            Constructor<?> workflowConstructor = null;
             try {
                 workflowConstructor = workflowClass.getConstructor(new Class[]{});
             }
@@ -622,13 +577,13 @@ public class Workflows {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_MISSING_CONSTRUCTOR,
                     "missing constructor",
-                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
             // Instantiate workflow
             try {
-                workflow = (SynchWorkflow_1_0)workflowConstructor.newInstance(new Object[]{});
+                workflow = (SynchWorkflow_2_0)workflowConstructor.newInstance(new Object[]{});
             }
             catch(InstantiationException e) {
                 new ServiceException(e).log();
@@ -636,7 +591,7 @@ public class Workflows {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_CAN_NOT_INSTANTIATE,
                     "can not instantiate",
-                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
@@ -646,7 +601,7 @@ public class Workflows {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_ILLEGAL_ACCESS,
                     "illegal access",
-                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                            
             }
@@ -656,7 +611,7 @@ public class Workflows {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_ILLEGAL_ARGUMENT,
                     "illegal argument",
-                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
@@ -665,20 +620,12 @@ public class Workflows {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_CAN_NOT_INVOKE,
                     "can not invoke",
-                    new BasicException.Parameter("param0", workflowName),
+                    new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getTargetException().getMessage())
                 );                                                                                        
             }
             // Get workflow parameters
-            List parameters = this.delegation.addFindRequest(
-                wfProcess.path().getChild("property"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                null,
-                0,
-                Integer.MAX_VALUE,
-                Orders.ASCENDING            
-            );
+            Collection<Property> parameters = wfProcess.getProperty();
             Map<String,Object> params = new HashMap<String,Object>();
             // Add parameters of executeWorkflow operation to params
             if(triggeredBySubscription != null) {
@@ -687,53 +634,40 @@ public class Workflows {
             if(triggeredByEventType != null) {
                 params.put("triggeredByEventType", triggeredByEventType);            
             }
-            for(
-                Iterator<DataproviderObject_1_0> i = parameters.iterator(); 
-                i.hasNext(); 
-            ) {
-                DataproviderObject_1_0 parameter = i.next();
-                String parameterType = (String)parameter.values(SystemAttributes.OBJECT_CLASS).get(0);
+            for(Property parameter: parameters) {
                 Object val = null;
-                if("org:opencrx:kernel:base:BooleanProperty".equals(parameterType)) {
-                    val = parameter.values("booleanValue");
+                if(parameter instanceof BooleanProperty) {
+                    val = ((BooleanProperty)parameter).isBooleanValue();
                 }
-                else if("org:opencrx:kernel:base:IntegerProperty".equals(parameterType)) {
-                    val = parameter.values("integerValue");
+                else if(parameter instanceof IntegerProperty) {
+                    val = ((IntegerProperty)parameter).getIntegerValue();
                 }
-                else if("org:opencrx:kernel:base:DecimalProperty".equals(parameterType)) {
-                    val = parameter.values("decimalValue");
+                else if(parameter instanceof DecimalProperty) {
+                    val = ((DecimalProperty)parameter).getDecimalValue();
                 }
-                else if("org:opencrx:kernel:base:UriProperty".equals(parameterType)) {
-                    val = parameter.values("uriValue");                
+                else if(parameter instanceof UriProperty) {
+                    val = ((UriProperty)parameter).getUriValue();                
                 }
-                else {
-                    val = parameter.values("stringValue");
+                else if(parameter instanceof StringProperty) {
+                    val = ((StringProperty)parameter).getStringValue();
                 }
                 params.put(
-                    (String)parameter.values("name").get(0),
+                    parameter.getName(),
                     val
                 );
             }
             // Execute workflow
             try {
                 workflow.execute(
-                    userHome,
-                    targetObjectIdentity,
+                    wfTarget,
+                    targetObject,
                     params,
-                    wfInstance.path(),
-                    this.backend
+                    wfInstance
                 );
                 // Update workflow instance after successful execution
-                wfInstance = this.backend.retrieveObjectForModification(
-                    wfInstanceIdentity
-                );
-                wfInstance.clearValues("startedOn").add(
-                    DateFormat.getInstance().format(new Date())
-                );
-                wfInstance.clearValues("lastActivityOn").add(
-                    DateFormat.getInstance().format(new Date())
-                );
-                wfInstance.clearValues("failed").add(Boolean.FALSE);
+                wfInstance.setStartedOn(new Date());
+                wfInstance.setLastActivityOn(new Date());
+                wfInstance.setFailed(Boolean.FALSE);
             }
             catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
@@ -751,47 +685,42 @@ public class Workflows {
                   * case of an exception has to be rolled back.
                   */   
                 // Update workflow instance. Set timestamp for last activity
-                wfInstance = this.backend.retrieveObjectForModification(
-                    wfInstanceIdentity
-                );
-                wfInstance.clearValues("lastActivityOn").add(
-                    DateFormat.getInstance().format(new Date())
-                );
-                Number maxRetries = (Number)wfProcess.values("maxRetries").get(0);
+                wfInstance.setLastActivityOn(new Date());
+                Number maxRetries = wfProcess.getMaxRetries();
                 if(
                     (maxRetries == null) ||
                     (maxRetries.intValue() == 0)
                 ) {
-                    wfInstance.clearValues("startedOn").add(
-                        DateFormat.getInstance().format(new Date())
-                    );
-                    wfInstance.clearValues("failed").add(Boolean.TRUE);
+                    wfInstance.setStartedOn(new Date());
+                    wfInstance.setFailed(Boolean.TRUE);
                 }
                 // Increment stepCounter
-                Number stepCounter = (Number)wfProcess.values("stepCounter").get(0);
+                Number stepCounter = wfInstance.getStepCounter();
                 if(stepCounter == null) {
                     stepCounter = new Integer(0);
                 }
-                wfProcess.clearValues("stepCounter").add(
+                wfInstance.setStepCounter(
                     new Integer(stepCounter.intValue() + 1)
                 );
                 // Create log entry
-                DataproviderObject logEntry = new DataproviderObject(
-                    wfInstanceIdentity.getDescendant(new String[]{"actionLog", this.backend.getUidAsString()})
+                WfActionLogEntry logEntry = pm.newInstance(WfActionLogEntry.class);
+                logEntry.refInitialize(false, false);
+                logEntry.setName(e0.getMessage());
+                logEntry.setCorrelation(
+                	targetObject instanceof BasicObject ?
+                		(BasicObject)targetObject :
+                		null
                 );
-                logEntry.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:home1:WfActionLogEntry"
-                );
-                logEntry.values("name").add(e0.getMessage());
-                logEntry.values("correlation").add(targetObjectPath);
-                this.delegation.addCreateRequest(
-                    logEntry
+                wfInstance.addActionLog(
+                	false,
+                	this.getUidAsString(),
+                	logEntry
                 );
             }
         }
         return wfInstance;
     }
-    
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -819,15 +748,12 @@ public class Workflows {
     public static final String TOPIC_NAME_QUOTE_MODIFICATIONS = "Quote Modifications";
     public static final String TOPIC_NAME_SALES_ORDER_MODIFICATIONS = "SalesOrder Modifications";
     
-    public static final String WORKFLOW_NAME_EXPORT_MAIL = "org.opencrx.mail.workflow.ExportMailWorkflow";
     public static final String WORKFLOW_NAME_PRINT_CONSOLE = "org.opencrx.kernel.workflow.PrintConsole";
     public static final String WORKFLOW_NAME_SEND_ALERT = "org.opencrx.kernel.workflow.SendAlert";
-    public static final String WORKFLOW_NAME_SEND_MAIL = "org.opencrx.mail.workflow.SendMailWorkflow";
-    public static final String WORKFLOW_NAME_SEND_MAIL_NOTIFICATION = "org.opencrx.mail.workflow.SendMailNotificationWorkflow";
-    
-    private final Backend backend;
-    private final RequestCollection delegation;
-    
+    public static final String WORKFLOW_NAME_EXPORT_MAIL = "org.opencrx.application.mail.exporter.ExportMailWorkflow";
+    public static final String WORKFLOW_NAME_SEND_MAIL_NOTIFICATION = "org.opencrx.application.mail.exporter.SendMailNotificationWorkflow";
+    public static final String WORKFLOW_NAME_SEND_MAIL = "org.opencrx.application.mail.exporter.SendMailWorkflow";
+        
 }
 
 //--- End of File -----------------------------------------------------------

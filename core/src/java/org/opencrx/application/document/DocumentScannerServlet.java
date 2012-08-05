@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.10 2009/03/08 17:04:53 wfro Exp $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.15 2009/05/09 21:44:32 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:53 $
+ * Date:        $Date: 2009/05/09 21:44:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,7 +77,6 @@ import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.cci2.FolderAssignmentQuery;
-import org.opencrx.kernel.document1.jmi1.Document1Package;
 import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.FolderAssignment;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
@@ -88,6 +87,7 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
+import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
@@ -181,7 +181,6 @@ public class DocumentScannerServlet
         PersistenceManager pm
     ) {
         File[] files = currentDir.listFiles(filter);
-        Document1Package documentPkg = Utils.getDocumentPackage(pm);
         if(files != null) {
             for(File file: files) {
                 if(file.isDirectory()) {
@@ -212,17 +211,31 @@ public class DocumentScannerServlet
                         Character.isDigit(names[names.length-1].charAt(1));
                     String version = hasVersion ? 
                         names[names.length-1].substring(1) : 
-                        "1.0";                    
+                        "1.0";  
+                    Date activeOn = null;
+                    for(String name: names) {
+                    	if(name.startsWith("@")) {
+                    		try {
+                    			activeOn = DateFormat.getInstance().parse(
+                    				name.indexOf("T") > 0 ?
+                    					name.substring(1) :
+                    					name.substring(1) + "T000000.000Z"
+                    			);
+                    		}
+                    		catch(Exception e) {}
+                    	}
+                    }
                     // Get/create document
-                    DocumentQuery query = documentPkg.createDocumentQuery();
+                    DocumentQuery query = (DocumentQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.Document.class);
                     String documentName = names[0] + (ext == null ? "" : "." + ext);
                     query.name().equalTo(documentName);
                     List<org.opencrx.kernel.document1.jmi1.Document> documents = documentSegment.getDocument(query); 
                     org.opencrx.kernel.document1.jmi1.Document document = null;
                     if(documents.isEmpty()) {
-                        document = documentPkg.getDocument().createDocument();
+                        document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
                         document.refInitialize(false, false);
                         document.setName(documentName);
+                        document.setActiveOn(activeOn);
                         document.getOwningGroup().clear();
                         document.getOwningGroup().addAll(principalGroups);
                         try {
@@ -256,7 +269,7 @@ public class DocumentScannerServlet
                     if(revision == null) {                    
                         // Upload file
                         if(upload) {
-                            MediaContent mediaContent = documentPkg.getMediaContent().createMediaContent();
+                            MediaContent mediaContent = pm.newInstance(MediaContent.class);
                             mediaContent.refInitialize(false, false);
                             mediaContent.setContent(BinaryLargeObjects.valueOf(file));
                             mediaContent.setContentMimeType(
@@ -267,7 +280,7 @@ public class DocumentScannerServlet
                         }
                         // Create a document link
                         else {
-                            ResourceIdentifier resourceIdentifier = documentPkg.getResourceIdentifier().createResourceIdentifier();
+                            ResourceIdentifier resourceIdentifier = pm.newInstance(ResourceIdentifier.class);
                             resourceIdentifier.refInitialize(false, false);
                             resourceIdentifier.setUri(
                                 uriPrefix + 
@@ -304,20 +317,21 @@ public class DocumentScannerServlet
                         i < (hasVersion ? names.length-1 : names.length); 
                         i++
                     ) {
-                        folderNames.add(names[i]);
+                    	if(!names[i].startsWith("@")) {
+                    		folderNames.add(names[i]);
+                    	}
                     }
                     folderNames.add(currentDir.getName());
                     for(String folderName: folderNames) {
-                        DocumentFolderQuery folderQuery = documentPkg.createDocumentFolderQuery();
+                        DocumentFolderQuery folderQuery = (DocumentFolderQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
                         folderQuery.name().equalTo(folderName);
                         List<org.opencrx.kernel.document1.jmi1.DocumentFolder> folders = documentSegment.getFolder(folderQuery);
                         org.opencrx.kernel.document1.jmi1.DocumentFolder folder = null;
                         if(folders.isEmpty()) {
-                            folder = documentPkg.getDocumentFolder().createDocumentFolder();
+                            folder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
                             folder.refInitialize(false, false);
                             folder.setName(folderName);
-                            folder.getOwningGroup().clear();
-                            folder.getOwningGroup().addAll(principalGroups);
+                            // Default security for folders
                             try {
                                 pm.currentTransaction().begin();
                                 documentSegment.addFolder(
@@ -334,15 +348,30 @@ public class DocumentScannerServlet
                             }                        
                         }
                         else {
-                            folder = folders.iterator().next();
+                            try {
+                                pm.currentTransaction().begin();
+	                            folder = folders.iterator().next();
+	                            List<org.opencrx.security.realm1.jmi1.PrincipalGroup> groups = documentSegment.getOwningGroup();
+	                            for(org.opencrx.security.realm1.jmi1.PrincipalGroup group: groups) {
+	                            	if(!folder.getOwningGroup().contains(group)) {
+	                            		folder.getOwningGroup().add(group);
+	                            	}
+	                            }
+                                pm.currentTransaction().commit();
+                            }
+                            catch(Exception e) {
+                                try {
+                                    pm.currentTransaction().rollback();
+                                } catch(Exception e0) {}
+                            }                        
                         }
                         // Assign document to folder
-                        FolderAssignmentQuery assignmentQuery = documentPkg.createFolderAssignmentQuery();
+                        FolderAssignmentQuery assignmentQuery = (FolderAssignmentQuery)pm.newQuery(FolderAssignment.class);
                         assignmentQuery.thereExistsDocumentFolder().equalTo(folder);
                         List<FolderAssignment> assignments = document.getDocumentFolderAssignment(assignmentQuery);
                         // Add assignment
                         if(assignments.isEmpty()) {
-                            FolderAssignment assignment = documentPkg.getFolderAssignment().createFolderAssignment();
+                            FolderAssignment assignment = pm.newInstance(FolderAssignment.class);
                             assignment.refInitialize(false, false);
                             assignment.setName(folder.getName());
                             assignment.setDocumentFolder(folder);
@@ -387,7 +416,7 @@ public class DocumentScannerServlet
                 SecurityKeys.ROOT_PRINCIPAL,
                 UUIDs.getGenerator().next().toString()
             );
-            Workflows.initWorkflows(
+            Workflows.getInstance().initWorkflows(
                 pm, 
                 providerName, 
                 segmentName

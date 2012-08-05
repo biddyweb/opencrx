@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.41 2009/02/23 15:52:42 cmu Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.45 2009/05/27 12:18:31 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/23 15:52:42 $
+ * Date:        $Date: 2009/05/27 12:18:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,51 +75,6 @@ org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*
 " %>
-
-<%!
-
-	//-----------------------------------------------------------------------
-	private static org.opencrx.kernel.activity1.jmi1.Resource findResource(
-		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg,
-		org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
-		org.opencrx.kernel.home1.jmi1.UserHome userHome,
-		String providerName,
-		String segmentName
-	) {
-		// Resource
-		org.opencrx.kernel.activity1.jmi1.Resource resource = null;
-		try {
-			resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(
-				new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/resource/" + userHome.refGetPath().getBase())
-			);
-		}
-		catch(Exception e) {}
-		if(resource == null) {
-			try {
-				org.opencrx.kernel.activity1.cci2.ResourceQuery query = activityPkg.createResourceQuery();
-				query.thereExistsContact().equalTo(userHome.getContact());
-				query.orderByName().ascending();
-				Collection resources = activitySegment.getResource(query);
-				for(Iterator i = resources.iterator(); i.hasNext(); ) {
-					org.opencrx.kernel.activity1.jmi1.Resource candidate = (org.opencrx.kernel.activity1.jmi1.Resource)i.next();
-					if(
-						candidate.getName().equals(userHome.refGetPath().getBase()) ||
-						candidate.getName().equals(userHome.getContact().getFullName())
-					) {
-						resource = candidate;
-						break;
-					}
-				}
-				if(resource == null) {
-					resource = (org.opencrx.kernel.activity1.jmi1.Resource)resources.iterator().next();
-				}
-			}
-			catch(Exception e) {}
-		}
-		return resource;
-	}
-%>
 
 <%
 
@@ -340,285 +295,57 @@ org.openmdx.base.exception.*
 					)
 				);
 			}
-
 			String fTimezone = request.getParameter("timezone");
 			String fStoreSettingsOnLogoff = request.getParameter("storeSettingsOnLogoff");
 			String fEmailAccount = request.getParameter("emailAccount");
 			String fSendmailSubjectPrefix = request.getParameter("sendmailSubjectPrefix");
 			String fWebAccessUrl = request.getParameter("webAccessUrl");
-			String fPrivateTracker = request.getParameter("privateTracker");
-			String fResource = request.getParameter("resource");
-
+			String fTopNavigationShowMax = request.getParameter("topNavigationShowMax");
+			String fShowHistory = request.getParameter("history");
+			List<String> fRootObjects = new ArrayList<String>();
+			for(int i = 1; i < 20; i++) {
+				String state = request.getParameter("rootObject" + i);
+				fRootObjects.add(
+					state == null ? "0" : "1"
+				);
+			}
+			Map<String,String> fSubscriptions = new HashMap<String,String>();
+			Enumeration<String> parameterNames = request.getParameterNames();
+			while(parameterNames.hasMoreElements()) {
+				String parameterName = parameterNames.nextElement();
+				if(
+					parameterName.startsWith("topicIsActive-") ||
+					parameterName.startsWith("topicCreation-") ||
+					parameterName.startsWith("topicReplacement-") ||
+					parameterName.startsWith("topicRemoval-")			
+				) {
+					fSubscriptions.put(
+						parameterName,
+						request.getParameter(parameterName)
+					);
+				}
+			}
 			// Apply
 			if("apply".equalsIgnoreCase(command)) {
 				try {
-					UUIDGenerator uuids = UUIDs.getGenerator();
 					pm.currentTransaction().begin();
-
-					userSettings.setProperty("TimeZone.Name", fTimezone);
-					userHome.setStoreSettingsOnLogoff(
-						Boolean.valueOf(fStoreSettingsOnLogoff == null ? "false" :"true")
-					);
-					userHome.setWebAccessUrl(fWebAccessUrl);
-					userHome.setSendMailSubjectPrefix(fSendmailSubjectPrefix);
-					// Email account
-					org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = null;
-					for(Iterator i = userHome.getEMailAccount().iterator(); i.hasNext(); ) {
-						org.opencrx.kernel.home1.jmi1.EMailAccount emailAccount = (org.opencrx.kernel.home1.jmi1.EMailAccount)i.next();
-						if((emailAccount.isDefault() != null) && emailAccount.isDefault().booleanValue()) {
-							defaultEmailAccount = emailAccount;
-							break;
-						}
-					}
-					if(
-						(defaultEmailAccount == null) &&
-						(fEmailAccount != null) &&
-						(fEmailAccount.length() > 0)
-					) {
-						defaultEmailAccount = homePkg.getEMailAccount().createEMailAccount();
-						defaultEmailAccount.refInitialize(false, false);
-						defaultEmailAccount.setDefault(Boolean.TRUE);
-						defaultEmailAccount.setEMailAddress(fEmailAccount);
-						userHome.addEMailAccount(
-							false,
-							uuids.next().toString(),
-							defaultEmailAccount
-						);
-					}
-					else if(
-						(defaultEmailAccount != null) &&
-						((fEmailAccount == null) ||
-						(fEmailAccount.length() == 0))
-					) {
-						defaultEmailAccount.refDelete();
-					}
-					else if(defaultEmailAccount != null) {
-						defaultEmailAccount.setEMailAddress(fEmailAccount);
-					}
-					// Root objects
-					for(int i = 1; i < 20; i++) {
-						String state = request.getParameter("rootObject" + i);
-						userSettings.setProperty(
-							"RootObject." + i + ".State",
-							state == null ? "0" : "1"
-						);
-					}
-					// Show max items in top navigation
-					String topNavigationShowMax = request.getParameter("topNavigationShowMax");
-					userSettings.setProperty(
-						"TopNavigation.ShowMax",
-						topNavigationShowMax
-					);
-					// History
-					String state = request.getParameter("history");
-					userSettings.setProperty(
-						"History.State",
-						state == null ? "0" : "1"
-					);
-					// If running as segment admin set ACLs of created objects
-					org.opencrx.security.realm1.jmi1.PrincipalGroup privatePrincipalGroup = null;
-					if(currentUserIsAdmin) {
-						// Get principal group with name <principal>.Group. This is the private group of the owner of the user home page
-						org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getRealm(
-							pm,
-							providerName,
-							segmentName
-						);
-						privatePrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
-							userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
-							realm,
-							pm
-						);
-						if(
-							(privatePrincipalGroup == null)
-						) {
-							privatePrincipalGroup = realmPkg.getPrincipalGroup().createPrincipalGroup();
-							privatePrincipalGroup.refInitialize(false, false);
-							privatePrincipalGroup.setDescription(segmentName + "\\\\" + userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX);
-							realm.addPrincipal(
-								false,
-								userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
-								privatePrincipalGroup
-							);
-						}
-						// Set UserHome's primary group
-						userHome.setPrimaryGroup(privatePrincipalGroup);
-						org.openmdx.security.realm1.jmi1.Principal principal = null;
-						try {
-							principal = org.opencrx.kernel.backend.SecureObject.findPrincipal(
-								userHome.refGetPath().getBase(),
-								realm,
-								pm
-							);
-							// Validate that user is member of <principal>.Group
-							if(!principal.getIsMemberOf().contains(privatePrincipalGroup)) {
-								principal.getIsMemberOf().add(privatePrincipalGroup);
-							}
-							// Validate that user is member of group 'Public'
-							org.opencrx.security.realm1.jmi1.PrincipalGroup publicGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
-								"Public",
-								realm,
-								pm
-							);
-							if(!principal.getIsMemberOf().contains(publicGroup)) {
-								principal.getIsMemberOf().add(publicGroup);
-							}
-						} catch(Exception e) {}
-						// Validate that subject of <principal>.Group is the same as of <principal>
-						if((principal != null) && (privatePrincipalGroup != null)) {
-							privatePrincipalGroup.setSubject(principal.getSubject());
-						}
-					}
-
-					// Private activity tracker
-					org.opencrx.kernel.activity1.jmi1.ActivityTracker privateTracker = null;
-					try {
-						privateTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
-							new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase())
-						);
-					}
-					catch(Exception e) {}
-					if(privateTracker == null) {
-						privateTracker = activityPkg.getActivityTracker().createActivityTracker();
-						privateTracker.refInitialize(false, false);
-						privateTracker.setName(userHome.refGetPath().getBase() + "~Private");
-						if(privatePrincipalGroup != null) {
-							privateTracker.getOwningGroup().clear();
-							privateTracker.getOwningGroup().add(privatePrincipalGroup);
-						}
-						activitySegment.addActivityTracker(
-							false,
-							userHome.refGetPath().getBase(),
-							privateTracker
-						);
-					}
-					if((fPrivateTracker != null) && (fPrivateTracker.length() > 0)) {
-						privateTracker.setName(fPrivateTracker);
-					}
-					// Private activity creator
-					org.opencrx.kernel.activity1.jmi1.ActivityCreator privateCreator = null;
-					try {
-						privateCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
-							new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityCreator/" + userHome.refGetPath().getBase())
-						);
-					}
-					catch(Exception e) {}
-					if(privateCreator == null) {
-						privateCreator = activityPkg.getActivityCreator().createActivityCreator();
-						privateCreator.refInitialize(false, false);
-						privateCreator.setName(userHome.refGetPath().getBase() + "~Private");
-						privateCreator.getActivityGroup().add(privateTracker);
-						privateCreator.setActivityType(
-							org.opencrx.kernel.backend.Activities.findActivityType("Bugs + Features", activitySegment, pm)
-						);
-						if(privatePrincipalGroup != null) {
-							privateCreator.getOwningGroup().clear();
-							privateCreator.getOwningGroup().add(privatePrincipalGroup);
-						}
-						activitySegment.addActivityCreator(
-							false,
-							userHome.refGetPath().getBase(),
-							privateCreator
-						);
-					}
-					if((fPrivateTracker != null) && (fPrivateTracker.length() > 0)) {
-						privateCreator.setName(fPrivateTracker);
-					}
-					// Set default creator on tracker
-					privateTracker.setDefaultCreator(privateCreator);
-
-					// Resource
-					org.opencrx.kernel.activity1.jmi1.Resource resource = findResource(
-						pm,
-						activityPkg,
-						activitySegment,
+					org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
 						userHome,
-						providerName,
-						segmentName
+						userSettings,
+						currentUserIsAdmin,
+						!currentUserOwnsHome,
+						userHome.getPrimaryGroup(),
+						fTimezone,
+						fStoreSettingsOnLogoff,
+						fEmailAccount,
+						fSendmailSubjectPrefix,
+						fWebAccessUrl,
+						fTopNavigationShowMax,
+						fShowHistory,
+						fRootObjects,
+						fSubscriptions
 					);
-					if(resource == null) {
-						resource = activityPkg.getResource().createResource();
-						resource.refInitialize(false, false);
-						if(userHome.getContact() != null) {
-							resource.setName(userHome.getContact().getFullName());
-							resource.setContact(userHome.getContact());
-						}
-						else {
-							resource.setName(userHome.refGetPath().getBase());
-						}
-						activitySegment.addResource(
-							false,
-							userHome.refGetPath().getBase(),
-							resource
-						);
-					}
-					if((fResource != null) && (fResource.length() > 0)) {
-						resource.setName(fResource);
-					}
-					// Subscriptions
-					for(Iterator i = workflowSegment.getTopic().iterator(); i.hasNext(); ) {
-						org.opencrx.kernel.workflow1.jmi1.Topic topic = (org.opencrx.kernel.workflow1.jmi1.Topic)i.next();
-						org.opencrx.kernel.home1.cci2.SubscriptionQuery query = homePkg.createSubscriptionQuery();
-						query.thereExistsTopic().equalTo(topic);
-						Collection subscriptions = userHome.getSubscription(query);
-						org.opencrx.kernel.home1.jmi1.Subscription subscription = null;
-						if(subscriptions.isEmpty()) {
-							subscription = homePkg.getSubscription().createSubscription();
-							subscription.refInitialize(false, false);
-							subscription.setName(topic.getName());
-							subscription.setTopic(topic);
-							userHome.addSubscription(
-								false,
-								uuids.next().toString(),
-								subscription
-							);
-						}
-						else {
-							subscription = (org.opencrx.kernel.home1.jmi1.Subscription)subscriptions.iterator().next();
-						}
-						subscription.getEventType().clear();
-						String topicId = topic.refGetPath().getBase();
-						subscription.setActive(
-							request.getParameter("topicIsActive-" + topicId) != null
-						);
-						if(request.getParameter("topicCreation-" + topicId) != null) {
-							subscription.getEventType().add(new Short((short)1));
-						}
-						if(request.getParameter("topicReplacement-" + topicId) != null) {
-							subscription.getEventType().add(new Short((short)3));
-						}
-						if(request.getParameter("topicRemoval-" + topicId) != null) {
-							subscription.getEventType().add(new Short((short)4));
-						}
-					}
-					// Store settings
-					if(!currentUserOwnsHome) {
-						ByteArrayOutputStream bsSettings = new ByteArrayOutputStream();
-						userSettings.store(
-							bsSettings,
-							"settings of user " + userHome.refMofId()
-						);
-						bsSettings.close();
-						userHome.setSettings(
-							bsSettings.toString("UTF-8")
-						);
-					}
 					pm.currentTransaction().commit();
-					// Assert owningUser of Resource
-					if(!currentUserOwnsHome) {
-					    pm.currentTransaction().begin();
-					    org.opencrx.kernel.base.jmi1.SetOwningUserParams setOwningUserParams = basePkg.createSetOwningUserParams(
-					        (short)SecureObject.MODE_RECURSIVE,
-					        userHome.getOwningUser()
-					    );
-						resource.setOwningUser(
-						    setOwningUserParams
-						);
-					    pm.currentTransaction().commit();
-					}
-   					if(currentUserOwnsHome) {
-						app.saveSettings(false);
-					}
 				}
 				catch(Exception e) {
 					new ServiceException(e).log();
@@ -719,33 +446,6 @@ org.openmdx.base.exception.*
 			</div>
 			<div class="col2">
 				<fieldset>
-					<legend>Activities</legend>
-					<table>
-<%
-						org.opencrx.kernel.activity1.jmi1.ActivityTracker privateTracker = null;
-						try {
-							privateTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
-								new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase())
-							);
-						} catch(Exception e) {}
-%>
-						<tr><td><label for="privateTracker">Private activity tracker:</label></td>
-						<td><input type="text" id="privateTracker" name="privateTracker"  value="<%= privateTracker == null ? userHome.refGetPath().getBase() + "~Private" : privateTracker.getName() %>"/></td></tr>
-<%
-						org.opencrx.kernel.activity1.jmi1.Resource resource = findResource(
-							pm,
-							activityPkg,
-							activitySegment,
-							userHome,
-							providerName,
-							segmentName
-						);
-%>
-						<tr><td><label for="resource">Resource:</label></td>
-						<td><input type="text" id="resource" name="resource"  value="<%= resource == null ? (userHome.getContact() == null ? "" :  userHome.getContact().getFullName()) : resource.getName() %>"/></td></tr>
-					</table>
-				</fieldset>
-				<fieldset>
 					<legend>Subscriptions</legend>
 					<table>
 						<tr><td></td><td></td><td colspan="3" style="background-color:#DDDDDD;text-align:center;">Notify on</td></tr>
@@ -783,7 +483,7 @@ org.openmdx.base.exception.*
 			</div>
 			<div class="buttons">
 <%
-				boolean allowApply = currentUserIsAdmin || (currentUserOwnsHome && (privateTracker != null) && (resource != null));
+				boolean allowApply = currentUserIsAdmin || currentUserOwnsHome;
 %>
 				<input <%= allowApply ? "" : "disabled" %> type="submit" value="Apply"  class="button" />
 				<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" class="button" />

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.29 2009/02/20 21:44:49 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.38 2009/06/13 18:47:42 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.29 $
+ * Revision:    $Revision: 1.38 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/20 21:44:49 $
+ * Date:        $Date: 2009/06/13 18:47:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,29 +57,31 @@ package org.opencrx.security.layer.application;
 
 import java.util.Set;
 
+import javax.resource.ResourceException;
+import javax.resource.cci.MappedRecord;
+
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
+import org.openmdx.application.dataprovider.layer.application.ProvidingUid_1;
 import org.openmdx.application.dataprovider.spi.Layer_1_0;
+import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.query.AttributeSpecifier;
 import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
+import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
 import org.openmdx.base.text.conversion.Base64;
-import org.openmdx.compatibility.base.dataprovider.layer.application.ProvidingUid_1;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -112,32 +114,8 @@ public class OpenCrxSecurity_1
         id,
         configuration,
         delegation
-      );
-      
-      // model
-      if(configuration.values(SharedConfigurationEntries.MODEL).size() > 0) {
-        this.model = (Model_1_0)configuration.values(SharedConfigurationEntries.MODEL).get(0);
-      }
-      else {
-        throw new ServiceException(
-          BasicException.Code.DEFAULT_DOMAIN,
-          BasicException.Code.INVALID_CONFIGURATION, 
-          "A model must be configured with options 'modelPackage' and 'packageImpl'"
-        );
-      }
-
-      // realmIdentity
-      if(configuration.values("realmIdentity").size() > 0) {
-          this.realmIdentity = new Path((String)configuration.values("realmIdentity").get(0));
-      }
-      else {
-          throw new ServiceException(
-              BasicException.Code.DEFAULT_DOMAIN,
-              BasicException.Code.INVALID_CONFIGURATION, 
-              "A realm identity must be configured with option 'realmIdentity'"
-          );
-      } 
-      
+      );      
+      this.model = Model_1Factory.getModel();
     } 
 
     //-------------------------------------------------------------------------
@@ -147,21 +125,21 @@ public class OpenCrxSecurity_1
         if(header.getPrincipalChain().size() == 0) {
             return null;
         }
-        return (String)header.getPrincipalChain().get(0);
+        return header.getPrincipalChain().get(0);
     }
     
     //-------------------------------------------------------------------------
     protected void completeObject(
       ServiceHeader header,
-      Set fetchSet,
-      DataproviderObject_1_0 object
+      Set<String> fetchSet,
+      MappedRecord object
     ) throws ServiceException {
     }
     
     //-------------------------------------------------------------------------
     private DataproviderReply completeReply(
       ServiceHeader header,
-      Set fetchSet,
+      Set<String> fetchSet,
       DataproviderReply reply
     ) throws ServiceException {
       for(int i = 0; i < reply.getObjects().length; i++) {
@@ -176,26 +154,32 @@ public class OpenCrxSecurity_1
     
     //-------------------------------------------------------------------------
     private void setQualifier(
-        DataproviderObject obj
+    	MappedRecord obj
     ) throws ServiceException {
-        if(
-            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
-            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
-            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
-            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
-            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
-        ) {
-            obj.clearValues("name").add(obj.path().getBase());            
-        }
-        else if(
-            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
-        ) {
-           obj.clearValues("id").add(obj.path().getBase());            
-        }
+    	try {
+	    	ObjectHolder_2Facade objFacade = ObjectHolder_2Facade.newInstance(obj);
+	        if(
+	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
+	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
+	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
+	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
+	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
+	        ) {
+	        	objFacade.clearAttributeValues("name").add(objFacade.getPath().getBase());            
+	        }
+	        else if(
+	            this.model.objectIsSubtypeOf(objFacade, "org:openmdx:security:realm1:Credential")
+	        ) {
+	        	objFacade.clearAttributeValues("id").add(objFacade.getPath().getBase());            
+	        }
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-------------------------------------------------------------------------
-    public DataproviderObject_1_0 retrieveObject(
+    public MappedRecord retrieveObject(
         Path identity
     ) throws ServiceException {
         return this.delegation.addGetRequest(
@@ -206,19 +190,22 @@ public class OpenCrxSecurity_1
     }
 
     //-------------------------------------------------------------------------
-    private DataproviderObject createResult(
+    private MappedRecord createResult(
       DataproviderRequest request,
       String structName
-    ) {
-      DataproviderObject result = new DataproviderObject(
-        request.path().getDescendant(
-          new String[]{ "reply", UUIDs.getGenerator().next().toString()}
-        )
-      );
-      result.clearValues(SystemAttributes.OBJECT_CLASS).add(
-        structName
-      );
-      return result;
+    ) throws ServiceException {
+    	try {
+	    	MappedRecord result = ObjectHolder_2Facade.newInstance(
+		        request.path().getDescendant(
+		          new String[]{ "reply", UUIDs.getGenerator().next().toString()}
+		        ),
+		        structName
+	      ).getDelegate();
+	      return result;
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
 
     //-------------------------------------------------------------------------
@@ -252,8 +239,8 @@ public class OpenCrxSecurity_1
     //-------------------------------------------------------------------------
     private void setAttributes(
       ServiceHeader header,
-      DataproviderObject obj,
-      DataproviderObject_1_0 oldValues
+      MappedRecord obj,
+      MappedRecord oldValues
     ) throws ServiceException {
       this.setQualifier(
         obj 
@@ -262,29 +249,40 @@ public class OpenCrxSecurity_1
 
     //-------------------------------------------------------------------------
     private void changePassword(
-        DataproviderObject_1_0 passwordCredential,
-        DataproviderObject_1_0 changePasswordParams
+    	MappedRecord passwordCredential,
+    	MappedRecord changePasswordParams
     ) throws ServiceException {
-        String oldPassword = changePasswordParams.getValues("oldPassword") != null
-            ? Base64.encode((byte[])changePasswordParams.values("oldPassword").get(0))
-            : null;
-        if((oldPassword != null) && !oldPassword.equals(passwordCredential.values("password").get(0))) {
-            throw new ServiceException(
-                BasicException.Code.DEFAULT_DOMAIN,
-                BasicException.Code.ASSERTION_FAILURE, 
-                "old password verification mismatch",
-                new BasicException.Parameter("credential", passwordCredential)
-            );
-        }
-        DataproviderObject changedPasswordCredential = new DataproviderObject(
-            passwordCredential
-        );
-        changedPasswordCredential.clearValues("password").add(
-            Base64.encode((byte[])changePasswordParams.values("password").get(0))
-        );
-        this.delegation.addReplaceRequest(
-            changedPasswordCredential
-        );
+    	try {
+	    	ObjectHolder_2Facade changePasswordParamsFacade = ObjectHolder_2Facade.newInstance(changePasswordParams);
+	    	ObjectHolder_2Facade passwordCredentialFacade = ObjectHolder_2Facade.newInstance(passwordCredential);
+	        String oldPassword = (changePasswordParamsFacade.getAttributeValues("oldPassword") != null) && !changePasswordParamsFacade.attributeValues("oldPassword").isEmpty() ? 
+	        	Base64.encode((byte[])changePasswordParamsFacade.attributeValue("oldPassword")) : 
+	        	null;
+	        if((oldPassword != null) && !oldPassword.equals(passwordCredentialFacade.attributeValue("password"))) {
+	            throw new ServiceException(
+	                BasicException.Code.DEFAULT_DOMAIN,
+	                BasicException.Code.ASSERTION_FAILURE, 
+	                "old password verification mismatch",
+	                new BasicException.Parameter("credential", passwordCredential)
+	            );
+	        }
+	        MappedRecord changedPasswordCredential;
+            try {
+	            changedPasswordCredential = ObjectHolder_2Facade.cloneObject(passwordCredential);
+            }
+            catch (ResourceException e) {
+            	throw new ServiceException(e);
+            }
+	        ObjectHolder_2Facade.newInstance(changedPasswordCredential).clearAttributeValues("password").add(
+	            Base64.encode((byte[])changePasswordParamsFacade.attributeValue("password"))
+	        );
+	        this.delegation.addReplaceRequest(
+	            changedPasswordCredential
+	        );
+    	}
+    	catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
     }
     
     //-------------------------------------------------------------------------
@@ -338,13 +336,13 @@ public class OpenCrxSecurity_1
                     header,
                     this.getDelegation()
                 );
-                DataproviderObject_1_0 realm = delegation.addGetRequest( 
+                MappedRecord realm = delegation.addGetRequest( 
                     realmIdentity,
                     AttributeSelectors.ALL_ATTRIBUTES,
                     new AttributeSpecifier[]{}
                 );
                 delegation.addReplaceRequest(
-                    new DataproviderObject(realm)
+                    (MappedRecord)realm.clone()
                 );
             }
             catch(ServiceException e) {
@@ -352,6 +350,9 @@ public class OpenCrxSecurity_1
                 if(BasicException.Code.NOT_FOUND != e.getExceptionCode()) {
                     throw e;
                 }
+            }
+            catch (CloneNotSupportedException e) {
+            	throw new ServiceException(e);
             }
         }
     }
@@ -416,11 +417,16 @@ public class OpenCrxSecurity_1
         );
         // Only mark realm as dirty if group memberships are modified
         // E.g. modifying lastLoginAt does not require to refresh the realm
-        if(request.object().containsAttributeName("isMemberOf")) {
-            this.updateRealm(
-                header,
-                request
-            );
+        try {
+	        if(ObjectHolder_2Facade.newInstance(request.object()).getValue().keySet().contains("isMemberOf")) {
+	            this.updateRealm(
+	                header,
+	                request
+	            );
+	        }
+        }
+        catch (ResourceException e) {
+        	throw new ServiceException(e);
         }
         try {
             return super.replace(
@@ -475,14 +481,13 @@ public class OpenCrxSecurity_1
         String operationName = request.path().get(
             request.path().size() - 2
         );
-        DataproviderObject_1_0 source = this.retrieveObject(
+        MappedRecord source = this.retrieveObject(
             request.path().getPrefix(request.path().size() - 2)
         );
-        String sourceClass = (String)source.values(SystemAttributes.OBJECT_CLASS).get(0);
-        DataproviderObject param = request.object();
-
+        String sourceClass = ObjectHolder_2Facade.getObjectClass(source);
+        MappedRecord param = request.object();
         // change password
-        DataproviderObject reply = null;
+        MappedRecord reply = null;
         if("org:openmdx:security:authentication1:Password".equals(sourceClass)) {
             if("change".equals(operationName)) {
                 this.changePassword(
@@ -587,7 +592,6 @@ public class OpenCrxSecurity_1
         new Path("xri:@openmdx:org.opencrx.security.identity1/provider/:*/segment/:*/subject");
 
     private RequestCollection delegation = null;
-    private Path realmIdentity = null;
     private Model_1_0 model = null;
     
 }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.23 2009/03/08 17:04:47 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.26 2009/06/09 14:10:35 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:47 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +63,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -522,20 +523,26 @@ public class ICalServlet extends FreeBusyServlet {
                                 uid
                             );
                             StringBuilder dummy = new StringBuilder();
-                            Map<String,String> newICal = ICalendar.parseICal(
-                                new BufferedReader(new StringReader(calendar.toString())),
-                                dummy 
-                            );
+                            Map<String,String> newICal = new HashMap<String,String>();
+                            try {
+                            	newICal = ICalendar.getInstance().parseICal(
+	                                new BufferedReader(new StringReader(calendar.toString())),
+	                                dummy 
+	                            );
+                            } catch(Exception e) {}
                             newICal.remove("LAST-MODIFIED");
                             newICal.remove("DTSTAMP");                               
                             newICal.remove("CREATED");                               
                             dummy.setLength(0);
                             Map<String,String> oldICal = null;
                             if(activity != null) {
-                                oldICal = ICalendar.parseICal(
-                                    new BufferedReader(new StringReader(activity.getIcal())),
-                                    dummy
-                                );
+                            	try {
+	                                oldICal = ICalendar.getInstance().parseICal(
+	                                    new BufferedReader(new StringReader(activity.getIcal())),
+	                                    dummy
+	                                );
+                            	} 
+                            	catch(Exception e) {}
                                 oldICal.remove("LAST-MODIFIED");
                                 oldICal.remove("DTSTAMP");                                   
                                 oldICal.remove("CREATED");                                   
@@ -557,7 +564,7 @@ public class ICalServlet extends FreeBusyServlet {
                                     );
                                     activity.importItem(importItemParams);
                                     pm.currentTransaction().commit();
-                                    activity.refRefresh();
+                                    pm.refresh(activity);
                                     pm.currentTransaction().begin();
                                     activity.setDisabled(
                                         Boolean.valueOf(activitiesHelper.isDisabledFilter())
@@ -650,7 +657,7 @@ public class ICalServlet extends FreeBusyServlet {
                                             );
                                             activity.importItem(importItemParams);
                                             pm.currentTransaction().commit();
-                                            activity.refRefresh();
+                                            pm.refresh(activity);
                                             if(
                                                 activitiesHelper.isDisabledFilter() &&
                                                 ((activity.isDisabled() == null) || !activity.isDisabled().booleanValue())
@@ -707,7 +714,7 @@ public class ICalServlet extends FreeBusyServlet {
         try {
             pm.close();            
         } 
-        catch(Exception e) {}        
+        catch(Exception e) {}
     }
 
     //-----------------------------------------------------------------------

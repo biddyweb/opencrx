@@ -67,17 +67,17 @@
 
 						<!-- Begin .post -->
                         <a name="header"></a>
-						<H3 class="post-title">Online store for you daily needs</H4>
+						<H3 class="post-title">Online store for you daily needs</H3>
 
                         <div class="post">
-                        <H4 class="post-title">Order Details</H3>
+                        <H4 class="post-title">Order Details</H4>
                         <ul>
                         <li>Ordered by: <%=buyer.getName()%></li>
                         <li>Start date: <%=Converter.getString( order.getStartDate() )%></li>
                         <li>End date: <%=Converter.getString( order.getEndDate() )%></li>
                         <li>Status: <b><%=order.getStatusString()%></b></li>
-                        </ui>
-                        <p>
+                        </ul>
+                        <p/>
                         Products:
                         <ul>
                         <%
@@ -106,7 +106,7 @@
                         |
                         <input type="submit" name="<%= RequestHelper.ACTION %>" value="<%= RequestHelper.ACTION_CANCEL %>">
 
-                        </p>
+                        <p />
                         </div>
 
 </form>

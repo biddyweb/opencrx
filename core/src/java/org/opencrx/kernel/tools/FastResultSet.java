@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: FastResultSet.java,v 1.2 2007/07/09 12:38:56 wfro Exp $
+ * Name:        $Id: FastResultSet.java,v 1.3 2009/04/23 22:19:07 wfro Exp $
  * Description: 
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2007/07/09 12:38:56 $
+ * Date:        $Date: 2009/04/23 22:19:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,17 +82,17 @@ public class FastResultSet {
   //-----------------------------------------------------------------------
   public FastResultSet(
       ResultSet rs,
-      List columnNames
+      List<String> columnNames
   ) throws SQLException {
       this.rs = rs;
       this.columnNames = columnNames;
   }
 
   //-----------------------------------------------------------------------
-  static public List getColumnNames(
+  static public List<String> getColumnNames(
     ResultSetMetaData rsmd
   ) throws SQLException {
-    List columnNames = new ArrayList();
+    List<String> columnNames = new ArrayList<String>();
     for(int i = 0; i < rsmd.getColumnCount(); i++) {
       columnNames.add(
         rsmd.getColumnName(i+1).toLowerCase()
@@ -146,7 +146,7 @@ public class FastResultSet {
   }
   
   //-----------------------------------------------------------------------
-  public List getColumnNames(
+  public List<String> getColumnNames(
   ) {
     return this.columnNames;
   }
@@ -164,6 +164,6 @@ public class FastResultSet {
   //-----------------------------------------------------------------------
   private final ResultSet rs;
   private int currentColumnIndex = -1;
-  private final Map columnValues = new HashMap();
-  private final List columnNames;
+  private final Map<String,Object> columnValues = new HashMap<String,Object>();
+  private final List<String> columnNames;
 }

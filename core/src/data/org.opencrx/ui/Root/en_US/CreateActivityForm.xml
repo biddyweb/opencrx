@@ -29,7 +29,7 @@
 											</label>
 											<order>10</order>
 											<columnBreakAtElement>
-												<_item>3</_item>
+												<_item>4</_item>
 											</columnBreakAtElement>
 										</_object>
 										<_content>
@@ -55,6 +55,14 @@
 														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
 														<featureName>reportingContact</featureName>
 														<order>300</order>	
+													</_object>
+													<_content />
+												</org.openmdx.ui1.FormFieldDefinition>												
+												<org.openmdx.ui1.FormFieldDefinition id="reportingAccount">
+													<_object>
+														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
+														<featureName>reportingAccount</featureName>
+														<order>400</order>	
 													</_object>
 													<_content />
 												</org.openmdx.ui1.FormFieldDefinition>												

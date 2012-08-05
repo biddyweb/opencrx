@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.55 2009/03/08 17:04:49 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.87 2009/06/08 09:21:19 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.55 $
+ * Revision:    $Revision: 1.87 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:49 $
+ * Date:        $Date: 2009/06/08 09:21:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,80 +61,125 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
+import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
+import org.opencrx.kernel.contract1.cci2.AbstractContractQuery;
+import org.opencrx.kernel.contract1.cci2.CalculationRuleQuery;
 import org.opencrx.kernel.contract1.cci2.InvoiceQuery;
 import org.opencrx.kernel.contract1.cci2.LeadQuery;
 import org.opencrx.kernel.contract1.cci2.OpportunityQuery;
+import org.opencrx.kernel.contract1.cci2.PositionModificationQuery;
 import org.opencrx.kernel.contract1.cci2.QuoteQuery;
 import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
+import org.opencrx.kernel.contract1.jmi1.AbstractContract;
+import org.opencrx.kernel.contract1.jmi1.AbstractFilterContract;
+import org.opencrx.kernel.contract1.jmi1.AbstractInvoicePosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractOpportunityPosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractQuotePosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractRemovedPosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.CalculationRule;
 import org.opencrx.kernel.contract1.jmi1.Contract1Package;
+import org.opencrx.kernel.contract1.jmi1.ContractFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.ContractPosition;
+import org.opencrx.kernel.contract1.jmi1.ContractPriorityFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.CustomerFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.DeliveryInformation;
+import org.opencrx.kernel.contract1.jmi1.DisabledFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult;
+import org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
+import org.opencrx.kernel.contract1.jmi1.InvoicePosition;
+import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
+import org.opencrx.kernel.contract1.jmi1.OpportunityPosition;
+import org.opencrx.kernel.contract1.jmi1.PositionCreation;
+import org.opencrx.kernel.contract1.jmi1.PositionModification;
+import org.opencrx.kernel.contract1.jmi1.PositionRemoval;
+import org.opencrx.kernel.contract1.jmi1.QuantityModification;
 import org.opencrx.kernel.contract1.jmi1.Quote;
+import org.opencrx.kernel.contract1.jmi1.QuotePosition;
+import org.opencrx.kernel.contract1.jmi1.RemovedPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
+import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
+import org.opencrx.kernel.contract1.jmi1.SalesRepFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.SupplierFilterProperty;
+import org.opencrx.kernel.contract1.jmi1.TotalAmountFilterProperty;
+import org.opencrx.kernel.depot1.jmi1.BookingOrigin;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
+import org.opencrx.kernel.depot1.jmi1.Depot;
+import org.opencrx.kernel.depot1.jmi1.DepotEntity;
+import org.opencrx.kernel.depot1.jmi1.DepotPosition;
+import org.opencrx.kernel.depot1.jmi1.DepotReference;
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
+import org.opencrx.kernel.generic.jmi1.Description;
+import org.opencrx.kernel.generic.jmi1.DescriptionContainer;
+import org.opencrx.kernel.product1.cci2.PricingRuleQuery;
+import org.opencrx.kernel.product1.cci2.ProductBasePriceQuery;
+import org.opencrx.kernel.product1.jmi1.AbstractPriceLevel;
+import org.opencrx.kernel.product1.jmi1.ConfiguredProduct;
+import org.opencrx.kernel.product1.jmi1.PricingRule;
+import org.opencrx.kernel.product1.jmi1.Product;
+import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.DataproviderRequest;
-import org.openmdx.application.dataprovider.cci.Directions;
-import org.openmdx.application.dataprovider.cci.Orders;
-import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
-import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
-import org.w3c.spi2.Datatypes;
 
-public class Contracts {
-
-    //-----------------------------------------------------------------------
-    public Contracts(
-        Backend backend
-    ) {
-        this.backend = backend;
-        this.cloning = new Cloneable(           
-            backend
-        );
-    }
+public class Contracts extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.contract1.jmi1.CalculationRule findCalculationRule(
+	public static void register(
+	) {
+		registerImpl(new Contracts());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Contracts getInstance(
+	) throws ServiceException {
+		return getInstance(Contracts.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Contracts(
+	) {
+		
+	}
+	
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.contract1.jmi1.CalculationRule findCalculationRule(
         String name,
         org.opencrx.kernel.contract1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
@@ -152,7 +197,7 @@ public class Contracts {
     /**
      * @return Returns the contract segment.
      */
-    public static org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
+    public org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
         PersistenceManager pm,
         String providerName,
         String segmentName
@@ -164,7 +209,7 @@ public class Contracts {
     }
 
     //-----------------------------------------------------------------------
-    public static CalculationRule initCalculationRule(
+    public CalculationRule initCalculationRule(
         String calculationRuleName,
         String description,
         String getPositionAmountsScript,
@@ -175,13 +220,13 @@ public class Contracts {
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
         Contract1Package contractPkg = Utils.getContractPackage(pm);
-        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getContractSegment(
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = this.getContractSegment(
             pm, 
             providerName, 
             segmentName
         );
         CalculationRule calculationRule = null;
-        if((calculationRule = Contracts.findCalculationRule(calculationRuleName, contractSegment, pm)) != null) {
+        if((calculationRule = this.findCalculationRule(calculationRuleName, contractSegment, pm)) != null) {
             return calculationRule;            
         }                
         pm.currentTransaction().begin();
@@ -204,10 +249,10 @@ public class Contracts {
     }
         
     //-------------------------------------------------------------------------
-    public static void calculateUserHomeCharts(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        PersistenceManager pm
+    public void calculateUserHomeCharts(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
         org.opencrx.kernel.home1.jmi1.Media[] charts = new org.opencrx.kernel.home1.jmi1.Media[2];
         Collection<org.opencrx.kernel.home1.jmi1.Media> existingCharts = userHome.getChart();
         for(org.opencrx.kernel.home1.jmi1.Media chart: existingCharts) {
@@ -237,7 +282,7 @@ public class Contracts {
          */
         chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Contracts Overview (" + createdAt + ")";
         if(charts[0] == null) {
-            charts[0] = (org.opencrx.kernel.home1.jmi1.Media)pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
+            charts[0] = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
             charts[0].refInitialize(false, false);
             userHome.addChart(
                 false, 
@@ -272,7 +317,7 @@ public class Contracts {
         Query query = pm.newQuery(org.opencrx.kernel.contract1.jmi1.Invoice.class);
         InvoiceQuery invoiceQuery = (InvoiceQuery)query;
         invoiceQuery.contractState().lessThan(CLOSED_THRESHOLD_INVOICE);
-        counts[0] = Contracts.calculateTimeDistributionOpenContracts(
+        counts[0] = this.calculateTimeDistributionOpenContracts(
             userHome,
             query,
             timeDistribution, 
@@ -282,7 +327,7 @@ public class Contracts {
         query = pm.newQuery(org.opencrx.kernel.contract1.jmi1.SalesOrder.class);
         SalesOrderQuery salesOrderQuery = (SalesOrderQuery)query;
         salesOrderQuery.contractState().lessThan(CLOSED_THRESHOLD_SALES_ORDER);        
-        counts[1] = Contracts.calculateTimeDistributionOpenContracts(
+        counts[1] = this.calculateTimeDistributionOpenContracts(
             userHome,
             query,
             timeDistribution,
@@ -292,7 +337,7 @@ public class Contracts {
         query = pm.newQuery(org.opencrx.kernel.contract1.jmi1.Quote.class);
         QuoteQuery quoteQuery = (QuoteQuery)query;
         quoteQuery.contractState().lessThan(CLOSED_THRESHOLD_QUOTE);        
-        counts[2] = Contracts.calculateTimeDistributionOpenContracts(
+        counts[2] = this.calculateTimeDistributionOpenContracts(
             userHome,
             query,
             timeDistribution, 
@@ -302,7 +347,7 @@ public class Contracts {
         query = pm.newQuery(org.opencrx.kernel.contract1.jmi1.Opportunity.class);
         OpportunityQuery opportunityQuery = (OpportunityQuery)query;
         opportunityQuery.contractState().lessThan(CLOSED_THRESHOLD_OPPORTUNITY);                
-        counts[3] = Contracts.calculateTimeDistributionOpenContracts(
+        counts[3] = this.calculateTimeDistributionOpenContracts(
             userHome,
             query,
             timeDistribution, 
@@ -312,7 +357,7 @@ public class Contracts {
         query = pm.newQuery(org.opencrx.kernel.contract1.jmi1.Lead.class);
         LeadQuery leadQuery = (LeadQuery)query;
         leadQuery.contractState().lessThan(CLOSED_THRESHOLD_LEAD);                
-        counts[4] = Contracts.calculateTimeDistributionOpenContracts(
+        counts[4] = this.calculateTimeDistributionOpenContracts(
             userHome,
             query,
             timeDistribution, 
@@ -402,204 +447,201 @@ public class Contracts {
     }
 
     //-------------------------------------------------------------------------
-    static void copyAbstractContract(
-        DataproviderObject_1_0 from,
-        DataproviderObject to
-    ) throws ServiceException {
-        // Contract
-        to.clearValues("name").addAll(from.values("name"));
-        to.clearValues("description").addAll(from.values("description"));
-        to.clearValues("priority").addAll(from.values("priority"));
-        to.clearValues("activeOn").addAll(from.values("activeOn"));
-        to.clearValues("expiresOn").addAll(from.values("expiresOn"));
-        to.clearValues("cancelOn").addAll(from.values("cancelOn"));
-        to.clearValues("closedOn").addAll(from.values("closedOn"));
-        to.clearValues("contractNumber").addAll(from.values("contractNumber"));
-        to.clearValues("contractCurrency").addAll(from.values("contractCurrency"));
-        to.clearValues("paymentTerms").addAll(from.values("paymentTerms"));
-        to.clearValues("contractLanguage").addAll(from.values("contractLanguage"));
-        to.clearValues("contractState").addAll(from.values("contractState"));
-        to.clearValues("pricingDate").addAll(from.values("pricingDate"));
-        to.clearValues("competitor").addAll(from.values("competitor"));
-        to.clearValues("contact").addAll(from.values("contact"));
-        to.clearValues("broker").addAll(from.values("broker"));
-        to.clearValues("customer").addAll(from.values("customer"));
-        to.clearValues("salesRep").addAll(from.values("salesRep"));
-        to.clearValues("supplier").addAll(from.values("supplier"));
-        to.clearValues("activity").addAll(from.values("activity"));
-        to.clearValues("origin").addAll(from.values("origin"));
-        to.clearValues("inventoryCb").addAll(from.values("inventoryCb"));
-        to.clearValues("pricingRule").addAll(from.values("pricingRule"));
-        to.clearValues("calcRule").addAll(from.values("calcRule"));
-        // ShippingDetail
-        to.clearValues("shippingMethod").addAll(from.values("shippingMethod"));
-        to.clearValues("shippingTrackingNumber").addAll(from.values("shippingTrackingNumber"));
-        to.clearValues("shippingInstructions").addAll(from.values("shippingInstructions"));
-        to.clearValues("isGift").addAll(from.values("isGift"));
-        to.clearValues("giftMessage").addAll(from.values("giftMessage"));
-        // SecureObject
-        to.clearValues("owningGroup").addAll(from.values("owningGroup"));
-        to.clearValues("owningUser").addAll(from.values("owningUser"));
-        // CrxObject
-        to.clearValues("disabled").addAll(from.values("disabled"));
-        to.clearValues("disabledReason").addAll(from.values("disabledReason"));
-        to.clearValues("externalLink").addAll(from.values("externalLink"));
-        to.clearValues("category").addAll(from.values("category"));
-        for(int i = 0; i < 5; i++) {
-            to.clearValues("userBoolean" + i).addAll(from.values("userBoolean" + i));
-            to.clearValues("userNumber" + i).addAll(from.values("userNumber" + i));
-            to.clearValues("userString" + i).addAll(from.values("userString" + i));
-            to.clearValues("userDateTime" + i).addAll(from.values("userDateTime" + i));
-            to.clearValues("userDate" + i).addAll(from.values("userDate" + i));
-            to.clearValues("userCode" + i).addAll(from.values("userCode" + i));            
-        }        
-    }
-
-    //-------------------------------------------------------------------------
-    static void copyAbstractContractPosition(
-        DataproviderObject_1_0 from,
-        DataproviderObject to
-    ) throws ServiceException {
-        to.addClones(from, true);
-    }
-
-    //-------------------------------------------------------------------------
-    private DataproviderObject_1_0 getCachedDescription(
-        Path path,
-        int contractLanguage
-    ) throws ServiceException {
-        String key = path + ":" + contractLanguage;
-        DataproviderObject_1_0 description = (DataproviderObject_1_0)this.cachedDescriptions.get(key);
-        if((description == null) && !this.cachedDescriptions.containsKey(key)) {
-            description = this.backend.getBase().getAdditionalDescription(
-                path,
-                contractLanguage
-            );
-            this.cachedDescriptions.put(
-                key,
-                description
-            );
-        }
-        return description;          
+    void copyCrxObject(
+    	CrxObject from,
+    	CrxObject to
+    ) {
+        // Index 0
+        to.setUserBoolean0(from.isUserBoolean0());
+        to.setUserNumber0(from.getUserNumber0());
+        to.setUserString0(from.getUserString0());
+        to.setUserDateTime0(from.getUserDateTime0());
+        to.setUserDate0(from.getUserDate0());
+        to.setUserCode0(from.getUserCode0());            
+        // Index 1
+        to.setUserBoolean1(from.isUserBoolean1());
+        to.setUserNumber1(from.getUserNumber1());
+        to.setUserString1(from.getUserString1());
+        to.setUserDateTime1(from.getUserDateTime1());
+        to.setUserDate1(from.getUserDate1());
+        to.setUserCode1(from.getUserCode1());            
+        // Index 2
+        to.setUserBoolean2(from.isUserBoolean2());
+        to.setUserNumber2(from.getUserNumber2());
+        to.setUserString2(from.getUserString2());
+        to.setUserDateTime2(from.getUserDateTime2());
+        to.setUserDate2(from.getUserDate2());
+        to.setUserCode2(from.getUserCode2());            
+        // Index 3
+        to.setUserBoolean3(from.isUserBoolean3());
+        to.setUserNumber3(from.getUserNumber3());
+        to.setUserString3(from.getUserString3());
+        to.setUserDateTime3(from.getUserDateTime3());
+        to.setUserDate3(from.getUserDate3());
+        to.setUserCode3(from.getUserCode3());            
+        // Index 4
+        to.setUserBoolean4(from.getUserBoolean4());
+        to.setUserNumber4(from.getUserNumber4());
+        to.setUserString4(from.getUserString4());
+        to.setUserDateTime4(from.getUserDateTime4());
+        to.setUserDate4(from.getUserDate4());
+        to.setUserCode4(from.getUserCode4());                	
     }
     
     //-------------------------------------------------------------------------
-    private DataproviderObject_1_0 getCachedObject(
-        Path path
+    void copyAbstractContract(
+        AbstractContract from,
+        AbstractContract to
     ) throws ServiceException {
-        DataproviderObject_1_0 object = (DataproviderObject_1_0)this.cachedObjects.get(path);
-        if((object == null) && !this.cachedObjects.containsKey(path)) {
-            object = this.backend.retrieveObject(
-                path
-            );
-            this.cachedObjects.put(
-                object.path(),
-                object
-            );
+        to.setName(from.getName());
+        to.setDescription(from.getDescription());
+        to.setPriority(from.getPriority());
+        to.setActiveOn(from.getActiveOn());
+        to.setExpiresOn(from.getExpiresOn());
+        to.setCancelOn(from.getCancelOn());
+        to.setClosedOn(from.getClosedOn());
+        to.setContractNumber(from.getContractNumber());
+        to.setContractCurrency(from.getContractCurrency());
+        to.setPaymentTerms(from.getPaymentTerms());
+        to.setContractLanguage(from.getContractLanguage());
+        to.setContractState(from.getContractState());
+        to.setPricingDate(from.getPricingDate());
+        to.getCompetitor().clear();
+        to.getCompetitor().addAll(from.getCompetitor());
+        to.getContact().clear();
+        to.getContact().addAll(from.getContact());
+        to.setBroker(from.getBroker());
+        to.setCustomer(from.getCustomer());
+        to.setSalesRep(from.getSalesRep());
+        to.setSupplier(from.getSupplier());
+        to.getActivity().clear();
+        to.getActivity().addAll(from.getActivity());
+        to.setOrigin(from.getOrigin());
+        to.getInventoryCb().clear();
+        to.getInventoryCb().addAll(from.getInventoryCb());
+        to.setPricingRule(from.getPricingRule());
+        to.setCalcRule(from.getCalcRule());
+        to.setShippingMethod(from.getShippingMethod());
+        to.setShippingTrackingNumber(from.getShippingTrackingNumber());
+        to.setShippingInstructions(from.getShippingInstructions());
+        to.setGift(from.isGift());
+        to.setGiftMessage(from.getGiftMessage());
+        to.getOwningGroup().clear();
+        to.getOwningGroup().addAll(from.getOwningGroup());
+        to.setOwningUser(from.getOwningUser());
+        to.setDisabled(from.isDisabled());
+        to.setDisabledReason(from.getDisabledReason());
+        to.getExternalLink().clear();
+        to.getExternalLink().addAll(from.getExternalLink());
+        to.getCategory().clear();
+        to.getCategory().addAll(from.getCategory());
+    	copyCrxObject(
+    		from,
+    		to
+    	);
+    }
+
+    //-------------------------------------------------------------------------
+    void copyContractPosition(
+        ContractPosition from,
+        ContractPosition to
+    ) throws ServiceException {
+    	to.setLineItemNumber(from.getLineItemNumber());
+    	to.setName(from.getName());
+    	to.setDescription(from.getDescription());
+    	to.setPositionNumber(from.getPositionNumber());
+    	to.setContractPositionState(from.getContractPositionState());
+    	to.setQuantity(from.getQuantity());
+    	to.setMinQuantity(from.getMinQuantity());
+    	to.setMaxQuantity(from.getMaxQuantity());
+    	to.setOffsetQuantity(from.getOffsetQuantity());    	
+    	try { to.setMinMaxQuantityHandling(from.getMinMaxQuantityHandling()); } catch(Exception e) {}
+    	to.setPricePerUnit(from.getPricePerUnit());
+    	try { to.setPricingState(from.getPricingState()); } catch(Exception e) {}
+    	to.setDiscount(from.getDiscount());
+    	to.setDiscountDescription(from.getDiscountDescription());
+    	to.setDiscountIsPercentage(from.isDiscountIsPercentage());
+    	to.setSalesCommission(from.getSalesCommission());
+    	to.setSalesCommissionIsPercentage(from.isSalesCommissionIsPercentage());
+    	to.getContact().clear();
+    	to.getContact().addAll(from.getContact());
+    	to.setPriceUom(from.getPriceUom());
+    	to.setUom(from.getUom());
+    	to.setSalesTaxType(from.getSalesTaxType());    	
+    	try { to.setListPrice(from.getListPrice()); } catch(Exception e) {}
+    	to.setPricingRule(from.getPricingRule());
+    	to.setPriceLevel(from.getPriceLevel());
+    	to.setCalcRule(from.getCalcRule());
+    	try { to.setShippingMethod(from.getShippingMethod()); } catch(Exception e) {}
+    	to.setShippingTrackingNumber(from.getShippingTrackingNumber());
+    	to.setShippingInstructions(from.getShippingInstructions());
+    	try { to.setGift(from.isGift()); } catch(Exception e) {}
+    	to.setGiftMessage(from.getGiftMessage());
+    	to.setCarrier(from.getCarrier());
+    	if(from instanceof ConfiguredProduct && to instanceof ConfiguredProduct) {
+    		((ConfiguredProduct)to).setProduct(((ConfiguredProduct)from).getProduct());
+    		((ConfiguredProduct)to).setProductSerialNumber(((ConfiguredProduct)from).getProductSerialNumber());
+    		((ConfiguredProduct)to).setConfigType(((ConfiguredProduct)from).getConfigType());
+    	}
+    	if(from instanceof CrxObject && to instanceof CrxObject) {
+	    	copyCrxObject(
+	    		(CrxObject)from,
+	    		(CrxObject)to
+	    	);
+    	}
+    }
+
+    //-------------------------------------------------------------------------
+    protected Description getAdditionalDescription(
+        DescriptionContainer container,
+        short language
+    ) throws ServiceException {
+        Collection<Description> descriptions = container.getAdditionalDescription();
+        for(Description description: descriptions) {
+        	if(description.getLanguage() == language) {
+        		return description;
+        	}
         }
-        return object;
+        return null;
     }
     
     //-------------------------------------------------------------------------
-    private DataproviderObject_1_0 findCalculationRule(
-        Path contractSegmentIdentity,
-        Path calculationRuleIdentity
+    protected CalculationRule getDefaultCalculationRule(
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment
     ) throws ServiceException {
-        if(calculationRuleIdentity != null) {
-            return this.backend.retrieveObject(calculationRuleIdentity);
-        }
-        // Get default calculation rule
-        else {
-            List<DataproviderObject_1_0> calculationRules = this.backend.getDelegatingRequests().addFindRequest(
-                contractSegmentIdentity.getChild("calculationRule"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "isDefault",
-                        FilterOperators.IS_IN,
-                        Boolean.TRUE
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );     
-            return calculationRules.isEmpty() ?
-                null :
-                calculationRules.iterator().next();
-        }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contractSegment);
+    	CalculationRuleQuery query = (CalculationRuleQuery)pm.newQuery(CalculationRule.class);
+    	query.thereExistsIsDefault().isTrue();
+    	List<CalculationRule> calculationRules = contractSegment.getCalculationRule(query);
+    	return calculationRules.isEmpty() ?
+    		null :
+    		calculationRules.iterator().next();
     }
     
     //-------------------------------------------------------------------------
     public void markAsClosed(
-        Path contractIdentity,
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
         short newContractState
     ) throws ServiceException {
-        DataproviderObject contract = this.backend.retrieveObjectForModification(
-            contractIdentity
-        );
-        String contractType = (String)contract.values(SystemAttributes.OBJECT_CLASS).get(0);
-        contract.clearValues("closedOn").add(
-            org.openmdx.base.text.format.DateFormat.getInstance().format(new Date())
+        contract.setClosedOn(
+            new Date()
         );        
-        contract.clearValues("contractState").add(
-            new Short(newContractState)
+        contract.setContractState(
+            newContractState
         );
     }
         
     //-------------------------------------------------------------------------
-    private BigDecimal getUomScaleFactor(
-        org.opencrx.kernel.uom1.jmi1.Uom from,
-        org.opencrx.kernel.uom1.jmi1.Uom to
-    ) {
-        if(from == null || to == null) {
-            return new BigDecimal(0.0);
-        }
-        else if(from.refMofId().equals(to.refMofId())) {
-            return new BigDecimal(1.0);
-        }
-        else if(
-            (from.getBaseUom() != null) && 
-            from.getBaseUom().refMofId().equals(to.refMofId())
-        ) {
-            return from.getQuantity() != null 
-                ? from.getQuantity() 
-                : new BigDecimal(0.0);
-        }
-        else if(
-            (to.getBaseUom() != null) && 
-            to.getBaseUom().refMofId().equals(from.refMofId())
-        ) {
-            return (to.getQuantity() != null) && (to.getQuantity().signum() != 0) 
-                ? new BigDecimal((double)1.0 / to.getQuantity().doubleValue()) 
-                : new BigDecimal(0.0);
-        }
-        else if(
-            (from.getBaseUom() != null) && 
-            (to.getBaseUom() != null) && 
-            from.getBaseUom().refMofId().equals(to.getBaseUom().refMofId())
-        ) {
-            return (from.getQuantity() != null) && (to.getQuantity() != null) && (to.getQuantity().signum() != 0) 
-                ? new BigDecimal(from.getQuantity().doubleValue() / to.getQuantity().doubleValue()) 
-                : new BigDecimal(0.0);
-        }
-        else {
-            return new BigDecimal(0.0);
-        }
-    }
-  
-    //-------------------------------------------------------------------------
-    private BigDecimal getUomScaleFactor(
+    protected BigDecimal getUomScaleFactor(
         org.opencrx.kernel.contract1.jmi1.ContractPosition position
     ) {
-        return (position.getUom() != null) && (position.getPriceUom() != null)
-            ? this.getUomScaleFactor(position.getUom(), position.getPriceUom())
-            : new BigDecimal(1.0);
+        return (position.getUom() != null) && (position.getPriceUom() != null) ? 
+        	Utils.getUomScaleFactor(position.getUom(), position.getPriceUom()) : 
+        	BigDecimal.ONE;
     }
 
     //-------------------------------------------------------------------------
-    private BigDecimal getSalesTaxRate(
+    protected BigDecimal getSalesTaxRate(
         org.opencrx.kernel.contract1.jmi1.ContractPosition position
     ) {
         BigDecimal salesTaxRate = new BigDecimal(0);
@@ -615,7 +657,7 @@ public class Contracts {
     }    
 
     //-------------------------------------------------------------------------
-    private BigDecimal getMinMaxAdjustedQuantity(
+    protected BigDecimal getMinMaxAdjustedQuantity(
         org.opencrx.kernel.contract1.jmi1.ContractPosition position
     ) {
         // quantity
@@ -650,68 +692,15 @@ public class Contracts {
     }
     
     //-------------------------------------------------------------------------
-    public void getPositionAmounts(
-        DataproviderObject_1_0 calcRule,
-        DataproviderObject_1_0 params,
-        DataproviderObject getPositionAmountsResult        
-    ) throws ServiceException {
-        try {
-            org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult res = 
-                this.getPositionAmounts(
-                    (org.opencrx.kernel.contract1.jmi1.CalculationRule)this.backend.getDelegatingPkg().refObject(
-                        calcRule.path().toXri()
-                    ),
-                    params.values("position").isEmpty() ? 
-                        null : 
-                        (org.opencrx.kernel.contract1.jmi1.ContractPosition)this.backend.getDelegatingPkg().refObject(((Path)params.values("position").get(0)).toXri())                    
-                );
-            if(res != null) {                                
-                if(res.getBaseAmount() != null) {
-                    getPositionAmountsResult.values("baseAmount").add(
-                        res.getBaseAmount()
-                    );
-                }
-                if(res.getDiscountAmount() != null) {
-                    getPositionAmountsResult.values("discountAmount").add(
-                        res.getDiscountAmount()
-                    );
-                }
-                if(res.getTaxAmount() != null) {
-                    getPositionAmountsResult.values("taxAmount").add(
-                        res.getTaxAmount()
-                    );
-                }
-                if(res.getAmount() != null) {
-                    getPositionAmountsResult.values("amount").add(
-                        res.getAmount()
-                    );
-                }
-                getPositionAmountsResult.clearValues("statusCode").add(
-                    new Short(res.getStatusCode())
-                );
-                if(res.getStatusMessage() != null) {
-                    getPositionAmountsResult.values("statusMessage").add(
-                        res.getStatusMessage()
-                    );
-                }
-            }
-        }
-        finally {
-        }
-    }
-
-    //-------------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
         org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
         org.opencrx.kernel.contract1.jmi1.ContractPosition position
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
         String script = (calculationRule.getGetPositionAmountsScript() == null) || (calculationRule.getGetPositionAmountsScript().length() == 0) ? 
             DEFAULT_GET_POSITION_AMOUNTS_SCRIPT : 
             calculationRule.getGetPositionAmountsScript();
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = 
-            (org.opencrx.kernel.contract1.jmi1.Contract1Package)this.backend.getDelegatingPkg().refPackage(
-                org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
-            );
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm); 
         try {
             Method getPositionAmountMethod = getPositionAmountMethods.get(script);
             if(getPositionAmountMethod == null) {
@@ -732,7 +721,7 @@ public class Contracts {
                 (org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult)getPositionAmountMethod.invoke(
                     null, 
                     new Object[] {
-                        this.backend.getDelegatingPkg(),
+                        contractPkg.refOutermostPackage(),
                         calculationRule,
                         position,
                         this.getMinMaxAdjustedQuantity(position),
@@ -799,74 +788,6 @@ public class Contracts {
     }
 
     //-------------------------------------------------------------------------
-    public void getContractAmounts(
-        DataproviderObject_1_0 calcRule,
-        DataproviderObject_1_0 params,
-        DataproviderObject getContractAmountsResult        
-    ) throws ServiceException {
-        try {
-            org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult res = 
-                this.getContractAmounts(
-                    (org.opencrx.kernel.contract1.jmi1.CalculationRule)this.backend.getDelegatingPkg().refObject(
-                        calcRule.path().toXri()
-                    ),
-                    params.values("contract").isEmpty() ? 
-                        null : 
-                        (org.opencrx.kernel.contract1.jmi1.AbstractContract)this.backend.getDelegatingPkg().refObject(((Path)params.values("contract").get(0)).toXri()),
-                    params.values("lineItemNumber"),
-                    params.values("positionBaseAmount"),
-                    params.values("positionDiscountAmount"),
-                    params.values("positionTaxAmount"),
-                    params.values("positionAmount"),
-                    params.values("salesCommission"),
-                    params.values("salesCommissionIsPercentage")                        
-                );
-            if(res != null) {                                
-                if(res.getTotalBaseAmount() != null) {
-                    getContractAmountsResult.values("totalBaseAmount").add(
-                        res.getTotalBaseAmount()
-                    );
-                }
-                if(res.getTotalDiscountAmount() != null) {
-                    getContractAmountsResult.values("totalDiscountAmount").add(
-                        res.getTotalDiscountAmount()
-                    );
-                }
-                if(res.getTotalTaxAmount() != null) {
-                    getContractAmountsResult.values("totalTaxAmount").add(
-                        res.getTotalTaxAmount()
-                    );
-                }
-                if(res.getTotalAmount() != null) {
-                    getContractAmountsResult.values("totalAmount").add(
-                        res.getTotalAmount()
-                    );
-                }
-                if(res.getTotalAmountIncludingTax() != null) {
-                    getContractAmountsResult.values("totalAmountIncludingTax").add(
-                        res.getTotalAmountIncludingTax()
-                    );
-                }
-                if(res.getTotalSalesCommission() != null) {
-                    getContractAmountsResult.values("totalSalesCommission").add(
-                        res.getTotalSalesCommission()
-                    );
-                }
-                getContractAmountsResult.clearValues("statusCode").add(
-                    new Short(res.getStatusCode())
-                );
-                if(res.getStatusMessage() != null) {
-                    getContractAmountsResult.values("statusMessage").add(
-                        res.getStatusMessage()
-                    );
-                }
-            }
-        }
-        finally {
-        }
-    }
-
-    //-------------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(
         org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
         org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
@@ -878,13 +799,11 @@ public class Contracts {
         List<?> salesCommissions,
         List<?> salesCommissionIsPercentages
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
         String script = (calculationRule.getGetContractAmountsScript() == null) || (calculationRule.getGetContractAmountsScript().length() == 0) ? 
             DEFAULT_GET_CONTRACT_AMOUNTS_SCRIPT : 
             calculationRule.getGetContractAmountsScript();
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = 
-            (org.opencrx.kernel.contract1.jmi1.Contract1Package)this.backend.getDelegatingPkg().refPackage(
-                org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
-            );
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm); 
         try {
             Method getContractAmountMethod = getContractAmountMethods.get(script);
             if(getContractAmountMethod == null) {
@@ -913,7 +832,7 @@ public class Contracts {
                 (org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult)getContractAmountMethod.invoke(
                     null, 
                     new Object[] {
-                        this.backend.getDelegatingPkg(),
+                        contractPkg.refOutermostPackage(),
                         calculationRule,
                         contract,
                         lineItemNumbers.toArray(new Integer[lineItemNumbers.size()]),
@@ -978,44 +897,41 @@ public class Contracts {
     }
 
     //-------------------------------------------------------------------------
-    public void calculateContractPosition(
-        DataproviderObject_1_0 position,
-        Set<String> fetchSet
+    public BigDecimal[] calculateAmounts(
+        ContractPosition position
     ) throws ServiceException {      
-        DataproviderObject_1_0 contract = this.backend.retrieveObject(
-            position.path().getPrefix(position.path().size()-2)
-        );        
         // baseAmount, discountAmount         
         BigDecimal baseAmount = null;
         BigDecimal discountAmount = null;
-        BigDecimal taxAmount = null;
         BigDecimal amount = null;
-        BigDecimal pricePerUnit = position.values("pricePerUnit").isEmpty() ? 
+        BigDecimal taxAmount = null;
+        BigDecimal pricePerUnit = position.getPricePerUnit() == null ? 
             BigDecimal.ZERO :
-            (BigDecimal)position.values("pricePerUnit").get(0);          
+            position.getPricePerUnit();
+        PersistenceManager pm = JDOHelper.getPersistenceManager(position);        
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		position.refGetPath().getPrefix(5)
+        	);
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
+        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+        		position.refGetPath().getParent().getParent()
+        	);
         // Get all positions in one roundtrip. Read up to the last element
-        org.opencrx.kernel.contract1.jmi1.ContractPosition p = 
-            (org.opencrx.kernel.contract1.jmi1.ContractPosition)this.backend.getDelegatingPkg().refObject(
-                position.path().toXri()
-            );
-        BigDecimal minMaxAdjustedQuantity = this.getMinMaxAdjustedQuantity(p);
+        BigDecimal minMaxAdjustedQuantity = this.getMinMaxAdjustedQuantity(position);
         // Calculation rule with first prio from position, then contract, then default
-        DataproviderObject_1_0 calculationRule = this.findCalculationRule(
-            contract.path().getPrefix(5),
-            position.values("calcRule").get(0) == null ?
-                (Path)contract.values("calcRule").get(0) :
-                (Path)position.values("calcRule").get(0)
-        );
+        CalculationRule calculationRule = position.getCalcRule() == null ?
+        	contract.getCalcRule() :
+        	position.getCalcRule();
+        if(calculationRule == null) {
+        	calculationRule = this.getDefaultCalculationRule(contractSegment);
+        }
         if(calculationRule != null) {
-            DataproviderObject_1_0 params = new DataproviderObject(new Path(""));
-            params.values("position").add(position.path());
-            DataproviderObject result = new DataproviderObject(new Path(""));
-            this.getPositionAmounts(
+            GetPositionAmountsResult result = this.getPositionAmounts(
                 calculationRule,
-                params,
-                result
+                position
             );
-            if(((Number)result.values("statusCode").get(0)).intValue() != STATUS_CODE_OK) {
+            if(result.getStatusCode() != STATUS_CODE_OK) {
                 throw new ServiceException(
                     BasicException.Code.DEFAULT_DOMAIN,
                     BasicException.Code.PROCESSING_FAILURE,
@@ -1023,23 +939,23 @@ public class Contracts {
                     new BasicException.Parameter("result", result)
                 );
             }          
-            baseAmount = (BigDecimal)result.values("baseAmount").get(0);
-            discountAmount = (BigDecimal)result.values("discountAmount").get(0);   
-            taxAmount = (BigDecimal)result.values("taxAmount").get(0);
-            amount = (BigDecimal)result.values("amount").get(0);   
+            baseAmount = result.getBaseAmount();
+            discountAmount = result.getDiscountAmount();   
+            taxAmount = result.getTaxAmount();
+            amount = result.getAmount();   
         }
         // No calculation rule. Fall back to default amount calculation
         else {
-            BigDecimal uomScaleFactor = this.getUomScaleFactor(p);
-            BigDecimal salesTaxRate = this.getSalesTaxRate(p);              
+            BigDecimal uomScaleFactor = this.getUomScaleFactor(position);
+            BigDecimal salesTaxRate = this.getSalesTaxRate(position);              
             baseAmount = minMaxAdjustedQuantity.multiply(pricePerUnit.multiply(uomScaleFactor));
             // discount
-            Boolean discountIsPercentage = position.values("discountIsPercentage").isEmpty() ? 
+            Boolean discountIsPercentage = position.isDiscountIsPercentage() == null ? 
                 Boolean.FALSE : 
-                (Boolean)position.values("discountIsPercentage").get(0);
-            BigDecimal discount = position.values("discount").isEmpty() ? 
+                position.isDiscountIsPercentage();
+            BigDecimal discount = position.getDiscount() == null ? 
                 BigDecimal.ZERO : 
-               (BigDecimal)position.values("discount").get(0);
+               position.getDiscount();
             // Discount is per piece in case of !discountIsPercentage
             discountAmount = discountIsPercentage.booleanValue() ? 
                 baseAmount.multiply(discount.divide(new BigDecimal(100.0), BigDecimal.ROUND_UP)) : 
@@ -1051,870 +967,684 @@ public class Contracts {
             // amount
             amount = baseAmount.subtract(discountAmount).add(taxAmount);      
         }        
-        position.clearValues("baseAmount").add(baseAmount);
-        position.clearValues("discountAmount").add(discountAmount);
-        position.clearValues("taxAmount").add(taxAmount);
-        position.clearValues("amount").add(amount);
-        // quantityShipped, quantityBackOrdered
-        if(
-            (fetchSet == null)  ||
-            fetchSet.contains("quantityShipped") ||
-            fetchSet.contains("quantityBackOrdered")
-        ) {
-            // Retrieve DeliveryInformation and calculate quantity shipped
-            List<DataproviderObject_1_0> deliveryInformations = this.backend.getDelegatingRequests().addFindRequest(
-                position.path().getChild("deliveryInformation"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
+        return new BigDecimal[]{
+        	baseAmount, 
+        	discountAmount, 
+        	amount, 
+        	taxAmount
+        };
+    }
+    
+    //-------------------------------------------------------------------------    
+    public BigDecimal[] calculateQuantities(
+    	ContractPosition position
+    ) {
+        BigDecimal minMaxAdjustedQuantity = this.getMinMaxAdjustedQuantity(position);
+        Collection<DeliveryInformation> deliveryInformations = position.getDeliveryInformation();
+        BigDecimal quantityShipped = new BigDecimal(0);
+        for(DeliveryInformation deliveryInformation: deliveryInformations) {
+            quantityShipped = quantityShipped.add(
+                deliveryInformation.getQuantityShipped()
             );
-            BigDecimal quantityShipped = new BigDecimal(0);
-            for(
-                Iterator<DataproviderObject_1_0> i = deliveryInformations.iterator();
-                i.hasNext();
-            ) {
-                DataproviderObject_1_0 deliveryInformation = i.next();
-                quantityShipped = quantityShipped.add(
-                    (BigDecimal)deliveryInformation.values("quantityShipped").get(0)
+        }
+        return new BigDecimal[]{
+        	quantityShipped, 
+        	minMaxAdjustedQuantity.subtract(quantityShipped)
+        };        
+    }
+    
+    //-------------------------------------------------------------------------    
+    public String[] calculateUomDescriptions(
+    	ContractPosition position
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
+        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+        		position.refGetPath().getParent().getParent()
+        	);    	
+    	short contractLanguage = contract.getContractLanguage();
+    	String description = "N/A";
+    	String detailedDescription = "N/A";
+        if(position.getUom() != null) {
+            try {
+                description = position.getUom().getDescription();
+                detailedDescription = position.getUom().getDetailedDescription();
+                Description additionalDescription = this.getAdditionalDescription(
+                    position.getUom(),
+                    contractLanguage
                 );
-            }
-            position.clearValues("quantityShipped").add(quantityShipped);
-            position.clearValues("quantityBackOrdered").add(
-                minMaxAdjustedQuantity.subtract(quantityShipped)
-            );
-        }
-        // get contract language and calculate descriptions
-        Set<String> derivedAttributes = new HashSet<String>(
-            Arrays.asList(
-                "productDescription", "productDetailedDescription", 
-                "uomDescription", "uomDetailedDescription", 
-                "priceUomDescription", "priceUomDetailedDescription",
-                "salesTaxTypeDescription", "salesTaxTypeDetailedDescription"
-            )    
-        );
-        if((fetchSet == null) || derivedAttributes.removeAll(fetchSet)) {
-            int contractLanguage = contract.values("contractLanguage").size() < 1 ? 
-                0 : 
-                ((Number)contract.values("contractLanguage").get(0)).intValue();      
-            // get product description
-            if(!position.values("product").isEmpty()) {
-                try {
-                    DataproviderObject_1_0 product = this.backend.getDelegatingRequests().addGetRequest(
-                        (Path)position.values("product").get(0),
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        new AttributeSpecifier[]{}            
-                    );
-                    position.clearValues("productDescription").add(
-                        product.values("description").get(0)
-                    );
-                    position.clearValues("productDetailedDescription").add(
-                        product.values("detailedDescription").get(0)
-                    );
-                    DataproviderObject_1_0 additionalDescription = this.getCachedDescription(
-                        product.path(),
-                        contractLanguage
-                    );
-                    if(additionalDescription != null) {
-                        position.clearValues("productDescription").add(
-                            additionalDescription.values("description").get(0)
-                        );
-                        position.clearValues("productDetailedDescription").add(
-                            additionalDescription.values("detailedDescription").get(0)
-                        );            
-                    }
-                }
-                catch(Exception e) {
-                    new ServiceException(e).log();
-                    position.clearValues("productDescription").add("#ERR");
-                    position.clearValues("productDetailedDescription").add("#ERR");  
+                if(additionalDescription != null) {
+                    description = additionalDescription.getDescription();
+                    detailedDescription = additionalDescription.getDetailedDescription();
                 }
             }
-            else {
-                position.clearValues("productDescription").add("N/A");
-                position.clearValues("productDetailedDescription").add("N/A");
-            }
-            // Complete uom derived attributes
-            if(!position.values("uom").isEmpty()) {
-                try {
-                    DataproviderObject_1_0 uom = this.getCachedObject(
-                        (Path)position.values("uom").get(0)
-                    );
-                    position.clearValues("uomDescription").add(
-                        uom.values("description").get(0)
-                    );
-                    position.clearValues("uomDetailedDescription").add(
-                        uom.values("detailedDescription").get(0)
-                    );
-                    DataproviderObject_1_0 additionalDescription = this.getCachedDescription(
-                        uom.path(),
-                        contractLanguage
-                    );
-                    if(additionalDescription != null) {
-                        position.clearValues("uomDescription").add(
-                            additionalDescription.values("description").get(0)
-                        );
-                        position.clearValues("uomDetailedDescription").add(
-                            additionalDescription.values("detailedDescription").get(0)
-                        );            
-                    }
-                }
-                catch(Exception e) {
-                    new ServiceException(e).log();
-                    position.clearValues("uomDescription").add("#ERR");
-                    position.clearValues("uomDetailedDescription").add("#ERR");         
-                }
-            }
-            else {
-                position.clearValues("uomDescription").add("N/A");
-                position.clearValues("uomDetailedDescription").add("N/A");
-            }
-            // Complete priceUom derived attributes
-            if(!position.values("priceUom").isEmpty()) {
-                try {
-                    DataproviderObject_1_0 priceUom = this.getCachedObject(
-                        (Path)position.values("priceUom").get(0)
-                    );
-                    position.clearValues("priceUomDescription").add(
-                        priceUom.values("description").get(0)
-                    );
-                    position.clearValues("priceUomDetailedDescription").add(
-                        priceUom.values("detailedDescription").get(0)
-                    );
-                    DataproviderObject_1_0 additionalDescription = this.getCachedDescription(
-                        priceUom.path(),
-                        contractLanguage
-                    );
-                    if(additionalDescription != null) {
-                        position.clearValues("priceUomDescription").add(
-                            additionalDescription.values("description").get(0)
-                        );
-                        position.clearValues("priceUomDetailedDescription").add(
-                            additionalDescription.values("detailedDescription").get(0)
-                        );            
-                    }
-                }
-                catch(Exception e) {
-                    new ServiceException(e).log();
-                    position.clearValues("priceUomDescription").add("#ERR");
-                    position.clearValues("priceUomDetailedDescription").add("#ERR");         
-                }
-            }
-            else {
-                position.clearValues("priceUomDescription").add("N/A");
-                position.clearValues("priceUomDetailedDescription").add("N/A");
-            }
-            // Complete salesTaxType derived attributes
-            if(!position.values("salesTaxType").isEmpty()) {
-                try {
-                    DataproviderObject_1_0 salesTaxType = this.getCachedObject(
-                        (Path)position.values("salesTaxType").get(0)
-                    );
-                    position.clearValues("salesTaxTypeDescription").add(
-                        salesTaxType.values("description").get(0)
-                    );
-                    position.clearValues("salesTaxTypeDetailedDescription").add(
-                        salesTaxType.values("detailedDescription").get(0)
-                    );
-                    DataproviderObject_1_0 additionalDescription = this.getCachedDescription(
-                        salesTaxType.path(),
-                        contractLanguage
-                    );
-                    if(additionalDescription != null) {
-                        position.clearValues("salesTaxTypeDescription").add(
-                            additionalDescription.values("description").get(0)
-                        );
-                        position.clearValues("salesTaxTypeDetailedDescription").add(
-                            additionalDescription.values("detailedDescription").get(0)
-                        );            
-                    }
-                }
-                catch(Exception e) {
-                    new ServiceException(e).log();
-                    position.clearValues("salesTaxTypeDescription").add("#ERR");
-                    position.clearValues("salesTaxTypeDetailedDescription").add("#ERR");         
-                }
-            }
-            else {
-                position.clearValues("salesTaxTypeDescription").add("N/A");
-                position.clearValues("salesTaxTypeDetailedDescription").add("N/A");
+            catch(Exception e) {
+                new ServiceException(e).log();
+                description = "#ERR";
+                detailedDescription = "#ERR";         
             }
         }
+        return new String[]{
+        	description,
+        	detailedDescription
+        };
     }
 
+    //-------------------------------------------------------------------------    
+    public String[] calculatePriceUomDescriptions(
+    	ContractPosition position
+    ) {    	
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
+        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+        		position.refGetPath().getParent().getParent()
+        	);    	
+    	short contractLanguage = contract.getContractLanguage();
+    	String description = "N/A";
+    	String detailedDescription = "N/A";
+        if(position.getPriceUom() != null) {
+            try {
+                description = position.getPriceUom().getDescription();
+                detailedDescription = position.getPriceUom().getDetailedDescription();
+                Description additionalDescription = this.getAdditionalDescription(
+                    position.getPriceUom(),
+                    contractLanguage
+                );
+                if(additionalDescription != null) {
+                    description = additionalDescription.getDescription();
+                    detailedDescription = additionalDescription.getDetailedDescription();
+                }
+            }
+            catch(Exception e) {
+                new ServiceException(e).log();
+                description = "#ERR";
+                detailedDescription = "#ERR";         
+            }
+        }
+        return new String[]{
+        	description,
+        	detailedDescription
+        };
+    }
+
+    //-------------------------------------------------------------------------
+    public String[] calculateProductDescriptions(
+    	ContractPosition position
+    ) {    	
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
+        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+        		position.refGetPath().getParent().getParent()
+        	);    	
+    	short contractLanguage = contract.getContractLanguage();
+    	String description = "N/A";
+    	String detailedDescription = "N/A";
+        if(
+        	(position instanceof ConfiguredProduct) &&
+        	(((ConfiguredProduct)position).getProduct() != null)
+        ) {
+            try {
+            	Product product = ((ConfiguredProduct)position).getProduct();
+                description = product.getDescription();
+                detailedDescription = product.getDetailedDescription();
+                Description additionalDescription = this.getAdditionalDescription(
+                	product,
+                    contractLanguage
+                );
+                if(additionalDescription != null) {
+                    description = additionalDescription.getDescription();
+                    detailedDescription = additionalDescription.getDetailedDescription();
+                }
+            }
+            catch(Exception e) {
+                new ServiceException(e).log();
+                description = "#ERR";
+                detailedDescription = "#ERR";         
+            }
+        }
+        return new String[]{
+        	description,
+        	detailedDescription
+        };
+    }
+    
+    //-------------------------------------------------------------------------
+    public String[] calculateSalesTaxTypeDescriptions(
+    	ContractPosition position
+    ) {    	
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
+        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+        		position.refGetPath().getParent().getParent()
+        	);    	
+    	short contractLanguage = contract.getContractLanguage();
+    	String description = "N/A";
+    	String detailedDescription = "N/A";
+        if(position.getSalesTaxType() != null) {
+            try {
+                description = position.getSalesTaxType().getDescription();
+                detailedDescription = position.getSalesTaxType().getDetailedDescription();
+                Description additionalDescription = this.getAdditionalDescription(
+                    position.getSalesTaxType(),
+                    contractLanguage
+                );
+                if(additionalDescription != null) {
+                    description = additionalDescription.getDescription();
+                    detailedDescription = additionalDescription.getDetailedDescription();
+                }
+            }
+            catch(Exception e) {
+                new ServiceException(e).log();
+                description = "#ERR";
+                detailedDescription = "#ERR";         
+            }
+        }
+        return new String[]{
+        	description,
+        	detailedDescription
+        };
+    }
+    
     //-------------------------------------------------------------------------
     public void markContractAsDirty(
-        Path contractIdentity
+        AbstractContract contract
     ) throws ServiceException {
-        DataproviderObject contract = this.backend.retrieveObjectForModification(
-            contractIdentity
-        );
-        contract.clearValues("totalBaseAmount");
-        contract.clearValues("totalDiscountAmount");
-        contract.clearValues("totalAmount");
-        contract.clearValues("totalTaxAmount");
-        contract.clearValues("totalAmountIncludingTax");
-        contract.clearValues("totalSalesCommission");        
+        contract.setName(contract.getName());
     }
     
     //-------------------------------------------------------------------------
-    public void completeContract(
-        DataproviderObject_1_0 contract,
-        Set<String> fetchSet
+    public BigDecimal[] calculateAmounts(
+        AbstractContract contract
     ) throws ServiceException {        
-        if(!this.backend.isLead(contract)) {
-            // Recalc if totalBaseAmount is not set. Assert that is set and matches the 
-            // access path --> contract exists and is accessed by its composite path
-            if(
-                !contract.values(SystemAttributes.OBJECT_IDENTITY).isEmpty() &&                        
-                contract.path().equals(new Path((String)contract.values(SystemAttributes.OBJECT_IDENTITY).get(0))) &&
-                ((contract.getValues("totalBaseAmount") == null) ||
-                contract.values("totalBaseAmount").isEmpty())
-            ) {
-                List<DataproviderObject_1_0> positions = this.backend.getDelegatingRequests().addFindRequest(
-                    contract.path().getChild("position"),
-                    null,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    0,
-                    Integer.MAX_VALUE,
-                    Directions.ASCENDING
-                );
-                List<Integer> lineItemNumbers = new ArrayList<Integer>();
-                List<Number> positionBaseAmounts = new ArrayList<Number>();
-                List<Number> positionDiscountAmounts = new ArrayList<Number>();
-                List<Number> positionTaxAmounts = new ArrayList<Number>();
-                List<Number> positionAmounts = new ArrayList<Number>();
-                List<Number> salesCommissions = new ArrayList<Number>();
-                List<Boolean> salesCommissionIsPercentages = new ArrayList<Boolean>();
-                for(
-                    Iterator<DataproviderObject_1_0> i = positions.iterator();
-                    i.hasNext();
-                ) {
-                    DataproviderObject_1_0 position = i.next();
-                    this.calculateContractPosition(
-                        position,
-                        fetchSet
-                    );
-                    lineItemNumbers.add(
-                        position.values("lineItemNumber").isEmpty() ? 
-                            new Integer(0) : 
-                            new Integer(((Number)position.values("lineItemNumber").get(0)).intValue())
-                    );
-                    positionBaseAmounts.add(
-                        position.values("baseAmount").isEmpty() ? 
-                            new BigDecimal(0.0) : 
-                            (Number)position.values("baseAmount").get(0)
-                    );
-                    positionDiscountAmounts.add(
-                        position.values("discountAmount").isEmpty() ? 
-                            new BigDecimal(0.0) : 
-                            (Number)position.values("discountAmount").get(0)
-                    );
-                    positionTaxAmounts.add(
-                        position.values("taxAmount").isEmpty() ? 
-                            new BigDecimal(0.0) : 
-                            (Number)position.values("taxAmount").get(0)
-                    );
-                    positionAmounts.add(
-                        position.values("amount").isEmpty() ? 
-                            new BigDecimal(0.0) : 
-                            (Number)position.values("amount").get(0)
-                    );
-                    salesCommissions.add(
-                        position.values("salesCommission").isEmpty() ? 
-                            new BigDecimal(0) : 
-                            (Number)position.values("salesCommission").get(0)
-                    );
-                    salesCommissionIsPercentages.add(
-                        position.values("salesCommissionIsPercentage").isEmpty() ?
-                            Boolean.FALSE : 
-                            (Boolean)position.values("salesCommissionIsPercentage").get(0)
-                    );
-                }
-                BigDecimal totalBaseAmount = null;
-                BigDecimal totalDiscountAmount = null;
-                BigDecimal totalTaxAmount = null;                
-                BigDecimal totalAmount = null;
-                BigDecimal totalAmountIncludingTax = null;
-                BigDecimal totalSalesCommission = null;
-                // To amount calculation using calculation rule if defined
-                DataproviderObject_1_0 calculationRule = this.findCalculationRule(
-                    contract.path().getPrefix(5),
-                    (Path)contract.values("calcRule").get(0)
-                );
-                if(calculationRule != null) {
-                    DataproviderObject_1_0 params = new DataproviderObject(new Path(""));
-                    params.values("contract").add(contract.path());
-                    params.values("lineItemNumber").addAll(lineItemNumbers);
-                    params.values("positionBaseAmount").addAll(positionBaseAmounts);
-                    params.values("positionDiscountAmount").addAll(positionDiscountAmounts);
-                    params.values("positionTaxAmount").addAll(positionTaxAmounts);
-                    params.values("positionAmount").addAll(positionAmounts);
-                    params.values("salesCommission").addAll(salesCommissions);
-                    params.values("salesCommissionIsPercentage").addAll(salesCommissionIsPercentages);                    
-                    DataproviderObject result = new DataproviderObject(new Path(""));
-                    this.getContractAmounts(
-                        calculationRule,
-                        params,
-                        result
-                    );
-                    if(((Number)result.values("statusCode").get(0)).intValue() != STATUS_CODE_OK) {
-                        throw new ServiceException(
-                            BasicException.Code.DEFAULT_DOMAIN,
-                            BasicException.Code.PROCESSING_FAILURE,
-                            "Unable to calculate contract amounts",
-                            new BasicException.Parameter("result", result)
-                        );
-                    }
-                    totalBaseAmount = (BigDecimal)result.values("totalBaseAmount").get(0);
-                    totalDiscountAmount = (BigDecimal)result.values("totalDiscountAmount").get(0);   
-                    totalTaxAmount = (BigDecimal)result.values("totalTaxAmount").get(0);
-                    totalAmount = (BigDecimal)result.values("totalAmount").get(0);   
-                    totalAmountIncludingTax = (BigDecimal)result.values("totalAmountIncludingTax").get(0);
-                    totalSalesCommission = (BigDecimal)result.values("totalSalesCommission").get(0);   
-                }
-                // To default amount calculation if no calculation rule is defined
-                else {
-                    totalBaseAmount = BigDecimal.ZERO;
-                    totalDiscountAmount = BigDecimal.ZERO;
-                    totalTaxAmount = BigDecimal.ZERO;
-                    totalSalesCommission = BigDecimal.ZERO;
-                    for(int i = 0; i < positionBaseAmounts.size(); i++) {
-                        totalBaseAmount = totalBaseAmount.add(
-                          (BigDecimal)positionBaseAmounts.get(i)
-                        );
-                        BigDecimal discountAmount = (BigDecimal)positionDiscountAmounts.get(i);
-                        totalDiscountAmount = totalDiscountAmount.add(discountAmount);
-                        totalTaxAmount = totalTaxAmount.add(
-                          (BigDecimal)positionTaxAmounts.get(i)
-                        );
-                        BigDecimal salesCommission = salesCommissions.get(i) != null ? 
-                            (BigDecimal) salesCommissions.get(i) : 
-                            BigDecimal.ZERO;
-                        BigDecimal baseAmount = (BigDecimal)positionBaseAmounts.get(i);
-                        totalSalesCommission = totalSalesCommission.add(
-                          (salesCommissionIsPercentages.get(i) != null) &&
-                          (((Boolean)salesCommissionIsPercentages.get(i)).booleanValue())
-                          ? baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new BigDecimal(100), BigDecimal.ROUND_UP))
-                          : salesCommission
-                        );
-                    }
-                    totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
-                    totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
-                }
-                contract.clearValues("totalBaseAmount").add(totalBaseAmount);
-                contract.clearValues("totalDiscountAmount").add(totalDiscountAmount);
-                contract.clearValues("totalAmount").add(totalAmount);
-                contract.clearValues("totalTaxAmount").add(totalTaxAmount);
-                contract.clearValues("totalAmountIncludingTax").add(totalAmountIncludingTax);
-                contract.clearValues("totalSalesCommission").add(totalSalesCommission);
-            }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
+    	org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
+    		(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+    			contract.refGetPath().getPrefix(5)
+    		);
+        List<ContractPosition> positions = new ArrayList<ContractPosition>();
+        if(contract instanceof Opportunity) {
+        	Collection<AbstractOpportunityPosition> p = ((Opportunity)contract).getPosition();
+        	positions.addAll(p);
         }
+        else if(contract instanceof Quote) {
+        	Collection<AbstractQuotePosition> p = ((Quote)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof SalesOrder) {
+        	Collection<AbstractSalesOrderPosition> p = ((SalesOrder)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof Invoice) {
+        	Collection<AbstractInvoicePosition> p = ((Invoice)contract).getPosition();
+        	positions.addAll(p);
+        }
+        List<Integer> lineItemNumbers = new ArrayList<Integer>();
+        List<BigDecimal> positionBaseAmounts = new ArrayList<BigDecimal>();
+        List<BigDecimal> positionDiscountAmounts = new ArrayList<BigDecimal>();
+        List<BigDecimal> positionTaxAmounts = new ArrayList<BigDecimal>();
+        List<BigDecimal> positionAmounts = new ArrayList<BigDecimal>();
+        List<BigDecimal> salesCommissions = new ArrayList<BigDecimal>();
+        List<Boolean> salesCommissionIsPercentages = new ArrayList<Boolean>();
+        for(ContractPosition position: positions) {
+            BigDecimal[] amounts = this.calculateAmounts(
+                position
+            );
+            lineItemNumbers.add(
+                (int)position.getLineItemNumber()
+            );
+            positionBaseAmounts.add(
+            	amounts[0]
+            );
+            positionDiscountAmounts.add(
+            	amounts[1]
+            );
+            positionAmounts.add(
+            	amounts[2]
+            );
+            positionTaxAmounts.add(
+            	amounts[3]
+            );
+            salesCommissions.add(
+                position.getSalesCommission() == null ? 
+                    BigDecimal.ZERO : 
+                    position.getSalesCommission()
+            );
+            salesCommissionIsPercentages.add(
+                position.isDiscountIsPercentage() == null ?
+                    Boolean.FALSE : 
+                    position.isSalesCommissionIsPercentage()
+            );
+        }
+        BigDecimal totalBaseAmount = null;
+        BigDecimal totalDiscountAmount = null;
+        BigDecimal totalTaxAmount = null;                
+        BigDecimal totalAmount = null;
+        BigDecimal totalAmountIncludingTax = null;
+        BigDecimal totalSalesCommission = null;
+        // To amount calculation using calculation rule if defined        
+        CalculationRule calculationRule = contract.getCalcRule() == null ?
+        	this.getDefaultCalculationRule(contractSegment) :
+        	contract.getCalcRule();
+        if(calculationRule != null) {
+            GetContractAmountsResult result = this.getContractAmounts(
+                calculationRule,
+                contract,
+                lineItemNumbers,
+                positionBaseAmounts,
+                positionDiscountAmounts,
+                positionTaxAmounts,
+                positionAmounts,
+                salesCommissions,
+                salesCommissionIsPercentages
+            );
+            if(result.getStatusCode() != STATUS_CODE_OK) {
+                throw new ServiceException(
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.PROCESSING_FAILURE,
+                    "Unable to calculate contract amounts",
+                    new BasicException.Parameter("result", result)
+                );
+            }
+            totalBaseAmount = result.getTotalBaseAmount();
+            totalDiscountAmount = result.getTotalDiscountAmount();   
+            totalTaxAmount = result.getTotalTaxAmount();
+            totalAmount = result.getTotalAmount();   
+            totalAmountIncludingTax = result.getTotalAmountIncludingTax();
+            totalSalesCommission = result.getTotalSalesCommission();   
+        }
+        // To default amount calculation if no calculation rule is defined
+        else {
+            totalBaseAmount = BigDecimal.ZERO;
+            totalDiscountAmount = BigDecimal.ZERO;
+            totalTaxAmount = BigDecimal.ZERO;
+            totalSalesCommission = BigDecimal.ZERO;
+            for(int i = 0; i < positionBaseAmounts.size(); i++) {
+                totalBaseAmount = totalBaseAmount.add(
+                  positionBaseAmounts.get(i)
+                );
+                BigDecimal discountAmount = positionDiscountAmounts.get(i);
+                totalDiscountAmount = totalDiscountAmount.add(discountAmount);
+                totalTaxAmount = totalTaxAmount.add(
+                  positionTaxAmounts.get(i)
+                );
+                BigDecimal salesCommission = salesCommissions.get(i) != null ? 
+                    (BigDecimal) salesCommissions.get(i) : 
+                    BigDecimal.ZERO;
+                BigDecimal baseAmount = positionBaseAmounts.get(i);
+                totalSalesCommission = totalSalesCommission.add(
+                  (salesCommissionIsPercentages.get(i) != null) &&
+                  ((salesCommissionIsPercentages.get(i)).booleanValue()) ? 
+                	  baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new BigDecimal(100), BigDecimal.ROUND_UP)) : 
+                	  salesCommission
+                );
+            }
+            totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
+            totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
+        }
+        return new BigDecimal[]{
+        	totalBaseAmount,
+        	totalDiscountAmount,
+        	totalAmount,
+        	totalTaxAmount,
+        	totalAmountIncludingTax,
+        	totalSalesCommission
+        };
     }
     
-    //-------------------------------------------------------------------------
-    /**
-     * calculate forward references, i.e.
-     * Lead --> Opportunity
-     * Opportunity --> Quote
-     * Quote --> SalesOrder
-     * SalesOrder --> Invoice
-     */
-    public void calculateForwardReferences(
-        DataproviderObject_1_0 contract,
-        Set fetchSet
+    //-----------------------------------------------------------------------
+    public void updateContract(
+    	AbstractContract contract
     ) throws ServiceException {
-      String contractType = (String)contract.values(SystemAttributes.OBJECT_CLASS).get(0);
-      String referenceName = null;
-      if("org:opencrx:kernel:contract1:Lead".equals(contractType)) {
-          referenceName = "opportunity";
-      }
-      else if("org:opencrx:kernel:contract1:Opportunity".equals(contractType)) {
-          referenceName = "quote";
-      }
-      else if("org:opencrx:kernel:contract1:Quote".equals(contractType)) {
-          referenceName = "salesOrder";   
-      }
-      else if("org:opencrx:kernel:contract1:SalesOrder".equals(contractType)) {
-          referenceName = "invoice";
-      }
-      if(
-          (referenceName != null) &&          
-          ((fetchSet == null) || fetchSet.contains(referenceName))
-      ) {
-          Path contractIdentity = new Path((String)contract.values(SystemAttributes.OBJECT_IDENTITY).get(0));
-          List referencedContracts = 
-              this.backend.getDelegatingRequests().addFindRequest(
-	              contractIdentity.getParent().getParent().getChild(referenceName),
-	              new FilterProperty[]{
-	                  new FilterProperty(
-			              Quantors.THERE_EXISTS,
-			              "origin",
-			              FilterOperators.IS_IN,
-			              contractIdentity
-	                  )
-	              }
-              );
-          contract.clearValues(referenceName);
-          for(Iterator i = referencedContracts.iterator(); i.hasNext(); ) {
-              contract.values(referenceName).add(
-                  ((DataproviderObject_1_0)i.next()).path()
-              );
-          }
-      }
+    	if(JDOHelper.isNew(contract)) {
+    		Base.getInstance().assignToMe(
+    			contract, 
+    			false, 
+    			null
+    		);
+    		contract.setPricingState(PRICING_STATE_NA);
+    	}
+		BigDecimal[] amounts = Contracts.getInstance().calculateAmounts(
+			contract
+		);
+		contract.setTotalBaseAmount(amounts[0]);
+		contract.setTotalDiscountAmount(amounts[1]);
+		contract.setTotalAmount(amounts[2]);
+		contract.setTotalTaxAmount(amounts[3]);
+		contract.setTotalAmountIncludingTax(amounts[4]);
+		contract.setTotalSalesCommission(amounts[5]);    		    	
     }
-
+    
     //-----------------------------------------------------------------------
     public Invoice createInvoice(
-        Path salesOrderIdentity
+        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder
     ) throws ServiceException {
-        Map objectMarshallers = new HashMap();
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:SalesOrder",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 salesOrder = (DataproviderObject_1_0)s;
-              DataproviderObject invoice = new DataproviderObject(new Path(""));
-              copyAbstractContract(
-                  salesOrder,
-                  invoice
-              );
-              invoice.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Invoice");
-              invoice.clearValues("contractState").add(new Short((short)0));              
-              return invoice;                       
-            }
-            public Object unmarshal(Object s) {
-              throw new UnsupportedOperationException();
-            }
-          }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(salesOrder);
+    	Map<String,Marshaller> objectMarshallers = new HashMap<String,Marshaller>();
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:SalesOrder",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				SalesOrder salesOrder = (SalesOrder)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(salesOrder);
+    				Invoice invoice = pm.newInstance(Invoice.class);
+    				invoice.refInitialize(false, false);
+    				Contracts.getInstance().copyAbstractContract(
+    					salesOrder,
+    					invoice
+    				);
+    				return invoice;                       
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:SalesOrderPosition",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				SalesOrderPosition salesOrderPosition = (SalesOrderPosition)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(salesOrderPosition);
+    				InvoicePosition invoicePosition = pm.newInstance(InvoicePosition.class);
+    				invoicePosition.refInitialize(false, false);
+    				Contracts.getInstance().copyContractPosition(
+    					salesOrderPosition,
+    					invoicePosition
+    				);
+    				return invoicePosition;
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		salesOrder.refGetPath().getPrefix(5)
+        	);
+        Invoice invoice = (Invoice)Cloneable.getInstance().cloneObject(
+        	salesOrder, 
+        	contractSegment, 
+        	"invoice", 
+        	objectMarshallers, 
+        	null
         );
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:SalesOrderPosition",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 salesOrderPosition = (DataproviderObject_1_0)s;
-              DataproviderObject invoicePosition = new DataproviderObject(new Path(""));
-              copyAbstractContractPosition(
-                  salesOrderPosition,
-                  invoicePosition
-              );
-              invoicePosition.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:InvoicePosition");
-              invoicePosition.clearValues("contractPositionState").add(new Short((short)0));
-              return invoicePosition;
-            }
-            public Object unmarshal(Object s) {
-                throw new UnsupportedOperationException();
-            }
-          }
-        );
-        DataproviderObject invoice =
-            this.backend.retrieveObjectForModification(
-                this.cloning.cloneAndUpdateReferences(
-                    this.backend.retrieveObject(salesOrderIdentity),
-                    salesOrderIdentity.getParent().getParent().getChild("invoice"),
-                    objectMarshallers,
-                    DEFAULT_REFERENCE_FILTER,
-                    false,
-                    AttributeSelectors.ALL_ATTRIBUTES
-                ).path()
-            );
-        invoice.clearValues("origin").add(salesOrderIdentity);
-        if(invoice.values("salesRep").isEmpty()) {
-            this.backend.getBase().assignToMe(
+        invoice.setOrigin(salesOrder);
+        if(invoice.getSalesRep() == null) {
+            Base.getInstance().assignToMe(
                 invoice,
-                null,
                 true,
                 null
             );
-        }
-        return invoice == null
-            ? null
-            : (Invoice)this.backend.getDelegatingPkg().refObject(invoice.path().toXri());
+        }        
+        return invoice;
     }
     
     //-----------------------------------------------------------------------
     public SalesOrder createSalesOrder(
-        Path quoteIdentity
+        org.opencrx.kernel.contract1.jmi1.Quote quote
     ) throws ServiceException {
-        Map objectMarshallers = new HashMap();
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:Quote",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 quote = (DataproviderObject_1_0)s;
-              DataproviderObject salesOrder = new DataproviderObject(new Path(""));
-              copyAbstractContract(
-                  quote,
-                  salesOrder
-              );
-              salesOrder.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:SalesOrder");
-              salesOrder.clearValues("contractState").add(new Short((short)0));
-              return salesOrder;                       
-            }
-            public Object unmarshal(Object s) {
-              throw new UnsupportedOperationException();
-            }
-          }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(quote);
+    	Map<String,Marshaller> objectMarshallers = new HashMap<String,Marshaller>();
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:Quote",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				Quote quote = (Quote)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(quote);
+    				SalesOrder salesOrder = pm.newInstance(SalesOrder.class);
+    				salesOrder.refInitialize(false, false);
+    				Contracts.getInstance().copyAbstractContract(
+    					quote,
+    					salesOrder
+    				);
+    				return salesOrder;                       
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:QuotePosition",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				QuotePosition quotePosition = (QuotePosition)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(quotePosition);
+    				SalesOrderPosition salesOrderPosition = pm.newInstance(SalesOrderPosition.class);
+    				salesOrderPosition.refInitialize(false, false);
+    				Contracts.getInstance().copyContractPosition(
+    					quotePosition,
+    					salesOrderPosition
+    				);
+    				return salesOrderPosition;
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		quote.refGetPath().getPrefix(5)
+        	);
+        SalesOrder salesOrder = (SalesOrder)Cloneable.getInstance().cloneObject(
+        	quote, 
+        	contractSegment, 
+        	"salesOrder", 
+        	objectMarshallers, 
+        	null
         );
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:QuotePosition",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 quotePosition = (DataproviderObject_1_0)s;
-              DataproviderObject salesOrderPosition = new DataproviderObject(new Path(""));
-              copyAbstractContractPosition(
-                quotePosition,
-                salesOrderPosition
-              );
-              salesOrderPosition.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:SalesOrderPosition");
-              salesOrderPosition.clearValues("contractPositionState").add(new Short((short)0));
-              salesOrderPosition.clearValues("estimatedCloseDate");
-              salesOrderPosition.clearValues("closeProbability");
-              return salesOrderPosition;
-            }
-            public Object unmarshal(Object s) {
-              throw new UnsupportedOperationException();
-            }
-          }
-        );
-        DataproviderObject salesOrder =
-            this.backend.retrieveObjectForModification(
-                this.cloning.cloneAndUpdateReferences(
-                    this.backend.retrieveObject(quoteIdentity),
-                    quoteIdentity.getParent().getParent().getChild("salesOrder"),
-                    objectMarshallers,
-                    DEFAULT_REFERENCE_FILTER,
-                    false,
-                    AttributeSelectors.ALL_ATTRIBUTES
-                ).path()
-           );
-        salesOrder.clearValues("origin").add(quoteIdentity);
-        if(salesOrder.values("salesRep").isEmpty()) {
-            this.backend.getBase().assignToMe(
+        salesOrder.setOrigin(quote);
+        if(salesOrder.getSalesRep() == null) {
+            Base.getInstance().assignToMe(
                 salesOrder,
-                null,
                 true,
                 null
             );
         }
-        return salesOrder == null
-            ? null
-            : (SalesOrder)this.backend.getDelegatingPkg().refObject(salesOrder.path().toXri());
+        return salesOrder;
     }
     
     //-----------------------------------------------------------------------
     public Quote createQuote(
-        Path opportunityIdentity
+        org.opencrx.kernel.contract1.jmi1.Opportunity opportunity
     ) throws ServiceException {
-        Map objectMarshallers = new HashMap();
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:Opportunity",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 opportunity = (DataproviderObject_1_0)s;
-              DataproviderObject quote = new DataproviderObject(new Path(""));
-              copyAbstractContract(
-                opportunity,
-                quote
-              );
-              quote.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Quote");
-              quote.clearValues("contractState").add(new Short((short)0));
-              return quote;                       
-            }
-            public Object unmarshal(Object s) {
-              throw new UnsupportedOperationException();
-            }
-          }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(opportunity);
+    	Map<String,Marshaller> objectMarshallers = new HashMap<String,Marshaller>();
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:Opportunity",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				Opportunity opportunity = (Opportunity)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(opportunity);
+    				Quote quote = pm.newInstance(Quote.class);
+    				quote.refInitialize(false, false);
+    				Contracts.getInstance().copyAbstractContract(
+    					opportunity,
+    					quote
+    				);
+    				return quote;                       
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:OpportunityPosition",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				OpportunityPosition opportunityPosition = (OpportunityPosition)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(opportunityPosition);
+    				QuotePosition quotePosition = pm.newInstance(QuotePosition.class);
+    				quotePosition.refInitialize(false, false);
+    				Contracts.getInstance().copyContractPosition(
+    					opportunityPosition,
+    					quotePosition
+    				);
+    				return quotePosition;
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		opportunity.refGetPath().getPrefix(5)
+        	);
+        Quote quote = (Quote)Cloneable.getInstance().cloneObject(
+        	opportunity, 
+        	contractSegment, 
+        	"quote", 
+        	objectMarshallers, 
+        	null
         );
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:OpportunityPosition",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 opportunityPosition = (DataproviderObject_1_0)s;
-              DataproviderObject quotePosition = new DataproviderObject(new Path(""));
-              copyAbstractContractPosition(
-                opportunityPosition,
-                quotePosition
-              );
-              quotePosition.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:QuotePosition");
-              quotePosition.clearValues("contractPositionState").add(new Short((short)0));
-              return quotePosition;
-            }
-            public Object unmarshal(Object s) {
-              throw new UnsupportedOperationException();
-            }
-          }
-        );
-        DataproviderObject quote =
-            this.backend.retrieveObjectForModification(
-                this.cloning.cloneAndUpdateReferences(
-                    this.backend.retrieveObject(opportunityIdentity),
-                    opportunityIdentity.getParent().getParent().getChild("quote"),
-                    objectMarshallers,
-                    DEFAULT_REFERENCE_FILTER,
-                    false,
-                    AttributeSelectors.ALL_ATTRIBUTES
-            ).path()
-        );
-        quote.clearValues("origin").add(opportunityIdentity);              
-        if(quote.values("salesRep").isEmpty()) {
-            this.backend.getBase().assignToMe(
-                quote,
-                null,
+        quote.setOrigin(opportunity);
+        if(quote.getSalesRep() == null) {
+            Base.getInstance().assignToMe(
+            	quote,
                 true,
                 null
             );
         }
-        return quote == null
-            ? null
-            : (Quote)this.backend.getDelegatingPkg().refObject(quote.path().toXri());
+        return quote;
     }
     
     //-----------------------------------------------------------------------
     public Opportunity createOpportunity(
-        Path leadIdentity
+        org.opencrx.kernel.contract1.jmi1.Lead lead        
     ) throws ServiceException {
-        Map objectMarshallers = new HashMap();
-        objectMarshallers.put(
-          "org:opencrx:kernel:contract1:Lead",
-          new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-              DataproviderObject_1_0 lead = (DataproviderObject_1_0)s;
-              DataproviderObject opportunity = new DataproviderObject(new Path(""));
-              copyAbstractContract(
-                lead,
-                opportunity
-              );
-              opportunity.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Opportunity");
-              opportunity.clearValues("contractState").add(new Short((short)0));
-              return opportunity;     
-            }
-            public Object unmarshal(Object s) {
-              throw new UnsupportedOperationException();
-            }
-          }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(lead);
+    	Map<String,Marshaller> objectMarshallers = new HashMap<String,Marshaller>();
+    	objectMarshallers.put(
+    		"org:opencrx:kernel:contract1:Lead",
+    		new Marshaller() {
+    			public Object marshal(
+    				Object s
+    			) throws ServiceException {
+    				Lead lead = (Lead)s;
+    				PersistenceManager pm = JDOHelper.getPersistenceManager(lead);
+    				Opportunity opportunity = pm.newInstance(Opportunity.class);
+    				opportunity.refInitialize(false, false);
+    				Contracts.getInstance().copyAbstractContract(
+    					lead,
+    					opportunity
+    				);
+    				return opportunity;                       
+    			}
+    			public Object unmarshal(Object s) {
+    				throw new UnsupportedOperationException();
+    			}
+    		}
+    	);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		lead.refGetPath().getPrefix(5)
+        	);
+        Opportunity opportunity = (Opportunity)Cloneable.getInstance().cloneObject(
+        	lead, 
+        	contractSegment, 
+        	"opportunity", 
+        	objectMarshallers, 
+        	null
         );
-        DataproviderObject opportunity =
-            this.backend.retrieveObjectForModification(
-                this.cloning.cloneAndUpdateReferences(
-                    this.backend.retrieveObject(
-                        leadIdentity
-                    ),
-                    leadIdentity.getParent().getParent().getChild("opportunity"),
-                    objectMarshallers,
-                    DEFAULT_REFERENCE_FILTER,
-                    false,
-                    AttributeSelectors.ALL_ATTRIBUTES
-                ).path()
-            );
-        opportunity.clearValues("origin").add(leadIdentity);
-        if(opportunity.values("salesRep").isEmpty()) {
-            this.backend.getBase().assignToMe(
-                opportunity,
-                null,
+        opportunity.setOrigin(lead);
+        if(opportunity.getSalesRep() == null) {
+            Base.getInstance().assignToMe(
+            	opportunity,
                 true,
                 null
             );
         }
-        return opportunity == null
-            ? null
-            : (Opportunity)this.backend.getDelegatingPkg().refObject(opportunity.path().toXri());
+        return opportunity;
     }
 
     //-------------------------------------------------------------------------
-    private void resetPrice(
-        DataproviderObject position
-    ) {
-        position.clearValues("pricePerUnit");
-    }
-
-    //-------------------------------------------------------------------------
-    private boolean productOverridesPrice(
-        DataproviderObject_1_0 product
+    public void updateListPrice(
+        ContractPosition position,
+        AbstractContract contract,
+        Product product,
+        boolean overrideExistingPrice
     ) throws ServiceException {
-        Boolean overridePrice = product == null
-            ? Boolean.FALSE
-            : (Boolean)product.values("overridePrice").get(0);
-        if((overridePrice != null) && overridePrice.booleanValue()) {
-            return true;
-        }         
-        // Does type override price?
-        DataproviderObject_1_0 productType = (product != null) && !product.values("type").isEmpty()
-            ? this.backend.retrieveObjectFromDelegation((Path)product.values("type").get(0))
-            : null;
-        overridePrice = productType == null
-            ? Boolean.FALSE
-            : (Boolean)productType.values("overridePrice").get(0);
-        if((overridePrice != null) && overridePrice.booleanValue()) {
-            return true;
-        }         
-        return false;
-    }
-    
-    //-------------------------------------------------------------------------
-    private boolean parentPositionOverridesPrice(
-        DataproviderObject_1_0 position
-    ) throws ServiceException {
-        while(!position.values("parentPosition").isEmpty()) {
-            DataproviderObject_1_0 parentPosition = this.backend.retrieveObjectFromDelegation(
-                (Path)position.values("parentPosition").get(0)
-            );
-            DataproviderObject_1_0 product = (parentPosition != null) && !parentPosition.values("basedOn").isEmpty()
-                ? this.backend.retrieveObjectFromDelegation((Path)parentPosition.values("basedOn").get(0))
-                : null;
-            if(this.productOverridesPrice(product)) {
-                return true;
-            }
-            position = parentPosition;
-        }
-        return false;
-    }
-    
-    //-------------------------------------------------------------------------
-    public void updateContractPositionPrice(
-        DataproviderObject_1_0 contract,
-        DataproviderObject position,
-        DataproviderObject_1_0 oldValues,
-        DataproviderObject_1_0 product,
-        boolean priceEnabledOverridesPosition
-    ) throws ServiceException {
-
         if(contract == null) return;
+        PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
         if(position == null) return;
-        if(product == null) return;
-        Path productIdentity = product.path();
-        
-        // pricingRule
-        Path pricingRuleIdentity = null;
-        if(oldValues == null) {
-            pricingRuleIdentity = (Path)position.values("pricingRule").get(0);
-        }
-        else {
-            pricingRuleIdentity = (position.getValues("pricingRule") != null) && !position.values("pricingRule").isEmpty()
-                ? (Path)position.values("pricingRule").get(0)
-                : (Path)oldValues.values("pricingRule").get(0);            
-        }
-        if(pricingRuleIdentity == null) return;       
-        // quantity
-        BigDecimal quantity = null;
-        if(oldValues == null) {
-            quantity = (BigDecimal)position.values("quantity").get(0);
-        }
-        else {
-            quantity = (position.getValues("quantity") != null) && !position.values("quantity").isEmpty()
-                ? (BigDecimal)position.values("quantity").get(0)
-                : (BigDecimal)oldValues.values("quantity").get(0);
-        }
+        if(product == null) return;        
+        PricingRule pricingRule = position.getPricingRule();
+        if(pricingRule == null) return;       
+        BigDecimal quantity = position.getQuantity();
         if(quantity == null) return;
-        // pricingDate
-        String pricingDate = null;
-        if(oldValues == null) {
-            pricingDate = (String)position.values("pricingDate").get(0);
-        }
-        else {
-            pricingDate = (position.getValues("pricingDate") != null) && !position.values("pricingDate").isEmpty()
-                ? (String)position.values("pricingDate").get(0)
-                : (String)oldValues.values("pricingDate").get(0);
-        }
-        // priceUom
-        Path priceUomIdentity = (position.getValues("priceUom") != null) && !position.values("priceUom").isEmpty()
-            ? (Path)position.values("priceUom").get(0)
-            : !position.values("uom").isEmpty()
-                ? (Path)position.values("uom").get(0)
-                : oldValues == null
-                    ? null
-                    : !oldValues.values("priceUom").isEmpty()
-                        ? (Path)oldValues.values("priceUom").get(0)
-                        : (Path)oldValues.values("uom").get(0);
-        // priceLevel
-        Path priceLevelIdentity = null;
+        Date pricingDate = position.getPricingDate();
+        org.opencrx.kernel.uom1.jmi1.Uom priceUom = position.getPriceUom() != null ?
+            position.getPriceUom() :
+            position.getUom() == null ?
+            	null :
+            	position.getUom();           
+        AbstractPriceLevel priceLevel = null;
         BigDecimal customerDiscount = null;
-        Boolean customerDiscountIsPercentage = null;
-        if(position.getValues("priceLevel") != null) {
-            priceLevelIdentity = (Path)position.values("priceLevel").get(0);
+        Boolean customerDiscountIsPercentage = null;        
+        if(position.getPriceLevel() != null) {
+            priceLevel = position.getPriceLevel();
         }
         else {
-            try {
-                org.opencrx.kernel.product1.jmi1.GetPriceLevelResult res = 
-                    this.backend.getProducts().getPriceLevel(
-                        pricingRuleIdentity == null
-                            ? null
-                            : (org.opencrx.kernel.product1.jmi1.PricingRule)this.backend.getLocalPkg().refObject(pricingRuleIdentity.toXri()),                
-                        (org.opencrx.kernel.contract1.jmi1.AbstractContract)this.backend.getLocalPkg().refObject(contract.path().toXri()),                
-                        productIdentity == null
-                            ? null
-                            : (org.opencrx.kernel.product1.jmi1.AbstractProduct)this.backend.getLocalPkg().refObject(productIdentity.toXri()),                
-                        priceUomIdentity == null
-                            ? null
-                            : (org.opencrx.kernel.uom1.jmi1.Uom)this.backend.getLocalPkg().refObject(priceUomIdentity.toXri()),                
-                        quantity, 
-                        pricingDate == null
-                            ? new Date()
-                            : org.openmdx.base.text.format.DateFormat.getInstance().parse(pricingDate)
-                      );
-                priceLevelIdentity = (Path)res.refDelegate().objGetValue("priceLevel");
-                customerDiscount = res.getCustomerDiscount();
-                customerDiscountIsPercentage = res.isCustomerDiscountIsPercentage();
-            }
-            catch(ParseException e) {
-                throw new ServiceException(e);
-            }
-            finally {
-            }
+            org.opencrx.kernel.product1.jmi1.GetPriceLevelResult res = 
+                Products.getInstance().getPriceLevel(
+                    pricingRule,       
+                    contract,
+                    product,
+                    priceUom,
+                    quantity, 
+                    pricingDate == null ? 
+                    	new Date() : 
+                    	pricingDate
+                  );            
+            priceLevel = res.getPriceLevel() == null ?
+            	null :
+            	(AbstractPriceLevel)pm.getObjectById(res.getPriceLevel().refGetPath());
+            customerDiscount = res.getCustomerDiscount();
+            customerDiscountIsPercentage = res.isCustomerDiscountIsPercentage();
         }
-        position.clearValues("priceLevel");
-        if(priceLevelIdentity != null) {
-            position.values("priceLevel").add(priceLevelIdentity);
-        }        
+        position.setPriceLevel(priceLevel);
         // Find price matching price list and quantity
-        List prices = new ArrayList();
-        DataproviderObject_1_0 listPrice = null;
-        AppLog.trace("Price level found", "" + (priceLevelIdentity != null));
-        if(priceLevelIdentity != null) {
+        List<ProductBasePrice> prices = new ArrayList<ProductBasePrice>();
+        ProductBasePrice listPrice = null;
+        AppLog.trace("Price level", priceLevel);
+        if(priceLevel != null) {
             // Find product prices
             // priceLevel and priceUom must match
-            FilterProperty[] priceFilter = new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "priceLevel",
-                    FilterOperators.IS_IN,
-                    priceLevelIdentity                        
-                ),
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "uom",
-                    FilterOperators.IS_IN,
-                    priceUomIdentity                        
-                )
-            };
-            AppLog.trace("Lookup of prices with filter", Arrays.asList(priceFilter));
-            prices = this.backend.getDelegatingRequests().addFindRequest(
-                productIdentity.getChild("basePrice"),
-                priceFilter,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
+        	ProductBasePriceQuery basePriceQuery = (ProductBasePriceQuery)pm.newQuery(ProductBasePrice.class);
+        	basePriceQuery.thereExistsPriceLevel().equalTo(priceLevel);
+        	basePriceQuery.uom().equalTo(priceUom);
+            AppLog.trace("Lookup of prices with filter", Arrays.asList(basePriceQuery));
+            prices = product.getBasePrice(basePriceQuery);
             AppLog.trace("Matching prices found", prices);
             // Check quantity
-            for(
-                Iterator i = prices.iterator(); 
-                i.hasNext(); 
-            ) {
-                DataproviderObject_1_0 current = (DataproviderObject_1_0)i.next();
+            for(ProductBasePrice current: prices) {
                 AppLog.trace("Testing price", current);
                 boolean quantityFromMatches =
-                    (current.values("quantityFrom").isEmpty()) || 
+                    (current.getQuantityFrom() == null) || 
                     (quantity == null) || 
-                    ((BigDecimal)current.values("quantityFrom").get(0)).compareTo(quantity) <= 0;
-                AppLog.trace("Quantity from matches", new Boolean(quantityFromMatches));
+                    (current.getQuantityFrom().compareTo(quantity) <= 0);
+                AppLog.trace("Quantity from matches", quantityFromMatches);
                 boolean quantityToMatches = 
-                    (current.values("quantityTo").isEmpty()) || 
+                    (current.getQuantityTo() == null) || 
                     (quantity == null) || 
-                    ((BigDecimal)current.values("quantityTo").get(0)).compareTo(quantity) >= 0;
-                AppLog.trace("Quantity to matches", new Boolean(quantityToMatches));
+                    (current.getQuantityTo().compareTo(quantity) >= 0);
+                AppLog.trace("Quantity to matches", quantityToMatches);
                 if(quantityFromMatches && quantityToMatches) {
                     listPrice = current;
                     break;
@@ -1923,38 +1653,14 @@ public class Contracts {
         }
         // List price found?
         AppLog.trace("List price found", "" + (listPrice != null));
-        position.clearValues("pricingState").add(
-            new Short(PRICING_STATE_NA)
-        );
+        position.setPricingState(PRICING_STATE_NA);
+        position.setListPrice(listPrice);
         if(listPrice != null) {
-            position.clearValues("listPrice").add(
-                listPrice.path()
-            );
-            position.clearValues("pricingState").add(
-                new Short(PRICING_STATE_OK)
-            );
-            BigDecimal listPriceDiscount = (BigDecimal)listPrice.values("discount").get(0);
-            Boolean listPriceDiscountIsPercentage = (Boolean)listPrice.values("discountIsPercentage").get(0);
-            // Get existing discount
-            BigDecimal discount = null;
-            if(oldValues == null) {
-                discount = (BigDecimal)position.values("discount").get(0);
-            }
-            else {
-                discount = (position.getValues("discount") != null) && !position.values("discount").isEmpty()
-                    ? (BigDecimal)position.values("discount").get(0)
-                    : (BigDecimal)oldValues.values("discount").get(0);
-            }            
-            // Get existing discountIsPercentage
-            Boolean discountIsPercentage = null;
-            if(oldValues == null) {
-                discountIsPercentage = (Boolean)position.values("discountIsPercentage").get(0);
-            }
-            else {
-                discountIsPercentage = (position.getValues("discountIsPercentage") != null) && !position.values("discountIsPercentage").isEmpty()
-                    ? (Boolean)position.values("discountIsPercentage").get(0)
-                    : (Boolean)oldValues.values("discountIsPercentage").get(0);
-            }            
+            position.setPricingState(PRICING_STATE_OK);
+            BigDecimal listPriceDiscount = listPrice.getDiscount();
+            Boolean listPriceDiscountIsPercentage = listPrice.isDiscountIsPercentage();
+            BigDecimal discount = position.getDiscount();
+            Boolean discountIsPercentage = position.isDiscountIsPercentage();
             // Recalc discount if not already set on position
             if(discount == null) {
                 // Accumulate list price discount and customer discount
@@ -1963,33 +1669,33 @@ public class Contracts {
                     discountIsPercentage = listPriceDiscountIsPercentage;
                 }
                 else {
-                    BigDecimal price = (BigDecimal)listPrice.values("price").get(0);
-                    price = price == null
-                        ? new BigDecimal(0.0)
-                        : price;
-                    listPriceDiscount = listPriceDiscount == null
-                        ? new BigDecimal(0.0)
-                        : listPriceDiscount;
-                    customerDiscount = customerDiscount == null
-                        ? new BigDecimal(0.0)
-                        : customerDiscount;                    
+                    BigDecimal price = listPrice.getPrice();
+                    price = price == null ? 
+                    	BigDecimal.ZERO : 
+                    	price;
+                    listPriceDiscount = listPriceDiscount == null ? 
+                    	BigDecimal.ZERO : 
+                    	listPriceDiscount;
+                    customerDiscount = customerDiscount == null ? 
+                    	BigDecimal.ZERO : 
+                    	customerDiscount;                    
                     if(
-                        (listPriceDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
+                        (listPriceDiscount.compareTo(BigDecimal.ZERO) == 0) ||
                         ((listPriceDiscountIsPercentage != null) &&
                         listPriceDiscountIsPercentage.booleanValue())
                     ) {
                         // listPriceDiscountIsPercentage=true, customerDiscountIsPercentage=true
                         // totalDiscount = 1 - (1-listPriceDiscount) * (1-customerDiscount)
                         if(
-                            (customerDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
+                            (customerDiscount.compareTo(BigDecimal.ZERO) == 0) ||
                             ((customerDiscountIsPercentage != null) &&
                             customerDiscountIsPercentage.booleanValue())
                         ) {
                             discountIsPercentage = Boolean.TRUE;
                             discount =
-                                new BigDecimal(1.0).subtract(
-                                    new BigDecimal(1.0).subtract(listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR)).multiply(
-                                        new BigDecimal(1.0).subtract(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
+                                BigDecimal.ONE.subtract(
+                                    BigDecimal.ONE.subtract(listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR)).multiply(
+                                        BigDecimal.ONE.subtract(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
                                     )
                                 ).multiply(new BigDecimal(100.0));
                         }
@@ -2006,7 +1712,7 @@ public class Contracts {
                         // listPriceDiscountIsPercentage=false, customerDiscountIsPercentage=true
                         // totalDiscount = listPriceDiscount + (price - listPriceDiscount)*customerDiscount
                         if(
-                            (customerDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
+                            (customerDiscount.compareTo(BigDecimal.ZERO) == 0) ||
                             (customerDiscountIsPercentage != null) &&
                             customerDiscountIsPercentage.booleanValue()
                         ) {
@@ -2024,103 +1730,29 @@ public class Contracts {
                     }
                 }
             }            
-            // Position creation
-            if(oldValues == null) {
-                AppLog.trace("New position");
-                if(position.getValues("pricePerUnit") == null) {
-                    position.values("pricePerUnit").addAll(
-                        listPrice.values("price")
-                    );
-                    position.clearValues("discount");
-                    if(discount != null) {
-                        position.clearValues("discount").add(
-                            discount
-                        );
-                    }
-                    position.clearValues("discountIsPercentage");
-                    if(discountIsPercentage != null) {
-                        position.clearValues("discountIsPercentage").add(
-                            discountIsPercentage
-                        );
-                    }
-                }
-                if(position.getValues("priceUom") == null) {
-                    position.values("priceUom").addAll(listPrice.values("uom"));
-                }
+            if(overrideExistingPrice) {
+                position.setPricePerUnit(
+                    listPrice.getPrice()
+                );
+                position.setDiscount(discount);
+                position.setDiscountIsPercentage(
+                	discountIsPercentage
+                );
+                position.setPriceUom(
+                	listPrice.getUom()
+                );
             }
-            // Position update
-            else {
-                AppLog.trace("Replace position");
-                boolean pricePerUnitModified = (position.getValues("pricePerUnit") != null) && !position.getValues("pricePerUnit").isEmpty() && !oldValues.getValues("pricePerUnit").isEmpty() 
-                    ? ((BigDecimal)position.getValues("pricePerUnit").get(0)).compareTo((BigDecimal)oldValues.values("pricePerUnit").get(0)) != 0
-                    : !position.getValues("pricePerUnit").isEmpty();
-                AppLog.trace("pricePerUnitModified", new Boolean(pricePerUnitModified));
-                boolean priceUomModified = (position.getValues("priceUom") != null) && !position.getValues("priceUom").isEmpty() && !oldValues.getValues("priceUom").isEmpty() 
-                    ? position.getValues("priceUom").get(0).equals(oldValues.values("priceUom").get(0))
-                    : !position.getValues("priceUom").isEmpty();                    
-                AppLog.trace("priceUomModified", new Boolean(priceUomModified));
-                AppLog.trace("priceEnabledOverridesPosition", new Boolean(priceEnabledOverridesPosition));
-                if(priceEnabledOverridesPosition && !pricePerUnitModified) {
-                    position.clearValues("pricePerUnit").addAll(
-                        listPrice.values("price")
-                    );
-                    position.clearValues("discount");
-                    if(discount != null) {
-                        position.clearValues("discount").add(
-                            discount
-                        );
-                    }
-                    position.clearValues("discountIsPercentage");
-                    if(discountIsPercentage != null) {
-                        position.clearValues("discountIsPercentage").add(
-                            discountIsPercentage
-                        );
-                    }
-                }
-                if(priceEnabledOverridesPosition && !priceUomModified) {
-                    position.clearValues("priceUom").addAll(listPrice.values("uom"));
-                }
-                AppLog.trace("Updated position", position);
-            }
-        }
-        if(this.productOverridesPrice(product)) {
-            this.resetPrice(position);                
         }
     }
     
     //-------------------------------------------------------------------------
     public long getMaxLineItemNumber(
-        DataproviderObject_1_0 contract,
-        Path parentPositionIdentity
+        Collection<ContractPosition> positions
     ) throws ServiceException {
         long maxLineItemNumber = 0L;
-        List positions = this.backend.getDelegatingRequests().addFindRequest(
-            contract.path().getChild("position"),
-            parentPositionIdentity == null
-                ? null
-                : new FilterProperty[]{
-                      new FilterProperty(
-                          Quantors.THERE_EXISTS, 
-                          "parentPosition", 
-                          FilterOperators.IS_IN, 
-                          parentPositionIdentity
-                      )
-                  },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        for(
-            Iterator i = positions.iterator(); 
-            i.hasNext(); 
-        ) {
-            DataproviderObject_1_0 pos = (DataproviderObject_1_0)i.next();
-            if(
-                (pos.values("lineItemNumber").size() > 0) && 
-                (((Number)pos.values("lineItemNumber").get(0)).longValue() > maxLineItemNumber)
-            ) {
-                maxLineItemNumber = ((Number)pos.values("lineItemNumber").get(0)).longValue();
+        for(ContractPosition position: positions) {
+            if(position.getLineItemNumber() > maxLineItemNumber) {
+                maxLineItemNumber = position.getLineItemNumber();
             }
         }
         return maxLineItemNumber;
@@ -2128,235 +1760,77 @@ public class Contracts {
 
     //-------------------------------------------------------------------------
     public void updateContractPosition(
-        DataproviderObject_1_0 contract,
-        DataproviderObject position,
-        DataproviderObject_1_0 oldValues,
-        DataproviderObject_1_0 product,
+        AbstractContract contract,
+        ContractPosition position,
+        Product product,
         boolean reprice
     ) {
         try {
-            
-            String productClass = (String)product.values(SystemAttributes.OBJECT_CLASS).get(0);
-            
-            // Update uoms
-            Path positionUomIdentity = null;
-            Path priceUomIdentity = null;
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
+        	org.opencrx.kernel.product1.jmi1.Segment productSegment =
+        		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+        			product.refGetPath().getPrefix(5)
+        		);
             // Create
-            if(oldValues == null) {
-                // Get from position or take from defaultUom specified on product, its
-                // product type or its underyling product
-                if((position.getValues("uom") != null) && !position.values("uom").isEmpty()) { 
-                    positionUomIdentity = (Path)position.values("uom").get(0);
-                }
-                else if((product != null) && !product.values("defaultUom").isEmpty()) {
-                    positionUomIdentity = (Path)product.values("defaultUom").get(0);
-                }
-                priceUomIdentity = (position.getValues("priceUom") != null) && !position.values("priceUom").isEmpty()
-                    ? (Path)position.values("priceUom").get(0)
-                    : null;
+            if(JDOHelper.isNew(position)) {
+            	if(position.getUom() == null) {
+            		position.setUom(product.getDefaultUom());
+            	}
+            	if(position.getSalesTaxType() == null) {
+            		position.setSalesTaxType(product.getSalesTaxType());
+            	}
+            	PricingRule pricingRule = position.getPricingRule() == null ?
+            		contract.getPricingRule() :
+            		position.getPricingRule();
+            	if(pricingRule == null) {
+            		PricingRuleQuery pricingRuleQuery = (PricingRuleQuery)pm.newQuery(PricingRule.class);
+            		pricingRuleQuery.thereExistsIsDefault().isTrue();
+            		List<PricingRule> pricingRules = productSegment.getPricingRule(pricingRuleQuery);
+            		if(!pricingRules.isEmpty()) {
+            			pricingRule = pricingRules.iterator().next();
+            		}
+            	}
+            	position.setPricingRule(pricingRule);
+            	// PositionCreation
+            	PositionCreation positionCreation = pm.newInstance(PositionCreation.class);
+                positionCreation.refInitialize(false, false);
+                positionCreation.setInvolved(position);
+                contract.addPositionModification(
+                	false,
+                	this.getUidAsString(),
+                	positionCreation
+                );            	
             }
-            // Replace
+            // Update
             else {
-                // Get uom from position if supplied, else leave unchanged
-                positionUomIdentity = position.getValues("uom") != null
-                    ? (Path)position.values("uom").get(0)
-                    : (Path)oldValues.values("uom").get(0);
-                priceUomIdentity = position.getValues("priceUom") != null
-                    ? (Path)position.values("priceUom").get(0)
-                    : (Path)oldValues.values("priceUom").get(0);
+            	PersistenceManager pmOld = pm.getPersistenceManagerFactory().getPersistenceManager(
+            		SecurityKeys.ROOT_PRINCIPAL,
+            		null
+            	);
+                BigDecimal quantityOld = ((ContractPosition)pmOld.getObjectById(
+                	position.refGetPath())
+                ).getQuantity();
+                BigDecimal quantityNew = position.getQuantity();
+                if(quantityOld.compareTo(quantityNew) != 0) {
+                	QuantityModification quantityModification = pm.newInstance(QuantityModification.class);
+                	quantityModification.refInitialize(false, false);
+                	quantityModification.setInvolved(position);
+                	quantityModification.setQuantity(quantityOld);
+                    contract.addPositionModification(
+                    	false,
+                    	this.getUidAsString(),
+                    	quantityModification
+                    );            	
+                }                            	
             }
-            // Update uom
-            if(position.getValues("uom") != null) {
-                position.clearValues("uom");
-            }
-            if(positionUomIdentity != null) {
-                position.values("uom").add(positionUomIdentity);
-            }
-            // Set priceUom
-            if(position.getValues("priceUom") != null) {
-                position.clearValues("priceUom");
-            }
-            if(priceUomIdentity != null) {
-                position.values("priceUom").add(priceUomIdentity);
-            }
-            
-            // Update sales tax type
-            Path salesTaxTypeIdentity = null;
-            // Create
-            if(oldValues == null) {
-                if((position.getValues("salesTaxType") != null) && (position.values("salesTaxType").size() > 0)) {
-                    salesTaxTypeIdentity = (Path)position.values("salesTaxType").get(0);
-                }
-                else if((product != null) && (product.values("salesTaxType").size() > 0)) {
-                    salesTaxTypeIdentity = (Path)product.values("salesTaxType").get(0);
-                }
-            }
-            // Replace
-            else {
-                salesTaxTypeIdentity = position.getValues("salesTaxType") != null
-                    ? (Path)position.values("salesTaxType").get(0)
-                    : (Path)oldValues.values("salesTaxType").get(0);
-            }
-            position.clearValues("salesTaxType");
-            if(salesTaxTypeIdentity != null) {
-                position.values("salesTaxType").add(salesTaxTypeIdentity);
-            }
-
-            // Update pricing rule
-            Path pricingRuleIdentity = null;
-            // Create
-            if(oldValues == null) {
-                pricingRuleIdentity = (position.getValues("pricingRule") != null) && (position.values("pricingRule").size() > 0)
-                    ? (Path)position.values("pricingRule").get(0)
-                    : (Path)contract.values("pricingRule").get(0);
-                if(pricingRuleIdentity == null) {
-                    // Get default pricing rule
-                    List pricingRules = this.backend.getDelegatingRequests().addFindRequest(
-                        product.path().getPrefix(5).getChild("pricingRule"),
-                        new FilterProperty[]{
-                            new FilterProperty(
-                                Quantors.THERE_EXISTS,
-                                "isDefault",
-                                FilterOperators.IS_IN,
-                                Boolean.TRUE
-                            )
-                        }
-                    );
-                    if(pricingRules.size() > 0) {
-                        pricingRuleIdentity = ((DataproviderObject_1_0)pricingRules.iterator().next()).path();
-                    }
-                }
-            }
-            // Replace
-            else {
-                pricingRuleIdentity = position.getValues("pricingRule") != null
-                    ? (Path)position.values("pricingRule").get(0)
-                    : (Path)oldValues.values("pricingRule").get(0);                
-            }
-            position.clearValues("pricingRule");
-            if(pricingRuleIdentity != null) {
-                position.values("pricingRule").add(pricingRuleIdentity);
-            }
-            // Reprice            
             if(reprice) {
-                DataproviderObject_1_0 pricingProduct = product;
-                this.updateContractPositionPrice(
-                    contract,
+            	this.updateListPrice(
                     position, 
-                    oldValues,
-                    pricingProduct,
+                    contract,
+                    product,
                     true
                 );
             }
-            // PositionCreation 
-            if(oldValues == null) {
-                DataproviderObject positionCreation = new DataproviderObject(
-                    position.path().getPrefix(position.path().size() - 2).getDescendant(
-                        new String[]{"positionModification", this.backend.getUidAsString()}                          
-                    )
-                );
-                positionCreation.values(SystemAttributes.OBJECT_CLASS).add(
-                    "org:opencrx:kernel:contract1:PositionCreation"
-                );
-                positionCreation.values("involved").add(
-                    position.path()
-                );
-                this.backend.createObject(
-                    positionCreation
-                );
-            }
-            // QuantityModification 
-            else {
-                Comparable quantityOld = (Comparable)oldValues.values("quantity").get(0);
-                Comparable quantityNew = (Comparable)position.values("quantity").get(0);
-                if(quantityOld.compareTo(quantityNew) != 0) {
-                    DataproviderObject quantityModification = new DataproviderObject(
-                        position.path().getPrefix(position.path().size() - 2).getDescendant(
-                            new String[]{"positionModification", this.backend.getUidAsString()}                          
-                        )
-                    );
-                    quantityModification.values(SystemAttributes.OBJECT_CLASS).add(
-                        "org:opencrx:kernel:contract1:QuantityModification"
-                    );
-                    quantityModification.values("involved").add(
-                        position.path()
-                    );
-                    quantityModification.values("quantity").add(
-                        quantityOld
-                    );
-                    this.backend.createObject(
-                        quantityModification
-                    );
-                }                
-            }
-        }
-        catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause());
-        }
-    }
-    
-    //-------------------------------------------------------------------------
-    public void updateContractPositionConfigurationProperty(
-        DataproviderObject_1_0 contract,
-        DataproviderObject property,
-        DataproviderObject_1_0 oldValues
-    ) {
-        try {
-            // ConfigurationModification 
-            if(oldValues != null) {
-                boolean isModified = false;
-                Object propertyValue = null;
-                String propertyType = (String)property.values(SystemAttributes.OBJECT_CLASS).get(0);
-                if("org:opencrx:kernel:base:StringProperty".equals(propertyType)) {                    
-                    isModified = !Utils.areEqual(property.values("stringValue").get(0), oldValues.values("stringValue").get(0));
-                    propertyValue = oldValues.values("stringValue").get(0);
-                }
-                else if("org:opencrx:kernel:base:IntegerProperty".equals(propertyType)) {
-                    isModified = !Utils.areEqual(oldValues.values("integerValue").get(0), property.values("integerValue").get(0));
-                    propertyValue = oldValues.values("integerValue").get(0);
-                }
-                else if("org:opencrx:kernel:base:BooleanProperty".equals(propertyType)) {
-                    isModified = !Utils.areEqual(oldValues.values("booleanValue").get(0), property.values("booleanValue").get(0));                                        
-                    propertyValue = oldValues.values("booleanValue").get(0);
-                }
-                else if("org:opencrx:kernel:base:UriProperty".equals(propertyType)) {
-                    isModified = !Utils.areEqual(property.values("uriValue").get(0), oldValues.values("uriValue").get(0));                    
-                    propertyValue = oldValues.values("uriValue").get(0);
-                }
-                else if("org:opencrx:kernel:base:DecimalProperty".equals(propertyType)) {
-                    isModified = !Utils.areEqual(oldValues.values("decimalValue").get(0), property.values("decimalValue").get(0));                    
-                    propertyValue = oldValues.values("decimalValue").get(0);
-                }
-                else if("org:opencrx:kernel:base:ReferenceProperty".equals(propertyType)) {
-                    isModified = !Utils.areEqual(property.values("referenceValue").get(0), oldValues.values("referenceValue").get(0));                    
-                    propertyValue = oldValues.values("referenceValue").get(0);
-                }
-                if(isModified) {
-                    // ConfigurationModification
-                    DataproviderObject configurationModification = new DataproviderObject(
-                        property.path().getPrefix(7).getDescendant(
-                            new String[]{"positionModification", this.backend.getUidAsString()}                          
-                        )
-                    );
-                    configurationModification.values(SystemAttributes.OBJECT_CLASS).add(
-                        "org:opencrx:kernel:contract1:ConfigurationModification"
-                    );
-                    if(propertyValue != null) {
-                        configurationModification.values("propertyValue").add(
-                            propertyValue instanceof Path ? ((Path)propertyValue).toXri() : propertyValue.toString() 
-                        );
-                    }
-                    configurationModification.values("involvedPty").add(
-                        property.path()
-                    );
-                    configurationModification.values("involved").add(
-                         property.path().getPrefix(9)
-                    );
-                    this.backend.createObject(
-                        configurationModification
-                    );
-                }                
-            }            
         }
         catch(ServiceException e) {
             AppLog.info(e.getMessage(), e.getCause());
@@ -2365,135 +1839,155 @@ public class Contracts {
     
     //-------------------------------------------------------------------------
     public ContractPosition createContractPosition(
-        Path contractIdentity,
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
         Boolean isIgnoreProductConfiguration,
         String name,
         BigDecimal quantity,
         Date pricingDate,
-        Path productIdentity,
-        Path uomIdentity,
-        Path priceUomIdentity,
-        Path pricingRuleIdentity
+        org.opencrx.kernel.product1.jmi1.Product product,
+        org.opencrx.kernel.uom1.jmi1.Uom uom,
+        org.opencrx.kernel.uom1.jmi1.Uom priceUom,
+        org.opencrx.kernel.product1.jmi1.PricingRule pricingRule
     ) {
-        DataproviderObject position = null;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
+    	ContractPosition position = null;
         try {
-            DataproviderObject_1_0 contract = this.backend.retrieveObject(contractIdentity);
-            position = new DataproviderObject(
-                contractIdentity.getDescendant(new String[]{"position", this.backend.getUidAsString()})
-            );
-            String contractType = (String)contract.values(SystemAttributes.OBJECT_CLASS).get(0);
-            if(this.backend.getModel().isSubtypeOf(contractType, "org:opencrx:kernel:contract1:Opportunity")) {
-                position.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:OpportunityPosition");
-            }
-            else if(this.backend.getModel().isSubtypeOf(contractType, "org:opencrx:kernel:contract1:Quote")) {
-                position.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:QuotePosition");
-            }
-            else if(this.backend.getModel().isSubtypeOf(contractType, "org:opencrx:kernel:contract1:SalesOrder")) {
-                position.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:SalesOrderPosition");
-            }
-            else if(this.backend.getModel().isSubtypeOf(contractType, "org:opencrx:kernel:contract1:Invoice")) {
-                position.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:InvoicePosition");
-            }
+        	long maxLineItemNumber = 0;
+        	if(contract instanceof Opportunity) {
+        		Collection<AbstractOpportunityPosition> c = ((Opportunity)contract).getPosition();
+        		Collection<ContractPosition> positions = new ArrayList<ContractPosition>();
+        		positions.addAll(c);
+        		maxLineItemNumber = this.getMaxLineItemNumber(positions);
+        		position = pm.newInstance(OpportunityPosition.class);
+        		position.refInitialize(false, false);
+        		((Opportunity)contract).addPosition(
+        			false,
+        			this.getUidAsString(),
+        			(OpportunityPosition)position
+        		);
+        	}
+        	else if(contract instanceof Quote) {
+        		Collection<AbstractQuotePosition> c = ((Quote)contract).getPosition();
+        		Collection<ContractPosition> positions = new ArrayList<ContractPosition>();
+        		positions.addAll(c);
+        		maxLineItemNumber = this.getMaxLineItemNumber(positions);
+        		position = pm.newInstance(QuotePosition.class);
+        		position.refInitialize(false, false);
+        		((Quote)contract).addPosition(
+        			false,
+        			this.getUidAsString(),
+        			(QuotePosition)position
+        		);
+        	}
+        	else if(contract instanceof SalesOrder) {
+        		Collection<AbstractSalesOrderPosition> c = ((SalesOrder)contract).getPosition();
+        		Collection<ContractPosition> positions = new ArrayList<ContractPosition>();
+        		positions.addAll(c);
+        		maxLineItemNumber = this.getMaxLineItemNumber(positions);
+        		position = pm.newInstance(SalesOrderPosition.class);
+        		position.refInitialize(false, false);
+        		((SalesOrder)contract).addPosition(
+        			false,
+        			this.getUidAsString(),
+        			(SalesOrderPosition)position
+        		);
+        	}
+        	else if(contract instanceof Invoice) {
+        		Collection<AbstractInvoicePosition> c = ((Invoice)contract).getPosition();
+        		Collection<ContractPosition> positions = new ArrayList<ContractPosition>();
+        		positions.addAll(c);
+        		maxLineItemNumber = this.getMaxLineItemNumber(positions);
+        		position = pm.newInstance(InvoicePosition.class);
+        		position.refInitialize(false, false);
+        		((Invoice)contract).addPosition(
+        			false,
+        			this.getUidAsString(),
+        			(InvoicePosition)position
+        		);
+        	}
             else {
                 return null;
             }
-            position.values("shippingMethod").add(0);
-            position.values("minMaxQuantityHandling").add(0);
-            position.values("isGift").add(false);
-            position.values("contractPositionState").add(0);
             // lineItemNumber
-            position.values("lineItemNumber").add(
-                new Long(
-                    100000 * (this.getMaxLineItemNumber(contract, null) / 100000 + 1)
-                )
+        	Long positionNumber = new Long(100000 * (maxLineItemNumber / 100000 + 1));
+            position.setLineItemNumber(
+            	positionNumber
+            );
+            position.setPositionNumber(
+            	positionNumber.toString()
             );
             // name
             if(name != null) {
-                position.values("name").add(name);
+                position.setName(name);
             }
             else {
-                position.values("name").add("Position " + position.values("lineItemNumber").get(0));
+                position.setName("Position " + position.getLineItemNumber());
             }
             // quantity
             if(quantity != null) {
-                position.values("quantity").add(quantity);
+                position.setQuantity(quantity);
             }
             else {
-                position.values("quantity").add(new BigDecimal(1));
+                position.setQuantity(BigDecimal.ONE);
             }
             // pricingDate
             if(pricingDate != null) {
-                position.values("pricingDate").add(
-                    org.openmdx.base.text.format.DateFormat.getInstance().format(pricingDate)
-                );
+                position.setPricingDate(pricingDate);
             }
             else {
-                position.values("pricingDate").add(
-                    !contract.values("pricingDate").isEmpty()
-                        ? contract.values("pricingDate").get(0)
-                        : org.openmdx.base.text.format.DateFormat.getInstance().format(new Date())
+                position.setPricingDate(
+                    contract.getPricingDate() != null ? 
+                    	contract.getPricingDate() : 
+                    	new Date()
                 );
             }
-            // product                    
-            DataproviderObject_1_0 product = productIdentity == null ? 
-                null : 
-                this.backend.retrieveObjectFromDelegation(productIdentity);
             // uom (only touch if specified as param
-            if(uomIdentity != null) {
-                position.values("uom").add(uomIdentity);
-            }
+            position.setUom(uom);
             // priceUom (only touch if specified as param
-            if(priceUomIdentity != null) {
-                position.values("priceUom").add(priceUomIdentity);
+            if(priceUom != null) {
+                position.setPriceUom(priceUom);
             }
             // pricingRule
-            if(pricingRuleIdentity != null) {
-                position.values("pricingRule").add(pricingRuleIdentity);
+            if(pricingRule != null) {
+                position.setPricingRule(pricingRule);
             }
             // calcRule
-            position.values("calcRule").addAll(
-                contract.values("calcRule")
+            position.setCalcRule(
+                contract.getCalcRule()
             );            
             // Update position
             this.updateContractPosition(
                 contract,
                 position,
-                null,
                 product,
                 true
             );
-            position.clearValues("product");
-            if(productIdentity != null) {
-                position.values("product").add(productIdentity);            
+            if(position instanceof ConfiguredProduct) {
+            	((ConfiguredProduct)position).setProduct(product);
             }
-            
-            // Create position
-            this.backend.getDelegatingRequests().addCreateRequest(
-                position
-            );
             // Clone configurations
             if((isIgnoreProductConfiguration == null) || !isIgnoreProductConfiguration.booleanValue()) {
-                this.backend.getProducts().cloneProductConfigurationSet(
-                    productIdentity,
-                    position.path(),
+                Products.getInstance().cloneProductConfigurationSet(
+                    product,
+                    position,
                     false,
                     true
                 );
             }
+            // Touch contract --> jdoPreStore will be invoked
             this.markContractAsDirty(
-                contract.path()
+            	contract
             );
         }
 	    catch(Exception e) {
 	        new ServiceException(e).log();
 	    }
-	    return position == null
-	        ? null
-	        : (ContractPosition)this.backend.getDelegatingPkg().refObject(position.path().toXri());	               
+	    return position;
     }
     
     //-------------------------------------------------------------------------
-    private static int calculateTimeDistributionOpenContracts(
+    @SuppressWarnings("unchecked")
+    private int calculateTimeDistributionOpenContracts(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
         Query query,
         int[] timeDistribution,
@@ -2537,318 +2031,77 @@ public class Contracts {
     }
 
     //-------------------------------------------------------------------------
-    public boolean allowPositionRemoval(
-        Path contractIdentity,
-        DataproviderObject_1_0 productRole,
-        Path parentPositionIdentity
-    ) throws ServiceException {
-        List positions = this.backend.getDelegatingRequests().addFindRequest(
-            contractIdentity.getChild("position"),
-            parentPositionIdentity == null
-                ? null
-                : new FilterProperty[]{
-                      new FilterProperty(
-                          Quantors.THERE_EXISTS, 
-                          "parentPosition", 
-                          FilterOperators.IS_IN, 
-                          parentPositionIdentity
-                      )
-                  },
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        int nPositions = 0;
-        for(
-            Iterator i = positions.iterator(); 
-            i.hasNext(); 
-        ) {
-            DataproviderObject_1_0 pos = (DataproviderObject_1_0)i.next();
-            if(productRole.path().equals(pos.values("basedOn").get(0))) {
-                nPositions++;
-            }
-        }
-        // If minPositions is not defined for productRole fall back to product type
-        // if defined
-        if(productRole.values("minPositions").isEmpty()) {
-            if(productRole.values("type").size() > 0) {
-                DataproviderObject_1_0 productType = this.backend.retrieveObjectFromDelegation(
-                    (Path)productRole.values("type").get(0)
-                );
-                return productType.values("minPositions").size() > 0
-                    ? nPositions > ((Number)productType.values("minPositions").get(0)).intValue()
-                    : true;
-            }
-            else {
-                return true;
-            }
-        }
-        else {
-            return nPositions > ((Number)productRole.values("minPositions").get(0)).intValue();
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    public int getNumberPositionsBasedOnProduct(
-        Path contractIdentity,
-        DataproviderObject_1_0 product,
-        Path parentPositionIdentity,
-        List positions
-    ) throws ServiceException {
-        if(positions == null) {
-            positions = this.backend.getDelegatingRequests().addFindRequest(
-                contractIdentity.getChild("position"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-        }
-        int nPositions = 0;
-        for(
-            Iterator i = positions.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 position = (DataproviderObject_1_0)i.next();
-            boolean matches = true;
-            if(position.values("parentPosition").isEmpty()) {
-                matches &= parentPositionIdentity == null;
-            }
-            else {
-                matches &= position.values("parentPosition").get(0).equals(parentPositionIdentity);
-            }
-            matches &= 
-                product.path().equals(position.values("basedOn").get(0));
-            if(matches) nPositions++;
-        }
-        return nPositions; 
-    }
-
-    //-------------------------------------------------------------------------
-    public boolean allowPositionCreation(
-        Path contractIdentity,
-        DataproviderObject_1_0 product,
-        Path parentPositionIdentity,
-        List positions
-    ) throws ServiceException {
-        int nPositions = this.getNumberPositionsBasedOnProduct(
-            contractIdentity,
-            product,
-            parentPositionIdentity,
-            positions
-        );
-        // If maxPositions is not defined for productBundle fall back to product type
-        // if defined
-        if(product.values("maxPositions").isEmpty()) {
-            if(!product.values("type").isEmpty()) {
-                DataproviderObject_1_0 type = this.backend.retrieveObjectFromDelegation(
-                    (Path)product.values("type").get(0)
-                );
-                return type.values("maxPositions").size() > 0
-                    ? nPositions < ((Number)type.values("maxPositions").get(0)).intValue()
-                    : true;
-            }
-            else {
-                return true;
-            }
-        }
-        else {
-            return nPositions < ((Number)product.values("maxPositions").get(0)).intValue();
-        }        
-    }
-    
-    //-------------------------------------------------------------------------
     public void removeContractPosition(
-        ServiceHeader header,
-        DataproviderObject_1_0 position,
-        boolean checkForMinPositions
+        ContractPosition position,
+        boolean checkForMinPositions,
+        boolean preDelete
     ) throws ServiceException {
-        Path contractIdentity = position.path().getPrefix(position.path().size() - 2);
-        Path productRoleIdentity = (Path)position.values("basedOn").get(0);
-        if(productRoleIdentity != null) {
-            DataproviderObject_1_0 productRole = this.backend.retrieveObjectFromDelegation(productRoleIdentity);
-            Path parentPositionIdentity = (Path)position.values("parentPosition").get(0);
-            if(checkForMinPositions && !this.allowPositionRemoval(contractIdentity, productRole, parentPositionIdentity)) {
-                throw new ServiceException(
-                    OpenCrxException.DOMAIN,
-                    OpenCrxException.CONTRACT_MIN_POSITIONS_REACHED,
-                    "Removal not allowed. Min positions reached.",
-                    new BasicException.Parameter("param0", productRole.values("minPositions").get(0)),   
-                    new BasicException.Parameter("param1", position.values("name").get(0))   
-                );                                                                            
-            }
-            // Remove all contained positions
-            // NOTE: find request also returns positions with empty parent position
-            List positions = this.backend.getDelegatingRequests().addFindRequest(
-                contractIdentity.getChild("position"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS, 
-                        "parentPosition", 
-                        FilterOperators.IS_IN, 
-                        position.path()
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-            for(
-                Iterator i = positions.iterator();
-                i.hasNext();
-            ) {
-                DataproviderObject_1_0 memberPosition = (DataproviderObject_1_0)i.next();
-                if(!memberPosition.values("parentPosition").isEmpty()) {
-                    this.removeContractPosition(
-                        header,
-                        memberPosition,
-                        false
-                    );
-                }
-            }
-        }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+    	org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
+    		(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
+    			position.refGetPath().getParent().getParent()
+    		);
         // Make a copy of the removed position
-        // position marshallers
         Marshaller positionMarshaller = new Marshaller() {
-            public Object marshal(Object s) throws ServiceException {
-                DataproviderObject_1_0 position = new DataproviderObject((DataproviderObject_1_0)s);
-                position.clearValues(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:RemovedPosition");
-                position.attributeNames().remove("estimatedCloseDate");
-                position.attributeNames().remove("closeProbability");
-                position.attributeNames().remove("parentPosition");
-                return position;     
+            public Object marshal(
+            	Object s
+            ) throws ServiceException {
+            	if(s instanceof ContractPosition) {
+            		ContractPosition position = (ContractPosition)s;
+            		PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+            		RemovedPosition removedPosition = pm.newInstance(RemovedPosition.class);
+            		removedPosition.refInitialize(false, false);
+            		Contracts.getInstance().copyContractPosition(
+            			position, 
+            			removedPosition
+            		);
+            		return removedPosition;
+            	}
+            	else {
+            		return s;
+            	}
             }
             public Object unmarshal(Object s) {
                 throw new UnsupportedOperationException();
             }
         };
-        Map objectMarshallers = new HashMap();
-        // position marshallers
+        Map<String,Marshaller> objectMarshallers = new HashMap<String,Marshaller>();
         objectMarshallers.put("org:opencrx:kernel:contract1:OpportunityPosition", positionMarshaller);
         objectMarshallers.put("org:opencrx:kernel:contract1:QuotePosition", positionMarshaller);
         objectMarshallers.put("org:opencrx:kernel:contract1:SalesOrderPosition", positionMarshaller);
         objectMarshallers.put("org:opencrx:kernel:contract1:InvoicePosition", positionMarshaller);
-        // clone
-        DataproviderObject removedPosition = this.backend.getCloneable().cloneAndUpdateReferences(
-            position,
-            position.path().getPrefix(position.path().size() - 2).getChild("removedPosition"),
-            objectMarshallers,
-            DEFAULT_REFERENCE_FILTER,
-            true,
-            AttributeSelectors.ALL_ATTRIBUTES
+        RemovedPosition removedPosition = (RemovedPosition)Cloneable.getInstance().cloneObject(
+        	position, 
+        	contract, 
+        	"removedPosition", 
+        	objectMarshallers, 
+        	null
         );
         // Update position modifications
         // Replace involved with removed position
-        List positionModifications = this.backend.getDelegatingRequests().addFindRequest(
-            position.path().getPrefix(position.path().size() - 2).getChild("positionModification"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "involved",
-                    FilterOperators.IS_IN,
-                    position.path()
-                )
-            }            
-        );
-        for(
-            Iterator i = positionModifications.iterator(); 
-            i.hasNext(); 
-        ) {
-            DataproviderObject_1_0 positionModification = (DataproviderObject_1_0)i.next();
-            DataproviderObject updatedPositionModification = this.backend.retrieveObjectForModification(
-                positionModification.path()
-            );
-            updatedPositionModification.clearValues("involved").add(
-                removedPosition.path()
-            );
+        Collection<PositionModification> positionModifications = contract.getPositionModification();
+        for(PositionModification positionModification: positionModifications) {
+        	try {
+	        	if(positionModification.getInvolved().equals(position)) {
+	        		positionModification.setInvolved(removedPosition);
+	        	}
+        	}
+        	catch(Exception e) {}
         }
-        // Create position modification
-        DataproviderObject positionRemoval = new DataproviderObject(
-            position.path().getPrefix(position.path().size() - 2).getDescendant(
-                new String[]{"positionModification", this.backend.getUidAsString()}                          
-            )
+        PositionRemoval positionRemoval = pm.newInstance(PositionRemoval.class);
+        positionRemoval.refInitialize(false, false);
+        positionRemoval.setInvolved(removedPosition);
+        contract.addPositionModification(
+        	false,
+        	this.getUidAsString(),
+        	positionRemoval
         );
-        positionRemoval.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:contract1:PositionRemoval"
-        );
-        positionRemoval.values("involved").add(
-            removedPosition.path()
-        );
-        this.backend.createObject(
-            positionRemoval
-        );        
-        // Remove position
-        this.backend.removeObject(
-            position.path()
-        );
+        if(!preDelete) {
+        	position.refDelete();        	
+        }
         this.markContractAsDirty(
-            contractIdentity
+        	contract
         );
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * Copy depot references from product role to contract position.
-     */
-    public Set createDepotReferences(
-        Path depotHolderIdentity,
-        Path positionIdentity,
-        Set excludeDepotUsage
-    ) throws ServiceException {
-        Set depotUsages = new HashSet();
-        List depotReferences = this.backend.getDelegatingRequests().addFindRequest(
-            depotHolderIdentity.getChild("depotReference"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        for(
-            Iterator i = depotReferences.iterator();
-            i.hasNext();
-        ) {            
-            DataproviderObject_1_0 depotReference = (DataproviderObject_1_0)i.next();         
-            Integer depotUsage = new Integer(((Number)depotReference.values("depotUsage").get(0)).intValue());
-            if(!excludeDepotUsage.contains(depotUsage)) {
-                this.backend.getCloneable().cloneAndUpdateReferences(
-                    depotReference,
-                    positionIdentity.getChild("depotReference"),
-                    null,
-                    "",
-                    true,
-                    AttributeSelectors.ALL_ATTRIBUTES                    
-                );
-            }
-            depotUsages.add(depotUsage);
-        }
-        return depotUsages;
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * Add itemNumber to lineItemNumber. Assert that itemNumber is adjusted
-     * to lineItemNumber.
-     */
-    public long getAdjustedLineItemNumber(
-        long itemNumber,
-        long lineItemNumber
-    ) {
-        long d = 1;
-        while((lineItemNumber / d) % 100 == 0) {
-            d *= 100;
-        }
-        itemNumber %= d;
-        itemNumber = Math.max(1, itemNumber);
-        d /= 100;
-        d = Math.max(1L, d);
-        while(itemNumber / d == 0) {
-            itemNumber *= 100;
-        }        
-        return lineItemNumber + itemNumber;
     }
     
     //-------------------------------------------------------------------------
@@ -2857,74 +2110,52 @@ public class Contracts {
      * final booking or null if no inventory booking is set on the contract
      */
     public CompoundBooking removePendingInventoryBookings(
-        Path contractIdentity
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract
     ) throws ServiceException {
-
-        DataproviderObject updatedContract = this.backend.retrieveObjectForModification(
-            contractIdentity
-        );
-        DataproviderObject_1_0 lastFinalInventoryCb = null;
-        while(updatedContract.values("inventoryCb").size() > 0) {
-            DataproviderObject_1_0 cb = this.backend.retrieveObjectFromDelegation(
-                (Path)updatedContract.values("inventoryCb").get(updatedContract.values("inventoryCb").size()-1)
-            );
-            Number bookingStatus = (Number)cb.values("bookingStatus").get(0);
-            if((bookingStatus == null) || (bookingStatus.shortValue() != Depots.BOOKING_STATUS_PROCESSED)) {
-                this.backend.getDepots().removeCompoundBooking(
-                    cb.path()
+    	List<CompoundBooking> inventoryCbs = contract.getInventoryCb();
+    	List<CompoundBooking> removedInventoryCbs = new ArrayList<CompoundBooking>();
+    	CompoundBooking lastFinalInventoryCb = null;
+    	for(CompoundBooking cb: inventoryCbs) {
+            short bookingStatus = cb.getBookingStatus();
+            if(bookingStatus != Depots.BOOKING_STATUS_PROCESSED) {
+                Depots.getInstance().removeCompoundBooking(
+                    cb,
+                    false
                 );
-                updatedContract.values("inventoryCb").remove(
-                    updatedContract.values("inventoryCb").size()-1
-                );
+                removedInventoryCbs.add(cb);
             }
             else {
                 lastFinalInventoryCb = cb;
                 break;
             }
         }
-        return lastFinalInventoryCb == null
-            ? null
-            : (CompoundBooking)this.backend.getDelegatingPkg().refObject(lastFinalInventoryCb.path().toXri());
+    	contract.getInventoryCb().removeAll(removedInventoryCbs);
+        return lastFinalInventoryCb;
     }
     
     //-------------------------------------------------------------------------
     public CompoundBooking updateInventory(
-        Path contractIdentity
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract
     ) throws ServiceException {
-
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
         CompoundBooking lastFinalInventoryCb = 
-            this.removePendingInventoryBookings(
-                contractIdentity
+        	this.removePendingInventoryBookings(
+                contract
             );
         // Get all position modifications since the last inventory update marked as final
-        Date positionModificationsSince = lastFinalInventoryCb != null
-            ? lastFinalInventoryCb.getBookingDate()
-            : null;
-                
-        DataproviderObject_1_0 deliveryDepot = null;
-        
+        Date positionModificationsSince = lastFinalInventoryCb != null ? 
+        	lastFinalInventoryCb.getBookingDate() :
+        	null;                
+        Depot deliveryDepot = null;        
         // Test depots of contract. It must have at least
         // a goods delivery depot.
-        List depotReferences = this.backend.getDelegatingRequests().addFindRequest(
-            contractIdentity.getChild("depotReference"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
+        Collection<DepotReference> depotReferences = contract.getDepotReference();
         boolean hasDepotGoodsDelivery = false;
-        for(
-            Iterator i = depotReferences.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 depotReference = (DataproviderObject_1_0)i.next();
-            Number depotUsage = (Number)depotReference.values("depotUsage").get(0);
-            if(!depotReference.values("depot").isEmpty() && (depotUsage != null) && (depotUsage.shortValue() == Depots.DEPOT_USAGE_GOODS_DELIVERY)) {
+        for(DepotReference depotReference: depotReferences) {
+            short depotUsage = depotReference.getDepotUsage();
+            if((depotReference.getDepot() != null) && (depotUsage == Depots.DEPOT_USAGE_GOODS_DELIVERY)) {
                 hasDepotGoodsDelivery = true;
-                deliveryDepot = this.backend.retrieveObject(
-                    (Path)depotReference.values("depot").get(0)
-                );
+                deliveryDepot = depotReference.getDepot();
             }
         }
         if(!hasDepotGoodsDelivery) {
@@ -2932,85 +2163,59 @@ public class Contracts {
                 OpenCrxException.DOMAIN,
                 OpenCrxException.CONTRACT_MISSING_DEPOT_GOODS_DELIVERY,
                 "Missing goods delivery depot.",
-                new BasicException.Parameter("param0", contractIdentity)
+                new BasicException.Parameter("param0", contract.refGetPath())
             );                                                                            
         }
-
         // Test depots of all positions. Each position must have
         // a depot with usage=DEPOT_USAGE_GOODS_ISSUE and 
         // usage=DEPOT_USAGE_GOODS_RETURN
-        List allPositions = new ArrayList();
-        List positions = this.backend.getDelegatingRequests().addFindRequest(
-            contractIdentity.getChild("position"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        for(Iterator i = positions.iterator(); i.hasNext(); ) {
-            allPositions.add(i.next());
+        List<ContractPosition> allPositions = new ArrayList<ContractPosition>();
+        if(contract instanceof Opportunity) {
+        	Collection<AbstractOpportunityPosition> p = ((Opportunity)contract).getPosition();
+        	allPositions.addAll(p);
         }
-        positions = this.backend.getDelegatingRequests().addFindRequest(
-            contractIdentity.getChild("removedPosition"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        for(Iterator i = positions.iterator(); i.hasNext(); ) {
-            allPositions.add(i.next());
+        else if(contract instanceof Quote) {
+        	Collection<AbstractQuotePosition> p = ((Quote)contract).getPosition();
+        	allPositions.addAll(p);
         }
-
+        else if(contract instanceof SalesOrder) {
+        	Collection<AbstractSalesOrderPosition> p = ((SalesOrder)contract).getPosition();
+        	allPositions.addAll(p);
+        }
+        else if(contract instanceof Invoice) {
+        	Collection<AbstractInvoicePosition> p = ((Invoice)contract).getPosition();
+        	allPositions.addAll(p);
+        }
+        Collection<RemovedPosition> removedPositions = contract.getRemovedPosition();
+        for(RemovedPosition removedPosition: removedPositions) {
+        	allPositions.add(removedPosition);
+        }
         // Create positions
-        List issueDepotPositions = new ArrayList();
-        List returnDepotPositions = new ArrayList();
-        List deliveryDepotPositions = new ArrayList();
+        List<DepotPosition> issueDepotPositions = new ArrayList<DepotPosition>();
+        List<DepotPosition> returnDepotPositions = new ArrayList<DepotPosition>();
+        List<DepotPosition> deliveryDepotPositions = new ArrayList<DepotPosition>();
         int ii = 0;
-        for(
-            Iterator i = allPositions.iterator();
-            i.hasNext();
-            ii++
-        ) {
-            DataproviderObject_1_0 position = (DataproviderObject_1_0)i.next();  
-            String positionType = (String)position.values(SystemAttributes.OBJECT_CLASS).get(0);
-            depotReferences = this.backend.getDelegatingRequests().addFindRequest(
-                position.path().getChild("depotReference"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-            DataproviderObject_1_0 issueDepot = null;
-            DataproviderObject_1_0 returnDepot =  null;
+        for(Iterator<ContractPosition> i = allPositions.iterator(); i.hasNext(); ii++) {
+        	ContractPosition position = i.next();
+        	depotReferences = position.getDepotReference();
+            Depot issueDepot = null;
+            Depot returnDepot =  null;
             boolean holderQualifiesPosition = false;
-            for(
-                Iterator j = depotReferences.iterator();
-                j.hasNext();
-            ) {
-                DataproviderObject_1_0 depotReference = (DataproviderObject_1_0)j.next();
-                Number depotUsage = (Number)depotReference.values("depotUsage").get(0);
-                if((depotReference.values("depot").size() > 0) && (depotUsage != null) && (depotUsage.shortValue() == Depots.DEPOT_USAGE_GOODS_ISSUE)) {
-                    issueDepot = this.backend.retrieveObject(
-                        (Path)depotReference.values("depot").get(0)
-                    );
+            for(DepotReference depotReference: depotReferences) {
+                short depotUsage = depotReference.getDepotUsage();
+                if((depotReference.getDepot() != null) && (depotUsage == Depots.DEPOT_USAGE_GOODS_ISSUE)) {
+                    issueDepot = depotReference.getDepot();
                     // The issue depot determines the useDepotPositionQualifier 
-                    holderQualifiesPosition = depotReference.values("holderQualifiesPosition").size() > 0
-                        ? ((Boolean)depotReference.values("holderQualifiesPosition").get(0)).booleanValue()
-                        : false;
+                    holderQualifiesPosition = depotReference.isHolderQualifiesPosition();
                 }
-                if((depotReference.values("depot").size() > 0) && (depotUsage != null) && (depotUsage.shortValue() == Depots.DEPOT_USAGE_GOODS_RETURN)) {
-                    returnDepot = this.backend.retrieveObject(
-                        (Path)depotReference.values("depot").get(0)
-                    );                    
+                if((depotReference.getDepot() != null) && (depotUsage == Depots.DEPOT_USAGE_GOODS_RETURN)) {
+                    returnDepot = depotReference.getDepot();
                 }
             }
             if(issueDepot == null) {
                 // Removed positions with no valid depot references can not have inventory bookings.
                 // The position can be ignored.
-                if(this.backend.getModel().isSubtypeOf(positionType, "org:opencrx:kernel:contract1:AbstractRemovedPosition")) {
+                if(position instanceof AbstractRemovedPosition) {
                     i.remove();
                     continue;
                 }
@@ -3019,14 +2224,14 @@ public class Contracts {
                         OpenCrxException.DOMAIN,
                         OpenCrxException.CONTRACT_MISSING_DEPOT_GOODS_ISSUE,
                         "Missing goods issue depot.",
-                        new BasicException.Parameter("param0", position.values("lineItemNumber").get(0))  
+                        new BasicException.Parameter("param0", position.getLineItemNumber())  
                     );
                 }
             }
             if(returnDepot == null) {
                 // Removed positions with no valid depot references can not have inventory bookings.
                 // The position can be ignored.
-                if(this.backend.getModel().isSubtypeOf(positionType, "org:opencrx:kernel:contract1:AbstractRemovedPosition")) {
+                if(position instanceof AbstractRemovedPosition) {
                     i.remove();
                     continue;
                 }
@@ -3035,128 +2240,87 @@ public class Contracts {
                         OpenCrxException.DOMAIN,
                         OpenCrxException.CONTRACT_MISSING_DEPOT_GOODS_RETURN,
                         "Missing goods return depot.",
-                        new BasicException.Parameter("param0", position.values("lineItemNumber").get(0))   
+                        new BasicException.Parameter("param0", position.getLineItemNumber())   
                     );
                 }
             }
-
             // delivery depot position
             deliveryDepotPositions.add( 
-                this.backend.getDepots().openDepotPosition(
+                Depots.getInstance().openDepotPosition(
                     deliveryDepot,
                     null,
                     null,
                     new Date(),
-                    holderQualifiesPosition ? (String)position.values("positionNumber").get(0) : null,
-                    (Path)position.values("basedOn").get(0),
+                    holderQualifiesPosition ? 
+                    	position.getPositionNumber() : 
+                    	null,
                     null,
                     Boolean.FALSE
                 )
             );
-
             // issue depot position
             issueDepotPositions.add( 
-                this.backend.getDepots().openDepotPosition(
+                Depots.getInstance().openDepotPosition(
                     issueDepot,
                     null,
                     null,
                     new Date(),
-                    holderQualifiesPosition ? (String)position.values("positionNumber").get(0) : null,
-                    (Path)position.values("basedOn").get(0),
+                    holderQualifiesPosition ? 
+                    	position.getPositionNumber() : 
+                    	null,
                     null,
                     Boolean.FALSE
                 )
             );
-
             // return depot position
             returnDepotPositions.add(
-                this.backend.getDepots().openDepotPosition(
+                Depots.getInstance().openDepotPosition(
                     returnDepot,
                     null,
                     null,
                     new Date(),
-                    holderQualifiesPosition ? (String)position.values("positionNumber").get(0) : null,
-                    (Path)position.values("basedOn").get(0),
+                    holderQualifiesPosition ? 
+                    	position.getPositionNumber() : 
+                    	null,
                     null,
                     Boolean.FALSE
                 )
             );
-        }
-        
+        }        
         // Create booking        
-        List creditPositions = new ArrayList();
-        List debitPositions = new ArrayList();
-        List quantities = new ArrayList();
-        List bookingTextNames = new ArrayList();
-        List productConfigurationSets = new ArrayList();
-        List originIdentities = new ArrayList();
-        
+        List<DepotPosition> creditPositions = new ArrayList<DepotPosition>();
+        List<DepotPosition> debitPositions = new ArrayList<DepotPosition>();
+        List<BigDecimal> quantities = new ArrayList<BigDecimal>();
+        List<String> bookingTextNames = new ArrayList<String>();
+        List<ContractPosition> origins = new ArrayList<ContractPosition>();        
         ii = 0;
-        for(
-            Iterator i = allPositions.iterator();
-            i.hasNext();
-            ii++
-        ) {
-            DataproviderObject_1_0 position = (DataproviderObject_1_0)i.next();
-            
+        for(Iterator<ContractPosition> i = allPositions.iterator(); i.hasNext(); ii++) {
+            ContractPosition position = i.next();            
             // Get all modifications of this position since positionModificationsSince ordered by creation date
-            List positionModifications = this.backend.getDelegatingRequests().addFindRequest(
-                contractIdentity.getChild("positionModification"),
-                positionModificationsSince == null
-                    ? new FilterProperty[]{
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,
-                            "involved",
-                            FilterOperators.IS_IN,
-                            position.path()
-                        )
-                      }
-                    : new FilterProperty[]{
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,
-                            "involved",
-                            FilterOperators.IS_IN,
-                            position.path()
-                        ),
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,                        
-                            SystemAttributes.CREATED_AT,
-                            FilterOperators.IS_GREATER,
-                            org.openmdx.base.text.format.DateFormat.getInstance().format(positionModificationsSince)
-                        )
-                    },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{
-                    new AttributeSpecifier(
-                        SystemAttributes.CREATED_AT,
-                        0,
-                        Orders.ASCENDING
-                    )
-                },
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-
+            PositionModificationQuery positionModificationQuery = (PositionModificationQuery)pm.newQuery(PositionModification.class);
+            positionModificationQuery.thereExistsInvolved().equalTo(position);
+            if(positionModificationsSince != null) {
+            	positionModificationQuery.createdAt().greaterThan(
+            		positionModificationsSince
+            	);
+            }
+            positionModificationQuery.orderByCreatedAt().ascending();            
+            List<PositionModification> positionModifications = contract.getPositionModification(positionModificationQuery);
             BigDecimal quantityBeforeFirstModification = new BigDecimal(0.0);
-            for(
-                Iterator j = positionModifications.iterator(); 
-                j.hasNext(); 
-            ) {
-                DataproviderObject_1_0 positionModification = (DataproviderObject_1_0)j.next();
-                String positionModificationType = (String)positionModification.values(SystemAttributes.OBJECT_CLASS).get(0);
-                if("org:opencrx:kernel:contract1:QuantityModification".equals(positionModificationType)) {
-                    quantityBeforeFirstModification = ((BigDecimal)position.values("quantity").get(0)).subtract(
-                        (BigDecimal)positionModification.values("quantity").get(0)
+            for(PositionModification positionModification: positionModifications) {
+                if(positionModification instanceof QuantityModification) {
+                	QuantityModification quantityModification = (QuantityModification)positionModification;
+                    quantityBeforeFirstModification = position.getQuantity().subtract(
+                        quantityModification.getQuantity()
                     );
                     break;
                 }
-                else if("org:opencrx:kernel:contract1:PositionCreation".equals(positionModificationType)) {
-                    quantityBeforeFirstModification = (BigDecimal)position.values("quantity").get(0);
+                else if(positionModification instanceof PositionCreation) {
+                    quantityBeforeFirstModification = position.getQuantity();
                     break;
                 }
-                else if("org:opencrx:kernel:contract1:PositionRemoval".equals(positionModificationType)) {
-                    quantityBeforeFirstModification = ((BigDecimal)position.values("quantity").get(0)).negate();
+                else if(positionModification instanceof PositionRemoval) {
+                    quantityBeforeFirstModification = position.getQuantity().negate();
                     break;
                 }
             }
@@ -3164,10 +2328,10 @@ public class Contracts {
             if(quantityBeforeFirstModification.signum() != 0) {
                 if(quantityBeforeFirstModification.signum() < 0) {
                     creditPositions.add(
-                        ((DataproviderObject_1_0)returnDepotPositions.get(ii)).path()
+                        returnDepotPositions.get(ii)
                     );
                     debitPositions.add(
-                        ((DataproviderObject_1_0)deliveryDepotPositions.get(ii)).path()
+                        deliveryDepotPositions.get(ii)
                     );
                     bookingTextNames.add(
                         BOOKING_TEXT_NAME_RETURN_GOODS
@@ -3175,23 +2339,17 @@ public class Contracts {
                 }
                 else {
                     creditPositions.add(
-                        ((DataproviderObject_1_0)deliveryDepotPositions.get(ii)).path()
+                        deliveryDepotPositions.get(ii)
                     );
                     debitPositions.add(
-                        ((DataproviderObject_1_0)issueDepotPositions.get(ii)).path()
+                        issueDepotPositions.get(ii)
                     );
                     bookingTextNames.add(
                         BOOKING_TEXT_NAME_DELIVER_GOODS
                     );
                 }
-                String contractPositionType = (String)position.values(SystemAttributes.OBJECT_CLASS).get(0);                    
-                productConfigurationSets.add(
-                    this.backend.getModel().isSubtypeOf(contractPositionType, "org:opencrx:kernel:product1:ProductDescriptor")
-                        ? position.path()
-                        : null
-                );
-                originIdentities.add(
-                    position.path()
+                origins.add(
+                    position
                 );
                 quantities.add(
                     quantityBeforeFirstModification.abs()
@@ -3199,29 +2357,28 @@ public class Contracts {
             }
         }
         if(!quantities.isEmpty()) {
-            DataproviderObject_1_0 inventoryCb = 
-                this.backend.getDepots().createCompoundBooking(
-                    deliveryDepot.path().getPrefix(7),
+        	DepotEntity depotEntity =
+        		(DepotEntity)pm.getObjectById(
+        			deliveryDepot.refGetPath().getPrefix(7)
+        		);
+            CompoundBooking inventoryCb = 
+                Depots.getInstance().createCompoundBooking(
+                    depotEntity,
                     new Date(),
                     Depots.BOOKING_TYPE_STANDARD,
-                    (BigDecimal[])quantities.toArray(new BigDecimal[quantities.size()]),
-                    (String[])bookingTextNames.toArray(new String[bookingTextNames.size()]),
+                    quantities.toArray(new BigDecimal[quantities.size()]),
+                    bookingTextNames.toArray(new String[bookingTextNames.size()]),
                     null,
-                    (Path[])creditPositions.toArray(new Path[creditPositions.size()]),
-                    (Path[])debitPositions.toArray(new Path[debitPositions.size()]),
-                    (Path[])productConfigurationSets.toArray(new Path[productConfigurationSets.size()]),
-                    (Path[])originIdentities.toArray(new Path[originIdentities.size()]),
+                    creditPositions.toArray(new DepotPosition[creditPositions.size()]),
+                    debitPositions.toArray(new DepotPosition[debitPositions.size()]),
+                    origins.toArray(new BookingOrigin[origins.size()]),
+                    null,
                     null
                 );        
-            DataproviderObject updatedContract = this.backend.retrieveObjectForModification(
-                contractIdentity
+            contract.getInventoryCb().add(
+                inventoryCb
             );
-            updatedContract.values("inventoryCb").add(
-                inventoryCb.path()
-            );
-            return inventoryCb == null
-                ? null
-                : (CompoundBooking)this.backend.getDelegatingPkg().refObject(inventoryCb.path().toXri());
+            return inventoryCb;
         }
         else {
             return null;
@@ -3230,429 +2387,422 @@ public class Contracts {
     
     //-------------------------------------------------------------------------
     public void updateContractPosition(
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
+    	ContractPosition position
     ) throws ServiceException {
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        // Contract position
-        if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:contract1:ContractPosition")) {
-            Path productIdentity = null;
-            if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:product1:ConfiguredProduct")) {
-                productIdentity = (object.getValues("product") != null) && !object.values("product").isEmpty() ? 
-                    (Path)object.values("product").get(0) : 
-                    oldValues == null ? null : (Path)oldValues.values("product").get(0);
-            }
-            else {
-                productIdentity = (object.getValues("basedOn") != null) && !object.values("basedOn").isEmpty() ? 
-                    (Path)object.values("basedOn").get(0) : 
-                    oldValues == null ? null : (Path)oldValues.values("basedOn").get(0);                                
-            }
-            DataproviderObject contract = this.backend.retrieveObjectForModification(
-                object.path().getPrefix(7)
-            );
-            if(productIdentity != null) {
-                DataproviderObject_1_0 product = this.backend.retrieveObjectFromDelegation(productIdentity);                
-                this.updateContractPosition(
-                    contract,
-                    object,
-                    oldValues,
-                    product,
-                    false
-                );
-            }
-            this.markContractAsDirty(
-                contract.path()
-            );
-        }
-        // Configuration property of configured product on contract position
-        else if(object.path().isLike(CONTRACT_POSITION_CONFIGURATION_PROPERTY)) {
-            DataproviderObject_1_0 contract = this.backend.retrieveObject(
-                object.path().getPrefix(7)
-            );
-            this.updateContractPositionConfigurationProperty(
-                contract,
-                object,
-                oldValues
-            );
-        }
-        
-    }
-
-    //-------------------------------------------------------------------------
-    public void updateContract(
-        ServiceHeader header,
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
-    ) throws ServiceException {
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:contract1:AbstractContract")) {
-            this.completeContract(
-                object,
-                null
-            );
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    /**
-     * @return new pricingState of contract position
-     */
-    public short repriceContractPosition(
-        Path contractPositionIdentity
-    ) throws ServiceException {
-        DataproviderObject_1_0 contractPosition = this.backend.retrieveObject(
-            contractPositionIdentity
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+        AbstractContract contract = 
+        	(AbstractContract)pm.getObjectById(
+            position.refGetPath().getParent().getParent()
         );
-        String objectClass = (String)contractPosition.values(SystemAttributes.OBJECT_CLASS).get(0);
-        short pricingState = PRICING_STATE_NA;
-        if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:contract1:ContractPosition")) {
-            Path productIdentity = null;
-            if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:product1:ProductDescriptor")) {
-                productIdentity = (Path)contractPosition.values("product").get(0);
-            }
-            if(productIdentity != null) {
-                DataproviderObject_1_0 product = this.backend.retrieveObjectFromDelegation(productIdentity);                
-                DataproviderObject_1_0 contract = this.backend.retrieveObject(
-                    contractPosition.path().getParent().getParent()
-                );
-                DataproviderObject position = this.backend.retrieveObjectForModification(
-                    contractPosition.path()
-                );
-                // Force recalc of priceLevel
-                position.attributeNames().remove("priceLevel");
-                this.updateContractPosition(
-                    contract,
-                    position,
-                    contractPosition,
-                    product,
-                    true
-                );
-                if(position.values("pricingState").size() > 0) {
-                    pricingState = ((Number)position.values("pricingState").get(0)).shortValue();
-                }
-            }
+        // Pricing state is dirty if pricePerUnit is modified
+        PersistenceManager pmOld = pm.getPersistenceManagerFactory().getPersistenceManager(
+        	SecurityKeys.ROOT_PRINCIPAL,
+        	null
+        );
+        if(!JDOHelper.isNew(position)) {
+	        ContractPosition positionOld = (ContractPosition)pmOld.getObjectById(
+	        	position.refGetPath()
+	        );
+	        boolean priceIsModified = (position.getPricePerUnit() == null) || (positionOld.getPricePerUnit() == null) ?
+	            position.getPricePerUnit() != positionOld.getPricePerUnit() :
+	            position.getPricePerUnit().compareTo(positionOld.getPricePerUnit()) != 0;
+	        if(priceIsModified) {
+	            position.setPricingState(
+	                PRICING_STATE_DIRTY
+	            );
+	            contract.setPricingState(
+	                PRICING_STATE_DIRTY
+	            );
+	        }
+        }
+        if(position instanceof ConfiguredProduct) {
+        	Product product = ((ConfiguredProduct)position).getProduct();
+	        if(product != null) {
+	            this.updateContractPosition(
+	                contract,
+	            	position,
+	                product,
+	                false
+	            );
+	        }
+        }
+        this.markContractAsDirty(
+            contract
+        );
+    }
+
+    //-------------------------------------------------------------------------
+    public short repriceContractPosition(
+        org.opencrx.kernel.contract1.jmi1.ContractPosition position
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
+    	AbstractContract contract = 
+    		(AbstractContract)pm.getObjectById(
+    			position.refGetPath().getParent().getParent()
+    		);
+    	short pricingState = 0;
+        if(position instanceof ConfiguredProduct) {
+        	Product product = ((ConfiguredProduct)position).getProduct();
+        	if(product != null) {
+	            position.setPriceLevel(null);
+	            this.updateContractPosition(
+	                contract,
+	                position,
+	                product,
+	                true
+	            );
+        	}
+        	pricingState = position.getPricingState();
         }
         return pricingState;
     }
     
     //-------------------------------------------------------------------------
     public void repriceContract(
-        Path contractIdentity
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract
     ) throws ServiceException {
-        List positions = this.backend.getDelegatingRequests().addFindRequest(
-            contractIdentity.getChild("position"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
+        List<ContractPosition> positions = new ArrayList<ContractPosition>();
+        if(contract instanceof Opportunity) {
+        	Collection<AbstractOpportunityPosition> p = ((Opportunity)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof Quote) {
+        	Collection<AbstractQuotePosition> p = ((Quote)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof SalesOrder) {
+        	Collection<AbstractSalesOrderPosition> p = ((SalesOrder)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof Invoice) {
+        	Collection<AbstractInvoicePosition> p = ((Invoice)contract).getPosition();
+        	positions.addAll(p);
+        }
         short pricingState = PRICING_STATE_OK;
-        for(Iterator i = positions.iterator(); i.hasNext(); ) {
-            DataproviderObject_1_0 position = (DataproviderObject_1_0)i.next();
+        for(ContractPosition position: positions) {
             short pricingStatePosition = this.repriceContractPosition(
-                position.path()
+                position
             );
             if(pricingStatePosition == PRICING_STATE_DIRTY) {
                 pricingState = PRICING_STATE_DIRTY;
             }
         }
-        DataproviderObject contract = this.backend.retrieveObjectForModification(
-            contractIdentity
-        );
-        contract.clearValues("pricingState").add(
-            new Short(pricingState)
+        contract.setPricingState(
+            pricingState
         );
     }
 
     //-------------------------------------------------------------------------
-    public void replaceContractPosition(
-        DataproviderRequest request
-    ) throws ServiceException {
-        // Set pricingState to dirty in case pricePerUnit is modified
-        if(request.object().getValues("pricePerUnit") != null) {
-            DataproviderObject newValues = request.object();
-            DataproviderObject position = this.backend.retrieveObjectForModification(
-                request.path()
-            );
-            boolean priceIsModified = (newValues.getValues("pricePerUnit") == null) || (newValues.values("pricePerUnit").get(0) == null) || (position.getValues("pricePerUnit") == null) || (position.values("pricePerUnit").get(0) == null)
-                ? newValues.values("pricePerUnit").get(0) != position.values("pricePerUnit").get(0)
-                : ((BigDecimal)newValues.values("pricePerUnit").get(0)).compareTo((BigDecimal)position.values("pricePerUnit").get(0)) != 0;
-            if(priceIsModified) {
-                DataproviderObject contract = this.backend.retrieveObjectForModification(
-                    position.path().getPrefix(position.path().size()-2)
-                );
-                position.clearValues("pricingState").add(
-                    new Short(PRICING_STATE_DIRTY)
-                );
-                contract.clearValues("pricingState").add(
-                    new Short(PRICING_STATE_DIRTY)
-                );
-            }
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    public FilterProperty[] getContractFilterProperties(
-        Path contractFilterIdentity,
+    public AbstractContractQuery getFilteredContractQuery(
+        AbstractFilterContract contractFilter,
         boolean forCounting
     ) throws ServiceException {
-        List filterProperties = this.backend.getDelegatingRequests().addFindRequest(
-            contractFilterIdentity.getChild("filterProperty"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            null,
-            0, 
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        List filter = new ArrayList();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contractFilter);
+        Collection<ContractFilterProperty> filterProperties = contractFilter.getFilterProperty();
+        AbstractContractQuery query = (AbstractContractQuery)pm.newQuery(AbstractContract.class);
+        for(ContractFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
+            if((isActive != null) && isActive.booleanValue()) {
+            	if(filterProperty instanceof ContractTypeFilterProperty) {
+            		ContractTypeFilterProperty p = (ContractTypeFilterProperty)filterProperty;
+            		if(!p.getContractType().isEmpty()) {
+	            		if(p.getContractType().get(0).indexOf("Lead") > 0) {
+	            			query = (LeadQuery)pm.newQuery(Lead.class);            		
+	            		}
+	            		else if(p.getContractType().get(0).indexOf("Opportunity") > 0) {
+	            			query = (OpportunityQuery)pm.newQuery(Opportunity.class);            		
+	            		}
+	            		else if(p.getContractType().get(0).indexOf("Quote") > 0) {
+	            			query = (QuoteQuery)pm.newQuery(Quote.class);            		
+	            		}
+	            		else if(p.getContractType().get(0).indexOf("SalesOrder") > 0) {
+	            			query = (SalesOrderQuery)pm.newQuery(SalesOrder.class);            		
+	            		}
+	            		else if(p.getContractType().get(0).indexOf("Invoice") > 0) {
+	            			query = (InvoiceQuery)pm.newQuery(Invoice.class);            		
+	            		}
+            		}
+            	}
+            }
+        }        
         boolean hasQueryFilterClause = false;
-        for(
-            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 filterProperty = i.next();
-            String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
-
-            Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);            
+        for(ContractFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
             if((isActive != null) && isActive.booleanValue()) {
                 // Query filter
-                if("org:opencrx:kernel:contract1:ContractQueryFilterProperty".equals(filterPropertyClass)) {     
-                    String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-                    // Clause and class
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                            FilterOperators.PIGGY_BACK,
-                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
-                        )
+                if(filterProperty instanceof ContractQueryFilterProperty) {
+                	ContractQueryFilterProperty p = (ContractQueryFilterProperty)filterProperty;
+                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+                	queryFilter.setClause(
+                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
+                	);
+                    queryFilter.setStringParam(
+                    	p.getStringParam()
                     );
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                            FilterOperators.PIGGY_BACK,
-                            Database_1_Attributes.QUERY_FILTER_CLASS
-                        )
+                    queryFilter.setIntegerParam(
+                    	p.getIntegerParam()
                     );
-                    // stringParam
-                    List values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDecimalParam(
+                    	p.getDecimalParam()
                     );
-                    // integerParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setBooleanParam(
+                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
                     );
-                    // decimalParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateParam(
+                    	p.getDateParam()
                     );
-                    // booleanParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateTimeParam(
+                    	p.getDateTimeParam()
                     );
-                    // dateParam
-                    values = new ArrayList();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
-                    );
-                    // dateTimeParam
-                    values = new ArrayList();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(Date.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    query.thereExistsContext().equalTo(
+                    	queryFilter
                     );
                     hasQueryFilterClause = true;
                 }
                 // Attribute filter
-                else {
+                else if(filterProperty instanceof AttributeFilterProperty) {
+                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
                     // Get filterOperator, filterQuantor
-                    short filterOperator = filterProperty.values("filterOperator").size() == 0
-                        ? FilterOperators.IS_IN
-                        : ((Number)filterProperty.values("filterOperator").get(0)).shortValue();
-                    filterOperator = filterOperator == 0
-                        ? FilterOperators.IS_IN
-                        : filterOperator;
-                    short filterQuantor = filterProperty.values("filterQuantor").size() == 0
-                        ? Quantors.THERE_EXISTS
-                        : ((Number)filterProperty.values("filterQuantor").get(0)).shortValue();
-                    filterQuantor = filterQuantor == 0
-                        ? Quantors.THERE_EXISTS
-                        : filterQuantor;
-                    
-                    if("org:opencrx:kernel:contract1:ContractTypeFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                SystemAttributes.OBJECT_CLASS,
-                                filterOperator,
-                                filterProperty.values("contractType").toArray()
-                            )
-                        );
+                    short operator = attributeFilterProperty.getFilterOperator();
+                    operator = operator == 0 ? 
+                    	FilterOperators.IS_IN : 
+                    	operator;
+                    short quantor = attributeFilterProperty.getFilterQuantor();
+                    quantor = quantor == 0 ? 
+                    	Quantors.THERE_EXISTS : 
+                    	quantor;                    
+                    if(filterProperty instanceof ContractStateFilterProperty) {
+                    	ContractStateFilterProperty p = (ContractStateFilterProperty)filterProperty;
+                    	switch(quantor) {
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.contractState().elementOf(p.getContractState()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.contractState().greaterThan(p.getContractState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.contractState().greaterThanOrEqualTo(p.getContractState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.contractState().lessThan(p.getContractState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.contractState().lessThanOrEqualTo(p.getContractState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.contractState().notAnElementOf(p.getContractState()); 
+                    					break;
+                    				default:
+                    					query.contractState().elementOf(p.getContractState()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:contract1:ContractStateFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "contractState",
-                                filterOperator,
-                                filterProperty.values("contractState").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof ContractPriorityFilterProperty) {
+                    	ContractPriorityFilterProperty p = (ContractPriorityFilterProperty)filterProperty;
+                    	switch(quantor) {
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.priority().elementOf(p.getPriority()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.priority().greaterThan(p.getPriority().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.priority().greaterThanOrEqualTo(p.getPriority().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.priority().lessThan(p.getPriority().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.priority().lessThanOrEqualTo(p.getPriority().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.priority().notAnElementOf(p.getPriority()); 
+                    					break;
+                    				default:
+                    					query.priority().elementOf(p.getPriority()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:contract1:ContractPriorityFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "priority",
-                                filterOperator,
-                                filterProperty.values("priority").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof TotalAmountFilterProperty) {
+                    	TotalAmountFilterProperty p = (TotalAmountFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.totalAmount().elementOf(p.getTotalAmount()); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.totalAmount().greaterThan(p.getTotalAmount().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.totalAmount().greaterThanOrEqualTo(p.getTotalAmount().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.totalAmount().lessThan(p.getTotalAmount().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.totalAmount().lessThanOrEqualTo(p.getTotalAmount().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.totalAmount().notAnElementOf(p.getTotalAmount()); 
+	                					break;
+	                				default:
+	                					query.totalAmount().elementOf(p.getTotalAmount()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:contract1:TotalAmountFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "totalAmount",
-                                filterOperator,
-                                filterProperty.values("totalAmount").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof CustomerFilterProperty) {
+                    	CustomerFilterProperty p = (CustomerFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllCustomer().elementOf(p.getCustomer()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllCustomer().notAnElementOf(p.getCustomer()); 
+	                					break;
+	                				default:
+	                					query.forAllCustomer().elementOf(p.getCustomer()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsCustomer().elementOf(p.getCustomer()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsCustomer().notAnElementOf(p.getCustomer()); 
+	                					break;
+	                				default:
+	                					query.thereExistsCustomer().elementOf(p.getCustomer()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:contract1:CustomerFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "customer",
-                                filterOperator,
-                                filterProperty.values("customer").toArray()                    
-                            )
-                        );
+                    else if(filterProperty instanceof SupplierFilterProperty) {
+                    	SupplierFilterProperty p = (SupplierFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllSupplier().elementOf(p.getSupplier()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllSupplier().notAnElementOf(p.getSupplier()); 
+	                					break;
+	                				default:
+	                					query.forAllSupplier().elementOf(p.getSupplier()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsSupplier().elementOf(p.getSupplier()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsSupplier().notAnElementOf(p.getSupplier()); 
+	                					break;
+	                				default:
+	                					query.thereExistsSupplier().elementOf(p.getSupplier()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:contract1:SupplierFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "supplier",
-                                filterOperator,
-                                filterProperty.values("supplier").toArray()                    
-                            )
-                        );
+                    else if(filterProperty instanceof SalesRepFilterProperty) {
+                    	SalesRepFilterProperty p = (SalesRepFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllSalesRep().elementOf(p.getSalesRep()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllSalesRep().notAnElementOf(p.getSalesRep()); 
+	                					break;
+	                				default:
+	                					query.forAllSalesRep().elementOf(p.getSalesRep()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsSalesRep().elementOf(p.getSalesRep()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsSalesRep().notAnElementOf(p.getSalesRep()); 
+	                					break;
+	                				default:
+	                					query.thereExistsSalesRep().elementOf(p.getSalesRep()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:contract1:SalesRepFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "salesRep",
-                                filterOperator,
-                                filterProperty.values("salesRep").toArray()                    
-                            )
-                        );
-                    }
-                    else if("org:opencrx:kernel:contract1:DisabledFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "disabled",
-                                filterOperator,
-                                filterProperty.values("disabled").toArray()
-                            )
-                        );
-                    }
+                    else if(filterProperty instanceof DisabledFilterProperty) {
+                    	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
+                	}
                 }
             }
-        }        
-        if(!hasQueryFilterClause && forCounting) {
-            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-            // Clause and class
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                    FilterOperators.PIGGY_BACK,
-                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-                )
-            );
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.PIGGY_BACK,
-                    Database_1_Attributes.QUERY_FILTER_CLASS
-                )
-            );            
         }
-        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
+        if(!hasQueryFilterClause && forCounting) {
+        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+        	queryFilter.setClause(
+        		Database_1_Attributes.HINT_COUNT + "(1=1)"
+        	);
+        	query.thereExistsContext().equalTo(
+        		queryFilter
+        	);
+        }
+        return query;
     }
-    
+        
     //-------------------------------------------------------------------------
     public int countFilteredContract(
-        Path contractFilterIdentity
+        org.opencrx.kernel.contract1.jmi1.AbstractFilterContract contractFilter
     ) throws ServiceException {
-        List contracts = this.backend.getDelegatingRequests().addFindRequest(
-            contractFilterIdentity.getChild("filteredContract"),
-            this.getContractFilterProperties(
-                contractFilterIdentity, 
-                true
-            ),
-            AttributeSelectors.NO_ATTRIBUTES,
-            null,
-            0, 
-            1,
-            Directions.ASCENDING
-        );
+    	AbstractContractQuery contractQuery = this.getFilteredContractQuery(
+    		contractFilter, 
+    		true
+    	);
+        List<AbstractContract> contracts = contractFilter.getFilteredContract(contractQuery);
         return contracts.size();
     }
             
@@ -3738,7 +2888,7 @@ public class Contracts {
               : new java.math.BigDecimal(0);
             totalSalesCommission = totalSalesCommission.add(
               (salesCommissionIsPercentages[i] != null) &&
-              (((Boolean)salesCommissionIsPercentages[i]).booleanValue())
+              (salesCommissionIsPercentages[i].booleanValue())
               ? baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP))
               : salesCommission
             );
@@ -3756,12 +2906,6 @@ public class Contracts {
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
-    private static final String DEFAULT_REFERENCE_FILTER = null;
-    
-    private static final Path CONTRACT_POSITION_CONFIGURATION_PROPERTY = new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/configuration/:*/property/:*");
-    
-    private final static int BATCHING_MODE_SIZE = 1000;
-    
     private final static short STATUS_CODE_OK = 0;
     private final static short STATUS_CODE_ERROR = 1;
     
@@ -3774,8 +2918,6 @@ public class Contracts {
 
     // Min/Max Quantity Handling
     private static final int MIN_MAX_QUANTITY_HANDLING_NA = 0;
-    private static final int MIN_MAX_QUANTITY_HANDLING_INFORMATIONAL = 1;
-    private static final int MIN_MAX_QUANTITY_HANDLING_STRICT = 2;
     private static final int MIN_MAX_QUANTITY_HANDLING_LIMIT = 3;
     
     // Pricing Status
@@ -3838,11 +2980,6 @@ public class Contracts {
         "}//</pre>";
     protected static final Map<String,Method> getContractAmountMethods = new HashMap<String,Method>();
     protected static final Map<String,Method> getPositionAmountMethods = new HashMap<String,Method>();
-
-    private final Backend backend;
-    protected final Cloneable cloning;
-    protected final Map cachedObjects = new HashMap();
-    protected final Map cachedDescriptions = new HashMap();
         
 }
 

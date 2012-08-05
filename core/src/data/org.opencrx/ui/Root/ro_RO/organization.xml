@@ -17,7 +17,7 @@
                         <_item>Organizaţii</_item>
                       </label>
                       <toolTip>
-                        <_item>toate organizaţiile</_item>
+                        <_item>Toate Organizaţiile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:OrganizationalUnitRelationship:relationshipType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Relaţie</_item>
+                        <_item>Tip de Relaţie</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Relaţie</_item>
+                        <_item>Tip de Relaţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>

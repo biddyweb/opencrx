@@ -98,10 +98,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:identity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Adresa</_item>
+                        <_item>Titlu</_item>
                       </label>
                       <toolTip>
-                        <_item>Adresa</_item>
+                        <_item>Titlu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -120,10 +120,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroupMember:disabledReason" _operation="create">
                     <_object>
                       <label>
-                        <_item>Motiv Dezactivat</_item>
+                        <_item>Motiv Dezactivare</_item>
                       </label>
                       <toolTip>
-                        <_item>Motiv Dezactivat</_item>
+                        <_item>Motiv Dezactivare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

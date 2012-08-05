@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ScheduleEventWizard.jsp,v 1.43 2009/03/06 10:04:23 cmu Exp $
+ * Name:		$Id: ScheduleEventWizard.jsp,v 1.47 2009/06/14 19:43:10 wfro Exp $
  * Description: ScheduleEventWizard
- * Revision:	$Revision: 1.43 $
+ * Revision:	$Revision: 1.47 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2009/03/06 10:04:23 $
+ * Date:		$Date: 2009/06/14 19:43:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -385,7 +385,6 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	// Format times
 	TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
 	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", app.getCurrentLocale());
@@ -417,15 +416,15 @@ org.openmdx.application.log.*
 		0 :
 		Integer.valueOf(request.getParameter("voter.count"));
 	if(actionRefreshCal || actionApplyCal) {
-	  pm.evictAll();
+	  app.resetPmData();
 	  anchor = ANCHOR_CALENDAR;
 	}
 	if(actionRefresh) {
-	  pm.evictAll();
+	  app.resetPmData();
 	  anchor = ANCHOR_VOTES;
 	}
 	if(actionApply) {
-	  pm.evictAll();
+	  app.resetPmData();
 	  anchor = ANCHOR_VOTES;
 	}
 	// Delete voter
@@ -1045,7 +1044,7 @@ org.openmdx.application.log.*
 				activityLinkTo.setActivityLinkType(new Short(CODE_ACTIVITYLINKTYPE_RELATESTO)); // relates to
 				activity.addActivityLinkTo(
 					false,
-					UUIDConversion.toUID(uuids.next()),
+					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 					activityLinkTo
 				);
 				try {
@@ -1066,7 +1065,7 @@ org.openmdx.application.log.*
 					pm.currentTransaction().rollback();
 				} catch(Exception e1) {}
 			}
-			pm.evictAll();
+			app.resetPmData();
 		}
 	}
 	if(actionDisableTentativeEvent) {
@@ -1150,7 +1149,7 @@ org.openmdx.application.log.*
 			);
 			activity.setMessageBody(messageBody);
 			if(!isEditMode) {
-				org.opencrx.kernel.account1.jmi1.AccountAddress[] userMainAddresses = org.opencrx.kernel.backend.Accounts.getMainAddresses(currentUserHome.getContact());
+				org.opencrx.kernel.account1.jmi1.AccountAddress[] userMainAddresses = org.opencrx.kernel.backend.Accounts.getInstance().getMainAddresses(currentUserHome.getContact());
 				activity.setSender(
 					userMainAddresses[org.opencrx.kernel.backend.Accounts.MAIL_BUSINESS] == null ?
 						userMainAddresses[org.opencrx.kernel.backend.Accounts.MAIL_HOME] :
@@ -1190,7 +1189,7 @@ org.openmdx.application.log.*
 					recipient.setParty((org.opencrx.kernel.account1.jmi1.AccountAddress)formValues.get("voter." + i));
 					activity.addEmailRecipient(
 						false,
-						UUIDConversion.toUID(uuids.next()),
+						org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 						recipient
 					);
 				}
@@ -1246,7 +1245,7 @@ org.openmdx.application.log.*
 				note.refInitialize(false, false);
 				activity.addNote(
 					false,
-					UUIDConversion.toUID(uuids.next()),
+					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 					note
 				);
 			}
@@ -1483,7 +1482,7 @@ org.openmdx.application.log.*
 								<td>
 									<select id="emailCreator" name="emailCreator" class="valueL">
 <%
-										org.opencrx.kernel.activity1.jmi1.ActivityType activityTypeEMails = org.opencrx.kernel.backend.Activities.findActivityType(
+										org.opencrx.kernel.activity1.jmi1.ActivityType activityTypeEMails = org.opencrx.kernel.backend.Activities.getInstance().findActivityType(
 											org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
 											activitySegment,
 											pm
@@ -1581,20 +1580,31 @@ org.openmdx.application.log.*
 							<td>
 								<table>
 									<tr><td>
-										<div id="wizMonth">
-											<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&lt;&lt;" onclick="<%= SUBMIT_HANDLER %>" />
-											<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&lt;&nbsp;" onclick="<%= SUBMIT_HANDLER %>"  />
-											<span style="font-weight:bold;">&nbsp;&nbsp;<%= monthFormat.format(calendar.getTime()) + " " + calendarYear %>&nbsp;&nbsp;</span>
-											<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&gt;&nbsp;" onclick="<%= SUBMIT_HANDLER %>" />
-											<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&gt;&gt;" onclick="<%= SUBMIT_HANDLER %>"  />
-											<input type="hidden" name="calendar.year" tabindex="<%= tabIndex++ %>" value="<%= calendarYear %>"/>
-											<input type="hidden" name="calendar.month" tabindex="<%= tabIndex++ %>" value="<%= calendarMonth %>"/>
+										<div id="wizMonth" style="width:100%;">
+											<table style="width:100%;">
+												<tr>
+													<td>													
+														<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&lt;&lt;" onclick="<%= SUBMIT_HANDLER %>" />
+														<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;" onclick="<%= SUBMIT_HANDLER %>"  />
+													</td>
+													<td style="width:100%;vertical-align:middle;">
+														<span style="font-weight:bold;">&nbsp;<%= monthFormat.format(calendar.getTime()) + " " + calendarYear %>&nbsp;</span>
+													</td>
+													<td>
+														<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="<%= SUBMIT_HANDLER %>" />
+														<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&gt;&gt;" onclick="<%= SUBMIT_HANDLER %>"  />
+														<input type="hidden" name="calendar.year" tabindex="<%= tabIndex++ %>" value="<%= calendarYear %>"/>
+														<input type="hidden" name="calendar.month" tabindex="<%= tabIndex++ %>" value="<%= calendarMonth %>"/>
+													</td>
+												</tr>
+											</table>
 										</div>
 									</td></tr>
 									<tr><td>
 										<table id="calWizard" cellspacing="1">
 											<thead>
 												<tr>
+													<th style="text-align:center;padding:0px 10px;">#</th>
 <%
 													GregorianCalendar dayInWeekCalendar = (GregorianCalendar)calendar.clone();
 													while(dayInWeekCalendar.get(GregorianCalendar.DAY_OF_WEEK) != dayInWeekCalendar.getFirstDayOfWeek()) {
@@ -1615,6 +1625,7 @@ org.openmdx.application.log.*
 												while(calendar.get(GregorianCalendar.MONTH) == calendarMonth) {
 %>
 													<tr>
+														<td style="text-align:right;font-size:6pt;vertical-align:middle;padding:0px 10px;"><%= calendar.get(GregorianCalendar.WEEK_OF_YEAR) %></td>
 <%
 														for(int i = 0; i < 7; i++) {
 															dayOfMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);

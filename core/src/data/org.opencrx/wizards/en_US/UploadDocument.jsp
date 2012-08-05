@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.16 2009/01/06 13:16:55 wfro Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.17 2009/05/11 12:22:40 cmu Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:16:55 $
+ * Date:        $Date: 2009/05/11 12:22:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -197,7 +197,6 @@ org.openmdx.kernel.id.*
   }
   javax.jdo.PersistenceManager pm = app.getPmData();
   Texts_1_0 texts = app.getTexts();
-  UUIDGenerator uuids = UUIDs.getGenerator();
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -381,7 +380,7 @@ org.openmdx.kernel.id.*
   		    	document.setContentLanguage((short)0);
   		    	documentSegment.addDocument(
   		    	  false,
-              uuids.next().toString(),
+  		    		org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
               document
   		    	);
   		    }
@@ -406,7 +405,7 @@ org.openmdx.kernel.id.*
           );
 		    	document.addRevision(
 		    	  false,
-            uuids.next().toString(),
+		    	  org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 		    	  revision
 		    	);
 					// Commit
@@ -550,7 +549,7 @@ org.openmdx.kernel.id.*
 	          <td class="addon"></td>
           	<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENTFOLDER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
 <%
-            String lookupId = org.openmdx.kernel.id.UUIDs.getGenerator().next().toString();
+            String lookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
             Action findDocumentFolderObjectAction = Action.getFindObjectAction(DOCUMENT_CLASS + ":folder", lookupId);
 %>
 	          <td>

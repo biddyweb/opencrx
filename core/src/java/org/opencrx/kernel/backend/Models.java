@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Models.java,v 1.12 2009/03/08 17:04:48 wfro Exp $
+ * Name:        $Id: Models.java,v 1.18 2009/04/21 11:22:00 wfro Exp $
  * Description: Models
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:48 $
+ * Date:        $Date: 2009/04/21 11:22:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,86 +56,63 @@
 
 package org.opencrx.kernel.backend;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
-import org.openmdx.application.dataprovider.cci.Orders;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.model1.cci2.ParameterQuery;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
 
-public class Models {
-
-    //-----------------------------------------------------------------------
-    public Models(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
+public class Models extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    private String getOperationSignature(
-        DataproviderObject_1_0 operation
+	public static void register(
+	) {
+		registerImpl(new Models());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Models getInstance(		
+	) throws ServiceException {
+		return getInstance(Models.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Models(
+	) {
+		
+	}
+	
+    //-------------------------------------------------------------------------
+    public String getOperationSignature(
+        org.opencrx.kernel.model1.jmi1.Operation operation
     ) throws ServiceException {
-        // Calculate operation signature
-        List parameters = this.backend.getDelegatingRequests().addFindRequest(
-            operation.path().getPrefix(5).getChild("element"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "container",
-                    FilterOperators.IS_IN,
-                    new Object[]{operation.path().getPrefix(7)}
-                ),                        
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.IS_IN,
-                    new Object[]{"org:opencrx:kernel:model1:Parameter"}
-                )                        
-            },                
-            AttributeSelectors.ALL_ATTRIBUTES,
-            new AttributeSpecifier[]{
-                new AttributeSpecifier("elementOrder", 0, Orders.ASCENDING)
-            },
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );        
-        String signature = operation.values("name").get(0) + "(";
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(operation);
+    	org.opencrx.kernel.model1.jmi1.Segment modelSegment =
+    		(org.opencrx.kernel.model1.jmi1.Segment)pm.getObjectById(
+    			operation.refGetPath().getPrefix(5)
+    		);
+    	ParameterQuery parameterQuery = (ParameterQuery)pm.newQuery(org.opencrx.kernel.model1.jmi1.Parameter.class);
+    	parameterQuery.thereExistsContainer().equalTo(
+    		operation
+    	);
+    	parameterQuery.orderByElementOrder().ascending();
+    	List<org.opencrx.kernel.model1.jmi1.Parameter> parameters = modelSegment.getElement(parameterQuery); 
+        String signature = operation.getName() + "(";
         int ii = 0;
-        for(
-            Iterator i = parameters.iterator();
-            i.hasNext();
-            ii++
-        ) {
-            DataproviderObject_1_0 parameter = (DataproviderObject_1_0)i.next();
-            DataproviderObject_1_0 type = null;
-            try {
-                type = this.backend.retrieveObjectFromDelegation(
-                    (Path)parameter.values("type").get(0)
-                );
-            } 
-            catch(Exception e) {}
+        for(org.opencrx.kernel.model1.jmi1.Parameter parameter: parameters) {
+        	org.opencrx.kernel.model1.jmi1.Classifier type = parameter.getType();
             if(ii > 0) signature += ",";
             signature += "\n  ";
-            String typeName = type == null
-                ? "void"
-                : (String)type.values("qualifiedName").get(0); 
+            String typeName = type == null ? 
+            	"void" : 
+            	(String)type.getQualifiedName(); 
             signature += 
-                PARAMETER_DIRECTIONS[((Number)parameter.values("direction").get(0)).intValue()] + " " +
+                PARAMETER_DIRECTIONS[parameter.getDirection()] + " " +
                 typeName + " " +
-                "[" + MULTIPLICITIES[((Number)parameter.values("multiplicity").get(0)).intValue()] + "] " +                
-                parameter.values("name").get(0) + " ";
+                "[" + MULTIPLICITIES[parameter.getMultiplicity()] + "] " +                
+                parameter.getName() + " ";
         }
         signature += "\n);";
         return signature;
@@ -143,46 +120,20 @@ public class Models {
     
     //-------------------------------------------------------------------------
     public void updateModelElement(
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
+        org.opencrx.kernel.model1.jmi1.Element element
     ) throws ServiceException {
-        if(this.backend.isModelElement(object)) {
-            DataproviderObject_1_0 container = null;
-            if((oldValues != null) && (oldValues.values("container").size() > 0)) {
-                container = this.backend.retrieveObject((Path)oldValues.values("container").get(0));
-            }
-            else if((object.getValues("container") != null) && (object.values("container").size() > 0)) {
-                container = this.backend.retrieveObject((Path)object.values("container").get(0));
-            }
-            String name = oldValues == null 
-                ? (String)object.values("name").get(0) 
-                : object.getValues("name") == null ? (String)oldValues.values("name").get(0) : (String)object.values("name").get(0);
-            object.clearValues("qualifiedName").add(
-                container == null
-                    ? name
-                    : container.values("qualifiedName").get(0) + ":" + name
-            );
-        }
+        org.opencrx.kernel.model1.jmi1.Namespace container = element.getContainer();
+        String name = element.getName(); 
+        element.setQualifiedName(
+            container == null ? 
+            	name : 
+            	container.getQualifiedName() + ":" + name           
+        );
     }
             
     //-------------------------------------------------------------------------
-    public List completeElement(
-        DataproviderObject_1_0 object
-    ) throws ServiceException {
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        if("org:opencrx:kernel:model1:Operation".equals(objectClass)) {
-            object.clearValues("signature").add(
-                this.getOperationSignature(object)
-            );
-        }
-        return Collections.EMPTY_LIST;
-    }
-    
-    //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
-    protected final Backend backend;
-    
     protected static final String[] PARAMETER_DIRECTIONS = {"N/A", "in", "out", "inout", "return"};
     protected static final String[] MULTIPLICITIES = {"N/A", "0..*", "0..1", "1", "1..*", "set", "sparsearray"};
         

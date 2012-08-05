@@ -58,10 +58,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>Listă de Preţ (Produse Blocate)</_item>
+                              <_item>Listă de Preţ (produse blocate)</_item>
                             </label>
                             <toolTip>
-                              <_item>Listă de Preţ (Produse Blocate)</_item>
+                              <_item>Listă de Preţ (produse blocate)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -349,10 +349,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nivel de Preţ ai fazei Produsului</_item>
+                        <_item>Nivel de Preţ al fazei Produsului</_item>
                       </label>
                       <toolTip>
-                        <_item>Nivel de Preţ ai fazei Produsului</_item>
+                        <_item>Nivel de Preţ al fazei Produsului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -479,10 +479,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DiscountPriceModifier" _operation="create">
                     <_object>
                       <label>
-                        <_item>Corecţie reducere de Preţ</_item>
+                        <_item>Corecţie reducere de preţ</_item>
                       </label>
                       <toolTip>
-                        <_item>Corecţie reducere de Preţ</_item>
+                        <_item>Corecţie reducere de preţ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -512,10 +512,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:LinearPriceModifier" _operation="create">
                     <_object>
                       <label>
-                        <_item>Corecţie lineară de Preţ</_item>
+                        <_item>Corecţie lineară de preţ</_item>
                       </label>
                       <toolTip>
-                        <_item>Corecţie lineară de Preţ</_item>
+                        <_item>Corecţie lineară de preţ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -556,10 +556,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBasePrice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Preţ de bază Produs</_item>
+                        <_item>Preţ de Bază Produs</_item>
                       </label>
                       <toolTip>
-                        <_item>Preţ de bază Produs</_item>
+                        <_item>Preţ de Bază Produs</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -586,10 +586,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:basePrice" _operation="create">
                     <_object>
                       <label>
-                        <_item>Preţ de bază</_item>
+                        <_item>Preţ de Bază</_item>
                       </label>
                       <toolTip>
-                        <_item>Preţ de bază</_item>
+                        <_item>Preţ de Bază</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -641,10 +641,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip TVA</_item>
+                        <_item>Tip de Taxă (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip TVA</_item>
+                        <_item>Tip de Taxă (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1180,10 +1180,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1257,10 +1257,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PricingRule:Pane:Op:Tab:getPriceLevel:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

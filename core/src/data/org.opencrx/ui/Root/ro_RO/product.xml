@@ -72,10 +72,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:configurationTypeSet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipuri configurări produse</_item>
+                        <_item>Tipuri de configurări produse</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipuri configurări produse</_item>
+                        <_item>Tipuri de configurări produse</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -244,10 +244,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip TVA</_item>
+                        <_item>Tip de taxă (TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip TVA</_item>
+                        <_item>Tip de taxă (TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -552,10 +552,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship:relationshipType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip relaţie</_item>
+                        <_item>Tip de relaţie</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip relaţie</_item>
+                        <_item>Tip de relaţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -596,10 +596,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:RelatedProduct:relationshipType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip relaţie</_item>
+                        <_item>Tip de relaţie</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip relaţie</_item>
+                        <_item>Tip de relaţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -659,13 +659,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationSet:configType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip configurări</_item>
+                        <_item>Tip de configurări</_item>
                       </label>
                       <shortLabel>
-                        <_item>Tip configurări</_item>
+                        <_item>Tip de configurări</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Tip configurări</_item>
+                        <_item>Tip de configurări</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -684,10 +684,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:configurationType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip configurări</_item>
+                        <_item>Tip de configurări</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip configurări</_item>
+                        <_item>Tip de configurări</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -772,10 +772,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip configurare produs</_item>
+                        <_item>Tip de configurare produs</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip configurare produs</_item>
+                        <_item>Tip de configurare produs</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -802,13 +802,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfiguration:configType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip configurare</_item>
+                        <_item>Tip de configurare</_item>
                       </label>
                       <shortLabel>
-                        <_item>Tip configurare</_item>
+                        <_item>Tip de configurare</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Tip configurare</_item>
+                        <_item>Tip de configurare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -868,10 +868,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:Pane:Op:Tab:setConfigurationType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setează tip configurare</_item>
+                        <_item>Introdu tipul de configurare</_item>
                       </label>
                       <toolTip>
-                        <_item>Setează tip configurare</_item>
+                        <_item>Introdu tipul de configurare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -890,10 +890,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SetConfigurationTypeParams:configurationType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip configurare</_item>
+                        <_item>Tip de configurare</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip configurare</_item>
+                        <_item>Tip de configurare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -912,10 +912,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationSet:Pane:Op:Tab:unsetConfigurationType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Resetează tip configurare</_item>
+                        <_item>Anulează tipul de configurare</_item>
                       </label>
                       <toolTip>
-                        <_item>Resetează tip configurare</_item>
+                        <_item>Anulează tipul de configurare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -945,10 +945,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfiguration:Pane:Op:Tab:unsetConfigurationType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Resetează tip configurare</_item>
+                        <_item>Anulează tipul de configurare</_item>
                       </label>
                       <toolTip>
-                        <_item>Resetează tip configurare</_item>
+                        <_item>Anulează tipul de configurare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

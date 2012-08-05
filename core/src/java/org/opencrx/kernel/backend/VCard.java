@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.32 2009/03/08 17:04:49 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.45 2009/05/27 23:09:57 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:49 $
+ * Date:        $Date: 2009/05/27 23:09:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -67,52 +67,57 @@ import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
+import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
+import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.account1.jmi1.EMailAddress;
+import org.opencrx.kernel.account1.jmi1.PhoneNumber;
+import org.opencrx.kernel.account1.jmi1.PostalAddress;
+import org.opencrx.kernel.account1.jmi1.WebAddress;
+import org.opencrx.kernel.generic.jmi1.Note;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.collection.SparseList;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
-import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
-public class VCard {
+public class VCard extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    public VCard(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
-
+	public static void register(
+	) {
+		registerImpl(new VCard());
+	}
+	
     //-------------------------------------------------------------------------
-    private Short numberAsShort(
-        Object number
-    ) {
-        return new Short(((Number)number).shortValue());
-    }
+	public static VCard getInstance(
+	) throws ServiceException {
+		return getInstance(VCard.class);
+	}
 
+	//-------------------------------------------------------------------------
+	protected VCard(
+	) {
+		
+	}
+	
     //-------------------------------------------------------------------------
     protected String getUtcDateTime(
         String dateTime,
@@ -137,6 +142,29 @@ public class VCard {
     }
     
     //-------------------------------------------------------------------------
+    protected Date getUtcDate(
+        String dateTime,
+        SimpleDateFormat dateTimeFormatter
+    ) throws ParseException {
+        Date date = null;
+        if(dateTime.endsWith("Z")) {
+            if(dateTime.length() == 16) {
+                date = DateFormat.getInstance().parse(dateTime.substring(0, 15) + ".000Z");
+            }
+            else {
+                date = DateFormat.getInstance().parse(dateTime);
+            }
+        }
+        else if(dateTime.length() == 8) {
+            date = DateFormat.getInstance().parse(dateTime + "T000000.000Z");
+        }
+        else {
+            date = dateTimeFormatter.parse(dateTime);
+        }
+        return date;
+    }
+    
+    //-------------------------------------------------------------------------
     protected String encodeString(
         String s
     ) {
@@ -149,28 +177,19 @@ public class VCard {
     private String mapToSalutationText(
         short salutationCode
     ) throws ServiceException {
-        return (String)this.backend.getCodes().getLongText(
-            "org:opencrx:kernel:account1:Contact:salutationCode", 
-            (short)0, 
-            true
-        ).get(Short.valueOf(salutationCode));        
+    	return salutations.get(Integer.valueOf(salutationCode));
     }
     
     //-------------------------------------------------------------------------
     private short mapToSalutationCode(
         String salutation
     ) throws ServiceException {
-        for(int locale = 0; locale < 32; locale++) {
-            Number salutationCode = (Number)this.backend.getCodes().getLongText(
-                "org:opencrx:kernel:account1:Contact:salutationCode", 
-                (short)locale, 
-                false
-            ).get(salutation);
-            if(salutationCode != null) {
-                return salutationCode.shortValue();
-            }
-        }
-        return (short)0;
+    	for(Entry<Integer,String> entry: salutations.entrySet()) {
+    		if(entry.getValue().equals(salutation)) {
+    			return entry.getKey().shortValue();
+    		}
+    	}
+    	return 0;
     }
     
     //-------------------------------------------------------------------------
@@ -178,79 +197,86 @@ public class VCard {
      * Update sourceVcard with account values and return merged vcard. 
      */
     public String mergeVcard(
-        DataproviderObject_1_0 account,
+        Account account,
         String sourceVcard,
         List<String> statusMessage
     ) throws ServiceException {
-        boolean isContact = this.backend.isContact(account);
+    	boolean isContact = account instanceof Contact;
         // N
         String n = null;        
         if(isContact) {
-            if(!account.values("lastName").isEmpty()) {
-                String lastName = (String)account.values("lastName").get(0);
-                String firstName = account.values("firstName").isEmpty() ? "" : (String)account.values("firstName").get(0);
-                String middleName = account.values("middleName").isEmpty() ? "" : (String)account.values("middleName").get(0);
-                Short salutationCode = account.values("salutationCode").isEmpty() ? null : ((Number)account.values("salutationCode").get(0)).shortValue();
-                String salutation = account.values("salutation").isEmpty() ?
+        	Contact contact = (Contact)account;
+            if(contact.getLastName() != null) {
+                String lastName = contact.getLastName();
+                String firstName = contact.getFirstName() == null ? "" : contact.getFirstName();
+                String middleName = contact.getMiddleName() == null ? "" : contact.getMiddleName();
+                Short salutationCode = contact.getSalutationCode();
+                String salutation = contact.getSalutation() == null ?
                     (salutationCode == null) || (salutationCode.shortValue() == 0) ?
                         null :
                         this.mapToSalutationText(salutationCode) :
-                    (String)account.values("salutation").get(0);
-                String suffix = account.values("suffix").isEmpty() ? "" : (String)account.values("suffix").get(0);
+                    contact.getSalutation();
+                String suffix = contact.getSuffix() == null ? "" : contact.getSuffix();
                 n = lastName + ";" + firstName + ";"+ middleName + ";" + (salutation == null ? "" : salutation) + ";" + suffix;
             }
         }
-        else {
-            if(!account.values("name").isEmpty()) {
-                String name = (String)account.values("name").get(0);
+        else if(account instanceof AbstractGroup) {
+        	AbstractGroup group = (AbstractGroup)account;
+            if(group.getName() != null) {
+                String name = group.getName();
                 n = name;
             }
         }
         // FN
         String fn = null;
         if(isContact) {
-            String firstName = account.values("firstName").isEmpty() ? "" : (String)account.values("firstName").get(0);
-            String lastName = account.values("lastName").isEmpty() ? "" : (String)account.values("lastName").get(0);
-            String middleName = account.values("middleName").isEmpty() ? "" : (String)account.values("middleName").get(0);
-            String suffix = account.values("suffix").isEmpty() ? "" : (String)account.values("suffix").get(0);
+        	Contact contact = (Contact)account;
+            String firstName = contact.getFirstName() == null ? "" : contact.getFirstName();
+            String lastName = contact.getLastName() == null ? "" : contact.getLastName();
+            String middleName = contact.getMiddleName() == null ? "" : contact.getMiddleName();
+            String suffix = contact.getSuffix() == null ? "" : contact.getSuffix();
             fn = firstName + (middleName.length() == 0 ? "" : " " + middleName) + (lastName.length() == 0 ? "" : " " + lastName) + (suffix.length() == 0 ? "" : " " + suffix);
         }
         else {
-            String fullName = account.values("fullName").isEmpty() ? "" : (String)account.values("fullName").get(0);
+            String fullName = account.getFullName() == null ? "" : account.getFullName();
             fn = fullName;            
         }
         // NICKNAME
         String nickName = null;
         if(isContact) {
-            nickName = account.values("nickName").isEmpty() ? "" : (String)account.values("nickName").get(0);            
+        	Contact contact = (Contact)account;        	
+            nickName = contact.getNickName() == null ? "" : contact.getNickName();            
         }
         // REV
         String rev = DateFormat.getInstance().format(new Date());        
         // ORG
         String org = null;
         if(isContact) {
-            if(!account.values("organization").isEmpty()) {
-                org = (String)account.values("organization").get(0);
+        	Contact contact = (Contact)account;        	
+            if(contact.getOrganization() != null) {
+                org = contact.getOrganization();
             }
         }
         // TITLE
         String title = null;
         if(isContact) {
-            if(!account.values("jobTitle").isEmpty()) {
-                title = (String)account.values("jobTitle").get(0);
+        	Contact contact = (Contact)account;        	
+            if(contact.getJobTitle() != null) {
+                title = contact.getJobTitle();
             }
         }
         // BDAY
         String bday = null;
         if(isContact) {
-            if(!account.values("birthdate").isEmpty()) {
-                bday = (String)account.values("birthdate").get(0);
+        	Contact contact = (Contact)account;        	
+            if(contact.getBirthdate() != null) {
+                bday = DateFormat.getInstance().format(contact.getBirthdate());
             }
         }
         AccountAddress[] addresses = new AccountAddress[11];
         try {
-            addresses = Accounts.getMainAddresses(
-                (Account)this.backend.getDelegatingPkg().refObject(account.path().toXri())
+            addresses = Accounts.getInstance().getMainAddresses(
+            	account
             );
         }
         catch(Exception e) {
@@ -262,133 +288,122 @@ public class VCard {
         // TEL;WORK;VOICE
         String telWorkVoice = addresses[Accounts.PHONE_BUSINESS] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.PHONE_BUSINESS].refGetPath()).values("phoneNumberFull").get(0);
+            ((PhoneNumber)addresses[Accounts.PHONE_BUSINESS]).getPhoneNumberFull();
         // TEL;HOME;VOICE
         String telHomeVoice = addresses[Accounts.PHONE_HOME] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.PHONE_HOME].refGetPath()).values("phoneNumberFull").get(0);
+            ((PhoneNumber)addresses[Accounts.PHONE_HOME]).getPhoneNumberFull();
         // TEL;CELL;VOICE
         String telCellVoice = addresses[Accounts.MOBILE] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.MOBILE].refGetPath()).values("phoneNumberFull").get(0);
+            ((PhoneNumber)addresses[Accounts.MOBILE]).getPhoneNumberFull();
         // TEL;FAX
         String telWorkFax = addresses[Accounts.FAX_BUSINESS] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.FAX_BUSINESS].refGetPath()).values("phoneNumberFull").get(0);
+            ((PhoneNumber)addresses[Accounts.FAX_BUSINESS]).getPhoneNumberFull();
         // TEL;HOME;FAX
         String telHomeFax = addresses[Accounts.FAX_HOME] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.FAX_HOME].refGetPath()).values("phoneNumberFull").get(0);
+            ((PhoneNumber)addresses[Accounts.FAX_HOME]).getPhoneNumberFull();
         // ADR;WORK
         String adrWork = "";
         if(addresses[Accounts.POSTAL_BUSINESS] != null) {
-            DataproviderObject_1_0 postalAddress = this.backend.retrieveObject(addresses[Accounts.POSTAL_BUSINESS].refGetPath());
+            PostalAddress postalAddress = (PostalAddress)addresses[Accounts.POSTAL_BUSINESS];
             StringBuilder adr = new StringBuilder();
             // postalAddressLine
-            List<Object> addressLines = postalAddress.values("postalAddressLine");
+            List<String> addressLines = postalAddress.getPostalAddressLine();
             for(int j = 0; j < addressLines.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(this.encodeString((String)addressLines.get(j)));
+                adr.append(this.encodeString(addressLines.get(j)));
             }
             // postalStreet
-            List<Object> postalStreet = postalAddress.values("postalStreet");
+            List<String> postalStreet = postalAddress.getPostalStreet();
             for(int j = 0; j < postalStreet.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(this.encodeString((String)postalStreet.get(j)));
+                adr.append(this.encodeString(postalStreet.get(j)));
             }
             // postalCity
             adr.append(
-                (postalAddress.getValues("postalCity") == null) || postalAddress.getValues("postalCity").isEmpty() ? 
+                (postalAddress.getPostalCity() == null) ? 
                     ";" : 
-                    ";" + this.encodeString((String)postalAddress.getValues("postalCity").get(0))
+                    ";" + this.encodeString(postalAddress.getPostalCity())
             );
             // postalState
             adr.append(
-                (postalAddress.getValues("postalState") == null) || postalAddress.getValues("postalState").isEmpty() ? 
+                (postalAddress.getPostalState() == null) ? 
                     ";" : 
-                    ";" + this.encodeString((String)postalAddress.getValues("postalState").get(0))
+                    ";" + this.encodeString(postalAddress.getPostalState())
             );            
             // postalCode
             adr.append(
-                (postalAddress.getValues("postalCode") == null) || postalAddress.getValues("postalCode").isEmpty() ? 
+                (postalAddress.getPostalCode() == null) ? 
                     ";" : 
-                    ";" + this.encodeString((String)postalAddress.getValues("postalCode").get(0))
-            );
-            // postalCountry
-            Map<Short,String> postalCountries = this.backend.getCodes().getLongText(
-                "org:opencrx:kernel:address1:PostalAddressable:postalCountry", 
-                DEFAULT_LOCALE, 
-                true
+                    ";" + this.encodeString(postalAddress.getPostalCode())
             );
             adr.append(";");
-            adr.append(postalCountries.get(
-                this.numberAsShort(postalAddress.values("postalCountry").get(0)))
+            adr.append(
+            	Addresses.getInstance().mapToPostalCountryText(postalAddress.getPostalCountry())
             );   
             adrWork = adr.toString();
         }
         // ADR;HOME
         String adrHome = "";
         if(addresses[Accounts.POSTAL_HOME] != null) {
-            DataproviderObject_1_0 postalAddress = this.backend.retrieveObject(addresses[Accounts.POSTAL_HOME].refGetPath());
+            PostalAddress postalAddress = (PostalAddress)addresses[Accounts.POSTAL_HOME];
             StringBuilder adr = new StringBuilder();
             // postalAddressLine
-            List<Object> addressLines = postalAddress.values("postalAddressLine");
+            List<String> addressLines = postalAddress.getPostalAddressLine();
             for(int j = 0; j < addressLines.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(this.encodeString((String)addressLines.get(j)));
+                adr.append(this.encodeString(addressLines.get(j)));
             }
             // postalStreet
-            List<Object> postalStreet = postalAddress.values("postalStreet");
+            List<String> postalStreet = postalAddress.getPostalStreet();
             for(int j = 0; j < postalStreet.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(this.encodeString((String)postalStreet.get(j)));
+                adr.append(this.encodeString(postalStreet.get(j)));
             }
             // postalCity
             adr.append(
-                (postalAddress.getValues("postalCity") == null) || postalAddress.getValues("postalCity").isEmpty() ? 
+                (postalAddress.getPostalCity() == null) ? 
                     ";" : 
-                    ";" + this.encodeString((String)postalAddress.getValues("postalCity").get(0))
+                    ";" + this.encodeString(postalAddress.getPostalCity())
             );
             // postalState
             adr.append(
-                (postalAddress.getValues("postalState") == null) || postalAddress.getValues("postalState").isEmpty() ? 
+                (postalAddress.getPostalState() == null) ? 
                     ";" : 
-                    ";" + this.encodeString((String)postalAddress.getValues("postalState").get(0))
+                    ";" + this.encodeString(postalAddress.getPostalState())
             );
             // postalCode
             adr.append(
-                (postalAddress.getValues("postalCode") == null) || postalAddress.getValues("postalCode").isEmpty() ? 
+                (postalAddress.getPostalCode() == null) ? 
                     ";" : 
-                    ";" + this.encodeString((String)postalAddress.getValues("postalCode").get(0))
+                    ";" + this.encodeString(postalAddress.getPostalCode())
             );
             // postalCountry
-            Map<Short,String> postalCountries = this.backend.getCodes().getLongText(
-                "org:opencrx:kernel:address1:PostalAddressable:postalCountry", 
-                DEFAULT_LOCALE, 
-                true
-            );
             adr.append(";");
-            adr.append(postalCountries.get(
-                this.numberAsShort(postalAddress.values("postalCountry").get(0)))
+            adr.append(
+            	Addresses.getInstance().mapToPostalCountryText(postalAddress.getPostalCountry())
             );   
             adrHome = adr.toString();
         }
         // URL;WORK
-        String urlWork = addresses[Accounts.WEB_BUSINESS] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.WEB_BUSINESS].refGetPath()).values("webUrl").get(0);
+        String urlWork = addresses[Accounts.WEB_BUSINESS] == null ? 
+        	"" : 
+        	((WebAddress)addresses[Accounts.WEB_BUSINESS]).getWebUrl();
         // URL;HOME
         String urlHome = addresses[Accounts.WEB_HOME] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.WEB_HOME].refGetPath()).values("webUrl").get(0);
+            ((WebAddress)addresses[Accounts.WEB_HOME]).getWebUrl();
         // EMAIL;PREF;INTERNET
         String emailWork = addresses[Accounts.MAIL_BUSINESS] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.MAIL_BUSINESS].refGetPath()).values("emailAddress").get(0);
+            ((EMailAddress)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress();
         // EMAIL;INTERNET
         String emailHome = addresses[Accounts.MAIL_HOME] == null ? 
             "" : 
-            (String)this.backend.retrieveObject(addresses[Accounts.MAIL_HOME].refGetPath()).values("emailAddress").get(0);        
+            ((EMailAddress)addresses[Accounts.MAIL_HOME]).getEmailAddress();        
         // return if data is missing
         if(!statusMessage.isEmpty()) {
             return null;
@@ -397,7 +412,7 @@ public class VCard {
             // Template
             UUID uid = null;
             try {
-                uid = UUIDConversion.fromString(account.path().getBase());
+                uid = UUIDConversion.fromString(account.refGetPath().getBase());
             }
             catch(Exception e) {
                 uid = UUIDs.getGenerator().next();
@@ -583,7 +598,7 @@ public class VCard {
     
     //-------------------------------------------------------------------------
     public boolean updatePostalAddress(
-        DataproviderObject address,
+        PostalAddress address,
         String newValue,
         short locale
     ) throws ServiceException {
@@ -611,7 +626,7 @@ public class VCard {
                 return false;
             }
             // parse street (=0D=0A separated tokens)
-            List street = new ArrayList();
+            List<String> street = new ArrayList<String>();
             String temp = tokens[2];
             int pos = 0;
             while((pos = temp.indexOf("=0D=0A")) >= 0) {
@@ -619,30 +634,20 @@ public class VCard {
                 temp = temp.substring(pos + 6);
             }
             street.add(temp);
-            address.clearValues("postalAddressLine");
+            address.getPostalAddressLine().clear();
             for(int i = 0; i < street.size()-1; i++) {
-                address.values("postalAddressLine").add(street.get(i));
+                address.getPostalAddressLine().add(street.get(i));
             }
-            address.clearValues("postalStreet").add(street.get(street.size()-1));
-            address.clearValues("postalCity").add(tokens[3]);
-            address.clearValues("postalState").add(tokens[4]);
-            address.clearValues("postalCode").add(tokens[5]);
-            address.clearValues("postalCountry").add(new Short((short)0));
-
-            // lookup country
+            address.getPostalStreet().add(street.get(street.size()-1));
+            address.setPostalCity(tokens[3]);
+            address.setPostalState(tokens[4]);
+            address.setPostalCode(tokens[5]);
+            address.setPostalCountry(new Short((short)0));
+            // Lookup country
             AppLog.trace("lookup country", tokens[6]);
-            SortedMap countries = this.backend.getCodes().getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", locale, true);
-            if(countries != null) {
-                for(Iterator i = countries.entrySet().iterator(); i.hasNext(); ) {
-                    Entry entry = (Entry)i.next();
-                    if(((String)entry.getValue()).indexOf(tokens[6]) >= 0) {
-                        address.clearValues("postalCountry").add(
-                            entry.getKey()
-                        );
-                        break;
-                    }
-                }
-            }
+            address.setPostalCountry(
+            	Addresses.getInstance().mapToPostalCountryCode(tokens[6])
+            );
             AppLog.trace("updated address", address);
             return true;
         }
@@ -651,13 +656,13 @@ public class VCard {
 
     //-------------------------------------------------------------------------
     public boolean updatePhoneNumber(
-        DataproviderObject address,
+        PhoneNumber address,
         String newValue
     ) throws ServiceException {
         if((newValue != null) && (newValue.length() > 0)) {
-            address.clearValues("phoneNumberFull").add(newValue);
-            address.clearValues("automaticParsing").add(Boolean.TRUE);
-            this.backend.getAddresses().updatePhoneNumber(address, null);
+            address.setPhoneNumberFull(newValue);
+            address.setAutomaticParsing(Boolean.TRUE);
+            Addresses.getInstance().updatePhoneNumber(address);
             AppLog.trace("updated address", address);
             return true;
         }
@@ -666,11 +671,11 @@ public class VCard {
 
     //-------------------------------------------------------------------------
     public boolean updateWebAddress(
-        DataproviderObject address,
+        WebAddress address,
         String newValue
     ) {
         if((newValue != null) && (newValue.length() > 0)) {
-            address.clearValues("webUrl").add(newValue);
+            address.setWebUrl(newValue);
             AppLog.trace("updated address", address);
             return true;
         }
@@ -679,11 +684,11 @@ public class VCard {
 
     //-------------------------------------------------------------------------
     public boolean updateEMailAddress(
-        DataproviderObject address,
+        EMailAddress address,
         String newValue
     ) {
         if((newValue != null) && (newValue.length() > 0)) {
-            address.clearValues("emailAddress").add(newValue);
+            address.setEmailAddress(newValue);
             AppLog.trace("updated address", address);
             return true;
         }
@@ -691,7 +696,7 @@ public class VCard {
     }
 
     //-------------------------------------------------------------------------
-    public static Map<String,String> parseVCard(
+    public Map<String,String> parseVCard(
         BufferedReader reader
     ) throws IOException {
         Map<String,String> vcard = new HashMap<String,String>();
@@ -722,7 +727,7 @@ public class VCard {
     //-------------------------------------------------------------------------
     public BasicObject importItem(
         byte[] item,
-        Path accountIdentity,
+        Account account,
         short locale,
         List<String> errors,
         List<String> report
@@ -732,11 +737,11 @@ public class VCard {
             BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, "UTF-8")
             );
-            Map<String,String> vcard = VCard.parseVCard(reader);
+            Map<String,String> vcard = this.parseVCard(reader);
             AppLog.trace("parsed vcard", vcard);
             return this.importItem(
                 vcard,
-                this.backend.retrieveObjectForModification(accountIdentity),
+                account,
                 locale,
                 report
             );
@@ -748,18 +753,20 @@ public class VCard {
     }
 
     //-------------------------------------------------------------------------
-    private BasicObject importItem(
+    private Account importItem(
         Map<String,String> vcard,
-        DataproviderObject account,
+        Account account,
         short locale,
         List<String> report
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(DATETIME_FORMAT);
         dateTimeFormatter.setLenient(false);
-        boolean isContact = this.backend.isContact(account);
+        boolean isContact = account instanceof Contact;
         // name
         String name = vcard.get("N");
         if(isContact) {
+        	Contact contact = (Contact)account;
             if((name != null) && (name.indexOf(";") >= 0)) {
                 String[] nameTokens = new String[]{"", "", "", "", ""};
                 StringTokenizer tokenizer = new StringTokenizer(name, ";", true);
@@ -775,63 +782,62 @@ public class VCard {
                 }
                 // lastName
                 if(nameTokens[0].length() > 0) {
-                    account.clearValues("lastName").add(nameTokens[0]);        
+                    contact.setLastName(nameTokens[0]);        
                 }
-                else if(account.values("lastName").isEmpty()) {
-                    account.values("lastName").add("N/A");
+                else if(contact.getLastName() == null) {
+                    contact.setLastName("N/A");
                 }
                 // firstName
                 if(nameTokens[1].length() > 0) {
-                    account.clearValues("firstName").add(nameTokens[1]);
+                    contact.setFirstName(nameTokens[1]);
                 }
                 // middleName
                 if(nameTokens[2].length() > 0) {
-                    account.clearValues("middleName").add(nameTokens[2]);
+                    contact.setMiddleName(nameTokens[2]);
                 }
                 // salutation
                 if(nameTokens[3].length() > 0) {
                     String salutation = nameTokens[3];
                     short salutationCode = this.mapToSalutationCode(salutation);
                     if(
-                        (account.getValues("salutation") != null) && 
-                        !account.getValues("salutation").isEmpty() &&
-                        (((String)account.getValues("salutation").get(0)).length() > 0)
+                        (contact.getSalutation() != null) && 
+                        (contact.getSalutation().length() > 0)
                     ) {
-                        account.clearValues("salutation").add(salutation);
+                        contact.setSalutation(salutation);
                     }
                     else if(salutationCode != 0) {
-                        account.clearValues("salutationCode").add(salutationCode);
+                        contact.setSalutationCode(salutationCode);
                     }
                     else {
-                        account.clearValues("salutation").add(salutation);                        
+                        contact.setSalutation(salutation);                        
                     }                    
                 }
                 // suffix
                 if(nameTokens[4].length() > 0) {
-                    account.clearValues("suffix").add(nameTokens[4]);
+                    contact.setSuffix(nameTokens[4]);
                 }
             }
             // nickName
             String nickName = vcard.get("NICKNAME");
             if((nickName != null) && (nickName.length() > 0)) {
-                account.clearValues("nickName").add(nickName);
+                contact.setNickName(nickName);
             }
             // jobTitle
             String jobTitle = vcard.get("TITLE");
             if((jobTitle != null) && (jobTitle.length() > 0)) {
-                account.clearValues("jobTitle").add(jobTitle);
+                contact.setJobTitle(jobTitle);
             }
             // organization
             String organization = vcard.get("ORG");
             if((organization != null) && (organization.length() > 0)) {
-                account.clearValues("organization").add(organization);
+                contact.setOrganization(organization);
             }
             // bday
             String bday = vcard.get("BDAY");
             if((bday != null) && (bday.length() > 0)) {
                 try {
-                    account.clearValues("birthdate").add(
-                        this.getUtcDateTime(
+                    contact.setBirthdate(
+                    	this.getUtcDate(
                             bday, 
                             dateTimeFormatter
                         )
@@ -839,14 +845,10 @@ public class VCard {
                 } 
                 catch(Exception e) {}
             }
-            this.backend.getAccounts().updateFullName(
-                account, 
-                null
-            );
-            AppLog.trace("Update", account);
             report.add("Update account");
         }
-        else if(this.backend.isAbstractGroup(account)){
+        else if(account instanceof AbstractGroup){
+        	AbstractGroup group = (AbstractGroup)account;
             if((name != null) && (name.indexOf(";") >= 0)) {
                 String[] nameTokens = new String[]{"", "", "", "", ""};
                 StringTokenizer tokenizer = new StringTokenizer(name, ";", true);
@@ -862,21 +864,21 @@ public class VCard {
                 }
                 // name
                 if(nameTokens[0].length() > 0) {
-                    account.clearValues("name").add(nameTokens[0]);        
+                	group.setName(nameTokens[0]);        
                 }
-                else if(account.values("name").isEmpty()) {
-                    account.values("name").add("N/A");
+                else if(group.getName() == null) {
+                    group.setName("N/A");
                 }
             }
         }
         // externalLink
         boolean hasVcardUid = false;
-        SparseList<Object> externalLinks = account.values("externalLink");
-        String vcardUid = vcard.get("UID") == null
-            ? account.path().getBase()
-            : vcard.get("UID");
+        List<String> externalLinks = account.getExternalLink();
+        String vcardUid = vcard.get("UID") == null ? 
+        	account.refGetPath().getBase() : 
+        	vcard.get("UID");
         for(int i = 0; i < externalLinks.size(); i++) {
-            if(((String)externalLinks.get(i)).startsWith(VCARD_SCHEMA)) {
+            if(externalLinks.get(i).startsWith(VCARD_SCHEMA)) {
                 externalLinks.set(
                     i,
                     VCARD_SCHEMA + vcardUid
@@ -893,114 +895,97 @@ public class VCard {
         // note
         String s = vcard.get("NOTE") != null ? vcard.get("NOTE") : vcard.get("NOTE;ENCODING=QUOTED-PRINTABLE");
         if(s != null) {
-            DataproviderObject note = null;
-            boolean isNew = false;
-            try {
-                note = this.backend.retrieveObjectForModification(
-                    account.path().getDescendant(new String[]{"note", "VCARD"})
-                );
-            } 
-            catch(Exception e) {}
+        	Note note = null;
+            note = (Note)pm.getObjectById(
+                account.refGetPath().getDescendant(new String[]{"note", "VCARD"})
+            );
             if(note == null) {
-                note = new DataproviderObject(account.path().getDescendant(new String[]{"note", "VCARD"}));
-                note.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:generic:Note");
-                isNew = true;
-            }
-            note.clearValues("title").add("vCard note");
-            String text = "";
-            int pos = 0;
-            while((pos = s.indexOf("=0D=0A")) >= 0) {
-                text += s.substring(0, pos) + "\n";
-                s = s.substring(pos + 6);
-            }
-            note.clearValues("text").add(text);
-            if(isNew) {
-                this.backend.getDelegatingRequests().addCreateRequest(
-                    note
+                note = pm.newInstance(Note.class);
+                note.refInitialize(false, false);
+                account.addNote(
+                	false,
+                	this.getUidAsString(),
+                	note
                 );
                 report.add("Create note");
             }
             else {
                 report.add("Update note");
             }
+            note.setTitle("vCard note");
+            String text = "";
+            int pos = 0;
+            while((pos = s.indexOf("=0D=0A")) >= 0) {
+                text += s.substring(0, pos) + "\n";
+                s = s.substring(pos + 6);
+            }
+            note.setText(text);
         }
 
         // addresses
-        List<DataproviderObject_1_0> addresses = this.backend.getDelegatingRequests().addFindRequest(
-            account.path().getChild("address"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-
-        Path adrHomeIdentity = null;
-        Path adrWorkIdentity = null;
-        Path telHomeVoiceIdentity = null;
-        Path telWorkVoiceIdentity = null;
-        Path telHomeFaxIdentity = null;
-        Path telFaxIdentity = null;
-        Path urlHomeIdentity = null;
-        Path urlWorkIdentity = null;
-        Path telCellVoiceIdentity = null;
-        Path emailInternetIdentity = null;
-        Path emailPrefInternetIdentity = null;
+        Collection<AccountAddress> addresses = account.getAddress();
+        PostalAddress adrHome = null;
+        PostalAddress adrWork = null;
+        PhoneNumber telHomeVoice = null;
+        PhoneNumber telWorkVoice = null;
+        PhoneNumber telHomeFax = null;
+        PhoneNumber telFax = null;
+        WebAddress urlHome = null;
+        WebAddress urlWork = null;
+        PhoneNumber telCellVoice = null;
+        EMailAddress emailInternet = null;
+        EMailAddress emailPrefInternet = null;
 
         // get addresses
-        for(Iterator<DataproviderObject_1_0> i = addresses.iterator(); i.hasNext(); ) {
-            DataproviderObject address = new DataproviderObject(i.next());
-            String addressClass = (String)address.values(SystemAttributes.OBJECT_CLASS).get(0);
+        for(AccountAddress address: addresses) {
             List<Short> usage = new ArrayList<Short>();
-            for(Iterator<Object> j = address.values("usage").iterator(); j.hasNext(); ) {
-                usage.add(
-                    this.numberAsShort(j.next())
-                );
+            for(Iterator<Short> j = address.getUsage().iterator(); j.hasNext(); ) {
+                usage.add(j.next());
             }
-            if("org:opencrx:kernel:account1:PostalAddress".equals(addressClass)) {
+            if(address instanceof PostalAddress) {
                 if(usage.contains(Addresses.USAGE_HOME)) {
-                    adrHomeIdentity = address.path();
+                    adrHome = (PostalAddress)address;
                 }
                 else if(usage.contains(Addresses.USAGE_BUSINESS)) {
-                    adrWorkIdentity = address.path();
+                    adrWork = (PostalAddress)address;
                 }          
             }
-            else if("org:opencrx:kernel:account1:EMailAddress".equals(addressClass)) {
+            else if(address instanceof EMailAddress) {
                 if(usage.contains(Addresses.USAGE_BUSINESS)) {
-                    emailPrefInternetIdentity = address.path();
+                    emailPrefInternet = (EMailAddress)address;
                 }
                 else if(usage.contains(Addresses.USAGE_HOME)) {
-                    emailInternetIdentity = address.path();
+                    emailInternet = (EMailAddress)address;
                 }
             }
-            else if("org:opencrx:kernel:account1:PhoneNumber".equals(addressClass)) {
+            else if(address instanceof PhoneNumber) {
                 if(usage.contains(Addresses.USAGE_HOME)) {
-                    telHomeVoiceIdentity = address.path();
+                    telHomeVoice = (PhoneNumber)address;
                 }
                 // work voice
                 else if(usage.contains(Addresses.USAGE_BUSINESS)) {
-                    telWorkVoiceIdentity = address.path();
+                    telWorkVoice = (PhoneNumber)address;
                 }              
                 // home fax
                 else if(usage.contains(Addresses.USAGE_HOME_FAX)) {
-                    telHomeFaxIdentity = address.path();
+                    telHomeFax = (PhoneNumber)address;
                 }
                 // work fax
                 else if(usage.contains(Addresses.USAGE_BUSINESS_FAX)) {
-                    telFaxIdentity = address.path();
+                    telFax = (PhoneNumber)address;
                 }              
                 // cell voice
                 else if(usage.contains(Addresses.USAGE_MOBILE)) {
-                    telCellVoiceIdentity = address.path();
+                    telCellVoice = (PhoneNumber)address;
                 }          
             }
-            else if("org:opencrx:kernel:account1:WebAddress".equals(addressClass)) {
+            else if(address instanceof WebAddress) {
                 if(usage.contains(Addresses.USAGE_HOME)) {
-                    urlHomeIdentity = address.path();
+                    urlHome = (WebAddress)address;
                 }
                 // work url
                 else if(usage.contains(Addresses.USAGE_BUSINESS)) {
-                    urlWorkIdentity = address.path();
+                    urlWork = (WebAddress)address;
                 }
             }
         }
@@ -1009,18 +994,21 @@ public class VCard {
             vcard.get("ADR;TYPE=HOME") != null ? vcard.get("ADR;TYPE=HOME") :
             vcard.get("ADR;HOME;ENCODING=QUOTED-PRINTABLE");
         if((s != null) && (s.length() > 0) && !s.startsWith(";;;")) {
-            if(adrHomeIdentity == null) {
-                DataproviderObject adrHome = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                adrHome.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PostalAddress");
-                adrHome.values("usage").add(Addresses.USAGE_HOME);
-                adrHome.values("isMain").add(Boolean.TRUE);
+            if(adrHome == null) {
+                adrHome = pm.newInstance(PostalAddress.class);
+                adrHome.refInitialize(false, false);
+                adrHome.getUsage().add(Addresses.USAGE_HOME);
+                adrHome.setMain(Boolean.TRUE);
                 this.updatePostalAddress(adrHome, s, locale);
-                this.backend.getDelegatingRequests().addCreateRequest(adrHome);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	adrHome
+                );
                 report.add("Create postal address");
             }
             else {
-                DataproviderObject adrHome = this.backend.retrieveObjectForModification(adrHomeIdentity);
-                this.updatePostalAddress(adrHome, s, locale);
+            	this.updatePostalAddress(adrHome, s, locale);
                 report.add("Update postal address");
             }
         }
@@ -1029,18 +1017,21 @@ public class VCard {
             vcard.get("ADR;TYPE=WORK") != null ? vcard.get("ADR;TYPE=WORK") :
             vcard.get("ADR;WORK;ENCODING=QUOTED-PRINTABLE");
         if((s != null) && (s.length() > 0) && !s.startsWith(";;;")) {
-            if(adrWorkIdentity == null) {
-                DataproviderObject adrWork = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                adrWork.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PostalAddress");
-                adrWork.values("usage").add(Addresses.USAGE_BUSINESS);
-                adrWork.values("isMain").add(Boolean.TRUE);
+            if(adrWork == null) {
+            	adrWork = pm.newInstance(PostalAddress.class);
+            	adrWork.refInitialize(false, false);
+                adrWork.getUsage().add(Addresses.USAGE_BUSINESS);
+                adrWork.setMain(Boolean.TRUE);
                 this.updatePostalAddress(adrWork, s, locale);
-                this.backend.getDelegatingRequests().addCreateRequest(adrWork);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	adrWork
+                );
                 report.add("Create postal address");
             }
             else {
-                DataproviderObject adrWork = this.backend.retrieveObjectForModification(adrWorkIdentity);
-                this.updatePostalAddress(adrWork, s, locale);
+            	this.updatePostalAddress(adrWork, s, locale);
                 report.add("Update postal address");
             }
         }
@@ -1048,18 +1039,21 @@ public class VCard {
         s = vcard.get("TEL;HOME;VOICE") != null ? vcard.get("TEL;HOME;VOICE") :
             vcard.get("TEL;TYPE=HOME");
         if((s != null) && (s.length() > 0)) {
-            if(telHomeVoiceIdentity == null) {
-                DataproviderObject telHomeVoice = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                telHomeVoice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
-                telHomeVoice.values("usage").add(Addresses.USAGE_HOME);
-                telHomeVoice.values("isMain").add(Boolean.TRUE);
+            if(telHomeVoice == null) {
+                telHomeVoice = pm.newInstance(PhoneNumber.class);
+                telHomeVoice.refInitialize(false, false);                
+                telHomeVoice.getUsage().add(Addresses.USAGE_HOME);
+                telHomeVoice.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telHomeVoice, s);
-                this.backend.getDelegatingRequests().addCreateRequest(telHomeVoice);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	telHomeVoice
+                );
                 report.add("Create phone number");
             }
             else {
-                DataproviderObject telHomeVoice = this.backend.retrieveObjectForModification(telHomeVoiceIdentity);
-                this.updatePhoneNumber(telHomeVoice, s);
+            	this.updatePhoneNumber(telHomeVoice, s);
                 report.add("Update phone number");
             }
         }
@@ -1067,36 +1061,42 @@ public class VCard {
         s = vcard.get("TEL;WORK;VOICE") != null ? vcard.get("TEL;WORK;VOICE") :
             vcard.get("TEL;TYPE=WORK");
         if((s != null) && (s.length() > 0)) {        
-            if(telWorkVoiceIdentity == null) {
-                DataproviderObject telWorkVoice = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                telWorkVoice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
-                telWorkVoice.values("usage").add(Addresses.USAGE_BUSINESS);
-                telWorkVoice.values("isMain").add(Boolean.TRUE);
+            if(telWorkVoice == null) {
+            	telWorkVoice = pm.newInstance(PhoneNumber.class);
+            	telWorkVoice.refInitialize(false, false);            	
+                telWorkVoice.getUsage().add(Addresses.USAGE_BUSINESS);
+                telWorkVoice.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telWorkVoice, s);
-                this.backend.getDelegatingRequests().addCreateRequest(telWorkVoice);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	telWorkVoice
+                );
                 report.add("Create phone number");
             }
             else {
-                DataproviderObject telWorkVoice = this.backend.retrieveObjectForModification(telWorkVoiceIdentity);
-                this.updatePhoneNumber(telWorkVoice, s);
+            	this.updatePhoneNumber(telWorkVoice, s);
                 report.add("Update phone number");
             }
         }
         // update telHomeFax
         s = vcard.get("TEL;HOME;FAX");
         if((s != null) && (s.length() > 0)) {                
-            if(telHomeFaxIdentity == null) {
-                DataproviderObject telHomeFax = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                telHomeFax.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
-                telHomeFax.values("usage").add(Addresses.USAGE_HOME_FAX);
-                telHomeFax.values("isMain").add(Boolean.TRUE);
+            if(telHomeFax == null) {
+            	telHomeFax = pm.newInstance(PhoneNumber.class);
+            	telWorkVoice.refInitialize(false, false);            	
+                telHomeFax.getUsage().add(Addresses.USAGE_HOME_FAX);
+                telHomeFax.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telHomeFax, s);
-                this.backend.getDelegatingRequests().addCreateRequest(telHomeFax);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	telHomeFax
+                );
                 report.add("Create phone number");
             }
             else {
-                DataproviderObject telHomeFax = this.backend.retrieveObjectForModification(telHomeFaxIdentity);
-                this.updatePhoneNumber(telHomeFax, s);
+            	this.updatePhoneNumber(telHomeFax, s);
                 report.add("Update phone number");
             }
         }
@@ -1104,18 +1104,21 @@ public class VCard {
         s = vcard.get("TEL;FAX") != null ? vcard.get("TEL;FAX") :
             vcard.get("TEL;TYPE=FAX");
         if((s != null) && (s.length() > 0)) {                
-            if(telFaxIdentity == null) {
-                DataproviderObject telFax = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                telFax.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
-                telFax.values("usage").add(Addresses.USAGE_BUSINESS_FAX);
-                telFax.values("isMain").add(Boolean.TRUE);
+            if(telFax == null) {
+            	telFax = pm.newInstance(PhoneNumber.class);
+            	telFax.refInitialize(false, false);            	
+                telFax.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
+                telFax.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telFax, s);
-                this.backend.getDelegatingRequests().addCreateRequest(telFax);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	telFax
+                );
                 report.add("Create phone number");
             }
             else {
-                DataproviderObject telFax = this.backend.retrieveObjectForModification(telFaxIdentity);
-                this.updatePhoneNumber(telFax, s);
+            	this.updatePhoneNumber(telFax, s);
                 report.add("Update phone number");
             }
         }
@@ -1123,54 +1126,63 @@ public class VCard {
         s = vcard.get("TEL;CELL;VOICE") != null ? vcard.get("TEL;CELL;VOICE") :
             vcard.get("TEL;TYPE=CELL");
         if((s != null) && (s.length() > 0)) {                
-            if(telCellVoiceIdentity == null) {
-                DataproviderObject telCellVoice = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                telCellVoice.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:PhoneNumber");
-                telCellVoice.values("usage").add(Addresses.USAGE_MOBILE);
-                telCellVoice.values("isMain").add(Boolean.TRUE);
+            if(telCellVoice == null) {
+            	telCellVoice = pm.newInstance(PhoneNumber.class);
+            	telCellVoice.refInitialize(false, false);            	
+                telCellVoice.getUsage().add(Addresses.USAGE_MOBILE);
+                telCellVoice.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telCellVoice, s);
-                this.backend.getDelegatingRequests().addCreateRequest(telCellVoice);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	telCellVoice
+                );
                 report.add("Create phone number");
             }
             else {
-                DataproviderObject telCellVoice = this.backend.retrieveObjectForModification(telCellVoiceIdentity);
-                this.updatePhoneNumber(telCellVoice, s);
+            	this.updatePhoneNumber(telCellVoice, s);
                 report.add("Update phone number");
             }
         }
         // update urlHome
         s = vcard.get("URL;HOME");
         if((s != null) && (s.length() > 0)) {                
-            if(urlHomeIdentity == null) {
-                DataproviderObject urlHome = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                urlHome.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:WebAddress");
-                urlHome.values("usage").add(Addresses.USAGE_HOME);
-                urlHome.values("isMain").add(Boolean.TRUE);
+            if(urlHome == null) {
+                urlHome = pm.newInstance(WebAddress.class);
+                urlHome.refInitialize(false, false);                
+                urlHome.getUsage().add(Addresses.USAGE_HOME);
+                urlHome.setMain(Boolean.TRUE);
                 this.updateWebAddress(urlHome, s);
-                this.backend.getDelegatingRequests().addCreateRequest(urlHome);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	urlHome
+                );
                 report.add("Create web address");
             }
             else {
-                DataproviderObject urlHome = this.backend.retrieveObjectForModification(urlHomeIdentity);
-                this.updateWebAddress(urlHome, s);
+            	this.updateWebAddress(urlHome, s);
                 report.add("Update web address");
             }
         }
         // update urlWork
         s = vcard.get("URL;WORK");
         if((s != null) && (s.length() > 0)) {                
-            if(urlWorkIdentity == null) {
-                DataproviderObject urlWork = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                urlWork.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:WebAddress");
-                urlWork.values("usage").add(Addresses.USAGE_BUSINESS);
-                urlWork.values("isMain").add(Boolean.TRUE);
+            if(urlWork == null) {
+            	urlWork = pm.newInstance(WebAddress.class);
+            	urlWork.refInitialize(false, false);            	
+                urlWork.getUsage().add(Addresses.USAGE_BUSINESS);
+                urlWork.setMain(Boolean.TRUE);
                 this.updateWebAddress(urlWork, s);
-                this.backend.getDelegatingRequests().addCreateRequest(urlWork);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	urlWork
+                );
                 report.add("Create web address");
             }
             else {
-                DataproviderObject urlWork = this.backend.retrieveObjectForModification(urlWorkIdentity);
-                this.updateWebAddress(urlWork, s);
+            	this.updateWebAddress(urlWork, s);
                 report.add("Update web address");
             }
         }
@@ -1178,18 +1190,21 @@ public class VCard {
         s = vcard.get("EMAIL;PREF;INTERNET") != null ? vcard.get("EMAIL;PREF;INTERNET") :
             vcard.get("EMAIL;TYPE=WORK");
         if((s != null) && (s.length() > 0)) {                
-            if(emailPrefInternetIdentity == null) {
-                DataproviderObject emailPrefInternet = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                emailPrefInternet.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:EMailAddress");
-                emailPrefInternet.values("usage").add(Addresses.USAGE_BUSINESS);
-                emailPrefInternet.values("isMain").add(Boolean.TRUE);
+            if(emailPrefInternet == null) {
+                emailPrefInternet = pm.newInstance(EMailAddress.class);
+                emailPrefInternet.refInitialize(false, false);                
+                emailPrefInternet.getUsage().add(Addresses.USAGE_BUSINESS);
+                emailPrefInternet.setMain(Boolean.TRUE);
                 this.updateEMailAddress(emailPrefInternet, s);
-                this.backend.getDelegatingRequests().addCreateRequest(emailPrefInternet);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	emailPrefInternet
+                );
                 report.add("Create email address");
             }
             else {
-                DataproviderObject emailPrefInternet = this.backend.retrieveObjectForModification(emailPrefInternetIdentity);
-                this.updateEMailAddress(emailPrefInternet, s);
+            	this.updateEMailAddress(emailPrefInternet, s);
                 report.add("Update email address");
             }
         }
@@ -1197,75 +1212,54 @@ public class VCard {
         s = vcard.get("EMAIL;INTERNET") != null ? vcard.get("EMAIL;INTERNET") :
             vcard.get("EMAIL;TYPE=HOME");
         if((s != null) && (s.length() > 0)) {                
-            if(emailInternetIdentity == null) {
-                DataproviderObject emailInternet = new DataproviderObject(account.path().getDescendant(new String[]{"address", UUIDs.getGenerator().next().toString()}));
-                emailInternet.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:EMailAddress");
-                emailInternet.values("usage").add(Addresses.USAGE_HOME);
-                emailInternet.values("isMain").add(Boolean.TRUE);
+            if(emailInternet == null) {
+                emailInternet = pm.newInstance(EMailAddress.class);
+                emailInternet.refInitialize(false, false);                
+                emailInternet.getUsage().add(Addresses.USAGE_HOME);
+                emailInternet.setMain(Boolean.TRUE);
                 this.updateEMailAddress(emailInternet, s);
-                this.backend.getDelegatingRequests().addCreateRequest(emailInternet);
+                account.addAddress(
+                	false,
+                	this.getUidAsString(),
+                	emailInternet
+                );
                 report.add("Create email address");
             }
             else {
-                DataproviderObject emailInternet = this.backend.retrieveObjectForModification(emailInternetIdentity);
-                this.updateEMailAddress(emailInternet, s);
+            	this.updateEMailAddress(emailInternet, s);
                 report.add("Update email address");
             }
         }
-        return account == null
-            ? null
-            : (BasicObject)this.backend.getDelegatingPkg().refObject(account.path().toXri());       
+        return account;
     }
         
     //-------------------------------------------------------------------------
-    /**
-      * Updates account according to values of vcard. If a account with email 
-      * address EMAIL;PREF;INTERNET is found then the account and its addresses 
-      * are updated. If no contact is found then null is returned.
-      */
-    public BasicObject updateAccount(
+    public Account updateAccount(
         Map<String,String> vcard,
-        Path accountSegmentIdentity,
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         short locale,
         List<String> report
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
         String lookupEmail = vcard.get("EMAIL;PREF;INTERNET");
-        DataproviderObject contact = null;
+        Account contact = null;
         if((lookupEmail != null) && (lookupEmail.length() > 0)) {
             AppLog.trace("looking up", lookupEmail);
-            List<DataproviderObject_1_0> addresses = this.backend.getDelegatingRequests().addFindRequest(
-                accountSegmentIdentity.getChild("extent"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "identity",
-                        FilterOperators.IS_LIKE,
-                        accountSegmentIdentity.getDescendant(new String[]{"account", ":*", "address", ":*"}).toXri()
-                    ),
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        SystemAttributes.OBJECT_CLASS,
-                        FilterOperators.IS_IN,
-                        "org:opencrx:kernel:account1:EMailAddress"
-                    ),
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "emailAddress",
-                        FilterOperators.IS_IN,
-                        lookupEmail
-                    )
-                }
+            EMailAddressQuery addressQuery = (EMailAddressQuery)pm.newQuery(AccountAddress.class);
+            addressQuery.identity().like(
+            	accountSegment.refGetPath().getDescendant(new String[]{"account", ":*", "address", ":*"}).toXRI()
             );
+            addressQuery.thereExistsEmailAddress().equalTo(lookupEmail);
+            List<EMailAddress> addresses = accountSegment.getExtent(addressQuery);
             if(addresses.iterator().hasNext()) {
                 AppLog.trace("address found");
-                DataproviderObject_1_0 address = addresses.iterator().next();
-                contact = this.backend.retrieveObjectForModification(
-                    address.path().getParent().getParent()
+                AccountAddress address = addresses.iterator().next();
+                contact = (Account)pm.getObjectById(
+                    address.refGetPath().getParent().getParent()
                 );
             }
         }
         AppLog.trace("account", contact);
-
         boolean isNew = contact == null;
         if(isNew) {
             return null;
@@ -1281,15 +1275,28 @@ public class VCard {
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
+    public static final Map<Integer,String> salutations = new HashMap<Integer,String>();
+    
+    static {
+    	salutations.put(0, "NA");
+    	salutations.put(1, "Mr.");
+    	salutations.put(2, "Mrs.");
+    	salutations.put(3, "Miss");
+    	salutations.put(4, "Mr. and Mrs.");
+    	salutations.put(5, "Company");
+    	salutations.put(6, "Brothers");
+    	salutations.put(7, "Prof.");
+    	salutations.put(8, "Dr.");
+    	salutations.put(9, "Family");    	
+    }
+    
     public static final String DATETIME_FORMAT =  "yyyyMMdd'T'HHmmss";
     public static final String MIME_TYPE = "text/x-vcard";
-    public static final String PROD_ID = "//OPENCRX//Groupware Version 2//EN";
+    public static final String PROD_ID = "//OPENCRX//Core Version 2//EN";
     
     public static final int MIME_TYPE_CODE = 3;
     public static final short DEFAULT_LOCALE = 0;
     public final static String VCARD_SCHEMA = "VCARD:";    
-
-    protected final Backend backend;
 
 }
 

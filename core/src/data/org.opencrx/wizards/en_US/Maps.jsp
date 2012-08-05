@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Maps.jsp,v 1.19 2009/01/06 13:16:55 wfro Exp $
+ * Name:        $Id: Maps.jsp,v 1.20 2009/04/23 12:50:18 cmu Exp $
  * Description: prepare calls to mapping services like GoogleMaps
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:16:55 $
+ * Date:        $Date: 2009/04/23 12:50:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -276,14 +276,12 @@ org.openmdx.application.log.*
     }
   }
   catch (Exception e) {
-    out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-    PrintWriter pw = new PrintWriter(out);
-    ServiceException e0 = new ServiceException(e);
-    pw.println(e0.getMessage());
-    pw.println(e0.getCause());
-    out.println("</pre>");
-    AppLog.warning("Error calling Google Map", "Wizard GoogleMap.jsp");
-    AppLog.warning(e0.getMessage(), e0.getCause());
+	      ServiceException e0 = new ServiceException(e);
+	      e0.log();
+	      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+	      PrintWriter pw = new PrintWriter(out);
+	      e0.printStackTrace(pw);
+	      out.println("</pre></p>");
   }
 %>
   </table>

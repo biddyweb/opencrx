@@ -102,6 +102,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:basePrice" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Aktívne Základné ceny</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Aktívne Základné ceny</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:priceUom" _operation="create">
                     <_object>
                       <label>
@@ -789,6 +807,9 @@
                       <shortLabel>
                         <_item>Typ konfigurácie</_item>
                       </shortLabel>
+                      <toolTip>
+                        <_item>Typ konfigurácie</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -811,14 +832,11 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:10:Group:20" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:0:Group:15" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dodatočné detaily</_item>
+                        <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>Dodatočné detaily</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

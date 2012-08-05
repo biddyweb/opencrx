@@ -28,7 +28,7 @@
                         <_item>Proprietăţi filtru</_item>
                       </label>
                       <toolTip>
-                        <_item>toate proprietăţile filtrului</_item>
+                        <_item>Toate Proprietăţile filtrului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Adrese filtrate</_item>
                       </label>
                       <toolTip>
-                        <_item>toate adresele filtrate</_item>
+                        <_item>Toate Adresele filtrate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAddress:Pane:Op:Tab:countFilteredAddress:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietăţi filtrare tip de Adrese</_item>
+                        <_item>Proprietăţi filtrare Tip de adrese</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietăţi filtrare tip de Adrese</_item>
+                        <_item>Proprietăţi filtrare Tip de adrese</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressCategoryFilterProperty:category" _operation="create">
                     <_object>
                       <label>
-                        <_item>Categorii de adrese</_item>
+                        <_item>Categorii de Adrese</_item>
                       </label>
                       <toolTip>
-                        <_item>Categorii de adrese</_item>
+                        <_item>Categorii de Adrese</_item>
                       </toolTip>
                     </_object>
                     <_content/>

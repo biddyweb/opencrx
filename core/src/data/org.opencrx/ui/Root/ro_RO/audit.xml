@@ -234,10 +234,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:TestAndSetVisitedByParams:visitorId" _operation="create">
                     <_object>
                       <label>
-                        <_item>ID Vizitator</_item>
+                        <_item>Identificator Vizitator</_item>
                       </label>
                       <toolTip>
-                        <_item>ID Vizitator</_item>
+                        <_item>Identificator Vizitator</_item>
                       </toolTip>
                     </_object>
                     <_content/>

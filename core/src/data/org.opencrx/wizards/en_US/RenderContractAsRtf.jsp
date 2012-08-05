@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RenderContractAsRtf.jsp,v 1.8 2009/02/11 12:56:07 wfro Exp $
+ * Name:        $Id: RenderContractAsRtf.jsp,v 1.9 2009/06/09 14:18:15 wfro Exp $
  * Description: RenderContractAsRtf
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/11 12:56:07 $
+ * Date:        $Date: 2009/06/09 14:18:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -223,7 +223,7 @@ org.openmdx.application.log.*
      	return;
     }
     org.opencrx.kernel.utils.rtf.RTFTemplate document = new org.opencrx.kernel.utils.rtf.RTFTemplate();
-    template.refRefresh();
+    pm.refresh(template);
     document.readFrom(
     	new InputStreamReader(template.getContent().getContent()),
     	true

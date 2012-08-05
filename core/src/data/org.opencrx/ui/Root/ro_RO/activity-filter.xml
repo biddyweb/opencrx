@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru de activităţi</_item>
+                        <_item>Filtru de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>toate filtrele de activităţi</_item>
+                        <_item>Toate Filtrele de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grup de filtre de activităţi</_item>
+                        <_item>Grup de Filtre de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Grup de filtre de activităţi</_item>
+                        <_item>Grup de Filtre de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru de activităţi</_item>
+                        <_item>Filtru de Activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtru de activităţi</_item>
+                        <_item>Filtru de Activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru de proprietăţi</_item>
+                        <_item>Filtru de Proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>toate filtrele de proprietăţi</_item>
+                        <_item>Toate Filtrele de Proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Activităţi filtrate</_item>
                       </label>
                       <toolTip>
-                        <_item>toate activităţile filtrate</_item>
+                        <_item>Toate Activităţile filtrate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Numără activităţile filtrate</_item>
+                        <_item>Numără Activităţile filtrate</_item>
                       </label>
                       <toolTip>
-                        <_item>Numără activităţile filtrate</_item>
+                        <_item>Numără Activităţile filtrate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -143,29 +143,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Efort real calculat</_item>
+                        <_item>Calculează Cantitatea  Totală de  Muncă din Înregistrările de Muncă  / Cheltuieli</_item>
                       </label>
                       <toolTip>
-                        <_item>Efort real calculat</_item>
+                        <_item>Calculează Cantitatea  Totală de  Muncă din Înregistrările de Muncă  / Cheltuieli</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Intrare</_item>
+                        <_item>Introducere</_item>
                       </label>
                       <toolTip>
-                        <_item>Intrare</_item>
+                        <_item>Introducere</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Rezultat</_item>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietăţi de filtrare ale statutului activităţii de procesare</_item>
+                        <_item>Proprietăţile filtrului  statutului proceselor activităţii</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietăţi de filtrare ale statutului activităţii de procesare</_item>
+                        <_item>Proprietăţile filtrului  statutului proceselor activităţii</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityStateFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietăţi de filtrare ale statutului activităţii</_item>
+                        <_item>Proprietăţile filtrului statutului activităţii</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietăţi de filtrare ale statutului activităţii</_item>
+                        <_item>Proprietăţile filtrului statutului activităţii</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityNumberFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietăţi de filtrare a numărului activităţii</_item>
+                        <_item>Proprietăţile filtrului numărului activităţii</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietăţi de filtrare a numărului activităţii</_item>
+                        <_item>Proprietăţile filtrului numărului activităţii</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru de proprietăţi ale tipurilor de activităţi</_item>
+                        <_item>Proprietăţile filtrului tipurilor de activităţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtru de proprietăţi ale tipurilor de activităţi</_item>
+                        <_item>Proprietăţile filtrului tipurilor de activităţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Terminare programată a filtrului de proprietăţi</_item>
+                        <_item>Proprietățile filtrului  programărilor de terminare</_item>
                       </label>
                       <toolTip>
-                        <_item>Terminare programată a filtrului de proprietăţi</_item>
+                        <_item>Proprietățile filtrului  programărilor de terminare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -344,10 +344,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Începere programată a filtrului de proprietăţi</_item>
+                        <_item>Proprietățile filtrului  programărilor de începere</_item>
                       </label>
                       <toolTip>
-                        <_item>Începere programată a filtrului de proprietăţi</_item>
+                        <_item>Proprietățile filtrului  programărilor de începere</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -377,10 +377,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityQueryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietăţi de filtrare a interogării</_item>
+                        <_item>Proprietățile filtrului  interogărilor</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietăţi de filtrare a interogării</_item>
+                        <_item>Proprietățile filtrului  interogărilor</_item>
                       </toolTip>
                     </_object>
                     <_content/>

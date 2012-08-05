@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendAlert.java,v 1.23 2009/03/08 17:04:52 wfro Exp $
+ * Name:        $Id: SendAlert.java,v 1.29 2009/04/23 22:30:57 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:52 $
+ * Date:        $Date: 2009/04/23 22:30:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,58 +59,55 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.opencrx.kernel.backend.Backend;
-import org.opencrx.kernel.backend.SynchWorkflow_1_0;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
+import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.backend.SynchWorkflow_2_0;
+import org.opencrx.kernel.base.jmi1.WorkflowTarget;
+import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
+import org.openmdx.base.jmi1.ContextCapable;
 
 public class SendAlert 
-    implements SynchWorkflow_1_0 {
+    implements SynchWorkflow_2_0 {
 
-    /* (non-Javadoc)
-     * @see org.opencrx.kernel.layer.application.Workflow_1_0#execute(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0, org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0, org.opencrx.kernel.layer.application.OpenCrxKernel_1, org.openmdx.compatibility.base.dataprovider.cci.RequestCollection)
-     */
     public void execute(
-        DataproviderObject_1_0 userHome,
-        Path targetObjectIdentity,
-        Map params,
-        Path wfProcessInstanceIdentity,
-        Backend backend
+        WorkflowTarget wfTarget,
+        ContextCapable targetObject,
+        Map<String,Object> params,
+        WfProcessInstance wfProcessInstance
     ) throws ServiceException {
         String name = null;
         // Get attribute name of target object if available and set as name of alert
-        if(targetObjectIdentity != null) {
+        if(targetObject != null) {
             try {
-                DataproviderObject_1_0 targetObject = backend.getDelegatingRequests().addGetRequest(
-                    targetObjectIdentity                    
-                );
-                if(targetObject.getValues("name") != null) {
-                    name = (String)targetObject.values("name").get(0);
+                if(targetObject.refGetValue("name") != null) {
+                    name = (String)targetObject.refGetValue("name");
                 }
             } 
             catch(Exception e) {}
         }
         String description = "";
         for(
-            Iterator i = params.entrySet().iterator(); 
+            Iterator<Entry<String,Object>> i = params.entrySet().iterator(); 
             i.hasNext();
         ) {
-            Entry e = (Entry)i.next();
+            Entry<String,Object> e = i.next();
             description += e.getKey() + "=" + e.getValue() + "\n";
         }
         try {
-            backend.getBase().sendAlert(
-                targetObjectIdentity, 
-                userHome.path().getBase(), 
-                name == null
-                    ? "SendAlert notification"
-                    : name, // toUsers
-                description,
-                5, // importance
-                60, // resend delay is 1 minute
-                targetObjectIdentity
-            );
+        	if(wfTarget instanceof UserHome) {
+	            Base.getInstance().sendAlert(
+	                targetObject, 
+	                wfTarget.refGetPath().getBase(), // toUsers
+	                name == null ? 
+	                	"SendAlert notification" : 
+	                	name,
+	                description,
+	                (short)5, // importance
+	                60, // resend delay is 1 minute
+	                targetObject
+	            );
+        	}
         }
         catch(ServiceException e) {
             System.out.println("can not execute workflow SendAlert. Reason " + e.getMessage());

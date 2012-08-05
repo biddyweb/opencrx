@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.36 2009/01/06 13:16:55 wfro Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.38 2009/05/11 12:22:41 cmu Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.36 $
+ * Revision:    $Revision: 1.38 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:16:55 $
+ * Date:        $Date: 2009/05/11 12:22:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -197,7 +197,6 @@ org.openmdx.kernel.id.*
 			String[] requestIds = (String[])parameterMap.get(Action.PARAMETER_REQUEST_ID);
 			String requestId = (requestIds == null) || (requestIds.length == 0) ? "" : requestIds[0];
 			javax.jdo.PersistenceManager pm = app.getPmData();
-			UUIDGenerator uuids = UUIDs.getGenerator();
 
 			boolean actionOk = parameterMap.get("OK.Button") != null;
 			boolean actionCancel = parameterMap.get("Cancel.Button") != null;
@@ -286,7 +285,7 @@ org.openmdx.kernel.id.*
 								if(isNew) {
 									crxObject.addMedia(
 										false,
-										uuids.next().toString(),
+										org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 										media
 									);
 								}
@@ -323,7 +322,7 @@ org.openmdx.kernel.id.*
 								if(isNew) {
 								    userHome.addChart(
 										false,
-										uuids.next().toString(),
+										org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 										media
 									);
 								}
@@ -361,7 +360,7 @@ org.openmdx.kernel.id.*
 								if(isNew) {
 									document.addAttachment(
 										false,
-										uuids.next().toString(),
+										org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 										documentAttachment
 									);
 								}
@@ -451,12 +450,12 @@ org.openmdx.kernel.id.*
 <%
     }
     catch (Exception ex) {
-	    ServiceException e0 = new ServiceException(ex);
-	    out.println("<p><b>The following exception occurred:</b><br><br><pre>");
-		PrintWriter pw = new PrintWriter(out);
-		pw.println(e0.getMessage());
-		pw.println(e0.getCause());
-		out.println("</pre></p>");
+      ServiceException e0 = new ServiceException(ex);
+      e0.log();
+      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+      PrintWriter pw = new PrintWriter(out);
+      e0.printStackTrace(pw);
+      out.println("</pre></p>");
     }
 %>
       </div> <!-- content -->

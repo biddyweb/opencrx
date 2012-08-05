@@ -385,10 +385,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:storeSettingsOnLogoff" _operation="create">
                     <_object>
                       <label>
-                        <_item>Salvează setările la ieşire</_item>
+                        <_item>Salvează configurările la ieşire</_item>
                       </label>
                       <toolTip>
-                        <_item>Salvează setările la ieşire</_item>
+                        <_item>Salvează configurările la ieşire</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -396,10 +396,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:settings" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setări utilizator</_item>
+                        <_item>Configurări utilizator</_item>
                       </label>
                       <toolTip>
-                        <_item>Setări utilizator</_item>
+                        <_item>Configurări utilizator</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -605,10 +605,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip acţiune</_item>
+                        <_item>Tip de Acţiune</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip acţiune</_item>
+                        <_item>Tip de Acţiune</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -616,10 +616,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nume acţiune</_item>
+                        <_item>Nume Acţiune</_item>
                       </label>
                       <toolTip>
-                        <_item>Nume acţiune</_item>
+                        <_item>Nume Acţiune</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -627,10 +627,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionParam" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametrii acţiune</_item>
+                        <_item>Parametrii Acţiune</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametrii acţiunii</_item>
+                        <_item>Parametrii Acţiunii</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -924,10 +924,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nume articol</_item>
+                        <_item>Nume Articol</_item>
                       </label>
                       <toolTip>
-                        <_item>Nume articol</_item>
+                        <_item>Nume Articol</_item>
                       </toolTip>
                     </_object>
                     <_content/>

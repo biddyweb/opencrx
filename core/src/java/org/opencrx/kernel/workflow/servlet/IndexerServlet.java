@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.27 2009/03/08 17:04:52 wfro Exp $
+ * Name:        $Id: IndexerServlet.java,v 1.28 2009/04/20 17:56:46 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:52 $
+ * Date:        $Date: 2009/04/20 17:56:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -115,7 +115,7 @@ public class IndexerServlet
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );        
-            Workflows.initWorkflows(
+            Workflows.getInstance().initWorkflows(
                 pm, 
                 providerName, 
                 segmentName

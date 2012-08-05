@@ -1,15 +1,13 @@
-#if defined(MAXDB_7)
-//
-#elif defined(POSTGRESQL_7)
+#if defined(POSTGRESQL_8)
 
-#elif defined(FIREBIRD_1)
-
-#elif defined(SQL_SERVER_2000)
+#elif defined(SQL_SERVER_2005)
 GO
-#elif defined(MYSQL_4)
+#elif defined(MYSQL_5)
 
-#elif defined(ORACLE_8)
+#elif defined(ORACLE_10)
 
-#elif defined(DB2_8)
+#elif defined(DB2_9)
+
+#elif defined(HSQLDB_1)
 
 #endif

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Timeline.jsp,v 1.14 2009/01/09 14:11:22 wfro Exp $
+ * Name:        $Id: Timeline.jsp,v 1.15 2009/04/23 13:04:43 cmu Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/09 14:11:22 $
+ * Date:        $Date: 2009/04/23 13:04:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -189,14 +189,12 @@ org.openmdx.application.log.*
     }
   }
   catch (Exception e) {
-    out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-    PrintWriter pw = new PrintWriter(out);
-    ServiceException e0 = new ServiceException(e);
-    pw.println(e0.getMessage());
-    pw.println(e0.getCause());
-    out.println("</pre>");
-    AppLog.warning("Error launching timeline", "Wizard Timeline.jsp");
-    AppLog.warning(e0.getMessage(), e0.getCause());
+      ServiceException e0 = new ServiceException(e);
+      e0.log();
+      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+      PrintWriter pw = new PrintWriter(out);
+      e0.printStackTrace(pw);
+      out.println("</pre></p>");
   }
 
 %>

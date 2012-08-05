@@ -161,7 +161,7 @@
           <children xmi:id="_JfMVqd7NEdmKapscEl8OLg" visible="false" type="StructureCompartment">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JfMVqt7NEdmKapscEl8OLg" canonical="false"/>
           </children>
-          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfMVnd7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="13434879" lineColor="3342489" showStereotype="Text"/>
+          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfMVnd7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="13434879" lineColor="3342489" showStereotype="Text"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfMVnt7NEdmKapscEl8OLg" x="641" y="2786" width="7542" height="1553"/>
         </children>
         <children xmi:id="_JfMV597NEdmKapscEl8OLg" element="_3C7B8A60016D415A99CD0095">
@@ -339,6 +339,11 @@
         <qualifier xmi:id="_3C7B8A60016D418269BD005A" name="index" visibility="private">
           <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3CC6A34B0011?w3c/w3c/integer?"/>
         </qualifier>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_IWrQQDPhEd6XQv1N84LoBw" name="isFinal" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B63180083?w3c/w3c/boolean?"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NNIB0DPhEd6XQv1N84LoBw" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NNGzsDPhEd6XQv1N84LoBw"/>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D415A99CD0095" name="Principal">

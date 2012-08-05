@@ -80,10 +80,6 @@ DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_WORKREPORTENTRY COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_WORKREPORTENTRY_ COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_ACCTHASASSCONTR COMMAND_TERMINATOR 
@@ -111,6 +107,14 @@ DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK COMMAND_TERMINATOR
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASSBK COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_FILTERINCLDESCONTR COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_JOIN_RESCONTAINSWRE COMMAND_TERMINATOR
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_JOIN_ACTCONTAINSWRE COMMAND_TERMINATOR
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_JOIN_ACTGCONTAINSWRE COMMAND_TERMINATOR
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_JOIN_SEGCONTAINSWRE COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSACT AS
@@ -170,7 +174,31 @@ FROM
 INNER JOIN
     OOCKE1_CONTRACT c0
 ON
-    act.contract = c0.object_id COMMAND_TERMINATOR 
+    act.contract = c0.object_id
+    
+UNION
+
+SELECT
+    act.object_id AS assigned_activity, 
+    acc.object_id AS account
+FROM 
+    OOCKE1_ACTIVITY act
+INNER JOIN
+    OOCKE1_ACCOUNT acc
+ON
+    act.rep_contact = acc.object_id
+
+UNION
+
+SELECT
+    act.object_id AS assigned_activity, 
+    acc.object_id AS account
+FROM 
+    OOCKE1_ACTIVITY act
+INNER JOIN
+    OOCKE1_ACCOUNT acc
+ON
+    act.rep_acct = acc.object_id COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 
@@ -387,7 +415,31 @@ ON
 INNER JOIN 
     OOCKE1_USERHOME h0
 ON
-    adr.p$$parent = h0.contact COMMAND_TERMINATOR 
+    adr.p$$parent = h0.contact 
+    
+UNION
+
+SELECT
+    a.object_id AS assigned_activity, 
+    h0.object_id AS user_home
+FROM         
+    OOCKE1_ACTIVITY a
+INNER JOIN 
+    OOCKE1_USERHOME h0 
+ON 
+    a.rep_contact = h0.contact
+
+UNION
+
+SELECT
+    a.object_id AS assigned_activity, 
+    h0.object_id AS user_home
+FROM         
+    OOCKE1_ACTIVITY a
+INNER JOIN 
+    OOCKE1_USERHOME h0 
+ON 
+    a.rep_acct = h0.contact COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_JOIN_IITEMHASBOOKING AS
@@ -670,6 +722,62 @@ INNER JOIN
     OOCKE1_CONTRACT c
 ON
     (1=1) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSWRE AS
+SELECT
+  ga.activity_group AS activity_group,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id
+INNER JOIN
+  OOCKE1_ACTIVITYGROUPASS ga
+ON
+  ga.p$$parent = ra.p$$parent COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_JOIN_ACTCONTAINSWRE AS 
+SELECT
+  ra.p$$parent AS activity,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_JOIN_SEGCONTAINSWRE AS 
+SELECT
+  a.p$$parent AS segment,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id
+INNER JOIN
+  OOCKE1_ACTIVITY a
+ON
+  ra.p$$parent = a.object_id COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_JOIN_RESCONTAINSWRE AS 
+SELECT
+  ra.resrc AS QUOTED_COL_RESOURCE,
+  wr.object_id AS work_report_entry
+FROM
+  OOCKE1_WORKRECORD wr
+INNER JOIN
+  OOCKE1_RESOURCEASSIGNMENT ra
+ON
+  wr.p$$parent = ra.object_id COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
@@ -1851,236 +1959,6 @@ SELECT
     dtype
 FROM
     OOCKE1_ACCOUNT_ COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-
-CREATE VIEW OOCKE1_TOBJ_WORKREPORTENTRY AS
-SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(a.p$$parent, 'activities/', 'workReportEntry1/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(w.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
-    a.p$$parent AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, 
-    w.modified_at,
-    w.modified_by_, 
-    w.created_at, 
-    w.created_by_,
-    w.access_level_browse, 
-    w.access_level_update, 
-    w.access_level_delete, 
-    w.owner_,
-    w.name, 
-    w.description, 
-    w.started_at, 
-    w.ended_at,
-    w.duration_hours, 
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS duration_hh_mm,    
-    w.pause_duration_hours, 
-    w.pause_duration_minutes, 
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.pause_duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.pause_duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM 
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-
-UNION ALL
-
-SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry2/'), 'activityCategory/', 'workReportEntry2/'), 'activityMilestone/', 'workReportEntry2/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(w.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif    
-    AS object_id,
-    ga.activity_group AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, 
-    w.modified_at, 
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse, 
-    w.access_level_update, 
-    w.access_level_delete, 
-    w.owner_,
-    w.name, 
-    w.description, 
-    w.started_at, 
-    w.ended_at,
-    w.duration_hours, 
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS duration_hh_mm,    
-    w.pause_duration_hours, 
-    w.pause_duration_minutes, 
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.pause_duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.pause_duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM 
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-INNER JOIN
-    OOCKE1_ACTIVITYGROUPASS ga
-ON
-   (a.object_id = ga.p$$parent) AND
-   (ga.activity_group IS NOT NULL)
-   
-UNION ALL
-
-SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry3/'), 'activityCategory/', 'workReportEntry3/'), 'activityMilestone/', 'workReportEntry3/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(w.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif    
-    AS object_id,
-    ga.activity_group AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, 
-    w.modified_at, 
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse, 
-    w.access_level_update, 
-    w.access_level_delete, 
-    w.owner_,
-    w.name, 
-    w.description, 
-    w.started_at, 
-    w.ended_at,
-    w.duration_hours, 
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS duration_hh_mm,    
-    w.pause_duration_hours, 
-    w.pause_duration_minutes, 
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.pause_duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.pause_duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM 
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-INNER JOIN
-    OOCKE1_ACTIVITYGROUPASS ga
-ON
-   (a.object_id = ga.p$$parent) AND
-   (ga.activity_group IS NOT NULL)
-   
-UNION ALL
-
-SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(REPLACE(REPLACE(ga.activity_group, 'activityTracker/', 'workReportEntry4/'), 'activityCategory/', 'workReportEntry4/'), 'activityMilestone/', 'workReportEntry4/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(w.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
-    ga.activity_group AS p$$parent,
-    'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, 
-    w.modified_at, 
-    w.modified_by_,
-    w.created_at,
-    w.created_by_,
-    w.access_level_browse, 
-    w.access_level_update, 
-    w.access_level_delete, 
-    w.owner_,
-    w.name, 
-    w.description, 
-    w.started_at, 
-    w.ended_at,
-    w.duration_hours, 
-    w.duration_minutes,
-    (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS duration_hh_mm,    
-    w.pause_duration_hours, w.pause_duration_minutes, 
-    (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    (STRCAT_PREFIX FORMAT_NUMBER_3_0(w.pause_duration_hours) STRCAT_INFIX ':' STRCAT_INFIX FORMAT_NUMBER_2_0(w.pause_duration_minutes) STRCAT_INFIX AS_CHAR(39) STRCAT_SUFFIX) AS pause_duration_hh_mm,
-    w.billable_amount AS billable_amount,
-    w.billing_currency AS billing_currency,
-    a.activity_number,
-    a.object_id AS activity,
-    ra.object_id AS assignment,
-    w.object_id AS work_record,
-    ra.resrc AS resrc
-FROM 
-   OOCKE1_WORKRECORD w
-INNER JOIN
-   OOCKE1_RESOURCEASSIGNMENT ra
-ON
-   w.p$$parent = ra.object_id
-INNER JOIN
-   OOCKE1_ACTIVITY a
-ON
-   a.object_id = ra.p$$parent
-INNER JOIN
-    OOCKE1_ACTIVITYGROUPASS ga
-ON
-   (a.object_id = ga.p$$parent) AND
-   (ga.activity_group IS NOT NULL) COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-
-CREATE VIEW OOCKE1_TOBJ_WORKREPORTENTRY_ AS 
-SELECT
-    object_id,
-    idx,
-    created_by,
-    modified_by,
-    owner,
-    dtype
-FROM
-    OOCKE1_WORKRECORD_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOMSE2_TOBJ_USERS AS

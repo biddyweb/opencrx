@@ -98,12 +98,12 @@
 			<env-entry>
 				<env-entry-name>KERNEL/INTERCEPTION</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1</env-entry-value>
+				<env-entry-value>org.openmdx.application.dataprovider.layer.interception.Standard_1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/TYPE</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.type.Strict_1</env-entry-value>
+				<env-entry-value>org.openmdx.application.dataprovider.layer.type.Strict_1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/APPLICATION</env-entry-name>
@@ -153,33 +153,6 @@
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MD5</env-entry-value>
 			</env-entry>
-			<env-entry>
-				<env-entry-name>APPLICATION/delegationPath[0]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.openmdx.security.realm1/provider/CRX</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>APPLICATION/delegationPath[1]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.opencrx.security.identity1/provider/CRX</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>APPLICATION/delegationPath[2]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.openmdx.security.authorization1/provider/CRX</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>APPLICATION/delegationPath[3]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.openmdx.security.authentication1/provider/CRX</env-entry-value>
-			</env-entry>
-			<!-- EXTERNAL_PROVIDER_ENABLE_BEGIN
-			<env-entry>
-				<env-entry-name>APPLICATION/delegationPath[4]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>EXTERNAL_PROVIDER_DELEGATION_PATH</env-entry-value>
-			</env-entry>
-			EXTERNAL_PROVIDER_ENABLE_END -->
 			<env-entry>
 				<env-entry-name>APPLICATION/readOnlyObjectType[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
@@ -238,27 +211,6 @@
 				<env-entry-value>true</env-entry-value>
 			</env-entry>
 			EXTENDED_ACCESS_LEVEL_BASIC_ENABLE_END -->
-			<!-- Give AccessControl_1 access to realm, identity, authentication and authorization objects -->
-			<env-entry>
-				<env-entry-name>MODEL/delegationPath[0]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.openmdx.security.realm1/provider/CRX</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>MODEL/delegationPath[1]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.opencrx.security.identity1/provider/CRX</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>MODEL/delegationPath[2]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.openmdx.security.authorization1/provider/CRX</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>MODEL/delegationPath[3]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>xri:@openmdx:org.openmdx.security.authentication1/provider/CRX</env-entry-value>
-			</env-entry>
 			<env-entry>
 				<env-entry-name>MODEL/realmIdentity</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
@@ -418,27 +370,6 @@
 				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
 				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
 			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_1">
-				<ejb-ref-name>ejb/dataprovider[1]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_2">
-				<ejb-ref-name>ejb/dataprovider[2]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
-			</ejb-local-ref>
-			<ejb-local-ref id="dataprovider_3">
-				<ejb-ref-name>ejb/dataprovider[3]</ejb-ref-name>
-				<ejb-ref-type>Session</ejb-ref-type>
-				<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-				<local>org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-				<ejb-link>security.jar#opencrx_core_CRX_security_mandatory</ejb-link>
-			</ejb-local-ref>
 			<!-- resource-ref -->
 			<resource-ref id="opencrx_core_CRX_kernel_datasource_0">
 				<res-ref-name>jdbc/datasource[0]</res-ref-name>
@@ -458,9 +389,9 @@
 		<container-transaction>
 			<method>
 				<ejb-name>opencrx_core_CRX_kernel_mandatory</ejb-name>
-				<method-name>createEntityProvider</method-name>
+				<method-name>execute</method-name>
 			</method>
-			<trans-attribute>Never</trans-attribute>
+			<trans-attribute>Required</trans-attribute>
 		</container-transaction>
 	</assembly-descriptor>
 </ejb-jar>

@@ -2,7 +2,7 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="110">
+			<array class="java.lang.String" length="122">
 				<void index="0">
 					<string>org:opencrx:kernel:activity1:Absence:note</string>
 				</void>
@@ -13,62 +13,67 @@
 					<string>org:opencrx:kernel:activity1:ExternalActivity:note</string>
 				</void>
 				<void index="3">
-					<string>org:opencrx:kernel:activity1:Fax:note</string>
-				</void>
-				<void index="4">
 					<string>org:opencrx:kernel:activity1:Incident:note</string>
 				</void>
-				<void index="5">
+				<void index="4">
 					<string>org:opencrx:kernel:activity1:Mailing:note</string>
 				</void>
-				<void index="6">
+				<void index="5">
 					<string>org:opencrx:kernel:activity1:Meeting:note</string>
 				</void>
-				<void index="7">
-					<string>org:opencrx:kernel:activity1:Mms:note</string>
-				</void>
-				<void index="8">
+				<void index="6">
 					<string>org:opencrx:kernel:activity1:PhoneCall:note</string>
 				</void>
-				<void index="9">
-					<string>org:opencrx:kernel:activity1:Sms:note</string>
-				</void>
-				<void index="10">
+				<void index="7">
 					<string>org:opencrx:kernel:activity1:Task:note</string>
 				</void>
-				<void index="11">
+				<void index="8">
 					<string>org:opencrx:kernel:activity1:Absence:followUp</string>
 				</void>
-				<void index="12">
+				<void index="9">
 					<string>org:opencrx:kernel:activity1:EMail:followUp</string>
 				</void>
-				<void index="13">
+				<void index="10">
 					<string>org:opencrx:kernel:activity1:ExternalActivity:followUp</string>
 				</void>
-				<void index="14">
-					<string>org:opencrx:kernel:activity1:Fax:followUp</string>
-				</void>
-				<void index="15">
+				<void index="11">
 					<string>org:opencrx:kernel:activity1:Incident:followUp</string>
 				</void>
-				<void index="16">
+				<void index="12">
 					<string>org:opencrx:kernel:activity1:Mailing:followUp</string>
 				</void>
-				<void index="17">
+				<void index="13">
 					<string>org:opencrx:kernel:activity1:Meeting:followUp</string>
 				</void>
-				<void index="18">
-					<string>org:opencrx:kernel:activity1:Mms:followUp</string>
-				</void>
-				<void index="19">
+				<void index="14">
 					<string>org:opencrx:kernel:activity1:PhoneCall:followUp</string>
 				</void>
-				<void index="20">
-					<string>org:opencrx:kernel:activity1:Sms:followUp</string>
-				</void>
-				<void index="21">
+				<void index="15">
 					<string>org:opencrx:kernel:activity1:Task:followUp</string>
 				</void>
+				<void index="15">
+					<string>org:opencrx:kernel:activity1:Task:followUp</string>
+				</void>
+
+				<void index="16">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:assignedActivity</string>
+				</void>
+				<void index="17">
+					<string>org:opencrx:kernel:home1:UserHome:assignedActivity</string>
+				</void>
+				<void index="18">
+					<string>org:opencrx:kernel:activity1:Segment:activityTracker</string>
+				</void>
+				<void index="19">
+					<string>org:opencrx:kernel:activity1:Segment:activityCategory</string>
+				</void>
+				<void index="20">
+					<string>org:opencrx:kernel:activity1:Segment:activityMilestone</string>
+				</void>
+				<void index="21">
+					<string>org:opencrx:kernel:activity1:Segment:activityCreator</string>
+				</void>
+
 				<void index="22">
 					<string>org:opencrx:kernel:activity1:ActivityGroup:activityNote</string>
 				</void>
@@ -334,12 +339,48 @@
 					<string>org:opencrx:kernel:account1:LegalEntity:assignedActivity</string>
 				</void>
 				<void index="108">
-					<string>org:opencrx:kernel:account1:UnspecifiedAccount:assignedActivity</string>
-				</void>
-				<void index="109">
-					<string>org:opencrx:kernel:home1:UserHome:assignedActivity</string>
+					<string>org:opencrx:kernel:activity1:Segment:activityType</string>
 				</void>
 
+				<void index="109">
+					<string>org:opencrx:kernel:activity1:Resource:workReportEntry</string>
+				</void>
+				<void index="110">
+					<string>org:opencrx:kernel:activity1:ActivityTracker:workReportEntry</string>
+				</void>
+				<void index="111">
+					<string>org:opencrx:kernel:activity1:ActivityCategory:workReportEntry</string>
+				</void>
+				<void index="112">
+					<string>org:opencrx:kernel:activity1:ActivityMilestone:workReportEntry</string>
+				</void>
+				<void index="113">
+					<string>org:opencrx:kernel:activity1:Absence:workReportEntry</string>
+				</void>
+				<void index="114">
+					<string>org:opencrx:kernel:activity1:EMail:workReportEntry</string>
+				</void>
+				<void index="115">
+					<string>org:opencrx:kernel:activity1:ExternalActivity:workReportEntry</string>
+				</void>
+				<void index="116">
+					<string>org:opencrx:kernel:activity1:Incident:workReportEntry</string>
+				</void>
+				<void index="117">
+					<string>org:opencrx:kernel:activity1:Mailing:workReportEntry</string>
+				</void>
+				<void index="118">
+					<string>org:opencrx:kernel:activity1:Meeting:workReportEntry</string>
+				</void>
+				<void index="119">
+					<string>org:opencrx:kernel:activity1:PhoneCall:workReportEntry</string>
+				</void>
+				<void index="120">
+					<string>org:opencrx:kernel:activity1:Task:workReportEntry</string>
+				</void>
+				<void index="121">
+					<string>org:opencrx:kernel:activity1:Segment:workReportEntry</string>
+				</void>
 
 			</array>
 		</void>
@@ -672,7 +713,7 @@
 							<string>°° Disabled</string>
 						</void>
 						<void property="iconKey">
-							<string>delete.gif</string>
+							<string>filter_disabled.gif</string>
 						</void>
 						<void property="condition">
 							<array class="org.openmdx.base.query.Condition" length="1">

@@ -229,14 +229,14 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- result is defined in  common.xml -->
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Calculate Actual Effort</_item>
+												<_item>Calculate Total Quantity from Work / Expense Records</_item>
 											</toolTip>
 											<label>
-												<_item>Calculate Actual Effort</_item>
+												<_item>Calculate Total Quantity from Work / Expense Records</_item>
 											</label>
 											<order>
 												<_item>500</_item>
@@ -247,7 +247,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort:Group:in">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity:Group:in">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -264,7 +264,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcActualEffort:Group:result">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:calcTotalQuantity:Group:result">
 										<_object>
 											<active>true</active>
 											<toolTip>

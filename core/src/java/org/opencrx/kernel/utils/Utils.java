@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.28 2009/03/08 17:04:48 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.37 2009/06/09 14:10:35 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.28 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:48 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,18 +55,22 @@
  */
 package org.opencrx.kernel.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jmi.reflect.RefObject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.opencrx.kernel.account1.jmi1.Account1Package;
@@ -78,25 +82,25 @@ import org.opencrx.kernel.depot1.jmi1.Depot1Package;
 import org.opencrx.kernel.forecast1.jmi1.Forecast1Package;
 import org.opencrx.kernel.generic.jmi1.GenericPackage;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
+import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
-import org.openmdx.application.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
-import org.openmdx.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
-import org.openmdx.application.dataprovider.transport.ejb.cci.Jmi1AccessorFactory_1;
-import org.openmdx.application.dataprovider.transport.ejb.cci.Jmi1AccessorFactory_2;
+import org.openmdx.application.persistence.ejb.Jmi1AccessorFactory_2;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
-import org.openmdx.base.mof.cci.Model_1_3;
+import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
+import org.openmdx.portal.servlet.ApplicationContext;
+import org.openmdx.portal.servlet.attribute.DateValue;
 
 public class Utils {
 
     //-----------------------------------------------------------------------
-    public static Model_1_3 getModel(
+    public static Model_1_0 getModel(
     ) {
-        Model_1_3 model = null;
+        Model_1_0 model = null;
         try {
             model = Model_1Factory.getModel();
         }
@@ -123,7 +127,7 @@ public class Utils {
     }
     
     //-----------------------------------------------------------------------
-    private static javax.jmi.reflect.RefPackage getOutermostPackage(
+    public static javax.jmi.reflect.RefPackage getOutermostPackage(
         PersistenceManager pm
     ) {
         return ((RefObject)pm.newInstance(org.opencrx.kernel.account1.jmi1.Segment.class)).refOutermostPackage();            
@@ -483,35 +487,8 @@ public class Utils {
         return null;
     }
     
-    //-----------------------------------------------------------------------
-    public static PersistenceManagerFactory getRemotePersistenceManagerFactory(
-    ) throws NamingException, ServiceException {
-        Context initialContext = new InitialContext();
-        Map<String, Object> configuration = new HashMap<String, Object>();
-        configuration.put(
-            Dataprovider_1ConnectionFactory.class.getName(),
-            new Dataprovider_1ConnectionFactoryImpl(
-                initialContext,
-                "data",
-                new String[]{"java:comp/env/ejb"}
-            )
-        );
-        configuration.put(
-            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-            Jmi1AccessorFactory_1.class.getName()
-        );
-        configuration.put(
-            ConfigurableProperty.Optimistic.qualifiedName(),
-            Boolean.TRUE.toString()
-        );
-        configuration.put(
-            ConfigurableProperty.BindingPackageSuffix.qualifiedName(),
-            "jmi1"
-        );
-        return JDOHelper.getPersistenceManagerFactory(configuration);
-    }
-
     //-------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     public static boolean areEqual(
         Object v1,
         Object v2
@@ -528,6 +505,92 @@ public class Utils {
         return v1.equals(v2);
     }
 
+    //-------------------------------------------------------------------------
+    public static BigDecimal getUomScaleFactor(
+        org.opencrx.kernel.uom1.jmi1.Uom from,
+        org.opencrx.kernel.uom1.jmi1.Uom to
+    ) {
+        if(from == null || to == null) {
+            return BigDecimal.ZERO;
+        }
+        else if(from.refMofId().equals(to.refMofId())) {
+            return BigDecimal.ONE;
+        }
+        else if(
+            (from.getBaseUom() != null) && 
+            from.getBaseUom().refMofId().equals(to.refMofId())
+        ) {
+            return from.getQuantity() != null ? 
+            	from.getQuantity() : 
+            	BigDecimal.ZERO;
+        }
+        else if(
+            (to.getBaseUom() != null) && 
+            to.getBaseUom().refMofId().equals(from.refMofId())
+        ) {
+            return (to.getQuantity() != null) && (to.getQuantity().signum() != 0) ? 
+            	new BigDecimal(1.0 / to.getQuantity().doubleValue()) : 
+            	BigDecimal.ZERO;
+        }
+        else if(
+            (from.getBaseUom() != null) && 
+            (to.getBaseUom() != null) && 
+            from.getBaseUom().refMofId().equals(to.getBaseUom().refMofId())
+        ) {
+            return (from.getQuantity() != null) && (to.getQuantity() != null) && (to.getQuantity().signum() != 0) ? 
+            	new BigDecimal(from.getQuantity().doubleValue() / to.getQuantity().doubleValue()) : 
+            	BigDecimal.ZERO;
+        }
+        else {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    public static SimpleDateFormat getLocalizedDateFormat(
+    	UserHome userHome
+    ) {
+    	// User settings
+    	Properties userSettings = new Properties();
+		try {
+	    	if(userHome != null && userHome.getSettings() != null) {
+	    		userSettings.load(
+	    			new ByteArrayInputStream(
+	    				userHome.getSettings().getBytes("UTF-8")
+	    			)
+	    	    );
+	    	}
+		}
+		catch(Exception e) {}
+		// Locale
+		Locale userLocale = Locale.getDefault();
+		if(userSettings.getProperty(ApplicationContext.PROPERTY_LOCALE_NAME) != null) {
+			String localeAsString = userSettings.getProperty(ApplicationContext.PROPERTY_LOCALE_NAME); 
+	        userLocale = new Locale(
+	        	localeAsString.substring(0, 2), 
+	        	localeAsString.substring(localeAsString.indexOf("_") + 1)
+	        );
+		}		
+    	SimpleDateFormat dateTimeFormat = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(
+        	java.text.DateFormat.SHORT,
+        	java.text.DateFormat.MEDIUM,
+        	userLocale
+        );
+        DateValue.assert4DigitYear(dateTimeFormat);
+        // TimeZone
+		if(userSettings.getProperty(ApplicationContext.PROPERTY_TIMEZONE_NAME) != null) {
+			try {
+	    		dateTimeFormat.setTimeZone(
+	    			TimeZone.getTimeZone(
+	    				userSettings.getProperty(ApplicationContext.PROPERTY_TIMEZONE_NAME)
+	    			)
+	            );
+    		}
+	    	catch(Exception e) {}
+    	}
+    	return dateTimeFormat;
+    }
+    	
 }
 
 //--- End of File -----------------------------------------------------------

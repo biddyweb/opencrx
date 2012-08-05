@@ -9,7 +9,7 @@
 			<property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO" />
 			<property name="openjpa.jdbc.MappingDefaults" value="IndexLogicalForeignKeys=false,IndexDiscriminator=false"/>
 			<property name="openjpa.jdbc.DBDictionary" value="mysql(CharacterColumnSize=256)"/>											
-			<property name="openjpa.ConnectionURL" value="jdbc:mysql://localhost:3306/CRX_2_4"/>
+			<property name="openjpa.ConnectionURL" value="jdbc:mysql://localhost:3306/CRX_2_5"/>
 			<property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>
 			<property name="openjpa.ConnectionUserName" value="root"/>
 			<property name="openjpa.ConnectionPassword" value="manager99"/>

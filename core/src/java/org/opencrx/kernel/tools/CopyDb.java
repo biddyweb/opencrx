@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.39 2009/03/20 18:15:30 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.41 2009/05/26 14:45:26 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.39 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/20 18:15:30 $
+ * Date:        $Date: 2009/05/26 14:45:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,10 +74,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.openmdx.application.configuration.Configuration;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.LayerConfigurationEntries;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.mof.spi.Model_1Factory;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.LayerConfigurationEntries;
 import org.openmdx.kernel.exception.BasicException;
 
 public class CopyDb {
@@ -188,7 +187,6 @@ public class CopyDb {
             Configuration configuration = new Configuration();
             configuration.values(LayerConfigurationEntries.BOOLEAN_TYPE).add(LayerConfigurationEntries.BOOLEAN_TYPE_STANDARD);
             configuration.values(LayerConfigurationEntries.XML_DATATYPES).add(Boolean.TRUE);
-            configuration.values(LayerConfigurationEntries.MODEL).add(Model_1Factory.getModel());
             configuration.values(LayerConfigurationEntries.DATABASE_CONNECTION_FACTORY );           
             db.activate(
                 (short)0,

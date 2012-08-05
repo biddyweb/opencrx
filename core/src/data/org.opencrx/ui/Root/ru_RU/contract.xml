@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:assignedAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначение счета</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначение счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:competitor" _operation="create">
                     <_object>
                       <label>
@@ -40,6 +51,28 @@
                       </label>
                       <toolTip>
                         <_item>Родств. деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связано с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связано с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Входящие связи</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Входящие связи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -192,6 +225,9 @@
                       <label>
                         <_item>Состояние</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Сост-е</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Состояние</_item>
                       </toolTip>
@@ -396,6 +432,138 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:linkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действителен с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действителен с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действителен до</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действителен до</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Исходящая связь контракта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Исходящая связь контракта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связанный контракт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связанный контракт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Входящая связь контракта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Входящая связь контракта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связано с контрактом</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связано с контрактом</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связано от контракта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связано от контракта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначение счета</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначение счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract:accountRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Роль</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Роль</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition" _operation="create">
                     <_object>
                       <label>
@@ -491,6 +659,17 @@
                       </label>
                       <toolTip>
                         <_item>UOM (Цена)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:ignoreProductConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Игнорировать конфигурацию продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Игнорировать конфигурацию продукта</_item>
                       </toolTip>
                     </_object>
                     <_content/>

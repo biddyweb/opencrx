@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ObjectIdBuilder.java,v 1.32 2009/03/08 17:04:53 wfro Exp $
+ * Name:        $Id: ObjectIdBuilder.java,v 1.35 2009/05/06 16:48:55 wfro Exp $
  * Description: ObjectIdBuilder
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.35 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:53 $
+ * Date:        $Date: 2009/05/06 16:48:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,7 +57,6 @@ package org.opencrx.kernel.layer.persistence.jdo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -65,6 +64,7 @@ import org.openmdx.base.exception.RuntimeServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 
+@SuppressWarnings("unchecked")
 public class ObjectIdBuilder {
 
     /**
@@ -98,7 +98,6 @@ public class ObjectIdBuilder {
         /* (non-Javadoc)
          * @see org.oasisopen.spi2.ObjectId#getQualifier(java.lang.Class, int)
          */
-        @SuppressWarnings("unchecked")
         public <E> E getQualifier(
             Class<E> qualifierClass, 
             int index
@@ -424,7 +423,6 @@ public class ObjectIdBuilder {
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/resource/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/assignedContract/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/assignedContract/:*"),
-        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/workReportEntry/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/resource/:*/assignedActivity/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/position/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*"),
@@ -492,7 +490,6 @@ public class ObjectIdBuilder {
         new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/removedPosition/:*/deliveryInformation/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/configurationTypeSet/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/configurationTypeSet/:*/configurationType/:*"),
-        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityTracker/:*/workReportEntry/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/contractRole/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/contractRole/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*/removedPosition/:*"),
@@ -518,8 +515,6 @@ public class ObjectIdBuilder {
         new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/productClassification/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/productClassification/:*/relationship/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/accountMembership/:*"),
-        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityMilestone/:*/workReportEntry/:*"),
-        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityCategory/:*/workReportEntry/:*"),
         new Path("xri:@openmdx::*/provider/:*/segment/:*/indexEntry/:*"),
         new Path("xri:@openmdx::*/provider/:*/segment/:*/:*/:*/propertySetEntry/:*"),
         new Path("xri:@openmdx::*/provider/:*/segment/:*/:*/:*/:*/:*/propertySetEntry/:*"),
@@ -549,7 +544,8 @@ public class ObjectIdBuilder {
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/involvedObject/:*")
     };
 
-    public static final List[] CLASS_NAMES = {
+    @SuppressWarnings("cast")
+    public static final List<String>[] CLASS_NAMES = new List[]{
         org.opencrx.kernel.account1.jpa3.Organization.CLASS,
         org.opencrx.security.identity1.jpa3.Segment.CLASS,
         org.openmdx.security.realm1.jpa3.Segment.CLASS,
@@ -624,7 +620,7 @@ public class ObjectIdBuilder {
         org.opencrx.kernel.account1.jpa3.Segment.CLASS,
         org.opencrx.kernel.model1.jpa3.Segment.CLASS,
         org.opencrx.kernel.depot1.jpa3.Segment.CLASS,
-        org.opencrx.kernel.activity1.jpa3.ActivityWorkRecord.CLASS,
+        org.opencrx.kernel.activity1.jpa3.WorkAndExpenseRecord.CLASS,
         org.opencrx.kernel.activity1.jpa3.ActivityVote.CLASS,
         org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
         org.opencrx.kernel.generic.jpa3.AdditionalExternalLink.CLASS,
@@ -636,9 +632,9 @@ public class ObjectIdBuilder {
         org.opencrx.kernel.forecast1.jpa3.Segment.CLASS,
         org.opencrx.kernel.account1.jpa3.ContactMembership.CLASS,
         org.opencrx.kernel.account1.jpa3.ContactMembership.CLASS,
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
+        Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable"),
+        Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable"),
+        Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable"),
         (List<String>)null,
         org.opencrx.kernel.workflow1.jpa3.Segment.CLASS,
         org.opencrx.kernel.uom1.jpa3.Segment.CLASS,
@@ -690,9 +686,8 @@ public class ObjectIdBuilder {
         org.opencrx.kernel.activity1.jpa3.ActivityType.CLASS,
         org.opencrx.kernel.activity1.jpa3.Calendar.CLASS,
         org.opencrx.kernel.activity1.jpa3.Resource.CLASS,
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "contract1", "AbstractContract")),
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "contract1", "AbstractContract")),
-        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
+        Arrays.asList("org", "opencrx", "kernel", "contract1", "AbstractContract"),
+        Arrays.asList("org", "opencrx", "kernel", "contract1", "AbstractContract"),
         org.opencrx.kernel.activity1.jpa3.Activity.CLASS,
         org.opencrx.kernel.contract1.jpa3.AbstractQuotePosition.CLASS,
         org.opencrx.kernel.activity1.jpa3.ActivityFilterGroup.CLASS,
@@ -760,7 +755,6 @@ public class ObjectIdBuilder {
         org.opencrx.kernel.contract1.jpa3.DeliveryInformation.CLASS,
         org.opencrx.kernel.product1.jpa3.ProductConfigurationTypeSet.CLASS,
         org.opencrx.kernel.product1.jpa3.ProductConfigurationType.CLASS,
-        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
         org.opencrx.kernel.contract1.jpa3.ContractRole.CLASS,
         org.opencrx.kernel.contract1.jpa3.ContractRole.CLASS,
         org.opencrx.kernel.contract1.jpa3.AbstractRemovedPosition.CLASS,
@@ -781,22 +775,20 @@ public class ObjectIdBuilder {
         org.openmdx.security.authorization1.jpa3.Privilege.CLASS,
         org.opencrx.security.identity1.jpa3.Subject.CLASS,
         org.openmdx.security.authentication1.jpa3.Credential.CLASS,
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
+        Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable"),
         org.opencrx.kernel.admin1.jpa3.ComponentConfiguration.CLASS,
         org.opencrx.kernel.product1.jpa3.ProductClassification.CLASS,
         org.opencrx.kernel.product1.jpa3.ProductClassificationRelationship.CLASS,
         org.opencrx.kernel.account1.jpa3.AccountMembership.CLASS,
-        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
-        org.opencrx.kernel.activity1.jpa3.WorkReportEntry.CLASS,
         org.opencrx.kernel.base.jpa3.IndexEntry.CLASS,
         org.opencrx.kernel.generic.jpa3.PropertySetEntry.CLASS,
         org.opencrx.kernel.generic.jpa3.PropertySetEntry.CLASS,
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
+        Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable"),
         org.opencrx.kernel.building1.jpa3.Facility.CLASS,
         org.opencrx.kernel.building1.jpa3.Facility.CLASS,
         org.opencrx.kernel.building1.jpa3.Facility.CLASS,
         org.opencrx.kernel.building1.jpa3.Facility.CLASS,
-        Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "building1", "AbstractBuildingUnit")),
+        Arrays.asList("org", "opencrx", "kernel", "building1", "AbstractBuildingUnit"),
         org.opencrx.kernel.building1.jpa3.InventoryItem.CLASS,
         org.opencrx.kernel.building1.jpa3.LinkableItemLinkTo.CLASS,
         org.opencrx.kernel.building1.jpa3.LinkableItemLinkTo.CLASS,
@@ -960,7 +952,6 @@ public class ObjectIdBuilder {
         "resource",
         "userHomeAssignedContract",
         "accountAssignedContract",
-        "workReportEntry1",
         "assignedActivity",
         "quotePos",
         "activityFilter2",
@@ -1028,7 +1019,6 @@ public class ObjectIdBuilder {
         "deliveryInfoRem",
         "configTypeSet",
         "configType",
-        "workReportEntry2",
         "depotHolderContractRole",
         "depotContractRole",
         "leadPosRem",
@@ -1054,8 +1044,6 @@ public class ObjectIdBuilder {
         "productClass",
         "productClassRel",
         "accountMembership",
-        "workReportEntry3",
-        "workReportEntry4",
         "indexEntry",
         "propertySetEntry1",
         "propertySetEntry2",

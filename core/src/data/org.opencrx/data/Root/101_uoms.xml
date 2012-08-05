@@ -131,6 +131,48 @@
 										</_object>
 										<_content/>
 									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="min" _operation="create">
+										<_object>
+											<description>Minute (time)</description>
+											<name>min</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>60.00</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/sec</baseUom>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="hour" _operation="create">
+										<_object>
+											<description>Hour (time)</description>
+											<name>hour</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>3600.00</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/sec</baseUom>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="day" _operation="create">
+										<_object>
+											<description>Day (time)</description>
+											<name>day</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>86400.00</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/sec</baseUom>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
 									<org.opencrx.kernel.uom1.Uom id="C" _operation="create">
 										<_object>
 											<description>Coulomb (electric charge) = A*s</description>
@@ -477,6 +519,62 @@
 											<isScheduleBaseUom>true</isScheduleBaseUom>
 											<quantity>1.00</quantity>
 											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="km" _operation="create">
+										<_object>
+											<description>Kilometer</description>
+											<name>km</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>1000.00</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/m</baseUom>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="inch" _operation="create">
+										<_object>
+											<description>Inch</description>
+											<name>inch</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>0.0254</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/m</baseUom>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="feet" _operation="create">
+										<_object>
+											<description>Feet</description>
+											<name>feet</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>0.3048</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/m</baseUom>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="mile" _operation="create">
+										<_object>
+											<description>Mile</description>
+											<name>mile</name>
+											<isScheduleBaseUom>false</isScheduleBaseUom>
+											<quantity>1609.344</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/SI</uomSchedule>
+											<baseUom>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uom/m</baseUom>
 											<accessLevelBrowse>4</accessLevelBrowse>
 											<accessLevelUpdate>2</accessLevelUpdate>
 											<accessLevelDelete>2</accessLevelDelete>

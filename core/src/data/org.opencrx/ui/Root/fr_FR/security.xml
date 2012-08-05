@@ -462,6 +462,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:isFinal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Groupe de base</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Groupe de base</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:subject" _operation="create">
                     <_object>
                       <label>
@@ -784,10 +795,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:LocalUserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Groupe dutilisateur local</_item>
+                        <_item>Groupe d&apos;utilisateur local</_item>
                       </label>
                       <toolTip>
-                        <_item>Groupe dutilisateur local</_item>
+                        <_item>Groupe d&apos;utilisateur local</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -795,10 +806,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:LocalUserGroup:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Groupe dutilisateur local</_item>
+                        <_item>Groupe d&apos;utilisateur local</_item>
                       </label>
                       <toolTip>
-                        <_item>Groupe dutilisateur local</_item>
+                        <_item>Groupe d&apos;utilisateur local</_item>
                       </toolTip>
                     </_object>
                     <_content/>

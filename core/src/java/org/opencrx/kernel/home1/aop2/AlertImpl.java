@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AlertImpl.java,v 1.7 2008/11/26 09:40:42 wfro Exp $
+ * Name:        $Id: AlertImpl.java,v 1.14 2009/04/20 17:56:46 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/26 09:40:42 $
+ * Date:        $Date: 2009/04/20 17:56:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,36 +55,31 @@
  */
 package org.opencrx.kernel.home1.aop2;
 
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.listener.StoreCallback;
-
 import org.opencrx.kernel.backend.UserHomes;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
+import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.jmi1.BasePackage;
 
-public class AlertImpl implements StoreCallback {
+public class AlertImpl
+	<S extends org.opencrx.kernel.home1.jmi1.Alert,N extends org.opencrx.kernel.home1.cci2.Alert,C extends Void>
+	extends AbstractObject<S,N,C> {
 
     //-----------------------------------------------------------------------
     public AlertImpl(
-        org.opencrx.kernel.home1.jmi1.Alert same,
-        org.opencrx.kernel.home1.cci2.Alert next
+        S same,
+        N next
     ) {
-        this.same = same;
-        this.next = next;
+    	super(same, next);
     }
 
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void markAsAccepted(
     ) {
         try {       
-            PersistenceManager pm = JDOHelper.getPersistenceManager(this.same);            
-            UserHomes.markAsAccepted(
-                this.same,
-                pm
+            UserHomes.getInstance().markAsAccepted(
+                this.sameObject()
             );
-            return ((BasePackage)this.same.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
+            return super.newVoid();
         }
         catch(ServiceException e) {
             throw new JmiServiceException(e);
@@ -95,28 +90,14 @@ public class AlertImpl implements StoreCallback {
     public org.openmdx.base.jmi1.Void markAsRead(
     ) {
         try {        
-            PersistenceManager pm = JDOHelper.getPersistenceManager(this.same);            
-            UserHomes.markAsRead(
-                this.same,
-                pm
+            UserHomes.getInstance().markAsRead(
+                this.sameObject()
             );
-            return ((BasePackage)this.same.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
+            return super.newVoid();
         }
         catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                        
     }
-    
-    //-----------------------------------------------------------------------
-    public void jdoPreStore(
-    ) {
-        boolean inCallback = true;
-    }
-    
-    //-----------------------------------------------------------------------
-    // Members
-    //-----------------------------------------------------------------------
-    protected final org.opencrx.kernel.home1.jmi1.Alert same;
-    protected final org.opencrx.kernel.home1.cci2.Alert next;
-    
+        
 }

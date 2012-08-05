@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.66 2009/03/08 17:04:54 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.73 2009/06/09 14:10:35 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.66 $
+ * Revision:    $Revision: 1.73 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:54 $
+ * Date:        $Date: 2009/06/09 14:10:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefStruct;
 
@@ -89,8 +90,8 @@ import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.cci.SystemAttributes;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.accessor.jmi.spi.RefMetaObject_1;
@@ -122,8 +123,8 @@ public class PortalExtension
     private DateFormat getDateFormat(
         String language
     ) {
-        Map dateFormatters = (Map)PortalExtension.cachedDateFormat.get();
-        DateFormat dateFormat = (DateFormat)dateFormatters.get(language);
+        Map<String,DateFormat> dateFormatters = PortalExtension.cachedDateFormat.get();
+        DateFormat dateFormat = dateFormatters.get(language);
         if(dateFormat == null) {
             dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, new Locale(language));
             dateFormatters.put(
@@ -135,8 +136,9 @@ public class PortalExtension
     }
     
     //-------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     @Override
-    public List getFindObjectsBaseFilter(
+    public List<FilterProperty> getFindObjectsBaseFilter(
         ApplicationContext application,
         RefObject_1_0 context, 
         String referenceName
@@ -176,8 +178,8 @@ public class PortalExtension
     private DateFormat getTimeFormat(
         String language
     ) {
-        Map timeFormatters = (Map)PortalExtension.cachedTimeFormat.get();
-        DateFormat timeFormat = (DateFormat)timeFormatters.get(language);
+        Map<String,DateFormat> timeFormatters = PortalExtension.cachedTimeFormat.get();
+        DateFormat timeFormat = timeFormatters.get(language);
         if(timeFormat == null) {
             timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, new Locale(language)); 
             timeFormatters.put(
@@ -192,8 +194,8 @@ public class PortalExtension
     private DecimalFormat getDecimalFormat(
         String language
     ) {
-        Map decimalFormatters = (Map)PortalExtension.cachedDecimalFormat.get();
-        DecimalFormat decimalFormat = (DecimalFormat)decimalFormatters.get(language);
+        Map<String,DecimalFormat> decimalFormatters = PortalExtension.cachedDecimalFormat.get();
+        DecimalFormat decimalFormat = decimalFormatters.get(language);
         if(decimalFormat == null) {
             decimalFormat = (DecimalFormat)DecimalFormat.getInstance(new Locale(language)); 
             decimalFormatters.put(
@@ -205,6 +207,7 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     @Override
     public String getTitle(
         RefObject_1_0 refObj,
@@ -215,7 +218,7 @@ public class PortalExtension
         if(refObj == null) {
             return "#NULL";
         }
-        if(refObj.refIsNew() || !refObj.refIsPersistent()) {
+        if(JDOHelper.isNew(refObj) || !JDOHelper.isPersistent(refObj)) {
             return "Untitled";
         }
         try {
@@ -234,7 +237,7 @@ public class PortalExtension
           }
           else if(refObj instanceof org.opencrx.kernel.product1.jmi1.ProductBasePrice) {
               org.opencrx.kernel.product1.jmi1.ProductBasePrice obj = (org.opencrx.kernel.product1.jmi1.ProductBasePrice)refObj;
-              Map currencyTexts = codes.getLongText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", locale, true, true);
+              Map<Short,String> currencyTexts = codes.getLongText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", locale, true, true);
               try {
                   return this.toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
               }
@@ -305,16 +308,20 @@ public class PortalExtension
                           org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)application.getPmData().getObjectById(
                               recipient.refGetPath().getParent().getParent()
                           );
-                          String messageSubject = URLEncoder.encode(email.getMessageSubject(), "UTF-8").replace("+", "%20");
-                          String messageBody = URLEncoder.encode(email.getMessageBody(), "UTF-8").replace("+", "%20");
+                          String messageSubject = email.getMessageSubject() == null ? 
+                        	  "" :
+                        	  URLEncoder.encode(email.getMessageSubject(), "UTF-8").replace("+", "%20");
+                          String messageBody = email.getMessageBody() == null ?
+                        	  "" :
+                        	  URLEncoder.encode(email.getMessageBody(), "UTF-8").replace("+", "%20");
                           // Browser limit
                           if(messageBody.length() > 1500) {
                               messageBody = messageBody.substring(0, 1500);
                           }
-                          return 
-                              this.getTitle(address, locale, localeAsString, application) + 
-                              "?subject=" + messageSubject +
-                              "&body=" + messageBody;
+                          String title = this.getTitle(address, locale, localeAsString, application);
+                          return
+                              title + 
+                              (title.indexOf("@") > 0 ? "?subject=" + messageSubject + "&body=" + messageBody : "");
                       }
                   }
                   else {
@@ -379,7 +386,7 @@ public class PortalExtension
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PostalAddressable) {
               String address = "";
               int nLines = 0;
-              for(Iterator i = ((List)refObj.refGetValue("postalAddressLine")).iterator(); i.hasNext(); ) {
+              for(Iterator<String> i = ((List<String>)refObj.refGetValue("postalAddressLine")).iterator(); i.hasNext(); ) {
                   String line = this.toS(i.next());
                   if(line.length() > 0) {
                       if(nLines > 0) address += "<br />";
@@ -387,7 +394,7 @@ public class PortalExtension
                       nLines++;
                   }
               }
-              for(Iterator i = ((List)refObj.refGetValue("postalStreet")).iterator(); i.hasNext(); ) {
+              for(Iterator<String> i = ((List<String>)refObj.refGetValue("postalStreet")).iterator(); i.hasNext(); ) {
                   String street = this.toS(i.next());
                   if(street.length() > 0) {
                       if(nLines > 0) address += "<br />";
@@ -699,7 +706,7 @@ public class PortalExtension
         
         // org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition
         if("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition".equals(qualifiedFeatureName)) {
-            List selectableValues = null;
+            List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
                 org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)context;
                 org.opencrx.kernel.activity1.jmi1.ActivityType activityType = null;
@@ -713,14 +720,13 @@ public class PortalExtension
                     processState = activity.getProcessState();
                 } catch(Exception e) {}
                 if((activityType != null) && (processState != null)) {
-                    selectableValues = new ArrayList();
+                    selectableValues = new ArrayList<ObjectReference>();
                     org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = activityType.getControlledBy();
                     processState = activity.getProcessState();
                     org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery transitionFilter = activityPkg.createActivityProcessTransitionQuery();
                     transitionFilter.orderByNewPercentComplete().ascending();
-                    for(Iterator i = activityProcess.getTransition(transitionFilter).iterator(); i.hasNext(); ) {
-                        org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition = 
-                            (org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition)i.next();
+                    List<org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition> transitions = activityProcess.getTransition(transitionFilter);
+                    for(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition: transitions) {
                         if(transition.getPrevState().equals(processState)) {
                             selectableValues.add(
                                 new ObjectReference(transition, application)
@@ -735,7 +741,7 @@ public class PortalExtension
         }
         // org:opencrx:kernel:activity1:ActivityAssignToParams:resource
         else if("org:opencrx:kernel:activity1:ActivityAssignToParams:resource".equals(qualifiedFeatureName)) {
-            List selectableValues = null;
+            List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
                 org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)context;
                 Path activityIdentity = new Path(activity.refMofId());
@@ -749,13 +755,10 @@ public class PortalExtension
                     );
                 org.opencrx.kernel.activity1.cci2.ResourceQuery filter = activityPkg.createResourceQuery();
                 filter.orderByName().ascending();
-                selectableValues = new ArrayList();
+                selectableValues = new ArrayList<ObjectReference>();
                 int count = 0;
-                for(
-                    Iterator i = activitySegment.getResource(filter).iterator(); 
-                    i.hasNext() && (count < 20);
-                ) {
-                    org.opencrx.kernel.activity1.jmi1.Resource resource = (org.opencrx.kernel.activity1.jmi1.Resource)i.next();
+                List<org.opencrx.kernel.activity1.jmi1.Resource> resources = activitySegment.getResource(filter);
+                for(org.opencrx.kernel.activity1.jmi1.Resource resource: resources) {
                     if(resource != null) {
                         selectableValues.add(
                             new ObjectReference(resource, application)
@@ -777,7 +780,7 @@ public class PortalExtension
             "org:opencrx:kernel:activity1:ResourceAddWorkRecordByPeriodParams:activity".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity".equals(qualifiedFeatureName)
         ) {
-            List selectableValues = null;
+            List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.activity1.jmi1.Resource) {
                 org.opencrx.kernel.activity1.jmi1.Resource resource = 
                     (org.opencrx.kernel.activity1.jmi1.Resource)context;
@@ -788,15 +791,16 @@ public class PortalExtension
                 org.opencrx.kernel.activity1.cci2.ActivityQuery filter = activityPkg.createActivityQuery();
                 filter.thereExistsPercentComplete().lessThan(new Short((short)100));
                 filter.orderByActivityNumber().ascending();
-                selectableValues = new ArrayList();
+                selectableValues = new ArrayList<ObjectReference>();
                 int count = 0;
+                List<org.opencrx.kernel.activity1.jmi1.Activity> activities = resource.getAssignedActivity(filter);
                 for(
-                    Iterator i = resource.getAssignedActivity(filter).iterator(); 
+                    Iterator<org.opencrx.kernel.activity1.jmi1.Activity> i = activities.iterator(); 
                     i.hasNext() && count < 20; 
                     count++
                 ) {
                     selectableValues.add(
-                        new ObjectReference((org.opencrx.kernel.activity1.jmi1.Activity)i.next(), application)
+                        new ObjectReference(i.next(), application)
                     );
                 }
                 // Show at most 20 values in drop down. Otherwise show lookup
@@ -816,16 +820,16 @@ public class PortalExtension
             "org:opencrx:kernel:base:UriProperty:uriValue".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:base:DecimalProperty:decimalValue".equals(qualifiedFeatureName)
         ) {
-            List selectableValues = null;
+            List<String> selectableValues = null;
             if(context instanceof org.opencrx.kernel.base.jmi1.Property) {
                 org.opencrx.kernel.base.jmi1.Property property = 
                     (org.opencrx.kernel.base.jmi1.Property)context;
                 try {
                     if(property.getDomain() != null) {
-                        selectableValues = new ArrayList();
+                        selectableValues = new ArrayList<String>();
                         org.opencrx.kernel.code1.jmi1.CodeValueContainer domain = property.getDomain();
-                        for(Iterator i = domain.getEntry().iterator(); i.hasNext(); ) {
-                            org.opencrx.kernel.code1.jmi1.AbstractEntry entry = (org.opencrx.kernel.code1.jmi1.AbstractEntry)i.next();
+                        Collection<org.opencrx.kernel.code1.jmi1.AbstractEntry> entries = domain.getEntry();
+                        for(org.opencrx.kernel.code1.jmi1.AbstractEntry entry: entries) {
                             selectableValues.add(
                                 entry.getEntryValue() != null 
                                     ? entry.getEntryValue()
@@ -983,20 +987,6 @@ public class PortalExtension
     }
         
     //-------------------------------------------------------------------------
-    private boolean isPhoneNumber(
-        String text
-    ) {
-        if(!text.startsWith("+")) return false;
-        for(int i = 1; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if(!Character.isDigit(c) && (c != '-') && (c != ' ') && (c != '(') && (c != ')')) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    //-------------------------------------------------------------------------
     /**
      * The default implementation handles the following tags:
      * <ul>
@@ -1050,10 +1040,10 @@ public class PortalExtension
                     filter.thereExistsActivityNumber().equalTo(
                         activityNumber
                     );
-                    Collection activities = activitySegment.getActivity(filter);
+                    Collection<org.opencrx.kernel.activity1.jmi1.Activity> activities = activitySegment.getActivity(filter);
                     if(activities.size() == 1) {
                         ObjectReference objRef = new ObjectReference(
-                            (RefObject_1_0)activities.iterator().next(),
+                            activities.iterator().next(),
                             application
                         );
                         Action action = objRef.getSelectObjectAction();
@@ -1157,6 +1147,9 @@ public class PortalExtension
         else if(FormattedNoteDataBinding.class.getName().equals(dataBindingName)) {
             return new FormattedNoteDataBinding(application);
         }
+        else if(DocumentDataBinding.class.getName().equals(dataBindingName)) {
+            return new DocumentDataBinding();
+        }
         else {
             return super.getDataBinding(
                 dataBindingName,
@@ -1193,8 +1186,8 @@ public class PortalExtension
     //-------------------------------------------------------------------------
     private static final long serialVersionUID = 3761691203816992816L;
 
-    private static final Set CLASSES_WITH_USER_DEFINABLE_QUALIFER =
-        new HashSet(Arrays.asList(
+    private static final Set<String> CLASSES_WITH_USER_DEFINABLE_QUALIFER =
+        new HashSet<String>(Arrays.asList(
             new String[]{
                 "org:opencrx:security:realm1:PrincipalGroup",
                 "org:opencrx:security:realm1:Principal",                
@@ -1204,19 +1197,19 @@ public class PortalExtension
             }
         ));
     
-    private static ThreadLocal cachedDateFormat = new ThreadLocal() {
-        protected synchronized Object initialValue() {
-            return new HashMap();
+    private static ThreadLocal<Map<String,DateFormat>> cachedDateFormat = new ThreadLocal<Map<String,DateFormat>>() {
+        protected synchronized Map<String,DateFormat> initialValue() {
+            return new HashMap<String,DateFormat>();
         }
     };
-    private static ThreadLocal cachedTimeFormat = new ThreadLocal() {
-        protected synchronized Object initialValue() {
-            return new HashMap();
+    private static ThreadLocal<Map<String,DateFormat>> cachedTimeFormat = new ThreadLocal<Map<String,DateFormat>>() {
+        protected synchronized Map<String,DateFormat> initialValue() {
+            return new HashMap<String,DateFormat>();
         }
     };
-    private static ThreadLocal cachedDecimalFormat = new ThreadLocal() {
-        protected synchronized Object initialValue() {
-            return new HashMap();
+    private static ThreadLocal<Map<String,DecimalFormat>> cachedDecimalFormat = new ThreadLocal<Map<String,DecimalFormat>>() {
+        protected synchronized Map<String,DecimalFormat> initialValue() {
+            return new HashMap<String,DecimalFormat>();
         }
     };
     

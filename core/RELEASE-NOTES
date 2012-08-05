@@ -1,5 +1,5 @@
-Release Name: openCRX/Core 2.4.1
-Release Date: 2009-03-23
+Release Name: openCRX/Core 2.5.0
+Release Date: 2009-06-08
 
 ---------------------------------------------------------------------
 Notes:
@@ -51,283 +51,113 @@ openMDX (http://www.openmdx.org/)
 ---------------------------------------------------------------------
 
 0.    SUMMARY
-      * Wizards which make the user interface more intuitive to use
-      * User-defineable forms
-      * Migration from JPOX to OpenJPA for database schema generation
-      * Support for Apache OpenEJB
-      * Improved performance
-      * Fixed bugs
+      * Migration to openMDX 2 architecture
+      * Improvements for work and expense record management
+      * Bug fixes
             
-      For more information see below and http://www.opencrx.org/opencrx/2.4/new.htm
+      For more information see below and http://www.opencrx.org/opencrx/2.5/new.htm
 
 
 1.    NEW FEATURES
-
-      CR10008389
-      Notifications as RSS feed. NewsServlet added.
       
-      CR10008279
-      User interface that is more intuitive to use. Added the following
-      wizards:
-      * CreateProjectWizard
-      * CreateActivityWizard
-      * ScheduleEventWizard / VoteForEvent
-      * CreateProductWizard
-      * CreateContractWizard
-      * CreateLeadWizard
-      * CreateContactWizard
-      
-      CR10008309
-      Forms: allow to define forms which are composed from customized fields.
-      A form consists of a set of field groups and a field group of a set
-      of fields. A field definition is specified by the class name and
-      feature name of a modeled, customized field and a field order. Below
-      is a sample definition:
-      
-			<?xml version="1.0" encoding="UTF-8"?>
-			<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
-			  <_object/>
-			  <_content>
-			    <provider>
-			      <org.openmdx.base.Provider qualifiedName="MDX" _operation="null">
-			        <_object/>
-			        <_content>
-			          <segment>
-			            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
-			              <_object/>
-			              <_content>
-						            <org.openmdx.ui1.FormDefinition name="ProductBasePriceForm">
-						              <_object>
-						                <title>
-						                  <_item>Product Price</_item>
-						                </title>
-						                <toolTip>
-						                  <_item>Product Price</_item>
-						                </toolTip>
-						              </_object>
-						              <_content>
-						                <formFieldGroupDefinition>
-						                  <org.openmdx.ui1.FormFieldGroupDefinition name="ProductBasePriceInformation">
-						                    <_object>
-						                      <label>
-						                        <_item>Product Price</_item>
-						                      </label>
-						                      <order>10</order>
-						                      <columnBreakAtElement>
-						                        <_item>4</_item>
-						                        <_item>8</_item>
-						                      </columnBreakAtElement>
-						                    </_object>
-						                    <_content>
-						                      <formFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="usage">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
-						                            <featureName>usage</featureName>
-						                            <order>100</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="priceLevel">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractPriceLevel</forClass>
-						                            <featureName>basedOn</featureName>
-						                            <order>200</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="price">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
-						                            <featureName>price</featureName>
-						                            <order>300</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="quantityFrom">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
-						                            <featureName>quantityFrom</featureName>
-						                            <order>400</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="quantityTo">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
-						                            <featureName>quantityTo</featureName>
-						                            <order>500</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="discountIsPercentage">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
-						                            <featureName>discountIsPercentage</featureName>
-						                            <order>600</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                        <org.openmdx.ui1.FormFieldDefinition id="discount">
-						                          <_object>
-						                            <forClass>org:opencrx:kernel:product1:AbstractProductPrice</forClass>
-						                            <featureName>discount</featureName>
-						                            <order>700</order>                            
-						                          </_object>
-						                          <_content />
-						                        </org.openmdx.ui1.FormFieldDefinition>
-						                      </formFieldDefinition>
-						                    </_content>
-						                  </org.openmdx.ui1.FormFieldGroupDefinition>
-						                </formFieldGroupDefinition>
-						              </_content>
-						            </org.openmdx.ui1.FormDefinition>                       
-						          </formDefinition>
-			              </_content>
-			            </org.openmdx.ui1.Segment>
-			          </segment>
-			        </_content>
-			      </org.openmdx.base.Provider>
-			    </provider>
-			  </_content>
-			</org.openmdx.base.Authority>
-      
-      The form can then be used in a wizard as follows:
-      
-			1. Get the form
-			org.openmdx.ui1.jmi1.FormDefinition productBasePriceFormDefinition = app.getUiFormDefinition("ProductBasePriceForm");
-			org.openmdx.portal.servlet.control.FormControl productBasePriceForm = new org.openmdx.portal.servlet.control.FormControl(
-				formDefinition.refGetPath().getBase(),
-				app.getCurrentLocaleAsString(),
-				app.getCurrentLocaleAsIndex(),
-				app.getUiContext(),
-				productBasePriceFormDefinition
-			);
-			
-			2. Read the fields from an HttpRequest into a field value map
-			Map formValues = new HashMap();
-			productBasePriceForm.updateObject(
-				request.getParameterMap(),
-				formValues,
-				app,
-				pm
-			);
-			
-			3. Paint the form
-			form.paint(
-				p,
-				null, // frame
-				true // forEditing
-			);
-			p.flush();
-
-
-      CR10008349
-      Support for OpenEJB. Setup is done as follows:
-      
-			From Apache get:
-			* tomcat 6.0.18
-			
-			From openMDX get:
-			* openmdx-openejb.war
-			  openmdx-openejb.war is the original openejb.war from Apache OpenEJB with the 
-			  following modifications: 
-			  - Patch for TomcatWebAppBuilder which allows to load context.xml files from 
-			    WebApps META-INF
-			  - Patch for MailSessionFactory which allows to use multiple mail sessions
-			  - Deployment factory for in-process deployment, log stream for slf4j.
-			* openmdx-base.jar, openmdx-base-ext.jar
-			* catalina.jar which contains the ExtendedJDBCRealm
-			* tomcat-juli.jar which contains xri protocol handler
-			* slf4j-openmdx1.jar
-			
-			From openCRX get:
-			* opencrx-core-CRX.ear
-      
-			Installation                                                                                                                       
-			* Unzip Tomcat
-			* Copy openmdx-openejb.war to webapps and rename to 0-openejb.war. This asserts 
-			  that openejb.war is the first WebApp deployed by tomcat
-			* Copy openmdx-base.jar, openmdx-base-ext.jar, catalina.jar, slf4j-openmdx1.jar, database 
-			  driver jars to lib
-			* Copy tomcat-juli.jar to bin
-			* Create directory apps (same dir level as webapps) and copy opencrx-core-CRX.ear to apps
-			* Copy openejb.xml to conf. Adapt JDBC resource.
-			* Add users to tomcat-users.xml
-			* Start Tomcat with the same -D options as Tomcat+LWC.      
-      
-			Configuring Security Realm with in opencrx-core-CRX.ear                                                  
-			The WebApps in opencrx-core-CRX.ear have a context.xml located in the META-INF 
-			directory of each WebApp. The Realm is configured by setting the following 
-			environment variables (-D option):			
-			-Dopencrx.CRX.jdbc.driverName="org.postgresql.Driver" 
-			-Dopencrx.CRX.jdbc.url="jdbc:postgresql://127.0.0.1:5432/CRX_2_4"
-			-Dopencrx.CRX.jdbc.userName="postgres" 
-			-Dopencrx.CRX.jdbc.password="..."
-			
+      CR10008468
+      Final PrincipalGroups. Add flag to mark PrincipalGroups as final. Access 
+      level deep does not calculate subgroups for final principal groups. isFinal
+      can therefore be used to fine-control the behaviour of access level deep.
 
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
+      
+      CR10008468
+      Final PrincipalGroups. Add flag to mark PrincipalGroups as final. The access
+      control plugin does not subgroups for final principal groups in case of
+      accessLevelBrowse=access level deep. 
+       
+      CR10008467
+      Work and Expense record. Extend existing work record so that expenses 
+      can be stored as well. Wizard CreateWorkAndExpenseRecord which allows
+      user-friendly management of work and expense records. 
+            
+      CR10007950
+      Migrate application plugin to openMDX 2 architecture. Backend classes
+      in package org.opencrx.kernel.backend are fully rewritten. The backend
+      now uses the typed jmi1 openCRX API instead of the deprecated, generic 
+      openMDX 1 RequestCollection/DataproviderObject API. A backend is now 
+      organized as library. The methods can be used in wizards, portal 
+      extensions, data bindings or backend extensions. beClass.getInstance(), 
+      e.g. Accounts.getInstance() allows an easy-to-use lookup. The standard 
+      backend classes can be overriden by user-defined implementations.
+      This way the standard openCRX business-logic can easily be adapted and
+      extended.
+      
+      A user-defined backend class can be added as follows:
+      
+      1. Write a class which extends one of the standard backend classes, 
+      e.g. Accounts as follows:
+      
+      package com.mycompany.opencrx.backend;
 
-			CR10008387
-			Migrate models to RSM 7.5.
+      public class Accounts extends org.opencrx.kernel.backend.Accounts {
 
-      CR20018534
-      Replace JPOX by OpenJPA. The model mapper now generates JPA compliant
-      persistence classes and a default persistence mapping (orm.xml). The
-      JDO2 mapping is not supported anymore. The ant build-library provides
-      the following targets:
-      * enhance: enhances the classes listed in orm.xml
-      * create-schema: orm.xml --> openjpa-schema.xml
-      * create-sql: openjpa-schema --> sql build and upgrade script            
+	    public static void register(
+	    ) {
+		    registerImpl(new com.mycompany.opencrx.backend.Accounts());
+	    }
+	
+        protected Accounts(
+        ) {
+        }
+        
+        ...
+      }
+
+      2. Extend the standard Configuration class and register your backend 
+      class as follows:
+
+      package com.mycompany.opencrx.backend;
+            
+      public class Configuration extends org.opencrx.kernel.aop2.Configuration {
+
+	    public Configuration(
+        ) {
+		   super();
+		   com.mycompany.opencrx.backend.Accounts.register();
+	    }
+	
+      }
+              
+      3. Register the configuration class in 
+      src/ear/opencrx-core-CRX.ear/gateway.jar/META-INF/ejb-jar.xml. This can
+      be done by adapting the entry configuration.class.name in the
+      build.properties file.
+      
+      
+      CR10008417
+      Replace openMDX/Log by SLF4J / JDK Logger. The sub-project openMDX/Log is
+      not used anymore by openCRX. Tomcat+OpenEJB can therefore be configured
+      as follows:
+      * Option -Dorg.openmdx.log.config.filename can be removed and corresponding
+        log properties file can be removed
+      * Update CATALINA_HOME/bin/tomcat-juli.jar from openmdx/jre-1.5/core/lib
+      * Update CATALINA_HOME/lib/openmdx-base.jar from openmdx/jre-1.5/core/lib
+      * Add slf4j-jdk14-1.5.6.jar to CATALINA_HOME/lib
+      * Remove slf4j-openmdx1.jar from CATALINA_HOME/lib
+      * Adapt log configuration in CATALINA_HOME/conf/logging.properties to your needs
+      * Remove LogConsoleServlet from customized web.xml
             
 2.1.  FIXED BUGS
       
-      SF6884208
-      When I run ant script: 
-
-      ant -Dformat.source=openmdx2 -Dformat.target=openmdx2
-      -Ddb.jdbc.driver.classpath="D:\temp\hsqldb.jar;D:\temp\ojdbc14.jar"
-      -Ddb.jdbc.url.source="jdbc:hsqldb:hsql://127.0.0.1:9001/CRX_2_4"
-      -Ddb.jdbc.driver.source="org.hsqldb.jdbcDriver" -Ddb.username.source="sa"
-      -Ddb.password.source="manager99"
-      -Ddb.jdbc.url.target="jdbc:oracle:thin:@localhost:1521:XE"
-      -Ddb.jdbc.driver.target="oracle.jdbc.driver.OracleDriver"
-      -Ddb.username.target="CRX_CRX" -Ddb.password.target="123" CopyDb
-
-      I get an error: [java] java.lang.NoClassDefFoundError:
-      org/openmdx/kernel/application/client/Launch
-      
-      SF6853479
-      I tried http://www.opencrx.org/opencrx/2.3/new.htm#REST in 2.3 it is ok. But
-      in 2.4 I get an error:
-
-      javax.servlet.ServletException: Servlet.init() for servlet RestServlet threw exception
-	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
-	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
-	      org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:525)
-	      org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
-	      org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
-	      org.apache.coyote.http11.Http11AprProcessor.process(Http11AprProcessor.java:857)
-	      org.apache.coyote.http11.Http11AprProtocol$Http11ConnectionHandler.process(Http11AprProtocol.java:565)
-	      org.apache.tomcat.util.net.AprEndpoint$Worker.run(AprEndpoint.java:1509)
-	      java.lang.Thread.run(Thread.java:595)
-
-      root cause 
-
-      java.lang.NoClassDefFoundError:
-      org/openmdx/application/dataprovider/transport/ejb/cci/Jmi1AccessorFactory_2org.openmdx.application.rest.RestServlet.getPersistenceManagerFactory(RestServlet.java:1317)
-	      org.openmdx.application.rest.RestServlet.init(RestServlet.java:1338)
-	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
-	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
-	      org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:525)
-	      org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
-	      org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
-	      org.apache.coyote.http11.Http11AprProcessor.process(Http11AprProcessor.java:857)
-	      org.apache.coyote.http11.Http11AprProtocol$Http11ConnectionHandler.process(Http11AprProtocol.java:565)
-	      org.apache.tomcat.util.net.AprEndpoint$Worker.run(AprEndpoint.java:1509)
-	      java.lang.Thread.run(Thread.java:595)
+      SF329844
+      So I did a post with the following settings:  
+      POST http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/7wmWgCjdEd6ri3Nu6Dapag/member 
+      <?xml version="1.0"?> 
+      <org.opencrx.kernel.account1.Member> 
+        <name>MyName</name> 
+        <account>xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/NI7XwEIBEd29BeMf4vj8cA</account> 
+      </org.opencrx.kernel.account1.Member> 
+      NI7XwEIBEd29BeMf4vj8cA should become a member of 7wmWgCjdEd6ri3Nu6Dapag. 
+      Anyway, I get a server error, without using the account argument all is fine.      
 
 2.2   REMOVED FEATURES
       none

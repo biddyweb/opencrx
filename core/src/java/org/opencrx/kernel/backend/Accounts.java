@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.36 2009/03/15 11:18:17 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.57 2009/05/26 14:43:00 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.36 $
+ * Revision:    $Revision: 1.57 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/15 11:18:17 $
+ * Date:        $Date: 2009/05/26 14:43:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,20 +56,48 @@
 package org.opencrx.kernel.backend;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.opencrx.kernel.account1.cci2.AccountAddressQuery;
+import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.cci2.ContactMembershipQuery;
+import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
+import org.opencrx.kernel.account1.cci2.PhoneNumberQuery;
+import org.opencrx.kernel.account1.cci2.PostalAddressQuery;
+import org.opencrx.kernel.account1.cci2.RoomQuery;
+import org.opencrx.kernel.account1.cci2.WebAddressQuery;
+import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
+import org.opencrx.kernel.account1.jmi1.AbstractFilterAddress;
+import org.opencrx.kernel.account1.jmi1.AbstractGroup;
+import org.opencrx.kernel.account1.jmi1.AbstractOrganizationalUnit;
+import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.opencrx.kernel.account1.jmi1.AccountCategoryFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AccountFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AccountTypeFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressCategoryFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressDisabledFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressMainFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressQueryFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressTypeFilterProperty;
+import org.opencrx.kernel.account1.jmi1.AddressUsageFilterProperty;
+import org.opencrx.kernel.account1.jmi1.CategoryFilterProperty;
+import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.account1.jmi1.ContactMembership;
+import org.opencrx.kernel.account1.jmi1.DisabledFilterProperty;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
+import org.opencrx.kernel.account1.jmi1.Room;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
+import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.Lead;
@@ -77,581 +105,622 @@ import org.opencrx.kernel.contract1.jmi1.Opportunity;
 import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
-import org.openmdx.application.log.AppLog;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
-import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.w3c.spi2.Datatypes;
+import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 
-public class Accounts {
-
-    //-----------------------------------------------------------------------
-    public Accounts(
-        Backend backend
-    ) {
-        this.backend = backend;
-        this.vcards = new VCard(
-            this.backend
-        );                
-    }
+public class Accounts extends AbstractImpl {
 
     //-------------------------------------------------------------------------
-    public void completeOuMembership(
-        DataproviderObject_1_0 contact
+	public static void register(
+	) {
+		registerImpl(new Accounts());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Accounts getInstance(
+	) throws ServiceException {
+		return getInstance(Accounts.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Accounts(
+	) {		
+	}
+	
+    //-------------------------------------------------------------------------
+    public void markAccountAsDirty(
+        Account account
+    ) throws ServiceException {
+    	account.setAccountRating(account.getAccountRating());
+    }
+    	
+    //-------------------------------------------------------------------------
+    public List<AbstractOrganizationalUnit> getOuMembership(
+        org.opencrx.kernel.account1.jmi1.Contact contact
     ) {
-        try {
-            // find on ContactMembership extent
-            List ouMemberships = new ArrayList();
-            String providerName = contact.path().get(2);
-            String segmentName = contact.path().get(4);
-            // organization memberships
-            ouMemberships.addAll(
-                this.backend.getDelegatingRequests().addFindRequest(
-	                contact.path().getPrefix(5).getChild("extent"),
-	                new FilterProperty[]{
-		                new FilterProperty(
-				            Quantors.THERE_EXISTS,
-				            "identity",
-				            FilterOperators.IS_LIKE,
-				            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(providerName, "segment", segmentName, "organization", ":*", "contactMembership", ":*").toResourcePattern()
-				        ),
-		                new FilterProperty(
-				            Quantors.THERE_EXISTS,
-				            "contact",
-				            FilterOperators.IS_IN,
-				            contact.path()
-				        )
-	                }
-	            )
-            );
-
-            // organizational unit memberships
-            ouMemberships.addAll(
-                this.backend.getDelegatingRequests().addFindRequest(
-	                contact.path().getPrefix(5).getChild("extent"),
-	                new FilterProperty[]{
-		                new FilterProperty(
-				            Quantors.THERE_EXISTS,
-				            "identity",
-				            FilterOperators.IS_LIKE,
-				            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(providerName, "segment", segmentName, "organization", ":*", "organizationalUnit", ":*", "contactMembership", ":*").toResourcePattern()
-				        ),
-		                new FilterProperty(
-				            Quantors.THERE_EXISTS,
-				            "contact",
-				            FilterOperators.IS_IN,
-				            contact.path()
-				        )
-	                }
-	            )
-            );
-
-            Set memberships = new HashSet();
-            for(Iterator i = ouMemberships.iterator(); i.hasNext(); ) {
-                memberships.add(
-                    ((DataproviderObject_1_0)i.next()).path().getParent().getParent()
-                );
-            }
-            contact.clearValues("ouMembership").addAll(memberships);
-        }
-        catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause());
-        }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contact);
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
+    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+    			contact.refGetPath().getPrefix(5)
+    		);
+    	ContactMembershipQuery membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
+    	membershipQuery.identity().like(
+    		accountSegment.refGetPath().getDescendant("organization", ":*", "contactMembership", ":*").toResourcePattern()    	
+    	);
+    	membershipQuery.contact().equalTo(contact);
+    	List<ContactMembership> memberships = accountSegment.getExtent(membershipQuery);
+    	List<AbstractOrganizationalUnit> ouMemberships = new ArrayList<AbstractOrganizationalUnit>();
+    	for(ContactMembership membership: memberships) {
+    		AbstractOrganizationalUnit ou = (AbstractOrganizationalUnit)pm.getObjectById(
+    			membership.refGetPath().getParent().getParent()
+    		);
+    		ouMemberships.add(ou);
+    	}
+    	return ouMemberships;
     }
     
     //-------------------------------------------------------------------------
-    public AbstractContract createContract(
-        Path accountIdentity,
-        DataproviderObject newContract,
+    public void initContract(
+        AbstractContract contract,
+        Account account,
         String name,
-        String description,
-        String nextStep,
-        Path basedOnIdentity
-    ) {
-        DataproviderObject contract = null;
-        try {
-            // Create new contract based on existing contract
-            if(basedOnIdentity != null) {
-                DataproviderObject_1_0 contractBase = this.backend.retrieveObjectFromDelegation(
-                    basedOnIdentity
-                );
-                Path contractIdentity = this.backend.getCloneable().cloneAndUpdateReferences(
-                    contractBase,
-                    contractBase.path().getParent(),
-                    null,
-                    DEFAULT_REFERENCE_FILTER,
-                    false,
-                    AttributeSelectors.ALL_ATTRIBUTES                    
-                ).path();
-                contract = this.backend.retrieveObjectForModification(
-                    contractIdentity
-                );
-            }
-            // Create new contract
-            else {
-                newContract.values("priority").add(new Short((short)0));
-                newContract.values("contractCurrency").add(new Short((short)0));
-                newContract.values("paymentTerms").add(new Short((short)0));
-                newContract.values("contractLanguage").add(new Short((short)0));
-                newContract.values("contractState").add(new Short((short)0));
-                newContract.values("pricingState").add(new Short((short)0));
-                newContract.values("shippingMethod").add(new Short((short)0));
-                this.backend.getDelegatingRequests().addCreateRequest(
-                    newContract
-                );
-                contract = this.backend.retrieveObjectForModification(
-                    newContract.path()
-                );
-            }
-            
-            // Update supplied contract attributes
-            if(name != null) {
-                contract.clearValues("name").add(name);
-            }
-            if(description != null) {
-                contract.clearValues("description").add(description);
-            }
-            if(nextStep != null) {
-                contract.clearValues("nextStep").add(nextStep);
-            }
-            // customer
-            contract.clearValues("customer").add(accountIdentity);
-            // activeOn
-            contract.clearValues("activeOn").add(
-                DateFormat.getInstance().format(new Date())
-            );
-            
-            // assign to current user
-            this.backend.getBase().assignToMe(
-                contract,
-                null,
-                true,
-                null
-            );
+        String description
+    ) throws ServiceException {
+        if(name != null) {
+            contract.setName(name);
         }
-        catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause());
+        if(description != null) {
+            contract.setDescription(description);
         }
-        return contract == null
-            ? null
-            : (AbstractContract)this.backend.getDelegatingPkg().refObject(contract.path().toXri());
+        contract.setCustomer(account);
+        contract.setActiveOn(
+        	new Date()
+        );
+        Base.getInstance().assignToMe(
+            contract,
+            true,
+            null
+        );
     }
     
     //-------------------------------------------------------------------------
     public Lead createLead(
-        Path accountIdentity,
+        Account account,
         String name,
         String description,
         String nextStep,
-        Path basedOnIdentity
-    ) {
-        DataproviderObject contract = new DataproviderObject(
-            new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider").getDescendant(
-                new String[]{accountIdentity.get(2), "segment", accountIdentity.get(4), "lead", this.backend.getUidAsString()}
-            )
-        );
-        contract.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Lead");
-        contract.values("leadSource").add(new Short((short)0));
-        contract.values("leadRating").add(new Short((short)0));
-        contract.values("closeProbability").add(new Short((short)0));
-        return (Lead)this.createContract(
-            accountIdentity,
+        Lead basedOn
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
+        	);
+    	Lead contract = null;
+    	if(basedOn != null) {
+    		contract = (Lead)Cloneable.getInstance().cloneObject(
+    			basedOn, 
+    			contractSegment, 
+    			"lead", 
+    			null, 
+    			null 
+    		);    		
+    	}
+    	else {
+	        contract = pm.newInstance(Lead.class);
+	        contract.refInitialize(false, false);
+	        contractSegment.addLead(
+	        	false,
+	        	this.getUidAsString(),
+	        	contract
+	        );
+    	}
+        contract.setNextStep(nextStep);    	
+        this.initContract(
             contract,
+            account,
             name,
-            description,
-            nextStep,
-            basedOnIdentity
+            description
         );
+        return contract;
     }
     
     //-------------------------------------------------------------------------
     public Opportunity createOpportunity(
-        Path accountIdentity,
+        Account account,
         String name,
         String description,
         String nextStep,
-        Path basedOnIdentity
-    ) {
-        DataproviderObject contract = new DataproviderObject(
-            new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider").getDescendant(
-                new String[]{accountIdentity.get(2), "segment", accountIdentity.get(4), "opportunity", this.backend.getUidAsString()}
-            )
-        );
-        contract.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Opportunity");
-        contract.values("opportunitySource").add(new Short((short)0));
-        contract.values("opportunityRating").add(new Short((short)0));
-        contract.values("closeProbability").add(new Short((short)0));
-        return (Opportunity)this.createContract(
-            accountIdentity,
+        Opportunity basedOn
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
+        	);
+    	Opportunity contract = null;
+    	if(basedOn != null) {
+    		contract = (Opportunity)Cloneable.getInstance().cloneObject(
+    			basedOn, 
+    			contractSegment, 
+    			"opportunity", 
+    			null, 
+    			null 
+    		);    		
+    	}
+    	else {
+	        contract = pm.newInstance(Opportunity.class);
+	        contract.refInitialize(false, false);
+	        contractSegment.addOpportunity(
+	        	false,
+	        	this.getUidAsString(),
+	        	contract
+	        );
+    	}
+        contract.setNextStep(nextStep);    	
+        this.initContract(
             contract,
+            account,
             name,
-            description,
-            nextStep,
-            basedOnIdentity
+            description
         );
+        return contract;
     }
     
     //-------------------------------------------------------------------------
     public Quote createQuote(
-        Path accountIdentity,
+        Account account,
         String name,
         String description,
-        String nextStep,
-        Path basedOnIdentity
-    ) {
-        DataproviderObject contract = new DataproviderObject(
-            new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider").getDescendant(
-                new String[]{accountIdentity.get(2), "segment", accountIdentity.get(4), "quote", this.backend.getUidAsString()}
-            )
-        );
-        contract.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Quote");
-        contract.values("freightTerms").add(new Short((short)0));
-        contract.values("closeProbability").add(new Short((short)0));
-        return (Quote)this.createContract(
-            accountIdentity,
+        Quote basedOn
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
+        	);
+    	Quote contract = null;
+    	if(basedOn != null) {
+    		contract = (Quote)Cloneable.getInstance().cloneObject(
+    			basedOn, 
+    			contractSegment, 
+    			"quote", 
+    			null, 
+    			null 
+    		);    		
+    	}
+    	else {
+	        contract = pm.newInstance(Quote.class);
+	        contract.refInitialize(false, false);
+	        contractSegment.addQuote(
+	        	false,
+	        	this.getUidAsString(),
+	        	contract
+	        );
+    	}
+        this.initContract(
             contract,
+            account,
             name,
-            description,
-            nextStep,
-            basedOnIdentity
+            description
         );
+        return contract;
     }
     
     //-------------------------------------------------------------------------
     public SalesOrder createSalesOrder(
-        Path accountIdentity,
+        Account account,
         String name,
         String description,
-        String nextStep,
-        Path basedOnIdentity
-    ) {
-        DataproviderObject contract = new DataproviderObject(
-            new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider").getDescendant(
-                new String[]{accountIdentity.get(2), "segment", accountIdentity.get(4), "salesOrder", this.backend.getUidAsString()}
-            )
-        );
-        contract.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:SalesOrder");
-        contract.values("submitStatus").add(new Short((short)0));
-        contract.values("freightTerms").add(new Short((short)0));
-        return (SalesOrder)this.createContract(
-            accountIdentity,
+        SalesOrder basedOn
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
+        	);
+    	SalesOrder contract = null;
+    	if(basedOn != null) {
+    		contract = (SalesOrder)Cloneable.getInstance().cloneObject(
+    			basedOn, 
+    			contractSegment, 
+    			"salesOrder", 
+    			null, 
+    			null 
+    		);    		
+    	}
+    	else {
+	        contract = pm.newInstance(SalesOrder.class);
+	        contract.refInitialize(false, false);
+	        contractSegment.addSalesOrder(
+	        	false,
+	        	this.getUidAsString(),
+	        	contract
+	        );
+    	}
+        this.initContract(
             contract,
+            account,
             name,
-            description,
-            nextStep,
-            basedOnIdentity
+            description
         );
+        return contract;
     }
     
     //-------------------------------------------------------------------------
     public Invoice createInvoice(
-        Path accountIdentity,
+        Account account,
         String name,
         String description,
-        String nextStep,
-        Path basedOnIdentity
-    ) {
-        DataproviderObject contract = new DataproviderObject(
-            new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider").getDescendant(
-                new String[]{accountIdentity.get(2), "segment", accountIdentity.get(4), "invoice", this.backend.getUidAsString()}
-            )
-        );
-        contract.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:contract1:Invoice");
-        return (Invoice)this.createContract(
-            accountIdentity,
+        Invoice basedOn
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
+        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
+        	);
+    	Invoice contract = null;
+    	if(basedOn != null) {
+    		contract = (Invoice)Cloneable.getInstance().cloneObject(
+    			basedOn, 
+    			contractSegment, 
+    			"invoice", 
+    			null, 
+    			null 
+    		);    		
+    	}
+    	else {
+	        contract = pm.newInstance(Invoice.class);
+	        contract.refInitialize(false, false);
+	        contractSegment.addInvoice(
+	        	false,
+	        	this.getUidAsString(),
+	        	contract
+	        );
+    	}
+        this.initContract(
             contract,
+            account,
             name,
-            description,
-            nextStep,
-            basedOnIdentity
+            description
         );
+        return contract;
     }
     
     //-------------------------------------------------------------------------
     public void updateFullName(
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
+        Account account
     ) throws ServiceException {
         // org:opencrx:kernel:account1:Contact:fullName
-        if(this.backend.isContact(object)) {
-            List<Object> lastName = this.backend.getNewValue("lastName", object, oldValues);
-            List<Object> firstName = this.backend.getNewValue("firstName", object, oldValues);
-            List<Object> middleName = this.backend.getNewValue("middleName", object, oldValues);
-            object.clearValues("fullName").add(
-                ( (lastName.isEmpty() ? "" : lastName.get(0)) + ", "
-                  + (firstName.isEmpty() ? "" : firstName.get(0) + " ")
-                  + (middleName.isEmpty() ? "" : middleName.get(0) + "") ).trim()
+        if(account instanceof Contact) {
+        	Contact contact = (Contact)account;
+            contact.setFullName(
+                ( (contact.getLastName() == null ? "" : contact.getLastName()) + ", "
+                  + (contact.getFirstName() == null ? "" : contact.getFirstName() + " ")
+                  + (contact.getMiddleName() == null ? "" : contact.getMiddleName() + "") ).trim()
             );
         }
         // org:opencrx:kernel:account1:AbstractGroup
-        else if(this.backend.isAbstractGroup(object)) {
-            List<Object> name = this.backend.getNewValue("name", object, oldValues);
-            object.clearValues("fullName").add(
-                name.isEmpty() ? "" : name.get(0)
+        else if(account instanceof AbstractGroup) {
+        	AbstractGroup group = (AbstractGroup)account;
+            group.setFullName(
+                group.getName() == null ? "" : group.getName()
             );
         }
     }
     
     //-------------------------------------------------------------------------
     public void updateAccount(
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
+        Account account
     ) throws ServiceException {
-        if(this.backend.isAccount(object)) {
-            this.updateFullName(
-                object, 
-                oldValues
-            );
-            List<String> statusMessage = new ArrayList<String>();
-            String vcard = this.vcards.mergeVcard(
-                object,
-                (String)object.values("vcard").get(0),
-                statusMessage
-            );
-            object.clearValues("vcard").add(
-                vcard == null ? "" : vcard
-            );
-        }
+        this.updateFullName(
+            account 
+        );
+        List<String> statusMessage = new ArrayList<String>();
+        String vcard = VCard.getInstance().mergeVcard(
+            account,
+            account.getVcard(),
+            statusMessage
+        );
+        account.setVcard(
+            vcard == null ? "" : vcard
+        );
     }
     
     //-------------------------------------------------------------------------
-    public FilterProperty[] getAccountFilterProperties(
-        Path accountFilterIdentity,
+    public AccountQuery getFilteredAccountQuery(
+        AbstractFilterAccount accountFilter,
         boolean forCounting
     ) throws ServiceException {
-        List<DataproviderObject_1_0> filterProperties = this.backend.getDelegatingRequests().addFindRequest(
-            accountFilterIdentity.getChild("accountFilterProperty"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            null,
-            0, 
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        List<FilterProperty> filter = new ArrayList<FilterProperty>();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(accountFilter);
+        Collection<AccountFilterProperty> filterProperties = accountFilter.getAccountFilterProperty();
         boolean hasQueryFilterClause = false;
-        for(
-            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 filterProperty = i.next();
-            String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
-
-            Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);            
+        AccountQuery query = (AccountQuery)pm.newQuery(Account.class);
+        for(AccountFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
             if((isActive != null) && isActive.booleanValue()) {
                 // Query filter
-                if("org:opencrx:kernel:account1:AccountQueryFilterProperty".equals(filterPropertyClass)) {     
-                    String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-                    // Clause and class
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                            FilterOperators.PIGGY_BACK,
-                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
-                        )
+                if(filterProperty instanceof AccountQueryFilterProperty) {
+                	AccountQueryFilterProperty p = (AccountQueryFilterProperty)filterProperty;
+                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+                	queryFilter.setClause(
+                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
+                	);
+                    queryFilter.setStringParam(
+                    	p.getStringParam()
                     );
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                            FilterOperators.PIGGY_BACK,
-                            Database_1_Attributes.QUERY_FILTER_CLASS
-                        )
+                    queryFilter.setIntegerParam(
+                    	p.getIntegerParam()
                     );
-                    // stringParam
-                    List<Object> values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDecimalParam(
+                    	p.getDecimalParam()
                     );
-                    // integerParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setBooleanParam(
+                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
                     );
-                    // decimalParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateParam(
+                    	p.getDateParam()
                     );
-                    // booleanParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateTimeParam(
+                    	p.getDateTimeParam()
                     );
-                    // dateParam
-                    values = new ArrayList<Object>();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
-                    );
-                    // dateTimeParam
-                    values = new ArrayList<Object>();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(Date.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    query.thereExistsContext().equalTo(
+                    	queryFilter
                     );
                     hasQueryFilterClause = true;
                 }
                 // Attribute filter
-                else {
+                else if(filterProperty instanceof AttributeFilterProperty) {
+                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
                     // Get filterOperator, filterQuantor
-                    short filterOperator = filterProperty.values("filterOperator").size() == 0
-                        ? FilterOperators.IS_IN
-                        : ((Number)filterProperty.values("filterOperator").get(0)).shortValue();
-                    filterOperator = filterOperator == 0
-                        ? FilterOperators.IS_IN
-                        : filterOperator;
-                    short filterQuantor = filterProperty.values("filterQuantor").size() == 0
-                        ? Quantors.THERE_EXISTS
-                        : ((Number)filterProperty.values("filterQuantor").get(0)).shortValue();
-                    filterQuantor = filterQuantor == 0
-                        ? Quantors.THERE_EXISTS
-                        : filterQuantor;
-                    
-                    if("org:opencrx:kernel:account1:AccountTypeFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "accountType",
-                                filterOperator,
-                                filterProperty.values("accountType").toArray()
-                            )
-                        );
+                    short operator = attributeFilterProperty.getFilterOperator();
+                    operator = operator == 0 ? 
+                    	FilterOperators.IS_IN : 
+                    	operator;
+                    short quantor = attributeFilterProperty.getFilterQuantor();
+                    quantor = quantor == 0 ? 
+                    	Quantors.THERE_EXISTS : 
+                    	quantor;                    
+                    if(filterProperty instanceof AccountTypeFilterProperty) {
+                    	AccountTypeFilterProperty p = (AccountTypeFilterProperty)filterProperty;
+                    	switch(quantor) {
+                    		case Quantors.FOR_ALL:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.forAllAccountType().elementOf(p.getAccountType()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.forAllAccountType().greaterThan(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.forAllAccountType().greaterThanOrEqualTo(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.forAllAccountType().lessThan(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.forAllAccountType().lessThanOrEqualTo(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.forAllAccountType().notAnElementOf(p.getAccountType()); 
+                    					break;
+                    				default:
+                    					query.forAllAccountType().elementOf(p.getAccountType()); 
+                    					break;
+                    			}
+                    			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsAccountType().elementOf(p.getAccountType()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsAccountCategory().greaterThan(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsAccountType().greaterThanOrEqualTo(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsAccountType().lessThan(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsAccountType().lessThanOrEqualTo(p.getAccountType().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsAccountType().notAnElementOf(p.getAccountType()); 
+                    					break;
+                    				default:
+                    					query.thereExistsAccountType().elementOf(p.getAccountType()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:account1:AccountCategoryFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "accountCategory",
-                                filterOperator,
-                                filterProperty.values("accountCategory").toArray()                    
-                            )
-                        );
+                    else if(filterProperty instanceof AccountCategoryFilterProperty) {
+                    	AccountCategoryFilterProperty p = (AccountCategoryFilterProperty)filterProperty;
+                    	switch(quantor) {
+                    		case Quantors.FOR_ALL:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.forAllAccountCategory().elementOf(p.getAccountCategory()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.forAllAccountCategory().greaterThan(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.forAllAccountCategory().greaterThanOrEqualTo(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.forAllAccountCategory().lessThan(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.forAllAccountCategory().lessThanOrEqualTo(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.forAllAccountCategory().notAnElementOf(p.getAccountCategory()); 
+                    					break;
+                    				default:
+                    					query.forAllAccountCategory().elementOf(p.getAccountCategory()); 
+                    					break;
+                    			}
+                    			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsAccountCategory().elementOf(p.getAccountCategory()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsAccountCategory().greaterThan(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsAccountCategory().greaterThanOrEqualTo(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsAccountCategory().lessThan(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsAccountCategory().lessThanOrEqualTo(p.getAccountCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsAccountCategory().notAnElementOf(p.getAccountCategory()); 
+                    					break;
+                    				default:
+                    					query.thereExistsAccountCategory().elementOf(p.getAccountCategory()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:account1:CategoryFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "category",
-                                filterOperator,
-                                filterProperty.values("category").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof CategoryFilterProperty) {
+                    	CategoryFilterProperty p = (CategoryFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllCategory().elementOf(p.getCategory()); 
+	                					break;
+	                				case FilterOperators.IS_LIKE: 
+	                					query.forAllCategory().like(p.getCategory()); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.forAllCategory().greaterThan(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.forAllCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.forAllCategory().lessThan(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.forAllCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllCategory().notAnElementOf(p.getCategory()); 
+	                					break;
+	                				case FilterOperators.IS_UNLIKE: 
+	                					query.forAllCategory().unlike(p.getCategory()); 
+	                					break;
+	                				default:
+	                					query.forAllCategory().elementOf(p.getCategory()); 
+	                					break;
+	                			}
+	                			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsCategory().elementOf(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_LIKE: 
+                    					query.thereExistsCategory().like(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsCategory().greaterThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsCategory().lessThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsCategory().notAnElementOf(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_UNLIKE:
+                    					query.thereExistsCategory().unlike(p.getCategory()); 
+                    					break;
+                    				default:
+                    					query.thereExistsCategory().elementOf(p.getCategory()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:account1:DisabledFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "disabled",
-                                filterOperator,
-                                filterProperty.values("disabled").toArray()
-                            )
-                        );
-                    }
+                    else if(filterProperty instanceof DisabledFilterProperty) {
+                    	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
+                	}
                 }
             }
-        }        
-        if(!hasQueryFilterClause && forCounting) {
-            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-            // Clause and class
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                    FilterOperators.PIGGY_BACK,
-                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-                )
-            );
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.PIGGY_BACK,
-                    Database_1_Attributes.QUERY_FILTER_CLASS
-                )
-            );            
         }
-        return filter.toArray(new FilterProperty[filter.size()]);
-    }
-    
-    //-------------------------------------------------------------------------
-    public int countFilteredAccount(
-        Path accountFilterIdentity
-    ) throws ServiceException {
-        List accounts = this.backend.getDelegatingRequests().addFindRequest(
-            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + accountFilterIdentity.get(2) + "/segment/" + accountFilterIdentity.get(4) + "/account"),
-            this.getAccountFilterProperties(
-                accountFilterIdentity, 
-                true
-            ),
-            AttributeSelectors.NO_ATTRIBUTES,
-            null,
-            0, 
-            1,
-            Directions.ASCENDING
-        );
-        return accounts.size();
+        if(!hasQueryFilterClause && forCounting) {
+        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+        	queryFilter.setClause(
+        		Database_1_Attributes.HINT_COUNT + "(1=1)"
+        	);
+        	query.thereExistsContext().equalTo(
+        		queryFilter
+        	);
+        }
+        return query;
     }
         
+    //-------------------------------------------------------------------------
+    public int countFilteredAccount(
+    	AbstractFilterAccount accountFilter
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(accountFilter);
+    	AccountQuery query = this.getFilteredAccountQuery(
+    		accountFilter, 
+    		true 
+    	);
+    	List<Account> accounts =
+    		((org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(accountFilter.refGetPath().getPrefix(5))).getAccount(query);
+        return accounts.size();
+    }
+            
     //-----------------------------------------------------------------------
     /**
      * @return Returns the accountSegment.
      */
-    public static org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
+    public org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
         PersistenceManager pm,
         String providerName,
         String segmentName
@@ -672,17 +741,18 @@ public class Accounts {
      * @param emailAddress     The email address
      * @return                 A List of accounts containing the email address
      */
-    public static List<org.opencrx.kernel.account1.jmi1.EMailAddress> lookupEmailAddress(
+    public List<org.opencrx.kernel.account1.jmi1.EMailAddress> lookupEmailAddress(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         String emailAddress,
-        boolean caseInsensitiveAddressLookup
+        boolean caseInsensitive,
+        boolean ignoreDisabled
     ) {
         org.opencrx.kernel.account1.cci2.EMailAddressQuery query = 
             Utils.getAccountPackage(pm).createEMailAddressQuery();
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-            Accounts.getAccountSegment(
+            this.getAccountSegment(
                 pm,
                 providerName,
                 segmentName
@@ -691,10 +761,13 @@ public class Accounts {
             accountSegment.refGetPath().getDescendant("account", ":*", "address", ":*").toResourcePattern()  
         );
         query.thereExistsEmailAddress().like(
-           caseInsensitiveAddressLookup ? 
+           caseInsensitive ? 
                "(?i)" + emailAddress : 
                emailAddress
         );
+        if(ignoreDisabled) {
+        	query.forAllDisabled().isFalse();
+        }
         return accountSegment.getExtent(query);        
     }
         
@@ -718,7 +791,7 @@ public class Accounts {
      *         fax home, fax, business, postal home, postal business,
      *         mail home, mail business, mobile, phone other} 
      */
-    public static org.opencrx.kernel.account1.jmi1.AccountAddress[] getMainAddresses(
+    public org.opencrx.kernel.account1.jmi1.AccountAddress[] getMainAddresses(
         org.opencrx.kernel.account1.jmi1.Account account
     ) {
         int currentOrderBusinessMail = 0;
@@ -896,13 +969,13 @@ public class Accounts {
     
     //-------------------------------------------------------------------------
     public void updateVcard(
-        Path accountIdentity
+        Account account
     ) throws ServiceException {
         List<String> messages = new ArrayList<String>();
         List<String> errors = new ArrayList<String>();
         List<String> report = new ArrayList<String>();
-        String vcard = this.vcards.mergeVcard(
-            this.backend.retrieveObject(accountIdentity),
+        String vcard = VCard.getInstance().mergeVcard(
+            account,
             null, 
             messages
         );        
@@ -913,9 +986,9 @@ public class Accounts {
         catch(Exception e) {
             item = vcard.getBytes();    
         }
-        this.vcards.importItem(
+        VCard.getInstance().importItem(
             item, 
-            accountIdentity, 
+            account, 
             (short)0, 
             errors, 
             report
@@ -923,19 +996,268 @@ public class Accounts {
     }
     
     //-------------------------------------------------------------------------
-    public void markAccountAsDirty(
-        Path accountIdentity
+    public AccountAddressQuery getFilteredAddressQuery(
+        AbstractFilterAddress addressFilter,
+        boolean forCounting
     ) throws ServiceException {
-        this.backend.retrieveObjectForModification(
-            accountIdentity
-        );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(addressFilter);
+        Collection<AddressFilterProperty> filterProperties = addressFilter.getAddressFilterProperty();
+        boolean hasQueryFilterClause = false;
+        AccountAddressQuery query = (AccountAddressQuery)pm.newQuery(AccountAddress.class);
+        for(AddressFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
+            if((isActive != null) && isActive.booleanValue()) {
+            	if(filterProperty instanceof AddressTypeFilterProperty) {
+            		AddressTypeFilterProperty p = (AddressTypeFilterProperty)filterProperty;
+            		if(!p.getAddressType().isEmpty()) {
+            			switch(p.getAddressType().get(0)) {
+            				case 0:
+            					query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+            					break;
+            				case 1:
+            					query = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
+            					break;
+            				case 2:
+            					query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+            					break;
+            				case 3:
+            					query = (WebAddressQuery)pm.newQuery(WebAddress.class);
+            					break;
+            				case 4:
+            					query = (RoomQuery)pm.newQuery(Room.class);
+            					break;
+            			}
+            		}
+            	}
+            }
+        }        
+        for(AddressFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
+            if((isActive != null) && isActive.booleanValue()) {
+                // Query filter
+                if(filterProperty instanceof AddressQueryFilterProperty) {
+                	AddressQueryFilterProperty p = (AddressQueryFilterProperty)filterProperty;
+                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+                	queryFilter.setClause(
+                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
+                	);
+                    queryFilter.setStringParam(
+                    	p.getStringParam()
+                    );
+                    queryFilter.setIntegerParam(
+                    	p.getIntegerParam()
+                    );
+                    queryFilter.setDecimalParam(
+                    	p.getDecimalParam()
+                    );
+                    queryFilter.setBooleanParam(
+                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
+                    );
+                    queryFilter.setDateParam(
+                    	p.getDateParam()
+                    );
+                    queryFilter.setDateTimeParam(
+                    	p.getDateTimeParam()
+                    );
+                    query.thereExistsContext().equalTo(
+                    	queryFilter
+                    );
+                    hasQueryFilterClause = true;
+                }
+                // Attribute filter
+                else if(filterProperty instanceof AttributeFilterProperty) {
+                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
+                    // Get filterOperator, filterQuantor
+                    short operator = attributeFilterProperty.getFilterOperator();
+                    operator = operator == 0 ? 
+                    	FilterOperators.IS_IN : 
+                    	operator;
+                    short quantor = attributeFilterProperty.getFilterQuantor();
+                    quantor = quantor == 0 ? 
+                    	Quantors.THERE_EXISTS : 
+                    	quantor;                    
+                    if(filterProperty instanceof AddressCategoryFilterProperty) {
+                    	AddressCategoryFilterProperty p = (AddressCategoryFilterProperty)filterProperty;
+                    	switch(quantor) {
+                    		case Quantors.FOR_ALL:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.forAllCategory().elementOf(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.forAllCategory().greaterThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.forAllCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.forAllCategory().lessThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.forAllCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.forAllCategory().notAnElementOf(p.getCategory()); 
+                    					break;
+                    				default:
+                    					query.forAllCategory().elementOf(p.getCategory()); 
+                    					break;
+                    			}
+                    			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsCategory().elementOf(p.getCategory()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsCategory().greaterThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsCategory().lessThan(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsCategory().notAnElementOf(p.getCategory()); 
+                    					break;
+                    				default:
+                    					query.thereExistsCategory().elementOf(p.getCategory()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
+                    }
+                    else if(filterProperty instanceof AddressUsageFilterProperty) {
+                    	AddressUsageFilterProperty p = (AddressUsageFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllUsage().elementOf(p.getUsage()); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.forAllUsage().greaterThan(p.getUsage().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.forAllUsage().greaterThanOrEqualTo(p.getUsage().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.forAllUsage().lessThan(p.getUsage().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.forAllUsage().lessThanOrEqualTo(p.getUsage().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllUsage().notAnElementOf(p.getUsage()); 
+	                					break;
+	                				default:
+	                					query.forAllUsage().elementOf(p.getUsage()); 
+	                					break;
+	                			}
+	                			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsUsage().elementOf(p.getUsage()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsUsage().greaterThan(p.getUsage().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsUsage().greaterThanOrEqualTo(p.getUsage().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsUsage().lessThan(p.getUsage().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsUsage().lessThanOrEqualTo(p.getUsage().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsUsage().notAnElementOf(p.getUsage()); 
+                    					break;
+                    				default:
+                    					query.thereExistsUsage().elementOf(p.getUsage()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
+                    }
+                    else if(filterProperty instanceof AddressMainFilterProperty) {
+                    	AddressMainFilterProperty p = (AddressMainFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN:
+	                					query.isMain().equalTo(p.isMain()); 
+	                					break;
+		            				case FilterOperators.IS_NOT_IN:
+		            					query.isMain().equalTo(!p.isMain()); 
+		            					break;
+	                			}
+	                			break;
+                    	}
+                    }
+                    else if(filterProperty instanceof AddressDisabledFilterProperty) {
+                    	AddressDisabledFilterProperty p = (AddressDisabledFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN:
+	                					query.forAllDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN:
+	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
+                	}
+                }
+            }
+        }
+        if(!hasQueryFilterClause && forCounting) {
+        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+        	queryFilter.setClause(
+        		Database_1_Attributes.HINT_COUNT + "(1=1)"
+        	);
+        	query.thereExistsContext().equalTo(
+        		queryFilter
+        	);
+        }
+        return query;
     }
-    
+        
+    //-------------------------------------------------------------------------
+    public int countFilteredAddress(
+    	AbstractFilterAddress addressFilter
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(addressFilter);
+    	AccountAddressQuery query = this.getFilteredAddressQuery(
+    		addressFilter, 
+    		true 
+    	);
+    	List<AccountAddress> addresses =
+    		((org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(addressFilter.refGetPath().getPrefix(5))).getAddress(query);
+        return addresses.size();
+    }
+        
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
-    public static final String DEFAULT_REFERENCE_FILTER = ":*, :*/:*/:*, :*/:*/:*/:*/:*";
-    
     public static final int MAIL_BUSINESS = 0;
     public static final int MAIL_HOME = 1;
     public static final int PHONE_BUSINESS = 2;
@@ -948,10 +1270,7 @@ public class Accounts {
     public static final int WEB_HOME = 9;
     public static final int MOBILE = 10;
     public static final int PHONE_OTHER = 11;
-    
-    protected final Backend backend;
-    protected final VCard vcards;
-    
+        
 }
 
 //--- End of File -----------------------------------------------------------

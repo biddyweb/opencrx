@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.4 2009/03/19 17:30:15 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.6 2009/06/06 19:59:27 wfro Exp $
  * = Description: openCRX/Apps build.xml
- * = Revision:    $Revision: 1.4 $
- * = Date:        $Date: 2009/03/19 17:30:15 $
+ * = Revision:    $Revision: 1.6 $
+ * = Date:        $Date: 2009/06/06 19:59:27 $
  * = Copyright:   (c) 2003-2008 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,14 +62,16 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.4.1"/>
+	<property name="openmdx.version" value="2.5.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<path id="project.lib.classpath">
 		<path refid="openmdx.core.lib"/>
 		<path refid="java2.enterprise.api"/>
 		<path refid="java2.extension.lib"/>		
+		<pathelement location="../opt/openmdx-${openmdx.version}/${build.target.platform}/security/lib/openmdx-security.jar"/>
 		<pathelement location="../${build.target.platform}/core/lib/opencrx-kernel.jar"/>
+		<pathelement location="../${build.target.platform}/core/lib/opencrx-security.jar"/>
 	</path>
 	<path id="project.bin.classpath">
 		<path refid="project.lib.classpath"/>

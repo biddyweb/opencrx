@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.79 2009/03/08 17:04:50 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.130 2009/06/08 13:45:22 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.79 $
+ * Revision:    $Revision: 1.130 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:50 $
+ * Date:        $Date: 2009/06/08 13:45:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -64,7 +64,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.text.ParseException;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,8 +79,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -95,170 +95,223 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.activity1.cci2.AbsenceQuery;
+import org.opencrx.kernel.activity1.cci2.ActivityProcessActionQuery;
+import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
+import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
 import org.opencrx.kernel.activity1.cci2.ExternalActivityQuery;
 import org.opencrx.kernel.activity1.cci2.IncidentQuery;
 import org.opencrx.kernel.activity1.cci2.MailingQuery;
 import org.opencrx.kernel.activity1.cci2.MeetingQuery;
 import org.opencrx.kernel.activity1.cci2.PhoneCallQuery;
+import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
+import org.opencrx.kernel.activity1.cci2.ResourceQuery;
 import org.opencrx.kernel.activity1.cci2.SalesVisitQuery;
 import org.opencrx.kernel.activity1.cci2.TaskQuery;
+import org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
+import org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
+import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
+import org.opencrx.kernel.activity1.jmi1.ActivityCreationAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
+import org.opencrx.kernel.activity1.jmi1.ActivityFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
+import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
+import org.opencrx.kernel.activity1.jmi1.ActivityNumberFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
+import org.opencrx.kernel.activity1.jmi1.ActivityQueryFilterProperty;
+import org.opencrx.kernel.activity1.jmi1.ActivityStateFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
+import org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty;
+import org.opencrx.kernel.activity1.jmi1.ActivityVote;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
+import org.opencrx.kernel.activity1.jmi1.AssignedToFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.Calendar;
+import org.opencrx.kernel.activity1.jmi1.DisabledFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup;
+import org.opencrx.kernel.activity1.jmi1.EffortEstimate;
+import org.opencrx.kernel.activity1.jmi1.LinkedActivityFollowUpAction;
 import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
+import org.opencrx.kernel.activity1.jmi1.ScheduledEndFilterProperty;
+import org.opencrx.kernel.activity1.jmi1.ScheduledStartFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
 import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
 import org.opencrx.kernel.activity1.jmi1.SetAssignedToAction;
 import org.opencrx.kernel.activity1.jmi1.WeekDay;
 import org.opencrx.kernel.activity1.jmi1.WfAction;
+import org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord;
+import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
+import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
+import org.opencrx.kernel.depot1.jmi1.Depot;
+import org.opencrx.kernel.depot1.jmi1.DepotEntity;
+import org.opencrx.kernel.depot1.jmi1.DepotPosition;
+import org.opencrx.kernel.depot1.jmi1.DepotReference;
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.generic.jmi1.Note;
+import org.opencrx.kernel.generic.jmi1.PropertySet;
+import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Directions;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
-import org.w3c.spi2.Datatypes;
 
-public class Activities {
-
-    //-----------------------------------------------------------------------
-    public Activities(
-        Backend backend
-    ) {
-        this.backend = backend;
-        this.icals = new ICalendar(
-            this.backend
-        );        
-    }
+public class Activities extends AbstractImpl {
 
     //-------------------------------------------------------------------------
+	public static void register(
+	) {
+		registerImpl(new Activities());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Activities getInstance(
+	) throws ServiceException {
+		return getInstance(Activities.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Activities(
+	) {
+		
+	}
+	
+    //-------------------------------------------------------------------------
     public void refreshItems(
-        Path activityTrackerIdentity
+        ActivityTracker activityTracker
     ) throws ServiceException {
-        this.backend.flushObjectModifications(this.backend.getServiceHeader());
-        this.backend.getActivities().refreshTracker(
-            this.backend.retrieveObject(
-                activityTrackerIdentity
-            )
+        this.refreshTracker(
+        	activityTracker
         );
     }
     
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.activity1.jmi1.ActivityType findActivityType(
+    public org.opencrx.kernel.activity1.jmi1.ActivityType findActivityType(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.cci2.ActivityTypeQuery activityTypeQuery = activityPkg.createActivityTypeQuery();
+        org.opencrx.kernel.activity1.cci2.ActivityTypeQuery activityTypeQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityTypeQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityType.class);
         activityTypeQuery.name().equalTo(name);
         List<org.opencrx.kernel.activity1.jmi1.ActivityType> activityTypes = segment.getActivityType(activityTypeQuery);
-        return activityTypes.isEmpty()
-            ? null
-            : activityTypes.iterator().next();
+        return activityTypes.isEmpty() ? 
+        	null : 
+        	activityTypes.iterator().next();
     }
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.activity1.jmi1.ActivityProcess findActivityProcess(
+    public org.opencrx.kernel.activity1.jmi1.ActivityProcess findActivityProcess(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.cci2.ActivityProcessQuery activityProcessQuery = activityPkg.createActivityProcessQuery();
+        org.opencrx.kernel.activity1.cci2.ActivityProcessQuery activityProcessQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityProcessQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityProcess.class);
         activityProcessQuery.name().equalTo(name);
         List<org.opencrx.kernel.activity1.jmi1.ActivityProcess> activityProcesses = segment.getActivityProcess(activityProcessQuery);
-        return activityProcesses.isEmpty()
-            ? null
-            : activityProcesses.iterator().next();
+        return activityProcesses.isEmpty() ? 
+        	null : 
+        	activityProcesses.iterator().next();
     }
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.activity1.jmi1.ActivityCreator findActivityCreator(
+    public org.opencrx.kernel.activity1.jmi1.ActivityCreator findActivityCreator(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorQuery = activityPkg.createActivityCreatorQuery();
+        org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCreator.class);
         activityCreatorQuery.name().equalTo(name);
         List<org.opencrx.kernel.activity1.jmi1.ActivityCreator> activityCreators = segment.getActivityCreator(activityCreatorQuery);
-        return activityCreators.isEmpty()
-            ? null
-            : activityCreators.iterator().next();
+        return activityCreators.isEmpty() ? 
+        	null : 
+        	activityCreators.iterator().next();
     }
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
+    public org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery activityTrackerQuery = activityPkg.createActivityTrackerQuery();
+        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery activityTrackerQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(ActivityTracker.class);
         activityTrackerQuery.name().equalTo(name);
         List<org.opencrx.kernel.activity1.jmi1.ActivityTracker> activityTrackers = segment.getActivityTracker(activityTrackerQuery);
-        return activityTrackers.isEmpty()
-            ? null
-            : activityTrackers.iterator().next();
+        return activityTrackers.isEmpty() ? 
+        	null : 
+        	activityTrackers.iterator().next();
     }
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.activity1.jmi1.Calendar findCalendar(
+    public org.opencrx.kernel.activity1.jmi1.ActivityCategory findActivityCategory(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.cci2.CalendarQuery calendarQuery = activityPkg.createCalendarQuery();
+        org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery activityCategoryQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(ActivityCategory.class);
+        activityCategoryQuery.name().equalTo(name);
+        List<org.opencrx.kernel.activity1.jmi1.ActivityCategory> activityCategories = segment.getActivityCategory(activityCategoryQuery);
+        return activityCategories.isEmpty() ? 
+        	null : 
+        	activityCategories.iterator().next();
+    }
+
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.Calendar findCalendar(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.activity1.cci2.CalendarQuery calendarQuery = 
+        	(org.opencrx.kernel.activity1.cci2.CalendarQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Calendar.class);
         calendarQuery.name().equalTo(name);
         List<org.opencrx.kernel.activity1.jmi1.Calendar> calendars = segment.getCalendar(calendarQuery);
-        return calendars.isEmpty()
-            ? null
-            : calendars.iterator().next();
+        return calendars.isEmpty() ? 
+        	null : 
+        	calendars.iterator().next();
     }
     
     //-----------------------------------------------------------------------
-    public static Calendar initCalendar(
+    public Calendar initCalendar(
         String calendarName,
         PersistenceManager pm,
         String providerName,
@@ -266,13 +319,13 @@ public class Activities {
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
         Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         Calendar calendar = null;
-        if((calendar = Activities.findCalendar(calendarName, activitySegment, pm)) != null) {
+        if((calendar = this.findCalendar(calendarName, activitySegment, pm)) != null) {
             return calendar;            
         }                        
         pm.currentTransaction().begin();                    
@@ -392,20 +445,20 @@ public class Activities {
     }
       
     //-----------------------------------------------------------------------
-    public static ActivityProcess initEmailProcess(
+    public ActivityProcess initEmailProcess(
         PersistenceManager pm,
         String providerName,
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
         Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityProcess process = null;
-        if((process = Activities.findActivityProcess(ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm)) != null) {
+        if((process = this.findActivityProcess(ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm)) != null) {
             return process;            
         }                
         // Create email process
@@ -623,20 +676,20 @@ public class Activities {
     }
             
     //-----------------------------------------------------------------------
-    public static ActivityProcess initBugAndFeatureTrackingProcess(
+    public ActivityProcess initBugAndFeatureTrackingProcess(
         PersistenceManager pm,
         String providerName,
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
         Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityProcess process = null;
-        if((process = Activities.findActivityProcess(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, activitySegment, pm)) != null) {
+        if((process = this.findActivityProcess(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, activitySegment, pm)) != null) {
             return process;            
         }                
         // Create process
@@ -886,7 +939,7 @@ public class Activities {
     }
             
     //-----------------------------------------------------------------------
-    public static ActivityType initActivityType(
+    public ActivityType initActivityType(
         String activityTypeName,
         short activityClass,
         ActivityProcess activityProcess,
@@ -896,13 +949,13 @@ public class Activities {
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
         Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityType activityType = null;
-        if((activityType = Activities.findActivityType(activityTypeName, activitySegment, pm)) != null) {
+        if((activityType = this.findActivityType(activityTypeName, activitySegment, pm)) != null) {
             return activityType;            
         }                
         pm.currentTransaction().begin();
@@ -924,7 +977,7 @@ public class Activities {
     }
             
     //-----------------------------------------------------------------------
-    public static ActivityTracker initActivityTracker(
+    public ActivityTracker initActivityTracker(
         String trackerName,
         List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,        
         PersistenceManager pm,
@@ -932,18 +985,17 @@ public class Activities {
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityTracker activityTracker = null;
-        if((activityTracker = Activities.findActivityTracker(trackerName, activitySegment, pm)) != null) {
+        if((activityTracker = this.findActivityTracker(trackerName, activitySegment, pm)) != null) {
             return activityTracker;            
         }        
         pm.currentTransaction().begin();
-        activityTracker = activityPkg.getActivityTracker().createActivityTracker();
+        activityTracker = pm.newInstance(ActivityTracker.class);
         activityTracker.refInitialize(false, false);
         activityTracker.setName(trackerName);
         activityTracker.getOwningGroup().addAll(
@@ -961,7 +1013,43 @@ public class Activities {
     }
             
     //-----------------------------------------------------------------------
-    public static ActivityCreator initActivityCreator(
+    public ActivityCategory initActivityCategory(
+        String categoryName,
+        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,        
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        ActivityCategory activityCategory = null;
+        if((activityCategory = this.findActivityCategory(categoryName, activitySegment, pm)) != null) {
+            return activityCategory;            
+        }        
+        pm.currentTransaction().begin();
+        activityCategory = pm.newInstance(ActivityCategory.class);
+        activityCategory.refInitialize(false, false);
+        activityCategory.setName(categoryName);
+        activityCategory.getOwningGroup().addAll(
+            owningGroups == null
+                ? activitySegment.getOwningGroup()
+                : owningGroups
+        );
+        activitySegment.addActivityCategory(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            activityCategory
+        );                        
+        pm.currentTransaction().commit();
+        return activityCategory;
+    }
+            
+    //-----------------------------------------------------------------------
+    public ActivityCreator initActivityCreator(
         String creatorName,
         org.opencrx.kernel.activity1.jmi1.ActivityType activityType,
         List<org.opencrx.kernel.activity1.jmi1.ActivityGroup> activityGroups,
@@ -971,13 +1059,13 @@ public class Activities {
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityCreator activityCreator = null;
-        if((activityCreator = Activities.findActivityCreator(creatorName, activitySegment, pm)) == null) {
+        if((activityCreator = this.findActivityCreator(creatorName, activitySegment, pm)) == null) {
             Activity1Package activityPkg = Utils.getActivityPackage(pm);
             pm.currentTransaction().begin();
             activityCreator = activityPkg.getActivityCreator().createActivityCreator();
@@ -1012,10 +1100,10 @@ public class Activities {
     }
             
     //-------------------------------------------------------------------------
-    public static void calculateUserHomeCharts(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        PersistenceManager pm
+    public void calculateUserHomeCharts(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
         org.opencrx.kernel.home1.jmi1.Media[] charts = new org.opencrx.kernel.home1.jmi1.Media[2];
         Collection<org.opencrx.kernel.home1.jmi1.Media> existingCharts = userHome.getChart();
         for(org.opencrx.kernel.home1.jmi1.Media chart: existingCharts) {
@@ -1043,7 +1131,7 @@ public class Activities {
          */
         chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Overview (" + createdAt + ")";
         if(charts[0] == null) {
-            charts[0] = (org.opencrx.kernel.home1.jmi1.Media)pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
+            charts[0] = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
             charts[0].refInitialize(false, false);
             userHome.addChart(
                 false, 
@@ -1070,108 +1158,99 @@ public class Activities {
         
         // org:opencrx:kernel:activity1:EMail
         pw.println("CHART[0].LABEL[0]:EMail");
-        Query query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.EMail.class);
-        EMailQuery emailQuery = (EMailQuery)query;
+        EMailQuery emailQuery = (EMailQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.EMail.class);
         emailQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[0] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            emailQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:Incident",
         pw.println("CHART[0].LABEL[1]:Incident");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Incident.class);
-        IncidentQuery incidentQuery = (IncidentQuery)query;
+        IncidentQuery incidentQuery = (IncidentQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Incident.class);
         incidentQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[1] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            incidentQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:Mailing",
         pw.println("CHART[0].LABEL[2]:Mailing");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Mailing.class);
-        MailingQuery mailingQuery = (MailingQuery)query;
+        MailingQuery mailingQuery = (MailingQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Mailing.class);
         mailingQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[2] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            mailingQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:Meeting",
         pw.println("CHART[0].LABEL[3]:Meeting");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Meeting.class);
-        MeetingQuery meetingQuery = (MeetingQuery)query;
+        MeetingQuery meetingQuery = (MeetingQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Meeting.class);
         meetingQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[3] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            meetingQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:PhoneCall",
         pw.println("CHART[0].LABEL[4]:PhoneCall");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.PhoneCall.class);
-        PhoneCallQuery phoneCallQuery = (PhoneCallQuery)query;
+        PhoneCallQuery phoneCallQuery = (PhoneCallQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.PhoneCall.class);
         phoneCallQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[4] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            phoneCallQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:Task",
         pw.println("CHART[0].LABEL[5]:Task");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Task.class);
-        TaskQuery taskQuery = (TaskQuery)query;
+        TaskQuery taskQuery = (TaskQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Task.class);
         taskQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[5] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            taskQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:Absence",
         pw.println("CHART[0].LABEL[6]:Absence");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Absence.class);
-        AbsenceQuery absenceQuery = (AbsenceQuery)query;
+        AbsenceQuery absenceQuery = (AbsenceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Absence.class);
         absenceQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[6] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            absenceQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:ExternalActivity",
         pw.println("CHART[0].LABEL[7]:ExternalActivity");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.ExternalActivity.class);
-        ExternalActivityQuery externalActivityQuery = (ExternalActivityQuery)query;
+        ExternalActivityQuery externalActivityQuery = (ExternalActivityQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ExternalActivity.class);
         externalActivityQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[7] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            externalActivityQuery,
             timeDistribution, 
             "scheduledStart", 
             true
         );
         // org:opencrx:kernel:activity1:SalesVisit"  
         pw.println("CHART[0].LABEL[8]:SalesVisit");
-        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.SalesVisit.class);
-        SalesVisitQuery salesVisitQuery = (SalesVisitQuery)query;
+        SalesVisitQuery salesVisitQuery = (SalesVisitQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.SalesVisit.class);
         salesVisitQuery.thereExistsPercentComplete().lessThan((short)100);        
         counts[8] = Activities.calculateOpenActivityTimeDistribution(
             userHome,
-            query,
+            salesVisitQuery,
             timeDistribution, 
             "scheduledStart", 
             true
@@ -1199,7 +1278,7 @@ public class Activities {
          */
         chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Age Distribution (" + createdAt + ")";
         if(charts[1] == null) {
-            charts[1] = (org.opencrx.kernel.home1.jmi1.Media)pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
+            charts[1] = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
             charts[1].refInitialize(false, false);
             userHome.addChart(
                 false, 
@@ -1259,14 +1338,13 @@ public class Activities {
     //-------------------------------------------------------------------------
     private static int calculateOpenActivityTimeDistribution(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        Query query,
+        ActivityQuery query,
         int[] timeDistribution,
         String distributionOnAttribute,
         boolean lookAhead
     ) {
         try {
-            query.setCandidates(userHome.getAssignedActivity());
-            List<org.opencrx.kernel.activity1.jmi1.Activity> activities = (List<org.opencrx.kernel.activity1.jmi1.Activity>)query.execute();
+            List<org.opencrx.kernel.activity1.jmi1.Activity> activities = userHome.getAssignedActivity(query);
             int count = 0;
             for(org.opencrx.kernel.activity1.jmi1.Activity activity: activities) {
                 Date dt = null;
@@ -1297,69 +1375,43 @@ public class Activities {
             return count;
         }
         catch(Exception e) {
-            ServiceException e0 = new ServiceException(e);
             AppLog.warning("Error when iterating activities for user", Arrays.asList(userHome, e.getMessage()));
             return 0;
         }            
     }
 
     //-------------------------------------------------------------------------
-    public DataproviderObject refreshTracker(
-      DataproviderObject_1_0 activityTracker
-    ) throws ServiceException {
-        DataproviderObject refreshedTracker = this.backend.retrieveObjectForModification(
-            activityTracker.path()
-        );        
-        List activites = this.backend.getDelegatingRequests().addFindRequest(
-            activityTracker.path().getChild("filteredActivity"),
-            null,
-            AttributeSelectors.NO_ATTRIBUTES,
-            0, 
-            BATCHING_MODE_SIZE, 
-            Directions.ASCENDING
-        );
+    public ActivityTracker refreshTracker(
+      ActivityTracker activityTracker
+    ) throws ServiceException {    	
+        Collection<Activity> activities = activityTracker.getFilteredActivity();
         int estimateEffortHours = 0;
         int estimateEffortMinutes = 0;
         // Iterate all activities and sum up all main effort estimates. Don't care
         // if isMain=true if there is exactly one estimate for the activity
-        for(
-            Iterator i = activites.iterator(); 
-            i.hasNext(); 
-        ) {
-            DataproviderObject_1_0 activity = (DataproviderObject_1_0)i.next();
-            List effortEstimates = this.backend.getDelegatingRequests().addFindRequest(
-                new Path((String)activity.values(SystemAttributes.OBJECT_IDENTITY).get(0)).getChild("effortEstimate"),
-                null,
-                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
-                0, 
-                Integer.MAX_VALUE, 
-                Directions.ASCENDING
-            );
+        for(Activity activity: activities) {
+            Collection<EffortEstimate> effortEstimates = activity.getEffortEstimate();
             if(effortEstimates.size() == 1) {
-                DataproviderObject_1_0 effortEstimate = (DataproviderObject_1_0)effortEstimates.iterator().next();
-                if(effortEstimate.values("estimateEffortHours").size() > 0) {
-                    estimateEffortHours += ((Number)effortEstimate.values("estimateEffortHours").get(0)).intValue();
+                EffortEstimate effortEstimate = effortEstimates.iterator().next();
+                if(effortEstimate.getEstimateEffortHours() != null) {
+                    estimateEffortHours += effortEstimate.getEstimateEffortHours().intValue();
                 }
-                if(effortEstimate.values("estimateEffortMinutes").size() > 0) {
-                    estimateEffortMinutes += ((Number)effortEstimate.values("estimateEffortMinutes").get(0)).intValue();
+                if(effortEstimate.getEstimateEffortMinutes() != null) {
+                    estimateEffortMinutes += effortEstimate.getEstimateEffortMinutes().intValue();
                 }
             }
             // Lookup main estimate
             else {
-                for(
-                    Iterator j = effortEstimates.iterator();
-                    j.hasNext();
-                ) {
-                    DataproviderObject_1_0 effortEstimate = (DataproviderObject_1_0)j.next();
+                for(EffortEstimate effortEstimate: effortEstimates) {
                     if(
-                        (effortEstimate.values("isMain").size() > 0) &&
-                        ((Boolean)effortEstimate.values("isMain").get(0)).booleanValue()
+                        (effortEstimate.isMain() != null) &&
+                        effortEstimate.isMain().booleanValue()
                     ) {                    
-                        if(effortEstimate.values("estimateEffortHours").size() > 0) {
-                            estimateEffortHours += ((Number)effortEstimate.values("estimateEffortHours").get(0)).intValue();
+                        if(effortEstimate.getEstimateEffortHours() != null) {
+                            estimateEffortHours += effortEstimate.getEstimateEffortHours().intValue();
                         }
-                        if(effortEstimate.values("estimateEffortMinutes").size() > 0) {
-                            estimateEffortMinutes += ((Number)effortEstimate.values("estimateEffortMinutes").get(0)).intValue();
+                        if(effortEstimate.getEstimateEffortMinutes() != null) {
+                            estimateEffortMinutes += effortEstimate.getEstimateEffortMinutes();
                         }
                         // At most one main estimate is allowed. If the user entered more 
                         // than one include the first only
@@ -1369,13 +1421,13 @@ public class Activities {
             }
         }
         // Update tracker
-        refreshedTracker.clearValues("sumEstimateEffortHours").add(
-            new Integer(estimateEffortHours + estimateEffortMinutes / 60)
+        activityTracker.setSumEstimateEffortHours(
+        	new Integer(estimateEffortHours + estimateEffortMinutes / 60)
         );
-        refreshedTracker.clearValues("sumEstimateEffortMinutes").add(
+        activityTracker.setSumEstimateEffortMinutes(
             new Integer(estimateEffortMinutes % 60)
         );
-        return refreshedTracker;
+        return activityTracker;
     }
     
     //-------------------------------------------------------------------------
@@ -1392,15 +1444,16 @@ public class Activities {
         Date suppliedDueBy,
         Number suppliedPriority,
         Number suppliedIcalType,
-        Path reportingContactIdentity
+        Contact reportingContact
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityCreator);    	
+    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
+    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+    			activityCreator.refGetPath().getParent().getParent()
+    		);
         if(activityCreator.getActivityType() != null) {
-            DataproviderObject_1_0 activityType = this.backend.retrieveObjectFromDelegation(
-                activityCreator.getActivityType().refGetPath()
-            );
-            DataproviderObject_1_0 activityProcess = this.backend.retrieveObjectFromDelegation(
-                (Path)activityType.values("controlledBy").get(0)
-            );
+            ActivityType activityType = activityCreator.getActivityType();
+            ActivityProcess activityProcess = activityType.getControlledBy();
             Date scheduledStart = null;
             scheduledStart = suppliedScheduledStart != null ? 
                 suppliedScheduledStart : 
@@ -1427,98 +1480,103 @@ public class Activities {
             short icalType = (suppliedIcalType == null) || (suppliedIcalType.shortValue() == 0) ?
                 activityCreator.getIcalType() :    
                 suppliedIcalType.shortValue();
-            Path newActivityIdentity = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider");
-            newActivityIdentity = 
-                newActivityIdentity.getDescendant(
-                    new String[]{
-                        activityCreator.refGetPath().get(2), 
-                        "segment", 
-                        activityCreator.refGetPath().get(4), 
-                        "activity", 
-                        this.backend.getUidAsString()
-                    }
-                );
-            DataproviderObject newActivity = new DataproviderObject(newActivityIdentity);
-            String activityClass = !activityType.values("activityClassName").isEmpty() ? 
-                (String)activityType.values("activityClassName").get(0) : 
-                ACTIVITY_TYPES[((Number)activityType.values("activityClass").get(0)).intValue()];
-            newActivity.values(SystemAttributes.OBJECT_CLASS).add(activityClass);
+            String activityClass = activityType.getActivityClassName() != null ? 
+                activityType.getActivityClassName() : 
+                ACTIVITY_TYPES[((Number)activityType.getActivityClass()).intValue()];
+            Activity newActivity = null;
+            if("org:opencrx:kernel:activity1:EMail".equals(activityClass)) {
+            	newActivity = pm.newInstance(EMail.class); 
+            }
+        	else if("org:opencrx:kernel:activity1:Incident".equals(activityClass)) {
+        		newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Incident.class);
+        	}
+    		else if("org:opencrx:kernel:activity1:Mailing".equals(activityClass)) {
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Mailing.class);     			
+    		}
+			else if("org:opencrx:kernel:activity1:Meeting".equals(activityClass)) {
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Meeting.class); 				
+			}
+			else if("org:opencrx:kernel:activity1:PhoneCall".equals(activityClass)) {
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.PhoneCall.class); 				
+			}
+			else if("org:opencrx:kernel:activity1:Task".equals(activityClass)) {
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Task.class); 				
+			}
+			else if("org:opencrx:kernel:activity1:Absence".equals(activityClass)) {
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Absence.class); 				
+			}
+			else if("org:opencrx:kernel:activity1:ExternalActivity".equals(activityClass)) {
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ExternalActivity.class); 				
+			}
+			else if("org:opencrx:kernel:activity1:SalesVisit".equals(activityClass)) {            	
+            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.SalesVisit.class); 
+            }
+            newActivity.refInitialize(false, false);
             if(name != null) {
-                newActivity.values("name").add(name);
+                newActivity.setName(name);
             }
             if(description != null) {
-                newActivity.values("description").add(description);
+                newActivity.setDescription(description);
             }
             if(detailedDescription != null) {
-                newActivity.values("detailedDescription").add(
-                    detailedDescription
-                );
+                newActivity.setDetailedDescription(detailedDescription);
             }
             if(scheduledStart != null) {
-                newActivity.values("scheduledStart").add(
-                    DateFormat.getInstance().format(scheduledStart)
-                );
+                newActivity.setScheduledStart(scheduledStart);
             }
             if(scheduledEnd != null) {
-                newActivity.values("scheduledEnd").add(
-                    DateFormat.getInstance().format(scheduledEnd)
-                );
+                newActivity.setScheduledEnd(scheduledEnd);
             }
-            if(reportingContactIdentity != null) {
-                newActivity.values("reportingContact").add(reportingContactIdentity);                    
+            if(reportingContact != null) {
+                newActivity.setReportingContact(reportingContact);                    
             }
             else {
-                DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(
-                    newActivity.path()
+                org.opencrx.kernel.home1.jmi1.UserHome userHome = UserHomes.getInstance().getUserHome(
+                    activityCreator.refGetPath(),
+                    pm
                 );
-                newActivity.values("reportingContact").addAll(
-                    userHome.values("contact")
-                );
+                newActivity.setReportingContact(userHome.getContact());
             }
-            newActivity.values("priority").add(
-                new Short(priority)
-            );
-            newActivity.values("icalType").add(
-                new Short(icalType)
-            );
+            newActivity.setPriority(new Short(priority));
+            newActivity.setIcalType(new Short(icalType));
             if(dueBy != null) {
-                newActivity.values("dueBy").add(
-                    DateFormat.getInstance().format(dueBy)
-                );
+                newActivity.setDueBy(dueBy);
             }
-            newActivity.values("activityState").add(
-                new Short((short)0)
-            );
-            newActivity.values("percentComplete").add(
-                new Short((short)0)
-            );
-            newActivity.values("activityType").add(
-                activityType.path()
-            );
-            newActivity.values("processState").addAll(
-                activityProcess.values("startState")
-            );
+            newActivity.setActivityState(new Short((short)0));
+            newActivity.setPercentComplete(new Short((short)0));
+            newActivity.setActivityType(activityType);
+            newActivity.setProcessState(activityProcess.getStartState());
             // Set code values to 0 (non-optional attributes)
-            if(this.backend.getModel().isSubtypeOf(activityClass, "org:opencrx:kernel:activity1:Incident")) {
-                newActivity.values("caseOrigin").add(new Short((short)0));
-                newActivity.values("caseType").add(new Short((short)0));
-                newActivity.values("customerSatisfaction").add(new Short((short)0));
-                newActivity.values("severity").add(new Short((short)0));
-                newActivity.values("reproducibility").add(new Short((short)0));
+            if(newActivity instanceof org.opencrx.kernel.activity1.jmi1.Incident) {
+            	org.opencrx.kernel.activity1.jmi1.Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)newActivity;
+            	incident.setCaseOrigin(new Short((short)0));
+            	incident.setCaseType(new Short((short)0));
+            	incident.setCustomerSatisfaction(new Short((short)0));
+            	incident.setSeverity(new Short((short)0));
+            	incident.setReproducibility(new Short((short)0));
             }
             try {                
                 // Create activity
-                this.backend.createObject(
-                    newActivity
-                );
+            	activitySegment.addActivity(
+            		true,
+            		this.getUidAsString(),
+            		newActivity
+            	);
                 this.reapplyActivityCreator(
-                    newActivity.path(),
-                    (ActivityCreator)this.backend.getDelegatingPkg().refObject(activityCreator.refGetPath().toXri())
+                    newActivity,
+                    activityCreator
                 );
+                Base.getInstance().assignToMe(
+                	newActivity, 
+                	false, 
+                	null 
+                );                	
                 this.updateIcal(
-                    newActivity.path()
+                    newActivity,
+                    false,
+                    true
                 );
-                return (Activity)this.backend.getDelegatingPkg().refObject(newActivityIdentity.toXri());
+                return newActivity;
             }
             catch(ServiceException e) {
                 AppLog.warning("Creation of new activity failed", e.getMessage());
@@ -1529,74 +1587,60 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public void voteForActivity(
-        Path activityIdentity,
+    public ActivityVote voteForActivity(
+        Activity activity,
         String name,
         String description
     ) throws ServiceException {
-        this.voteForActivity(
-            this.backend.retrieveObject(
-                activityIdentity
-            ),
-            name, 
-            description
-        );
-    }
-            
-    //-------------------------------------------------------------------------
-    public Path voteForActivity(
-        DataproviderObject_1_0 activity,
-        String name,
-        String description
-    ) throws ServiceException {
-        DataproviderObject vote = new DataproviderObject(
-            activity.path().getDescendant(new String[]{"vote", this.backend.getUidAsString()})
-        );
-        vote.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:activity1:ActivityVote");
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+        ActivityVote vote = pm.newInstance(ActivityVote.class);
+        vote.refInitialize(false, false);
         if(name != null) {
-            vote.values("name").add(name);
+            vote.setName(name);
         }
         if(description != null) {
-            vote.values("description").add(description);
+            vote.setDescription(description);
         }
-        this.backend.getBase().assignToMe(
+        activity.addVote(
+        	false,
+        	this.getUidAsString(),
+        	vote
+        );
+        Base.getInstance().assignToMe(
             vote,
-            null,
             true,
             null
         );
-        this.backend.createObject(vote);
-        return vote.path();
+        return vote;
     }
     
     //-------------------------------------------------------------------------
     public ActivityFollowUp doFollowUp(
-        Path activityIdentity,
+        Activity activity,
         String followUpTitle,
         String followUpText,
-        Path processTransitionIdentity,
-        Path assignTo
+        ActivityProcessTransition processTransition,
+        Contact assignTo
     ) throws ServiceException {
-        DataproviderObject_1_0 activity = this.backend.retrieveObjectForModification(
-            activityIdentity
-        );
-        Path processStateIdentity = (Path)activity.values("processState").get(0);
-        if(processTransitionIdentity != null) {
-            DataproviderObject_1_0 processTransition = this.backend.retrieveObjectFromDelegation(
-                processTransitionIdentity
-            );
-            if(processTransition.values("nextState").size() == 0) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+        ActivityProcessState processState = activity.getProcessState();
+        if(processTransition != null) {
+        	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
+        		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+        			activity.refGetPath().getParent().getParent()
+        		);
+            if(processTransition.getNextState() == null) {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.ACTIVITY_UNDEFINED_NEXT_STATE, 
                     "Undefined next state. Transition not possible.",
-                    new BasicException.Parameter("param0", processTransition.path())
+                    new BasicException.Parameter("param0", processTransition.refGetPath())
                 );
             }
             // Check that previous state of transition matches the current activity's state
             if(
-                ((processTransition.values("prevState").size() == 0) && (processStateIdentity == null)) ||
-                ((processTransition.values("prevState").size() > 0) && processTransition.values("prevState").get(0).equals(processStateIdentity))
+                ((processTransition.getPrevState() == null) && (processState == null)) ||
+                ((processTransition.getPrevState() != null) && processTransition.getPrevState().equals(processState))
             ) {
                 
             }
@@ -1605,19 +1649,19 @@ public class Activities {
                     OpenCrxException.DOMAIN,
                     OpenCrxException.ACTIVITY_TRANSITION_NOT_VALID_FOR_STATE, 
                     "Transition is not valid for current state",
-                     new BasicException.Parameter("param0", processTransitionIdentity),
-                     new BasicException.Parameter("param1", processStateIdentity)
+                     new BasicException.Parameter("param0", processTransition.refGetPath()),
+                     new BasicException.Parameter("param1", processState.refGetPath())
                 );
             } 
             // Apply transition to activity
-            activity.clearValues("lastTransition").add(
-                processTransitionIdentity         
+            activity.setLastTransition(
+                processTransition         
             );    
-            activity.clearValues("percentComplete").addAll(
-                processTransition.values("newPercentComplete")
+            activity.setPercentComplete(
+                processTransition.getNewPercentComplete()
             );
-            activity.clearValues("activityState").addAll(
-                processTransition.values("newActivityState")
+            activity.setActivityState(
+                processTransition.getNewActivityState()
             );
             
             /**
@@ -1625,81 +1669,58 @@ public class Activities {
              * the transition is considered as failed. In this case the activity
              * is set to set errState if defined.
              */
-            Path nextState = (Path)processTransition.values("nextState").get(0);
-            Path errState = (Path)processTransition.values("errState").get(0);
-            List actions = this.backend.getDelegatingRequests().addFindRequest(
-                processTransitionIdentity.getChild("action"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
+            ActivityProcessState nextState = processTransition.getNextState();
+            ActivityProcessState errState = processTransition.getErrState();
+            ActivityProcessActionQuery activityProcessActionQuery = (ActivityProcessActionQuery)pm.newQuery(ActivityProcessAction.class);
+            activityProcessActionQuery.orderByName().ascending();
+            List<ActivityProcessAction> actions = processTransition.getAction(activityProcessActionQuery);
             boolean failed = false;
-            for(
-                Iterator i = actions.iterator(); 
-                i.hasNext(); 
-            ) {
-                DataproviderObject_1_0 action = (DataproviderObject_1_0)i.next();
-                String actionClass = (String)action.values(SystemAttributes.OBJECT_CLASS).get(0);
+            for(ActivityProcessAction action: actions) {
                 // SetActualEndAction
-                if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:SetActualEndAction")) {
-                    if(!action.values("resetToNull").isEmpty() && ((Boolean)action.values("resetToNull").get(0)).booleanValue()) {
-                        activity.clearValues("actualEnd");
+                if(action instanceof SetActualEndAction) {
+                	SetActualEndAction setActualEndAction = (SetActualEndAction)action;
+                    if((setActualEndAction.isResetToNull() != null) && setActualEndAction.isResetToNull().booleanValue()) {
+                        activity.setActualEnd(null);
                     }
                     else {
-                        activity.clearValues("actualEnd").add(
-                            DateFormat.getInstance().format(new Date())
-                        );
+                        activity.setActualEnd(new Date());
                     }
                 }
                 // SetActualStartAction
-                else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:SetActualStartAction")) {
-                    if(!action.values("resetToNull").isEmpty() && ((Boolean)action.values("resetToNull").get(0)).booleanValue()) {
-                        activity.clearValues("actualStart");
+                else if(action instanceof SetActualStartAction) {
+                	SetActualStartAction setActualStartAction = (SetActualStartAction)action;
+                    if((setActualStartAction.isResetToNull() != null) && setActualStartAction.isResetToNull().booleanValue()) {
+                        activity.setActualStart(null);
                     }
                     else {
-                        activity.clearValues("actualStart").add(
-                            DateFormat.getInstance().format(new Date())
-                        );
+                        activity.setActualStart(new Date());
                     }
                 }
                 // SetAssignedToAction
-                else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:SetAssignedToAction")) {
+                else if(action instanceof SetAssignedToAction) {
+                	SetAssignedToAction setAssignedToAction = (SetAssignedToAction)action;
                     // Determine contact to which activity is assigned to
-                    Path contactIdentity = null;
+                    Contact contact = null;
                     try {
-                        if(
-                            !action.values("contactFeatureName").isEmpty() &&
-                            !activity.values((String)action.values("contactFeatureName").get(0)).isEmpty()
-                        ) {
-                            contactIdentity = (Path)activity.values((String)action.values("contactFeatureName").get(0)).get(0);
+                        if(setAssignedToAction.getContactFeatureName() != null) {
+                        	try {
+                        		contact = (Contact)activity.refGetValue(setAssignedToAction.getContactFeatureName());
+                        	} 
+                        	catch(Exception e) {}
                         }
-                        else {
-                            DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(action.path());
-                            contactIdentity = (Path)userHome.values("contact").get(0);
+                        if(contact == null) {
+                            UserHome userHome = UserHomes.getInstance().getUserHome(action.refGetPath(), pm);
+                            contact = userHome.getContact();
                         }
-                        if(contactIdentity != null) {
+                        if(contact != null) {
                             // Determine resource matching the contact 
-                            List<DataproviderObject_1_0> resources = this.backend.getDelegatingRequests().addFindRequest(
-                                activityIdentity.getPrefix(5).getChild("resource"),
-                                new FilterProperty[]{
-                                    new FilterProperty(
-                                        Quantors.THERE_EXISTS,
-                                        "contact",
-                                        FilterOperators.IS_IN,
-                                        contactIdentity
-                                    )
-                                },
-                                AttributeSelectors.ALL_ATTRIBUTES,
-                                0,
-                                Integer.MAX_VALUE,
-                                Directions.ASCENDING
-                            );
+                        	ResourceQuery resourceQuery = (ResourceQuery)pm.newQuery(Resource.class);
+                        	resourceQuery.thereExistsContact().equalTo(contact);
+                        	List<Resource> resources = activitySegment.getResource(resourceQuery);
                             if(!resources.isEmpty()) {
                                 this.assignTo(
-                                    activityIdentity,
-                                    resources.iterator().next().path()
+                                    activity,
+                                    resources.iterator().next()
                                 );
                             }
                         }
@@ -1711,22 +1732,23 @@ public class Activities {
                     }                            
                 }
                 // WfAction
-                else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:WfAction")) {
-                    DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(action.path());
-                    if(!action.values("wfProcess").isEmpty()) {
+                else if(action instanceof WfAction) {
+                    UserHome userHome = UserHomes.getInstance().getUserHome(action.refGetPath(), pm);
+                    WfAction wfAction = (WfAction)action;
+                    if(wfAction.getWfProcess() != null) {
                         try {
-                            DataproviderObject_1_0 wfProcessInstance = 
-                                this.backend.getWorkflows().executeWorkflow(
+                            WfProcessInstance wfProcessInstance = 
+                                Workflows.getInstance().executeWorkflow(
                                     userHome,
-                                    (Path)action.values("wfProcess").get(0),
-                                    activityIdentity,
+                                    wfAction.getWfProcess(),
+                                    activity,
                                     null,
                                     null,
                                     null,
-                                    null                            
+                                    null
                                 );
                             AppLog.info("Execution of workflow successful.", action);
-                            Boolean wfExecutionFailed = (Boolean)wfProcessInstance.values("failed").get(0);
+                            Boolean wfExecutionFailed = wfProcessInstance.isFailed();
                             if((wfExecutionFailed != null) && wfExecutionFailed.booleanValue()) {
                                 failed = true;
                             }
@@ -1739,76 +1761,61 @@ public class Activities {
                     }
                 }
                 // ActivityCreationAction
-                else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:ActivityCreationAction")) {
-                    if(!action.values("activityCreator").isEmpty()) {
+                else if(action instanceof ActivityCreationAction) {
+                	ActivityCreationAction activityCreationAction = (ActivityCreationAction)action;
+                    if(activityCreationAction.getActivityCreator() != null) {
                         try {
-                            Path newActivityIdentity = this.newActivity(
-                                (ActivityCreator)this.backend.getDelegatingPkg().refObject(
-                                    ((Path)action.values("activityCreator").get(0)).toXri()
-                                ), // activityCreator
-                                (String)action.values("activityName").get(0), // name
-                                (String)action.values("activityDescription").get(0), // description
+                            Activity newActivity = this.newActivity(
+                            	activityCreationAction.getActivityCreator(),
+                                activityCreationAction.getName(),
+                                activityCreationAction.getActivityDescription(),
                                 null, // detailedDescription
                                 null, // suppliedScheduledStart
                                 null, // suppliedScheduledEnd
                                 null, // suppliedDueBy
                                 null, // suppliedPriority
                                 ICalendar.ICAL_TYPE_NA, // icalType
-                                (Path)activity.values("reportingContact").get(0) // reportingContactIdentity
-                            ).refGetPath();
+                                activity.getReportingContact()
+                            );
                             // Link new activity with original
-                            DataproviderObject activityLinkTo = new DataproviderObject(
-                                newActivityIdentity.getDescendant(new String[]{"activityLinkTo", this.backend.getUidAsString()})
-                            );
-                            activityLinkTo.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:activity1:ActivityLinkTo");
-                            activityLinkTo.values("name").addAll(
-                                activity.values("name")
-                            );
-                            activityLinkTo.values("activityLinkType").add(
+                            ActivityLinkTo activityLinkTo = pm.newInstance(ActivityLinkTo.class);
+                            activityLinkTo.refInitialize(false, false);
+                            activityLinkTo.setName(activity.getName());
+                            activityLinkTo.setActivityLinkType(
                                 new Short(ACTIVITY_LINK_TYPE_IS_DERIVED_FROM)
                             );
-                            activityLinkTo.values("linkTo").add(activityIdentity);
-                            this.backend.createObject(
-                                activityLinkTo
+                            activityLinkTo.setLinkTo(activity);
+                            newActivity.addActivityLinkTo(
+                            	false,
+                            	this.getUidAsString(),
+                            	activityLinkTo
                             );
                         }
                         catch(Exception e) {
                             AppLog.warning("Execution of action failed --> transition failed.", action);
                             new ServiceException(e).log();
                             failed = true;
-                        }                            
+                        }         
                     }
                 }
                 // LinkedActivityFollowUpAction
-                else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:LinkedActivityFollowUpAction")) {
-                    List activityLinks = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getChild("activityLinkTo"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );                    
-                    for(
-                        Iterator j = activityLinks.iterator(); 
-                        j.hasNext(); 
-                    ) {
-                        DataproviderObject_1_0 activityLink = (DataproviderObject_1_0)i.next();
-                        Number activityLinkType = (Number)activityLink.values("activityLinkType").get(0);
-                        Number actionActivityLinkType = (Number)action.values("activityLinkType").get(0);  
+                else if(activity instanceof LinkedActivityFollowUpAction) {
+                	LinkedActivityFollowUpAction linkedActivityFollowUpAction = (LinkedActivityFollowUpAction)action;
+                    Collection<ActivityLinkTo> activityLinks = activity.getActivityLinkTo();
+                    for(ActivityLinkTo activityLink: activityLinks) {
+                        short activityLinkType = activityLink.getActivityLinkType();
+                        short actionActivityLinkType = linkedActivityFollowUpAction.getActivityLinkType();  
                         if(
-                            !activityLink.values("linkTo").isEmpty() &&
-                            !action.values("transition").isEmpty() &&
-                            (actionActivityLinkType != null) && 
-                            (activityLinkType != null) &&
-                            (actionActivityLinkType.shortValue() == activityLinkType.shortValue())
+                            (activityLink.getLinkTo() != null) &&
+                            (linkedActivityFollowUpAction.getTransition() != null) &&
+                            (actionActivityLinkType == activityLinkType)
                         ) {
                             try {
                                 this.doFollowUp(
-                                    (Path)activityLink.values("linkTo").get(0),
-                                    (String)action.values("transitionTitle").get(0),
-                                    (String)action.values("transitionText").get(0),
-                                    (Path)action.values("transition").get(0),
+                                    activityLink.getLinkTo(),
+                                    linkedActivityFollowUpAction.getTransitionTitle(),
+                                    linkedActivityFollowUpAction.getTransitionText(),
+                                    linkedActivityFollowUpAction.getTransition(),
                                     null
                                 );
                             }
@@ -1821,893 +1828,575 @@ public class Activities {
                     }
                 }                
             }
-            activity.clearValues("processState").add(
-                failed && errState != null
-                    ? errState
-                    : nextState
+            activity.setProcessState(
+                failed && errState != null ? 
+                	errState : 
+                	nextState
             );
-        }
-        
+        }        
         // Create transition
-        DataproviderObject transition = new DataproviderObject(
-            activity.path().getDescendant(new String[]{"followUp", this.backend.getUidAsString()})
+        ActivityFollowUp transition = pm.newInstance(ActivityFollowUp.class);
+        transition.refInitialize(false, false);
+        transition.setTransition(processTransition);
+        transition.setTitle(followUpTitle);
+        transition.setText(followUpText);
+        activity.addFollowUp(
+        	false,
+        	this.getUidAsString(),
+        	transition
         );
-        transition.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:activity1:ActivityFollowUp");
-        transition.values("transition").add(processTransitionIdentity);
-        transition.values("title").add(followUpTitle);
-        transition.values("text").add(followUpText);
         if(assignTo == null) {
-            this.backend.getBase().assignToMe(
+            Base.getInstance().assignToMe(
                 transition,
-                null,
                 true,
                 null
             );
         }
         else {
-            transition.values("assignedTo").add(assignTo);
+            transition.setAssignedTo(assignTo);
         }
-        this.backend.createObject(transition);  
-        return transition == null
-            ? null
-            : (ActivityFollowUp)this.backend.getDelegatingPkg().refObject(transition.path().toXri());
+        return transition;
     }
         
     //-------------------------------------------------------------------------
-    public void updateWorkRecord(
-        DataproviderObject workRecord,
-        DataproviderObject_1_0 oldValues
+    public void updateWorkAndExpenseRecord(
+    	WorkAndExpenseRecord workRecord
     ) throws ServiceException {
-        if(this.backend.isActivityWorkRecord(workRecord)) {
-            DateFormat dateFormat = DateFormat.getInstance();
-            String startedAt = workRecord.getValues("startedAt") != null
-                ? (String)workRecord.values("startedAt").get(0)
-                : (oldValues == null ? dateFormat.format(new Date()) : (String)oldValues.values("startedAt").get(0));
-            String endedAt = workRecord.getValues("endedAt") != null
-                ? (String)workRecord.values("endedAt").get(0)
-                : (oldValues == null ? dateFormat.format(new Date()) : (String)oldValues.values("endedAt").get(0));
-            Number durationHours = workRecord.getValues("durationHours") != null
-                ? (Number)workRecord.values("durationHours").get(0)
-                : (oldValues == null ? new Integer(0) : (Number)oldValues.values("durationHours").get(0));
-            Number durationMinutes = workRecord.getValues("durationMinutes") != null
-                ? (Number)workRecord.values("durationMinutes").get(0)
-                : (oldValues == null ? new Integer(0) : (Number)oldValues.values("durationMinutes").get(0));
-            Number pauseDurationHours = workRecord.getValues("pauseDurationHours") != null
-                ? (Number)workRecord.values("pauseDurationHours").get(0)
-                : (oldValues == null ? new Integer(0) : (Number)oldValues.values("pauseDurationHours").get(0));
-            Number pauseDurationMinutes = workRecord.getValues("pauseDurationMinutes") != null
-                ? (Number)workRecord.values("pauseDurationMinutes").get(0)
-                : (oldValues == null ? new Integer(0) : (Number)oldValues.values("pauseDurationMinutes").get(0));
-            durationHours = durationHours == null ? new Integer(0) : durationHours;
-            durationMinutes = durationMinutes == null ? new Integer(0) : durationMinutes;
-            pauseDurationHours = pauseDurationHours == null ? new Integer(0) : pauseDurationHours;
-            pauseDurationMinutes = pauseDurationMinutes == null ? new Integer(0) : pauseDurationMinutes;
-            // depotSelector
-            short depotSelector = workRecord.getValues("depotSelector") != null
-                ? ((Number)workRecord.values("depotSelector").get(0)).shortValue()
-                : ((oldValues == null) || (oldValues.getValues("depotSelector") == null) 
-                    ? Depots.DEPOT_USAGE_WORK_EFFORT 
-                    : ((Number)oldValues.values("depotSelector").get(0)).shortValue());
-            if(depotSelector == 0) {
-                depotSelector = Depots.DEPOT_USAGE_WORK_EFFORT;
-            }
-            // Calculate duration
-            int durationCalculationMode = workRecord.getValues("durationCalculationMode") != null
-                ? ((Number)workRecord.getValues("durationCalculationMode").get(0)).intValue()
-                : (oldValues == null ? DURATION_CALCULATION_MODE_CALC_DURATION : ((Number)oldValues.values("durationCalculationMode").get(0)).intValue());
-            if(durationCalculationMode == DURATION_CALCULATION_MODE_CALC_DURATION) {
-                long duration = 0;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(workRecord);
+        PersistenceManager pmRoot =  pm.getPersistenceManagerFactory().getPersistenceManager(
+        	SecurityKeys.ROOT_PRINCIPAL,
+        	null
+        );
+        BigDecimal amount = workRecord.getQuantity();
+        BigDecimal rate = workRecord.getRate();
+        workRecord.setBillableAmount(
+        	amount == null || rate == null ?
+        		null :
+        		rate.multiply(workRecord.getQuantity())        	
+        );
+        BigDecimal oldAmount = null;
+        try {
+        	oldAmount = ((ActivityWorkRecord)pmRoot.getObjectById(workRecord.refGetPath())).getQuantity(); 
+        }
+        catch(Exception e) {}
+        // Update booking
+        if(!Utils.areEqual(amount, oldAmount)) {
+	        // depotSelector
+	        short depotSelector = workRecord.getDepotSelector() != 0 ? 
+	        	workRecord.getDepotSelector() : 
+	        	Depots.DEPOT_USAGE_WORK_EFFORT; 
+	        if(depotSelector == 0) {
+	            depotSelector = Depots.DEPOT_USAGE_WORK_EFFORT;
+	        }
+	        // Update work booking if duration has been changed                
+            if(workRecord.getWorkCb() != null) {
                 try {
-                    duration = 
-                        dateFormat.parse(endedAt).getTime() - dateFormat.parse(startedAt).getTime() -
-                        pauseDurationHours.longValue() * 3600000 - pauseDurationMinutes.longValue() * 60000;
-                    durationHours = new Long(duration / 3600000);
-                    durationMinutes = new Long((duration % 3600000) / 60000);                
-                    workRecord.clearValues("durationHours").add(durationHours);
-                    workRecord.clearValues("durationMinutes").add(durationMinutes);
+                    Depots.getInstance().removeCompoundBooking(
+                        workRecord.getWorkCb(),
+                        false
+                    );
                 } 
-                catch(ParseException e) {}
+                catch(Exception e) {}
             }
-            // Calculate pause
-            else {
-                long pauseDuration = 0;
-                try {
-                    pauseDuration = 
-                        dateFormat.parse(endedAt).getTime() - dateFormat.parse(startedAt).getTime() -
-                        durationHours.longValue() * 3600000 - durationMinutes.longValue() * 60000;
-                    pauseDurationHours = new Long(pauseDuration / 3600000);
-                    pauseDurationMinutes = new Long((pauseDuration % 3600000) / 60000);                
-                    workRecord.clearValues("pauseDurationHours").add(pauseDurationHours);
-                    workRecord.clearValues("pauseDurationMinutes").add(pauseDurationMinutes);
-                } 
-                catch(ParseException e) {}                
-            }            
-            // Billable amount
-            DataproviderObject_1_0 resourceAssignment = this.backend.retrieveObjectFromDelegation(
-                workRecord.path().getPrefix(workRecord.path().size() - 2)
+            workRecord.setWorkCb(null);
+            // Depot credit
+            // Get assigned depot of resource with usage DEPOT_USAGE_WORK_EFFORT
+            Depot depotCredit = null;
+            ResourceAssignment resourceAssignment = (ResourceAssignment)pm.getObjectById(
+            	workRecord.refGetPath().getParent().getParent()
             );
-            // rateType
-            Number rateType = workRecord.getValues("rateType") != null
-                ? (Number)workRecord.values("rateType").get(0)
-                : ((oldValues == null) || (oldValues.getValues("rateType") == null) 
-                      ? new Short(RATE_TYPE_NA)
-                      : (Number)oldValues.values("rateType").get(0));
-            workRecord.clearValues("rateType").add(rateType);
-            // rate
-            DataproviderObject_1_0 resource = null;
-            if(resourceAssignment.values("resource").size() > 0) {
-                resource = this.backend.retrieveObjectFromDelegation(
-                    (Path)resourceAssignment.values("resource").get(0)
-                );
-            }
-            BigDecimal rate = null;
-            if((rateType == null) || (rateType.shortValue() == RATE_TYPE_NA)) {
-                rate = workRecord.getValues("rate") != null
-                    ? (BigDecimal)workRecord.values("rate").get(0)
-                    : (oldValues == null ? new BigDecimal(0) : (BigDecimal)oldValues.values("rate").get(0));
-            }
-            else if(rateType.shortValue() == RATE_TYPE_STANDARD) { 
-                rate = (BigDecimal)resource.values("standardRate").get(0);
+            Resource resource = resourceAssignment.getResource();
+            Collection<DepotReference> depotReferences = null;
+            if(resource == null) {
+                depotReferences = Collections.emptyList();
             }
             else {
-                rate = (BigDecimal)resource.values("overtimeRate").get(0);
+                depotReferences = resource.getDepotReference();
             }
-            if(rate == null) {
-                rate = new BigDecimal(0);
-            }
-            boolean updateWorkCompoundBooking =
-                (oldValues == null) ||
-                (((Number)workRecord.values("durationHours").get(0)).intValue () != ((Number)oldValues.values("durationHours").get(0)).intValue()) ||
-                (((Number)workRecord.values("durationMinutes").get(0)).intValue() != ((Number)oldValues.values("durationMinutes").get(0)).intValue());
-            boolean updateBillableAmount =
-                updateWorkCompoundBooking ||
-                oldValues.values("rateType").isEmpty() ||
-                (rateType.intValue () != ((Number)oldValues.values("rateType").get(0)).intValue()) ||
-                (oldValues.values("rate").size() == 0) ||
-                (rate.doubleValue() != ((Number)oldValues.values("rate").get(0)).doubleValue());
-            // Update billable amount if rate or rate type has been changed
-            if(updateBillableAmount) {
-                workRecord.clearValues("rate").add(rate);
-                // billableAmount
-                workRecord.clearValues("billableAmount").add(
-                    rate.multiply(
-                        new BigDecimal(durationHours.intValue())
-                    ).add(
-                        rate.multiply(new BigDecimal(durationMinutes.intValue()).divide(new BigDecimal(60), 2, BigDecimal.ROUND_DOWN))
-                    )
-                );
-            }
-            // Update work booking if duration has been changed                
-            if(updateWorkCompoundBooking) {
-                if(!workRecord.values("workCb").isEmpty()) {
-                    try {
-                        this.backend.getDepots().removeCompoundBooking(
-                            (Path)workRecord.getValues("workCb").get(0)
-                        );
-                    } 
-                    catch(Exception e) {}
+            // Depot selector
+            for(DepotReference depotReference: depotReferences) {
+                short depotUsage = depotReference.getDepotUsage();
+                if(depotUsage == depotSelector) {
+                    depotCredit = depotReference.getDepot();
                 }
-                workRecord.clearValues("workCb");
-                // Depot credit
-                // Get assigned depot of resource with usage DEPOT_USAGE_WORK_EFFORT
-                DataproviderObject_1_0 depotCredit = null;
-                Path resourceIdentity = (Path)resourceAssignment.values("resource").get(0);
-                List depotReferences = null;
-                if(resourceIdentity == null) {
-                    depotReferences = Collections.EMPTY_LIST;
-                }
-                else {
-                    depotReferences = this.backend.getDelegatingRequests().addFindRequest(
-                        resourceIdentity.getChild("depotReference"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
+            }            
+            // Depot debit
+            // Get assigned depot of activity with usage DEPOT_USAGE_WORK_EFFORT
+            Depot depotDebit = null;
+            Activity activity = (Activity)pm.getObjectById(
+                workRecord.refGetPath().getPrefix(workRecord.refGetPath().size() - 4)
+            );
+            depotReferences = activity.getDepotReference();
+            for(DepotReference depotReference: depotReferences) {
+                short depotUsage = depotReference.getDepotUsage();
+                if(depotUsage == depotSelector) {
+                    depotDebit = depotReference.getDepot();
+               }
+            }
+            ActivityType activityType = activity.getActivityType();
+            if(
+                (depotCredit != null) &&
+                (depotDebit != null) &&
+                (activityType != null)
+            ) {
+                if(!depotCredit.refGetPath().getPrefix(7).equals(depotDebit.refGetPath().getPrefix(7))) {
+                    throw new ServiceException(
+                        OpenCrxException.DOMAIN,
+                        OpenCrxException.DEPOT_POSITION_IS_LOCKED,
+                        "Depot entity not equal",
+                        new BasicException.Parameter("param0", depotDebit.refGetPath()),
+                        new BasicException.Parameter("param1", depotCredit.refGetPath())
                     );
                 }
-                // Depot selector
-                for(
-                    Iterator j = depotReferences.iterator();
-                    j.hasNext();
-                ) {
-                    DataproviderObject_1_0 depotReference = (DataproviderObject_1_0)j.next();
-                    Number depotUsage = (Number)depotReference.values("depotUsage").get(0);
-                    if((depotUsage != null) && (depotUsage.shortValue() == depotSelector)) {
-                        depotCredit = this.backend.retrieveObject(
-                            (Path)depotReference.values("depot").get(0)
+                else {
+                    Date valueDate = workRecord.getEndedAt();
+                    DepotPosition positionCredit = Depots.getInstance().openDepotPosition(
+                        depotCredit,
+                        activityType.getName(),
+                        activityType.getDescription(),
+                        valueDate,
+                        null, // if position does not exist open at value date
+                        null,
+                        Boolean.FALSE
+                    );
+                    DepotPosition positionDebit = Depots.getInstance().openDepotPosition(
+                        depotDebit,
+                        activityType.getName(),
+                        activityType.getDescription(),
+                        valueDate,
+                        null, // if position does not exist open at value date
+                        null,
+                        Boolean.FALSE
+                    );
+                    CompoundBooking workCb = 
+                        Depots.getInstance().createCreditDebitBooking(
+                            (DepotEntity)pm.getObjectById(depotCredit.refGetPath().getPrefix(7)),
+                            workRecord.getEndedAt(),
+                            Depots.BOOKING_TYPE_STANDARD,
+                            workRecord.getQuantity(),
+                            BOOKING_TEXT_NAME_WORK_EFFORT,
+                            activityType.getWorkBt(),
+                            positionCredit,
+                            positionDebit,
+                            workRecord, // origin
+                            null, // reversalOf
+                            new ArrayList<String>()
                         );
-                    }
-                }            
-                // Depot debit
-                // Get assigned depot of activity with usage DEPOT_USAGE_WORK_EFFORT
-                DataproviderObject_1_0 depotDebit = null;
-                DataproviderObject_1_0 activity = this.backend.retrieveObjectFromDelegation(
-                    workRecord.path().getPrefix(workRecord.path().size() - 4)
-                );
-                depotReferences = this.backend.getDelegatingRequests().addFindRequest(
-                    activity.path().getChild("depotReference"),
-                    null,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    0,
-                    Integer.MAX_VALUE,
-                    Directions.ASCENDING
-                );
-                for(
-                    Iterator j = depotReferences.iterator();
-                    j.hasNext();
-                ) {
-                    DataproviderObject_1_0 depotReference = (DataproviderObject_1_0)j.next();
-                    Number depotUsage = (Number)depotReference.values("depotUsage").get(0);
-                    if((depotUsage != null) && (depotUsage.shortValue() == depotSelector)) {
-                        depotDebit = this.backend.retrieveObject(
-                            (Path)depotReference.values("depot").get(0)
-                        );
-                    }
+                    workRecord.setWorkCb(workCb);
                 }
-                Path activityTypeIdentity = (Path)activity.values("activityType").get(0);
-                if(
-                    (depotCredit != null) &&
-                    (depotDebit != null) &&
-                    (activityTypeIdentity != null)
-                ) {
-                    if(!depotCredit.path().getPrefix(7).equals(depotDebit.path().getPrefix(7))) {
-                        throw new ServiceException(
-                            OpenCrxException.DOMAIN,
-                            OpenCrxException.DEPOT_POSITION_IS_LOCKED,
-                            "Depot entity not equal",
-                            new BasicException.Parameter("param0", depotDebit.path()),
-                            new BasicException.Parameter("param1", depotCredit.path())
-                        );
-                    }
-                    else {
-                        DataproviderObject_1_0 activityType = this.backend.retrieveObjectFromDelegation(
-                            activityTypeIdentity
-                        );
-                        Date valueDate = this.backend.parseDate((String)workRecord.values("endedAt").get(0));
-                        Path positionCreditIdentity = this.backend.getDepots().openDepotPosition(
-                            depotCredit,
-                            (String)activityType.values("name").get(0),
-                            (String)activityType.values("description").get(0),
-                            valueDate,
-                            null, // if position does not exist open latest at value date
-                            null,
-                            null,
-                            Boolean.FALSE
-                        ).path();
-                        Path positionDebitIdentity = this.backend.getDepots().openDepotPosition(
-                            depotDebit,
-                            (String)activityType.values("name").get(0),
-                            (String)activityType.values("description").get(0),
-                            valueDate,
-                            null, // if position does not exist open latest at value date
-                            null,
-                            null,
-                            Boolean.FALSE
-                        ).path();
-                        DataproviderObject_1_0 workCb = 
-                            this.backend.getDepots().createCreditDebitBooking(
-                                depotCredit.path().getPrefix(7),
-                                this.backend.parseDate((String)workRecord.values("endedAt").get(0)),
-                                Depots.BOOKING_TYPE_STANDARD,
-                                new BigDecimal(durationHours.intValue()).add(new BigDecimal(durationMinutes.intValue()).divide(new BigDecimal(60), 2, BigDecimal.ROUND_DOWN)),
-                                BOOKING_TEXT_NAME_WORK_EFFORT,
-                                (Path)activityType.values("workBt").get(0),
-                                positionCreditIdentity,
-                                positionDebitIdentity,
-                                null,
-                                workRecord.path(),
-                                null
-                            );
-                        workRecord.clearValues("workCb").add(
-                            workCb.path()
-                        );
-                    }
-                }
-            }
-        }
+	        }
+    	}
     }
     
     //-------------------------------------------------------------------------
-    public ActivityWorkRecord addWorkRecord(
-        Path resourceIdentity,
-        Path activityIdentity,
+    public ActivityWorkRecord addWorkAndExpenseRecord(
+        Activity activity,
+        Resource resource,
         String name,
         String description,
         Date startedAt,
         Date endedAt,
-        Number durationHours,
-        Number durationMinutes,
-        Number pauseDurationHours,
-        Number pauseDurationMinutes,
-        Number rateType,
-        short durationCalculationMode,
-        short depotSelector
+        BigDecimal quantity,
+        Uom quantityUom,
+        short recordType,
+        short paymentType,
+        short depotSelector,
+        BigDecimal rate,
+        short rateCurrency,
+        Boolean isBillable,
+        Boolean isReimbursable
     ) throws ServiceException {
-        DataproviderObject workRecord = null;
-        if(resourceIdentity == null) {
+        ActivityWorkRecord workRecord = null;
+        if(resource == null) {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.ACTIVITY_CAN_NOT_ADD_WORK_RECORD_MISSING_RESOURCE,
                "Can not add work record. Missing resource"
            );            
         }
-        if(activityIdentity == null) {
+        if(activity == null) {
            throw new ServiceException(
                OpenCrxException.DOMAIN,
                OpenCrxException.ACTIVITY_CAN_NOT_ADD_WORK_RECORD_MISSING_ACTIVITY,
                "Can not add work record. Missing activity"
            );            
         }
-        DataproviderObject_1_0 activity = this.backend.retrieveObjectFromDelegation(activityIdentity);
-        DataproviderObject_1_0 resource = this.backend.retrieveObjectFromDelegation(resourceIdentity);            
-        List resourceAssignments = this.backend.getDelegatingRequests().addFindRequest(
-            activityIdentity.getChild("assignedResource"),
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "resource",
-                    FilterOperators.IS_IN,
-                    resourceIdentity
-                )
-            }
-        );
-        Path resourceAssignmentIdentity = null;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);        
+        ResourceAssignmentQuery resourceAssignmentQuery = (ResourceAssignmentQuery)pm.newQuery(ResourceAssignment.class);
+        resourceAssignmentQuery.thereExistsResource().equalTo(resource);
+        Collection<ResourceAssignment> resourceAssignments = activity.getAssignedResource(resourceAssignmentQuery);
+        ResourceAssignment resourceAssignment = null;
         if(resourceAssignments.isEmpty()) {
-            resourceAssignmentIdentity = this.createResourceAssignment(
+            resourceAssignment = this.createResourceAssignment(
                 activity, 
                 resource, 
                 (short)0
-            ).path();
+            );
         }
-        if(!resourceAssignments.isEmpty()) {
-            resourceAssignmentIdentity = 
-                ((DataproviderObject_1_0)resourceAssignments.iterator().next()).path();
+        else {
+            resourceAssignment = resourceAssignments.iterator().next();
         }            
-        workRecord = new DataproviderObject(
-            resourceAssignmentIdentity.getDescendant(new String[]{"workRecord", this.backend.getUidAsString()})
-        );
-        workRecord.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:activity1:ActivityWorkRecord"
-        );
+        workRecord = pm.newInstance(ActivityWorkRecord.class);
+        workRecord.refInitialize(false, false);
         if(name != null) {
-            workRecord.values("name").add(name);
+            workRecord.setName(name);
         }
         if(description != null) {
-            workRecord.values("description").add(description);
-        }                
-        workRecord.values("startedAt").add(
-            startedAt == null
-                ? DateFormat.getInstance().format(new Date()).substring(0, 8) + "T000000.000Z"
-                : DateFormat.getInstance().format(startedAt)
-        );
-        workRecord.values("endedAt").add(
-            endedAt == null
-                ? startedAt == null
-                    ? DateFormat.getInstance().format(new Date(System.currentTimeMillis() + 86400000L)).substring(0, 8) + "T000000.000Z"
-                    : DateFormat.getInstance().format(new Date(startedAt.getTime() + 86400000L)).substring(0, 8) + "T000000.000Z"
-                : DateFormat.getInstance().format(endedAt)
-        );
-        if(durationHours != null) {
-            workRecord.values("durationHours").add(durationHours);
+            workRecord.setDescription(description);
+        }           
+        DateFormat dateFormat = DateFormat.getInstance();
+        try {
+	        workRecord.setStartedAt(
+	            startedAt == null ? 
+	            	(startedAt = new Date()) : 
+	            	startedAt
+	        );
+	        workRecord.setEndedAt(
+	            endedAt == null ?
+	            	quantity == null ?
+	            		null :
+	            	    (endedAt = dateFormat.parse(dateFormat.format(new Date(startedAt.getTime() + quantity.multiply(new BigDecimal(3600000L)).longValue())))) : 
+	            	endedAt
+	        );
         }
-        if(durationMinutes != null) {
-            workRecord.values("durationMinutes").add(durationMinutes);
+        catch(Exception e) {}
+        // Default amount is endedAt - startedAt in hours/minutes
+        if(quantity == null && endedAt != null && startedAt != null) {
+        	workRecord.setQuantity(
+        		new BigDecimal(Math.abs(endedAt.getTime() - startedAt.getTime()) / 60000L).divide(new BigDecimal(60.0), RoundingMode.FLOOR)
+        	);
+        	Uom uomHour = null;
+        	try {
+        		uomHour = (Uom)pm.getObjectById(
+        			new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + activity.refGetPath().get(2) + "/segment/Root/uom/hour")
+        		);
+        	}
+        	catch(Exception e) {}
+        	workRecord.setQuantityUom(uomHour);
         }
-        if(pauseDurationHours != null) {
-            workRecord.values("pauseDurationHours").add(pauseDurationHours);
+        else {
+        	workRecord.setQuantity(quantity);        	
+            workRecord.setQuantityUom(quantityUom);
         }
-        if(pauseDurationMinutes != null) {
-            workRecord.values("pauseDurationMinutes").add(pauseDurationMinutes);
+        // Get default rate from resource in case of work records
+        if(
+        	(rate == null) && 
+        	(recordType == Activities.WORKRECORD_TYPE_WORK_OVERTIME || recordType == Activities.WORKRECORD_TYPE_WORK_STANDARD)
+        ) {
+            workRecord.setBillingCurrency(
+                resource.getRateCurrency()
+            );
+        	switch(recordType) {
+        		case Activities.WORKRECORD_TYPE_WORK_STANDARD:
+        			workRecord.setRate(resource.getStandardRate());
+        			break;
+        		case Activities.WORKRECORD_TYPE_WORK_OVERTIME:
+        			workRecord.setRate(resource.getOvertimeRate());
+        			break;
+        	}
         }
-        workRecord.values("durationCalculationMode").add(
-            new Short(durationCalculationMode)
+        else {
+        	workRecord.setRate(rate);
+            workRecord.setBillingCurrency(rateCurrency);
+        }
+        workRecord.setRecordType(recordType);
+        workRecord.setPaymentType(paymentType);
+        workRecord.setBillable(isBillable);
+        workRecord.setReimbursable(isReimbursable);
+        workRecord.setDepotSelector(depotSelector);
+        resourceAssignment.addWorkRecord(
+        	false,
+        	this.getUidAsString(),
+        	workRecord
         );
-        workRecord.values("isBillable").add(Boolean.TRUE);
-        workRecord.values("billingCurrency").addAll(
-            resource.values("rateCurrency")
+        this.updateWorkAndExpenseRecord(
+        	workRecord
         );
-        workRecord.values("rateType").add(
-            rateType == null
-                ? new Short(RATE_TYPE_NA)
-                : rateType
-        );  
-        // Take DEPOT_USAGE_WORK_EFFORT as default
-        workRecord.values("depotSelector").add(
-            depotSelector == 0
-                ? new Short(Depots.DEPOT_USAGE_WORK_EFFORT)
-                : new Short(depotSelector)
-        );                
-        this.backend.createObject(
-            workRecord
-        );
-        this.updateWorkRecord(
-            this.backend.retrieveObjectForModification(
-                workRecord.path()
-            ),
-            null
-        );
-        return workRecord == null
-            ? null
-            : (ActivityWorkRecord)this.backend.getDelegatingPkg().refObject(workRecord.path().toXri());
-    }
-    
-    //-------------------------------------------------------------------------
-    public ActivityWorkRecord resourceAddWorkRecordByDuration(
-        Path resourceIdentity,
-        Path activityIdentity,
-        String name,
-        String description,
-        Date startAt,
-        Date endAt,
-        Short durationHours,
-        Short durationMinutes,
-        short rateType,
-        short depotSelector
-    ) throws ServiceException {
-        return this.addWorkRecord(
-            resourceIdentity,
-            activityIdentity,
-            name,
-            description,
-            startAt, 
-            endAt,
-            durationHours,
-            durationMinutes,
-            null,
-            null,
-            rateType,
-            Activities.DURATION_CALCULATION_MODE_CALC_PAUSE,
-            depotSelector == 0
-                ? Depots.DEPOT_USAGE_WORK_EFFORT
-                : depotSelector           
-        );
-    }
-    
-    //-------------------------------------------------------------------------
-    public ActivityWorkRecord activityAddWorkRecordByDuration(
-        Path activityIdentity,
-        String name,
-        String description,
-        Date startAt,
-        Date endAt,
-        Short durationHours,
-        Short durationMinutes,
-        short rateType,
-        short depotSelector,
-        Path resourceIdentity
-    ) throws ServiceException {
-        return this.addWorkRecord(
-            resourceIdentity,
-            activityIdentity,
-            name,
-            description,
-            startAt, 
-            endAt,
-            durationHours,
-            durationMinutes,
-            null,
-            null,
-            rateType,
-            Activities.DURATION_CALCULATION_MODE_CALC_PAUSE,
-            depotSelector == 0
-                ? Depots.DEPOT_USAGE_WORK_EFFORT
-                : depotSelector            
-        );
+        return workRecord;
     }
     
     //-------------------------------------------------------------------------
     public void removeWorkRecord(
-        Path workRecordIdentity
+    	WorkAndExpenseRecord workRecord,
+        boolean preDelete
     ) throws ServiceException {
-        DataproviderObject_1_0 workRecord = this.backend.retrieveObjectFromDelegation(workRecordIdentity);
-        if(!workRecord.values("workCb").isEmpty()) {
-            this.backend.getDepots().removeCompoundBooking(
-                (Path)workRecord.values("workCb").get(0)
+        if(workRecord.getWorkCb() != null) {
+            Depots.getInstance().removeCompoundBooking(
+                workRecord.getWorkCb(),
+                false
             );
         }
-        this.backend.removeObject(
-            workRecordIdentity
-        );
+        if(!preDelete) {
+        	workRecord.refDelete();
+        }
     }
     
     //-------------------------------------------------------------------------
     public void removeActivityGroup(
-        Path activityGroupIdentity
+        ActivityGroup activityGroup,
+        boolean preDelete
     ) throws ServiceException {
-        List activities = this.backend.getDelegatingRequests().addFindRequest(
-            activityGroupIdentity.getChild("filteredActivity"),
-            null
-        );
+        Collection<Activity> activities = activityGroup.getFilteredActivity();
         // Don't allow removal if activity group has assigned activities
-        if(activities.size() > 0) {
+        if(!activities.isEmpty()) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.ACTIVITY_GROUP_HAS_ASSIGNED_ACTIVITIES, 
                 "Activity group has assigned activities. Can not remove.",
-                new BasicException.Parameter("param0", activityGroupIdentity)
+                new BasicException.Parameter("param0", activityGroup.refGetPath())
             );
         }
-        else {
-            this.backend.removeObject(
-                activityGroupIdentity
-            );
+        if(!preDelete) {
+        	activityGroup.refDelete();
         }
     }
     
     //-------------------------------------------------------------------------
     public void updateActivity(
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
+        Activity activity
     ) throws ServiceException {
-        if(this.backend.isActivity(object)) {
-            if(oldValues != null) {
-                List votes = this.backend.getDelegatingRequests().addFindRequest(
-                    object.path().getChild("vote"),
-                    null,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    0, Integer.MAX_VALUE, Directions.ASCENDING
-                );
-                object.clearValues("totalVotes").add(
-                    new Integer(votes.size())
-                );
+        if(!JDOHelper.isPersistent(activity) && JDOHelper.isNew(activity)) {
+            if((activity.getDueBy() == null)) {
+            	try {
+            		activity.setDueBy(DateFormat.getInstance().parse("99991231T000000.000Z"));
+            	}
+            	catch(Exception e) {}
             }
-            if(oldValues == null) {
-                // init dueBy on creation
-                if((object.getValues("dueBy") == null) || object.values("dueBy").isEmpty()) {
-                    object.clearValues("dueBy").add(MAX_DATE);
-                }
-                // init percentComplete on creation
-                if((object.getValues("percentComplete") == null) || object.values("percentComplete").isEmpty()) {
-                    object.clearValues("percentComplete").add(new Short((short)0));
-                }
+            if(activity.getPercentComplete() == null) {
+                activity.setPercentComplete(new Short((short)0));
             }
-            List<String> statusMessage = new ArrayList<String>();
-            String ical = this.icals.mergeIcal(
-                object,
-                (String)object.values("ical").get(0),
-                statusMessage
-            );
-            object.clearValues("ical").add(
-                ical == null ? "" : ical
-            );
         }
+        List<String> statusMessage = new ArrayList<String>();
+        String ical = ICalendar.getInstance().mergeIcal(
+        	activity, 
+        	activity.getIcal(), 
+        	statusMessage 
+        );
+        activity.setIcal(
+            ical == null ? "" : ical
+        );
     }
         
     //-------------------------------------------------------------------------
-    public DataproviderObject createResourceAssignment(
-        DataproviderObject_1_0 activity,
-        DataproviderObject_1_0 resource,
+    public ResourceAssignment createResourceAssignment(
+        Activity activity,
+        Resource resource,
         short resourceOrder
     ) throws ServiceException {
-        DataproviderObject resourceAssignment = new DataproviderObject(
-            activity.path().getDescendant(new String[]{"assignedResource", this.backend.getUidAsString()})
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+        ResourceAssignment resourceAssignment = pm.newInstance(ResourceAssignment.class);
+        resourceAssignment.refInitialize(false, false);
+        resourceAssignment.setName(
+            resource.getName()
         );
-        resourceAssignment.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:activity1:ResourceAssignment"
+        resourceAssignment.setDescription(
+            (activity.getName() != null ? activity.getName() : "") +
+            " (" + 
+            (resource.getName() != null ? resource.getName() : "") +
+            ")"
         );
-        resourceAssignment.values("name").addAll(
-            resource.values("name")
+        resourceAssignment.setResource(
+            resource
         );
-        resourceAssignment.values("description").add(
-            "#" + activity.values("activityNumber").get(0) + ": " + 
-            (activity.values("name").size() > 0 ? activity.values("name").get(0) : "") 
-        );
-        resourceAssignment.values("resource").add(
-            resource.path()
-        );
-        resourceAssignment.values("resourceRole").add(
+        resourceAssignment.setResourceRole(
             new Short((short)0)
         );
-        resourceAssignment.values("resourceOrder").add(
+        resourceAssignment.setResourceOrder(
             new Short(resourceOrder)
         );                    
-        resourceAssignment.values("workDurationPercentage").add(
+        resourceAssignment.setWorkDurationPercentage(
             new Short((short)100)
         );
-        this.backend.createObject(
-            resourceAssignment
+        resourceAssignment.getOwningGroup().addAll(
+        	activity.getOwningGroup()
+        );
+        activity.addAssignedResource(
+        	false,
+        	this.getUidAsString(),
+        	resourceAssignment
         );
         return resourceAssignment;
     }
     
     //-------------------------------------------------------------------------
     public void reapplyActivityCreator(
-        Path activityIdentity,
+        Activity activity,
         ActivityCreator activityCreator
     ) throws ServiceException {
         if(activityCreator != null) {
-            Path activityTypeIdentity = (Path)activityCreator.getActivityType().refGetPath();
-            if(activityTypeIdentity != null) {
-                DataproviderObject_1_0 activityType = this.backend.retrieveObjectFromDelegation(
-                    activityTypeIdentity
-                );
-                DataproviderObject updatedActivity = this.backend.retrieveObjectForModification(
-                    activityIdentity
-                );
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);        	
+        	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
+        		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+        			activityCreator.refGetPath().getParent().getParent()
+        		);
+            ActivityType activityType = activityCreator.getActivityType();
+            if(activityType != null) {
                 // Type of activity must match defined activity class
-                String activityClass = !activityType.values("activityClassName").isEmpty()
-                    ? (String)activityType.values("activityClassName").get(0)                
-                    : ACTIVITY_TYPES[((Number)activityType.values("activityClass").get(0)).intValue()];
-                if(activityClass.equals(updatedActivity.values(SystemAttributes.OBJECT_CLASS).get(0))) {
+                String activityClass = activityType.getActivityClassName() != null ? 
+                	activityType.getActivityClassName() : 
+                	ACTIVITY_TYPES[activityType.getActivityClass()];
+                if(activityClass.equals(activity.refClass().refMofId())) {
                     // Replace owning groups. The owning groups of the activity is the
                     // the union of all owning groups of the assigned activity groups. 
                     // This way it is guaranteed that the activity can be viewed in all
                     // assigned activity groups.
                     List<ActivityGroup> activityGroups = activityCreator.getActivityGroup();
-                    Set<Path> owningGroupIdentities = new HashSet<Path>();
+                    Set<PrincipalGroup> owningGroups = new HashSet<PrincipalGroup>();
                     for(ActivityGroup activityGroup: activityGroups) {
-                        List<PrincipalGroup> owningGroups = activityGroup.getOwningGroup();
-                        for(PrincipalGroup owningGroup: owningGroups) {
-                            owningGroupIdentities.add(owningGroup.refGetPath());
+                        List<PrincipalGroup> groups = activityGroup.getOwningGroup();
+                        for(PrincipalGroup group: groups) {
+                            owningGroups.add(group);
                         }
                     }
-                    updatedActivity.clearValues("owningGroup").addAll(
-                        owningGroupIdentities
-                    );
-                    // Update lastAppliedCreator
-                    updatedActivity.clearValues("lastAppliedCreator");
-                    updatedActivity.values("lastAppliedCreator").add(
-                        activityCreator.refGetPath()
-                    );
-                    this.backend.flushObjectModifications(
-                        this.backend.getServiceHeader()
-                    );
-                    updatedActivity = this.backend.retrieveObjectForModification(
-                        activityIdentity
-                    );
-                    
+                    activity.getOwningGroup().clear();
+                    activity.getOwningGroup().addAll(owningGroups);
+                    activity.setLastAppliedCreator(activityCreator);
                     // Create GroupAssignments
-                    // Remove already assigned activity groups from list to be added 
-                    List existingGroupAssignments = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getChild("assignedGroup"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );
-                    List<Path> excludeActivityGroups = new ArrayList<Path>();
-                    for(Iterator i = existingGroupAssignments.iterator(); i.hasNext(); ) {
-                        DataproviderObject_1_0 existingGroupAssignment = (DataproviderObject_1_0)i.next();
-                        if(!existingGroupAssignment.values("activityGroup").isEmpty()) {
+                    // Remove already assigned activity groups from list to be added
+                    Collection<ActivityGroupAssignment> existingGroupAssignments = activity.getAssignedGroup();
+                    List<ActivityGroup> excludeActivityGroups = new ArrayList<ActivityGroup>();
+                    for(ActivityGroupAssignment existingGroupAssignment: existingGroupAssignments) {
+                        if(existingGroupAssignment.getActivityGroup() != null) {
                             excludeActivityGroups.add(
-                                (Path)existingGroupAssignment.values("activityGroup").get(0)
+                                existingGroupAssignment.getActivityGroup()
                             );
                         }
                     }
                     // Add new group assignments
                     for(ActivityGroup activityGroup: activityGroups) {
-                        if(!excludeActivityGroups.contains(activityGroup.refGetPath())) {
-                            DataproviderObject activityGroupAssignment = new DataproviderObject(
-                                activityIdentity.getDescendant(
-                                    new String[]{"assignedGroup", this.backend.getUidAsString()}
-                                )
-                            );
-                            activityGroupAssignment.values(SystemAttributes.OBJECT_CLASS).add(
-                                "org:opencrx:kernel:activity1:ActivityGroupAssignment"
-                            );
-                            activityGroupAssignment.values("activityGroup").add(
-                                activityGroup.refGetPath()
-                            );
-                            this.backend.createObject(
-                                activityGroupAssignment
+                        if(!excludeActivityGroups.contains(activityGroup)) {
+                            ActivityGroupAssignment activityGroupAssignment = pm.newInstance(ActivityGroupAssignment.class);
+                            activityGroupAssignment.refInitialize(false, false);
+                            activityGroupAssignment.setActivityGroup(activityGroup);
+                            activityGroupAssignment.getOwningGroup().addAll(owningGroups);
+                            activity.addAssignedGroup(
+                            	false,
+                            	this.getUidAsString(),
+                            	activityGroupAssignment
                             );
                         }
-                    }            
+                    }    
                     // Create ResourceAssignments
-                    List<Path> resourceIdentities = new ArrayList<Path>();
+                    List<Resource> resources = new ArrayList<Resource>();
                     if(!activityCreator.getResource().isEmpty()) {
-                        List<Resource> resources = activityCreator.getResource();
-                        for(Resource resource: resources) {
-                            resourceIdentities.add(resource.refGetPath());
+                        List<Resource> rs = activityCreator.getResource();
+                        for(Resource r: rs) {
+                            resources.add(r);
                         }
                     }
                     else {
                         // Try to find resource matching the current user
-                        List allResources = this.backend.getDelegatingRequests().addFindRequest(
-                            activityIdentity.getPrefix(5).getChild("resource"),
-                            new FilterProperty[]{
-                                new FilterProperty(
-                                    Quantors.THERE_EXISTS,
-                                    "contact",
-                                    FilterOperators.IS_IN,
-                                    this.backend.getUserHomes().getUserHome(
-                                        activityIdentity
-                                    ).values("contact").get(0)
-                                )
-                            }
-                        );
+                    	ResourceQuery resourceQuery = (ResourceQuery)pm.newQuery(Resource.class);
+                    	resourceQuery.thereExistsContact().equalTo(
+                    		UserHomes.getInstance().getUserHome(activityCreator.refGetPath(), pm).getContact()
+                    	);
+                    	List<Resource> allResources = activitySegment.getResource(resourceQuery);
                         if(!allResources.isEmpty()) {
-                            resourceIdentities.add(
-                                ((DataproviderObject_1_0)allResources.iterator().next()).path()
+                            resources.add(
+                                allResources.iterator().next()
                             );
                         }
                     }
                     // Remove already assigned resources from list to be added 
-                    List existingResourceAssignments = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getChild("assignedResource"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );
-                    List<Path> excludeResources = new ArrayList<Path>();
-                    for(Iterator i = existingResourceAssignments.iterator(); i.hasNext(); ) {
-                        DataproviderObject_1_0 existingResourceAssignment = (DataproviderObject_1_0)i.next();
-                        if(!existingResourceAssignment.values("resource").isEmpty()) {
+                    Collection<ResourceAssignment> existingResourceAssignments = activity.getAssignedResource();
+                    List<Resource> excludeResources = new ArrayList<Resource>();
+                    for(ResourceAssignment existingResourceAssignment: existingResourceAssignments) {
+                        if(existingResourceAssignment.getResource() != null) {
                             excludeResources.add(
-                                (Path)existingResourceAssignment.values("resource").get(0)
+                                existingResourceAssignment.getResource()
                             );
                         }
                     }                    
                     int ii = 0;
-                    for(Iterator i = resourceIdentities.iterator(); i.hasNext(); ii++) {
-                        Path resourceIdentity = (Path)i.next();
-                        if(!excludeResources.contains(resourceIdentity)) {
-                            DataproviderObject_1_0 resource = this.backend.retrieveObjectFromDelegation(
-                                resourceIdentity
-                            );
+                    for(Resource resource: resources) {
+                        if(!excludeResources.contains(resource)) {
                             this.createResourceAssignment(
-                                updatedActivity,
+                                activity,
                                 resource,
                                 (short)ii
                             );
+                            ii++;
                         }
                     }
                     // Create depot references
-                    List existingDepotReferences = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getChild("depotReference"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );
+                    Collection<DepotReference> existingDepotReferences = activity.getDepotReference();
                     List<Short> excludesDepotUsages = new ArrayList<Short>();
-                    for(Iterator i = existingDepotReferences.iterator(); i.hasNext(); ) {
-                        DataproviderObject_1_0 existingDepotReference = (DataproviderObject_1_0)i.next();
+                    for(DepotReference existingDepotReference: existingDepotReferences) {
                         excludesDepotUsages.add(
-                            new Short(((Number)existingDepotReference.values("depotUsage").get(0)).shortValue())
+                            new Short(existingDepotReference.getDepotUsage())
                         );
                     }                    
-                    List depotReferences = this.backend.getDelegatingRequests().addFindRequest(
-                        activityCreator.refGetPath().getChild("depotReference"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );        
-                    for(
-                        Iterator i = depotReferences.iterator();
-                        i.hasNext();
-                    ) {
-                        DataproviderObject_1_0 depotReference = (DataproviderObject_1_0)i.next();
-                        if(!excludesDepotUsages.contains(new Short(((Number)depotReference.values("depotUsage").get(0)).shortValue()))) {
-                            this.backend.getCloneable().cloneAndUpdateReferences(
+                    Collection<DepotReference> depotReferences = activityCreator.getDepotReference();
+                    for(DepotReference depotReference: depotReferences) {
+                        if(!excludesDepotUsages.contains(new Short(depotReference.getDepotUsage()))) {
+                            Cloneable.getInstance().cloneObject(
                                 depotReference,
-                                activityIdentity.getChild("depotReference"),
+                                activity,
+                                "depotReference",
                                 null,
-                                "",
-                                true,
-                                AttributeSelectors.ALL_ATTRIBUTES                                
+                                ""
                             );
                         }
                     }                            
                     // Create PropertySet
-                    List existingPropertySets = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getChild("propertySet"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );
+                    Collection<PropertySet> existingPropertySets = activity.getPropertySet();
                     List<String> excludePropertySets = new ArrayList<String>();
-                    for(Iterator i = existingPropertySets.iterator(); i.hasNext(); ) {
-                        DataproviderObject_1_0 existingPropertySet = (DataproviderObject_1_0)i.next();
+                    for(PropertySet existingPropertySet: existingPropertySets) {
                         excludePropertySets.add(
-                            (String)existingPropertySet.values("name").get(0)
+                            existingPropertySet.getName()
                         );
                     }                    
-                    List propertySets = this.backend.getDelegatingRequests().addFindRequest(
-                        activityCreator.refGetPath().getChild("propertySet"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );        
-                    for(
-                        Iterator i = propertySets.iterator();
-                        i.hasNext();
-                    ) {
-                        DataproviderObject_1_0 propertySet = (DataproviderObject_1_0)i.next();
-                        if(!excludePropertySets.contains(propertySet.values("name").get(0))) {
-                            this.backend.getCloneable().cloneAndUpdateReferences(
+                    Collection<PropertySet> propertySets = activityCreator.getPropertySet();
+                    for(PropertySet propertySet: propertySets) {
+                        if(!excludePropertySets.contains(propertySet.getName())) {
+                            Cloneable.getInstance().cloneObject(
                                 propertySet,
-                                activityIdentity.getChild("propertySet"),
+                                activity,
+                                "propertySet",
                                 null,
-                                "property",
-                                true,
-                                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES                                
+                                "property"
                             );
                         }
                     }                            
                     // Set processState, lastTransition
-                    updatedActivity.clearValues("activityType").add(
-                        activityTypeIdentity
-                    );
-                    updatedActivity.clearValues("processState");
-                    updatedActivity.clearValues("lastTransition");
-                    if(!activityType.values("controlledBy").isEmpty()) {
-                        DataproviderObject_1_0 activityProcess = this.backend.retrieveObjectFromDelegation(
-                            (Path)activityType.values("controlledBy").get(0)
-                        );
+                    activity.setActivityType(activityType);
+                    activity.setProcessState(null);
+                    activity.setLastTransition(null);
+                    if(activityType.getControlledBy() != null) {
+                        ActivityProcess activityProcess = activityType.getControlledBy();
                         // Try to find transition which most closely matches the current activity
                         // completeness and state. If no transition can be found set to start transition.
-                        DataproviderObject_1_0 lastTransition = null;
-                        Path processStateIdentity = null;
-                        if(!updatedActivity.values("percentComplete").isEmpty()) {
-                            List transitions = 
-                                this.backend.getDelegatingRequests().addFindRequest(
-                                    activityProcess.path().getChild("transition"),
-                                    new FilterProperty[]{
-                                        new FilterProperty(
-                                            Quantors.THERE_EXISTS,
-                                            "newPercentComplete",
-                                            FilterOperators.IS_IN,
-                                            updatedActivity.values("percentComplete").get(0)
-                                        )
-                                    },
-                                    AttributeSelectors.ALL_ATTRIBUTES,
-                                    0,
-                                    Integer.MAX_VALUE,
-                                    Directions.ASCENDING
-                                );
+                        ActivityProcessTransition lastTransition = null;
+                        ActivityProcessState processState = null;
+                        if(activity.getPercentComplete() != null) {
+                        	ActivityProcessTransitionQuery transitionQuery = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
+                        	transitionQuery.thereExistsNewPercentComplete().equalTo(activity.getPercentComplete());
+                            List<ActivityProcessTransition> transitions = activityProcess.getTransition(transitionQuery);
                             if(!transitions.isEmpty()) {
-                                lastTransition = (DataproviderObject_1_0)transitions.iterator().next();
-                                processStateIdentity = (Path)lastTransition.values("nextState").get(0);
+                                lastTransition = transitions.iterator().next();
+                                processState = lastTransition.getNextState();
                             }
                         }
-                        if(
-                            (lastTransition == null) &&
-                            !updatedActivity.values("activityState").isEmpty()
-                        ) {
-                            List transitions = 
-                                this.backend.getDelegatingRequests().addFindRequest(
-                                    activityProcess.path().getChild("transition"),
-                                    new FilterProperty[]{
-                                        new FilterProperty(
-                                            Quantors.THERE_EXISTS,
-                                            "newActivityState",
-                                            FilterOperators.IS_IN,
-                                            updatedActivity.values("activityState").get(0)
-                                        )
-                                    },
-                                    AttributeSelectors.ALL_ATTRIBUTES,
-                                    0,
-                                    Integer.MAX_VALUE,
-                                    Directions.ASCENDING
-                                );
+                        if(lastTransition == null) {
+                        	ActivityProcessTransitionQuery transitionQuery = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
+                        	transitionQuery.newActivityState().equalTo(activity.getActivityState());
+                            List<ActivityProcessTransition> transitions = activityProcess.getTransition(transitionQuery); 
                             if(!transitions.isEmpty()) {
-                                lastTransition = (DataproviderObject_1_0)transitions.iterator().next();
-                                processStateIdentity = (Path)lastTransition.values("nextState").get(0);
+                                lastTransition = transitions.iterator().next();
+                                processState = lastTransition.getNextState();
                             }
                         }
                         if(lastTransition == null) {
                             lastTransition = null;
-                            processStateIdentity = (Path)activityProcess.values("startState").get(0);
+                            processState = activityProcess.getStartState();
                         }
-                        if(processStateIdentity != null) {
-                            updatedActivity.values("processState").add(processStateIdentity);
+                        if(processState != null) {
+                            activity.setProcessState(processState);
                         }
                         if(lastTransition != null) {
-                            updatedActivity.values("lastTransition").add(lastTransition.path());
-                            updatedActivity.clearValues("percentComplete").addAll(lastTransition.values("newPercentComplete"));
-                            updatedActivity.clearValues("activityState").addAll(lastTransition.values("newActivityState"));
+                            activity.setLastTransition(lastTransition);
+                            activity.setPercentComplete(lastTransition.getNewPercentComplete());
+                            activity.setActivityState(lastTransition.getNewActivityState());
                         }
                     }
                 }
@@ -2716,393 +2405,458 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public FilterProperty[] getActivityFilterProperties(
-        Path activityFilterIdentity,
-        boolean forCounting
+    public ActivityQuery getFilteredActivityQuery(
+        AbstractFilterActivity activityFilter,
+        ActivityQuery query,
+        boolean forCounting,
+        PersistenceManager pm
     ) throws ServiceException {
-        List<DataproviderObject_1_0> filterProperties = this.backend.getDelegatingRequests().addFindRequest(
-            activityFilterIdentity.getChild("filterProperty"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            null,
-            0, 
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-        );
-        List<FilterProperty> filter = new ArrayList<FilterProperty>();
+        Collection<ActivityFilterProperty> filterProperties = activityFilter.getFilterProperty();
         boolean hasQueryFilterClause = false;
-        for(
-            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject_1_0 filterProperty = i.next();
-            String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
-
-            Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);
-            
+        for(ActivityFilterProperty filterProperty: filterProperties) {
+            Boolean isActive = filterProperty.isActive();            
             if((isActive != null) && isActive.booleanValue()) {
                 // Query filter
-                if("org:opencrx:kernel:activity1:ActivityQueryFilterProperty".equals(filterPropertyClass)) {     
-                    String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-                    // Clause and class
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                            FilterOperators.PIGGY_BACK,
-                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
-                        )
+                if(filterProperty instanceof ActivityQueryFilterProperty) {
+                	ActivityQueryFilterProperty p = (ActivityQueryFilterProperty)filterProperty;
+                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+                	queryFilter.setClause(
+                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
+                	);
+                    queryFilter.setStringParam(
+                    	p.getStringParam()
                     );
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                            FilterOperators.PIGGY_BACK,
-                            Database_1_Attributes.QUERY_FILTER_CLASS
-                        )
+                    queryFilter.setIntegerParam(
+                    	p.getIntegerParam()
                     );
-                    // stringParam
-                    List<Object> values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDecimalParam(
+                    	p.getDecimalParam()
                     );
-                    // integerParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setBooleanParam(
+                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
                     );
-                    // decimalParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateParam(
+                    	p.getDateParam()
                     );
-                    // booleanParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    queryFilter.setDateTimeParam(
+                    	p.getDateTimeParam()
                     );
-                    // dateParam
-                    values = new ArrayList<Object>();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
-                    );
-                    // dateTimeParam
-                    values = new ArrayList<Object>();
-                    for(
-                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-                        j.hasNext();
-                    ) {
-                        values.add(
-                            Datatypes.create(Date.class, j.next())
-                        );
-                    }
-                    filter.add(
-                        new FilterProperty(
-                            Quantors.PIGGY_BACK,
-                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-                            FilterOperators.PIGGY_BACK,
-                            values.toArray()
-                        )
+                    query.thereExistsContext().equalTo(
+                    	queryFilter
                     );
                     hasQueryFilterClause = true;
                 }
                 // Attribute filter
-                else {
+                else if(filterProperty instanceof AttributeFilterProperty) {
+                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
                     // Get filterOperator, filterQuantor
-                    short filterOperator = filterProperty.values("filterOperator").size() == 0
-                        ? FilterOperators.IS_IN
-                        : ((Number)filterProperty.values("filterOperator").get(0)).shortValue();
-                    filterOperator = filterOperator == 0
-                        ? FilterOperators.IS_IN
-                        : filterOperator;
-                    short filterQuantor = filterProperty.values("filterQuantor").size() == 0
-                        ? Quantors.THERE_EXISTS
-                        : ((Number)filterProperty.values("filterQuantor").get(0)).shortValue();
-                    filterQuantor = filterQuantor == 0
-                        ? Quantors.THERE_EXISTS
-                        : filterQuantor;
-                    
-                    if("org:opencrx:kernel:activity1:ActivityStateFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "activityState",
-                                filterOperator,
-                                filterProperty.values("activityState").toArray()
-                            )
-                        );
+                    short operator = attributeFilterProperty.getFilterOperator();
+                    operator = operator == 0 ? 
+                    	FilterOperators.IS_IN : 
+                    	operator;
+                    short quantor = attributeFilterProperty.getFilterQuantor();
+                    quantor = quantor == 0 ? 
+                    	Quantors.THERE_EXISTS : 
+                    	quantor;                    
+                    if(filterProperty instanceof ActivityStateFilterProperty) {
+                    	ActivityStateFilterProperty p = (ActivityStateFilterProperty)filterProperty;
+                    	switch(quantor) {
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.activityState().elementOf(p.getActivityState()); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.activityState().greaterThan(p.getActivityState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.activityState().greaterThanOrEqualTo(p.getActivityState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.activityState().lessThan(p.getActivityState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.activityState().lessThanOrEqualTo(p.getActivityState().get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.activityState().notAnElementOf(p.getActivityState()); 
+                    					break;
+                    				default:
+                    					query.activityState().elementOf(p.getActivityState()); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:activity1:ScheduledStartFilterProperty".equals(filterPropertyClass)) {
-                        if(filterProperty.values("scheduledStart").isEmpty()) {
-                            filterProperty.values("scheduledStart").add(
-                                DateFormat.getInstance().format(new Date())
-                            );
+                    else if(filterProperty instanceof ScheduledStartFilterProperty) {
+                    	ScheduledStartFilterProperty p = (ScheduledStartFilterProperty)filterProperty;
+                    	List<Date> scheduledStart = new ArrayList<Date>();
+                        if(p.getScheduledStart().isEmpty()) {
+                            scheduledStart.add(new Date());
                         }
-                        if(!filterProperty.values("offsetInHours").isEmpty()) {
-                            int offsetInHours = ((Number)filterProperty.values("offsetInHours").get(0)).intValue();
-                            for(int j = 0; j < filterProperty.values("scheduledStart").size(); j++) {
+                        if(p.getOffsetInHours() != null) {
+                            int offsetInHours = p.getOffsetInHours().intValue();
+                            for(int j = 0; j < scheduledStart.size(); j++) {
                                 try {
                                     GregorianCalendar date = new GregorianCalendar();
                                     date.setTime(
-                                        DateFormat.getInstance().parse((String)filterProperty.values("scheduledStart").get(j))
+                                        scheduledStart.get(j)
                                     );
                                     date.add(GregorianCalendar.HOUR_OF_DAY, offsetInHours);
-                                    filterProperty.values("scheduledStart").set(
+                                    scheduledStart.set(
                                         j, 
-                                        DateFormat.getInstance().format(date.getTime())
+                                        date.getTime()
                                     );
                                 } 
                                 catch(Exception e) {}
                             }
                         }
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "scheduledStart",
-                                filterOperator,
-                                filterProperty.values("scheduledStart").toArray()
-                            )
-                        );
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllScheduledStart().elementOf(scheduledStart); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.forAllScheduledStart().greaterThan(scheduledStart.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.forAllScheduledStart().greaterThanOrEqualTo(scheduledStart.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.forAllScheduledStart().lessThan(scheduledStart.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.forAllScheduledStart().lessThanOrEqualTo(scheduledStart.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllScheduledStart().notAnElementOf(scheduledStart); 
+	                					break;
+	                				default:
+	                					query.forAllScheduledStart().elementOf(scheduledStart); 
+	                					break;
+	                			}
+	                			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsScheduledStart().elementOf(scheduledStart); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsScheduledStart().greaterThan(scheduledStart.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsScheduledStart().greaterThanOrEqualTo(scheduledStart.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsScheduledStart().lessThan(scheduledStart.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsScheduledStart().lessThanOrEqualTo(scheduledStart.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsScheduledStart().notAnElementOf(scheduledStart); 
+                    					break;
+                    				default:
+                    					query.thereExistsScheduledStart().elementOf(scheduledStart); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:activity1:ScheduledEndFilterProperty".equals(filterPropertyClass)) {
-                        if(filterProperty.values("scheduledEnd").isEmpty()) {
-                            filterProperty.values("scheduledEnd").add(
-                                DateFormat.getInstance().format(new Date())
-                            );
+                    else if(filterProperty instanceof ScheduledEndFilterProperty) {
+                    	ScheduledEndFilterProperty p = (ScheduledEndFilterProperty)filterProperty;
+                    	List<Date> scheduledEnd = new ArrayList<Date>();
+                        if(p.getScheduledEnd().isEmpty()) {
+                            scheduledEnd.add(new Date());
                         }
-                        if(!filterProperty.values("offsetInHours").isEmpty()) {
-                            int offsetInHours = ((Number)filterProperty.values("offsetInHours").get(0)).intValue();
-                            for(int j = 0; j < filterProperty.values("scheduledEnd").size(); j++) {
+                        if(p.getOffsetInHours() != null) {
+                            int offsetInHours = p.getOffsetInHours().intValue();
+                            for(int j = 0; j < scheduledEnd.size(); j++) {
                                 try {
                                     GregorianCalendar date = new GregorianCalendar();
                                     date.setTime(
-                                        DateFormat.getInstance().parse((String)filterProperty.values("scheduledEnd").get(j))
+                                        scheduledEnd.get(j)
                                     );
                                     date.add(GregorianCalendar.HOUR_OF_DAY, offsetInHours);
-                                    filterProperty.values("scheduledEnd").set(
+                                    scheduledEnd.set(
                                         j, 
-                                        DateFormat.getInstance().format(date.getTime())
+                                        date.getTime()
                                     );
                                 } 
                                 catch(Exception e) {}
                             }
                         }
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "scheduledEnd",
-                                filterOperator,
-                                filterProperty.values("scheduledEnd").toArray()
-                            )
-                        );
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllScheduledEnd().elementOf(scheduledEnd); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.forAllScheduledEnd().greaterThan(scheduledEnd.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.forAllScheduledEnd().greaterThanOrEqualTo(scheduledEnd.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.forAllScheduledEnd().lessThan(scheduledEnd.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.forAllScheduledEnd().lessThanOrEqualTo(scheduledEnd.get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllScheduledEnd().notAnElementOf(scheduledEnd); 
+	                					break;
+	                				default:
+	                					query.forAllScheduledEnd().elementOf(scheduledEnd); 
+	                					break;
+	                			}
+	                			break;
+                    		default:
+                    			switch(operator) {
+                    				case FilterOperators.IS_IN: 
+                    					query.thereExistsScheduledEnd().elementOf(scheduledEnd); 
+                    					break;
+                    				case FilterOperators.IS_GREATER:
+                    					query.thereExistsScheduledEnd().greaterThan(scheduledEnd.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    					query.thereExistsScheduledEnd().greaterThanOrEqualTo(scheduledEnd.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS:
+                    					query.thereExistsScheduledEnd().lessThan(scheduledEnd.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    					query.thereExistsScheduledEnd().lessThanOrEqualTo(scheduledEnd.get(0)); 
+                    					break;
+                    				case FilterOperators.IS_NOT_IN:
+                    					query.thereExistsScheduledEnd().notAnElementOf(scheduledEnd); 
+                    					break;
+                    				default:
+                    					query.thereExistsScheduledEnd().elementOf(scheduledEnd); 
+                    					break;
+                    			}
+                    			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "processState",
-                                filterOperator,
-                                filterProperty.values("processState").toArray()
-                            )                    
-                        );
+                    else if(filterProperty instanceof ActivityProcessStateFilterProperty) {
+                    	ActivityProcessStateFilterProperty p = (ActivityProcessStateFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllProcessState().elementOf(p.getProcessState()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllProcessState().notAnElementOf(p.getProcessState()); 
+	                					break;
+	                				default:
+	                					query.forAllProcessState().elementOf(p.getProcessState()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsProcessState().elementOf(p.getProcessState()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsScheduledEnd().notAnElementOf(p.getProcessState()); 
+	                					break;
+	                				default:
+	                					query.thereExistsScheduledEnd().elementOf(p.getProcessState()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
                     }
-                    else if("org:opencrx:kernel:activity1:ActivityTypeFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "activityType",
-                                filterOperator,
-                                filterProperty.values("activityType").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof ActivityTypeFilterProperty) {
+                    	ActivityTypeFilterProperty p = (ActivityTypeFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllActivityType().elementOf(p.getActivityType()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllActivityType().notAnElementOf(p.getActivityType()); 
+	                					break;
+	                				default:
+	                					query.forAllActivityType().elementOf(p.getActivityType()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsActivityType().elementOf(p.getActivityType()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsActivityType().notAnElementOf(p.getActivityType()); 
+	                					break;
+	                				default:
+	                					query.thereExistsActivityType().elementOf(p.getActivityType()); 
+	                					break;
+	                			}
+	                			break;
+                    	}                    	
                     }
-                    else if("org:opencrx:kernel:activity1:AssignedToFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "assignedTo",
-                                filterOperator,
-                                filterProperty.values("contact").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof AssignedToFilterProperty) {
+                    	AssignedToFilterProperty p = (AssignedToFilterProperty)filterProperty;
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllAssignedTo().elementOf(p.getContact()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllAssignedTo().notAnElementOf(p.getContact()); 
+	                					break;
+	                				default:
+	                					query.forAllAssignedTo().elementOf(p.getContact()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsAssignedTo().elementOf(p.getContact()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsAssignedTo().notAnElementOf(p.getContact()); 
+	                					break;
+	                				default:
+	                					query.thereExistsAssignedTo().elementOf(p.getContact()); 
+	                					break;
+	                			}
+	                			break;
+                    	}                    	
                     }
-                    else if("org:opencrx:kernel:activity1:ActivityNumberFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "activityNumber",
-                                filterOperator,
-                                filterProperty.values("activityNumber").toArray()
-                            )
-                        );
+                    else if(filterProperty instanceof ActivityNumberFilterProperty) {
+                    	ActivityNumberFilterProperty p = (ActivityNumberFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllActivityNumber().elementOf(p.getActivityNumber()); 
+	                					break;
+	                				case FilterOperators.IS_LIKE: 
+	                					query.forAllActivityNumber().like(p.getActivityNumber()); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.forAllActivityNumber().greaterThan(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.forAllActivityNumber().greaterThanOrEqualTo(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.forAllActivityNumber().lessThan(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.forAllActivityNumber().lessThanOrEqualTo(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.forAllActivityNumber().notAnElementOf(p.getActivityNumber()); 
+	                					break;
+	                				case FilterOperators.IS_UNLIKE:
+	                					query.forAllActivityNumber().unlike(p.getActivityNumber()); 
+	                					break;
+	                				default:
+	                					query.forAllActivityNumber().elementOf(p.getActivityNumber()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsActivityNumber().elementOf(p.getActivityNumber()); 
+	                					break;
+	                				case FilterOperators.IS_LIKE: 
+	                					query.thereExistsActivityNumber().like(p.getActivityNumber()); 
+	                					break;
+	                				case FilterOperators.IS_GREATER:
+	                					query.thereExistsActivityNumber().greaterThan(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                					query.thereExistsActivityNumber().greaterThanOrEqualTo(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS:
+	                					query.thereExistsActivityNumber().lessThan(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                					query.thereExistsActivityNumber().lessThanOrEqualTo(p.getActivityNumber().get(0)); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN:
+	                					query.thereExistsActivityNumber().notAnElementOf(p.getActivityNumber()); 
+	                					break;
+	                				case FilterOperators.IS_UNLIKE:
+	                					query.thereExistsActivityNumber().unlike(p.getActivityNumber()); 
+	                					break;
+	                				default:
+	                					query.thereExistsActivityNumber().elementOf(p.getActivityNumber()); 
+	                					break;
+	                			}
+	                			break;
+	                	}
                     }
-                    else if("org:opencrx:kernel:activity1:DisabledFilterProperty".equals(filterPropertyClass)) {
-                        filter.add(
-                            new FilterProperty(
-                                filterQuantor,
-                                "disabled",
-                                filterOperator,
-                                filterProperty.values("disabled").toArray()
-                            )
-                        );
-                    }
+                    else if(filterProperty instanceof DisabledFilterProperty) {
+                    	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
+                    	switch(quantor) {
+	                		case Quantors.FOR_ALL:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.forAllDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(operator) {
+	                				case FilterOperators.IS_IN: 
+	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
+	                					break;
+	                				case FilterOperators.IS_NOT_IN: 
+	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                			}
+	                			break;
+                    	}
+                	}
                 }
             }
         }
         if(!hasQueryFilterClause && forCounting) {
-            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
-            // Clause and class
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-                    FilterOperators.PIGGY_BACK,
-                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-                )
-            );
-            filter.add(
-                new FilterProperty(
-                    Quantors.PIGGY_BACK,
-                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.PIGGY_BACK,
-                    Database_1_Attributes.QUERY_FILTER_CLASS
-                )
-            );            
+        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+        	queryFilter.setClause(
+        		Database_1_Attributes.HINT_COUNT + "(1=1)"
+        	);
+        	query.thereExistsContext().equalTo(
+        		queryFilter
+        	);
         }
-        return filter.toArray(new FilterProperty[filter.size()]);
-    }
-    
-    //-------------------------------------------------------------------------
-    public DataproviderObject_1_0 findWorkingDay(
-        Path calendarIdentity,
-        GregorianCalendar dateOfDayAsCal
-    ) throws ServiceException {
-        int year = dateOfDayAsCal.get(GregorianCalendar.YEAR);
-        int month = dateOfDayAsCal.get(GregorianCalendar.MONTH) + 1;
-        int day = dateOfDayAsCal.get(GregorianCalendar.DAY_OF_MONTH);
-        String dateOfDay = "" +
-            year +
-            (month < 10 ? "0" : "") + month +
-            (day < 10 ? "0" : "") + day;
-        // Test for CalendarDay
-        List days = 
-            this.backend.getDelegatingRequests().addFindRequest(
-                calendarIdentity.getChild("calendarDay"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "dateOfDay",
-                        FilterOperators.IS_IN,
-                        dateOfDay
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-        if(days.size() > 0) {
-            return (DataproviderObject_1_0)days.iterator().next();
-        }
-        // Test for WeekDay. Sunday = 1
-        int dayOfWeek = 
-            dateOfDayAsCal.get(GregorianCalendar.DAY_OF_WEEK) - dateOfDayAsCal.getFirstDayOfWeek() + 1;
-        days = 
-            this.backend.getDelegatingRequests().addFindRequest(
-                calendarIdentity.getChild("weekDay"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "dayOfWeek",
-                        FilterOperators.IS_IN,
-                        new Short((short)dayOfWeek)
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-        if(days.size() > 0) {
-            return (DataproviderObject_1_0)days.iterator().next();
-        }     
-        // Not found. Lookup in base calendar
-        DataproviderObject_1_0 calendar = this.backend.retrieveObjectFromDelegation(
-            calendarIdentity
-        );
-        if(calendar.values("baseCalendar").size() > 0) {
-            return this.findWorkingDay(
-                (Path)calendar.values("baseCalendar").get(0),
-                dateOfDayAsCal
-            );
-        }
-        return null;
+        return query;
     }
     
     //-------------------------------------------------------------------------
     public void assignTo(
-        Path activityIdentity,
-        Path resourceIdentity
+        Activity activity,
+        Resource resource
     ) throws ServiceException {
-        if(resourceIdentity != null) {
-            DataproviderObject activity = this.backend.retrieveObjectForModification(
-                activityIdentity
-            );
-            DataproviderObject_1_0 resource = this.backend.retrieveObjectFromDelegation(
-                resourceIdentity
-            );
-            Path contactIdentity = (Path)resource.values("contact").get(0);
-            List<DataproviderObject_1_0> resourceAssignments = this.backend.getDelegatingRequests().addFindRequest(
-                activityIdentity.getChild("assignedResource"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
+        if(resource != null) {
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);        	
+            Contact contact = resource.getContact();
+            Collection<ResourceAssignment> resourceAssignments = activity.getAssignedResource(); 
             boolean hasAssignment = false;
             // Try to find resource which matches specified contact
-            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
-                if(!resourceAssignment.values("resource").isEmpty()) {
-                    DataproviderObject_1_0 assignedResource = this.backend.retrieveObject(
-                        (Path)resourceAssignment.values("resource").get(0)
-                    );
+            for(ResourceAssignment resourceAssignment: resourceAssignments) {
+                if(resourceAssignment.getResource() != null) {
+                    Resource assignedResource = resourceAssignment.getResource();
                     if(
-                        !assignedResource.values("contact").isEmpty() &&
-                        contactIdentity.equals(assignedResource.values("contact").get(0))
+                        (assignedResource.getContact() != null) &&
+                        contact.equals(assignedResource.getContact())
                     ) {
                         hasAssignment = true;
                         break;
@@ -3111,304 +2865,273 @@ public class Activities {
             }
             // Create a resource assignment
             if(!hasAssignment) {
-                DataproviderObject resourceAssignment = new DataproviderObject(
-                    activityIdentity.getChild("assignedResource").getChild(this.backend.getUidAsString())
+                ResourceAssignment resourceAssignment = pm.newInstance(ResourceAssignment.class);
+                resourceAssignment.refInitialize(false, false);
+                resourceAssignment.setName(resource.getName());
+                resourceAssignment.setDescription(
+                    "#" + (activity.getActivityNumber() == null ? "" : activity.getActivityNumber()) + ": " + (activity.getName() == null ? "" : activity.getName())
                 );
-                resourceAssignment.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:activity1:ResourceAssignment");
-                resourceAssignment.values("name").addAll(resource.values("name"));
-                resourceAssignment.values("description").add(
-                    "#" + (activity.values("activityNumber").isEmpty() ? "" : activity.values("activityNumber").get(0)) + ": " + (activity.values("name").isEmpty() ? "" : activity.values("name").get(0))
+                resourceAssignment.setResource(resource);
+                resourceAssignment.setResourceRole((short)0);
+                resourceAssignment.setResourceOrder((short)0);
+                resourceAssignment.setWorkDurationPercentage((short)100);
+                activity.addAssignedResource(
+                	false,
+                	this.getUidAsString(),
+                	resourceAssignment
                 );
-                resourceAssignment.values("resource").add(resourceIdentity);
-                resourceAssignment.values("resourceRole").add(0);
-                resourceAssignment.values("resourceOrder").add(0);
-                resourceAssignment.values("workDurationPercentage").add(100);
-                this.backend.createObject(resourceAssignment);                
             }
-            activity.clearValues("assignedTo").add(
-                contactIdentity
-            );
+            activity.setAssignedTo(contact);
         }
     }
 
     //-------------------------------------------------------------------------
     public void updateIcal(
-        Path activityIdentity
+        Activity activity,
+        boolean isEMailAddressLookupCaseInsensitive,
+        boolean isEMailAddressLookupIgnoreDisabled        
     ) throws ServiceException {
-        List messages = new ArrayList();
-        List errors = new ArrayList();
-        List report = new ArrayList();
-        DataproviderObject_1_0 activity = this.backend.retrieveObject(activityIdentity);
-        String ical = this.icals.mergeIcal(
+        List<String> messages = new ArrayList<String>();
+        List<String> errors = new ArrayList<String>();
+        List<String> report = new ArrayList<String>();
+        String ical = ICalendar.getInstance().mergeIcal(
             activity,
-            (String)activity.values("ical").get(0), 
+            activity.getIcal(), 
             messages
         );        
         byte[] item = null;
         try {
             item = ical.getBytes("UTF-8");
-        } catch(Exception e) {
+        } 
+        catch(Exception e) {
             item = ical.getBytes();    
         }
-        this.icals.importItem(
+        ICalendar.getInstance().importItem(
             item, 
-            activityIdentity, 
+            activity, 
             (short)0, 
             errors, 
-            report
+            report,
+            isEMailAddressLookupCaseInsensitive,
+            isEMailAddressLookupIgnoreDisabled            
         );
     }
 
     //-------------------------------------------------------------------------
-    public void completeActualEffortForActivity(
-        DataproviderObject_1_0 activity, 
-        String filterAttribute,
-        Set fetchSet
-    ) throws ServiceException {        
-        if(
-            (fetchSet == null) || 
-            fetchSet.contains("actualEffortHours") || 
-            fetchSet.contains("actualEffortMinutes") ||
-            fetchSet.contains("actualEffortHhMm")
-        ) {        
-            Path activityIdentity = null;
-            if(!activity.values(SystemAttributes.OBJECT_IDENTITY).isEmpty()) {
-                activityIdentity = new Path((String)activity.values(SystemAttributes.OBJECT_IDENTITY).get(0));
-            }
-            else {
-                activityIdentity = activity.path();
-            }            
-            List workReportEntries = this.backend.getDelegatingRequests().addFindRequest(
-                activityIdentity.getPrefix(5).getChild("workReportEntry"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        filterAttribute,
-                        FilterOperators.IS_IN,
-                        activityIdentity.getPrefix(7)                        
-                    )
-                },
-                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-                
-            );
-            BigDecimal actualEffortHours = new BigDecimal(0);
-            BigDecimal actualEffortMinutes = new BigDecimal(0);
-            for(
-                Iterator i = workReportEntries.iterator();
-                i.hasNext();
-            ) {
-                DataproviderObject workReportEntry = (DataproviderObject)i.next();
-                actualEffortHours = actualEffortHours.add(
-                    (BigDecimal)workReportEntry.values("durationHours").get(0)
-                );
-                actualEffortMinutes = actualEffortMinutes.add(
-                    (BigDecimal)workReportEntry.values("durationMinutes").get(0)
-                );
-            }
-            int hours = Math.abs(actualEffortHours.intValue() + (actualEffortMinutes.intValue() / 60));
-            int minutes = Math.abs(actualEffortMinutes.intValue() % 60);
-            boolean isNegative = 
-                actualEffortHours.intValue() < 0 || 
-                actualEffortMinutes.intValue() < 0;            
-            activity.clearValues("actualEffortHours").add(
-                new Integer(hours)
-            );
-            activity.clearValues("actualEffortMinutes").add(
-                new Integer(minutes)
-            );   
-            activity.clearValues("actualEffortHhMm").add(
-                (isNegative ? "-" : "") + hours + ":" + (minutes < 10 ? "0" + minutes : "" + minutes) + "'"
-            );
-        }     
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * Calculates the actual effort for the activity group in hours and minutes.
-     * @return array with actual effort hours at index 0 and minutes at index 1.
-     */
-    public int[] calcActualEffort(
-        org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup
-    ) throws ServiceException {        
-        List workReportEntries = this.backend.getDelegatingRequests().addFindRequest(
-            activityGroup.refGetPath().getChild("workReportEntry"),
-            null,
-            AttributeSelectors.ALL_ATTRIBUTES,
-            0,
-            Integer.MAX_VALUE,
-            Directions.ASCENDING
-            
-        );
-        BigDecimal actualEffortHours = new BigDecimal(0);
-        BigDecimal actualEffortMinutes = new BigDecimal(0);
-        for(
-            Iterator i = workReportEntries.iterator();
-            i.hasNext();
-        ) {
-            DataproviderObject workReportEntry = (DataproviderObject)i.next();
-            actualEffortHours = actualEffortHours.add(
-                (BigDecimal)workReportEntry.values("durationHours").get(0)
-            );
-            actualEffortMinutes = actualEffortMinutes.add(
-                (BigDecimal)workReportEntry.values("durationMinutes").get(0)
-            );
+    protected void calcTotalQuantity(
+    	List<WorkAndExpenseRecord> workAndExpenseRecords,
+        List<BigDecimal> totalQuantities,
+        List<Uom> quantityUoms
+    ) {
+        for(WorkAndExpenseRecord workAndExpenseRecord: workAndExpenseRecords) {
+        	boolean found = false;
+        	int ii = 0;
+        	for(Iterator<Uom> i = quantityUoms.iterator(); i.hasNext(); ii++) {
+        		Uom quantityUom = i.next();
+            	BigDecimal uomScaleFactor = Utils.getUomScaleFactor(
+            		workAndExpenseRecord.getQuantityUom(),
+            		quantityUom        		
+            	);
+            	if(uomScaleFactor.compareTo(BigDecimal.ONE) >= 0) {
+                    totalQuantities.set(
+                    	ii,
+	                    totalQuantities.get(ii).add(
+	                        workAndExpenseRecord.getQuantity().multiply(uomScaleFactor)
+	                    )
+	                );
+                    found = true;
+                    break;
+            	}
+            	else if(uomScaleFactor.compareTo(BigDecimal.ZERO) > 0) {
+            		totalQuantities.set(
+            			ii,
+            			totalQuantities.get(ii).divide(uomScaleFactor, RoundingMode.FLOOR)
+            		);
+            		quantityUoms.set(
+            			ii,
+            			workAndExpenseRecord.getQuantityUom()
+            		);
+            		totalQuantities.set(
+            			ii,
+            			totalQuantities.get(ii).add(
+            				workAndExpenseRecord.getQuantity()
+            			)
+            		);
+            		found = true;
+            		break;
+            	}            	
+        	}
+        	if(!found && workAndExpenseRecord.getQuantityUom() != null) {
+        		totalQuantities.add(
+        			workAndExpenseRecord.getQuantity()
+        		);
+        		quantityUoms.add(
+        			workAndExpenseRecord.getQuantityUom()
+        		);        		
+        	}
         }
-        return new int[]{
-            Math.abs(actualEffortHours.intValue() + (actualEffortMinutes.intValue() / 60)),                    
-            Math.abs(actualEffortMinutes.intValue() % 60)
-        };
     }
-    
+
     //-------------------------------------------------------------------------
-    public int[] calcActualEffort(
-        org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity activityFilter
+    public void calcTotalQuantity(
+        Activity activity,
+        short recordType,
+        Date startAt,
+        Date endAt,
+        List<BigDecimal> totalQuantities,
+        List<Uom> quantityUoms
     ) throws ServiceException {
-        List<DataproviderObject_1_0> activities = this.backend.getDelegatingRequests().addFindRequest(
-            activityFilter.refGetPath().getPrefix(5).getChild("activity"),
-            this.getActivityFilterProperties(
-                activityFilter.refGetPath(), 
-                false
-            ),
-            AttributeSelectors.NO_ATTRIBUTES,
-            null,
-            0, 
-            1,
-            Directions.ASCENDING
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+    	WorkAndExpenseRecordQuery workAndExpenseRecordQuery = (WorkAndExpenseRecordQuery)pm.newQuery(WorkAndExpenseRecord.class);
+    	workAndExpenseRecordQuery.recordType().equalTo(recordType);
+    	if(startAt != null) {
+    		workAndExpenseRecordQuery.thereExistsEndedAt().greaterThanOrEqualTo(startAt);
+    	}
+    	if(endAt != null) {
+    		workAndExpenseRecordQuery.thereExistsStartedAt().lessThanOrEqualTo(endAt);
+    	}
+    	List<WorkAndExpenseRecord> workAndExpenseRecords = activity.getWorkReportEntry(workAndExpenseRecordQuery);
+        this.calcTotalQuantity(
+        	workAndExpenseRecords, 
+        	totalQuantities, 
+        	quantityUoms
         );
-        BigDecimal actualEffortHours = new BigDecimal(0);
-        BigDecimal actualEffortMinutes = new BigDecimal(0);
-        for(DataproviderObject_1_0 activity: activities) {
-            List<DataproviderObject_1_0> workReportEntries = this.backend.getDelegatingRequests().addFindRequest(
-                activity.path().getPrefix(5).getChild("workReportEntry"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "activity",
-                        FilterOperators.IS_IN,
-                        new Object[]{activity.path()}
-                        
-                    )
-                },
-                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
-                null,
-                0, 
-                1,
-                Directions.ASCENDING
+    }
+    
+    //-------------------------------------------------------------------------
+    public void calcTotalQuantity(
+        Resource resource,
+        short recordType,
+        Date startAt,
+        Date endAt,
+        List<BigDecimal> totalQuantities,
+        List<Uom> quantityUoms
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(resource);    	
+    	WorkAndExpenseRecordQuery workReportQuery = (WorkAndExpenseRecordQuery)pm.newQuery(WorkAndExpenseRecord.class);
+    	workReportQuery.recordType().equalTo(recordType);
+    	if(startAt != null) {
+    		workReportQuery.thereExistsEndedAt().greaterThanOrEqualTo(startAt);
+    	}
+    	if(endAt != null) {
+    		workReportQuery.thereExistsStartedAt().lessThanOrEqualTo(endAt);
+    	}
+    	List<WorkAndExpenseRecord> workAndExpenseRecords = resource.getWorkReportEntry(workReportQuery);
+        this.calcTotalQuantity(
+        	workAndExpenseRecords, 
+        	totalQuantities, 
+        	quantityUoms
+        );
+    }
+    
+    //-------------------------------------------------------------------------
+    public void calcTotalQuantity(
+        org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup,
+        short recordType,
+        Date startAt,
+        Date endAt,
+        List<BigDecimal> totalQuantities,
+        List<Uom> quantityUoms
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityGroup);    	    	
+    	WorkAndExpenseRecordQuery workReportQuery = (WorkAndExpenseRecordQuery)pm.newQuery(WorkAndExpenseRecord.class);
+    	workReportQuery.recordType().equalTo(recordType);
+    	if(startAt != null) {
+    		workReportQuery.thereExistsEndedAt().greaterThanOrEqualTo(startAt);
+    	}
+    	if(endAt != null) {
+    		workReportQuery.thereExistsStartedAt().lessThanOrEqualTo(endAt);
+    	}    	
+        List<WorkAndExpenseRecord> workAndExpenseRecords = activityGroup.getWorkReportEntry(workReportQuery);
+        this.calcTotalQuantity(
+        	workAndExpenseRecords, 
+        	totalQuantities, 
+        	quantityUoms
+        );
+    }
+    
+    //-------------------------------------------------------------------------
+    public void calcTotalQuantity(
+        org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity activityFilter,
+        short recordType,
+        Date startAt,
+        Date endAt,        
+        List<BigDecimal> totalQuantities,
+        List<Uom> quantityUoms
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityFilter);    	
+    	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
+        this.getFilteredActivityQuery(
+        	activityFilter, 
+        	query, 
+        	false, 
+        	pm
+        );
+    	List<Activity> activities = activityFilter instanceof ActivityFilterGlobal ?
+    		((org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(activityFilter.refGetPath().getPrefix(5))).getActivity(query) :
+    		((org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(activityFilter.refGetPath().getPrefix(7))).getFilteredActivity(query);
+        for(Activity activity: activities) {
+        	WorkAndExpenseRecordQuery workReportQuery = (WorkAndExpenseRecordQuery)pm.newQuery(WorkAndExpenseRecord.class);
+        	workReportQuery.recordType().equalTo(recordType);
+        	if(startAt != null) {
+        		workReportQuery.thereExistsEndedAt().greaterThanOrEqualTo(startAt);
+        	}
+        	if(endAt != null) {
+        		workReportQuery.thereExistsStartedAt().lessThanOrEqualTo(endAt);
+        	}        	
+        	List<WorkAndExpenseRecord> workReportEntries = activity.getWorkReportEntry(workReportQuery);
+            this.calcTotalQuantity(
+            	workReportEntries, 
+            	totalQuantities, 
+            	quantityUoms
             );
-            for(DataproviderObject_1_0 workReportEntry: workReportEntries) {
-                actualEffortHours = actualEffortHours.add(
-                    (BigDecimal)workReportEntry.values("durationHours").get(0)
-                );
-                actualEffortMinutes = actualEffortMinutes.add(
-                    (BigDecimal)workReportEntry.values("durationMinutes").get(0)
-                );                
-            }
         }
-        return new int[]{
-            Math.abs(actualEffortHours.intValue() + (actualEffortMinutes.intValue() / 60)),                    
-            Math.abs(actualEffortMinutes.intValue() % 60)
-        };
     }
         
     //-------------------------------------------------------------------------
-    public void completeMainEffortEstimate(
-        DataproviderObject_1_0 activity, 
-        Set fetchSet
-    ) throws ServiceException {        
-        if(
-            (fetchSet == null) || 
-            fetchSet.contains("mainEstimateEffortHours") || 
-            fetchSet.contains("mainEstimateEffortMinutes") ||
-            fetchSet.contains("mainEstimateEffortHhMm")
-        ) {     
-            Path activityIdentity = null;
-            if(!activity.values(SystemAttributes.OBJECT_IDENTITY).isEmpty()) {
-                activityIdentity = new Path((String)activity.values(SystemAttributes.OBJECT_IDENTITY).get(0));
-            }
-            else {
-                activityIdentity = activity.path();
-            }
-            List estimates = this.backend.getDelegatingRequests().addFindRequest(
-                activityIdentity.getChild("effortEstimate"),
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                0,
-                Integer.MAX_VALUE,
-                Directions.ASCENDING
-                
-            );
-            BigDecimal estimateEffortHours = new BigDecimal(0);
-            BigDecimal effortEstimateMinutes = new BigDecimal(0);
-            for(
-                Iterator i = estimates.iterator();
-                i.hasNext();
+    public Object[] calcMainEffortEstimate(
+        Activity activity
+    ) throws ServiceException {
+        Collection<EffortEstimate> estimates = activity.getEffortEstimate();
+        BigDecimal estimateEffortHours = new BigDecimal(0);
+        BigDecimal effortEstimateMinutes = new BigDecimal(0);
+        for(EffortEstimate estimate: estimates) {
+            if(
+                (estimate.isMain() != null) &&
+                estimate.isMain().booleanValue()
             ) {
-                DataproviderObject estimate = (DataproviderObject)i.next();
-                if(
-                    !estimate.values("isMain").isEmpty() &&
-                    ((Boolean)estimate.values("isMain").get(0)).booleanValue()
-                ) {
-                    estimateEffortHours = (BigDecimal)estimate.values("estimateEffortHours").get(0);
-                    effortEstimateMinutes = (BigDecimal)estimate.values("estimateEffortMinutes").get(0);    
-                    break;
-                }
+                estimateEffortHours = new BigDecimal(estimate.getEstimateEffortHours());
+                effortEstimateMinutes = new BigDecimal(estimate.getEstimateEffortMinutes());    
+                break;
             }
-            int hours = Math.abs(estimateEffortHours.intValue() + (effortEstimateMinutes.intValue() / 60));
-            int minutes = Math.abs(effortEstimateMinutes.intValue() % 60);
-            boolean isNegative = 
-                estimateEffortHours.intValue() < 0 || 
-                effortEstimateMinutes.intValue() < 0;
-            activity.clearValues("mainEstimateEffortHours").add(
-                new Integer(hours)
-            );
-            activity.clearValues("mainEstimateEffortMinutes").add(
-                new Integer(minutes)
-            );   
-            activity.clearValues("mainEstimateEffortHhMm").add(
-                (isNegative ? "-" : "") + hours + ":" + (minutes < 10 ? "0" + minutes : "" + minutes) + "'"
-            );
-        }     
-    }
-    
-    //-------------------------------------------------------------------------
-    public List completeActivity(
-        DataproviderObject_1_0 activity, 
-        Set fetchSet
-    ) throws ServiceException {        
-        this.completeActualEffortForActivity(
-            activity,
-            "activity",
-            fetchSet
-        );
-        this.completeMainEffortEstimate(
-            activity,
-            fetchSet
-        );
-        return Collections.EMPTY_LIST;
+        }
+        int hours = Math.abs(estimateEffortHours.intValue() + (effortEstimateMinutes.intValue() / 60));
+        int minutes = Math.abs(effortEstimateMinutes.intValue() % 60);
+        boolean isNegative = 
+            estimateEffortHours.intValue() < 0 || 
+            effortEstimateMinutes.intValue() < 0;
+        return new Object[]{
+        	hours,
+        	minutes,
+        	(isNegative ? "-" : "") + hours + ":" + (minutes < 10 ? "0" + minutes : "" + minutes) + "'"
+        };
     }
     
     //-------------------------------------------------------------------------
     public int countFilteredActivity(
-        Path activityFilterIdentity,
-        boolean isActivityGroupFilter
+        org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity activityFilter
     ) throws ServiceException {
-        List activities = this.backend.getDelegatingRequests().addFindRequest(
-            isActivityGroupFilter ?                    
-                activityFilterIdentity.getPrefix(7).getChild("filteredActivity") :
-                activityFilterIdentity.getPrefix(5).getChild("activity"),
-            this.getActivityFilterProperties(
-            	activityFilterIdentity, 
-                true
-            ),
-            AttributeSelectors.NO_ATTRIBUTES,
-            null,
-            0, 
-            1,
-            Directions.ASCENDING
-        );
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityFilter);
+    	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
+    	this.getFilteredActivityQuery(
+    		activityFilter, 
+    		query, 
+    		true, 
+    		pm
+    	);
+    	List<Activity> activities = activityFilter instanceof ActivityFilterGlobal ?
+    		((org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(activityFilter.refGetPath().getPrefix(5))).getActivity(query) :
+    		((org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(activityFilter.refGetPath().getPrefix(7))).getFilteredActivity(query);
         return activities.size();
     }
     
@@ -3420,7 +3143,7 @@ public class Activities {
      * @param address          The email address object
      * @param type             The address type (TO, CC, BCC)
      */
-    public static void addEmailRecipient(
+    public void addEmailRecipient(
         PersistenceManager pm,
         EMail emailActivity,
         EMailAddress address,
@@ -3461,7 +3184,7 @@ public class Activities {
      * @param content          The content of the media object, e.g. an
      *                          attachment
      */
-    public static void addMedia(
+    public void addMedia(
         PersistenceManager pm,
         EMail emailActivity,
         String contentType,
@@ -3514,19 +3237,22 @@ public class Activities {
      * @param addresses                 A list of addresses
      * @param type                      The address type (TO, CC, BCC)
      */
-    public static void addRecipientToEmailActivity(
+    public void addRecipientToEmailActivity(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         EMail emailActivity,
         String[] addresses,
         Message.RecipientType type,
-        boolean caseInsensitiveAddressLookup
-    ) {
+        boolean isEMailAddressLookupCaseInsensitive,
+        boolean isEMailAddressLookupIgnoreDisabled
+        
+    ) throws ServiceException {
         if (addresses == null || addresses.length == 0) {
             AppLog.trace("Message does not contain any recipient of type '" + type.toString() + "'");
         }
         Set<String> newAddresses = new HashSet<String>(Arrays.asList(addresses));
+        newAddresses.remove("NO_ADDRESS_SPECIFIED");
         Collection<AbstractEMailRecipient> recipients = emailActivity.getEmailRecipient();
         for(AbstractEMailRecipient recipient: recipients) {
             if(recipient instanceof EMailRecipient) {
@@ -3538,24 +3264,26 @@ public class Activities {
         }
         for(String address: newAddresses) {
             List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
-                Accounts.lookupEmailAddress(
+                Accounts.getInstance().lookupEmailAddress(
                     pm,
                     providerName,
                     segmentName,
                     address,
-                    caseInsensitiveAddressLookup
+                    isEMailAddressLookupCaseInsensitive,
+                    isEMailAddressLookupIgnoreDisabled
                 );
             if(emailAddresses.isEmpty()) {
-                emailAddresses = Accounts.lookupEmailAddress(
+                emailAddresses = Accounts.getInstance().lookupEmailAddress(
                     pm,
                     providerName,
                     segmentName,
                     Addresses.UNASSIGNED_ADDRESS,
-                    caseInsensitiveAddressLookup
+                    isEMailAddressLookupCaseInsensitive,
+                    isEMailAddressLookupIgnoreDisabled
                 );
             }
             if(!emailAddresses.isEmpty()) {
-                Activities.addEmailRecipient(
+                this.addEmailRecipient(
                     pm, 
                     emailActivity, 
                     emailAddresses.iterator().next(), 
@@ -3576,7 +3304,7 @@ public class Activities {
      * @param externalLink     The message id
      * @return                 A List of activities containing the message id
      */
-    public static List<org.opencrx.kernel.activity1.jmi1.Activity> lookupEmailActivity(
+    public List<org.opencrx.kernel.activity1.jmi1.Activity> lookupEmailActivity(
         PersistenceManager pm,
         String providerName,
         String segmentName,
@@ -3588,7 +3316,7 @@ public class Activities {
         else {
             EMailQuery query = Utils.getActivityPackage(pm).createEMailQuery();
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-                Activities.getActivitySegment(
+                this.getActivitySegment(
                     pm,
                     providerName,
                     segmentName
@@ -3604,7 +3332,7 @@ public class Activities {
     /**
      * @return Returns the activitySegment.
      */
-    public static org.opencrx.kernel.activity1.jmi1.Segment getActivitySegment(
+    public org.opencrx.kernel.activity1.jmi1.Segment getActivitySegment(
         PersistenceManager pm,
         String providerName,
         String segmentName
@@ -3615,6 +3343,46 @@ public class Activities {
         );
     }
 
+	//-----------------------------------------------------------------------
+	public org.opencrx.kernel.activity1.jmi1.Resource findResource(
+		org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
+		UserHome userHome
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(activitySegment);
+		String providerName = activitySegment.refGetPath().get(2);
+		String segmentName = activitySegment.refGetPath().get(4);
+		// Resource
+		org.opencrx.kernel.activity1.jmi1.Resource resource = null;
+		try {
+			resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(
+				new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/resource/" + userHome.refGetPath().getBase())
+			);
+		}
+		catch(Exception e) {}
+		if(resource == null) {
+			try {
+				ResourceQuery query = (ResourceQuery)pm.newQuery(Resource.class);
+				query.thereExistsContact().equalTo(userHome.getContact());
+				query.orderByName().ascending();
+				Collection<Resource> resources = activitySegment.getResource(query);
+				for(Resource candidate: resources) {
+					if(
+						candidate.getName().equals(userHome.refGetPath().getBase()) ||
+						candidate.getName().equals(userHome.getContact().getFullName())
+					) {
+						resource = candidate;
+						break;
+					}
+				}
+				if(resource == null) {
+					resource = resources.iterator().next();
+				}
+			}
+			catch(Exception e) {}
+		}
+		return resource;
+	}
+    
     //-----------------------------------------------------------------------
     /**
      * Formats a text containing all the addresses of the different types
@@ -3628,76 +3396,105 @@ public class Activities {
      * @param mimeMsg          The email to be imported as openCRX EMailActivity
      * @return                 The formatted content for the 'Recipients' note
      */
-    public static String getRecipientsAsNoteText(
+    public String getRecipientsAsNoteText(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         String[] from,
         String[] to,
         String[] cc,
-        String[] bcc,        
-        boolean caseInsensitiveAddressLookup
-    ) throws MessagingException {
+        String[] bcc,
+        boolean isEMailAddressLookupCaseInsensitive,
+        boolean isEMailAddressLookupIgnoreDisabled        
+    ) throws ServiceException, MessagingException {
         StringBuffer text = new StringBuffer();  
 
         // add 'FROM's to the note
         String addresses[] = from;
         for (int i = 0; i < addresses.length; i++) {
-            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
-                Accounts.lookupEmailAddress(
-                    pm,
-                    providerName,
-                    segmentName,
-                    addresses[i],
-                    caseInsensitiveAddressLookup
-                );
-            text.append("FROM: " + addresses[i] + " ["
-                + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
+        	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
+	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	                Accounts.getInstance().lookupEmailAddress(
+	                    pm,
+	                    providerName,
+	                    segmentName,
+	                    addresses[i],
+	                    isEMailAddressLookupCaseInsensitive,
+	                    isEMailAddressLookupIgnoreDisabled                    
+	                );
+	            text.append(
+	            	"FROM: " + 
+	            	addresses[i] + 
+	            	" [" + 
+	            	((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n"
+	            );
+        	}
         }
   
         // add 'TO's to the note
         addresses = to;
         for (int i = 0; i < addresses.length; i++) {
-            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
-                Accounts.lookupEmailAddress(
-                    pm,
-                    providerName,
-                    segmentName,
-                    addresses[i],
-                    caseInsensitiveAddressLookup
-                );
-            text.append("TO: " + addresses[i] + " ["
-                + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
+        	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
+	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	                Accounts.getInstance().lookupEmailAddress(
+	                    pm,
+	                    providerName,
+	                    segmentName,
+	                    addresses[i],
+	                    isEMailAddressLookupCaseInsensitive,
+	                    isEMailAddressLookupIgnoreDisabled                    
+	                );
+	            text.append(
+	            	"TO: " + 
+	            	addresses[i] + 
+	            	" [" + 
+	            	((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n"
+	            );
+        	}
         }
   
         // add 'CC's to the note
         addresses = cc;
         for (int i = 0; i < addresses.length; i++) {
-            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
-                Accounts.lookupEmailAddress(
-                    pm,
-                    providerName,
-                    segmentName,
-                    addresses[i],
-                    caseInsensitiveAddressLookup
-                );
-            text.append("CC: " + addresses[i] + " ["
-                + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
+        	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
+	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	                Accounts.getInstance().lookupEmailAddress(
+	                    pm,
+	                    providerName,
+	                    segmentName,
+	                    addresses[i],
+	                    isEMailAddressLookupCaseInsensitive,
+	                    isEMailAddressLookupIgnoreDisabled                                        
+	                );
+	            text.append(
+	            	"CC: " + 
+	            	addresses[i] + 
+	            	" [" + 
+	            	((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n"
+	            );
+        	}
         }
   
         // add 'BCC's to the note
         addresses = bcc;
         for (int i = 0; i < addresses.length; i++) {
-            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
-                Accounts.lookupEmailAddress(
-                    pm,
-                    providerName,
-                    segmentName,
-                    addresses[i],
-                    caseInsensitiveAddressLookup
-                );
-            text.append("BCC: " + addresses[i] + " ["
-                + ((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n");
+        	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
+	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	                Accounts.getInstance().lookupEmailAddress(
+	                    pm,
+	                    providerName,
+	                    segmentName,
+	                    addresses[i],
+	                    isEMailAddressLookupCaseInsensitive,
+	                    isEMailAddressLookupIgnoreDisabled                    
+	                );
+	            text.append(
+	            	"BCC: " + 
+	            	addresses[i] + 
+	            	" [" + 
+	            	((emailAddresses == null || emailAddresses.size() == 0) ? "UNMATCHED" : "MATCHED") + "]\n"
+	            );
+        	}
         }
         return text.toString();
     }
@@ -3711,7 +3508,7 @@ public class Activities {
      * @param title            The note's title
      * @param content          The note's content
      */
-    public static void addNote(
+    public void addNote(
         PersistenceManager pm,
         EMail emailActivity,
         String title,
@@ -3751,7 +3548,7 @@ public class Activities {
      * 
      * @return the subject of the message
      */
-    public static short getMessagePriority(
+    public short getMessagePriority(
         Message message
     ) throws MessagingException {
         String priority = "normal";
@@ -3816,7 +3613,7 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------      
-    public static String getMessageBody(
+    public String getMessageBody(
         MimePart messagePart
     ) throws IOException, MessagingException {
         Part part = Activities.getFirstTextPart(messagePart);
@@ -3847,7 +3644,7 @@ public class Activities {
     }
 
     //-------------------------------------------------------------------------
-    public static boolean isAllAscii(
+    public boolean isAllAscii(
         String s
     ) {
         int ascii = 0, nonAscii = 0;
@@ -3871,7 +3668,7 @@ public class Activities {
      * which contains the original MimeMessage the stream of this message is
      * returned in addition.
      */
-    public static InputStream mapMessageContent(
+    public InputStream mapMessageContent(
         org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
         Message message
     ) throws MessagingException {
@@ -3885,7 +3682,7 @@ public class Activities {
             : text;
         if(text.startsWith("<!DOCTYPE html")) {
             String charset = null;
-            if (!Activities.isAllAscii(text)) {
+            if (!this.isAllAscii(text)) {
                 charset = MimeUtility.getDefaultJavaCharset();
             }
             else {
@@ -3945,7 +3742,7 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public static String getInternetAddress(
+    public String getInternetAddress(
         AccountAddress address,
         String gateway
     ) {
@@ -3977,7 +3774,7 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public static List<Address> mapMessageRecipients(
+    public List<Address> mapMessageRecipients(
         org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
         Message message            
     ) throws AddressException, MessagingException {
@@ -3994,7 +3791,7 @@ public class Activities {
             AppLog.detail(e0.getMessage(), e0.getCause());
         }
         if(sender != null) {
-            String inetAddress = Activities.getInternetAddress(
+            String inetAddress = this.getInternetAddress(
                 sender,
                 gateway
             );
@@ -4020,7 +3817,7 @@ public class Activities {
                 if(recipient instanceof EMailRecipient) {
                     String inetAddress = null;
                     try {
-                        inetAddress = Activities.getInternetAddress(
+                        inetAddress = this.getInternetAddress(
                             ((EMailRecipient)recipient).getParty(),
                             gateway
                         );
@@ -4050,7 +3847,7 @@ public class Activities {
                         if((member.isDisabled() == null) || !member.isDisabled()) {
                             AccountAddress address = member.getAddress();
                             if((address.isDisabled() == null) || !member.isDisabled()) {
-                                String inetAddress = Activities.getInternetAddress(
+                                String inetAddress = this.getInternetAddress(
                                     address,
                                     gateway
                                 );
@@ -4077,12 +3874,12 @@ public class Activities {
     }
     
     //-------------------------------------------------------------------------
-    public static InputStream mapToMessage(
+    public InputStream mapToMessage(
         org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
         Message message
     ) throws MessagingException {
         try {
-            InputStream originalMessageStream = Activities.mapMessageContent(
+            InputStream originalMessageStream = this.mapMessageContent(
                 emailActivity, 
                 message
             );
@@ -4094,7 +3891,7 @@ public class Activities {
             new ServiceException(e).log();
         }
         try {
-        	Activities.mapMessageRecipients(
+        	this.mapMessageRecipients(
                 emailActivity, 
                 message
             );
@@ -4121,12 +3918,6 @@ public class Activities {
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
-    public static final String MAX_DATE = "99991231T000000.000Z";
-
-    private final static int BATCHING_MODE_SIZE = 1000;
-
-    private static final String CODEVALUENAME_ACTIVITY_TYPE = "org:opencrx:kernel:activity1:ActivityType:activityClass";
-  
     private static final String[] ACTIVITY_TYPES = 
         new String[]{
             "org:opencrx:kernel:activity1:EMail",
@@ -4161,14 +3952,10 @@ public class Activities {
     // LINK_TYPE
     public static final short ACTIVITY_LINK_TYPE_IS_DERIVED_FROM = 97;
     
-    // DURATION_CALCULATION_MODE
-    public static final short DURATION_CALCULATION_MODE_CALC_DURATION = 1;
-    public static final short DURATION_CALCULATION_MODE_CALC_PAUSE = 2;
-    
-    // RATE_TYPE
-    public static final short RATE_TYPE_NA = 0;
-    public static final short RATE_TYPE_STANDARD = 1;
-    public static final short RATE_TYPE_OVERTIME = 2;
+    // WORKRECORD_TYPE
+    public static final short WORKRECORD_TYPE_NA = 0;
+    public static final short WORKRECORD_TYPE_WORK_STANDARD = 1;
+    public static final short WORKRECORD_TYPE_WORK_OVERTIME = 2;
     
     // PRIORITY
     public static final short PRIORITY_LOW = 1;
@@ -4220,9 +4007,6 @@ public class Activities {
     public static final String ACTIVITY_TRACKER_NAME_TRASH = "Trash";
     public static final String ACTIVITY_TRACKER_NAME_POLLS = "Polls";
     public static final String ACTIVITY_TRACKER_NAME_MEETING_ROOMS = "Meeting Rooms";
-
-    protected final Backend backend;
-    protected final ICalendar icals;
         
 }
 

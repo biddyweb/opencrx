@@ -50,11 +50,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>			
 -->
-	<!-- LogConsoleServlet -->
-	<servlet id="LogConsoleServlet">
-		<servlet-name>LogConsoleServlet</servlet-name>
-		<servlet-class>org.openmdx.application.servlet.log.console.LogConsoleServlet</servlet-class>
-	</servlet>
 	<!-- WorkflowController -->
 	<servlet id="WorkflowController">
 		<servlet-name>WorkflowController</servlet-name>
@@ -236,6 +231,11 @@
 			<param-name>uiRefreshRate</param-name>
 			<param-value>0</param-value>
 		</init-param>
+		<!-- Number of views per session -->
+		<init-param>
+			<param-name>viewsCacheSize</param-name>
+			<param-value>10</param-value>
+		</init-param>
 		<!-- ui provider -->
 		<init-param>
 			<param-name>uiSegment</param-name>
@@ -379,10 +379,6 @@
 		<url-pattern>/Login</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>LogConsoleServlet</servlet-name>
-		<url-pattern>/LogConsoleServlet/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
 		<servlet-name>WorkflowHandler</servlet-name>
 		<url-pattern>/WorkflowHandler/*</url-pattern>
 	</servlet-mapping>
@@ -448,7 +444,6 @@
 	<security-constraint id="security_constraint-Root">
 		<web-resource-collection id="c-Root">
 			<web-resource-name>c-Root</web-resource-name>
-			<url-pattern>/LogConsoleServlet/*</url-pattern>
 			<url-pattern>/WorkflowController/*</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
@@ -480,8 +475,8 @@
 	<ejb-local-ref id="ejb_EntityManagerFactory">
 		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
 		<ejb-ref-type>Session</ejb-ref-type>
-		<local-home>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2LocalHome</local-home>
-		<local>org.openmdx.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2_0Local</local>
+		<local-home>org.openmdx.application.persistence.ejb.EntityManagerFactory_2LocalHome</local-home>
+		<local>org.openmdx.application.persistence.ejb.EntityManagerFactory_2_0Local</local>
 		<ejb-link>gateway.jar#opencrx_core_CRX_EntityManagerFactory</ejb-link>
 	</ejb-local-ref>
 </web-app>

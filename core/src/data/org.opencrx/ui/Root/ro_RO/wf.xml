@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IntegerProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietate Număr întreg</_item>
+                        <_item>Proprietate Număr Întreg</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietate Număr întreg</_item>
+                        <_item>Proprietate Număr Întreg</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IntegerProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietate Număr întreg</_item>
+                        <_item>Proprietate Număr Întreg</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietate Număr întreg</_item>
+                        <_item>Proprietate Număr Întreg</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IntegerProperty:integerValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valoare Număr întreg</_item>
+                        <_item>Valoare Număr Întreg</_item>
                       </label>
                       <toolTip>
-                        <_item>Valoare Număr întreg</_item>
+                        <_item>Valoare Număr Întreg</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:StringProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietate String</_item>
+                        <_item>Proprietate Șir</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietate String</_item>
+                        <_item>Proprietate Șir</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -333,10 +333,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:StringProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietate String</_item>
+                        <_item>Proprietate Șir</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietate String</_item>
+                        <_item>Proprietate Șir</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -344,10 +344,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:StringProperty:stringValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valoare String</_item>
+                        <_item>Valoare Șir</_item>
                       </label>
                       <toolTip>
-                        <_item>Valoare String</_item>
+                        <_item>Valoare Șir</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -388,7 +388,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietate Dată/Oră</_item>
+                        <_item>Proprietate Dată / Oră</_item>
                       </label>
                       <toolTip>
                         <_item>Proprietate Dată/Oră</_item>
@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietate Dată/Oră</_item>
+                        <_item>Proprietate Dată / Oră</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietate Dată/Oră</_item>
+                        <_item>Proprietate Dată / Oră</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -410,10 +410,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty:dateTimeValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valoare Dată/Oră</_item>
+                        <_item>Valoare Dată / Oră</_item>
                       </label>
                       <toolTip>
-                        <_item>Valoare Dată/Oră</_item>
+                        <_item>Valoare Dată / Oră</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Order.java,v 1.2 2009/02/15 18:06:15 wfro Exp $
+ * Name:        $Id: Order.java,v 1.5 2009/06/10 10:43:31 wfro Exp $
  * Description: Order
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:15 $
+ * Date:        $Date: 2009/06/10 10:43:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,9 +58,11 @@ package org.opencrx.apps.store.objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.StringTokenizer;
+
+import javax.jdo.JDOHelper;
 
 import org.opencrx.apps.store.common.PrimaryKey;
 import org.opencrx.apps.store.common.util.Keys;
@@ -116,12 +118,8 @@ public final class Order
         // Address
         this.Address = "";
         org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddress = null;
-        for(
-            Iterator i = salesOrder.getAddress().iterator();
-            i.hasNext();
-        ) {
-            org.opencrx.kernel.contract1.jmi1.ContractAddress address = 
-                (org.opencrx.kernel.contract1.jmi1.ContractAddress)i.next();
+        Collection<org.opencrx.kernel.contract1.jmi1.ContractAddress> addresses = salesOrder.getAddress();
+        for(org.opencrx.kernel.contract1.jmi1.ContractAddress address: addresses) {
             if(address instanceof org.opencrx.kernel.contract1.jmi1.PostalAddress) {
                 postalAddress = (org.opencrx.kernel.contract1.jmi1.PostalAddress)address;
                 break;
@@ -143,13 +141,9 @@ public final class Order
         UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddress = null;
         // Find existing postal address
-        if(salesOrder.refIsPersistent()) {
-            for(
-                Iterator i = salesOrder.getAddress().iterator();
-                i.hasNext();
-            ) {
-                org.opencrx.kernel.contract1.jmi1.ContractAddress address = 
-                    (org.opencrx.kernel.contract1.jmi1.ContractAddress)i.next();
+        if(JDOHelper.isPersistent(salesOrder)) {
+        	Collection<org.opencrx.kernel.contract1.jmi1.ContractAddress> addresses = salesOrder.getAddress();
+            for(org.opencrx.kernel.contract1.jmi1.ContractAddress address: addresses) {
                 if(address instanceof org.opencrx.kernel.contract1.jmi1.PostalAddress) {
                     postalAddress = (org.opencrx.kernel.contract1.jmi1.PostalAddress)address;
                     break;
@@ -158,7 +152,7 @@ public final class Order
         }
         // Create
         if(postalAddress == null) {
-            postalAddress = context.getContractPackage().getPostalAddress().createPostalAddress();
+            postalAddress = context.getPersistenceManager().newInstance(org.opencrx.kernel.contract1.jmi1.PostalAddress.class);
             postalAddress.refInitialize(false, false);
             salesOrder.addAddress(
                 false,
@@ -168,10 +162,12 @@ public final class Order
         }
         postalAddress.getPostalAddressLine().clear();
         StringTokenizer t = new StringTokenizer(this.getAddress(), "\n\r", false);
-        while(t.hasMoreTokens()) {
+        int ii = 0;
+        while(t.hasMoreTokens() && (ii < 3)) {
             postalAddress.getPostalAddressLine().add(
                 t.nextToken()
             );
+            ii++;
         }
         // Customer
         Account customer = context.getAccountSegment().getAccount(this.getUserID().toString());

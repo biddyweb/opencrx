@@ -225,6 +225,9 @@
                       <label>
                         <_item>status</_item>
                       </label>
+                      <shortLabel>
+                        <_item> </_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>status</_item>
                       </toolTip>

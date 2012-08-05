@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateLeadWizard.jsp,v 1.10 2009/02/10 17:39:43 wfro Exp $
+ * Name:        $Id: CreateLeadWizard.jsp,v 1.12 2009/06/01 23:03:00 wfro Exp $
  * Description: CreateLeadWizard
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/10 17:39:43 $
+ * Date:        $Date: 2009/06/01 23:03:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ java.io.*,
 java.text.*,
 org.openmdx.application.cci.*,
 org.openmdx.base.text.conversion.*,
+org.openmdx.base.accessor.cci.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
@@ -90,7 +91,6 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	String formName = "CreateLeadForm";
 	String wizardName = "CreateLeadWizard.jsp";
 
@@ -194,7 +194,7 @@ org.openmdx.application.log.*
 	      	pm.currentTransaction().begin();
 	      	contractSegment.addLead(
 	            false,
-	            UUIDConversion.toUID(uuids.next()),
+	            org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
 	            lead
 	        );
 	        pm.currentTransaction().commit();

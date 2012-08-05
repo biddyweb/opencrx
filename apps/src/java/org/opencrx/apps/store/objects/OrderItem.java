@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderItem.java,v 1.2 2009/02/15 18:06:14 wfro Exp $
+ * Name:        $Id: OrderItem.java,v 1.4 2009/05/24 12:49:36 wfro Exp $
  * Description: OrderItem
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:14 $
+ * Date:        $Date: 2009/05/24 12:49:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,13 +86,19 @@ public final class OrderItem
     public OrderItem(
         org.opencrx.kernel.contract1.jmi1.SalesOrderPosition position
     ) {
-        this.Key = new PrimaryKey(position.getPositionNumber().trim(), false);
-        this.OrderID = new PrimaryKey(position.refGetPath().get(position.refGetPath().size()-3), false);
-        this.ProductID = position.getProduct() == null
-            ? new PrimaryKey("", false)
-            : new PrimaryKey(position.getProduct().refGetPath().getBase(), false);
+        this.OrderID = new PrimaryKey(
+        	position.refGetPath().get(position.refGetPath().size() - 3), 
+        	false
+        );
+        this.Key = new PrimaryKey(
+        	this.OrderID.toString() + "*" + position.refGetPath().getBase(), 
+        	false
+        );
+        this.ProductID = position.getProduct() == null ? 
+        	new PrimaryKey("", false) : 
+        	new PrimaryKey(position.getProduct().refGetPath().getBase(), false);
         this.Quantity = position.getQuantity().intValue();
-        this.Price = position.getAmount().floatValue();        
+        this.Price = position.getAmount() == null ? 0.0f : position.getAmount().floatValue();        
     }
     
     //-----------------------------------------------------------------------

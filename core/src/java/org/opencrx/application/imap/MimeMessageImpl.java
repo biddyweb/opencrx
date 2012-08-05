@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 public class MimeMessageImpl extends MimeMessage {
 
     //-----------------------------------------------------------------------    
+    @SuppressWarnings("unchecked")
     public static String getHeadersAsRFC822(
         Part part,
         String[] fields

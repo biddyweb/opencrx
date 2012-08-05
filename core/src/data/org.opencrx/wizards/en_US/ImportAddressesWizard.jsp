@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImportAddressesWizard.jsp,v 1.1 2009/02/06 15:13:45 wfro Exp $
+ * Name:        $Id: ImportAddressesWizard.jsp,v 1.2 2009/05/11 11:49:40 cmu Exp $
  * Description: ImportAddressGroupMemberWizard
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/06 15:13:45 $
+ * Date:        $Date: 2009/05/11 11:49:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,7 +88,6 @@ org.openmdx.application.log.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	UUIDGenerator uuids = UUIDs.getGenerator();
 	String formName = "ImportAddressesForm";
 	String wizardName = "ImportAddressesWizard.jsp";
 
@@ -160,7 +159,7 @@ org.openmdx.application.log.*
 			    member.setAddress(address);
 				addressGroup.addMember(
 				    false,
-				    UUIDConversion.toUID(uuids.next()),
+				    org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
 				    member
 				);
 				ii++;

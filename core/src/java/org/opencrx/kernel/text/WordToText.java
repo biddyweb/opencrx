@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WordToText.java,v 1.5 2009/03/08 17:04:53 wfro Exp $
+ * Name:        $Id: WordToText.java,v 1.6 2009/04/23 17:52:42 wfro Exp $
  * Description: WordToText
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:53 $
+ * Date:        $Date: 2009/04/23 17:52:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -109,6 +109,7 @@ public class WordToText {
      * bits of crud, but will work in cases where the text piece -> paragraph
      * mapping is broken. Fast too.
      */
+    @SuppressWarnings("unchecked")
     public String getTextFromPieces(
         HWPFDocument doc            
     ) {

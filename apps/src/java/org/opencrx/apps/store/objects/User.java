@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: User.java,v 1.2 2009/02/15 18:06:15 wfro Exp $
+ * Name:        $Id: User.java,v 1.4 2009/06/10 10:43:31 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/15 18:06:15 $
+ * Date:        $Date: 2009/06/10 10:43:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,8 +58,10 @@ package org.opencrx.apps.store.objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.StringTokenizer;
+
+import javax.jdo.JDOHelper;
 
 import org.opencrx.apps.store.common.IStandardObject;
 import org.opencrx.apps.store.common.PrimaryKey;
@@ -95,12 +97,8 @@ public final class User implements IStandardObject
         this.Name = contact.getAliasName();
         this.Address = "";
         org.opencrx.kernel.account1.jmi1.PostalAddress postalAddress = null;
-        for(
-            Iterator i = contact.getAddress().iterator();
-            i.hasNext();
-        ) {
-            org.opencrx.kernel.account1.jmi1.AccountAddress address = 
-                (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
+        Collection<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = contact.getAddress();
+        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
                 postalAddress = (org.opencrx.kernel.account1.jmi1.PostalAddress)address;
                 break;
@@ -142,13 +140,9 @@ public final class User implements IStandardObject
         UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.account1.jmi1.PostalAddress postalAddress = null;
         // Find existing postal address
-        if(contact.refIsPersistent()) {
-            for(
-                Iterator i = contact.getAddress().iterator();
-                i.hasNext();
-            ) {
-                org.opencrx.kernel.account1.jmi1.AccountAddress address = 
-                    (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
+        if(JDOHelper.isPersistent(contact)) {
+        	Collection<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = contact.getAddress();
+            for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
                 if(address instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
                     postalAddress = (org.opencrx.kernel.account1.jmi1.PostalAddress)address;
                     break;
@@ -157,7 +151,7 @@ public final class User implements IStandardObject
         }
         // Create
         if(postalAddress == null) {
-            postalAddress = context.getAccountPackage().getPostalAddress().createPostalAddress();
+            postalAddress = context.getPersistenceManager().newInstance(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
             postalAddress.refInitialize(false, false);
             contact.addAddress(
                 false,
@@ -185,7 +179,7 @@ public final class User implements IStandardObject
             Keys.STORE_SCHEMA + "Properties"
         );
         if(propertySet == null) {
-            propertySet = context.getGenericPackage().getPropertySet().createPropertySet();
+            propertySet = context.getPersistenceManager().newInstance(org.opencrx.kernel.generic.jmi1.PropertySet.class);
             propertySet.refInitialize(false, false);
             propertySet.setName(Keys.STORE_SCHEMA + "Properties");
             contact.addPropertySet(
@@ -198,7 +192,7 @@ public final class User implements IStandardObject
         org.opencrx.kernel.base.jmi1.StringProperty passwordProperty = 
             (org.opencrx.kernel.base.jmi1.StringProperty)this.getProperty(propertySet, "Password");
         if(passwordProperty == null) {
-            passwordProperty = context.getBasePackage().getStringProperty().createStringProperty();
+            passwordProperty = context.getPersistenceManager().newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
             passwordProperty.refInitialize(false, false);
             passwordProperty.setName("Password");
             propertySet.addProperty(
@@ -212,7 +206,7 @@ public final class User implements IStandardObject
         org.opencrx.kernel.base.jmi1.StringProperty userTypeProperty = 
             (org.opencrx.kernel.base.jmi1.StringProperty)this.getProperty(propertySet, "UserType");
         if(userTypeProperty == null) {
-            userTypeProperty = context.getBasePackage().getStringProperty().createStringProperty();
+            userTypeProperty = context.getPersistenceManager().newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
             userTypeProperty.refInitialize(false, false);
             userTypeProperty.setName("UserType");
             propertySet.addProperty(
@@ -234,8 +228,8 @@ public final class User implements IStandardObject
         String name
     ) {
         org.opencrx.kernel.generic.jmi1.PropertySet propertySet = null;
-        for(Iterator i = crxObject.getPropertySet().iterator(); i.hasNext(); ) {
-            org.opencrx.kernel.generic.jmi1.PropertySet ps = (org.opencrx.kernel.generic.jmi1.PropertySet)i.next();
+        Collection<org.opencrx.kernel.generic.jmi1.PropertySet> propertySets = crxObject.getPropertySet();
+        for(org.opencrx.kernel.generic.jmi1.PropertySet ps: propertySets) {
             if(name.trim().equals(ps.getName().trim())) {
                 propertySet = ps;
                 break;
@@ -250,8 +244,8 @@ public final class User implements IStandardObject
         String name
     ) {
         org.opencrx.kernel.base.jmi1.Property property = null;
-        for(Iterator i = propertySet.getProperty().iterator(); i.hasNext(); ) {
-            org.opencrx.kernel.base.jmi1.Property p = (org.opencrx.kernel.base.jmi1.Property)i.next();
+        Collection<org.opencrx.kernel.base.jmi1.Property> properties = propertySet.getProperty();
+        for(org.opencrx.kernel.base.jmi1.Property p: properties) {
             if(name.equals(p.getName())) {
                 property = p;
                 break;

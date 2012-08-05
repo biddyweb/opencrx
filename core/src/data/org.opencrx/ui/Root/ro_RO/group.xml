@@ -255,10 +255,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountToId" _operation="create">
                     <_object>
                       <label>
-                        <_item>ID Cont al</_item>
+                        <_item>Identificator Cont al</_item>
                       </label>
                       <toolTip>
-                        <_item>ID Cont al</_item>
+                        <_item>Identificator Cont al</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.13 2009/03/08 17:04:54 wfro Exp $
+ * Name:        $Id: ProjectExporter.java,v 1.17 2009/04/28 14:33:20 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:54 $
+ * Date:        $Date: 2009/04/28 14:33:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,8 +72,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.activity1.cci2.ActivityWorkRecordQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
@@ -81,6 +84,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
+import org.opencrx.kernel.backend.Activities;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
@@ -110,10 +114,10 @@ public class ProjectExporter {
         boolean isRootActivity() {
           return this.isRoot;
         }
-        Collection getPartActivityMappers() {
+        Collection<ActivityMapper> getPartActivityMappers() {
           return this.partActivityMappers.values();
         }
-        Collection getPredecessorActivityMappers() {
+        Collection<ActivityMapper> getPredecessorActivityMappers() {
           return this.predecessorActivityMappers.values();
         }
         void addPartActivityMapper(ActivityMapper an) {
@@ -152,8 +156,8 @@ public class ProjectExporter {
         private Activity activity;
         private int uid;
         private boolean isRoot = true; //is not part of any other activity
-        private Map partActivityMappers = new HashMap(); //Use a map to be sure to have no duplicates
-        private Map predecessorActivityMappers = new HashMap();//Use a map to be sure to have no duplicates
+        private Map<String,ActivityMapper> partActivityMappers = new HashMap<String,ActivityMapper>(); //Use a map to be sure to have no duplicates
+        private Map<String,ActivityMapper> predecessorActivityMappers = new HashMap<String,ActivityMapper>();//Use a map to be sure to have no duplicates
         private Date taskStart = null;
         private Date taskFinish = null;
     }
@@ -194,47 +198,61 @@ public class ProjectExporter {
             ActivityMapper am, 
             ResourceMapper rm
         ) {
+          PersistenceManager pm = JDOHelper.getPersistenceManager(ra);
           this.resourceAssignment = ra;
           this.activityMapper = am;
           this.resourceMapper = rm;
           this.uid = uid;
-          int minutes = 0;
-          for(Iterator i = ra.getWorkRecord().iterator(); i.hasNext(); ) {
-              ActivityWorkRecord workRecord = (ActivityWorkRecord)i.next();
-              this.actualWorkHours = this.actualWorkHours + workRecord.getDurationHours();
-              minutes = minutes + workRecord.getDurationMinutes();
+          ActivityWorkRecordQuery workRecordQuery = (ActivityWorkRecordQuery)pm.newQuery(ActivityWorkRecord.class);
+          workRecordQuery.recordType().elementOf(
+        	  Activities.WORKRECORD_TYPE_WORK_OVERTIME, 
+        	  Activities.WORKRECORD_TYPE_WORK_STANDARD
+          );
+          List<ActivityWorkRecord> workRecords = ra.getWorkRecord(workRecordQuery);
+          BigDecimal totalAmount = new BigDecimal(0.0);
+          for(ActivityWorkRecord workRecord: workRecords) {
+              totalAmount = totalAmount.add(workRecord.getQuantity());
           }
-          this.actualWorkHours = this.actualWorkHours + ((minutes+30)/60);          
-          this.workDurationPercentage = ra.getWorkDurationPercentage() == null
-              ? (short)100
-              : ra.getWorkDurationPercentage().shortValue();
+          this.actualWorkHours = totalAmount.intValue();          
+          this.workDurationPercentage = ra.getWorkDurationPercentage() == null ? 
+        	  (short)100 : 
+        	  ra.getWorkDurationPercentage().shortValue();
         }
+        
         public int getUid() {
           return uid;
         }
+        
         public int getTaskUid() {
           return this.activityMapper.getUid();
         }
+        
         public int getResourceUid() {
           return this.resourceMapper.getUid();
         }
+        
         public Date getFinish() {
           return this.activityMapper.getTaskFinish();
         }
+        
         public Date getStart() {
           return this.activityMapper.getTaskStart();
         }
+        
         public ResourceAssignment getResourceAssignment() {
           return this.resourceAssignment;
-        }     
+        }
+        
         public short getWorkDurationPercentage(
         ) {
             return this.workDurationPercentage;
         }
+        
         public int getActualWorkHours(
         ) {
             return this.actualWorkHours;
         }
+        
         //-----------------------------------------------------------------------
         // Members
         //-----------------------------------------------------------------------    
@@ -394,8 +412,8 @@ public class ProjectExporter {
     this.clear();
     //Fill activityMappers
     //get all Activities
-    for (Iterator i=activityGroup.getFilteredActivity().iterator(); i.hasNext(); ) {
-      Activity a = (Activity)i.next();
+    Collection<Activity> activities = activityGroup.getFilteredActivity();
+    for (Activity a: activities) {
       //if (!a.getName().startsWith("XTask")) continue;
       //read again to get obj with composite path.
       a = (Activity)pm.getObjectById(a.refGetPath());
@@ -403,12 +421,12 @@ public class ProjectExporter {
       activityMappers.put(am.getActivity().getIdentity(),am);
     }
     //get all links of interest
-    for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
-      this.setActivityLinks((ActivityMapper)i.next());
+    for (Iterator<ActivityMapper> i=activityMappers.values().iterator(); i.hasNext(); ) {
+      this.setActivityLinks(i.next());
     }
     //set uid used during export
-    for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
-     ActivityMapper am = (ActivityMapper)i.next();
+    for (Iterator<ActivityMapper> i=activityMappers.values().iterator(); i.hasNext(); ) {
+     ActivityMapper am = i.next();
      if (am.isRootActivity()) {
        this.setActivityMapperUid(am, 0);
      }
@@ -416,10 +434,11 @@ public class ProjectExporter {
     
     //Fill resourceMappers
     int resourceUid = 0;
-    for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
-      Activity a = ((ActivityMapper)i.next()).getActivity();
-      for (Iterator j=a.getAssignedResource().iterator(); j.hasNext(); ) {
-        Resource r = ((ResourceAssignment)j.next()).getResource();
+    for (Iterator<ActivityMapper> i=activityMappers.values().iterator(); i.hasNext(); ) {
+      Activity a = (i.next()).getActivity();
+      Collection<ResourceAssignment> assignments = a.getAssignedResource();
+      for (ResourceAssignment assignment: assignments) {
+        Resource r = assignment.getResource();
         if (r != null && !resourceMappers.containsKey(r.getIdentity())) {
           resourceUid++;
           resourceMappers.put(r.getIdentity(), new ResourceMapper(r,resourceUid));
@@ -444,8 +463,8 @@ public class ProjectExporter {
     am.setUid(nextUid);
     this.nextUid++;
     int newDeep = deep + 1;
-    for (Iterator i=am.getPartActivityMappers().iterator(); i.hasNext();) {
-      ActivityMapper next = (ActivityMapper)i.next();
+    for (Iterator<ActivityMapper> i=am.getPartActivityMappers().iterator(); i.hasNext();) {
+      ActivityMapper next = i.next();
       this.setActivityMapperUid(next, newDeep);
     }
   }
@@ -454,8 +473,8 @@ public class ProjectExporter {
   private void setActivityLinks(
       ActivityMapper am
   ) {
-    for (Iterator i=am.getActivity().getActivityLinkTo().iterator(); i.hasNext(); ) {
-      ActivityLinkTo link = (ActivityLinkTo)i.next();
+	Collection<ActivityLinkTo> links = am.getActivity().getActivityLinkTo();
+    for (ActivityLinkTo link: links) {
       if (link.getActivityLinkType() == isPartOf || 
           link.getActivityLinkType() == isContainerOf ||
           link.getActivityLinkType() == isChildOf ||
@@ -465,7 +484,7 @@ public class ProjectExporter {
           AppLog.warning("Activity "+ am.getActivity().getIdentity() + " has an ActivityLinkTo that doesn't reference a linked activity");
         }
         else {
-          ActivityMapper linkedMapper = (ActivityMapper)activityMappers.get(linkedActivity.getIdentity());
+          ActivityMapper linkedMapper = activityMappers.get(linkedActivity.getIdentity());
           if (linkedMapper == null) {
             AppLog.warning("Activity "+ am.getActivity().getIdentity() + " has a link to an Activity outside the exported set", linkedActivity.getIdentity());
           }
@@ -548,12 +567,12 @@ public class ProjectExporter {
     //task with uid 0 is a special task containing project infos.
     this.exportTask0();
     
-    List outlineNumber = new ArrayList();
+    List<Integer> outlineNumber = new ArrayList<Integer>();
     outlineNumber.add(new Integer(0));
-    for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
-     ActivityMapper am = (ActivityMapper)i.next();
+    for (Iterator<ActivityMapper> i=activityMappers.values().iterator(); i.hasNext(); ) {
+     ActivityMapper am = i.next();
      if (am.isRootActivity()) {
-       outlineNumber.set(0, new Integer(((Integer)outlineNumber.get(0)).intValue() + 1)); 
+       outlineNumber.set(0, new Integer((outlineNumber.get(0)).intValue() + 1)); 
        this.exportTask(am,outlineNumber);
      }
     }
@@ -615,7 +634,7 @@ public class ProjectExporter {
    */
   private void exportTask(
       ActivityMapper am, 
-      List outlineNumber
+      List<Integer> outlineNumber
   ) {
 
     Activity a = am.getActivity();
@@ -641,10 +660,7 @@ public class ProjectExporter {
         mainEstimateMinutes = workingMinutesDuringScheduledPeriod;
     }
     // !useActualEffort --> derive actual duration from main estimate and percentComplete
-    int actualDurationMinutes = this.useActualEffort
-        ? (a.getActualEffortHours() == null ? 0 : a.getActualEffortHours().intValue() * 60) +
-          (a.getActualEffortMinutes() == null ? 0 : a.getActualEffortMinutes().intValue())
-        : (percentComplete * mainEstimateMinutes) / 100;
+    int actualDurationMinutes = (percentComplete * mainEstimateMinutes) / 100;
           
     Date earlyStart = a.getScheduledStart();
     Date earlyFinish = a.getScheduledEnd();
@@ -747,8 +763,8 @@ public class ProjectExporter {
     this.exportHyperlink(a.getIdentity());
     this.we("IgnoreResourceCalendar", "true");
     this.we("Notes", notes);
-    for (Iterator i=am.getPredecessorActivityMappers().iterator(); i.hasNext();) {
-        this.exportPredecessorLink((ActivityMapper)i.next());
+    for (Iterator<ActivityMapper> i=am.getPredecessorActivityMappers().iterator(); i.hasNext();) {
+        this.exportPredecessorLink(i.next());
     }
     this.exportExtendedAttribute(ID_EXTENDED_TASK_ATTR_IDENTITY, a.getIdentity());
     this.wee("Task");
@@ -756,10 +772,10 @@ public class ProjectExporter {
     int lastOutlineNumberIx =outlineNumber.size();
     int lastOutlineNumber = 0;
     outlineNumber.add(lastOutlineNumberIx, new Integer(lastOutlineNumber));
-    for (Iterator i=am.getPartActivityMappers().iterator(); i.hasNext();) {
+    for (Iterator<ActivityMapper> i=am.getPartActivityMappers().iterator(); i.hasNext();) {
         lastOutlineNumber++;
         outlineNumber.set(lastOutlineNumberIx, new Integer(lastOutlineNumber));
-        this.exportTask((ActivityMapper)i.next(), outlineNumber);
+        this.exportTask(i.next(), outlineNumber);
     }
     outlineNumber.remove(lastOutlineNumberIx);
   }
@@ -780,8 +796,8 @@ public class ProjectExporter {
     this.exportResource0();
     //order list using uid starting with 1;
     ResourceMapper[] resourceMappersArr = new ResourceMapper[this.resourceMappers.size()];
-    for (Iterator i=resourceMappers.values().iterator(); i.hasNext(); ) {
-      ResourceMapper rm = (ResourceMapper)i.next();
+    for (Iterator<ResourceMapper> i=resourceMappers.values().iterator(); i.hasNext(); ) {
+      ResourceMapper rm = i.next();
       resourceMappersArr[rm.getUid()-1] = rm; 
     }
     for (int i=0; i<resourceMappersArr.length; i++) {
@@ -844,18 +860,18 @@ public class ProjectExporter {
     ResourceAssignmentQuery filter = null;
     this.web("Assignments");
     int assignmentUid = 0;
-    for (Iterator i=activityMappers.values().iterator(); i.hasNext(); ) {
-      ActivityMapper am = (ActivityMapper)i.next();
+    for (Iterator<ActivityMapper> i=activityMappers.values().iterator(); i.hasNext(); ) {
+      ActivityMapper am = i.next();
       Activity a = am.getActivity();
       if (filter == null) {
         Activity1Package pkg = (Activity1Package)a.refImmediatePackage();
         filter = pkg.createResourceAssignmentQuery();
         filter.orderByResourceOrder().ascending();
       }
-      List assignmentMappers = new ArrayList();
+      List<AssignmentMapper> assignmentMappers = new ArrayList<AssignmentMapper>();
       int totalWorkPercentage = 0;
-      for (Iterator j=a.getAssignedResource(filter).iterator(); j.hasNext(); ) {
-        ResourceAssignment ra = (ResourceAssignment)j.next();
+      List<ResourceAssignment> assignments = a.getAssignedResource(filter); 
+      for (ResourceAssignment ra: assignments) {
         if (ra.getWorkDurationPercentage() == null || ra.getWorkDurationPercentage().shortValue() < 0) {
           totalWorkPercentage = totalWorkPercentage + 100; //default is 100%
         }
@@ -863,14 +879,14 @@ public class ProjectExporter {
           totalWorkPercentage = totalWorkPercentage + ra.getWorkDurationPercentage().shortValue();
         }
         assignmentUid++;
-        assignmentMappers.add(new AssignmentMapper(assignmentUid, ra, am, (ResourceMapper)resourceMappers.get(ra.getResource().getIdentity())));
+        assignmentMappers.add(new AssignmentMapper(assignmentUid, ra, am, resourceMappers.get(ra.getResource().getIdentity())));
       }
       if (totalWorkPercentage == 0) {
         totalWorkPercentage = 100 * assignmentMappers.size();
       }
       //export
       for (int j=0; j<assignmentMappers.size(); j++) {
-        AssignmentMapper assignmentMapper = (AssignmentMapper)assignmentMappers.get(j);
+        AssignmentMapper assignmentMapper = assignmentMappers.get(j);
         this.exportAssignment(
             assignmentMappers.size(), 
             assignmentMapper
@@ -936,7 +952,7 @@ public class ProjectExporter {
   
   //-----------------------------------------------------------------------
   private static String outlineNumberToString(
-      List outlineNumber
+      List<Integer> outlineNumber
   ) {
     StringBuffer buf = new StringBuffer();
     for (int i=0; i<outlineNumber.size(); i++) {
@@ -1115,7 +1131,6 @@ public class ProjectExporter {
   private DateFormat startDateFormater = new SimpleDateFormat("yyyy-MM-dd'T00:00:00'");
   private DateFormat endDateFormater = new SimpleDateFormat("yyyy-MM-dd'T23:59:59'");
   
-  private boolean useActualEffort = false;
   private PrintWriter pw;
   private ActivityGroup activityGroup;
   private PersistenceManager pm;
@@ -1132,8 +1147,8 @@ public class ProjectExporter {
   private short mspTaskType = TASK_TYPE_FIXED_UNITS; //= default msproject task type
   private DateFormat projectDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
   private StandardCalendar mspCalendar = new StandardCalendar();
-  private Map activityMappers = new HashMap(); //key is identity of contained Activity
-  private Map resourceMappers = new HashMap(); //key is identity of contained Resource
+  private Map<String,ActivityMapper> activityMappers = new HashMap<String,ActivityMapper>(); //key is identity of contained Activity
+  private Map<String,ResourceMapper> resourceMappers = new HashMap<String,ResourceMapper>(); //key is identity of contained Resource
   
 }
 

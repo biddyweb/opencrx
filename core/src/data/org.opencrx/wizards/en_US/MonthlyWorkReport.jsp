@@ -3,11 +3,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.openmdx.org/
- * Name:        $Id: MonthlyWorkReport.jsp,v 1.3 2009/01/06 13:16:55 wfro Exp $
+ * Name:        $Id: MonthlyWorkReport.jsp,v 1.14 2009/06/12 04:38:45 cmu Exp $
  * Description: MonthlyReport
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2009/01/06 13:16:55 $
+ * Date:        $Date: 2009/06/12 04:38:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,19 +81,19 @@ org.openmdx.application.log.*
 
 	private static boolean includeActivity(
 		org.opencrx.kernel.activity1.jmi1.Activity activity,
-		org.opencrx.kernel.activity1.jmi1.ActivityTracker selectedActivityTracker,
+		org.opencrx.kernel.activity1.jmi1.ActivityGroup selectedActivityGroup,
 		int selectedPriority
 	) {
 		// Only report activity if it is member of the selected activity tracker
-		boolean isMemberOfSelectedActivityTracker = false;
-		if(selectedActivityTracker == null) {
-			isMemberOfSelectedActivityTracker = true;
+		boolean isMemberOfSelectedActivityGroup = false;
+		if(selectedActivityGroup == null) {
+			isMemberOfSelectedActivityGroup = true;
 		}
 		else {
 			for(Iterator j = activity.getAssignedGroup().iterator(); j.hasNext(); ) {
 				org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignment = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)j.next();
-				if(assignment.getActivityGroup().refMofId().equals(selectedActivityTracker.refMofId())) {
-					isMemberOfSelectedActivityTracker = true;
+				if(assignment.getActivityGroup().refMofId().equals(selectedActivityGroup.refMofId())) {
+					isMemberOfSelectedActivityGroup = true;
 					break;
 				}
 			}
@@ -108,7 +108,21 @@ org.openmdx.application.log.*
 				? activity.getPriority() <= 2
 				: activity.getPriority() > 2;
 		}
-		return isMemberOfSelectedActivityTracker && matchesSelectedPriority;
+		return isMemberOfSelectedActivityGroup && matchesSelectedPriority;
+	}
+
+	private static String decimalMinutesToHhMm(
+		double decimalMinutes
+	) {
+		NumberFormat hhFormatter = new DecimalFormat("#,##0");
+		NumberFormat mmFormatter = new DecimalFormat("#,#00");
+		int hours = (int)(decimalMinutes / 60.0);
+		int minutes = (int)java.lang.Math.rint(decimalMinutes % 60.0);
+		if (minutes == 60) {
+				hours += 1;
+				minutes = 0;
+		}
+		return hhFormatter.format(hours) + ":" + mmFormatter.format(minutes);
 	}
 %>
 
@@ -208,11 +222,12 @@ org.openmdx.application.log.*
 				DecimalFormat decimalFormat = (DecimalFormat)DecimalFormat.getInstance(currentLocale);
 				decimalFormat.setMaximumFractionDigits(2);
 				decimalFormat.setMinimumFractionDigits(2);
-        NumberFormat hhFormatter = new DecimalFormat("#,##0");
-        NumberFormat mmFormatter = new DecimalFormat("#,#00");
+        NumberFormat weekNumberFormatter = new DecimalFormat("#,##0");
         NumberFormat formatter5 = new DecimalFormat("00000");
 
-        final String DEFAULT_TIMESTAMP = "0000-01-01T00:00:00.000Z";
+    		final int RECORDTYPE_WORK_MAX = 99; // <=99 --> WorkRecord, >= 100 --> ExpenseRecord
+
+    		final String DEFAULT_TIMESTAMP = "0000-01-01T00:00:00.000Z";
         DateFormat crxDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         crxDateFormat.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
         DateFormat activityDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -232,10 +247,10 @@ org.openmdx.application.log.*
 					selectedResource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(selectedResourceXri));
 				}
 				// Selected activity tracker
-				String selectedActivityTrackerXri = request.getParameter("activityTrackerXri");
-				org.opencrx.kernel.activity1.jmi1.ActivityTracker selectedActivityTracker = null;
-				if((selectedActivityTrackerXri != null) && (selectedActivityTrackerXri.length() > 0)) {
-					selectedActivityTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker )pm.getObjectById(new Path(selectedActivityTrackerXri));
+				String selectedActivityGroupXri = request.getParameter("activityGroupXri");
+				org.opencrx.kernel.activity1.jmi1.ActivityGroup selectedActivityGroup = null;
+				if((selectedActivityGroupXri != null) && (selectedActivityGroupXri.length() > 0)) {
+					selectedActivityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(new Path(selectedActivityGroupXri));
 				}
 				// Selected priority
 				String selectedPriorityAsString = request.getParameter("activityPriority");
@@ -336,15 +351,50 @@ org.openmdx.application.log.*
 						<tr>
 							<td>Activity group:</td>
 							<td colspan="2">
-								<select class="valueL" name="activityTrackerXri" tabindex="1040">
-						       		<option value="">All
+								<select class="valueL" name="activityGroupXri" tabindex="1040">
+						      <option value="">All
 <%
+									Map orderedActivityGroups = new TreeMap();
+						      // get ActivityTrackers
 									org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-									trackerFilter.orderByName().ascending();
+									trackerFilter.forAllDisabled().isFalse();
+									int gCounter = 0;
 									for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
-										org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
+											org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
+											orderedActivityGroups.put(
+													(activityGroup.getName() != null ? activityGroup.getName() : "_?") + "    " + gCounter++,
+													activityGroup
+												);
+									}
+									// get ActivityCategories
+									org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
+									categoryFilter.forAllDisabled().isFalse();
+									for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
+											org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
+											orderedActivityGroups.put(
+													(activityGroup.getName() != null ? activityGroup.getName() : "_?") + "    " + gCounter++,
+													activityGroup
+												);
+									}
+									// get ActivityMilestones
+									org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
+									milestoneFilter.forAllDisabled().isFalse();
+									for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
+											org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
+											orderedActivityGroups.put(
+													(activityGroup.getName() != null ? activityGroup.getName() : "_?") + "    " + gCounter++,
+													activityGroup
+												);
+									}
+
+									for (
+											Iterator i = orderedActivityGroups.keySet().iterator();
+											i.hasNext();
+										) {
+												org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup =
+													(org.opencrx.kernel.activity1.jmi1.ActivityGroup)orderedActivityGroups.get(i.next());
 %>
-						       		<option <%= (selectedActivityTracker != null) && selectedActivityTracker.refMofId().equals(activityTracker.refMofId()) ? "selected" : "" %> value="<%= activityTracker.refMofId() %>"><%= activityTracker.getName() %>
+							       		<option <%= (selectedActivityGroup != null) && selectedActivityGroup.refMofId().equals(activityGroup.refMofId()) ? "selected" : "" %> value="<%= activityGroup.refMofId() %>"><%= activityGroup.getName() != null ? activityGroup.getName() : "_?" %>
 <%
 									}
 %>
@@ -365,31 +415,37 @@ org.openmdx.application.log.*
 			    </td>
 			</tr>
 <%
-			if((selectedResource != null) || (selectedActivityTracker != null)) {
+			if((selectedResource != null) || (selectedActivityGroup != null)) {
 				GregorianCalendar startAt = (GregorianCalendar)calendar.clone();
 				GregorianCalendar endAt = (GregorianCalendar)calendar.clone();
 				endAt.add(Calendar.MONTH, 1);
-				org.opencrx.kernel.activity1.cci2.WorkReportEntryQuery filter = activityPkg.createWorkReportEntryQuery();
-				filter.startedAt().between(
+				org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery filter = activityPkg.createWorkAndExpenseRecordQuery();
+				filter.thereExistsStartedAt().between(
 					startAt.getTime(),
 					endAt.getTime()
 				);
+				filter.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX)); // work records only, i.e. no expense records
+				//filter.recordType().elementOf(
+				//	org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD,
+				//	org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_OVERTIME
+				//);
 				Map activities = new TreeMap();
 				Map depots = new TreeMap();
 				Map workRecords = new TreeMap(); // sorted by Map startedAt
 				int counter = 0;
 				List workReportEntries = selectedResource == null
-					? selectedActivityTracker.getWorkReportEntry(filter)
+					? selectedActivityGroup.getWorkReportEntry(filter)
 					: selectedResource.getWorkReportEntry(filter);
 				// Prepare involved activities
 				for(Iterator i = workReportEntries.iterator(); i.hasNext(); ) {
-					org.opencrx.kernel.activity1.jmi1.WorkReportEntry workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkReportEntry)i.next();
+					org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)i.next();
+					org.opencrx.kernel.activity1.jmi1.Activity activity = workReportEntry.getActivity();
 					activities.put(
-						workReportEntry.getActivity().getActivityNumber(),
-						workReportEntry.getActivity()
+						activity.getActivityNumber(),
+						activity
 					);
 					// Get depot of debit booking of work compound booking
-					org.opencrx.kernel.depot1.jmi1.CompoundBooking cb = workReportEntry.getWorkRecord().getWorkCb();
+					org.opencrx.kernel.depot1.jmi1.CompoundBooking cb = workReportEntry.getWorkCb();
 					if(cb != null) {
 						for(Iterator j = cb.getBooking().iterator(); j.hasNext(); ) {
 							org.opencrx.kernel.depot1.jmi1.Booking booking = (org.opencrx.kernel.depot1.jmi1.Booking)j.next();
@@ -406,9 +462,9 @@ org.openmdx.application.log.*
 //				System.out.println("< prepare WorkReportEntries");
 
 				int currentMonth = calendar.get(Calendar.MONTH);
-				int[] totalEffort = new int[isActivityReport ? activities.size() : depots.size()];
+				double[] totalEffort = new double[isActivityReport ? activities.size() : depots.size()];
 				for(int i = 0; i < totalEffort.length; i++) {
-					totalEffort[i] = 0;
+					totalEffort[i] = 0.0;
 				}
 				while(calendar.get(Calendar.MONTH) == currentMonth) {
 %>
@@ -453,9 +509,9 @@ org.openmdx.application.log.*
 									<td >Total<br />hh:mm</td>
 								</tr>
 <%
-								int[] sumDays = new int[7];
+								double[] sumDays = new double[7];
 								for(int i = 0; i < sumDays.length; i++) {
-									sumDays[i] = 0;
+									sumDays[i] = 0.0;
 								}
 								if(isActivityReport) {
 									int ii = 0;
@@ -464,13 +520,13 @@ org.openmdx.application.log.*
 
 										boolean includeActivity = includeActivity(
 											activity,
-											selectedActivityTracker,
+											selectedActivityGroup,
 											selectedPriority
 										);
 
 										if(includeActivity) {
 //											System.out.println("> activity " + activity.getName());
-											int sumWeek = 0;
+											double sumWeek = 0;
 %>
 											<tr class="gridTableRowFull">
 												<td style="text-align: left;"><%= activity.getActivityNumber() %></td>
@@ -484,24 +540,26 @@ org.openmdx.application.log.*
 <%
       									    continue;
       									  }
-													int sumDay = 0;
+													double sumDay = 0.0;
 
 													// Get work records of current day assigned to current activity
-													org.opencrx.kernel.activity1.cci2.WorkReportEntryQuery currentDayAndActivityFilter = activityPkg.createWorkReportEntryQuery();
+													org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery currentDayFilter = activityPkg.createWorkAndExpenseRecordQuery();
 													GregorianCalendar tomorrow = (GregorianCalendar)cal.clone();
 													tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-													currentDayAndActivityFilter.startedAt().between(
+													currentDayFilter.thereExistsStartedAt().between(
 														cal.getTime(),
 														tomorrow.getTime()
 													);
-													currentDayAndActivityFilter.thereExistsActivity().equalTo(
-														activity
-													);
-													Collection entries = selectedResource == null
-														? selectedActivityTracker.getWorkReportEntry(currentDayAndActivityFilter)
-														: selectedResource.getWorkReportEntry(currentDayAndActivityFilter);
+													currentDayFilter.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX)); // work records only, i.e. no expense records
+													//currentDayFilter.recordType().elementOf(
+													//	org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD,
+													//	org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_OVERTIME
+													//);
+													Collection entries = selectedResource == null ?
+														selectedActivityGroup.getWorkReportEntry(currentDayFilter) :
+														selectedResource.getWorkReportEntry(currentDayFilter);
 													for(Iterator k = entries.iterator(); k.hasNext(); ) {
-														org.opencrx.kernel.activity1.jmi1.WorkReportEntry workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkReportEntry)k.next();
+														org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)k.next();
 														GregorianCalendar calEntryStartedAt = new GregorianCalendar();
 														calEntryStartedAt.setTime(workReportEntry.getStartedAt());
 														if(
@@ -510,15 +568,14 @@ org.openmdx.application.log.*
 														) {
 															GregorianCalendar calEntryModifiedAt = new GregorianCalendar();
 															calEntryModifiedAt.setTime(workReportEntry.getModifiedAt());
-															sumDay += workReportEntry.getDurationHours()*60 + workReportEntry.getDurationMinutes();
-                              // add this work record to map with key [startedAt(TimeStamp)][Counter(00000)] = yyyy-MM-ddTHH:mm:ss.SSSZ00000
-                              workRecords.put((workReportEntry.getStartedAt() != null
-                                ? crxDateFormat.format(workReportEntry.getStartedAt())
-                                : DEFAULT_TIMESTAMP) + formatter5.format(counter),
-                                workReportEntry
-                              );
-                              counter += 1;
-                              // System.out.println("adding WorkRecord #" + formatter5.format(counter) + " - " + hhFormatter.format(workReportEntry.getDurationHours()) + ":" + mmFormatter.format(workReportEntry.getDurationMinutes()));
+															sumDay += workReportEntry.getQuantity().doubleValue() * 60.0;
+															// add this work record to map with key [startedAt(TimeStamp)][Counter(00000)] = yyyy-MM-ddTHH:mm:ss.SSSZ00000
+															workRecords.put((workReportEntry.getStartedAt() != null ?
+																crxDateFormat.format(workReportEntry.getStartedAt()) :
+																DEFAULT_TIMESTAMP) + formatter5.format(counter),
+															  workReportEntry
+															);
+															counter += 1;
 														}
 													}
 %>
@@ -539,7 +596,7 @@ org.openmdx.application.log.*
 												}
 %>
 												<td align="right"><%= decimalFormat.format(1.0 * sumWeek / 60.0) %></td>
-												<td align="right"><strong><%= hhFormatter.format((int)(sumWeek / 60.0)) %>:<%= mmFormatter.format(sumWeek % 60.0) %></strong></td>
+												<td align="right"><strong><%= decimalMinutesToHhMm(sumWeek) %></strong></td>
 											</tr>
 <%
 //											System.out.println("< activity");
@@ -552,7 +609,7 @@ org.openmdx.application.log.*
 //									System.out.println("> week " + calendar.get(Calendar.DAY_OF_MONTH));
 									for(Iterator i = depots.values().iterator(); i.hasNext(); ii++) {
 										org.opencrx.kernel.depot1.jmi1.Depot depot = (org.opencrx.kernel.depot1.jmi1.Depot)i.next();
-										int sumWeek = 0;
+										double sumWeek = 0.0;
 %>
 										<tr class="gridTableRowFull">
 											<td style="text-align: left;"><%= depot.getDepotNumber() %></td>
@@ -561,38 +618,41 @@ org.openmdx.application.log.*
 											cal = (GregorianCalendar)calendar.clone();
 //											System.out.println("> depot " + depot.getDepotNumber());
 											for(int j = 0; j < 7; j++) {
-    									  if (cal.get(Calendar.DAY_OF_WEEK) > j+2) {
+												if (cal.get(Calendar.DAY_OF_WEEK) > j+2) {
 %>
-                          <td>&nbsp;</td>
+													<td>&nbsp;</td>
 <%
-    									    continue;
-    									  }
-												int sumDay = 0;
-
+													continue;
+												}
+												double sumDay = 0.0;
 												// Get work records of current day
-												org.opencrx.kernel.activity1.cci2.WorkReportEntryQuery currentDayFilter = activityPkg.createWorkReportEntryQuery();
+												org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery currentDayFilter = activityPkg.createWorkAndExpenseRecordQuery();
 												GregorianCalendar tomorrow = (GregorianCalendar)cal.clone();
 												tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-												currentDayFilter.startedAt().between(
+												currentDayFilter.thereExistsStartedAt().between(
 													cal.getTime(),
 													tomorrow.getTime()
 												);
-												Collection entries = selectedResource == null
-													? selectedActivityTracker.getWorkReportEntry(currentDayFilter)
-													: selectedResource.getWorkReportEntry(currentDayFilter);
+												filter.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX)); // work records only, i.e. no expense records
+												//filter.recordType().elementOf(
+												//	org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD,
+												//	org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_OVERTIME
+												//);
+												Collection entries = selectedResource == null ?
+													selectedActivityGroup.getWorkReportEntry(currentDayFilter) :
+													selectedResource.getWorkReportEntry(currentDayFilter);
 												for(Iterator k = entries.iterator(); k.hasNext(); ) {
-													org.opencrx.kernel.activity1.jmi1.WorkReportEntry workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkReportEntry)k.next();
-
+													org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)k.next();
 													// Only report activity if it is member of the selected activity tracker
-													boolean isMemberOfSelectedActivityTracker = false;
-													if(selectedActivityTracker == null) {
-														isMemberOfSelectedActivityTracker = true;
+													boolean isMemberOfSelectedActivityGroup = false;
+													if(selectedActivityGroup == null) {
+														isMemberOfSelectedActivityGroup = true;
 													}
 													else {
 														for(Iterator l = workReportEntry.getActivity().getAssignedGroup().iterator(); l.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignment = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)l.next();
-															if(assignment.getActivityGroup().refMofId().equals(selectedActivityTracker.refMofId())) {
-																isMemberOfSelectedActivityTracker = true;
+															if(assignment.getActivityGroup().refMofId().equals(selectedActivityGroup.refMofId())) {
+																isMemberOfSelectedActivityGroup = true;
 																break;
 															}
 														}
@@ -615,13 +675,13 @@ org.openmdx.application.log.*
 														matchesSelectedPriority = true;
 													}
 													else {
-														matchesSelectedPriority = selectedPriority == 1
-															? workReportEntry.getActivity().getPriority() <= 2
-															: workReportEntry.getActivity().getPriority() > 2;
+														matchesSelectedPriority = selectedPriority == 1 ?
+															workReportEntry.getActivity().getPriority() <= 2 :
+															workReportEntry.getActivity().getPriority() > 2;
 													}
 
-													if(isMemberOfSelectedActivityTracker && isAssignedToSelectedResource && matchesSelectedPriority) {
-														org.opencrx.kernel.depot1.jmi1.CompoundBooking workCb = workReportEntry.getWorkRecord().getWorkCb();
+													if(isMemberOfSelectedActivityGroup && isAssignedToSelectedResource && matchesSelectedPriority) {
+														org.opencrx.kernel.depot1.jmi1.CompoundBooking workCb = workReportEntry.getWorkCb();
 														boolean workCbContainsDepot = false;
 														if(workCb != null) {
 															for(Iterator l = workCb.getBooking().iterator(); l.hasNext(); ) {
@@ -640,15 +700,14 @@ org.openmdx.application.log.*
 														) {
 															GregorianCalendar calEntryModifiedAt = new GregorianCalendar();
 															calEntryModifiedAt.setTime(workReportEntry.getModifiedAt());
-															sumDay += workReportEntry.getDurationHours()*60 + workReportEntry.getDurationMinutes();
-                              // add this work record to map with key [startedAt(TimeStamp)][Counter(00000)] = yyyy-MM-ddTHH:mm:ss.SSSZ00000
-                              workRecords.put((workReportEntry.getStartedAt() != null
-                                ? crxDateFormat.format(workReportEntry.getStartedAt())
-                                : DEFAULT_TIMESTAMP) + formatter5.format(counter),
-                                workReportEntry
-                              );
-                              counter += 1;
-                              // System.out.println("adding WorkRecord #" + formatter5.format(counter) + " - " + hhFormatter.format(workReportEntry.getDurationHours()) + ":" + mmFormatter.format(workReportEntry.getDurationMinutes()));
+															sumDay += workReportEntry.getQuantity().doubleValue() * 60.0;
+															// add this work record to map with key [startedAt(TimeStamp)][Counter(00000)] = yyyy-MM-ddTHH:mm:ss.SSSZ00000
+															workRecords.put((workReportEntry.getStartedAt() != null ?
+																crxDateFormat.format(workReportEntry.getStartedAt()) :
+																DEFAULT_TIMESTAMP) + formatter5.format(counter),
+															  workReportEntry
+															);
+															counter += 1;
 														}
 													}
 												}
@@ -671,7 +730,7 @@ org.openmdx.application.log.*
 //											System.out.println("< depot");
 %>
 											<td align="right"><%= decimalFormat.format(1.0 * sumWeek / 60.0) %></td>
-											<td align="right"><strong><%= hhFormatter.format((int)(sumWeek / 60.0)) %>:<%= mmFormatter.format(sumWeek % 60.0) %></strong></td>
+											<td align="right"><strong><%= decimalMinutesToHhMm(sumWeek) %></strong></td>
 										</tr>
 <%
 									}
@@ -683,7 +742,7 @@ org.openmdx.application.log.*
 									<td>Total:</td>
 <%
 									cal = (GregorianCalendar)calendar.clone();
-									int sumWeekTotal = 0;
+									double sumWeekTotal = 0;
 									for(int j = 0; j < 7; j++) {
 									  if (cal.get(Calendar.DAY_OF_WEEK) > j+2) {
 %>
@@ -707,7 +766,7 @@ org.openmdx.application.log.*
 									}
 %>
 									<td align="right"><%= decimalFormat.format(1.0 * sumWeekTotal / 60.0) %></td>
-									<td align="right"><strong><%= hhFormatter.format((int)(sumWeekTotal / 60.0)) %>:<%= mmFormatter.format(sumWeekTotal % 60.0) %></strong></td>
+									<td align="right"><strong><%= decimalMinutesToHhMm(sumWeekTotal) %></strong></td>
 								</tr>
 							</table>
 						</td>
@@ -734,13 +793,13 @@ org.openmdx.application.log.*
 							</tr>
 <%
 							int ii = 0;
-							int sumMonth = 0;
+							double sumMonth = 0.0;
 							if(isActivityReport) {
 								for(Iterator i = activities.values().iterator(); i.hasNext(); ii++) {
 									org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
 									boolean includeActivity = includeActivity(
 										activity,
-										selectedActivityTracker,
+										selectedActivityGroup,
 										selectedPriority
 									);
 									sumMonth += totalEffort[ii];
@@ -750,7 +809,7 @@ org.openmdx.application.log.*
 											<td style="text-align: left;"><%= activity.getActivityNumber() %></td>
 											<td style="text-align: left;"><%= activity.getName() %></td>
 											<td align="right"><%= decimalFormat.format(1.0 * totalEffort[ii] / 60.0) %></td>
-											<td align="right"><strong><%= hhFormatter.format((int)(totalEffort[ii] / 60.0)) %>:<%= mmFormatter.format(totalEffort[ii] % 60.0) %></strong></td>
+											<td align="right"><strong><%= decimalMinutesToHhMm(totalEffort[ii]) %></strong></td>
 										</tr>
 <%
 									}
@@ -765,7 +824,7 @@ org.openmdx.application.log.*
 										<td style="text-align: left;"><%= depot.getDepotNumber() %></td>
 										<td style="text-align: left;"><%= depot.getName() %></td>
 										<td align="right"><%= decimalFormat.format(1.0 * totalEffort[ii] / 60.0) %></td>
-										<td align="right"><strong><%= hhFormatter.format((int)(totalEffort[ii] / 60.0)) %>:<%= mmFormatter.format(totalEffort[ii] % 60.0) %></strong></td>
+										<td align="right"><strong><%= decimalMinutesToHhMm(totalEffort[ii]) %></strong></td>
 									</tr>
 <%
 								}
@@ -775,7 +834,7 @@ org.openmdx.application.log.*
 								<td></td>
 								<td><strong>Total:</strong></td>
 								<td align="right"><strong><%= decimalFormat.format(1.0 * sumMonth / 60.0) %></strong></td>
-								<td align="right"><strong><%= hhFormatter.format((int)(sumMonth / 60.0)) %>:<%= mmFormatter.format(sumMonth % 60.0) %></strong></td>
+								<td align="right"><strong><%= decimalMinutesToHhMm(sumMonth) %></strong></td>
 							</tr>
 						</table>
 					</td>
@@ -785,7 +844,8 @@ org.openmdx.application.log.*
 					<td style="padding-top: 40px;">&nbsp;</td>
 				</tr>
 				<tr>
-				  <td><strong>Work Reports</strong></td>
+				  <td><strong><p style="page-break-before: always">Work Reports</p></strong></td>
+				</tr>
 				<tr>
 					<td style="padding:5px; border:1px solid #ddd;">
 						<table id="table-<%= currentTableId++ %>" class="resultTableFull">
@@ -803,52 +863,52 @@ org.openmdx.application.log.*
 <%
 							int wr = 0;
 							for(Iterator i = workRecords.values().iterator(); i.hasNext(); wr++) {
-								org.opencrx.kernel.activity1.jmi1.WorkReportEntry workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkReportEntry)i.next();
-                String wrHref = "";
-                Action action = new Action(
-                   Action.EVENT_SELECT_OBJECT,
-                   new Action.Parameter[]{
-                       new Action.Parameter(Action.PARAMETER_OBJECTXRI, workReportEntry.refMofId())
-                   },
-                   "",
-                   true // enabled
-                );
-                wrHref = "../../" + action.getEncodedHRef();
-                String actHref = "";
-                if (workReportEntry.getActivity() != null) {
-                  action = new Action(
-                     Action.EVENT_SELECT_OBJECT,
-                     new Action.Parameter[]{
-                         new Action.Parameter(Action.PARAMETER_OBJECTXRI, workReportEntry.getActivity().refMofId())
-                     },
-                     "",
-                     true // enabled
-                  );
-                  actHref = "../../" + action.getEncodedHRef();
-                }
-                String resHref = "";
-                if (workReportEntry.getResource() != null) {
-                  action = new Action(
-                     Action.EVENT_SELECT_OBJECT,
-                     new Action.Parameter[]{
-                         new Action.Parameter(Action.PARAMETER_OBJECTXRI, workReportEntry.getResource().refMofId())
-                     },
-                     "",
-                     true // enabled
-                  );
-                  resHref = "../../" + action.getEncodedHRef();
-                }
+								org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workReportEntry = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)i.next();
+								String wrHref = "";
+								Action action = new Action(
+								   Action.EVENT_SELECT_OBJECT,
+								   new Action.Parameter[]{
+								       new Action.Parameter(Action.PARAMETER_OBJECTXRI, workReportEntry.refMofId())
+								   },
+								   "",
+								   true // enabled
+								);
+								wrHref = "../../" + action.getEncodedHRef();
+								String actHref = "";
+								if (workReportEntry.getActivity() != null) {
+								  action = new Action(
+								     Action.EVENT_SELECT_OBJECT,
+								     new Action.Parameter[]{
+								         new Action.Parameter(Action.PARAMETER_OBJECTXRI, workReportEntry.getActivity().refMofId())
+								     },
+								     "",
+								     true // enabled
+								  );
+								  actHref = "../../" + action.getEncodedHRef();
+								}
+								String resHref = "";
+								if (workReportEntry.getResource() != null) {
+								  action = new Action(
+								     Action.EVENT_SELECT_OBJECT,
+								     new Action.Parameter[]{
+								         new Action.Parameter(Action.PARAMETER_OBJECTXRI, workReportEntry.getResource().refMofId())
+								     },
+								     "",
+								     true // enabled
+								  );
+								  resHref = "../../" + action.getEncodedHRef();
+								}
 %>
   							<tr class="gridTableRowFull">
-  								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= hhFormatter.format(wr) %></a></td>
+  								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= weekNumberFormatter.format(wr) %></a></td>
   								<td style="text-align: left;"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= workReportEntry.getName() != null ? workReportEntry.getName() : "" %></a></td>
   								<td style="text-align: left;"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= workReportEntry.getDescription() != null ? workReportEntry.getDescription() : "" %></a></td>
-  								<td align="right"><a href="<%= actHref %>" target="_blank" title="click to open activity"><%= workReportEntry.getActivityNumber() != null ? workReportEntry.getActivityNumber() : "" %></a></td>
+  								<td align="right"><a href="<%= actHref %>" target="_blank" title="click to open activity"><%= workReportEntry.getActivity().getActivityNumber() != null ? workReportEntry.getActivity().getActivityNumber() : "" %></a></td>
   								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= workReportEntry.getStartedAt() != null ? activityDateFormat.format(workReportEntry.getStartedAt()) : "" %></a></td>
   								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= workReportEntry.getEndedAt() != null ? activityDateFormat.format(workReportEntry.getEndedAt()) : "" %></a></td>
   								<td align="left"><a href="<%= resHref %>" target="_blank" title="click to open resource"><%= (workReportEntry.getResource() != null) && (workReportEntry.getResource().getName() != null) ? workReportEntry.getResource().getName() : "--" %></a></td>
-  								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= decimalFormat.format(1.0 * (workReportEntry.getDurationHours()*60 + workReportEntry.getDurationMinutes()) / 60.0) %></a></td>
-  								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= hhFormatter.format(workReportEntry.getDurationHours()) %>:<%= mmFormatter.format(workReportEntry.getDurationMinutes()) %></a></td>
+  								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= decimalFormat.format(workReportEntry.getQuantity().doubleValue()) %></a></td>
+  								<td align="right"><a href="<%= wrHref %>" target="_blank" title="click to open work report"><%= decimalMinutesToHhMm(workReportEntry.getQuantity().doubleValue() * 60.0) %></a></td>
   							</tr>
 <%
               }
@@ -856,7 +916,7 @@ org.openmdx.application.log.*
 							<tr class="gridTableRowFull">
 								<td colspan=7>&nbsp;</td>
 								<td align="right"><strong><%= decimalFormat.format(1.0 * sumMonth / 60.0) %></strong></td>
-								<td align="right"><strong><%= hhFormatter.format((int)(sumMonth / 60.0)) %>:<%= mmFormatter.format(sumMonth % 60.0) %></strong></td>
+								<td align="right"><strong><%= decimalMinutesToHhMm(sumMonth) %></strong></td>
 							</tr>
 						</table>
 					</td>
@@ -873,15 +933,12 @@ org.openmdx.application.log.*
 	    }
     }
     catch (Exception ex) {
-	    out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-	    PrintWriter pw = new PrintWriter(out);
-	    ServiceException e0 = new ServiceException(ex);
-	    pw.println(e0.getMessage());
-	    pw.println(e0.getCause());
-      out.println("</pre>");
-
-	    AppLog.warning("unexpected error", "Wizard Work Reports");
-      AppLog.warning(e0.getMessage(), e0.getCause());
+	      ServiceException e0 = new ServiceException(ex);
+	      e0.log();
+	      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+	      PrintWriter pw = new PrintWriter(out);
+	      e0.printStackTrace(pw);
+	      out.println("</pre></p>");
 	    // Go back to previous view
   		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
   		response.sendRedirect(

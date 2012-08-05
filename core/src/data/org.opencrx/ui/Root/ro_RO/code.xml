@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:AbstractEntry:identity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cale/valoare</_item>
+                        <_item>Cale / Valoare</_item>
                       </label>
                       <toolTip>
-                        <_item>Cale/valoare</_item>
+                        <_item>Cale / Valoare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:SimpleEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere simplă</_item>
+                        <_item>Intrare simplă</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere simplă</_item>
+                        <_item>Intrare simplă</_item>
                       </toolTip>
                     </_object>
                     <_content/>

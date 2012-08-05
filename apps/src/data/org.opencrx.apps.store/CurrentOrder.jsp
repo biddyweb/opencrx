@@ -91,7 +91,7 @@
 
     final ProductManager productManager = new ProductManager(sessionHelper.getApplicationContext());
 %>
-<form method=POST action="<%=ResponseHelper.CHANGE_QUANTITY_JSP%>" >
+<form method="POST" action="<%=ResponseHelper.CHANGE_QUANTITY_JSP%>" >
             <%
                 float totalPrice = 0f;
                 // 2.2 Render the items

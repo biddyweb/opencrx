@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Verwandte Opportunitäten</_item>
+                        <_item>Verwandte Verkaufschancen</_item>
                       </label>
                       <toolTip>
-                        <_item>Verwandte Opportunitäten</_item>
+                        <_item>Verwandte Verkaufschancen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +190,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:Pane:Op:Tab:createOpportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunität kreieren</_item>
+                        <_item>Verkaufschance kreieren</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunität kreieren</_item>
+                        <_item>Verkaufschance kreieren</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:LeadCreateOpportunityResult:opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Opportunität</_item>
+                        <_item>Verkaufschance</_item>
                       </label>
                       <toolTip>
-                        <_item>Opportunität</_item>
+                        <_item>Verkaufschance</_item>
                       </toolTip>
                     </_object>
                     <_content/>

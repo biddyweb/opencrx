@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.27 2009/03/08 17:04:50 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.58 2009/06/08 09:21:19 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.58 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:50 $
+ * Date:        $Date: 2009/06/08 09:21:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,73 +60,69 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
-import javax.jmi.reflect.RefObject;
 
+import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.aop2.Configuration;
+import org.opencrx.kernel.backend.Admin.PrincipalType;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.cci2.AlertQuery;
+import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
+import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.ObjectFinder;
+import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.DataproviderOperations;
-import org.openmdx.application.dataprovider.cci.Directions;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
-import org.openmdx.application.dataprovider.cci.ServiceHeader;
+import org.opencrx.kernel.workflow1.jmi1.Topic;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
-import org.openmdx.base.text.conversion.Base64;
-import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.openmdx.portal.servlet.Action;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.portal.servlet.WebKeys;
-import org.w3c.cci2.BinaryLargeObjects;
 
-public class UserHomes {
+public class UserHomes extends AbstractImpl {
 
-    //-----------------------------------------------------------------------
-    public UserHomes(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
-    
     //-------------------------------------------------------------------------
-    public static String getUidAsString(
-    ) {
-        return UUIDConversion.toUID(UserHomes.uuidGenerator.next());        
-    }
-    
+	public static void register(
+	) {
+		registerImpl(new UserHomes());
+	}
+	
     //-------------------------------------------------------------------------
-    public static void markAsAccepted(
-        org.opencrx.kernel.home1.jmi1.Alert alert,
-        PersistenceManager pm
+	public static UserHomes getInstance(
+	) throws ServiceException {
+		return getInstance(UserHomes.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected UserHomes(
+	) {
+		
+	}
+	
+    //-------------------------------------------------------------------------
+    public void markAsAccepted(
+        org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
         alert.setAlertState(
             (short)3
@@ -134,9 +130,8 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
-    public static void markAsRead(
-        org.opencrx.kernel.home1.jmi1.Alert alert,
-        PersistenceManager pm
+    public void markAsRead(
+        org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
         alert.setAlertState(
             (short)2
@@ -144,53 +139,63 @@ public class UserHomes {
     }
     
     //-----------------------------------------------------------------------
-    public static void refreshItems(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        PersistenceManager pm
+    public void refreshItems(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome
     ) throws ServiceException {
         if(userHome.getContact() != null) {
-            // Remove accepted alerts
-            Query query = pm.newQuery(org.opencrx.kernel.home1.jmi1.Alert.class);
-            org.opencrx.kernel.home1.cci2.AlertQuery alertQuery = (org.opencrx.kernel.home1.cci2.AlertQuery)query; 
-            alertQuery.alertState().greaterThanOrEqualTo((short)3);
-            query.setCandidates(userHome.getAlert());
-            List<org.opencrx.kernel.home1.jmi1.Alert> alerts = (List<org.opencrx.kernel.home1.jmi1.Alert>)query.execute();
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
+        	// Remove old alerts which reference same object 
+            AlertQuery alertQuery = (AlertQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Alert.class);
+            alertQuery.orderByCreatedAt().descending();
+            List<ContextCapable> references = new ArrayList<ContextCapable>();
+            List<org.opencrx.kernel.home1.jmi1.Alert> alerts = userHome.getAlert(alertQuery);
             for(org.opencrx.kernel.home1.jmi1.Alert alert: alerts) {
-                alert.refDelete();
+            	ContextCapable reference = null;
+            	try {
+            		reference = alert.getReference();
+            	}
+            	catch(Exception e) {}
+            	if((reference == null) || references.contains(reference)) {
+            		alert.refDelete();
+            	}
+            	else {
+            		references.add(alert.getReference());
+            	}
             }
             // Update charts
-            Contracts.calculateUserHomeCharts(
-                userHome,
-                pm
+            Contracts.getInstance().calculateUserHomeCharts(
+                userHome
             );
-            Activities.calculateUserHomeCharts(
-                userHome,
-                pm
+            Activities.getInstance().calculateUserHomeCharts(
+                userHome
             );
         }
     }
        
     //-------------------------------------------------------------------------
-    /**
-     * @deprecated
-     */
-    public DataproviderObject_1_0 getUserHome(
-      Path from
+    public UserHome getUserHome(
+      Path from,
+      PersistenceManager pm
     ) throws ServiceException {
-        ServiceHeader header = this.backend.getServiceHeader();
-        return this.getUserHome(
-            (String)header.getPrincipalChain().get(0),
-            from
-        );
+    	List<String> principalChain = UserObjects.getPrincipalChain(pm);
+    	return (UserHome)pm.getObjectById(
+    		new Path(new String[]{
+              "org:opencrx:kernel:home1",
+              "provider",
+              from.get(2),
+              "segment",
+              from.get(4),
+              "userHome",
+              principalChain.get(0)
+            })    		
+    	);
     }
     
     //-------------------------------------------------------------------------
-    /**
-     * @deprecated
-     */
-    public DataproviderObject_1_0 getUserHome(
+    public UserHome getUserHome(
         String user,
-        Path from
+        Path from,
+        PersistenceManager pm
     ) throws ServiceException {
         if(user == null) return null;
         Path userHomePath = new Path(
@@ -204,16 +209,7 @@ public class UserHomes {
               user
             }
         );
-        try {
-            DataproviderObject_1_0 userHome = this.backend.retrieveObject(
-                userHomePath
-            );
-            return userHome;
-        }
-        catch(ServiceException e) {
-            AppLog.info("can not retrieve UserHome", userHomePath);
-        }
-        return null;
+        return (UserHome)pm.getObjectById(userHomePath);
     }
       
     //-------------------------------------------------------------------------
@@ -234,72 +230,66 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
-    /**
-     * Creates a password credential for the specified subject. The password
-     * is not set by this method. This must be done with changePassword.
-     * 
-     * @deprecated
-     */
-    public DataproviderObject createPasswordCredential(
-        Path subjectIdentity,
-        List errors
+    public org.openmdx.security.authentication1.jmi1.Password createPasswordCredential(
+    	org.openmdx.security.realm1.jmi1.Subject subject,
+        List<String> errors
     ) {
-        String providerName = subjectIdentity.get(2);
-        
-        // create password credential
-        Path passwordIdentity = new Path("xri:@openmdx:org.openmdx.security.authentication1/provider");
-        passwordIdentity = passwordIdentity.getDescendant(
-            new String[]{
-                providerName, 
-                "segment", 
-                "Root", // credentials are stored in Root segment 
-                "credential", 
-                this.backend.getUidAsString()
-            }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(subject);
+        String providerName = subject.refGetPath().get(2);        
+        org.openmdx.security.authentication1.jmi1.Segment authenticationSegment =
+        	(org.openmdx.security.authentication1.jmi1.Segment)pm.getObjectById(
+        		new Path("xri:@openmdx:org.openmdx.security.authentication1/provider/" + providerName + "/segment/Root")
+        	);
+        org.openmdx.security.authentication1.jmi1.Password passwordCredential = pm.newInstance(org.openmdx.security.authentication1.jmi1.Password.class);
+        passwordCredential.refInitialize(false, false);
+        passwordCredential.setSubject(subject);
+        passwordCredential.setLocked(Boolean.FALSE);
+        authenticationSegment.addCredential(
+        	false,
+        	this.getUidAsString(),
+        	passwordCredential
         );
-        DataproviderObject passwordCredential = new DataproviderObject(
-            passwordIdentity
-        );
-        passwordCredential.values(SystemAttributes.OBJECT_CLASS).add("org:openmdx:security:authentication1:Password");
-        passwordCredential.values("subject").add(subjectIdentity);
-        passwordCredential.values("locked").add(Boolean.FALSE);
-        try {
-            this.backend.getDelegatingRequests().addCreateRequest(passwordCredential);
-        }
-        catch(Exception e) {
-            ServiceException e0 = new ServiceException(e);
-            AppLog.warning(e0.getMessage(), e0.getCause());
-            errors.add("can not create password credential");
-            errors.add("reason is " + e.getMessage());
-            return null;
-        }
         return passwordCredential;
     }
     
     //-------------------------------------------------------------------------
     public short changePassword(
-        Path passwordCredentialIdentity,
+    	org.openmdx.security.authentication1.jmi1.Password passwordCredential,
         String oldPassword,
         String password
     ) {
-        DataproviderObject changePasswordParams = new DataproviderObject(
-            passwordCredentialIdentity.getChild("change")
-        );
-        changePasswordParams.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:openmdx:security:authentication1:PasswordChangeParams"
-        );
-        if(oldPassword != null) {
-            changePasswordParams.values("oldPassword").add(this.getPasswordDigest(oldPassword, this.backend.context.passwordEncodingAlgorithm));
-        }
         if(password == null) {
             return MISSING_NEW_PASSWORD;
         }
-        changePasswordParams.values("password").add(this.getPasswordDigest(password, this.backend.context.passwordEncodingAlgorithm));
-        try {
-            RequestCollection runAsRootDelegation = this.backend.getRunAsRootDelegation();
-            runAsRootDelegation.addOperationRequest(changePasswordParams);
-        }
-        catch(ServiceException e) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(passwordCredential);
+    	PersistenceManager pmRoot = null;
+    	org.openmdx.security.authentication1.jmi1.Password passwordCredentialByRoot =  null;
+    	if(JDOHelper.isNew(passwordCredential)) {
+    	    passwordCredentialByRoot = passwordCredential;
+    	}
+    	else {
+        	pmRoot = pm.getPersistenceManagerFactory().getPersistenceManager(SecurityKeys.ROOT_PRINCIPAL, null);
+        	passwordCredentialByRoot = 
+        		(org.openmdx.security.authentication1.jmi1.Password)pmRoot.getObjectById(
+        			passwordCredential.refGetPath()
+        		);
+    	}
+    	try {
+    		Configuration config = (Configuration)pm.getUserObject(Configuration.class.getSimpleName());
+    		if(pmRoot != null) {
+    			pmRoot.currentTransaction().begin();
+    		}
+	    	passwordCredentialByRoot.change(
+	    		((org.openmdx.security.authentication1.jmi1.Authentication1Package)passwordCredentialByRoot.refImmediatePackage()).createPasswordChangeParams(
+		    		oldPassword == null ? null : this.getPasswordDigest(oldPassword, config.getPasswordEncodingAlgorithm()),
+		    		password == null ? null : this.getPasswordDigest(password, config.getPasswordEncodingAlgorithm())
+		    	)
+	    	);
+	    	if(pmRoot != null) {
+	    		pmRoot.currentTransaction().commit();
+	    	}
+    	}
+        catch(Exception e) {
             AppLog.warning(e.getMessage(), e.getCause());
             return CAN_NOT_CHANGE_PASSWORD;
         }
@@ -308,12 +298,13 @@ public class UserHomes {
     
     //-------------------------------------------------------------------------
     public short changePassword(
-        Path userHomeIdentity,
+        org.opencrx.kernel.home1.jmi1.UserHome userHome,
         boolean verifyOldPassword,
         String oldPassword,
         String newPassword,
         String newPasswordVerification
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
         if(newPassword == null) {
             return MISSING_NEW_PASSWORD;
         }
@@ -325,102 +316,93 @@ public class UserHomes {
         }
         if(verifyOldPassword && oldPassword == null) {
             return MISSING_OLD_PASSWORD;
-        }
-        
+        }        
         // qualifier of user home is the principal name
-        String principalName = userHomeIdentity.getBase();
-        
+        String principalName = userHome.refGetPath().getBase();        
         // get principal
-        DataproviderObject principal = null;
+        org.opencrx.security.realm1.jmi1.Principal principal = null;
         try {
-            principal = 
-                new DataproviderObject(
-	                this.backend.getDelegatingRequests().addGetRequest(
-		                this.backend.getRealmIdentity().getDescendant(new String[]{"principal", principalName}),
-		                AttributeSelectors.ALL_ATTRIBUTES,
-		                new AttributeSpecifier[]{}
-	                )
-                );            
+            principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(
+            	SecureObject.getInstance().getLoginRealmIdentity(
+            		userHome.refGetPath().get(2)
+            	).getDescendant(new String[]{"principal", principalName})
+            );
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             AppLog.warning(e0.getMessage(), e0.getCause());
             return CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL;
         }
-
         return this.changePassword(
-            (Path)principal.values("credential").get(0),
+            (org.openmdx.security.authentication1.jmi1.Password)principal.getCredential(),
             verifyOldPassword ? oldPassword : null,
             newPassword
         );
     }
     
     //-------------------------------------------------------------------------
-    /**
-     * Creates a new user. The owner of the created objects are set as follows:
-     * <ul>
-     *   <li>user subject: segment administrator
-     *   <li>all other objects (user home, password): user
-     * </ul>
-     * 
-     * @deprecated
-     */
     public UserHome createUserHome(
-        Path realmIdentity,
-        Path contactIdentity,
-        Path primaryGroup,
+        org.openmdx.security.realm1.jmi1.Realm realm,
+        Contact contact,
+        org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup,
         String principalName,
-        Set isMemberOf,
+        List<org.openmdx.security.realm1.jmi1.Group> requiredGroups,
         boolean isAdministrator,
         String initialPassword,
         String initialPasswordVerification,
-        List errors
-    ) {
+        List<String> errors,
+        PersistenceManager pmRoot
+    ) throws ServiceException {
         if(principalName == null) {
             errors.add("missing principalName");
             return null;                        
         }
-        if(contactIdentity == null) {
+        if(contact == null) {
             errors.add("missing contact");
             return null;            
         }
-        String providerName = contactIdentity.get(2);
-        String segmentName = contactIdentity.get(4);
-        Path loginRealmIdentity = this.backend.getRealmIdentity();
-        
+        PersistenceManager pm = JDOHelper.getPersistenceManager(realm); 
+        String providerName = contact.refGetPath().get(2);
+        String segmentName = contact.refGetPath().get(4);
+        Path loginRealmIdentity = SecureObject.getInstance().getLoginRealmIdentity(providerName);   
+        org.openmdx.security.realm1.jmi1.Realm loginRealm = 
+        	(org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(
+        		loginRealmIdentity
+        	);
         // Get login principal. Get subject and set password credential
-        Path subjectIdentity = null;
+        
+        // --- BEGIN pmRoot
+        org.openmdx.security.realm1.jmi1.Subject subject = null;
+        boolean rootUowIsActive = pmRoot.currentTransaction().isActive();
+        if(!rootUowIsActive) {        	
+        	pmRoot.currentTransaction().begin();
+        }
         try {
             // Create login principal and subject on-demand. Create principal
             // and subject using the importLoginPrincipals() operation. Prepare
             // an import stream containing the principal and subject to be imported
-            DataproviderObject_1_0 contact = this.backend.retrieveObjectFromDelegation(
-                contactIdentity
-            );            
             ByteArrayOutputStream item = new ByteArrayOutputStream();
             PrintWriter pw = new PrintWriter(item);
-            pw.println("Subject;" + principalName + ";" + contact.values("fullName").get(0));
+            pw.println("Subject;" + principalName + ";" + contact.getFullName());
             pw.println("Principal;" + principalName + ";" + segmentName + "\\\\" + principalName + ";" + principalName + ";Users");
             pw.close();
-            this.backend.getAdmin().importLoginPrincipals(
-                new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root"), 
-                item.toByteArray(),
-                // Invoking user is segment admin. Create login principal and subject as root
-                true
+            Admin.getInstance().importLoginPrincipals(
+                (org.opencrx.kernel.admin1.jmi1.Segment)pmRoot.getObjectById(
+                	new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
+                ), 
+                item.toByteArray()
             ); 
             // Get login principal and subject
-            DataproviderObject_1_0 loginPrincipal = this.backend.retrieveObjectForModification(
-                loginRealmIdentity.getDescendant(new String[]{"principal", principalName})
-            );
-            if(loginPrincipal.values("subject").isEmpty()) {
-                errors.add("Undefined subject for principal " + loginPrincipal.path());
+            org.openmdx.security.realm1.jmi1.Principal loginPrincipal = loginRealm.getPrincipal(principalName);
+            if(loginPrincipal.getSubject() == null) {
+                errors.add("Undefined subject for principal " + principalName);
                 return null;
             }
-            subjectIdentity = (Path)loginPrincipal.values("subject").get(0);            
+            subject = loginPrincipal.getSubject();            
             // Create password credential
             if((initialPassword != null) && (initialPassword.length() > 0)) {
-                DataproviderObject passwordCredential = this.createPasswordCredential(
-                    subjectIdentity,
+            	org.openmdx.security.authentication1.jmi1.Password passwordCredential = this.createPasswordCredential(
+                    subject,
                     errors
                 );
                 if(passwordCredential == null) {
@@ -428,14 +410,14 @@ public class UserHomes {
                 }            
                 // Set initial password
                 this.changePassword(
-                    passwordCredential.path(),
+                    passwordCredential,
                     null,
                     initialPassword
-                );            
+                );
                 // Update principal's credential
-                loginPrincipal.clearValues("credential").add(passwordCredential.path());
+                loginPrincipal.setCredential(passwordCredential);
             }
-            if((loginPrincipal.getValues("credential") == null) || (loginPrincipal.getValues("credential").size() == 0)) {
+            if((loginPrincipal.getCredential() == null)) {
                 errors.add("No credential specified for principal " + principalName);                
             }
         }
@@ -446,195 +428,198 @@ public class UserHomes {
             errors.add("reason is " + e.getMessage());
             return null;
         }
-        
-        // Add user principal 
-        Path userIdentity = this.backend.getAdmin().createPrincipal(
+        // Add User 
+        org.openmdx.security.realm1.jmi1.Realm realmByRoot = 
+        	(org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath());
+        org.opencrx.security.realm1.jmi1.User user = (org.opencrx.security.realm1.jmi1.User)Admin.getInstance().createPrincipal(
             principalName + "." + SecurityKeys.USER_SUFFIX,
-            realmIdentity,
-            SecurityKeys.PRINCIPAL_TYPE_USER,
-            new Path[]{},
-            subjectIdentity,
-            errors
+            null,
+            realmByRoot,
+            PrincipalType.USER,
+            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+            subject
         );
-        if(errors.size() > 0) return null;
-
-        Path groupAdministratorsIdentity = userIdentity.getParent().getChild(SecurityKeys.USER_GROUP_ADMINISTRATORS);
-        Path groupUsersIdentity = userIdentity.getParent().getChild(SecurityKeys.USER_GROUP_USERS);
-        List isMemberOfGroupIdentities = new ArrayList();
+        org.opencrx.security.realm1.jmi1.PrincipalGroup groupAdministrators = 
+        	(org.opencrx.security.realm1.jmi1.PrincipalGroup)realmByRoot.getPrincipal(SecurityKeys.USER_GROUP_ADMINISTRATORS);
+        org.opencrx.security.realm1.jmi1.PrincipalGroup groupUsers = 
+        	(org.opencrx.security.realm1.jmi1.PrincipalGroup)realmByRoot.getPrincipal(SecurityKeys.USER_GROUP_USERS);
+        List<org.openmdx.security.realm1.jmi1.Group> groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
         if(isAdministrator) {
-            isMemberOfGroupIdentities.add(groupAdministratorsIdentity);
-            isMemberOfGroupIdentities.add(userIdentity);
-            isMemberOfGroupIdentities.add(groupUsersIdentity);
+        	groups.add(groupAdministrators);
+        	groups.add(user);
+        	groups.add(groupUsers);
         }
         else {
-            isMemberOfGroupIdentities.add(groupUsersIdentity);
-            isMemberOfGroupIdentities.add(userIdentity);
+        	groups.add(groupUsers);
+        	groups.add(user);
         }
-        for(Iterator i = isMemberOf.iterator(); i.hasNext(); ) {
-            isMemberOfGroupIdentities.add(
-                userIdentity.getParent().getChild((String)i.next())
-            );
+        if(requiredGroups != null) {
+        	groups.addAll(requiredGroups);
         }
-        
         // Add principal
-        this.backend.getAdmin().createPrincipal(
+        Admin.getInstance().createPrincipal(
             principalName, 
-            realmIdentity,
-            SecurityKeys.PRINCIPAL_TYPE_PRINCIPAL,
-            (Path[])isMemberOfGroupIdentities.toArray(new Path[isMemberOfGroupIdentities.size()]),
-            subjectIdentity,
-            errors
+            null,
+            realmByRoot,
+            PrincipalType.PRINCIPAL,
+            groups,
+            subject
         );
-        if(errors.size() > 0) return null;
-
         // Add principal to Root realm (each principal should be registered
         // in the Root realm because the Root segment provides data common
         // to all segments, e.g. code tables
-        this.backend.getAdmin().createPrincipal(
+        Admin.getInstance().createPrincipal(
             principalName, 
-            realmIdentity.getParent().getChild("Root"),
-            SecurityKeys.PRINCIPAL_TYPE_PRINCIPAL,
-            new Path[]{},
-            subjectIdentity,
-            errors
+            null,
+            (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath().getParent().getChild("Root")),
+            PrincipalType.PRINCIPAL,
+            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+            subject
         );
-        if(errors.size() > 0) return null;
-
         // Add user principal to Root realm 
-        this.backend.getAdmin().createPrincipal(
+        Admin.getInstance().createPrincipal(
             principalName + "." + SecurityKeys.USER_SUFFIX,
-            realmIdentity.getParent().getChild("Root"),
-            SecurityKeys.PRINCIPAL_TYPE_USER,
-            new Path[]{},
-            subjectIdentity,
-            errors
+            null,
+            (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath().getParent().getChild("Root")),
+            PrincipalType.USER,
+            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+            subject
         );
-        if(errors.size() > 0) return null;
-        
         initialPassword = initialPassword == null ? "" : initialPassword;
         initialPasswordVerification = initialPasswordVerification == null ? "" : initialPasswordVerification;
         if(!initialPassword.equals(initialPasswordVerification)) {
             errors.add("the passwords you typed do not match");
             return null;
         }
+        if(!rootUowIsActive) {
+        	pmRoot.currentTransaction().commit();
+        }
+        
+        //--- END pmRoot
         
         /**
          * User home
          */
-        Path userHomeReference = new Path("xri:@openmdx:org.opencrx.kernel.home1");
-        userHomeReference = userHomeReference.getDescendant(
-            new String[]{"provider", providerName, "segment", segmentName, "userHome"}
-        );
-        DataproviderObject_1_0 userHome = null;
-        try {
-            userHome = this.backend.getDelegatingRequests().addGetRequest(
-                userHomeReference.getChild(principalName),
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );
-            if(primaryGroup != null) {
-                DataproviderObject updatedUserHome = this.backend.retrieveObjectForModification(
-                    userHome.path()
-                );
-                updatedUserHome.clearValues("primaryGroup").add(primaryGroup);
-            }
+        user = (org.opencrx.security.realm1.jmi1.User)pm.getObjectById(user.refGetPath());
+        groupAdministrators = (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(groupAdministrators.refGetPath());
+        org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = 
+        	(org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
+        		 new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
+        	);        
+        UserHome userHome = userHomeSegment.getUserHome(principalName);
+        if(userHome != null) {
+        	if(primaryGroup != null) {
+        		userHome.setPrimaryGroup(primaryGroup);
+        	}
         }
-        catch(Exception e) {
-            DataproviderObject newUserHome = new DataproviderObject(
-                userHomeReference.getChild(principalName)
-            );
-            newUserHome.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:UserHome");
-            newUserHome.values("contact").add(contactIdentity);
-            newUserHome.values("sendMailSubjectPrefix").add(
-                "[" + providerName + ":" + segmentName + "]"
-            );
-            newUserHome.clearValues("primaryGroup").add(primaryGroup);            
+        else {
+            userHome = pm.newInstance(UserHome.class);
+            userHome.refInitialize(false, false);
+            userHome.setContact(contact);
             // owning user of home is user itself
-            newUserHome.values("owningUser").add(userIdentity);
+            userHome.setOwningUser(user);
             // owning group of home is segment administrator
-            newUserHome.values("owningGroup").addAll(
-                Arrays.asList(
-                    new Path[]{
-                        groupAdministratorsIdentity                    
-                    }        
-                )
-            );
+            userHome.getOwningGroup().add(groupAdministrators);
             // access level delete
-            newUserHome.values("accessLevelDelete").add(
+            userHome.setAccessLevelDelete(
                 new Short((short)0)
             );
-            newUserHome.values("accessLevelDelete").add(new Short(SecurityKeys.ACCESS_LEVEL_PRIVATE));
-            this.backend.getBase().initCharts(newUserHome, null);
-            
-            try {
-                this.backend.getDelegatingRequests().addCreateRequest(newUserHome);
+            userHome.setAccessLevelUpdate(
+            	new Short(SecurityKeys.ACCESS_LEVEL_BASIC)
+            );
+            userHomeSegment.addUserHome(
+            	false,
+            	principalName,
+            	userHome
+            );
+            // Create dummy charts
+            org.opencrx.kernel.home1.jmi1.Media chart0 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
+            chart0.refInitialize(false, false);
+            chart0.setContentName("Chart 0");
+            userHome.addChart(
+            	false,
+            	"0",
+            	chart0
+            );
+            userHome.setChart0(chart0);
+            org.opencrx.kernel.home1.jmi1.Media chart1 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
+            chart1.refInitialize(false, false);
+            chart1.setContentName("Chart 1");
+            userHome.addChart(
+            	false,
+            	"1",
+            	chart1
+            );
+            userHome.setChart1(chart1);
+            org.opencrx.kernel.home1.jmi1.Media chart2 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
+            chart2.refInitialize(false, false);
+            chart2.setContentName("Chart 2");
+            userHome.addChart(
+            	false,
+            	"2",
+            	chart2
+            );
+            userHome.setChart2(chart2);
+            org.opencrx.kernel.home1.jmi1.Media chart3 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
+            chart3.refInitialize(false, false);
+            chart3.setContentName("Chart 3");
+            userHome.addChart(
+            	false,
+            	"3",
+            	chart3
+            );
+            userHome.setChart3(chart3);
+            Properties userSettings = new Properties();
+            if(userHome.getSettings() != null) {
+	            try {            	
+					userSettings.load(
+						new ByteArrayInputStream(
+							userHome.getSettings().getBytes("UTF-8")
+						)
+					);
+	            }
+	            catch(IOException e) {
+	            	throw new ServiceException(e);
+	            }
             }
-            catch(Exception e0) {
-                ServiceException e1 = new ServiceException(e0);
-                AppLog.warning(e1.getMessage(), e1.getCause());
-                errors.add("can not create user home");
-                errors.add("reason is " + e.getMessage());
-                return null;
-            }
-            userHome = newUserHome;
-        }        
-        return userHome == null
-            ? null
-            : (UserHome)this.backend.getDelegatingPkg().refObject(userHome.path().toXri());
+            this.applyUserSettings(
+            	userHome, 
+            	userSettings, 
+            	true, // createUserHome is always invoked as admin
+            	true, // storeSettings 
+            	primaryGroup,
+            	null, // fTimezone, 
+            	"1", // fStoreSettingsOnLogoff
+            	null, // fDefaultEmailAccount 
+            	"[" + providerName + ":" + segmentName + "]", 
+            	null, // fWebAccessUrl 
+            	"8", // fTopNavigationShowMax, 
+            	"0", // fShowHistory, 
+            	null, // fRootObjects 
+            	null // fSubscriptions
+            );
+        }
+        return userHome;
     }
 
     //-----------------------------------------------------------------------
-    /**
-     * @deprecated
-     */    
-    private DataproviderObject_1_0 retrieveUserHome(
-        Path userHomeSegment,
-        String principalName
-    ) {
-        try {
-            return this.backend.retrieveObjectFromDelegation(
-                userHomeSegment.getDescendant(new String[]{"userHome", principalName})
-            );
-        }
-        catch(Exception e) {
-            return null;
-        }
-    }
-    
-    //-----------------------------------------------------------------------
-    private DataproviderObject_1_0 retrieveContact(
-        Path accountSegment,
+    private Contact retrieveContact(
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         String aliasName,
         String fullName
     ) {
         try {
-            FilterProperty[] filter = null;
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+        	AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
             if(!"-".equals(aliasName)) {
-                filter = new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "aliasName",
-                        FilterOperators.IS_IN,
-                        aliasName
-                    )
-                };
+            	accountQuery.thereExistsAliasName().equalTo(aliasName);
             }
             else if(!"-".equals(fullName)) {
-                filter = new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "fullName",
-                        FilterOperators.IS_IN,
-                        fullName
-                    )
-                };
+            	accountQuery.thereExistsFullName().equalTo(fullName);
             }
-            List accounts = this.backend.getDelegatingRequests().addFindRequest(
-                accountSegment.getChild("account"),
-                filter
-            );
-            if(accounts.size() > 0) {
-                return (DataproviderObject_1_0)accounts.iterator().next();
+            List<Account> accounts = accountSegment.getAccount(accountQuery);
+            if(!accounts.isEmpty()) {
+                return (Contact)accounts.iterator().next();
             }
             else {
                 return null;
@@ -645,42 +630,27 @@ public class UserHomes {
         }
     }
         
-    //-----------------------------------------------------------------------
-    /**
-     * @deprecated
-     */    
-    private DataproviderObject_1_0 retrievePrincipal(
-        Path realm,
-        String principalName
-    ) {
-        try {
-            return this.backend.retrieveObjectFromDelegation(
-                realm.getDescendant(new String[]{"principal", principalName})
-            );
-        }
-        catch(Exception e) {
-            return null;
-        }
-    }
-    
     //-------------------------------------------------------------------------
-    /**
-     * @deprecated
-     */    
     public String importUsers(
-        Path homeSegmentIdentity,
+        org.opencrx.kernel.home1.jmi1.Segment homeSegment,
         byte[] item
     ) throws ServiceException {
-        BufferedReader reader = new BufferedReader(
-            new InputStreamReader(new ByteArrayInputStream(item))
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(homeSegment);
+        BufferedReader reader;
+        try {
+	        reader = new BufferedReader(
+	            new InputStreamReader(new ByteArrayInputStream(item), "UTF-8")
+	        );
+        }
+        catch (UnsupportedEncodingException e) {
+        	throw new ServiceException(e);
+        }
+        org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
+        	SecureObject.getRealmIdentity(homeSegment.refGetPath().get(2), homeSegment.refGetPath().get(4))
         );
-        DataproviderObject_1_0 realm = this.backend.retrieveObjectFromDelegation(
-            new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + homeSegmentIdentity.get(2) + "/segment/Root/realm/" + homeSegmentIdentity.get(4))
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById( 
+        	new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + homeSegment.refGetPath().get(2) + "/segment/" + homeSegment.refGetPath().get(4))
         );
-        DataproviderObject_1_0 accountSegment = this.backend.retrieveObjectFromDelegation( 
-            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + homeSegmentIdentity.get(2) + "/segment/" + homeSegmentIdentity.get(4))
-        );
-
         int nCreatedUsers = 0;
         int nFailedUsersNoPrimaryGroup = 0;
         int nFailedUsersNoContact = 0;
@@ -698,45 +668,55 @@ public class UserHomes {
                     String primaryGroupName = t.nextToken();
                     String password = t.nextToken();
                     String groups = t.hasMoreTokens() ? t.nextToken() : "";
-                    
-                    if(this.retrieveUserHome(homeSegmentIdentity, principalName) == null) {
+                    UserHome userHome = null;
+                    try {
+                    	userHome = homeSegment.getUserHome(principalName);
+                    }
+                    catch(Exception e) {}
+                    if(userHome == null) {
                         try {
-                            DataproviderObject_1_0 contact = this.retrieveContact(accountSegment.path(), accountAlias, accountFullName);                            
+                            Contact contact = this.retrieveContact(
+                            	accountSegment, 
+                            	accountAlias, 
+                            	accountFullName
+                            );                            
                             if(contact != null) {
-                                DataproviderObject_1_0 primaryGroup = this.retrievePrincipal(
-                                    realm.path(), 
-                                    primaryGroupName
+                            	org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup = null;
+                                try {
+                                	if("-".equals(primaryGroupName)) {
+                                		primaryGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)realm.getPrincipal(primaryGroupName);
+                                	}
+                                }
+                                catch(Exception e) {}
+                                List<String> errors = new ArrayList<String>();                                    
+                                // Get groups
+                                List<org.openmdx.security.realm1.jmi1.Group> isMemberOf = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
+                                StringTokenizer g = new StringTokenizer(groups, ",");
+                                while(g.hasMoreTokens()) {
+                                	org.openmdx.security.realm1.jmi1.Group group = null;
+                                	try {
+                                		group = (org.openmdx.security.realm1.jmi1.Group)realm.getPrincipal(g.nextToken());
+                                		isMemberOf.add(group);
+                                	}
+                                	catch(Exception e) {}
+                                }                                    
+                                this.createUserHome(
+                                    realm,
+                                    contact,
+                                    primaryGroup, // principalName.Group will be created, if null 
+                                    principalName,
+                                    isMemberOf,
+                                    false, 
+                                    password, 
+                                    password, 
+                                    errors,
+                                    pm
                                 );
-                                if(primaryGroup != null) {
-                                    List errors = new ArrayList();
-                                    
-                                    // Get groups
-                                    Set isMemberOf = new HashSet();
-                                    StringTokenizer g = new StringTokenizer(groups, ",");
-                                    while(g.hasMoreTokens()) {
-                                        isMemberOf.add(g.nextToken());
-                                    }                                    
-                                    this.createUserHome(
-                                        realm.path(),
-                                        contact.path(),
-                                        primaryGroup.path(), 
-                                        principalName,
-                                        isMemberOf,
-                                        false, 
-                                        password, 
-                                        password, 
-                                        errors
-                                    );
-                                    if(errors.size() == 0) {
-                                        nCreatedUsers++;
-                                    }
-                                    else {
-                                        nFailedUsersOther++;
-                                    }
+                                if(errors.isEmpty()) {
+                                    nCreatedUsers++;
                                 }
                                 else {
-                                    AppLog.info("Group " + primaryGroup + " for user " + principalName + " not found");
-                                    nFailedUsersNoPrimaryGroup++;
+                                    nFailedUsersOther++;
                                 }
                             }
                             else {
@@ -763,166 +743,9 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
-    /**
-     * @deprecated
-     */    
-    public void encodeEMailAccountPassword(
-        DataproviderObject object,
-        DataproviderObject_1_0 oldValues
-    ) throws ServiceException {
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:home1:EMailAccount")) {
-            if(object.getValues("incomingPassword") != null) {
-                try {
-                    String password = (String)object.values("incomingPassword").get(0);
-                    if((password != null) && !password.startsWith(SecurityKeys.PASSWORD_ENCODING_SCHEME)) {
-                        object.clearValues("incomingPassword").add(
-                            SecurityKeys.PASSWORD_ENCODING_SCHEME + Base64.encode(password.getBytes("UTF-8"))                    
-                        );
-                    }
-                } 
-                catch(UnsupportedEncodingException e) {}                
-            }
-            if(object.getValues("outgoingPassword") != null) {
-                try {
-                    String password = (String)object.values("outgoingPassword").get(0);
-                    if((password != null) && !password.startsWith(SecurityKeys.PASSWORD_ENCODING_SCHEME)) {
-                        object.clearValues("outgoingPassword").add(
-                            SecurityKeys.PASSWORD_ENCODING_SCHEME + Base64.encode(password.getBytes("UTF-8"))                    
-                        );
-                    }
-                } 
-                catch(UnsupportedEncodingException e) {}                
-            }
-        }
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * @deprecated
-     */    
-    public List completeUserHome(
-      DataproviderObject_1_0 userHome
-    ) throws ServiceException {
-        List additionalFetchedObjects = new ArrayList();
-        try {
-            List charts = this.backend.getDelegatingRequests().addFindRequest(
-                userHome.path().getChild("chart"),  
-                null,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                null,
-                0, Integer.MAX_VALUE,
-                Directions.ASCENDING
-            );
-            for(
-                int i = 0; 
-                i < 4; 
-                i++
-            ) {            
-                // Touch so that attributes are in fetch set
-                userHome.values("favoriteChart" + i);
-                userHome.values("favoriteChart" + i + "MimeType");
-                userHome.values("favoriteChart" + i + "Name");
-                userHome.values("favoriteChart" + i + "Description");
-                if(userHome.getValues("chart" + i).size() > 0) {
-                    for(
-                        Iterator j = charts.iterator(); 
-                        j.hasNext(); 
-                    ) {
-                        DataproviderObject_1_0 chart = (DataproviderObject_1_0)j.next();
-                        if(chart.path().equals(userHome.getValues("chart" + i).get(0))) {
-                            ByteArrayOutputStream content = new ByteArrayOutputStream();
-                            try {
-                                BinaryLargeObjects.streamCopy(
-                                    (InputStream)chart.values("content").get(0), 
-                                    0L, 
-                                    content
-                                );
-                            } 
-                            catch(Exception e) {}
-                            userHome.values("favoriteChart" + i).add(
-                                content.toByteArray()
-                            );
-                            userHome.values("favoriteChart" + i + "MimeType").addAll(
-                                chart.values("contentMimeType")
-                            );
-                            userHome.values("favoriteChart" + i + "Name").addAll(
-                                chart.values("contentName")
-                            );
-                            userHome.values("favoriteChart" + i + "Description").addAll(
-                                chart.values("description")
-                            );
-                            additionalFetchedObjects.add(chart);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        // ignore if charts can not be retrieved
-        catch(ServiceException e) {}
-        return additionalFetchedObjects;
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * @deprecated
-     */    
-    public FilterProperty[] mapObjectFinderToFilter(
-        DataproviderObject_1_0 objectFinder
-    ) {
-        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-        String allWords = (String)objectFinder.values("allWords").get(0);
-        if((allWords != null) && (allWords.length() > 0)) {
-            String words[] = allWords.split("[\\s,]");
-            for(int i = 0; i < words.length; i++) {
-                filter.add(
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "keywords",
-                        FilterOperators.IS_LIKE,
-                        "%" + words[i] + "%"
-                    )
-                );
-            }
-        }
-        String withoutWords = (String)objectFinder.values("withoutWords").get(0);
-        if((withoutWords != null) && (withoutWords.length() > 0)) {
-            String words[] = withoutWords.split("[\\s,]");
-            for(int i = 0; i < words.length; i++) {
-                filter.add(
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "keywords",
-                        FilterOperators.IS_UNLIKE,
-                        "%" + words[i] + "%"
-                    )
-                );
-            }
-        }
-        String atLeastOneOfTheWords = (String)objectFinder.values("atLeastOneOfTheWords").get(0);
-        if((atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0)) {
-            String words[] = atLeastOneOfTheWords.split("[\\s,]");
-            for(int i = 0; i < words.length; i++) {
-                words[i] = "%" + words[i] + "%";
-            }
-            filter.add(
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "keywords",
-                    FilterOperators.IS_LIKE,
-                    (Object[])words
-                )
-            );
-        }
-        return filter.toArray(new FilterProperty[filter.size()]);
-    }
-    
-    //-------------------------------------------------------------------------
-    public static ObjectFinder searchBasic(
+    public ObjectFinder searchBasic(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
-        String searchExpression,
-        PersistenceManager pm
+        String searchExpression
     ) throws ServiceException {
         String words[] = searchExpression.split("[\\s,]");
         StringBuilder allWords = new StringBuilder();
@@ -944,24 +767,23 @@ public class UserHomes {
                 }
             }
         }
-        return UserHomes.searchAdvanced(
+        return this.searchAdvanced(
             userHome, 
             allWords.toString().trim(), 
             atLeastOneOfTheWords.toString().trim(), 
-            withoutWords.toString().trim(),
-            pm
+            withoutWords.toString().trim()
         );
     }
     
     //-------------------------------------------------------------------------
-    public static ObjectFinder searchAdvanced(
+    public ObjectFinder searchAdvanced(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
         String allWords,
         String atLeastOneOfTheWords,
-        String withoutWords,
-        PersistenceManager pm
+        String withoutWords
     ) throws ServiceException {
-        org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = (org.opencrx.kernel.home1.jmi1.ObjectFinder)pm.newInstance(org.opencrx.kernel.home1.jmi1.ObjectFinder.class);
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);    	
+        org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = pm.newInstance(org.opencrx.kernel.home1.jmi1.ObjectFinder.class);
         objectFinder.refInitialize(false, false);
         objectFinder.setName(
             (allWords != null) && (allWords.length() > 0) ? 
@@ -981,14 +803,14 @@ public class UserHomes {
         }
         userHome.addObjectFinder(
             false, 
-            UserHomes.getUidAsString(), 
+            this.getUidAsString(), 
             objectFinder
         );
         return objectFinder;
     }
 
     //-----------------------------------------------------------------------
-    public static String getWebAccessUrl(
+    public String getWebAccessUrl(
         UserHome userHome
     ) {
         Path userHomeIdentity = userHome.refGetPath();
@@ -996,7 +818,304 @@ public class UserHomes {
             "http://localhost/opencrx-core-" + userHomeIdentity.get(2) + "/" + WebKeys.SERVLET_NAME : 
             userHome.getWebAccessUrl() + "/" + WebKeys.SERVLET_NAME;        
     }
-        
+
+    //-------------------------------------------------------------------------
+    /**
+     * Initializes a user's home and settings.
+     */
+    public void applyUserSettings(
+    	org.opencrx.kernel.home1.jmi1.UserHome userHome,
+    	Properties userSettings,
+    	boolean runAsAdministrator,
+    	boolean storeSettings,
+    	org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup,    	
+    	String fTimezone,
+    	String fStoreSettingsOnLogoff,
+    	String fDefaultEmailAccount,
+    	String fSendmailSubjectPrefix,
+    	String fWebAccessUrl,
+    	String fTopNavigationShowMax,
+    	String fShowHistory,
+    	List<String> fRootObjects,
+    	Map<String,String> fSubscriptions
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome); 
+    	String providerName = userHome.refGetPath().get(2);
+    	String segmentName = userHome.refGetPath().get(4);
+    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
+    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+    			new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+    		);
+    	org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = 
+    		(org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
+    			new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
+    		);    	
+    	if(fTimezone != null) {
+    		userSettings.setProperty("TimeZone.Name", fTimezone);
+    	}
+		userHome.setStoreSettingsOnLogoff(
+			Boolean.valueOf(fStoreSettingsOnLogoff == null ? "false" :"true")
+		);
+		if(fWebAccessUrl != null) {
+			userHome.setWebAccessUrl(fWebAccessUrl);
+		}
+		if(fSendmailSubjectPrefix != null) {
+			userHome.setSendMailSubjectPrefix(fSendmailSubjectPrefix);
+		}
+		// Email account
+		org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = null;
+		Collection<EMailAccount> emailAccounts = userHome.getEMailAccount();
+		for(EMailAccount emailAccount: emailAccounts) {
+			if((emailAccount.isDefault() != null) && emailAccount.isDefault().booleanValue()) {
+				defaultEmailAccount = emailAccount;
+				break;
+			}
+		}
+		if(
+			(defaultEmailAccount == null) &&
+			(fDefaultEmailAccount != null) &&
+			(fDefaultEmailAccount.length() > 0)
+		) {
+			defaultEmailAccount = pm.newInstance(EMailAccount.class);
+			defaultEmailAccount.refInitialize(false, false);
+			defaultEmailAccount.setDefault(Boolean.TRUE);
+			defaultEmailAccount.setEMailAddress(fDefaultEmailAccount);
+			userHome.addEMailAccount(
+				false,
+				org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+				defaultEmailAccount
+			);
+		}
+		else if(
+			(defaultEmailAccount != null) &&
+			((fDefaultEmailAccount == null) ||
+			(fDefaultEmailAccount.length() == 0))
+		) {
+			defaultEmailAccount.refDelete();
+		}
+		else if(defaultEmailAccount != null) {
+			defaultEmailAccount.setEMailAddress(fDefaultEmailAccount);
+		}
+		// Root objects
+		for(int i = 1; i < 20; i++) {
+			String state = (fRootObjects != null) && (i < fRootObjects.size()) ? 
+				fRootObjects.get(i) : 
+				"on";
+			userSettings.setProperty(
+				"RootObject." + i + ".State",
+				state == null ? "0" : "1"
+			);
+		}
+		// Show max items in top navigation
+		if(fTopNavigationShowMax != null) {
+			userSettings.setProperty(
+				"TopNavigation.ShowMax",
+				fTopNavigationShowMax
+			);
+		}
+		// History
+		userSettings.setProperty(
+			"History.State",
+			fShowHistory == null ? "0" : "1"
+		);
+		// If running as segment admin set ACLs of created objects
+		org.opencrx.security.realm1.jmi1.PrincipalGroup privatePrincipalGroup = null;
+		if(runAsAdministrator) {
+			// Get principal group with name <principal>.Group. This is the private group of the owner of the user home page
+			org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
+				pm,
+				providerName,
+				segmentName
+			);
+			privatePrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+				userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
+				realm,
+				pm
+			);
+			if(
+				(privatePrincipalGroup == null)
+			) {
+				privatePrincipalGroup = pm.newInstance(PrincipalGroup.class);
+				privatePrincipalGroup.refInitialize(false, false);
+				privatePrincipalGroup.setDescription(segmentName + "\\\\" + userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX);
+				realm.addPrincipal(
+					false,
+					userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
+					privatePrincipalGroup
+				);
+			}
+			// Set UserHome's primary group
+			if(primaryGroup == null) {
+				userHome.setPrimaryGroup(privatePrincipalGroup);
+			}
+			org.openmdx.security.realm1.jmi1.Principal principal = null;
+			try {
+				principal = org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+					userHome.refGetPath().getBase(),
+					realm,
+					pm
+				);
+				// Validate that user is member of <principal>.Group
+				if(!principal.getIsMemberOf().contains(privatePrincipalGroup)) {
+					principal.getIsMemberOf().add(privatePrincipalGroup);
+				}
+				// Validate that user is member of group 'Public'
+				org.opencrx.security.realm1.jmi1.PrincipalGroup publicGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+					"Public",
+					realm,
+					pm
+				);
+				if(!principal.getIsMemberOf().contains(publicGroup)) {
+					principal.getIsMemberOf().add(publicGroup);
+				}
+			} catch(Exception e) {}
+			// Validate that subject of <principal>.Group is the same as of <principal>
+			if((principal != null) && (privatePrincipalGroup != null)) {
+				privatePrincipalGroup.setSubject(principal.getSubject());
+			}
+		}
+
+		// Private activity tracker
+		org.opencrx.kernel.activity1.jmi1.ActivityTracker privateTracker = null;
+		try {
+			privateTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
+				new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase())
+			);
+		}
+		catch(Exception e) {}
+		if(privateTracker == null) {
+			privateTracker = pm.newInstance(ActivityTracker.class);
+			privateTracker.refInitialize(false, false);
+			privateTracker.setName(userHome.refGetPath().getBase() + "~Private");
+			if(privatePrincipalGroup != null) {
+				privateTracker.getOwningGroup().clear();
+				privateTracker.getOwningGroup().add(privatePrincipalGroup);
+			}
+			activitySegment.addActivityTracker(
+				false,
+				userHome.refGetPath().getBase(),
+				privateTracker
+			);
+		}
+		// Private activity creator
+		org.opencrx.kernel.activity1.jmi1.ActivityCreator privateCreator = null;
+		try {
+			privateCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
+				new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityCreator/" + userHome.refGetPath().getBase())
+			);
+		}
+		catch(Exception e) {}
+		if(privateCreator == null) {
+			privateCreator = pm.newInstance(ActivityCreator.class);
+			privateCreator.refInitialize(false, false);
+			privateCreator.setName(userHome.refGetPath().getBase() + "~Private");
+			privateCreator.getActivityGroup().add(privateTracker);
+			privateCreator.setActivityType(
+				org.opencrx.kernel.backend.Activities.getInstance().findActivityType(
+					"Bugs + Features", 
+					activitySegment, 
+					pm
+				)
+			);
+			if(privatePrincipalGroup != null) {
+				privateCreator.getOwningGroup().clear();
+				privateCreator.getOwningGroup().add(privatePrincipalGroup);
+			}
+			activitySegment.addActivityCreator(
+				false,
+				userHome.refGetPath().getBase(),
+				privateCreator
+			);
+		}
+		// Set default creator on tracker
+		privateTracker.setDefaultCreator(privateCreator);
+
+		// Resource
+		org.opencrx.kernel.activity1.jmi1.Resource resource = Activities.getInstance().findResource(
+			activitySegment,
+			userHome
+		);
+		if(resource == null) {
+			resource = pm.newInstance(Resource.class);
+			resource.refInitialize(false, false);
+			if(userHome.getContact() != null) {
+				resource.setName(userHome.getContact().getFullName());
+				resource.setContact(userHome.getContact());
+			}
+			else {
+				resource.setName(userHome.refGetPath().getBase());
+			}
+			activitySegment.addResource(
+				false,
+				userHome.refGetPath().getBase(),
+				resource
+			);
+		}
+		// Subscriptions
+		Collection<Topic> topics = workflowSegment.getTopic();
+		for(Topic topic: topics) {
+			SubscriptionQuery query = (SubscriptionQuery)pm.newQuery(Subscription.class);
+			query.thereExistsTopic().equalTo(topic);
+			List<Subscription> subscriptions = userHome.getSubscription(query);
+			org.opencrx.kernel.home1.jmi1.Subscription subscription = null;
+			if(subscriptions.isEmpty()) {
+				subscription = pm.newInstance(Subscription.class);
+				subscription.refInitialize(false, false);
+				subscription.setName(topic.getName());
+				subscription.setTopic(topic);
+				userHome.addSubscription(
+					false,
+					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+					subscription
+				);
+			}
+			else {
+				subscription = subscriptions.iterator().next();
+			}
+			subscription.getEventType().clear();
+			String topicId = topic.refGetPath().getBase();
+			subscription.setActive(
+				(fSubscriptions != null) && (fSubscriptions.get("topicIsActive-" + topicId) != null)
+			);
+			if((fSubscriptions != null) && (fSubscriptions.get("topicCreation-" + topicId) != null)) {
+				subscription.getEventType().add(new Short((short)1));
+			}
+			if((fSubscriptions != null) && (fSubscriptions.get("topicReplacement-" + topicId) != null)) {
+				subscription.getEventType().add(new Short((short)3));
+			}
+			if((fSubscriptions != null) && (fSubscriptions.get("topicRemoval-" + topicId) != null)) {
+				subscription.getEventType().add(new Short((short)4));
+			}
+		}
+		// Store settings
+		if(storeSettings) {
+			try {
+				ByteArrayOutputStream bsSettings = new ByteArrayOutputStream();
+				userSettings.store(
+					bsSettings,
+					"settings of user " + userHome.refMofId()
+				);
+				bsSettings.close();
+				userHome.setSettings(
+					bsSettings.toString("UTF-8")
+				);
+			}
+			catch(IOException e) {
+				throw new ServiceException(e);
+			}
+		}
+		// Assert owningUser of Resource
+		if(runAsAdministrator) {
+		    org.opencrx.kernel.base.jmi1.SetOwningUserParams setOwningUserParams = Utils.getBasePackage(pm).createSetOwningUserParams(
+		        (short)SecureObject.MODE_RECURSIVE,
+		        userHome.getOwningUser()
+		    );
+			resource.setOwningUser(
+			    setOwningUserParams
+			);
+		}
+    }
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -1007,9 +1126,6 @@ public class UserHomes {
     public static final short CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL = 4;
     public static final short CAN_NOT_CHANGE_PASSWORD = 5;
     public static final short MISSING_OLD_PASSWORD = 6;
-
-    private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
-    protected final Backend backend;
         
 }
 

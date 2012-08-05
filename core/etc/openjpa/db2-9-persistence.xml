@@ -8,10 +8,8 @@
 		<properties>
 			<property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO" />
 			<property name="openjpa.jdbc.MappingDefaults" value="IndexLogicalForeignKeys=false,IndexDiscriminator=false"/>
-			<property name="openjpa.jdbc.DBDictionary" value="db2(BooleanTypeName=CHAR(1))"/>					
-			<property name="openjpa.jdbc.DBDictionary" value="db2(BitTypeName=CHAR(1))"/>					
 			<property name="openjpa.jdbc.DBDictionary" value="db2(CharacterColumnSize=256)"/>					
-			<property name="openjpa.ConnectionURL" value="jdbc:db2://localhost:50000/CRX_2_4"/>
+			<property name="openjpa.ConnectionURL" value="jdbc:db2://localhost:50000/CRX_2_5"/>
 			<property name="openjpa.ConnectionDriverName" value="com.ibm.db2.jcc.DB2Driver"/>
 			<property name="openjpa.ConnectionUserName" value="db2admin"/>
 			<property name="openjpa.ConnectionPassword" value="manager99"/>

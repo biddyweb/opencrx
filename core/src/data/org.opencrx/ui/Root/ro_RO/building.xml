@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="create">
                     <_object>
                       <label>
-                        <_item>toate clădirile</_item>
+                        <_item>Toate Clădirile</_item>
                       </label>
                       <toolTip>
-                        <_item>Toate clădirile</_item>
+                        <_item>Toate Clădirile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -72,10 +72,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Toate complexele de clădiri</_item>
+                        <_item>Toate Complexele de clădiri</_item>
                       </label>
                       <toolTip>
-                        <_item>Toate complexele de clădiri</_item>
+                        <_item>Toate Complexele de clădiri</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -119,10 +119,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Toate unităţile imobiliare</_item>
+                        <_item>Toate Unităţile imobiliare</_item>
                       </label>
                       <toolTip>
-                        <_item>Toate unităţile imobiliare</_item>
+                        <_item>Toate Unităţile imobiliare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -166,10 +166,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="create">
                     <_object>
                       <label>
-                        <_item>Toate facilităţile</_item>
+                        <_item>Toate Facilităţile</_item>
                       </label>
                       <toolTip>
-                        <_item>Toate facilităţile</_item>
+                        <_item>Toate Facilităţile</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -403,10 +403,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titlu / Sursă</_item>
+                        <_item>Titlu / Sursa</_item>
                       </label>
                       <toolTip>
-                        <_item>Titlu / Sursă</_item>
+                        <_item>Titlu / Sursa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -436,10 +436,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:parent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parte de unitate imobiliară</_item>
+                        <_item>Parte de Unitate imobiliară</_item>
                       </label>
                       <toolTip>
-                        <_item>Parte de unitate imobiliară</_item>
+                        <_item>Parte de Unitate imobiliară</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -458,10 +458,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titlu / Sursă</_item>
+                        <_item>Titlu / Sursa</_item>
                       </label>
                       <toolTip>
-                        <_item>Titlu / Sursă</_item>
+                        <_item>Titlu / Sursa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -601,10 +601,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AccountAssignmentInventoryItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Alocarea contului</_item>
+                        <_item>Alocarea Contului</_item>
                       </label>
                       <toolTip>
-                        <_item>Alocarea contului</_item>
+                        <_item>Alocarea Contului</_item>
                       </toolTip>
                     </_object>
                     <_content/>

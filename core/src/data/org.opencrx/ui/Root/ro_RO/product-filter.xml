@@ -17,7 +17,7 @@
                         <_item>Filtre de Produse</_item>
                       </label>
                       <toolTip>
-                        <_item>toate filtrele de produse</_item>
+                        <_item>Toate filtrele de Produse</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -61,7 +61,7 @@
                         <_item>Produse filtrate</_item>
                       </label>
                       <toolTip>
-                        <_item>toate produsele filtrate</_item>
+                        <_item>Toate Produsele filtrate</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -72,7 +72,7 @@
                         <_item>Proprietăţile filtrului</_item>
                       </label>
                       <toolTip>
-                        <_item>toate proprietăţile filtrului</_item>
+                        <_item>Toate Proprietăţile filtrului</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:in" _operation="create">
                     <_object>
                       <label>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Introducere</_item>
+                        <_item>Intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +190,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipuri TVA</_item>
+                        <_item>Tipuri de Taxe( TVA)</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipuri TVA</_item>
+                        <_item>Tipuri de Taxe( TVA)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

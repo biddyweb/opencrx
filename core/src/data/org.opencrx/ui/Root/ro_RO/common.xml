@@ -1186,10 +1186,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:StringPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Intrare setări şir de proprietăţi</_item>
+                        <_item>Intrare configurare şir de proprietăţi</_item>
                       </label>
                       <toolTip>
-                        <_item>Intrare setări şir de proprietăţi</_item>
+                        <_item>Intrare configurare şir de proprietăţi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1208,10 +1208,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:IntegerPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setare proprietăţi de intrare numere întregi</_item>
+                        <_item>Configurare proprietăţi de intrare numere întregi</_item>
                       </label>
                       <toolTip>
-                        <_item>Setare proprietăţi de intrare numere întregi</_item>
+                        <_item>Configurare proprietăţi de intrare numere întregi</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1230,10 +1230,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:BooleanPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setare proprietăţi de intrare boolane</_item>
+                        <_item>Configurare proprietăţi de intrare boleene</_item>
                       </label>
                       <toolTip>
-                        <_item>Setare proprietăţi de intrare booleane</_item>
+                        <_item>Configurare proprietăţi de intrare boleene</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1252,10 +1252,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DecimalPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setare proprietăţi de intrare zecimale</_item>
+                        <_item>Configurare proprietăţi de intrare zecimale</_item>
                       </label>
                       <toolTip>
-                        <_item>Setare proprietăţi de intrare zecimale</_item>
+                        <_item>Configurare proprietăţi de intrare zecimale</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1274,10 +1274,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DatePropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setare proprietăţi de intrare date</_item>
+                        <_item>Configurare proprietăţi de intrare date</_item>
                       </label>
                       <toolTip>
-                        <_item>Setare proprietăţi de intrare date</_item>
+                        <_item>Configurare proprietăţi de intrare date</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1296,10 +1296,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DateTimePropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Data / Ora setări proprietăţi de intrare</_item>
+                        <_item>Data / Ora configurări proprietăţi de intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>Data / Ora setări proprietăţi de intrare</_item>
+                        <_item>Data / Ora configurări proprietăţi de intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1318,10 +1318,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>URI setări proprietăţi de intrare</_item>
+                        <_item>URI configurări proprietăţi de intrare</_item>
                       </label>
                       <toolTip>
-                        <_item>URI setări proprietăţi de intrare</_item>
+                        <_item>URI configurări proprietăţi de intrare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1340,10 +1340,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:ReferencePropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Setare proprietăţi de intrare referinţe</_item>
+                        <_item>Configurare proprietăţi de intrare referinţe</_item>
                       </label>
                       <toolTip>
-                        <_item>Setare proprietăţi de intrare referinţe</_item>
+                        <_item>Configurare proprietăţi de intrare referinţe</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1615,10 +1615,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:booleanParam" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametru boolean</_item>
+                        <_item>Parametru bolean</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametru boolean</_item>
+                        <_item>Parametru bolean</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1692,10 +1692,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru referinţe</_item>
+                        <_item>Filtru de referinţe</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtru referinţe</_item>
+                        <_item>Filtru de referinţe</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1956,10 +1956,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:referenceFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru referinţe</_item>
+                        <_item>Filtru de referinţe</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtru referinţe</_item>
+                        <_item>Filtru de referinţe</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2033,10 +2033,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:WorkflowTarget:Pane:Op:Tab:executeWorkflow" _operation="create">
                     <_object>
                       <label>
-                        <_item>Execută flux de lucru</_item>
+                        <_item>Execută Flux de lucru</_item>
                       </label>
                       <toolTip>
-                        <_item>Execută flux de lucru</_item>
+                        <_item>Execută Flux de lucru</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2088,10 +2088,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:triggeredByEventId" _operation="create">
                     <_object>
                       <label>
-                        <_item>Activat de ID eveniment</_item>
+                        <_item>Activat de Identificator eveniment</_item>
                       </label>
                       <toolTip>
-                        <_item>Activat de ID eveniment</_item>
+                        <_item>Activat de Identificator eveniment</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2176,10 +2176,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CloneParams:referenceFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtru referinţe</_item>
+                        <_item>Filtru de referinţe</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtru referinţe</_item>
+                        <_item>Filtru de referinţe</_item>
                       </toolTip>
                     </_object>
                     <_content/>

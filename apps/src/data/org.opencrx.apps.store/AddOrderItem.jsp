@@ -38,7 +38,7 @@
 
     // 5. Add the order itme
     final OrderItemManager orderItemManager = new OrderItemManager(sessionHelper.getApplicationContext());
-    orderItemManager.newOrder( order.getKey(), productKey, product.getUnitPrice() );
+    orderItemManager.newOrder( order.getKey(), productKey);
 
     // 6. Return to shop page
     final ResponseHelper responseHelper = new ResponseHelper( response );

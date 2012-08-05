@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.22 2009/03/02 11:47:36 wfro Exp $
+ * Name:        $Id: Base.java,v 1.37 2009/06/08 09:21:19 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/02 11:47:36 $
+ * Date:        $Date: 2009/06/08 09:21:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,11 +55,8 @@
  */
 package org.opencrx.kernel.backend;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -67,106 +64,52 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.Orders;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
-import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.log.AppLog;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.cci2.AlertQuery;
+import org.opencrx.kernel.home1.jmi1.Alert;
+import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
-import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.base.persistence.cci.UserObjects;
 
-public class Base {
+public class Base extends AbstractImpl {
 
-    //-----------------------------------------------------------------------
-    public Base(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
-    
+    //-------------------------------------------------------------------------
+	public static void register(
+	) {
+		registerImpl(new Base());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Base getInstance(
+	) throws ServiceException {
+		return getInstance(Base.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Base(
+	) {
+		
+	}
+	
     //-------------------------------------------------------------------------
     public void sendAlert(
-        Path userHomeSender,
-        DataproviderObject params
-    ) throws ServiceException {
-        String toUsers = params.values("toUsers").size() == 0
-            ? ""
-            : (String)params.values("toUsers").get(0);
-        String name = (String)params.values("name").get(0);
-        String description = (String)params.values("description").get(0);
-        int importance = params.values("importance").isEmpty()
-            ? 0
-            : ((Number)params.values("importance").get(0)).intValue();
-        int resendDelayInSeconds = params.values("resendDelayInSeconds").isEmpty()
-            ? 0
-            : ((Number)params.values("resendDelayInSeconds").get(0)).intValue();
-        Path reference = (Path)params.values("reference").get(0);
-        this.sendAlert(
-            userHomeSender, 
-            toUsers, 
-            name,
-            description,
-            importance,
-            resendDelayInSeconds,
-            reference
-        );
-    }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * Get additional description of given object.
-     */
-    public DataproviderObject_1_0 getAdditionalDescription(
-        Path forObject,
-        int language
-    ) {
-        try {
-            List additionalDescriptions = this.backend.getDelegatingRequests().addFindRequest(
-                forObject.getChild("additionalDescription"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "language",
-                        FilterOperators.IS_IN,
-                        new Integer(language)
-                    )
-                },
-                AttributeSelectors.ALL_ATTRIBUTES,
-                null,
-                0,
-                Integer.MAX_VALUE,
-                Orders.ASCENDING
-            );
-            DataproviderObject_1_0 additionalDescription = null;
-            for(Iterator i = additionalDescriptions.iterator(); i.hasNext(); ) {
-                additionalDescription = (DataproviderObject_1_0)i.next();
-                AppLog.trace("additionalDescription", additionalDescription);
-            }
-            return additionalDescription;
-        }
-        catch(ServiceException e) {
-            e.log();
-            return null;
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    public void sendAlert(
-        Path userHomeSender,
+    	ContextCapable target,
         String toUsers,        
         String name,
         String description,
-        int importance,
+        short importance,
         Integer resendDelayInSeconds,
-        Path reference
+        ContextCapable reference
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(target);    	
         StringTokenizer tokenizer = new StringTokenizer(
             toUsers == null ? 
                 "" : 
@@ -174,72 +117,53 @@ public class Base {
         );
         while(tokenizer.hasMoreTokens()) {
             String toUser = tokenizer.nextToken();
-            DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(
+            UserHome userHome = UserHomes.getInstance().getUserHome(
                 toUser,
-                userHomeSender
+                target.refGetPath(),
+                pm
             );
             if(userHome != null) {
-                Path alertReference = reference == null 
-                    ? userHomeSender 
-                    : reference;
-                
+            	ContextCapable alertReference = (reference == null) || !JDOHelper.isPersistent(reference) ? 
+                	target : 
+                	reference;                
                 // Only create alert if there is not already an alert with the 
                 // same alert reference and created within the delay period.
-                RequestCollection delegation = this.backend.getRunAsRootDelegation();
-                List<DataproviderObject_1_0> alerts = delegation.addFindRequest(
-                    userHome.path().getChild("alert"), 
-                    new FilterProperty[]{
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,                            
-                            "reference", 
-                            FilterOperators.IS_IN,
-                            alertReference
-                        ),
-                        new FilterProperty(
-                            Quantors.THERE_EXISTS,                            
-                            SystemAttributes.CREATED_AT, 
-                            FilterOperators.IS_GREATER_OR_EQUAL,
-                            org.openmdx.base.text.format.DateFormat.getInstance().format(new Date(System.currentTimeMillis() - 1000*(resendDelayInSeconds == null ? 0 : resendDelayInSeconds.intValue())))
-                        )
-                    }
+                PersistenceManager pmRoot = pm.getPersistenceManagerFactory().getPersistenceManager(
+                	SecurityKeys.ROOT_PRINCIPAL, 
+                	null
                 );
-                if(alerts.isEmpty()) {
-                    DataproviderObject alert = new DataproviderObject(
-                        userHome.path().getDescendant(
-                            new String[]{
-                                "alert", 
-                                this.backend.getUidAsString()
-                            }
-                        )
-                    );
-                    alert.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Alert");
-                    alert.values("alertState").add(new Short((short)1));                    
-                    alert.values("name").add(
+                AlertQuery alertQuery = (AlertQuery)pmRoot.newQuery(Alert.class);
+                alertQuery.thereExistsReference().equalTo(alertReference);
+                alertQuery.createdAt().greaterThanOrEqualTo(
+                	new Date(System.currentTimeMillis() - 1000 * (resendDelayInSeconds == null ? 0 : resendDelayInSeconds.intValue()))
+                );
+                UserHome userHomeByRoot = (UserHome)pmRoot.getObjectById(userHome.refGetPath());
+                List<Alert> alertsByRoot = userHomeByRoot.getAlert(alertQuery);
+                if(alertsByRoot.isEmpty()) {
+                	Alert alertByRoot = pmRoot.newInstance(Alert.class);
+                	alertByRoot.refInitialize(false, false);
+                	alertByRoot.setAlertState(new Short((short)1));
+                	alertByRoot.setName(
                         name == null || name.length() == 0 ?
                             "--" : // name is mandatory
                             name
                     );
                     if(description != null) {
-                        alert.values("description").add(description);
+                        alertByRoot.setDescription(description);
                     }
-                    alert.values("importance").add(
-                        new Integer(importance)
+                    alertByRoot.setImportance(importance);
+                    alertByRoot.setReference(alertReference);
+                    alertByRoot.getOwningGroup().clear();
+                    alertByRoot.getOwningGroup().addAll(
+                        userHomeByRoot.getOwningGroup()
                     );
-                    alert.values("reference").add(
-                        alertReference
+                    pmRoot.currentTransaction().begin();
+                    userHomeByRoot.addAlert(
+                    	false,
+                    	this.getUidAsString(),
+                    	alertByRoot
                     );
-                    alert.clearValues("owningGroup").addAll(
-                        userHome.values("owningGroup")
-                    );
-                    try {
-                        this.backend.getRunAsRootDelegation().addCreateRequest(
-                            alert
-                        );
-                    }
-                    catch(ServiceException e) {
-                        AppLog.warning("can not create alert", alert);
-                        e.log();
-                    }
+                    pmRoot.currentTransaction().commit();
                 }
             }
         }
@@ -247,185 +171,39 @@ public class Base {
     
     //-------------------------------------------------------------------------
     public void assignToMe(
-        Path targetIdentity,
+        RefObject_1_0 target,
         boolean overwrite,
-        Set attributeFilter
+        Set<String> attributeFilter
     ) throws ServiceException {
-        this.assignToMe(
-            this.backend.retrieveObjectForModification(
-                targetIdentity
-            ),
-            this.backend.retrieveObject(
-                targetIdentity
-            ),
-            overwrite,
-            attributeFilter
-        );
-    }
-    
-    //-------------------------------------------------------------------------
-    public List completePictured(
-        DataproviderObject_1_0 object,
-        Set fetchSet
-    ) throws ServiceException {
-        List additionalFetchedObjects = new ArrayList();
-        if(
-            this.backend.isAccount(object) ||
-            (fetchSet == null) ||
-            fetchSet.contains("pictureContent") ||
-            fetchSet.contains("pictureContentName") ||
-            fetchSet.contains("pictureContentMimeType")
-        ) {
-            object.values("pictureContent");
-            object.values("pictureContentName");
-            object.values("pictureContentMimeType");
-            if(
-                (object.getValues("picture") != null) &&
-                !object.values("picture").isEmpty()
-            ) {
-                try {
-                    DataproviderObject_1_0 media = this.backend.retrieveObject(
-                        (Path)object.values("picture").get(0)
-                    );
-                    if(
-                        (media.getValues("content") != null) && 
-                        !media.values("content").isEmpty()
-                    ) {
-                        // map media type <<stream>> binary to binary
-                        InputStream is = (InputStream)media.values("content").get(0);
-                        ByteArrayOutputStream os = new ByteArrayOutputStream();
-                        int b = 0;
-                        int length = 0;
-                        while((b = is.read()) != -1) {
-                            os.write(b);
-                            length++;
-                        }
-                        if(length > 0) {
-                            object.values("pictureContent").add(
-                                os.toByteArray()                  
-                            );
-                            object.values("pictureContentName").addAll(
-                                media.values("contentName")
-                            );
-                            object.values("pictureContentMimeType").addAll(
-                                media.values("contentMimeType")
-                            );
-                            additionalFetchedObjects.add(media);
-                        }                
-                    }
-                }
-                catch(Exception e) {
-                    ServiceException e0 = new ServiceException(e);
-                    AppLog.detail("can not get picture.", e.getMessage());
-                    AppLog.info(e0.getMessage(), e0.getCause());
-                }
-            }
-        }
-        return additionalFetchedObjects;
-    }
-
-    //-------------------------------------------------------------------------
-    public List completePropertySetEntry(
-        DataproviderObject_1_0 object,
-        Set fetchSet
-    ) {
-        List additionalFetchedObjects = Collections.EMPTY_LIST;
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        if("org:opencrx:kernel:generic:StringPropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("stringValue").isEmpty()
-                    ? ""
-                    : object.values("stringValue").get(0)
-            );
-        }
-        else if("org:opencrx:kernel:generic:IntegerPropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("integerValue").isEmpty()
-                    ? ""
-                    : object.values("integerValue").get(0).toString()
-            );
-        }
-        else if("org:opencrx:kernel:generic:BooleanPropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("booleanValue").isEmpty()
-                    ? ""
-                    : object.values("booleanValue").get(0).toString()
-            );
-        }
-        else if("org:opencrx:kernel:generic:UriPropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("uriValue").isEmpty()
-                    ? ""
-                    : object.values("uriValue").get(0).toString()
-            );
-        }
-        else if("org:opencrx:kernel:generic:DecimalPropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("decimalValue").isEmpty()
-                    ? ""
-                    : object.values("decimalValue").get(0).toString()
-            );
-        }
-        else if("org:opencrx:kernel:generic:DatePropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("dateValue").isEmpty()
-                    ? ""
-                    : object.values("dateValue").get(0).toString()
-            );
-        }
-        else if("org:opencrx:kernel:generic:DateTimePropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("dateTimeValue").isEmpty()
-                    ? ""
-                    : object.values("dateTimeValue").get(0).toString()
-            );
-        }
-        else if("org:opencrx:kernel:generic:ReferencePropertySetEntry".equals(objectClass)) {
-            object.clearValues("stringifiedValue").add(
-                object.values("referenceValue").isEmpty()
-                    ? ""
-                    : ((Path)object.values("referenceValue").get(0)).toXri()
-            );
-        }
-        return additionalFetchedObjects;
-    }
-    
-    //-------------------------------------------------------------------------
-    public void assignToMe(
-        DataproviderObject target,
-        DataproviderObject_1_0 targetOldValues,
-        boolean overwrite,
-        Set attributeFilter
-    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(target);    	
         if(attributeFilter == null) {
-            attributeFilter = new HashSet();
+            attributeFilter = new HashSet<String>();
             attributeFilter.add("assignedTo");
             attributeFilter.add("salesRep");
             attributeFilter.add("ratedBy");
         }
-        DataproviderObject_1_0 source = targetOldValues == null
-        ? target
-                : targetOldValues;
-        String objectClass = (String)source.values(SystemAttributes.OBJECT_CLASS).get(0);
-        ModelElement_1_0 classDef = this.backend.getModel().getElement(objectClass);
-        Map attributeDefs = this.backend.getModel().getAttributeDefs(classDef, false, true);
-
+        String objectClass = target.refClass().refMofId();
+        Model_1_0 model = Model_1Factory.getModel();
+        ModelElement_1_0 classDef = model.getElement(objectClass);
+        Map<String,ModelElement_1_0> attributeDefs = model.getAttributeDefs(classDef, false, true);
         // Test whether class has feature assignedTo. If yes and obj has
         // not already set assignedTo assign current user as default value
-        ServiceHeader header = this.backend.getServiceHeader();
-        if(header.getPrincipalChain().size() > 0) {
-            DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(
-                target.path()
+        List<String> principalChain = UserObjects.getPrincipalChain(pm);
+        if(!principalChain.isEmpty()) {
+            UserHome userHome = UserHomes.getInstance().getUserHome(
+                target.refGetPath(),
+                pm
             );
-            if((userHome != null) && (userHome.values("contact").size() > 0)) {
-                for(Iterator i = attributeFilter.iterator(); i.hasNext(); ) {
-                    String attribute = (String)i.next();
+            if((userHome != null) && (userHome.getContact() != null)) {
+                for(Iterator<String> i = attributeFilter.iterator(); i.hasNext(); ) {
+                    String attribute = i.next();
                     if(
                         attributeDefs.keySet().contains(attribute) &&
-                        (overwrite || (source.getValues(attribute) == null) || (source.getValues(attribute).size() == 0))
+                        (overwrite || (target.refGetValue(attribute) == null))
                     ) {
-                        target.clearValues(attribute).add(
-                            userHome.values("contact").get(0)
+                        target.refSetValue(
+                        	attribute,
+                            userHome.getContact()
                         ); 
                     }
                 }
@@ -433,35 +211,29 @@ public class Base {
         }
     }
     
-    //-------------------------------------------------------------------------
-    public void initCharts(
-        DataproviderObject userHome,
-        DataproviderObject_1_0 oldValues
+	//-------------------------------------------------------------------------
+    /**
+     * Counts the number of occurences of items in report and returns a string
+     * of the form item0: n0, item1: n1, etc.
+     */
+    public String analyseReport(
+        List<String> report
     ) {
-        String objectClass = (String)userHome.values(SystemAttributes.OBJECT_CLASS).get(0);
-        // init favorite chart references in case when the user home is 
-        // assigned to a contact.
-        if(
-            "org:opencrx:kernel:home1:UserHome".equals(objectClass) &&
-            ((oldValues == null) || (oldValues.values("contact").size() == 0)) &&
-            (userHome.values("contact").size() > 0)
-        ) {
-            // set chart default references
-            userHome.clearValues("chart0").add(
-                userHome.path().getDescendant(new String[]{"chart", "0"})
-            );
-            userHome.clearValues("chart1").add(
-                userHome.path().getDescendant(new String[]{"chart", "2"})
-            );
-            userHome.clearValues("chart2").add(
-                userHome.path().getDescendant(new String[]{"chart", "1"})
-            );
-            userHome.clearValues("chart3").add(
-                userHome.path().getDescendant(new String[]{"chart", "3"})
+        Map<Object,Short> reportAsMap = new HashMap<Object,Short>();
+        for(int i = 0; i < report.size(); i++) {
+            Object key = report.get(i);
+            Short count = reportAsMap.get(key);
+            if(count == null) {
+                count = new Short((short)0);
+            }
+            reportAsMap.put(
+                key,
+                new Short((short)(count.shortValue() + 1))
             );
         }
+        return reportAsMap.toString();
     }
-    
+        
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -472,8 +244,6 @@ public class Base {
     
     public static final String MIME_TYPE_ZIP = "application/zip";
     
-    protected final Backend backend;
-        
 }
 
 //--- End of File -----------------------------------------------------------

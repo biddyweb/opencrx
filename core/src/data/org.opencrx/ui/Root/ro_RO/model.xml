@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:CollectionType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tip Colecţie</_item>
+                        <_item>Tip de Colecţie</_item>
                       </label>
                       <toolTip>
-                        <_item>Tip Colecţie</_item>
+                        <_item>Tip de Colecţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -363,10 +363,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:PrimitiveType:container" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pachet/Clasă</_item>
+                        <_item>Pachet / Clasă</_item>
                       </label>
                       <toolTip>
-                        <_item>Pachet/Clasă</_item>
+                        <_item>Pachet / Clasă</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -429,10 +429,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Parameter:container" _operation="create">
                     <_object>
                       <label>
-                        <_item>Operaţiune/Excepţie</_item>
+                        <_item>Operaţiune / Excepţie</_item>
                       </label>
                       <toolTip>
-                        <_item>Operaţiune/Excepţie</_item>
+                        <_item>Operaţiune / Excepţie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -440,10 +440,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Constant:container" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pachet/Clasă</_item>
+                        <_item>Pachet / Clasă</_item>
                       </label>
                       <toolTip>
-                        <_item>Pachet/Clasă</_item>
+                        <_item>Pachet / Clasă</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -836,10 +836,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:AssociationEnd:isNavigable" _operation="create">
                     <_object>
                       <label>
-                        <_item>E Navigabil</_item>
+                        <_item>E navigabil</_item>
                       </label>
                       <toolTip>
-                        <_item>E Navigabil</_item>
+                        <_item>E navigabil</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -935,10 +935,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Attribute:isDerived" _operation="create">
                     <_object>
                       <label>
-                        <_item>E Derivată</_item>
+                        <_item>E derivată</_item>
                       </label>
                       <toolTip>
-                        <_item>E Derivată</_item>
+                        <_item>E derivată</_item>
                       </toolTip>
                     </_object>
                     <_content/>

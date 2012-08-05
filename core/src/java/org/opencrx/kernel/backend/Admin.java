@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.13 2009/01/06 13:00:22 wfro Exp $
+ * Name:        $Id: Admin.java,v 1.26 2009/04/21 11:21:59 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 13:00:22 $
+ * Date:        $Date: 2009/04/21 11:21:59 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,222 +60,197 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.openmdx.application.cci.SystemAttributes;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
-import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderObject;
-import org.openmdx.application.dataprovider.cci.DataproviderObject_1_0;
-import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.uses.org.apache.commons.collections.set.ListOrderedSet;
 
-public class Admin {
+public class Admin extends AbstractImpl {
 
+    //-------------------------------------------------------------------------
+	public static void register(
+	) {
+		registerImpl(new Admin());
+	}
+	
+    //-------------------------------------------------------------------------
+	public static Admin getInstance(		
+	) throws ServiceException {
+		return getInstance(Admin.class);
+	}
+
+	//-------------------------------------------------------------------------
+	protected Admin(
+	) {
+		
+	}
+	
     //-----------------------------------------------------------------------
-    public Admin(
-        Backend backend
-    ) {
-        this.backend = backend;
-    }
-            
+	public enum PrincipalType {
+		PRINCIPAL,
+		USER,
+		GROUP
+	}
+	
     //-----------------------------------------------------------------------
-    public DataproviderObject_1_0 createSegment(
-        String qualifiedModelName,
-        String providerName,
+    public void createSegment(
+    	org.openmdx.base.jmi1.Provider provider,
+        org.openmdx.base.jmi1.Segment segment,
         String segmentName,
-        boolean isSecureObject,
-        Path groupAdminIdentity,
-        Path groupAdmininstratorsIdentity,
-        List errors
+        org.opencrx.security.realm1.jmi1.User owningUser,
+        org.opencrx.security.realm1.jmi1.PrincipalGroup owningGroup,
+        List<String> errors
     ) {
-	    Path segmentIdentity = new Path("xri:@openmdx:" + qualifiedModelName.replace(':', '.') + "/provider");
-	    segmentIdentity = segmentIdentity.getDescendant(new String[]{providerName, "segment", segmentName});        
-	    DataproviderObject_1_0 segment = null;
+    	segment.refInitialize(false, false);
+    	org.openmdx.base.jmi1.Segment test = null;
 	    try {
-	        segment = this.backend.getDelegatingRequests().addGetRequest(
-	            segmentIdentity,
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            new AttributeSpecifier[]{}        
-	        );            
+	        test = provider.getSegment(segmentName);
 	    }
-	    catch(Exception e) {
-	        DataproviderObject newSegment = new DataproviderObject(
-	            segmentIdentity
-	        );
-	        newSegment.values(SystemAttributes.OBJECT_CLASS).add(qualifiedModelName + ":Segment");
-	        if(isSecureObject) {
-		        newSegment.values("owningUser").add(groupAdminIdentity);
-		        newSegment.values("owningGroup").add(groupAdmininstratorsIdentity);
-                newSegment.values("accessLevelBrowse").add(new Short(SecurityKeys.ACCESS_LEVEL_GLOBAL));
-                newSegment.values("accessLevelUpdate").add(new Short(SecurityKeys.ACCESS_LEVEL_DEEP));
-                newSegment.values("accessLevelDelete").add(new Short(SecurityKeys.ACCESS_LEVEL_PRIVATE));                
+	    catch(Exception e) {}
+	    if(test == null) {
+	        if(segment instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
+		        ((org.opencrx.kernel.base.jmi1.SecureObject)segment).setOwningUser(owningUser);
+		        ((org.opencrx.kernel.base.jmi1.SecureObject)segment).getOwningGroup().add(owningGroup);
+		        ((org.opencrx.kernel.base.jmi1.SecureObject)segment).setAccessLevelBrowse(new Short(SecurityKeys.ACCESS_LEVEL_GLOBAL));
+		        ((org.opencrx.kernel.base.jmi1.SecureObject)segment).setAccessLevelUpdate(new Short(SecurityKeys.ACCESS_LEVEL_DEEP));
+		        ((org.opencrx.kernel.base.jmi1.SecureObject)segment).setAccessLevelDelete(new Short(SecurityKeys.ACCESS_LEVEL_PRIVATE));                
 	        }
 	        try {
-	            this.backend.getDelegatingRequests().addCreateRequest(newSegment);
+	        	provider.addSegment(
+	        		false,
+	        		segmentName,
+	        		segment
+	        	);
 	        }
 	        catch(Exception e0) {
 	            ServiceException e1 = new ServiceException(e0);
 	            AppLog.warning(e1.getMessage(), e1.getCause());
-	            errors.add("can not create segment for " + qualifiedModelName);
+	            errors.add("Unable to create segment " + segment);
 	            errors.add("reason is " + e0.getMessage());
-	            return null;
 	        }
-	        segment = newSegment;
 	    }
-	    return segment;
     }
     
     //-----------------------------------------------------------------------
-    public Path createContact(
-        Path adminIdentity,
+    public Contact createContact(
+        org.opencrx.kernel.admin1.jmi1.Segment adminSegment,
         String segmentName,
         String principalName,
-        Path owningUser,
-        Path[] owningGroup,
-        List errors
+        org.opencrx.security.realm1.jmi1.User owningUser,
+        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,
+        List<String> errors
     ) {
-        Path contactIdentity = new Path("xri:@openmdx:org.opencrx.kernel.account1/provider");
-        contactIdentity = contactIdentity.getDescendant(new String[]{adminIdentity.get(2), "segment", segmentName, "account", principalName});        
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(adminSegment);
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
+    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+    			new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + adminSegment.refGetPath().get(2) + "/segment/" + segmentName)
+    		);
+    	Contact contact = null;
         try {
-            this.backend.getDelegatingRequests().addGetRequest(
-                contactIdentity,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );            
+        	contact = (Contact)accountSegment.getAccount(principalName);
         }
-        catch(Exception e) {
-            DataproviderObject newContact = new DataproviderObject(
-                contactIdentity
+        catch(Exception e) {}
+        if(contact == null) {
+        	contact = pm.newInstance(Contact.class);
+        	contact.refInitialize(false, false);
+            contact.setLastName(principalName);
+            contact.setOwningUser(owningUser);
+            contact.getOwningGroup().addAll(owningGroups);
+            accountSegment.addAccount(
+            	false,
+            	principalName,
+            	contact
             );
-            newContact.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:account1:Contact");
-            newContact.values("lastName").add(principalName);
-            newContact.values("owningUser").add(owningUser);
-            newContact.values("owningGroup").addAll(
-                Arrays.asList(owningGroup)
-            );
-            try {
-                this.backend.getAccounts().updateAccount(newContact, null);
-                this.backend.getDelegatingRequests().addCreateRequest(newContact);
-            }
-            catch(Exception e0) {
-                ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause());
-                errors.add("can not create contact");
-                errors.add("reason is " + e0.getMessage());
-                return null;
-            }
         }
-        return contactIdentity;
+        return contact;
     }
 
     //-----------------------------------------------------------------------
-    public Path createSubject(
+    public org.opencrx.security.identity1.jmi1.Subject createSubject(
+    	org.opencrx.security.identity1.jmi1.Segment identitySegment,
         String subjectName,
-        Path identitySegment,
-        List errors
+        String subjectDescription,
+        List<String> errors
     ) {
-        Path subjectIdentity = identitySegment;
-        subjectIdentity = subjectIdentity.getDescendant(new String[]{"subject", subjectName});        
-        try {
-            this.backend.getDelegatingRequests().addGetRequest(
-                subjectIdentity,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}
-            );  
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(identitySegment);
+    	org.opencrx.security.identity1.jmi1.Subject subject = identitySegment.getSubject(subjectName);
+    	if(subject == null) {
+        	subject = pm.newInstance(org.opencrx.security.identity1.jmi1.Subject.class);
+        	subject.refInitialize(false, false);
+        	subject.setDescription(
+        		subjectDescription == null ? subjectName : subjectDescription
+        	);
+        	identitySegment.addSubject(
+        		false,
+        		subjectName,
+        		subject
+        	);
         }
-        catch(Exception e) {
-            DataproviderObject newSubject = new DataproviderObject(
-                subjectIdentity
-            );
-            newSubject.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:security:identity1:Subject");
-            newSubject.values("description").add(subjectName);
-            try {
-                this.backend.getDelegatingRequests().addCreateRequest(newSubject);
-            }
-            catch(Exception e0) {
-                ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause());
-                errors.add("can not create subject " + subjectName + " in segment " + identitySegment);
-                errors.add("reason is " + e0.getMessage());
-                return null;
-            }
-        }
-        return subjectIdentity;
+        return subject;
     }
     
     //-----------------------------------------------------------------------
-    public Path createPrincipal(
+    public org.openmdx.security.realm1.jmi1.Principal createPrincipal(
         String principalName,
-        Path realmIdentity,
-        String principalClass,
-        Path[] isMemberOf,
-        Path subjectIdentity,
-        List errors
+        String principalDescription,
+        org.openmdx.security.realm1.jmi1.Realm realm,
+        PrincipalType principalType,
+        List<org.openmdx.security.realm1.jmi1.Group> memberOfGroups,
+        org.openmdx.security.realm1.jmi1.Subject subject
     ) {
-        Path principalIdentity = realmIdentity;
-        principalIdentity = principalIdentity.getDescendant(new String[]{"principal", principalName});        
-        try {
-            DataproviderObject principal = new DataproviderObject(
-                this.backend.getDelegatingRequests().addGetRequest(
-                    principalIdentity,
-                    AttributeSelectors.ALL_ATTRIBUTES,
-                    new AttributeSpecifier[]{}
-                )
-            );  
-            List isMemberOfAsList = Arrays.asList(isMemberOf);
-            if(!principal.values("isMemberOf").containsAll(isMemberOfAsList)) {
-                Set modifiedIsMemberOf = new ListOrderedSet();
-                modifiedIsMemberOf.addAll(principal.values("isMemberOf"));
-                modifiedIsMemberOf.addAll(isMemberOfAsList);
-                principal.clearValues("isMemberOf").addAll(
-                    modifiedIsMemberOf
-                );
-                try {
-                    this.backend.getDelegatingRequests().addReplaceRequest(principal);
-                }
-                catch(ServiceException e) {
-                    ServiceException e1 = new ServiceException(e);
-                    AppLog.warning(e1.getMessage(), e1.getCause());
-                    errors.add("can not update principal " + principalName + " in realm " + realmIdentity);
-                    errors.add("reason is " + e1.getMessage());
-                    return null;                    
-                }
-            }
-        }
-        catch(Exception e) {
-            DataproviderObject newPrincipal = new DataproviderObject(
-                principalIdentity
+        PersistenceManager pm = JDOHelper.getPersistenceManager(realm);
+        org.openmdx.security.realm1.jmi1.Principal principal = realm.getPrincipal(principalName);
+        if(principal != null) {
+            Set<org.openmdx.security.realm1.jmi1.Group> mergedGroups = new LinkedHashSet<org.openmdx.security.realm1.jmi1.Group>();
+            List<org.openmdx.security.realm1.jmi1.Group> principalIsMemberOf = principal.getIsMemberOf();
+            mergedGroups.addAll(principalIsMemberOf);
+            mergedGroups.addAll(memberOfGroups);
+            principal.getIsMemberOf().clear();
+            principal.getIsMemberOf().addAll(
+                mergedGroups
             );
-            newPrincipal.values(SystemAttributes.OBJECT_CLASS).add(principalClass);
-            newPrincipal.values("description").add(principalIdentity.get(6) + "\\\\" + principalName);
-            newPrincipal.values("disabled").add(Boolean.FALSE);
-            newPrincipal.values("isMemberOf").addAll(
-                Arrays.asList(isMemberOf)
-            );
-            if(subjectIdentity != null) {
-                newPrincipal.values("subject").add(subjectIdentity);
-            }
-            try {
-                this.backend.getDelegatingRequests().addCreateRequest(newPrincipal);
-            }
-            catch(Exception e0) {
-                ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause());
-                errors.add("can not create principal " + principalName + " in realm " + realmIdentity);
-                errors.add("reason is " + e0.getMessage());
-                return null;
-            }
         }
-        return principalIdentity;
+        else {
+        	switch(principalType) {
+	        	case USER: 
+	        		principal = pm.newInstance(org.opencrx.security.realm1.jmi1.User.class);
+	        		break;
+	        	case PRINCIPAL:
+	        		principal = pm.newInstance(org.opencrx.security.realm1.jmi1.Principal.class);
+	        		break;
+	        	case GROUP:
+	        		principal = pm.newInstance(org.opencrx.security.realm1.jmi1.PrincipalGroup.class);
+	        		break;
+        	}
+        	principal.refInitialize(false, false);
+            principal.setDescription(
+            	principalDescription == null ?
+            		realm.refGetPath().getBase() + "\\\\" + principalName :
+            	    principalDescription
+            );
+            principal.setDisabled(Boolean.FALSE);
+            principal.getIsMemberOf().addAll(
+                memberOfGroups
+            );
+            principal.setSubject(subject);
+            realm.addPrincipal(
+            	false,
+            	principalName,
+            	principal
+            );
+        }
+        return principal;
     }
     
     //-----------------------------------------------------------------------
@@ -284,279 +259,292 @@ public class Admin {
      * is the owner of all created objects. 
      */
     public void createAdministrator(
-        Path adminIdentity,
+        org.opencrx.kernel.admin1.jmi1.Segment adminSegment,
         String segmentName,
         String principalName,
         String initialPassword,
         String initialPasswordVerification,
-        List errors
-    ) {
-        String providerName = adminIdentity.get(2);
-        
+        List<String> errors
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(adminSegment);
+        String providerName = adminSegment.refGetPath().get(2);        
         // Principal must exist in login realm
-        String segmentAdminName = SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName;
-        Path loginRealmIdentity = this.backend.getRealmIdentity();
-        try {
-            this.backend.getDelegatingRequests().addGetRequest(
-                loginRealmIdentity.getDescendant(new String[]{"principal", principalName}),
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );            
-        }
-        catch(Exception e) {
+        String adminPrincipalName = SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName;
+        Path loginRealmIdentity = SecureObject.getInstance().getLoginRealmIdentity(providerName);
+        org.openmdx.security.realm1.jmi1.Realm loginRealm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
+        	loginRealmIdentity
+        );
+        org.openmdx.security.realm1.jmi1.Subject segmentAdminSubject = null;
+    	if(loginRealm.getPrincipal(principalName) != null) {
+            try {
+            	segmentAdminSubject = loginRealm.getPrincipal(principalName).getSubject();
+            }
+            catch(Exception e) {}
+    	}
+        if(segmentAdminSubject == null) {
             // Create segment administrator if it does not exist
-            if(principalName.equals(segmentAdminName)) {
-                // Create segment administrator's subject
-                Path segmentAdminSubjectIdentity = this.createSubject(
-                    segmentAdminName,
-                    new Path("xri:@openmdx:org.opencrx.security.identity1/provider/" + loginRealmIdentity.get(2) + "/segment/" + loginRealmIdentity.get(4)),
-                    errors
-                );
-                if(errors.size() > 0) return;            
-                // Create segment administrator's principal
-                this.createPrincipal(
-                    principalName,
-                    loginRealmIdentity,
-                    SecurityKeys.PRINCIPAL_TYPE_PRINCIPAL,
-                    new Path[]{
-                        loginRealmIdentity.getDescendant(new String[]{"principal", SecurityKeys.PRINCIPAL_GROUP_ADMINISTRATORS})
-                    },
-                    segmentAdminSubjectIdentity,
-                    errors
-                );
-                if(errors.size() > 0) return;                
-            }
-            else {
-                ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause());
-                errors.add("principal " + principalName + " not found in realm " + loginRealmIdentity);
-                return;
-            }
+        	org.opencrx.security.identity1.jmi1.Segment identitySegment = 
+        		(org.opencrx.security.identity1.jmi1.Segment)pm.getObjectById(
+        			new Path("xri:@openmdx:org.opencrx.security.identity1/provider/" + loginRealmIdentity.get(2) + "/segment/Root")
+        		);
+            // Create segment administrator's subject
+        	segmentAdminSubject = this.createSubject(
+            	identitySegment,
+                adminPrincipalName,
+                null,
+                errors
+            );
+            if(!errors.isEmpty()) return;            
+            // Create segment administrator's principal
+            List<org.openmdx.security.realm1.jmi1.Group> groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
+            groups.add(
+            	(org.openmdx.security.realm1.jmi1.Group)loginRealm.getPrincipal(SecurityKeys.PRINCIPAL_GROUP_ADMINISTRATORS)
+            );
+            this.createPrincipal(
+                principalName,
+                null,
+                loginRealm,
+                PrincipalType.PRINCIPAL,
+                groups,
+                segmentAdminSubject
+            );
         }
-        
         // Principal admin-<segment name> must exist before any other
         // segment administrator can be created
-        try {
-            this.backend.getDelegatingRequests().addGetRequest(
-                loginRealmIdentity.getDescendant(new String[]{"principal", segmentAdminName}),
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );            
-        }
-        catch(Exception e) {
+        if(loginRealm.getPrincipal(adminPrincipalName) == null) {
             // admin-<segment name> does not exist --> principalName must match segment administrator
-            if(!principalName.equals(segmentAdminName)) {
-                errors.add("primary principal name must match " + segmentAdminName);
+            if(!principalName.equals(adminPrincipalName)) {
+                errors.add("primary principal name must match " + adminPrincipalName);
                 return;
             }
         }
         if(
             (principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) &&
-            !principalName.equals(segmentAdminName)
+            !principalName.equals(adminPrincipalName)
         ) {
-            errors.add("admin principal for segment " + segmentName + " must match " + segmentAdminName);
+            errors.add("admin principal for segment " + segmentName + " must match " + adminPrincipalName);
             return;            
-        }
-        
-        // realm
-        Path realmIdentity = new Path("xri:@openmdx:org.openmdx.security.realm1/provider");
-        realmIdentity = realmIdentity.getDescendant(new String[]{providerName, "segment", adminIdentity.get(4), "realm", segmentName});
-        
-        // user        
-        Path userIdentity = realmIdentity;
-        userIdentity = userIdentity.getDescendant(new String[]{"principal", principalName + "." + SecurityKeys.USER_SUFFIX});        
-        
-        // group Unspecified
-        Path groupUnspecifiedIdentity = realmIdentity;
-        groupUnspecifiedIdentity = groupUnspecifiedIdentity.getDescendant(new String[]{"principal", SecurityKeys.USER_GROUP_UNSPECIFIED});        
-
-        // group Administrators
-        Path groupAdministratorsIdentity = realmIdentity;
-        groupAdministratorsIdentity = groupAdministratorsIdentity.getDescendant(new String[]{"principal", SecurityKeys.USER_GROUP_ADMINISTRATORS});        
-
-        // group Users
-        Path groupUsersIdentity = realmIdentity;
-        groupUsersIdentity = groupUsersIdentity.getDescendant(new String[]{"principal", SecurityKeys.USER_GROUP_USERS});        
-
-        // Create realm
+        }        
+        // Create realm for segment
+        Path realmIdentity = SecureObject.getRealmIdentity(providerName, segmentName);
+        org.openmdx.security.realm1.jmi1.Realm realm = null;
         try {
-            this.backend.getDelegatingRequests().addGetRequest(
-                realmIdentity,
-                AttributeSelectors.ALL_ATTRIBUTES,
-                new AttributeSpecifier[]{}        
-            );            
+        	realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(realmIdentity);
         }
-        catch(Exception e) {
-            DataproviderObject realm = new DataproviderObject(
-                realmIdentity
+        catch(Exception e) {}
+        if(realm == null) {
+            org.openmdx.security.realm1.jmi1.Segment realmSegment = 
+            	(org.openmdx.security.realm1.jmi1.Segment)pm.getObjectById(
+            		realmIdentity.getParent().getParent()
+            	);
+            realm = pm.newInstance(org.openmdx.security.realm1.jmi1.Realm.class);
+            realm.refInitialize(false, false);
+            realm.setDescription(segmentName + " Realm");
+            realmSegment.addRealm(
+            	false,
+            	segmentName,
+            	realm
             );
-            realm.values(SystemAttributes.OBJECT_CLASS).add("org:openmdx:security:realm1:Realm");
-            realm.values("description").add(segmentName + " Realm");
-            try {
-                this.backend.getDelegatingRequests().addCreateRequest(realm);
-            }
-            catch(Exception e0) {
-                ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause());
-                errors.add("can not create realm " + realmIdentity);
-                errors.add("reason is " + e0.getMessage());
-                return;
-            }
-        }
-        
-        // Create segments
-        this.createSegment("org:opencrx:kernel:account1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:home1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:activity1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:contract1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:product1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:document1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:building1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:uom1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:forecast1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:workflow1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:depot1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:model1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        this.createSegment("org:opencrx:kernel:code1", providerName, segmentName, true, userIdentity, groupAdministratorsIdentity, errors);
-        if(errors.size() > 0) return;
-        
-        // Create contact: adminPrincipalName
-        Path contactIdentity = this.createContact(
-            adminIdentity, 
-            segmentName, 
-            principalName, 
-            userIdentity, 
-            new Path[]{
-                groupUsersIdentity,
-                groupAdministratorsIdentity
-            },
-            errors
+        }        
+        org.opencrx.security.realm1.jmi1.User adminUser = (org.opencrx.security.realm1.jmi1.User)this.createPrincipal(
+        	principalName + SecurityKeys.ID_SEPARATOR + SecurityKeys.GROUP_SUFFIX, 
+        	null, 
+        	realm, 
+        	PrincipalType.USER, 
+        	new ArrayList<org.openmdx.security.realm1.jmi1.Group>(), 
+        	segmentAdminSubject
         );
-        if(contactIdentity == null) return;
-
+        List<org.openmdx.security.realm1.jmi1.Group> groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
+        groups.add(adminUser);
         this.createPrincipal(
+        	principalName, 
+        	null, 
+        	realm, 
+        	PrincipalType.PRINCIPAL, 
+        	groups, 
+        	segmentAdminSubject
+        );
+        org.opencrx.security.realm1.jmi1.PrincipalGroup groupUnspecified = (org.opencrx.security.realm1.jmi1.PrincipalGroup)this.createPrincipal(
             SecurityKeys.USER_GROUP_UNSPECIFIED,
-            realmIdentity,
-            SecurityKeys.PRINCIPAL_TYPE_GROUP,
-            new Path[]{},
             null,
-            errors
+            realm,
+            PrincipalType.GROUP,
+            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+            segmentAdminSubject
         );
-        if(errors.size() > 0) return;
-        
-        this.createPrincipal(
+        groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
+        groups.add(groupUnspecified);
+        org.opencrx.security.realm1.jmi1.PrincipalGroup groupAdministrators = (org.opencrx.security.realm1.jmi1.PrincipalGroup)this.createPrincipal(
             SecurityKeys.USER_GROUP_ADMINISTRATORS,
-            realmIdentity,
-            SecurityKeys.PRINCIPAL_TYPE_GROUP,
-            new Path[]{
-                groupUnspecifiedIdentity        
-            },
             null,
-            errors
+            realm,
+            PrincipalType.GROUP,
+            groups,
+            segmentAdminSubject
         );
-        if(errors.size() > 0) return;
-
-        this.createPrincipal(
+        org.opencrx.security.realm1.jmi1.PrincipalGroup groupUsers = (org.opencrx.security.realm1.jmi1.PrincipalGroup)this.createPrincipal(
             SecurityKeys.USER_GROUP_USERS,
-            realmIdentity,
-            SecurityKeys.PRINCIPAL_TYPE_GROUP,
-            new Path[]{
-                groupUnspecifiedIdentity        
-            },
             null,
-            errors
+            realm,
+            PrincipalType.GROUP,
+            groups,
+            segmentAdminSubject
         );
-        if(errors.size() > 0) return;
-
+        groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
+        groups.add(groupUsers);
         this.createPrincipal(
             SecurityKeys.USER_GROUP_UNASSIGNED,
-            realmIdentity,
-            SecurityKeys.PRINCIPAL_TYPE_GROUP,
-            new Path[]{
-                groupUsersIdentity        
-            },
             null,
+            realm,
+            PrincipalType.GROUP,
+            groups,
+            segmentAdminSubject
+        );
+        // Create segments        
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.account1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.home1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.activity1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.contract1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.product1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.document1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.building1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.uom1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.forecast1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.workflow1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.depot1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.model1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        this.createSegment(
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.code1/provider/" + providerName)), 
+        	pm.newInstance(org.opencrx.kernel.code1.jmi1.Segment.class), 
+        	segmentName,
+        	adminUser, 
+        	groupAdministrators, 
+        	errors
+        );
+        if(errors.size() > 0) return;        
+        // Create contact: adminPrincipalName
+        Contact contact = this.createContact(
+            adminSegment, 
+            segmentName, 
+            principalName, 
+            adminUser,
+            Arrays.asList(groupUsers, groupAdministrators),
             errors
         );
-        if(errors.size() > 0) return;
-                
-        // Create user home principalName
-        this.backend.getUserHomes().createUserHome(
-            realmIdentity,
-            contactIdentity,
-            groupAdministratorsIdentity,
+        if(contact == null) return;
+        // Create user home for segment admin
+        UserHomes.getInstance().createUserHome(
+            realm,
+            contact,
+            groupAdministrators,
             principalName,
-            Collections.EMPTY_SET,
+            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),            
             true,
             initialPassword,
             initialPasswordVerification,
-            errors
-        );
-        
-    }
-    
-    //-----------------------------------------------------------------------
-    private DataproviderObject_1_0 retrievePrincipal(
-        Path realm,
-        String principalName
-    ) {
-        try {
-            return this.backend.retrieveObjectFromDelegation(
-                realm.getDescendant(new String[]{"principal", principalName})
-            );
-        }
-        catch(Exception e) {
-            return null;
-        }
-    }
-    
-    //-----------------------------------------------------------------------
-    private DataproviderObject retrievePrincipalForModification(
-        Path realm,
-        String principalName
-    ) {
-        try {
-            return this.backend.retrieveObjectForModification(
-                realm.getDescendant(new String[]{"principal", principalName})
-            );
-        }
-        catch(Exception e) {
-            return null;
-        }
-    }
-    
-    //-----------------------------------------------------------------------
-    private DataproviderObject_1_0 retrieveSubject(
-        Path identitySegment,
-        String subjectName
-    ) {
-        try {
-            return this.backend.retrieveObjectFromDelegation(
-                identitySegment.getDescendant(new String[]{"subject", subjectName})
-            );
-        }
-        catch(Exception e) {
-            return null;
-        }
+            errors,
+            pm
+        );   
     }
     
     //-------------------------------------------------------------------------
     public String importLoginPrincipals(
-        Path adminSegmentIdentity,
-        byte[] item,
-        boolean runAsRoot
+        org.opencrx.kernel.admin1.jmi1.Segment adminSegment,
+        byte[] item
     ) throws ServiceException {
-        RequestCollection delegation = runAsRoot
-            ? this.backend.getRunAsRootDelegation()
-            : this.backend.getDelegatingRequests();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(adminSegment);
         BufferedReader reader = new BufferedReader(
             new InputStreamReader(new ByteArrayInputStream(item))
         );
-        DataproviderObject_1_0 loginRealm = this.backend.retrieveObjectFromDelegation(
-            new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + adminSegmentIdentity.get(2) + "/segment/Root/realm/Default")
+        org.openmdx.security.realm1.jmi1.Realm loginRealm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
+        	SecureObject.getInstance().getLoginRealmIdentity(adminSegment.refGetPath().get(2))
         );
-        DataproviderObject_1_0 identitySegment = this.backend.retrieveObjectFromDelegation( 
-            new Path("xri:@openmdx:org.opencrx.security.identity1/provider/" + adminSegmentIdentity.get(2) + "/segment/Root")
+        org.opencrx.security.identity1.jmi1.Segment identitySegment = (org.opencrx.security.identity1.jmi1.Segment)pm.getObjectById( 
+            new Path("xri:@openmdx:org.opencrx.security.identity1/provider/" + adminSegment.refGetPath().get(2) + "/segment/Root")
         );
         int nCreatedPrincipals = 0;
         int nExistingPrincipals = 0;
@@ -574,28 +562,21 @@ public class Admin {
                     String principalDescription = t.nextToken();
                     String subjectName = t.nextToken();
                     String groups = t.nextToken();                       
-                    DataproviderObject principal = null;
-                    if((principal = this.retrievePrincipalForModification(loginRealm.path(), principalName)) == null) {
+                    org.openmdx.security.realm1.jmi1.Principal principal = null;
+                    try {
+                    	principal = loginRealm.getPrincipal(principalName);
+                    }
+                    catch(Exception e) {}
+                    if(principal == null) {
                         try {
-                            DataproviderObject_1_0 subject = this.backend.retrieveObjectFromDelegation(
-                                identitySegment.path().getDescendant(new String[]{"subject", subjectName})
-                            );
-                            principal = new DataproviderObject(
-                                loginRealm.path().getDescendant(new String[]{"principal", principalName})
-                            );
-                            principal.values(SystemAttributes.OBJECT_CLASS).add(
-                                "org:opencrx:security:realm1:Principal"
-                            );
-                            principal.values("description").add(principalDescription);
-                            principal.values("disabled").add(Boolean.FALSE);
-                            principal.values("subject").add(subject.path());
-                            delegation.addCreateRequest(
-                                principal
-                            );
-                            principal = this.retrievePrincipalForModification(
-                                loginRealm.path(),
-                                principalName
-                            );
+                        	principal = this.createPrincipal(
+                        		principalName, 
+                        		principalDescription,
+                        		loginRealm, 
+                        		PrincipalType.PRINCIPAL, 
+                        		new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+                        		identitySegment.getSubject(subjectName)
+                        	);
                             nCreatedPrincipals++;
                         }
                         catch(Exception e) {
@@ -610,12 +591,10 @@ public class Admin {
                         StringTokenizer g = new StringTokenizer(groups, ",");
                         while(g.hasMoreTokens()) {
                             String groupPrincipalName = g.nextToken();
-                            DataproviderObject_1_0 groupPrincipal = this.retrievePrincipal(
-                                loginRealm.path(), 
-                                groupPrincipalName
-                            );
-                            if(!principal.values("isMemberOf").contains(groupPrincipal.path())) {
-                                principal.values("isMemberOf").add(groupPrincipal.path());
+                            org.openmdx.security.realm1.jmi1.Group groupPrincipal = 
+                            	(org.openmdx.security.realm1.jmi1.Group)loginRealm.getPrincipal(groupPrincipalName);
+                            if(!principal.getIsMemberOf().contains(groupPrincipal)) {
+                                principal.getIsMemberOf().add(groupPrincipal);
                             }
                         }
                     }
@@ -625,18 +604,19 @@ public class Admin {
                     t.nextToken();
                     String subjectName = t.nextToken();
                     String subjectDescription = t.nextToken();
-                    if((this.retrieveSubject(identitySegment.path(), subjectName)) == null) {
+                    org.opencrx.security.identity1.jmi1.Subject subject = null;
+                    try {
+                    	subject = identitySegment.getSubject(subjectName);
+                    }
+                    catch(Exception e) {}
+                    if(subject == null) {
                         try {
-                            DataproviderObject subject = new DataproviderObject(
-                                identitySegment.path().getDescendant(new String[]{"subject", subjectName})
-                            );
-                            subject.values(SystemAttributes.OBJECT_CLASS).add(
-                                "org:opencrx:security:identity1:Subject"
-                            );
-                            subject.values("description").add(subjectDescription);
-                            delegation.addCreateRequest(
-                                subject
-                            );
+                        	subject = this.createSubject(
+                        		identitySegment,
+                        		subjectName,
+                        		subjectDescription,
+                        		new ArrayList<String>()
+                        	);
                             nCreatedSubjects++;
                         }
                         catch(Exception e) {
@@ -657,12 +637,7 @@ public class Admin {
             "Principals=(created:" + nCreatedPrincipals + ",existing:" + nExistingPrincipals + ",failed:" + nFailedPrincipals + "); " +
             "Subjects:(created:" + nCreatedSubjects + ",existing:" + nExistingSubjects + ",failed:" + nFailedSubjects + ")";
     }
-        
-    //-------------------------------------------------------------------------
-    // Members
-    //-------------------------------------------------------------------------
-    protected final Backend backend;
-        
+                
 }
 
 //--- End of File -----------------------------------------------------------
