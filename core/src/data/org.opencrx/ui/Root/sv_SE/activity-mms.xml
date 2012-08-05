@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MMS</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:mmsRecipient" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mottagare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mottagare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:mmsSlide" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bilder</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bilder</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:sender" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Avsändare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Avsändare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:sendDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Skickat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Skickat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipient" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mottagare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mottagare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipient:party" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefonnummer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefonnummer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipient:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipientGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefonnummergrupp</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefonnummergrupp</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipientGroup:party" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefonnummergrupp</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefonnummergrupp</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipientGroup:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractMmsRecipient:party" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefonnummer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefonnummer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractMmsRecipient:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsSlide" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MMS-bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MMS-bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsSlide:slideOrder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bildnummer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bildnummer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsSlide:mediaObject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mediaobjekt</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mediaobjekt</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsSlide:text" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Text</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Text</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE openmdx-ejb-jar PUBLIC "-//openMDX//DTD Enterprise JavaBeans Extension 1.0//EN" "http://www.openmdx.org/dtd/openmdx-ejb-jar_1_0.dtd">
+<openmdx-ejb-jar>
+	<enterprise-beans>
+		<session>
+			<ejb-name>opencrx_core_CRX_gateway_mandatory</ejb-name>
+			<jndi-name>org/opencrx/core/CRX/mandatory/gateway</jndi-name>
+			<local-jndi-name>org/opencrx/core/CRX/local/mandatory/gateway</local-jndi-name>
+		</session>
+		<session>
+			<ejb-name>opencrx_core_CRX_gateway_noOrNew</ejb-name>
+			<jndi-name>org/opencrx/core/CRX/noOrNew/gateway</jndi-name>
+			<local-jndi-name>org/opencrx/core/CRX/local/noOrNew/gateway</local-jndi-name>
+		</session>
+	</enterprise-beans>
+</openmdx-ejb-jar>

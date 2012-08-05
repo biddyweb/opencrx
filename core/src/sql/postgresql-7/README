@@ -1,0 +1,35 @@
+-------------------------------------------------------------------
+     
+          R E A D M E
+          openCRX Database Scripts for PostgreSQL 7
+
+-------------------------------------------------------------------
+
+1/ What this guide is for
+   ----------------------
+
+   This README describes known problems and solutions with the openCRX
+   database scripts for PostgreSQL 7.
+
+   upgrade-from-<version-from>-to-<version-to>.sql: These scripts must 
+   be executed to upgrade the database from <version-from> to <version-to>. 
+   E.g. If you have a database of version 1.4.0 and you want to upgrade to
+   version 1.6.0 you must run the scripts from-1.4.0-to-1.5.0, from-1.5.0-
+   to-1.6.0.
+  
+   NOTE: the execution of the upgrade scripts is mandatory.
+   
+   migrate-from-<version-from>-to-<version-to>.sql: The migrate scripts
+   allow to migrate data from <version-from> to <version-to>. If you have
+   made your own database extension you must add your own migration
+   code. 
+   
+   NOTE: the execution of the migrate scripts is optional.
+
+
+2/ Known Problems
+   --------------
+   None.
+   
+---
+End of README

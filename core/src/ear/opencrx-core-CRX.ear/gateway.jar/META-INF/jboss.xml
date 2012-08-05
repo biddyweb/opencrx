@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss PUBLIC "-//JBoss//DTD JBOSS 4.0//EN" "http://www.jboss.org/j2ee/dtd/jboss_4_0.dtd">
+<jboss>
+	<enterprise-beans>
+		<session>
+			<ejb-name>opencrx_core_CRX_gateway_mandatory</ejb-name>
+			<jndi-name>org.opencrx.core.CRX.mandatory.gateway</jndi-name>
+			<local-jndi-name>org.opencrx.core.CRX.local.mandatory.gateway</local-jndi-name>
+       <configuration-name>openMDX Gateway SessionBean</configuration-name>			
+		</session>
+		<session>
+			<ejb-name>opencrx_core_CRX_gateway_noOrNew</ejb-name>
+			<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
+			<local-jndi-name>org.opencrx.core.CRX.local.noOrNew.gateway</local-jndi-name>
+       <configuration-name>openMDX Gateway SessionBean</configuration-name>			
+		</session>
+	</enterprise-beans>
+    <container-configurations>
+        <container-configuration extends="Standard Stateless SessionBean">
+            <container-name>openMDX Gateway SessionBean</container-name>
+            <container-pool-conf>
+						<MaximumSize>5</MaximumSize>
+						<strictMaximumSize>true</strictMaximumSize>
+				  </container-pool-conf>
+        </container-configuration>
+    </container-configurations>	
+</jboss>

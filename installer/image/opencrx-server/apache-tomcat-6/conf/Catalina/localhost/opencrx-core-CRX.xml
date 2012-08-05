@@ -1,0 +1,28 @@
+<Context
+	className="org.openmdx.tomcat.application.container.ExtendedContext"
+	path="/opencrx-core-CRX"
+	enterpriseApplication="opencrx-core-CRX"
+	docBase="${catalina.home}/staging-area/opencrx-core-CRX/opencrx-core-CRX.war"
+>
+	<Resource
+		name="ejb/data"
+		auth="Container"
+		type="org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome"
+		factory="org.openmdx.kernel.naming.tomcat.LinkingObjectFactory"
+		linkName="openmdx:application/(gateway.jar)/opencrx_core_CRX_gateway_noOrNew/local"
+	/>
+	
+	<Realm  className="org.apache.catalina.realm.ExtendedJDBCRealm" 
+		debug="0"
+		digest="MD5"
+		digestEncoding="UTF-8"
+		digestFormat="base64"
+		flag="sufficient"
+		driverName="com.mysql.jdbc.Driver"
+		connectionURL="jdbc:mysql://localhost:3306/crx"
+		connectionName="root" connectionPassword="manager99"
+		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
+		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 
+	/>
+		
+</Context>

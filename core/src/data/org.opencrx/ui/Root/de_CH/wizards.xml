@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+	<_object/>
+	<_content>
+		<provider>
+			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+				<_object/>
+				<_content>
+					<segment>
+						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+							<_object/>
+							<_content>
+
+<!-- File -->
+								<elementDefinition>
+                <!-- Wizard ExportToOutlook.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportToOutlook">
+										<_object>
+											<toolTip>
+												<_item>Kontaktperson exportieren nach MS Outlook (nur mit IE)</_item>
+											</toolTip>
+											<label>
+												<_item>Kontaktperson exportieren nach MS Outlook (nur mit IE)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard Account_Quick.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick">
+										<_object>
+											<toolTip>
+												<_item>Neue Kontaktperson oder neue juristische Person erstellen</_item>
+											</toolTip>
+											<label>
+												<_item>Neue Kontaktperson oder neue juristische Person erstellen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+<!-- Edit -->
+                <!-- Wizard AddressBook.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook">
+										<_object>
+											<toolTip>
+												<_item>Kontaktperson bearbeiten</_item>
+											</toolTip>
+											<label>
+												<_item>Kontaktperson bearbeiten</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook">
+										<_object>
+											<toolTip>
+												<_item>Juristische Person bearbeiten</_item>
+											</toolTip>
+											<label>
+												<_item>Juristische Person bearbeiten</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook">
+										<_object>
+											<toolTip>
+												<_item>Gruppe bearbeiten</_item>
+											</toolTip>
+											<label>
+												<_item>Gruppe bearbeiten</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook">
+										<_object>
+											<toolTip>
+												<_item>Allgemeinen Kontakt bearbeiten</_item>
+											</toolTip>
+											<label>
+												<_item>Allgemeinen Kontakt bearbeiten</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard Account_Quick.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick">
+										<_object>
+											<toolTip>
+												<_item>Kontaktperson bearbeiten (Quick)</_item>
+											</toolTip>
+											<label>
+												<_item>Kontaktperson bearbeiten (Quick)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick">
+										<_object>
+											<toolTip>
+												<_item>Juristische Person bearbeiten (Quick)</_item>
+											</toolTip>
+											<label>
+												<_item>Juristische Person bearbeiten (Quick)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard UserSettings.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings">
+										<_object>
+											<toolTip>
+												<_item>Benutzereinstellungen</_item>
+											</toolTip>
+											<label>
+												<_item>Benutzereinstellungen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+<!-- View -->
+                <!-- Wizard AddressBook.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook">
+										<_object>
+											<toolTip>
+												<_item>Adressbuch</_item>
+											</toolTip>
+											<label>
+												<_item>Adressbuch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+<!-- Action -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia">
+										<_object>
+											<toolTip>
+												<_item>Datei hinzufügen</_item>
+											</toolTip>
+											<label>
+												<_item>Datei hinzufügen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								</elementDefinition>
+
+							</_content>
+						</org.openmdx.ui1.Segment>
+					</segment>
+				</_content>
+			</org.openmdx.base.Provider>
+		</provider>
+	</_content>
+</org.openmdx.base.Authority>

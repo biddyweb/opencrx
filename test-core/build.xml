@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+ * =======================================================================
+ * = Name:        $Id: build.xml,v 1.5 2008/02/15 16:27:48 wfro Exp $
+ * = Description: openCRX/Core Test build.xml
+ * = Revision:    $Revision: 1.5 $
+ * = Date:        $Date: 2008/02/15 16:27:48 $
+ * = Copyright:   (c) 2003-2005 CRIXP AG
+ * =======================================================================
+ * This software is published under the BSD license
+ * as listed below.
+ * 
+ * Copyright (c) 2004-2005, CRIXP Corp., Switzerland
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions 
+ * are met:
+ * 
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * 
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
+ * 
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ * 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * This product includes software developed by the Apache Software
+ * Foundation (http://www.apache.org/).
+ * 
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
+-->
+<project
+  name="opencrx-test-core" 
+  default="-projecthelp" 
+	xmlns:openmdx="xri://(antlib:org.openmdx.tools.ant)"
+	xmlns:antcontrib="antlib:net.sf.antcontrib"
+  xmlns:ivy="xri:(antlib:fr.jayasoft.ivy.ant)"
+>
+	<description>Build the openCRX/Core Test project</description>
+	<property name="project.specification.title" value="openCRX/Core Test"/>
+	<!-- Slash separated platform list, the last entry being the default -->
+	<property name="project.platform.list" value="jre-1.5"/>
+	<!-- openMDX libraries -->
+	<property name="openmdx.version" value="2.0.0"/>
+	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
+	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
+	<!-- Generic client parameters -->
+	<property name="client.provider.name" value="CRX"/>
+	<property name="client.segment.name" value="Standard"/>
+	<!-- SimpleClient parameters -->
+	<property name="simple.client.name" value="Guest"/>
+	<property name="simple.client.xmlExport" value="false"/>
+	<!-- CodeClient parameters -->
+	<property name="code.client.name" value="org:opencrx:kernel:address1:PostalAddressable:postalCountry"/>
+	<!-- classpath -->
+	<path id="project.lib.classpath">
+		<path refid="openmdx.core.lib"/>
+		<path refid="java2.enterprise.api"/>
+		<path refid="java2.extension.lib"/>
+		<pathelement location="../${build.java.platform}/core/lib/opencrx-kernel.jar"/>
+		<pathelement location="../${build.java.platform}/core/lib/opencrx-security.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/${build.java.platform}/security/lib/openmdx-security.jar"/>
+	</path>
+	<path id="project.bin.classpath">
+		<path refid="project.lib.classpath"/>
+		<pathelement location="${basedir}/src/resource"/>
+		<pathelement location="${build.dir}/bin"/>
+		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
+		<pathelement location="../opt/microsoft/jre-1.5/sql-server-2005/lib/sqljdbc.jar"/>
+	</path>
+	<patternset id="project.junit.test.case">
+		<include name="org/opencrx/**/Test*.java"/>
+	</patternset>
+	<!-- ******************************************************************* -->
+	<!-- * generate -->
+	<!-- ******************************************************************* -->
+	<target name="generate" description="Generate version, jt and model dependend files" depends="build-init">
+		<ant dir="${openmdx.home}/core" inheritAll="false" target="prepare">
+			<property name="build.target.platform" value="${build.java.platform}"/>
+		</ant>
+		<antcall target="-preprocess-model-files-"/>
+	</target>
+	<!-- ******************************************************************* -->
+	<!-- * deliverables -->
+	<!-- ******************************************************************* -->
+	<target name="deliverables" description="Populate the project's deliverables directory" depends="deliverables-init,java-archives,source-archives"/>
+	<!-- ******************************************************************* -->
+	<!-- * distribution -->
+	<!-- ******************************************************************* -->
+	<target name="distribution" description="Creates all distributions" depends="distribution-init,deliverables">
+		<mkdir dir="../distribution"/>
+		<openmdx:archive 
+			destfile="${distribution.dir}/${project.implementation.prefix}-${project.implementation.version}-${base.dir.name}.${build.target.platform}."
+			format="${distribution.format}"
+			checksum="MD5"
+		>
+			<openmdx:archivefileset 
+				dir="${basedir}" 
+				prefix="${project.implementation.prefix}-${project.implementation.version}/${base.dir.name}"
+			>
+				<include name="build.xml"/>
+				<include name="build.properties"/>
+				<include name="version.properties"/>
+				<include name="etc/**"/>
+			</openmdx:archivefileset>
+			<openmdx:archivefileset 
+				dir="${project.home}" 
+				prefix="${project.implementation.prefix}-${project.implementation.version}"
+			>				
+				<include name="source-archive/test-core/**"/>
+				<include name="${build.target.platform}/test-core/src/opencrx-*"/>
+				<include name="${build.target.platform}/test-core/lib/opencrx-*"/>
+			</openmdx:archivefileset>
+		</openmdx:archive>
+	</target>
+	<!-- ******************************************************************* -->
+	<!-- * java-archives -->
+	<!-- ******************************************************************* -->
+	<target name="java-archives" depends="deliverables-init,build">
+		<openmdx:archive 
+		  destfile="${deliver.dir}/lib/opencrx-test-core.jar"
+		  format="jar"
+		>
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} Library kernel"/>
+				<attribute name="Implementation-Title" value="opencrx-kernel for ${build.target.platform}"/>
+			</manifest>		
+			<openmdx:archivefileset dir="${build.dir}/bin">
+				<patternset id="opencrx-test-core.jar.content">
+					<include name="org/opencrx/test/**"/>
+					<include name="org/opencrx/xmi/**"/>
+				</patternset>
+			</openmdx:archivefileset>
+		</openmdx:archive>
+	</target>
+	<!-- ******************************************************************* -->
+	<!-- * test-SimpleClient -->
+	<!-- ******************************************************************* -->
+	<target name="test-SimpleClient" description="Simple openCRX Client Application">
+		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" failonerror="true" maxmemory="96m" classpathref="project.bin.classpath">
+			<sysproperty key="user.language" value="en"/>
+			<sysproperty key="user.region" value="US"/>
+			<sysproperty key="file.encoding" value="Cp1252"/>
+			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
+			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
+			<arg line="-ear file:src/ear/test-SimpleClient.ear --name=${simple.client.name} --xmlExport=${simple.client.xmlExport} --providerName=${client.provider.name} --segmentName=${client.segment.name}"/>
+		</java>
+		<echo/>
+		<echo>You can specify a different account name with option -Dsimple.client.name=...</echo>
+		<echo>You can perform an XML export with option -Dsimple.client.xmlExport=true</echo>
+		<echo>You can specify a different provider name with option -Dclient.provider.name=...</echo>
+		<echo>You can specify a different segment name with option -Dclient.segment.name=...</echo>
+	</target>
+	<!-- ******************************************************************* -->
+	<!-- * test-CodeClient -->
+	<!-- ******************************************************************* -->
+	<target name="test-CodeClient" description="openCRX Code Client Application">
+		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" failonerror="true" maxmemory="96m" classpathref="project.bin.classpath">
+			<sysproperty key="user.language" value="en"/>
+			<sysproperty key="user.region" value="US"/>
+			<sysproperty key="file.encoding" value="Cp1252"/>
+			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
+			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
+			<arg line="-ear file:src/ear/test-CodeClient.ear --name=${client.name} --providerName=${client.provider.name}"/>
+		</java>
+		<echo/>
+		<echo>You can specify a different code container name with option -Dcode.client.name=...</echo>
+		<echo>You can specify a different provider name with option -Dclient.provider.name=...</echo>
+	</target>
+	<!-- ******************************************************************* -->
+	<!-- * test-StressTester -->
+	<!-- ******************************************************************* -->
+	<target name="test-StressTester" description="openCRX Stress Tester">
+		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" failonerror="true" maxmemory="256m" classpathref="project.bin.classpath">
+			<sysproperty key="user.language" value="en"/>
+			<sysproperty key="user.region" value="US"/>
+			<sysproperty key="file.encoding" value="Cp1252"/>
+			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
+			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
+			<arg line="-ear file:src/ear/test-StressTester.ear --providerName=${client.provider.name} --segmentName=${client.segment.name}"/>
+		</java>
+		<echo/>
+		<echo>You can specify a different provider name with option -Dclient.provider.name=...</echo>
+		<echo>You can specify a different provider name with option -Dclient.segment.name=...</echo>
+	</target>
+</project>

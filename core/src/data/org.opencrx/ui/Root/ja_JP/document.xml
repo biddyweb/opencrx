@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment:folder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメントフォルダ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントフォルダ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメントフォルダ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントフォルダ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメントフォルダ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントフォルダ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>説明</_item>
+                      </label>
+                      <toolTip>
+                        <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:parent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>親</_item>
+                      </label>
+                      <toolTip>
+                        <_item>親</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:folder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメントフォルダ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントフォルダ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:revision" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リビジョン</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リビジョン</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>補足情報</_item>
+                      </label>
+                      <toolTip>
+                        <_item>補足情報</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>メディア</_item>
+                      </label>
+                      <toolTip>
+                        <_item>メディア</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>タイトル</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントタイトル</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>執筆者</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント執筆者</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>概要</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント概要</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ステータス</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントステータス</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:activeOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクティブ開始</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクティブ開始</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:activeUntil" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクティブ終了</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクティブ終了</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:headRevision" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ヘッダーリビジョン</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ヘッダーリビジョン</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:contentLength" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツ長</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツ長</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:contentType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツタイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツタイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:contentLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツ言語</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツ言語</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメントタイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントタイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:literatureType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>資料タイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>資料タイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:location" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>場所</_item>
+                      </label>
+                      <toolTip>
+                        <_item>場所</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>キーワード</_item>
+                      </label>
+                      <toolTip>
+                        <_item>キーワード</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:searchText" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>検索テキスト</_item>
+                      </label>
+                      <toolTip>
+                        <_item>検索テキスト</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentSize" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>サイズ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメントサイズ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>数</_item>
+                      </label>
+                      <toolTip>
+                        <_item>数</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:media" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>メディア</_item>
+                      </label>
+                      <toolTip>
+                        <_item>メディア</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>メディアコンテンツ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>メディアコンテンツ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:contentName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツ名</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツ名</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:contentLength" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツ長</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツ長</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:contentMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIMEタイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIMEタイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>説明</_item>
+                      </label>
+                      <toolTip>
+                        <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:content" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>コンテンツ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>コンテンツ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>メディアリファレンス</_item>
+                      </label>
+                      <toolTip>
+                        <_item>メディアリファレンス</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference:media" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>メディア</_item>
+                      </label>
+                      <toolTip>
+                        <_item>メディア</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:ResourceIdentifier" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リソースID</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リソースID</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:ResourceIdentifier:uri" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>URI</_item>
+                      </label>
+                      <toolTip>
+                        <_item>URI</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

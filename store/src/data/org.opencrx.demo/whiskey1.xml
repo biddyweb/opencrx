@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?StartPath org::opencrx::kernel::product1/provider/CRX/segment/Standard/product/iET0863rEduRlB3t5M7kmA?>
+<org.openmdx.base.Authority name="org:opencrx:kernel:product1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/product1/xmi/product1.xsd">
+    <_object/>
+    <_content>
+        <provider>
+            <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+                <_object/>
+                <_content>
+                    <segment>
+                        <org.opencrx.kernel.product1.Segment qualifiedName="Standard" _operation="null">
+                            <_object/>
+                            <_content>
+                                <product>
+                                    <org.opencrx.kernel.product1.Product id="iET0863rEduRlB3t5M7kmA">
+                                        <_object>
+                                            <classification>
+                                                <_item>xri:@openmdx:org.opencrx.kernel.product1/provider/CRX/segment/Standard/productClassification/iETz+a3rEduRlB3t5M7kmA</_item>
+                                            </classification>
+                                            <name>Speyside&apos;s finest 1965 - 40 Year Old</name>
+                                            <detailedDescription>Speyside&apos;s finest 1965 - 40 Year Old. Single Cask Single Malt.</detailedDescription>
+                                            <defaultUom>xri:@openmdx:org.opencrx.kernel.uom1/provider/CRX/segment/Root/uom/Unit</defaultUom>
+                                            <owningGroup>
+                                                <_item>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Standard/principal/Administrators</_item>
+                                            </owningGroup>
+                                            <description>malt-Ballindalloch-box-393_000.jpg</description>
+                                        </_object>
+                                        <_content>
+                                            <basePrice>
+                                                <org.opencrx.kernel.product1.ProductBasePrice id="k0OQW63rEduRlB3t5M7kmA">
+                                                    <_object>
+                                                        <price>99.989997863</price>
+                                                        <uom>xri:@openmdx:org.opencrx.kernel.uom1/provider/CRX/segment/Root/uom/Unit</uom>
+                                                        <priceLevel>
+                                                            <_item>xri:@openmdx:org.opencrx.kernel.product1/provider/CRX/segment/Standard/priceLevel/tL3Nca3nEduUrK-Q7UkzAQ</_item>
+                                                        </priceLevel>
+                                                        <usage>
+                                                            <_item>100</_item>
+                                                        </usage><!-- @see CodeValueContainer name="usageproductbaseprice" -->
+                                                        <owningGroup>
+                                                            <_item>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Standard/principal/Administrators</_item>
+                                                        </owningGroup>
+                                                        <priceCurrency>840</priceCurrency><!-- @see CodeValueContainer name="currency" -->
+                                                    </_object>
+                                                    <_content/>
+                                                </org.opencrx.kernel.product1.ProductBasePrice>
+                                            </basePrice>
+                                        </_content>
+                                    </org.opencrx.kernel.product1.Product>
+                                </product>
+                            </_content>
+                        </org.opencrx.kernel.product1.Segment>
+                    </segment>
+                </_content>
+            </org.openmdx.base.Provider>
+        </provider>
+    </_content>
+</org.openmdx.base.Authority>

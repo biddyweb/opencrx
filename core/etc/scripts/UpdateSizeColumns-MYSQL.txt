@@ -1,0 +1,1 @@
+ant -Ddb.jdbc.url="jdbc:mysql://localhost:3306/CRX" -Ddb.jdbc.driver="com.mysql.jdbc.Driver" -Ddb.jdbc.driver.classpath="..\opt\mysql\jre-1.5\mysql-5\lib\mysql-connector-java-3.1.12-bin.jar" -Ddb.username="system" -Ddb.password="manager" update-size-columns-1_11_0

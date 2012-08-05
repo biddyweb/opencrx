@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+	<_object/>
+	<_content>
+		<provider>
+			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+				<_object/>
+				<_content>
+					<segment>
+						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+							<_object/>
+							<_content>
+								<elementDefinition>
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>all Budgets</_item>
+											</toolTip>
+											<label>
+												<_item>Budgets</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Pane1 Tab Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetMilestone">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Budget Milestone</_item>
+											</toolTip>
+											<label>
+												<_item>Budget Milestone</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Budget</_item>
+											</toolTip>
+											<label>
+												<_item>Budget</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:forecast1:Budget</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--Element Definition Contact-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>To be fulfilled by organizational unit</_item>
+											</toolTip>
+											<label>
+												<_item>Organizational unit</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>To be fulfilled by account</_item>
+											</toolTip>
+											<label>
+												<_item>Account</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:underlying">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Underlying</_item>
+											</toolTip>
+											<label>
+												<_item>Underlying</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Budget type</_item>
+											</toolTip>
+											<label>
+												<_item>Type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:startingFrom">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Starting from</_item>
+											</toolTip>
+											<label>
+												<_item>Starting from</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:endingAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Ending at</_item>
+											</toolTip>
+											<label>
+												<_item>Ending at</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:targetValue">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Target value</_item>
+											</toolTip>
+											<label>
+												<_item>Target value</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:actualValue">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Actual value</_item>
+											</toolTip>
+											<label>
+												<_item>Actual value</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>110</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Budget Milestones -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Budget Milestone</_item>
+											</toolTip>
+											<label>
+												<_item>Milestone</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:forecast1:BudgetMilestone</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--Element Definition Contact-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:targetValue">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Target value</_item>
+											</toolTip>
+											<label>
+												<_item>Target value</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:actualValue">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Actual value</_item>
+											</toolTip>
+											<label>
+												<_item>Actual value</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								</elementDefinition>
+							</_content>
+						</org.openmdx.ui1.Segment>
+					</segment>
+				</_content>
+			</org.openmdx.base.Provider>
+		</provider>
+	</_content>
+</org.openmdx.base.Authority>

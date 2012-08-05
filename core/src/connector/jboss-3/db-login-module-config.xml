@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- since openCRX v1.10.0 -->
+<application-policy name="opencrx-core-CRX">
+  <authentication>
+    <login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="sufficient">
+      <module-option name="dsJndiName">java:/jdbc_opencrx_CRX</module-option>
+      <module-option name="principalsQuery">SELECT c.passwd FROM security_Principal p, security_Credential c WHERE (p.object_id LIKE 'principal/CRX/Root/Default/%') AND (p.credential = c.object_id) AND (p.name = ?)</module-option>
+      <module-option name="rolesQuery">SELECT r.name, 'Roles' FROM security_Principal_N pg, security_Principal p, security_Principal_N pn, security_Role r WHERE  (p.object_id = pn.object_id) AND (pn.is_member_of = pg.object_id) AND (pg.granted_role = r.object_id) AND (p.object_id LIKE 'principal/CRX/Root/Default/%') AND (p.name = ?)</module-option>
+      <module-option name="ignorePasswordCase">true</module-option>
+      <module-option name="hashCharset">UTF-8</module-option>
+      <module-option name="hashEncoding">base64</module-option>
+      <module-option name="hashAlgorithm">MD5</module-option>
+    </login-module>
+    <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="sufficient" >
+      <module-option name="usersProperties">users.properties</module-option>
+      <module-option name="rolesProperties">roles.properties</module-option>
+    </login-module>
+  </authentication>
+</application-policy>
+
+<!-- since openCRX v1.9.0 
+<application-policy name="opencrx-core-CRX">
+  <authentication>
+    <login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="sufficient">
+      <module-option name="dsJndiName">java:/jdbc_opencrx_CRX</module-option>
+      <module-option name="principalsQuery">SELECT c.passwd FROM security_Principal p, security_Credential c WHERE (p.object_rid = 'principal/CRX/Root/Default') AND (p.p$$credential__rid = c.object_rid) AND (p.p$$credential__oid = c.object_oid) AND (p.object_idx = 0) AND (p.object_oid = ?)</module-option>
+      <module-option name="rolesQuery">SELECT pg.p$$granted_role__oid, 'Roles' FROM security_Principal pg, security_Principal p WHERE (pg.object_rid = p.p$$is_member_of__rid) AND (pg.object_oid = p.p$$is_member_of__oid) AND (p.object_rid = 'principal/CRX/Root/Default') AND (p.object_oid = ?)</module-option>
+      <module-option name="ignorePasswordCase">true</module-option>
+      <module-option name="hashCharset">UTF-8</module-option>
+      <module-option name="hashEncoding">base64</module-option>
+      <module-option name="hashAlgorithm">MD5</module-option>
+    </login-module>
+    <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="sufficient" >
+      <module-option name="usersProperties">users.properties</module-option>
+      <module-option name="rolesProperties">roles.properties</module-option>
+    </login-module>
+  </authentication>
+</application-policy>
+<application-policy name="opencrx-core-CRX">
+  <authentication>
+    <login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="sufficient">
+      <module-option name="dsJndiName">java:/jdbc_opencrx_CRX</module-option>
+      <module-option name="principalsQuery">SELECT c.passwd FROM security_Principal p, security_Credential c WHERE (p.object_rid = 'principal/CRX/Root/Default') AND (p."p$$credential__rid" = c.object_rid) AND (p."p$$credential__oid" = c.object_oid) AND (p.object_idx = 0) AND (p.object_oid = ?)</module-option>
+      <module-option name="rolesQuery">SELECT pg."p$$granted_role__oid", 'Roles' FROM security_Principal pg, security_Principal p WHERE (pg.object_rid = p."p$$is_member_of__rid") AND (pg.object_oid = p."p$$is_member_of__oid") AND (p.object_rid = 'principal/CRX/Root/Default') AND (p.object_oid = ?)</module-option>
+      <module-option name="ignorePasswordCase">true</module-option>
+      <module-option name="hashCharset">UTF-8</module-option>
+      <module-option name="hashEncoding">base64</module-option>
+      <module-option name="hashAlgorithm">MD5</module-option>
+    </login-module>
+    <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="sufficient" >
+      <module-option name="usersProperties">users.properties</module-option>
+      <module-option name="rolesProperties">roles.properties</module-option>
+    </login-module>
+  </authentication>
+</application-policy>-->
+
+<!-- up to openCRX v1.8.1
+<policy>
+		<application-policy name="opencrx-core-CRX">
+			<authentication>
+				<login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="required">
+					<module-option name="dsJndiName">java:/jdbc_opencrx_CRX</module-option>
+					<module-option name="principalsQuery">SELECT c.passwd FROM security_Principal p, security_Credential c WHERE (p.object_rid IN (SELECT object_rid FROM security_REF WHERE c$0='org:openmdx:security:realm1' AND c$1='provider' AND c$2='CRX' AND c$3='segment' AND c$4='Root' AND c$5='realm' AND c$6='Default' AND c$7='principal' AND n=8)) AND (p.p$$credential__rid = c.object_rid) AND (p.p$$credential__oid = c.object_oid) AND (p.object_idx = 0) AND (p.object_oid = ?)</module-option>
+					<module-option name="rolesQuery">SELECT pg.p$$granted_role__oid, 'Roles' FROM security_Principal pg, security_Principal p WHERE (pg.object_rid = p.p$$is_member_of__rid) AND (pg.object_oid = p.p$$is_member_of__oid) AND (p.object_rid IN (SELECT object_rid FROM security_REF WHERE c$0='org:openmdx:security:realm1' AND c$1='provider' AND c$2='CRX' AND c$3='segment' AND c$4='Root' AND c$5='realm' AND c$6='Default' AND c$7='principal' AND n=8)) AND (p.object_oid = ?)</module-option>
+					<module-option name="ignorePasswordCase">true</module-option>
+					<module-option name="hashCharset">UTF-8</module-option>
+					<module-option name="hashEncoding">base64</module-option>
+					<module-option name="hashAlgorithm">MD5</module-option>
+				</login-module>
+			</authentication>
+		</application-policy>
+		<application-policy name="opencrx-core-CRX">
+			<authentication>
+				<login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="required">
+					<module-option name="dsJndiName">java:/jdbc_opencrx_CRX</module-option>
+					<module-option name="principalsQuery">SELECT c.passwd FROM security_Principal p, security_Credential c WHERE (p.object_rid IN (SELECT object_rid FROM security_REF WHERE "c$0"='org:openmdx:security:realm1' AND "c$1"='provider' AND "c$2"='CRX' AND "c$3"='segment' AND "c$4"='Root' AND "c$5"='realm' AND "c$6"='Default' AND "c$7"='principal' AND n=8)) AND (p."p$$credential__rid" = c.object_rid) AND (p."p$$credential__oid" = c.object_oid) AND (p.object_idx = 0) AND (p.object_oid = ?)</module-option>
+					<module-option name="rolesQuery">SELECT pg."p$$granted_role__oid", 'Roles' FROM security_Principal pg, security_Principal p WHERE (pg.object_rid = p."p$$is_member_of__rid") AND (pg.object_oid = p."p$$is_member_of__oid") AND (p.object_rid IN (SELECT object_rid FROM security_REF WHERE "c$0"='org:openmdx:security:realm1' AND "c$1"='provider' AND "c$2"='CRX' AND "c$3"='segment' AND "c$4"='Root' AND "c$5"='realm' AND "c$6"='Default' AND "c$7"='principal' AND n=8)) AND (p.object_oid = ?)</module-option>
+					<module-option name="ignorePasswordCase">true</module-option>
+					<module-option name="hashCharset">UTF-8</module-option>
+					<module-option name="hashEncoding">base64</module-option>
+					<module-option name="hashAlgorithm">MD5</module-option>
+				</login-module>
+			</authentication>
+		</application-policy> -->
+
+</policy>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selezioni Soggetti</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selezioni dei Soggetti</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Parametri Selezione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tutti i parametri di selezione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Soggetti Selezionati</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tutti i Soggetti Selezionati</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Conteggio Selezionati</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Conteggio Soggetti Selezionati</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Invio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Invio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Esito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Esito</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selezione per Tipo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Parametri selezione per Tipo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty:accountType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipi di Soggetto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipi di Soggetto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selezione per categoria</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Parametri Selezione per Categoria</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty:accountCategory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Categorie Soggetti</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Categorie dei Soggetti</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Parametro Selezione per Categoria</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Parametro Selezione per Categoria</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty:category" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Categorie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Categorie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Disabilita Parametro Selezione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Disabilita Parametro di Selezione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Disabilita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Disabilita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selezione Soggetto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selezione Soggetto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Parametro Interrogazione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Parametro Interrogazione Selezione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

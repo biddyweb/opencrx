@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib/xwiki-core.jar" sourcepath="src/xwiki-core.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity-tools.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/portlet-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ecs.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-httpclient.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/picocontainer.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/exo-platform.commons.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/exo-platform.container.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/oro.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-net.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/securityfilter.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/oscache-xwiki.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/backport-util-concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/groovy-all-jsr-06.jar" sourcepath="/openMDX Thirdparty ~ Groovy (jre-1.5)/src/groovy-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/radeox.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/rome-fetcher.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/rome.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ldap-UNKNOWN.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcr.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackrabbit-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-rasterizer.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jfreechart.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcommon.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcaptcha-all.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/flickrapi.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jrcs.diff.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jrcs.rcs.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-svggen.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-ext.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-awt-util.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

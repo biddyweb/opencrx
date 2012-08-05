@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jonas-ejb-jar xmlns="http://www.objectweb.org/jonas/ns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.objectweb.org/jonas/ns http://www.objectweb.org/jonas/ns/jonas-ejb-jar_4_0.xsd">
+	<jonas-session>
+		<ejb-name>opencrx_core_CRX_security_mandatory</ejb-name>
+		<jndi-name>org.opencrx.core.CRX.mandatory.security</jndi-name>
+		<jndi-local-name>org.opencrx.core.CRX.local.mandatory.security</jndi-local-name>
+		<jonas-resource>
+			<res-ref-name>jdbc/datasource[0]</res-ref-name>
+			<jndi-name>jdbc.jdbc_opencrx_CRX</jndi-name>
+		</jonas-resource>
+	</jonas-session>
+</jonas-ejb-jar>

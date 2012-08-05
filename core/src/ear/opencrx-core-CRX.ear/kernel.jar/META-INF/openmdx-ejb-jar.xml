@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE openmdx-ejb-jar PUBLIC "-//openMDX//DTD Enterprise JavaBeans Extension 1.0//EN" "http://www.openmdx.org/dtd/openmdx-ejb-jar_1_0.dtd">
+<openmdx-ejb-jar>
+	<enterprise-beans>
+		<session>
+			<ejb-name>opencrx_core_CRX_kernel_mandatory</ejb-name>
+			<jndi-name>org/opencrx/core/CRX/mandatory/kernel</jndi-name>
+			<local-jndi-name>org/opencrx/core/CRX/local/mandatory/kernel</local-jndi-name>
+			<!-- EXTERNAL_PROVIDER_ENABLE_BEGIN
+	    <ejb-ref>
+		    <ejb-ref-name>ejb/dataprovider[4]</ejb-ref-name>
+		    <jndi-name>EXTERNAL_PROVIDER_JNDI_NAME_FORMAT2</jndi-name>
+	    </ejb-ref>
+	    EXTERNAL_PROVIDER_ENABLE_END -->
+			<resource-ref>
+				<res-ref-name>jdbc/datasource[0]</res-ref-name>
+				<jndi-name>jdbc/jdbc_opencrx_CRX</jndi-name>
+			</resource-ref>
+		</session>
+	</enterprise-beans>
+</openmdx-ejb-jar>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontaktfilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontaktfilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filterselektierte Kontakte</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filterselektierte Kontakte</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtereigenschaften</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtereigenschaften</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Filterselektierte Kontakte Zählen</_item>
+											</toolTip>
+											<label>
+												<_item>Filterselektierte Kontakte Zählen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount:Group:in" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount:Group:result" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Kontakt-Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Kontakt-Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty:accountType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontakt-Typen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontakt-Typen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Kontakt-Kategorie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Kontakt-Kategorie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty:accountCategory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontakt Kategorien</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontakt Kategorien</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Kategorie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Kategorie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty:category" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kategorien</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kategorien</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Deaktiviert</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Deaktiviert</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktiviert</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Deaktiviert</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

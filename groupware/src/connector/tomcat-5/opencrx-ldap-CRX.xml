@@ -1,0 +1,12 @@
+<Context path="/opencrx-ldap-CRX" docBase="${catalina.home}/webapps/opencrx-ldap-CRX.war" debug="0" privileged="true">
+	<Realm className="org.apache.catalina.realm.MemoryRealm"/>
+
+	<Resource 
+	    name="ejb/data" 
+	    auth="Container" 
+	    type="org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1Home"
+	    factory="org.openmdx.kernel.naming.tomcat.DelegatingObjectFactory"
+	    jndiName="org/opencrx/core/CRX/noOrNew/gateway"
+	/>
+  
+</Context>

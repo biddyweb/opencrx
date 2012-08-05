@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Contas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Contas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Contas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Contas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Contatos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pessoa Contato</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pessoa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Informação de Contatos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Informação de Contatos</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Informação Pessoal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Informação Pessoal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fotografia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fotografia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutationCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Saudação</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Saudação</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Saudação</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Saudação da Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:firstName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome da pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:middleName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome do meio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome do meio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:lastName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sobrenome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome do meio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:suffix" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sufixo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sufixo da Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:nickName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Apelido</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Assistente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Método Preferido</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Método Preferido de Contato</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Idioma Falado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Idioma Falado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Idioma Escrito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Idioma escrito preferido da Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Não usar E-Mail</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indicador de não mandar E-Mail com esta pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPostalMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Não usar correio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indicador de no usar e-mail com esta Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotBulkPostalMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Não usar correio em massa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indicador de não usar e-mail em massa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPhone" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Não chamar por telefone</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indicador de não chamar por telefone</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotFax" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Não usar fax</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indicador de não enviar faxes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobTitle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Título</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Título da Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Regra</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Regra da pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:organization" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Organização</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Organização</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:department" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Departamento</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Departamento</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reporta a</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reporta a</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Assistente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Assistente da Pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:deputy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Segundo no posto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Segundo no posto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:gender" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sexo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sexo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:familyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Estado Civil</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Estado Civil</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:numberOfChildren" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Número de Filhos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Número de Filhos da pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:childrenNames" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome dos Filhos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome dos Filhos da pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Educação</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Educação</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada Anual (moeda)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada anual da pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada anual (quatidade)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada anual da pessoa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:birthdate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aniversário</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aniversário</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Data de Aniversário</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Data de Aniversário</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ID do Governo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aniversário</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fotografia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fotografia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content>
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Fotografia</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Fotografia</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Título / Origem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Título / Origem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportar como vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportar como vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Idioma</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Idioma</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

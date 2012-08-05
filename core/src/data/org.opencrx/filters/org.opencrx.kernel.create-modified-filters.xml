@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.4.2_06" class="java.beans.XMLDecoder">
+	<object class="org.openmdx.portal.servlet.Filters">
+		<void property="forReference">
+			<array class="java.lang.String" length="35">
+				<void index="0">
+					<string>org:opencrx:kernel:activity1:Absence:note</string>
+				</void>
+				<void index="1">
+					<string>org:opencrx:kernel:activity1:EMail:note</string>
+				</void>
+				<void index="2">
+					<string>org:opencrx:kernel:activity1:ExternalActivity:note</string>
+				</void>
+				<void index="3">
+					<string>org:opencrx:kernel:activity1:Fax:note</string>
+				</void>
+				<void index="4">
+					<string>org:opencrx:kernel:activity1:Incident:note</string>
+				</void>
+				<void index="5">
+					<string>org:opencrx:kernel:activity1:Mailing:note</string>
+				</void>
+				<void index="6">
+					<string>org:opencrx:kernel:activity1:Meeting:note</string>
+				</void>
+				<void index="7">
+					<string>org:opencrx:kernel:activity1:Mms:note</string>
+				</void>
+				<void index="8">
+					<string>org:opencrx:kernel:activity1:PhoneCall:note</string>
+				</void>
+				<void index="9">
+					<string>org:opencrx:kernel:activity1:Sms:note</string>
+				</void>
+				<void index="10">
+					<string>org:opencrx:kernel:activity1:Task:note</string>
+				</void>
+				<void index="11">
+					<string>org:opencrx:kernel:activity1:Absence:followUp</string>
+				</void>
+				<void index="12">
+					<string>org:opencrx:kernel:activity1:EMail:followUp</string>
+				</void>
+				<void index="13">
+					<string>org:opencrx:kernel:activity1:ExternalActivity:followUp</string>
+				</void>
+				<void index="14">
+					<string>org:opencrx:kernel:activity1:Fax:followUp</string>
+				</void>
+				<void index="15">
+					<string>org:opencrx:kernel:activity1:Incident:followUp</string>
+				</void>
+				<void index="16">
+					<string>org:opencrx:kernel:activity1:Mailing:followUp</string>
+				</void>
+				<void index="17">
+					<string>org:opencrx:kernel:activity1:Meeting:followUp</string>
+				</void>
+				<void index="18">
+					<string>org:opencrx:kernel:activity1:Mms:followUp</string>
+				</void>
+				<void index="19">
+					<string>org:opencrx:kernel:activity1:PhoneCall:followUp</string>
+				</void>
+				<void index="20">
+					<string>org:opencrx:kernel:activity1:Sms:followUp</string>
+				</void>
+				<void index="21">
+					<string>org:opencrx:kernel:activity1:Task:followUp</string>
+				</void>
+				<void index="22">
+					<string>org:opencrx:kernel:activity1:ActivityGroup:activityNote</string>
+				</void>
+				<void index="23">
+					<string>org:opencrx:kernel:activity1:ActivityGroup:followUp</string>
+				</void>
+				<void index="24">
+					<string>org:opencrx:kernel:activity1:ActivityCategory:activityNote</string>
+				</void>
+				<void index="25">
+					<string>org:opencrx:kernel:activity1:ActivityCategory:followUp</string>
+				</void>
+				<void index="26">
+					<string>org:opencrx:kernel:activity1:ActivityMilestone:activityNote</string>
+				</void>
+				<void index="27">
+					<string>org:opencrx:kernel:activity1:ActivityMilestone:followUp</string>
+				</void>
+				<void index="28">
+					<string>org:opencrx:kernel:activity1:ActivityTracker:activityNote</string>
+				</void>
+				<void index="29">
+					<string>org:opencrx:kernel:activity1:ActivityTracker:followUp</string>
+				</void>
+				<void index="30">
+					<string>org:opencrx:kernel:contract1:Lead:note</string>
+				</void>
+				<void index="31">
+					<string>org:opencrx:kernel:contract1:Opportunity:note</string>
+				</void>
+				<void index="32">
+					<string>org:opencrx:kernel:contract1:Quote:note</string>
+				</void>
+				<void index="33">
+					<string>org:opencrx:kernel:contract1:SalesOrder:note</string>
+				</void>
+				<void index="34">
+					<string>org:opencrx:kernel:contract1:Invoice:note</string>
+				</void>
+			</array>
+		</void>
+		<void property="filter">
+			<array class="org.openmdx.portal.servlet.Filter" length="4">
+				<void index="0">
+					<object class="org.openmdx.portal.servlet.Filter">
+						<void property="name">
+							<string>Created At [reverse chronological order]</string>
+						</void>
+						<void property="iconKey">
+							<string>filter_down_star.gif</string>
+						</void>
+						<void property="orderSpecifier">
+							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.query.OrderSpecifier">
+										<void property="feature">
+											<string>createdAt</string>
+										</void>
+										<void property="order">
+											<short>-1</short>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="groupName">
+							<string>Standard</string>
+						</void>
+					</object>
+				</void>
+				<void index="1">
+					<object class="org.openmdx.portal.servlet.Filter">
+						<void property="name">
+							<string>Created At [chronological order]</string>
+						</void>
+						<void property="iconKey">
+							<string>filter_up_star.gif</string>
+						</void>
+						<void property="orderSpecifier">
+							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.query.OrderSpecifier">
+										<void property="feature">
+											<string>createdAt</string>
+										</void>
+										<void property="order">
+											<short>1</short>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="groupName">
+							<string>Standard</string>
+						</void>
+					</object>
+				</void>
+				<void index="2">
+					<object class="org.openmdx.portal.servlet.Filter">
+						<void property="name">
+							<string>Modified At [reverse chronological order]</string>
+						</void>
+						<void property="iconKey">
+							<string>filter_down_time.gif</string>
+						</void>
+						<void property="orderSpecifier">
+							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.query.OrderSpecifier">
+										<void property="feature">
+											<string>modifiedAt</string>
+										</void>
+										<void property="order">
+											<short>-1</short>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="groupName">
+							<string>Standard</string>
+						</void>
+					</object>
+				</void>
+				<void index="3">
+					<object class="org.openmdx.portal.servlet.Filter">
+						<void property="name">
+							<string>Modified At [chronological order]</string>
+						</void>
+						<void property="iconKey">
+							<string>filter_up_time.gif</string>
+						</void>
+						<void property="orderSpecifier">
+							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.query.OrderSpecifier">
+										<void property="feature">
+											<string>modifiedAt</string>
+										</void>
+										<void property="order">
+											<short>1</short>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="groupName">
+							<string>Standard</string>
+						</void>
+					</object>
+				</void>
+			</array>
+		</void>
+	</object>
+</java>

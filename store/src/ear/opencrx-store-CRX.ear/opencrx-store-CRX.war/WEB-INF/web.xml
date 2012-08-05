@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+ <display-name>openCRX/Store</display-name>
+ <description>openCRX/Store Web Application</description>
+ 
+	<!-- openCRX provider name and segment name. Data is stored and retrieved from the specified segment -->
+	 <context-param>
+		<param-name>root</param-name>
+		<param-value>provider/CRX/segment/Standard</param-value>
+	</context-param>
+	<!-- Product prices are created and displayed in the specified currency. The specified -->
+	<!-- currency should match the StoreLanguage and StoreCountry -->
+	 <context-param>
+		<param-name>currencyCode</param-name>
+		<param-value>840</param-value>
+	</context-param>
+	<!-- Contract positions are created using the specified sales tax type. The sales tax type must be added -->
+	<!-- with the standard openCRX GUI in the tab Products->Sales tax type -->
+	 <context-param>
+		<param-name>salesTaxTypeName</param-name>
+		<param-value>Sales Tax 8.25%</param-value>
+	</context-param>
+	<!-- Locale of the store. E.g. prices are displayed in the format of the specified locale -->
+	 <context-param>
+		<param-name>locale</param-name>
+		<param-value>en_US</param-value>
+	</context-param>
+
+	<ejb-ref id="ejb_data">
+		<ejb-ref-name>ejb/data</ejb-ref-name>
+		<ejb-ref-type>Session</ejb-ref-type>
+		<home>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1Home</home>
+		<remote>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Remote</remote>
+	</ejb-ref>
+
+</web-app>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-apiutil.jar" sourcepath="src/bw-apiutil.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-appcommon.jar" sourcepath="src/bw-appcommon.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-calcore.jar" sourcepath="src/bw-calcore.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-calcorei.jar" sourcepath="src/bw-calcorei.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-caldav.jar" sourcepath="src/bw-caldav.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-calenv.jar" sourcepath="src/bw-calenv.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-calfacade.jar" sourcepath="src/bw-calfacade.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-calsvc.jar" sourcepath="src/bw-calsvc.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-calsvci.jar" sourcepath="src/bw-calsvci.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-cdvserver.jar" sourcepath="src/bw-cdserver.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-davio.jar" sourcepath="src/bw-davio.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-icalendar.jar" sourcepath="src/bw-icalendar.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-locale.jar" sourcepath="src/bw-locale.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-logging.jar" sourcepath="src/bw-logging.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-mail.jar" sourcepath="src/bw-mail.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/rpiaccess.jar" sourcepath="src/rpiaccess.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/rpiutil.jar" sourcepath="src/rpiutil.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bw-webcommon.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

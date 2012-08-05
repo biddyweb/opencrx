@@ -1,0 +1,33 @@
+Welcome to openCRX SDK!
+-----------------------
+
+This installer has created an openCRX development environment.
+The SDK contains the sources of the following openCRX projects:
+
+* core: contains the openCRX Core models and functions
+* groupware: contains the openCRX Groupware functions
+* store: contains the openCRX Store application
+
+Each project contains a build.xml which accepts the following
+targets:
+
+* clean: clean the project
+* install-src: expand project source files
+* deliverables: compile and build JARs
+* distribution: compile, build JARs and distribution
+* assemble: build assemblies
+* config: display the project settings
+
+The installer has already performed install-src and assemble 
+for each project.
+
+The projects come with Eclipse project files. Run 
+'ant distribution' on the project before opening the project
+with Eclipse. This generates all required source files.
+
+
+IMPORTANT:
+Make sure to set the environment by running the scripts 
+./setenv.bat on Windows or ./setenv.sh on Linux platforms.
+
+----

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://geronimo.apache.org/xml/ns/j2ee/web-1.0" configId="opencrx-core-CRX-Web_war" parentId="opencrx-core-CRX-App_ear">
+	<ejb-ref>
+		<ref-name>ejb/data</ref-name>
+		<target-name>geronimo.server:EJBModule=gateway.jar,J2EEApplication=opencrx-core-CRX_ear,J2EEServer=geronimo,j2eeType=StatelessSessionBean,name=opencrx_core_CRX_local_gateway_noOrNew</target-name>
+	</ejb-ref>
+	<security-realm-name>opencrx-realm</security-realm-name>
+</web-app>

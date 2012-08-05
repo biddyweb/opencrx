@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Risorse</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutte le Risorse</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:workReportEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazioni Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Registrazioni Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:calendar" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calendari</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i Calendari</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Risorsa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Risorsa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:assignedActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Attivita&apos; Assegnate</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Attivita&apos; assegnate</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:workReportEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazione Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Registrazione Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:rateCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Divisa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Divisa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Contatto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Contatto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:calendar" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calendario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Calendario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:standardRate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tariffa Ordinaria</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tariffa Ordinaria</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:overtimeRate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tariffa Straordinario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tariffa Straordinario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calendario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Calendario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:weekDay" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giorni della settimana</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giorni della settimana</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:calendarDay" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giorni Calendario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giorni del Calendario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar:baseCalendar" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calendario Base</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Calendario base</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkingDay:workDurationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (Durata Lavoro)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (Durata lavoro)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkingDay:workDurationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (Durata lavoro)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (Durata lavoro)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkingDay:isWorkingDay" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giorno Lavorativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E&apos; un giorno lavorativo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WeekDay" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giorno della settimana</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giorno della settimana</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WeekDay:dayOfWeek" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giorno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giorno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalendarDay" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giorno Calendario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giorno Calendario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalendarDay:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalendarDay:dateOfDay" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Data</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Data</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Impegno Stimato</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Impegno Stimato</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:isMain" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E&apos; Iniziale</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E&apos; Iniziale</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:estimateEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (impegno stimato)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (impegno stimato)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:estimateEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (impegno stimato)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (impegno stimato)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:estimateMaxDeviation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Max. Deviazione dalla stima</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Massima deviazione dalla stima</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:selector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selettori</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selettori</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Assegnazione Risorsa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Assegnazione Risorsa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:workRecord" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazioni Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutte le registrazioni lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Risorsa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Risorsa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:resourceOrder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ordine Risorsa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ordine Risorsa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:workDurationPercentage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Durata Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Durata Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:resourceRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ruolo della Risorsa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ruolo della Risorsa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:calendar" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calendario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Calendario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityWorkRecord" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazione Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Registrazione Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fatturazione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fatturazione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:pauseDurationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (durata pausa)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (durata pausa)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:pauseDurationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (durata pausa)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (durata pausa)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:durationCalculationMode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calcolo Durata</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Calcolo Durata</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:startedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inizio il</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Iniziato il</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:endedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Terminato il</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Termine il</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:durationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (durata)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (durata)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:durationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (durata)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (durata)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:rateType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo tariffa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo tariffa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:rate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tariffa Oraria</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tariffa Oraria</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:billingCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Divisa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Divisa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:billableAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Importo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Importo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:isBillable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fatturabile</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fatturabile</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selettore Conto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selettore Conto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:workCb" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazione Impegno Lavorativo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Registrazione Impegno Lavorativo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Voce Registrazione Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Voce Registrazione Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Attivita&apos;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Attivita&apos;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:activityNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>N. Attivita&apos;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Numero Attivita&apos;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Risorsa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Risorsa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:assignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Assegnazione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Assegnazione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:billingCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Divisa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Divisa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:startedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inizio il</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inizio il</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:endedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Terminato il</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Terminato il</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:billableAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Importo Fatturabile</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Importo Fatturabile</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:pauseDurationHhMm" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Durata Pausa (hh:mm)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Durata Pausa (hh:mm)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:pauseDurationDecimal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Durata Pausa (decimale)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Durata Pausa (decimale)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:pauseDurationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (durata pausa)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (durata pausa)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:pauseDurationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (durata pausa)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (durata pausa)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:durationHhMm" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Durata (hh:mm)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Durata (hh:mm)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:durationDecimal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Durata (decimale)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Durata (decimale)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:durationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (durata)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (durata)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:durationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (durata)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (durata)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:workRecord" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazione Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Registrazione Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aggiungi Registrazione Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aggiungi Registrazione Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Invio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Invio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inizio il</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inizio il</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Termine il</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Termine il</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:durationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (durata)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (durata)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:durationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (durata)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (durata)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Attivita&apos;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Attivita&apos;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:rateType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo Tariffa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo Tariffa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selettore Conto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selettore Conto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:addWorkRecordByDuration:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Esito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Esito</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddWorkRecordResult:workRecord" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Registrazione Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Registrazione Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

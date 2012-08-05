@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tahminler</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tüm Tahminler</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:forecast" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tahminler</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tüm Tahminler</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tahmin</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tahmin</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:forecastPeriod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tahmin Dönemleri</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tahmin Dönemleri</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>İsim</_item>
+                      </label>
+                      <toolTip>
+                        <_item>İsim</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Açıklama</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Açıklama</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:organizationalUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Örgüt Birimleri</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Örgüt Birimleri</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tahmin Dönemi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tahmin Dönemi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:lead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Potansiyeller</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Potansiyeller</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fırsatlar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fırsatlar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:quote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kotalar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kotalar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Potansiyeller</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Potansiyeller</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fırsatlar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fırsatlar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kotalar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kotalar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:period" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dönem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dönem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:person" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bağlantı</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bağlantı</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:leadMinSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam (min)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam (min)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:leadMaxSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam (max)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam (max)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:leadExpectedSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam (beklenilen)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam (beklenilen)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunityMinSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam (min)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam (min)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunityMaxSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam (max)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunityExpectedSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam (beklenilen)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam (beklenilen)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:quoteSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Toplam</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toplam</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

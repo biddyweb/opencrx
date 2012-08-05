@@ -1,0 +1,2835 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+	<_object></_object>
+	<_content>
+		<provider>
+			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+				<_object></_object>
+				<_content>
+					<segment>
+						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+							<_object></_object>
+							<_content>
+								<elementDefinition>
+									<!-- Segment -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Activities</_item>
+											</toolTip>
+											<label>
+												<_item>Activities</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>ActivityManagement</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:currentActivityNumber">
+										<_object>
+											<active>false</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Current activity number</_item>
+											</toolTip>
+											<label>
+												<_item>Current activity number</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>Activity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									-->
+									<!-- Grid Tab -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>all activity creators</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Creators</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>8</maxMember>
+											<showMaxMember>3</showMaxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activity">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>all activities</_item>
+											</toolTip>
+											<label>
+												<_item>Activities</_item>
+											</label>
+											<order>
+												<_item>20</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<showMaxMember>10</showMaxMember>
+											<maxMember>15</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>all activity types</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Types</_item>
+											</label>
+											<order>
+												<_item>40</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Inspector Definitions-->
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Assigned Groups</_item>
+											</toolTip>
+											<label>
+												<_item>Assigned Groups</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+											<maxMember>1</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Linked To</_item>
+											</toolTip>
+											<label>
+												<_item>Linked To</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>210</_item>
+											</order>
+											<maxMember>4</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkFrom">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Inbound Links</_item>
+											</toolTip>
+											<label>
+												<_item>Inbound Links</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>220</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedResource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Assigned Resources</_item>
+											</toolTip>
+											<label>
+												<_item>Assigned Resources</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>7</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:effortEstimate">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Effort Estimates</_item>
+											</toolTip>
+											<label>
+												<_item>Effort Estimates</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+											<maxMember>7</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:workReportEntry">
+										<_object>
+											<active>true</active>
+											<inPlace>false</inPlace>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Work Report</_item>
+											</toolTip>
+											<label>
+												<_item>Work Report</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+											<maxMember>19</maxMember>
+											<showMaxMember>12</showMaxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:vote">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Votes</_item>
+											</toolTip>
+											<label>
+												<_item>Votes</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+											<maxMember>4</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:followUp">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Follow Ups</_item>
+											</toolTip>
+											<label>
+												<_item>Follow Ups</_item>
+											</label>
+											<order>
+												<_item>13</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:contract">
+										<_object>
+											<active>true</active>
+											<filterable>true</filterable>
+											<toolTip>
+												<_item>Involved Pipeline Items / Contracts</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Pipeline Items / Contracts</_item>
+											</label>
+											<shortLabel>
+												<_item>Pipeline</_item>
+											</shortLabel>
+											<order>
+												<_item>15</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<!--
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>76</_item>
+											</orderObjectContainer>
+											-->
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:productReference">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved Products</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Products</_item>
+											</label>
+											<order>
+												<_item>15</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+											<maxMember>3</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:involvedObject">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved Objects</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Objects</_item>
+											</label>
+											<order>
+												<_item>15</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+											<maxMember>4</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:depotReference">
+										<_object>
+											<active>true</active>
+											<inPlace>true</inPlace>
+											<toolTip>
+												<_item>Involved Depots</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Depots</_item>
+											</label>
+											<order>
+												<_item>15</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Attr:Tab:0:Group:40">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item></_item>
+											</toolTip>
+											<label>
+												<_item>&amp;nbsp;</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in Details Tab-->
+
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name of activity</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityNumber">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Activity number</_item>
+											</toolTip>
+											<label>
+												<_item>Activity number</_item>
+											</label>
+											<shortLabel>
+												<_item>Activity-#</_item>
+											</shortLabel>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>115</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedTo">
+										<_object>
+											<active>true</active>
+											<filterable>true</filterable>
+											<toolTip>
+												<_item>Assigned to</_item>
+											</toolTip>
+											<label>
+												<_item>Assigned to</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>110</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc1">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Miscellaneous #1</_item>
+											</toolTip>
+											<label>
+												<_item>Miscellaneous #1</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc2">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Miscellaneous #2</_item>
+											</toolTip>
+											<label>
+												<_item>Miscellaneous #2</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>60</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc3">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Miscellaneous #3</_item>
+											</toolTip>
+											<label>
+												<_item>Miscellaneous #3</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityState">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>State</_item>
+											</toolTip>
+											<label>
+												<_item>State</_item>
+											</label>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>8</_item>
+											</orderObjectContainer>
+											<iconKey>openclosed.gif</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:priority">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Priority</_item>
+											</toolTip>
+											<label>
+												<_item>Priority</_item>
+											</label>
+											<shortLabel>
+												<_item>!</_item>
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>81</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:scheduledStart">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled start</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled start</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. start</_item>
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>5</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:modifiedAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>time and date when object was last modified</_item>
+											</toolTip>
+											<label>
+												<_item>Modified at</_item>
+											</label>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>151</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:scheduledEnd">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled end</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled end</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. end</_item>
+											</shortLabel>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>130</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:originalScheduledEnd">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled end (original)</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled end (original)</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. end (original)</_item>
+											</shortLabel>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>140</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:dueBy">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Due by</_item>
+											</toolTip>
+											<label>
+												<_item>Due by</_item>
+											</label>
+											<shortLabel>
+												<_item>Due by</_item>
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>6</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity type</_item>
+											</toolTip>
+											<label>
+												<_item>Activity type</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastTransition">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Last transition</_item>
+											</toolTip>
+											<label>
+												<_item>Last Transition</_item>
+											</label>
+											<shortLabel>
+												<_item>Follow up</_item>
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:processState">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Process state</_item>
+											</toolTip>
+											<label>
+												<_item>Process state</_item>
+											</label>
+											<shortLabel>
+												<_item>State</_item>
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>30</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>77</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:percentComplete">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>% complete</_item>
+											</toolTip>
+											<label>
+												<_item>% complete</_item>
+											</label>
+											<shortLabel>
+												<_item>%</_item>
+											</shortLabel>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>80</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualStart">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Actual start</_item>
+											</toolTip>
+											<label>
+												<_item>Actual start</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEnd">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Actual end</_item>
+											</toolTip>
+											<label>
+												<_item>Actual end</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>100</_item>
+											</orderFieldGroup>
+											<orderObjectContainer> <!-- calculation in grid is expensive!!! -->
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reporting account</_item>
+											</toolTip>
+											<label>
+												<_item>Reporting account</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingContact">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reporting contact</_item>
+											</toolTip>
+											<label>
+												<_item>Reporting contact</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:location">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Location</_item>
+											</toolTip>
+											<label>
+												<_item>Location</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:isAllDayEvent">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>is all day event</_item>
+											</toolTip>
+											<label>
+												<_item>is all day event</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:detailedDescription">
+										<_object>
+											<active>true</active>
+											<sortable>false</sortable>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Detailed description</_item>
+											</toolTip>
+											<label>
+												<_item>Detailed description</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>40</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>116</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHours">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>hh (actual effort)</_item>
+											</toolTip>
+											<label>
+												<_item>hh (actual effort)</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortMinutes">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>mm (actual effort)</_item>
+											</toolTip>
+											<label>
+												<_item>mm (actual effort)</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHhMm">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>hh mm (actual effort)</_item>
+											</toolTip>
+											<label>
+												<_item>hh mm (actual effort)</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHours">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>hh (main estimate)</_item>
+											</toolTip>
+											<label>
+												<_item>hh (main estimate)</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortMinutes">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>mm (main estimate)</_item>
+											</toolTip>
+											<label>
+												<_item>mm (main estimate)</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHhMm">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>hh mm (main estimate)</_item>
+											</toolTip>
+											<label>
+												<_item>hh mm (main estimate)</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:totalVotes">
+										<_object>
+											<changeable>false</changeable>
+											<active>true</active>
+											<toolTip>
+												<_item>Total votes</_item>
+											</toolTip>
+											<label>
+												<_item>Total votes</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical">
+										<_object>
+											<active>true</active>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>iCal</_item>
+											</toolTip>
+											<label>
+												<_item>iCal</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityLinkTo-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Outbound Activity Link</_item>
+											</toolTip>
+											<label>
+												<_item>Outbound Activity Link</_item>
+											</label>
+											<iconKey>ActivityLinkTo</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:activityLinkType">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Type</_item>
+											</toolTip>
+											<label>
+												<_item>Type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:linkTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Linked activity</_item>
+											</toolTip>
+											<label>
+												<_item>Linked activity</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- ActivityLinkFrom-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Inbound Activity Link</_item>
+											</toolTip>
+											<label>
+												<_item>Inbound Activity Link</_item>
+											</label>
+											<iconKey>ActivityLinkFrom</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:activityLinkType">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Type</_item>
+											</toolTip>
+											<label>
+												<_item>Type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:linkFrom">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Linked from activity</_item>
+											</toolTip>
+											<label>
+												<_item>Linked from activity</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:linkTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Based on</_item>
+											</toolTip>
+											<label>
+												<_item>Based on</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ProductReference-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ProductReference">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Product Reference</_item>
+											</toolTip>
+											<label>
+												<_item>Product Reference</_item>
+											</label>
+											<iconKey>ProductReference</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+
+									<!-- InvolvedObject-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved Object</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Object</_item>
+											</label>
+											<iconKey>InvolvedObject</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involvedRole">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Role</_item>
+											</toolTip>
+											<label>
+												<_item>Role</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involved">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved object</_item>
+											</toolTip>
+											<label>
+												<_item>Involved object</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>0</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- Operations -->
+									<!-- Operation Import Parameters are customized in common.xml -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Absence:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ExternalActivity:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mailing:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Meeting:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:Pane:Op:Tab:importItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Import iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Import iCal</_item>
+											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Follow Up</_item>
+											</toolTip>
+											<label>
+												<_item>Follow Up</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>Activity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Transition</_item>
+											</toolTip>
+											<label>
+												<_item>Transition</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpTitle">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Follow up title</_item>
+											</toolTip>
+											<label>
+												<_item>Follow up title</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpText">
+										<_object>
+											<active>true</active>
+											<spanRow>20</spanRow>
+											<toolTip>
+												<_item>Follow up text</_item>
+											</toolTip>
+											<label>
+												<_item>Follow up text</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reported by</_item>
+											</toolTip>
+											<label>
+												<_item>Reported by</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpResult:followUp">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Follow up</_item>
+											</toolTip>
+											<label>
+												<_item>Follow up</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reapply Activity Creator</_item>
+											</toolTip>
+											<label>
+												<_item>Reapply Activity Creator</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+											<iconKey>Activity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity creator</_item>
+											</toolTip>
+											<label>
+												<_item>Activity creator</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Assign to Resource</_item>
+											</toolTip>
+											<label>
+												<_item>Assign to Resource</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</order>
+											<iconKey>Resource</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAssignToParams:resource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Resource</_item>
+											</toolTip>
+											<label>
+												<_item>Resource</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:voteForActivity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Vote for Activity</_item>
+											</toolTip>
+											<label>
+												<_item>Vote for Activity</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</order>
+											<iconKey>ActivityTracker</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:voteForActivity:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityVoteForActivityParams:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name of vote</_item>
+											</toolTip>
+											<label>
+												<_item>Name of vote</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityVoteForActivityParams:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:voteForActivity:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Add Work Record</_item>
+											</toolTip>
+											<label>
+												<_item>Add Work Record</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+											<iconKey>ActivityWorkRecord</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:startAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Start at</_item>
+											</toolTip>
+											<label>
+												<_item>Start at</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:endAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>End at</_item>
+											</toolTip>
+											<label>
+												<_item>End at</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationHours">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>hh (duration)</_item>
+											</toolTip>
+											<label>
+												<_item>hh (duration)</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationMinutes">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>mm (duration)</_item>
+											</toolTip>
+											<label>
+												<_item>mm (duration)</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>60</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:resource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Resource</_item>
+											</toolTip>
+											<label>
+												<_item>Resource</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:rateType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Rate type</_item>
+											</toolTip>
+											<label>
+												<_item>Rate type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:depotSelector">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Depot selector</_item>
+											</toolTip>
+											<label>
+												<_item>Depot selector</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:updateIcal">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Update iCal</_item>
+											</toolTip>
+											<label>
+												<_item>Update iCal</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>250</_item>
+											</order>
+											<iconKey>Activity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:updateIcal:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:updateIcal:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityGroupAssignment -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity Group Assignment</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Group Assignment</_item>
+											</label>
+											<iconKey>ActivityGroupAssignment</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definition-->
+									<!--FieldGroups in General Tab-->
+									<!-- ElementDefinition -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment:assignedTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Assigned to</_item>
+											</toolTip>
+											<label>
+												<_item>Assigned to</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityGroupAssignment -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity Group Assignment</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Group Assignment</_item>
+											</label>
+											<iconKey>ActivityGroupAssignment</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definition-->
+									<!--FieldGroups in General Tab-->
+									<!-- ElementDefinition -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment:activityGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity group</_item>
+											</toolTip>
+											<label>
+												<_item>Activity group</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityType -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity Type</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Type</_item>
+											</label>
+											<iconKey>ActivityType</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definition-->
+									<!--FieldGroups in General Tab-->
+									<!-- ElementDefinition -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:controlledBy">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Controlled by</_item>
+											</toolTip>
+											<label>
+												<_item>Controlled by</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:activityClass">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity class</_item>
+											</toolTip>
+											<label>
+												<_item>Activity class</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:activityClassName">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity class name</_item>
+											</toolTip>
+											<label>
+												<_item>Activity class name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:description">
+										<_object>
+											<active>true</active>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:workBt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Work booking text</_item>
+											</toolTip>
+											<label>
+												<_item>Work booking text</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityCreator-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity Creator</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Creator</_item>
+											</label>
+											<iconKey>ActivityCreator</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>all activity groups</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Groups</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+											<maxMember>8</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:resource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>all resources</_item>
+											</toolTip>
+											<label>
+												<_item>Resources</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+											<maxMember>6</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Attr:Tab:0:Group:10">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity</_item>
+											</toolTip>
+											<label>
+												<_item>Activity</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity type</_item>
+											</toolTip>
+											<label>
+												<_item>Activity type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description">
+										<_object>
+											<active>true</active>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:priority">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Priority</_item>
+											</toolTip>
+											<label>
+												<_item>Priority</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:baseDate">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Base date</_item>
+											</toolTip>
+											<label>
+												<_item>Base date</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:scheduledStart">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled start</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled start</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. start</_item>
+											</shortLabel>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:scheduledEnd">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled end</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled end</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. end</_item>
+											</shortLabel>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:originalScheduledEnd">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled end (original)</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled end (original)</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. end (original)</_item>
+											</shortLabel>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:dueBy">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Due by</_item>
+											</toolTip>
+											<label>
+												<_item>Due by</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>110</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Operations -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:newActivity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>New Activity</_item>
+											</toolTip>
+											<label>
+												<_item>New Activity</_item>
+											</label>
+											<iconKey>Activity</iconKey>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:newActivity:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:detailedDescription">
+										<_object>
+											<active>true</active>
+											<spanRow>20</spanRow>
+											<toolTip>
+												<_item>Detailed description</_item>
+											</toolTip>
+											<label>
+												<_item>Detailed description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:scheduledStart">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled start</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled start</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. start</_item>
+											</shortLabel>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:scheduledEnd">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Scheduled end</_item>
+											</toolTip>
+											<label>
+												<_item>Scheduled end</_item>
+											</label>
+											<shortLabel>
+												<_item>Sched. end</_item>
+											</shortLabel>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Due by</_item>
+											</toolTip>
+											<label>
+												<_item>Due by</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Priority</_item>
+											</toolTip>
+											<label>
+												<_item>Priority</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reporting contact</_item>
+											</toolTip>
+											<label>
+												<_item>Reporting contact</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity group</_item>
+											</toolTip>
+											<label>
+												<_item>Activity group</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Resource</_item>
+											</toolTip>
+											<label>
+												<_item>Resource</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Resource role</_item>
+											</toolTip>
+											<label>
+												<_item>Resource role</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:newActivity:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityResult:activity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity</_item>
+											</toolTip>
+											<label>
+												<_item>Activity</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+								</elementDefinition>
+							</_content>
+						</org.openmdx.ui1.Segment>
+					</segment>
+				</_content>
+			</org.openmdx.base.Provider>
+		</provider>
+	</_content>
+</org.openmdx.base.Authority>

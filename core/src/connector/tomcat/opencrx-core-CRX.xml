@@ -1,0 +1,175 @@
+<Context path="/opencrx-core-CRX" docBase="${catalina.home}/webapps/opencrx-core-CRX.war" debug="0" privileged="true">
+	<Realm className="org.apache.catalina.realm.MemoryRealm"/>
+
+	<Resource 
+	    name="ejb/data" 
+	    auth="Container" 
+	    type="org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1Home"
+	/>
+	<ResourceParams name="ejb/data">
+		<parameter>
+			<name>factory</name>
+			<value>org.openmdx.kernel.naming.tomcat.DelegatingObjectFactory</value>
+		</parameter>
+		<parameter>
+			<name>jndiName</name>
+			<value>org/opencrx/core/CRX/noOrNew/gateway</value>
+		</parameter>
+	</ResourceParams>
+
+	<Resource name="mail/provider/CRX" auth="Container" type="javax.mail.Session"/>
+	<ResourceParams name="mail/provider/CRX">
+
+		<!-- Outbound -->
+		<parameter>
+			<name>mail.transport.protocol</name>
+			<value>smtp</value>
+		</parameter>
+		<parameter>
+			<name>mail.smtp.auth</name>
+			<value>true</value>
+		</parameter>
+		<parameter>
+			<name>mail.smtp.starttls.enable</name>
+			<value>true</value>
+		</parameter>
+		<parameter>
+			<name>mail.smtp.host</name>
+			<value>mail.dot.com</value>
+		</parameter>
+		<parameter>
+			<name>mail.smtp.port</name>
+			<value>25</value>
+		</parameter>
+		<parameter>
+			<name>mail.smtp.user</name>
+			<value>user name</value>
+		</parameter>
+		<!-- mail.smtp.password is not a property of JavaMail. However it is read by openCRX and supplied to JavaMail transport -->
+		<!-- Also see http://forum.java.sun.com/thread.jspa?threadID=615393&tstart=60 -->
+		<parameter>
+			<name>mail.smtp.password</name>
+			<value>password</value>
+		</parameter>
+		<parameter>
+			<name>mail.from</name>
+			<value>noreply@dot.com</value>
+		</parameter>
+
+		<!-- Inbound POP3 -->
+		<parameter>
+			<name>mail.store.protocol</name>
+			<value>pop3</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3.host</name>
+			<value>mail.dot.org</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3.port</name>
+			<value>110</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3.auth</name>
+			<value>true</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3.user</name>
+			<value>test</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3.password</name>
+			<value>test</value>
+		</parameter>
+
+		<!-- Inbound POP3S -->
+<!--				
+		<parameter>
+			<name>mail.store.protocol</name>
+			<value>pop3s</value>
+		</parameter>
+-->
+		<parameter>
+			<name>mail.pop3s.host</name>
+			<value>mail.dot.org</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3s.port</name>
+			<value>995</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3s.auth</name>
+			<value>true</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3s.user</name>
+			<value>test</value>
+		</parameter>
+		<parameter>
+			<name>mail.pop3s.password</name>
+			<value>test</value>
+		</parameter>
+
+		<!-- Inbound IMAP -->
+<!--				
+		<parameter>
+			<name>mail.store.protocol</name>
+			<value>imap</value>
+		</parameter>
+-->
+		<parameter>
+			<name>mail.imap.host</name>
+			<value>mail.dot.org</value>
+		</parameter>
+		<parameter>
+			<name>mail.imap.port</name>
+			<value>143</value>
+		</parameter>
+		<parameter>
+			<name>mail.imap.auth</name>
+			<value>true</value>
+		</parameter>
+		<parameter>
+			<name>mail.imap.user</name>
+			<value>test</value>
+		</parameter>
+		<parameter>
+			<name>mail.imap.password</name>
+			<value>test</value>
+		</parameter>
+
+		<!-- Inbound IMAPS -->
+<!--				
+		<parameter>
+			<name>mail.store.protocol</name>
+			<value>imaps</value>
+		</parameter>
+-->
+		<parameter>
+			<name>mail.imaps.host</name>
+			<value>mail.dot.org</value>
+		</parameter>
+		<parameter>
+			<name>mail.imaps.port</name>
+			<value>993</value>
+		</parameter>
+		<parameter>
+			<name>mail.imaps.auth</name>
+			<value>true</value>
+		</parameter>
+		<parameter>
+			<name>mail.imaps.user</name>
+			<value>test</value>
+		</parameter>
+		<parameter>
+			<name>mail.imaps.password</name>
+			<value>test</value>
+		</parameter>
+
+		<!-- Debug -->
+		<parameter>
+			<name>mail.debug</name>
+			<value>true</value>
+		</parameter>
+	</ResourceParams>
+</Context>

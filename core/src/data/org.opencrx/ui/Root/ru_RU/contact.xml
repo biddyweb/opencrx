@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Счета</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Счета</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контакт. лицо</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Субъект</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Субъект</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Конт. информация</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Конт. информация</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Перс. информация</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Перс. информация</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Изображение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Изображение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutationCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Код приветствия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Код приветствия</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Приветствие</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Приветствие</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:firstName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имя</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имя субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:middleName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отчество</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отчество субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:lastName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фамилия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Фамилия субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:suffix" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Суффикс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Суффикс</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:nickName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Прозвище</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Прозвище субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Предпочт. метод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Предпочт. метод контакта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Разг. язык</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Предпочт. разг. язык</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Письм. язык</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Предпочт. письм. язык</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Нет эл. почты</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Субъект не указ. адрес эл. почты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPostalMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Нет почт. адреса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Субъект не указ. почт. адрес</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotBulkPostalMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Нет больш. почты</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Субъект не послал больш. почт. индикаторов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPhone" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Не телефон</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Нет телефонного индикатора</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotFax" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Не факс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Нет индикатора факса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobTitle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Должность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Должность субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Обязанности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Обязанности субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:organization" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Организация</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Организация</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:department" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отдел</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отдел</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Кому передать инф-ю</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Кому передать инф-ю</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ассистент субъекта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ассистент субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:deputy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заместитель субъекта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Заместитель субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:gender" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Пол</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Пол субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:familyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Семейное положение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Семейное положение субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:numberOfChildren" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Дети</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Кол-во детей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:childrenNames" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имена детей</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имена детей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Образование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Образование субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Год. доход (валюта)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Годовой доход субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Год. доход (сумма)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Годовой доход субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:birthdate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Дата рождения</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Дата рождения субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Юбилейная дата</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Юбилейная дата субъекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ид. управления</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ид. управления</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Изображение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Изображение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content>
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Изображение</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Изображение</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название/Источник</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название/Источник</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Экспорт как vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Экспорт как vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Язык</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Язык</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

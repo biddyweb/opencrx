@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Byggnader</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Byggnader</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Byggnader</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Byggnader</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Byggnadskomplex</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Byggnadskomplex</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:buildingUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Lokaler</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lokaler</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:facility" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Faciliteter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Faciliteter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Byggnad</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Byggnad</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Byggnadskomplex</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Byggnadskomplex</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Lokal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lokal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Facilitet</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Facilitet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:sizeInSquareMeter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Storlek i kvadratmeter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Storlek i kvadratmeter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:sizeInCubicMeter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Storlek i kubikmeter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Storlek i kubikmeter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:buildingComplex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Byggnadskomplex</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Byggnadskomplex</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel / Källa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel / Källa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:buildingUnitType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:parent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Del av lokal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Del av lokal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel / Källa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel / Källa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:facilityType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel / Källa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel / Källa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel / Källa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel / Källa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

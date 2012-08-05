@@ -1,0 +1,174 @@
+
+
+                    =====================================
+                           CHANGE LOG openCRX/Groupware
+                    =====================================
+
+
+==============================================================================
+Version 2.0.0                                                       2008-02-20
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10006455
+      Groupware: XWiki frontend. XWiki can be used as Wiki frontend for openCRX.
+      org.opencrx.groupware.xwiki.spi.StoreImpl implements the XWiki document
+      backend. XWiki pages are stored as openCRX documents. The following steps
+      prepare an openCRX segment for XWiki:
+      * Create a document folder named 'XWikiSpaces'
+      * Create the user 'guest'. This is required to allow anonymous access
+        for XWiki users.
+      * In the database increase the size of the columns OOCKE1_PROPERTY.string_value 
+        and OOCKE1_DOCUMENT.keywords to 4K.
+      * Launch XWiki with the URL http://localhost:8080/opencrx-wiki-CRX
+      * Login as superadmin. The preconfigured password is 'changeit'. It can be 
+        configured in build.xml.      
+      * Go to Administration > Import and create the page 'Import'.
+      * Go to Administration 'Upload and Installation' and import 
+        xwiki-enterprise-wiki-1.2-milestone-1.xar which can be obtained from 
+        http://www.xwiki.org. This installs a default XWiki.
+      * After successful import the panel 'Search' has to be modified. Put the
+        page in edit mode and set the form action to
+        <form action="/opencrx-wiki-CRX/bin/view/Main/WebSearch">
+      
+      CR10006501
+      Groupware: IMAP adapter. The IMAP adapter allows to connect to openCRX 
+      with a standard IMAP client. openCRX activity groups are mapped to IMAP 
+      folders. The folders contain openCRX EMail activities. A folder is updatable 
+      if an EMail activity creator is available for the activity group. The IMAP 
+      adapter replaces the MailImporterServlet. The configuration can be customized 
+      by setting the following properties in build.properties:
+      
+      * imap.listenPort=143
+      
+      
+      CR10006500
+      Groupware: ICS servlet. The ics servlet allows allows to access activities 
+      in different formats: ics, xml, html. The URLs to access the activities
+      of a specific activity group are as follows:
+      
+      ICS
+      http://localhost:8080/opencrx-ical-CRX/ical?id=CRX/Standard/tracker/<name>&resource=activities.ics      
+      HTML
+      http://localhost:8080/opencrx-ical-CRX/ical?id=CRX/Standard/tracker/<name>&resource=activities.html
+      XML
+      http://localhost:8080/opencrx-ical-CRX/ical?id=CRX/Standard/tracker/<name>&resource=activities.xml
+      
+      
+      CR10006456
+      Groupware: LDAP service. The LDAP service is based on SUN's OpenDS
+      implementation. The openCRX adapter is implemented as 
+      org.opends.server.api.Backend. The LDAP service is started up by the
+      OpenDsServlet in the method init(). The default configuration is
+      located in ./src/data/org.opencrx.ldap/WEB-INF/config. The configuration
+      can be customized by setting the following properties in build.properties:
+      
+        ldap.baseDN=dc=CRX,dc=opencrx,dc=org
+        ldap.rootPassword=changeit
+        ldap.listenPort=389
+        ldap.listenPort.secure=636
+        
+      The OpenCrxBackend exposes the login principals and the contacts under
+      the following DNs:
+      * BaseDN for contacts:
+        dc=accounts,dc=Standard,dc=CRX,dc=opencrx,dc=org
+      * DN for login principal
+        dc=<principal name>,dc=users,dc=CRX,dc=opencrx,dc=org
+      This allows an LDAP client (e.g. Thunderbird or Outlook) to connect to
+      the openCRX LDAP service and retrieve the contacts stored in openCRX.
+      A typical client configuration looks like:
+      * hostname: localhost
+      * baseDN: dc=accounts,dc=Standard,dc=CRX,dc=opencrx,dc=org
+      * portNumber: 389
+      * bindDN: dc=<principal name>,dc=users,dc=CRX,dc=opencrx,dc=org
+      The LDAP password is the same as the login password for the standard GUI.
+      
+      Contacts and their assigned addresses are mapped to LDAP object classes as follows:
+      objectclass: top
+      objectclass: person
+      objectclass: organizationalPerson
+      objectclass: inetOrgPerson
+      objectclass: mozillaAddressBookEntry\
+      givenName: givenName
+      sn: sn
+      cn: cn
+      mail: businessMail
+      telephoneNumber: businessPhone
+      facsimileTelephoneNumber: businessFax
+      mobile: businessMobile
+      street: businessPostal.getPostalStreet().get(0)
+      streetAddress: businessPostal.getPostalStreet().get(0)
+      mozillaWorkStreet2: businessPostal.getPostalStreet().get(1)
+      l: businessPostal.getPostalCity()
+      postalCode: businessPostal.getPostalCode()
+      st: businessPostal.getPostalState()
+      c: businessPostalCountryName
+      postalAddress: businessPostal.getPostalStreet().get(0)
+      title: title
+      personalTitle: title
+      o: organization
+      company: organization
+      ou: department
+      department: department
+      mozillaWorkUrl: businessWeb
+      mozillaHomeStreet: homePostal.getPostalStreet().get(0)
+      mozillaHomeStreet2: homePostal.getPostalStreet().get(1)
+      mozillaHomeLocalityName: homePostal.getPostalCity()
+      mozillaHomePostalCode: homePostal.getPostalCode()
+      mozillaHomeState: homePostal.getPostalState()
+      mozillaHomeCountryName: homePostalCountryName
+      homePhone: homePhone
+      mozillaHomeUrl: homeWeb
+
+      CR10006343
+      CalDAV server. CalDAV server added to project. The server is based on
+      the Bedework CalDAV implementation. The mapping iCal <-> openCRX is as 
+      follows:
+      * A calendar is mapped to an activity group, i.e. each activity group
+        is a CalDAV calendar.
+      * Each VEVENT is mapped to an activity
+      * The corresponding ical is stored in the activiy's ical attribute.
+      * The ical attribute can be initialized with the operation importItem.
+        The import updates attributes name, description, scheduledStart,
+        scheduledEnd, ... of the activity
+      * The ical attribute is recalculated if the activity is modified or
+        if the operation updatIcal() is invoked.
+      
+      After deployment of opencrx-groupware-CRX.ear a CalDAV client can connect 
+      as follows:
+      
+      * Tracker
+        http://host:port/opencrx-caldav-CRX/<provider name>/<segment name>/tracker/<activity tracker name>
+      * Milestone
+        http://host:port/opencrx-caldav-CRX/<provider name>/<segment name>/milestone/<milestone name>
+      * Activity Category
+        http://host:port/opencrx-caldav-CRX/<provider name>/<segment name>/category/<activity category name>
+      
+      openCRX allows to define activity filters at the level of activity groups. 
+      Activity filters allow to define a subset of the activities contained in an
+      activity group. These subsets can also be mapped as CalDAV calendars. In this
+      case the connection URL looks as follows:
+      
+      * Filtered Tracker
+        http://host:port/opencrx-caldav-CRX/<provider name>/<segment name>/tracker/<activity tracker name>/filter/<filter name>
+      * Filtered Milestone
+        http://host:port/opencrx-caldav-CRX/<provider name>/<segment name>/milestone/<milestone name>/filter/<filter name>
+      * Filtered Activity Category
+        http://host:port/opencrx-caldav-CRX/<provider name>/<segment name>/category/<activity category name>/filter/<filter name>
+       
+      Examples are:   
+      http://host:port/opencrx-caldav-CRX/CRX/Standard/tracker/CRIXP.openCRX  
+      http://host:port/opencrx-caldav-CRX/CRX/Standard/milestone/openCRX~1.12.0/filter/InProgress
+      
+      
+2.    CHANGES  
+     
+2.0.  CHANGED FEATURES
+      none
+
+
+2.1.  FIXED BUGS
+      none
+      
+==============================================================================

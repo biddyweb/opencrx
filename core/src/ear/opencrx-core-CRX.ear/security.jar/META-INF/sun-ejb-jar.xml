@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sun-ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Application Server 8.1 EJB 2.1//EN" "http://www.sun.com/software/appserver/dtds/sun-ejb-jar_2_1-1.dtd">
+<sun-ejb-jar>
+	<enterprise-beans>
+		<ejb>
+			<ejb-name>opencrx_core_CRX_security_mandatory</ejb-name>
+			<jndi-name>org/opencrx/core/CRX/local/mandatory/security</jndi-name>
+			<resource-ref>
+				<res-ref-name>jdbc/datasource[0]</res-ref-name>
+				<jndi-name>jdbc/opencrx_CRX</jndi-name>
+			</resource-ref>
+			<pass-by-reference>false</pass-by-reference>
+			<is-read-only-bean>false</is-read-only-bean>
+		</ejb>
+	</enterprise-beans>
+</sun-ejb-jar>

@@ -1,0 +1,14 @@
+<Context path="/server-gateway" docBase="${catalina.home}/webapps/server-gateway.war" debug="0" privileged="true">
+	<Realm className="org.apache.catalina.realm.MemoryRealm"/>
+	<Resource name="ejb/dataprovider" auth="Container" type="org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1Home"/>
+	<ResourceParams name="ejb/dataprovider">
+		<parameter>
+			<name>factory</name>
+			<value>org.openmdx.kernel.naming.tomcat.LightweightContainerLookupFactory</value>
+		</parameter>
+		<parameter>
+			<name>name</name>
+			<value>org/opencrx/core/CRX/noOrNew/gateway</value>
+		</parameter>
+	</ResourceParams>
+</Context>

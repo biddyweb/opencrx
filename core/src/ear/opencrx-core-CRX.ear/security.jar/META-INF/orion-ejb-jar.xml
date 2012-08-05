@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE orion-ejb-jar PUBLIC "-//ORACLE//DTD OC4J Enterprise JavaBeans runtime 9.04//EN" "http://xmlns.oracle.com/ias/dtds/orion-ejb-jar-9_04.dtd">
+<orion-ejb-jar deployment-version="10.1.2.0.0" deployment-time="1028e704b14">
+	<enterprise-beans>
+		<session-deployment name="opencrx_core_CRX_security_mandatory" max-tx-retries="0" location="org/opencrx/core/CRX/mandatory/security">
+			<resource-ref-mapping name="jdbc/datasource[0]" location="jdbc/opencrx_core_CRX"/>
+		</session-deployment>
+	</enterprise-beans>
+	<assembly-descriptor>
+		<default-method-access>
+			<security-role-mapping name="&lt;default-ejb-caller-role>" impliesAll="true"/>
+		</default-method-access>
+	</assembly-descriptor>
+</orion-ejb-jar>

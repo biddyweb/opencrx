@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтры деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все фильтры деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Группа фильтров деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Группа фильтров деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтр деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Фильтр деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отфильтрованные деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все отфильтрованные деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойства фильтра</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все свойства фильтра</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: группа деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: группа деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty:activityGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Группы деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Группы деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: состояние процесса деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: состояние процесса деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty:processState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Состояния процессов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Состояния процессов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityStateFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: состояние деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: состояние деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityStateFilterProperty:activityState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Состояния деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Состояния деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityNumberFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: число деятельностей</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: число деятельностей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityNumberFilterProperty:activityNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Числа деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Числа деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: типы деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: типы деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty:activityType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Типы деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Типы деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: ресурс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: ресурс</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ресурсы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ресурсы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: название ресурса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: название ресурса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty:resourceName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Названия ресурсов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Названия ресурсов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: роль ресурса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: роль ресурса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty:resourceRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Роли ресурса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Роли ресурса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: плановый конец</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: плановый конец</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty:scheduledEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Планированные концы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Планированные концы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойство фильтра: планорованный старт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойство фильтра: планорованный старт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty:scheduledStart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Планированные старты</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Планированные старты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

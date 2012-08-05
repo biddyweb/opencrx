@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--xtools2_universal_type_manager-->
+<uml:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:DataModeler_0="http:///_MaNsu965EdmrtKJSXC0_FQ.profile.uml2" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.ibm.com/xtools/1.5.0/Notation" xmlns:uml="http://www.eclipse.org/uml2/1.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.0/Umlnotation" xsi:schemaLocation="http:///_MaNsu965EdmrtKJSXC0_FQ.profile.uml2 platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/DataModeler.epx#_MaTy8N65EdmrtKJSXC0_FQ?DataModeler/%3CEPackage%3E" xmi:id="3C7B8A60016D" name="models" appliedProfile="_HlheMd7NEdmKapscEl8OLg _Hl__UN7NEdmKapscEl8OLg _Hl__U97NEdmKapscEl8OLg _HnPVcN7NEdmKapscEl8OLg _HoMXsN7NEdmKapscEl8OLg _HpJZ8N7NEdmKapscEl8OLg _Hsr2IN7NEdmKapscEl8OLg _Hsr2I97NEdmKapscEl8OLg">
+	<eAnnotations xmi:id="_Hs4DYN7NEdmKapscEl8OLg" source="appliedStereotypes">
+		<contents xmi:type="DataModeler_0:DataModeler__default__Project" xmi:id="_Hs4DYd7NEdmKapscEl8OLg"/>
+	</eAnnotations>
+	<eAnnotations xmi:id="_YqeCNOEYEdmQhoEXouev3w" source="http://www.eclipse.org/emf/2002/Ecore"/>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_HlheMd7NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_HlheMt7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_HlheM97NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+		<importedProfile href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_Hl__UN7NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_Hl__Ud7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_Hl__Ut7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+		<importedProfile href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_Hl__U97NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_Hl__VN7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_Hl__Vd7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+		<importedProfile href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_HnPVcN7NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_HnPVcd7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_HnPVct7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+		<importedProfile href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_HoMXsN7NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_HoMXsd7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_HoMXst7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+		<importedProfile href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+	</packageImport>
+	<packageImport xmi:id="_HoerkN7NEdmKapscEl8OLg">
+		<importedPackage xmi:type="uml:Model" href="pathmap://UML2_LIBRARIES/UML2PrimitiveTypes.library.uml2#_EfRZoK86EdieaYgxtVWN8Q"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_HpJZ8N7NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_HpJZ8d7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_HpJZ8t7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/DataModeler.epx#_MZ1R0N65EdmrtKJSXC0_FQ?DataModeler"/>
+		<importedProfile href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/DataModeler.epx#_MZ1R0N65EdmrtKJSXC0_FQ?DataModeler"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_Hsr2IN7NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_Hsr2Id7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_Hsr2It7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="pathmap://ROSE_PROFILES/Rose.epx#_8yPmgEO4EdmZFZk7zjZ-eA?Rose"/>
+		<importedProfile href="pathmap://ROSE_PROFILES/Rose.epx#_8yPmgEO4EdmZFZk7zjZ-eA?Rose"/>
+	</packageImport>
+	<packageImport xmi:type="uml:ProfileApplication" xmi:id="_Hsr2I97NEdmKapscEl8OLg">
+		<eAnnotations xmi:id="_Hsr2JN7NEdmKapscEl8OLg" source="attributes">
+			<details xmi:id="_Hsr2Jd7NEdmKapscEl8OLg" key="version" value="0"/>
+		</eAnnotations>
+		<importedPackage xmi:type="uml:Profile" href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/openMDX.epx#_O4XmQN64EdmrtKJSXC0_FQ?openMDX"/>
+		<importedProfile href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/openMDX.epx#_O4XmQN64EdmrtKJSXC0_FQ?openMDX"/>
+	</packageImport>
+	<packageImport xmi:id="_HzwHcN7NEdmKapscEl8OLg">
+		<importedPackage xmi:type="uml:Model" href="pathmap://ROSE_LIBRARIES/RoseAnalysisDatatypes.library.uml2#_utXHQAfzEdmmcbnrymMrWg"/>
+	</packageImport>
+	<ownedMember xmi:type="uml:Package" xmi:id="_3C7B8A60016D4074737601BA" name="org">
+		<eAnnotations xmi:id="_qIkPIN8HEdmKapscEl8OLg" source="uml2.ownedShortcuts">
+			<contents xmi:type="ecore:EAnnotation" xmi:id="_HUXwEN8KEdmKapscEl8OLg" source="eObjectShortcut">
+				<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.iso.emx#_ekVogN67EdmkJO73lqONhA?iso"/>
+			</contents>
+			<contents xmi:type="ecore:EAnnotation" xmi:id="_JDouQN8KEdmKapscEl8OLg" source="eObjectShortcut">
+				<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.oasis-open.emx#_g9PZkN67EdmkJO73lqONhA?oasis-open"/>
+			</contents>
+			<contents xmi:type="ecore:EAnnotation" xmi:id="_LIrIIN8KEdmKapscEl8OLg" source="eObjectShortcut">
+				<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_7PK1QN67EdmkJO73lqONhA?w3c"/>
+			</contents>
+			<contents xmi:type="ecore:EAnnotation" xmi:id="_fj4PgKVkEdqPfv_DBM-TSg" source="eObjectShortcut">
+				<references xmi:type="uml:Package" href="org.opencrx.emx#_3C7B8A60016D407474C803A1?org/opencrx"/>
+			</contents>
+		</eAnnotations>
+		<ownedMember xmi:type="uml:Package" xmi:id="_3C7B8A60016D3FB3D59203B1" name="openmdx">
+			<eAnnotations xmi:id="_HmN_898IEdmKapscEl8OLg" source="uml2.ownedShortcuts">
+				<contents xmi:type="ecore:EAnnotation" xmi:id="_9lAu0N8JEdmKapscEl8OLg" source="eObjectShortcut">
+					<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.base.emx#_phn1cN67EdmkJO73lqONhA?base"/>
+				</contents>
+				<contents xmi:type="ecore:EAnnotation" xmi:id="__ZDfUN8JEdmKapscEl8OLg" source="eObjectShortcut">
+					<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.filter1.emx#_r0nLwN67EdmkJO73lqONhA?filter1"/>
+				</contents>
+				<contents xmi:type="ecore:EAnnotation" xmi:id="_BR3bEN8KEdmKapscEl8OLg" source="eObjectShortcut">
+					<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.generic1.emx#_tjGt4N67EdmkJO73lqONhA?generic1"/>
+				</contents>
+			</eAnnotations>
+			<ownedMember xmi:type="uml:Package" xmi:id="_3C7B8A60016D40747B8A0395" name="compatibility">
+				<eAnnotations xmi:id="_HzFZEd7NEdmKapscEl8OLg" source="uml2.diagrams" references="_3C7B8A60016D400E55C40281">
+					<contents xmi:type="notation:Diagram" xmi:id="_3C7B8A60016D400E55C40281" type="Class" name="Contains">
+						<children xmi:id="_IgiU8N7NEdmKapscEl8OLg">
+							<children xmi:id="_IgiU897NEdmKapscEl8OLg" type="ImageCompartment">
+								<element xmi:type="uml:Package" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.compatibility.view1.emx#_3C7B8A60016D403F30960159?view1/view1"/>
+								<layoutConstraint xmi:type="notation:Size" xmi:id="_IgiU9N7NEdmKapscEl8OLg" width="1320" height="1320"/>
+							</children>
+							<children xmi:id="_IgiU9d7NEdmKapscEl8OLg" type="Stereotype">
+								<element xmi:type="uml:Package" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.compatibility.view1.emx#_3C7B8A60016D403F30960159?view1/view1"/>
+							</children>
+							<children xmi:id="_IgiU9t7NEdmKapscEl8OLg" type="Name">
+								<element xmi:type="uml:Package" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.compatibility.view1.emx#_3C7B8A60016D403F30960159?view1/view1"/>
+							</children>
+							<styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_IgiU8d7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="None" showListVisibility="None" fillColor="13434879" lineColor="3342489" showStereotype="Image"/>
+							<element xmi:type="uml:Package" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.compatibility.view1.emx#_3C7B8A60016D403F30960159?view1/view1"/>
+							<layoutConstraint xmi:type="notation:Bounds" xmi:id="_IgiU8t7NEdmKapscEl8OLg" x="14782" y="1016" width="2540" height="1676"/>
+						</children>
+						<styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_HzFZE97NEdmKapscEl8OLg"/>
+					</contents>
+				</eAnnotations>
+				<eAnnotations xmi:id="_RaQF098IEdmKapscEl8OLg" source="uml2.ownedShortcuts">
+					<contents xmi:type="ecore:EAnnotation" xmi:id="_l-4yEN8JEdmKapscEl8OLg" source="eObjectShortcut">
+						<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.compatibility.view1.emx#_4trI4N67EdmkJO73lqONhA?view1"/>
+					</contents>
+				</eAnnotations>
+			</ownedMember>
+			<ownedMember xmi:type="uml:Package" xmi:id="_3C7B8A60016D414B16AD0366" name="security">
+				<eAnnotations xmi:id="_MAbhdt8IEdmKapscEl8OLg" source="uml2.ownedShortcuts">
+					<contents xmi:type="ecore:EAnnotation" xmi:id="_qZNBQN8JEdmKapscEl8OLg" source="eObjectShortcut">
+						<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authentication1.emx#_yrxUAN6_EdmkJO73lqONhA?authentication1"/>
+					</contents>
+					<contents xmi:type="ecore:EAnnotation" xmi:id="_swlIUN8JEdmKapscEl8OLg" source="eObjectShortcut">
+						<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_zYkIkN6_EdmkJO73lqONhA?authorization1"/>
+					</contents>
+					<contents xmi:type="ecore:EAnnotation" xmi:id="_3kUXsN8JEdmKapscEl8OLg" source="eObjectShortcut">
+						<references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_0cj8MN6_EdmkJO73lqONhA?realm1"/>
+					</contents>
+				</eAnnotations>
+			</ownedMember>
+		</ownedMember>
+	</ownedMember>
+</uml:Model>

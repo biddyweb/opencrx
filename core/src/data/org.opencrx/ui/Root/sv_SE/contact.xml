@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kunder</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kunder</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kunder</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kunder</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontakt</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontaktperson</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Person</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Person</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontaktinformation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontaktinformation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Personlig information</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personlig information</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutationCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hälsningsfras</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hälsningsfras</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hälsning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hälsning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:firstName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Förnamn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Förnamn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:middleName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Andranamn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Andranamn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:lastName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Efternamn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Efternamn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:suffix" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:nickName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Smeknamn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Smeknamn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Önskad metod</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontaktmetod som föredras av personen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Talspråk</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Språk som föredras av personen i tal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Skriftspråk</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Språk som föredras av personen i skrift</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ej E-post</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personen vill ej bli kontakt per E-post</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPostalMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ej post</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personen vill ej bli kontakt per post</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotBulkPostalMail" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ej massutskick</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personen vill ej bli kontakt per massutskick</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPhone" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ej telefon</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personen vill ej bli kontakt per telefon</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotFax" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ej fax</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personen vill ej bli kontakt per fax</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobTitle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Jobbtitel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Jobbtitel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Arbetsroll</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Arbetsroll</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:organization" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Organisation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Organisation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:department" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Avdelning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Avdelning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rapporterar till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rapporterar till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Assistent</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens assistent</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:deputy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ställföreträdare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens ställföreträdare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:gender" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kön</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens kön</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:familyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Civilstånd</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens civilstånd</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:numberOfChildren" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Antal barn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Antal barn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:childrenNames" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Barnens namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Barnens namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Utbildning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens utbildning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Årlig inkomst (valuta)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Valuta för personens årliga inkomst</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Årlig inkomst (summa)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens årliga inkomstssumma</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:birthdate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Födelsedag</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens födelsedag</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bröllopsdag</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personens bröllopsdag</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Personnummer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Personnummer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content>
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Bild</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Bild</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel / Källa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel / Källa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportera som vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportera som vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indata</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indata</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Språk</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Språk</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

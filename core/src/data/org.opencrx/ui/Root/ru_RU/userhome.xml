@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Польз. страницы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все польз. страницы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:userHome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Польз. страницы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Польз. страницы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:alert" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Предупрежд-я</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Предупрежд-я</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Послед. посещ-е</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Послед. посещ-е</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Закладки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Закладки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Графики</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Графики</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Моя страничка</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Моя страничка</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Еще графики</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Еще графики</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Опции</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Опции</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Календарь</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Календарь</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Графики</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Графики</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Опции эл. почты</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Опции эл. почты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Пользовательские настройки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Пользовательские настройки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контакт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeekName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeek" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Раб. неделя</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Раб. неделя</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название/Источник</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название/Источник</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип MIME</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название/Источник</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название/Источник</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип MIME</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название/Источник</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название/Источник</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип MIME</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название/Источник</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название/Источник</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип MIME</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:sendMailSubjectPrefix" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Префикс темы письма</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Префикс темы письма</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:webAccessUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>URL доступа к сети</_item>
+                      </label>
+                      <toolTip>
+                        <_item>URL доступа к сети</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:primaryGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Осн. группа польз-лей</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Осн. группа польз-лей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:storeSettingsOnLogoff" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Хранить настройки при выходе</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Хранить настройки при выходе</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:settings" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Пользовательские настройки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Пользовательские настройки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Предупрежд-е</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Предупрежд-е</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:alertState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статус</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статус</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:importance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Важность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Важность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:reference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ссылка</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ссылка</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Дата созд.</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Дата созд.</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Пометить как прочит.</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Пометить как прочит.</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Пометить как &quot;принято&quot;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Пометить как &quot;принято&quot;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Закладка</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Закладка</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:reference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ссылка</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ссылка</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Послед. посещ-е</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Послед. посещ-е</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory:reference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ссылка</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ссылка</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>График</_item>
+                      </label>
+                      <toolTip>
+                        <_item>График</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chartName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>График</_item>
+                      </label>
+                      <toolTip>
+                        <_item>График</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импорт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импорт эл-та</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Язык</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Язык</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Эл-т</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Эл-т</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имя эл-та</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имя эл-та</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статус</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статус</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статусное сообщ-е</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статусное сообщ-е</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:importedObject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импорт. объект</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импорт. объект</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создать польз-ля</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Создать польз-ля</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:principalName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имя адм-ра</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имя адм-ра</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контакт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:primaryUserGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Осн. группа польз-лей</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Осн. группа польз-лей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Пароль</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Пароль</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPasswordVerification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Повтор пароля</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Повтор пароля</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статус</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статус</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статусное сообщ-е</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статусное сообщ-е</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:createdUserHome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Созданная ПользСтр</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Созданная ПользСтр</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импортировать пользователей</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импортировать пользователей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ед-ца</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ед-ца</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:itemName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имя ед-цы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имя ед-цы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статус. сообщ-е</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статус. сообщ-е</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Обновить</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Обновить</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Изменить пароль</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Изменить пароль</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:oldPassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Старый пароль</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Старый пароль</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый пароль</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый пароль</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPasswordVerification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Повтор пароля</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Повтор пароля</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статус</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статус</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

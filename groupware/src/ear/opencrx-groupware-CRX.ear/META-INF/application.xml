@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+<application id="Application_ID">
+	<display-name>opencrx-groupware-CRX</display-name>
+	<module id="WebModule_1">
+		<web>
+			<web-uri>opencrx-caldav-CRX.war</web-uri>
+			<context-root>opencrx-caldav-CRX</context-root>
+		</web>
+	</module>
+	<module id="WebModule_2">
+		<web>
+			<web-uri>opencrx-wiki-CRX.war</web-uri>
+			<context-root>opencrx-wiki-CRX</context-root>
+		</web>
+	</module>
+	<module id="WebModule_3">
+		<web>
+			<web-uri>opencrx-ical-CRX.war</web-uri>
+			<context-root>opencrx-ical-CRX</context-root>
+		</web>
+	</module>
+	<module id="WebModule_4">
+		<web>
+			<web-uri>opencrx-ldap-CRX.war</web-uri>
+			<context-root>opencrx-ldap-CRX</context-root>
+		</web>
+	</module>
+	<module id="WebModule_5">
+		<web>
+			<web-uri>opencrx-imap-CRX.war</web-uri>
+			<context-root>opencrx-imap-CRX</context-root>
+		</web>
+	</module>
+	<security-role id="SecurityRole_OpenCrxUser">
+		<description>openCRX Standard Users</description>
+		<role-name>OpenCrxUser</role-name>
+	</security-role>
+</application>

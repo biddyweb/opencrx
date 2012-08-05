@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?StartPath org::opencrx::kernel::product1/provider/CRX/segment/Standard/productClassification/X+VQ2K3IEduUrK-Q7UkzAQ?>
+<org.openmdx.base.Authority name="org:opencrx:kernel:product1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/product1/xmi/product1.xsd">
+    <_object/>
+    <_content>
+        <provider>
+            <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+                <_object/>
+                <_content>
+                    <segment>
+                        <org.opencrx.kernel.product1.Segment qualifiedName="Standard" _operation="null">
+                            <_object/>
+                            <_content>
+                                <productClassification>
+                                    <org.opencrx.kernel.product1.ProductClassification id="X+VQ2K3IEduUrK-Q7UkzAQ">
+                                        <_object>
+                                            <name>opencrx-store:Pets</name>
+                                            <owningGroup>
+                                                <_item>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Standard/principal/Administrators</_item>
+                                            </owningGroup>
+                                            <description>Pets</description>
+                                        </_object>
+                                        <_content>
+                                            <relationship>
+                                                <org.opencrx.kernel.product1.ProductClassificationRelationship id="vSRyQ63lEduUrK-Q7UkzAQ">
+                                                    <_object>
+                                                        <relationshipType>0</relationshipType><!-- @see CodeValueContainer name="relatedProductType" -->
+                                                        <disabled>false</disabled>
+                                                        <name>opencrx-store:Products</name>
+                                                        <relationshipTo>xri:@openmdx:org.opencrx.kernel.product1/provider/CRX/segment/Standard/productClassification/vSRyQq3lEduUrK-Q7UkzAQ</relationshipTo>
+                                                        <owningGroup>
+                                                            <_item>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Standard/principal/Administrators</_item>
+                                                        </owningGroup>
+                                                    </_object>
+                                                    <_content/>
+                                                </org.opencrx.kernel.product1.ProductClassificationRelationship>
+                                            </relationship>
+                                        </_content>
+                                    </org.opencrx.kernel.product1.ProductClassification>
+                                </productClassification>
+                            </_content>
+                        </org.opencrx.kernel.product1.Segment>
+                    </segment>
+                </_content>
+            </org.openmdx.base.Provider>
+        </provider>
+    </_content>
+</org.openmdx.base.Authority>

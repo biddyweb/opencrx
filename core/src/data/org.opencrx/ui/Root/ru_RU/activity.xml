@@ -1,0 +1,1339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все виды деят.</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создатели деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все создатели деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Деятельность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все виды деят.</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Типы деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все типы деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначенные Группы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначенные Группы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связанные деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связанные деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Несвязанные деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Несвязанные деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedResource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначенные Ресурсы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначенные Ресурсы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:effortEstimate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Оценки усилия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Оценки усилия</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:workReportEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отчет работы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отчет работы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:vote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Голоса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Голоса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:followUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слежения</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слежения</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:contract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контракт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контракт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:productReference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Вовлеченные Продукты</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Вовлеченные Продукты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Attr:Tab:0:Group:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>#</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Номер</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:isAllDayEvent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>событие дня</_item>
+                      </label>
+                      <toolTip>
+                        <_item>событие дня</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:location" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Расположение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Расположение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Переуступлен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Переуступлен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Разное №1</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Разное №1</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Разное №2</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Разное №2</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:misc3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Разное №3</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Разное №3</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Состояние</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Состояние</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:priority" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Приоритет</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Приоритет</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:scheduledStart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>План. начало</_item>
+                      </label>
+                      <toolTip>
+                        <_item>План. начало</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:modifiedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Дата модиф.</_item>
+                      </label>
+                      <toolTip>
+                        <_item>время и дата посл. модиф-ии объекта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:scheduledEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>План. окончание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>План. окончание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:originalScheduledEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Планируемый конец (оригинал)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Планируемый конец (оригинал)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Подлежащий</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Подлежащий</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastTransition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Последний переход</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Последний переход</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:processState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Статус процесса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Статус процесса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:percentComplete" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Завершено в %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Завершено в %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualStart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действ. начало</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действ. начало</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действ. окончание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действ. окончание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контакт. счет</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контакт. счет</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingContact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контакт. связь</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контакт. связь</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:detailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Детальное описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Детальное описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (действительное усилие)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (действительное усилие)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (действительное усилие)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (действительное усилие)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:totalVotes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Всего голосов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Всего голосов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Несвязанная деятельность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Несвязанная деятельность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:activityLinkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkTo:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связанная деятельность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связанная деятельность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Несвязанная деятельность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Несвязанная деятельность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:activityLinkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связанное деятельностью</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связанное деятельностью</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ProductReference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ссылки продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ссылки продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импорт iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импорт iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слежение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слежение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Переход</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Переход</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpTitle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заголовок</_item>
+                      </label>
+                      <toolTip>
+                        <_item>загол. заметки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpText" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Текст</_item>
+                      </label>
+                      <toolTip>
+                        <_item>текст</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Использовать повторно создателя деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Использовать повторно создателя деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создатель деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Создатель деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначить Ресурсу</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначить Ресурсу</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAssignToParams:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ресурс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ресурс</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:voteForActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Согласно деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Согласно деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:voteForActivity:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityVoteForActivityParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название голоса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название голоса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityVoteForActivityParams:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:voteForActivity:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:startAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Начало</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Начало</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:endAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Конец</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Конец</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>часов (продолжительность работы)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>часов (продолжительность работы)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (продолжительность работы)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (продолжительность работы)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ресурсы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ресурсы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:rateType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип ставки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип ставки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначение Группы Деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначение Группы Деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment:assignedTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment:activityGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Группа деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Группа деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:controlledBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Управляется</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Управляется</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:activityClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Класс деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Класс деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:workBt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Текст заказа работы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Текст заказа работы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создатель деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Создатель деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Группы деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все группы деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ресурсы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все ресурсы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:priority" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Приоритет</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Приоритет</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:baseDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Основная дата</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Основная дата</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:scheduledStart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>План. начало</_item>
+                      </label>
+                      <toolTip>
+                        <_item>План. начало</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:scheduledEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>План. окончание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>План. окончание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:originalScheduledEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Планируемый конец (оригинал)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Планируемый конец (оригинал)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Подлежащий</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Подлежащий</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:newActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новая Деятельность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новая Деятельность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:newActivity:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:detailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Детальное описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Детальное описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:scheduledStart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>План. начало</_item>
+                      </label>
+                      <toolTip>
+                        <_item>План. начало</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:scheduledEnd" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>План. окончание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>План. окончание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:dueBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Подлежащий</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Подлежащий</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:priority" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Приоритет</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Приоритет</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:reportingContact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контакт. связь</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контакт. связь</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:activityGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Группа деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Группа деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ресурсы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ресурсы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Роль ресурса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Роль ресурса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:newActivity:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityResult:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Деятельность</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Деятельность</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

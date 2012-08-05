@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:revenueReport" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relatórios de Receitas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relatórios de Receitas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entidade Legal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entidade Legal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome Oficial</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome da Entidade Legal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:tickerSymbol" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Símbolo do Ticket</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Símbolo do Ticket da Entidade Legal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:stockExchange" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Câmbio do Estoque</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Câmbios do estoque onde a entidade legal está listada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:organizationalUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Unidade Organizacional</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Unidade Organizacional</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:industry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indústria</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indústria da Entidade Legal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:numberOfEmployeesCategory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item># de funcionários (código)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>número de empregados (categoria)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:numberOfEmployees" _operation="create">
+                    <_object>
+                      <label>
+                        <_item># de funcionários</_item>
+                      </label>
+                      <toolTip>
+                        <_item>número de empregados</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:building" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prédios</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prédios</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relatório de Receita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relatório de Receita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relatório de Receita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relatório de Receita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:reportNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Número do relatório</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Número do relatório</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:reportingYear" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relatório Anual</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relatório Anual</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:reportingQuarter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relatório Trimestral</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relatório Trimestral</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:reportingCurrency" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Moeda</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Moeda</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport:reportedRevenue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Receita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Receita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

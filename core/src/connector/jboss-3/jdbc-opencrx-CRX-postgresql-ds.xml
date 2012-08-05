@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+	<local-tx-datasource>
+		<jndi-name>jdbc_opencrx_CRX</jndi-name>
+		<connection-url>jdbc:postgresql://localhost/crx-CRX</connection-url>
+		<driver-class>org.postgresql.Driver</driver-class>
+		<user-name>system</user-name>
+		<password>manager</password>
+		<connection-property name="loginTimeout">100</connection-property>
+		<transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+		<min-pool-size>5</min-pool-size>
+		<max-pool-size>100</max-pool-size>
+		<blocking-timeout-millis>5000</blocking-timeout-millis>
+		<idle-timeout-minutes>15</idle-timeout-minutes>
+		<new-connection-sql>SELECT 1 FROM prefs_Preference</new-connection-sql>
+		<check-valid-connection-sql>SELECT 1 FROM prefs_Preference</check-valid-connection-sql>
+	</local-tx-datasource>
+</datasources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" sourcepath="C:/temp/oracle.zip" kind="lib" path="lib/ojdbc14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/orai18n.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

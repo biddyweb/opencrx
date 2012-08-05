@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prévisions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toutes les prévisions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:forecast" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prévisions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Toutes les prévisions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prévision</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prévision</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:forecastPeriod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Périodes de prévision</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Périodes de prévision</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nom</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Description</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Description</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:organizationalUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Unités Org.</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Unités d&apos;organisation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Période de prévision</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Période de prévision</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:lead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pistes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pistes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Occasions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Occasions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:quote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Propositions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Propositions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pistes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pistes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Occasions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Occasions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Propositions</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Propositions</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:period" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Période</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Période</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:person" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Contact</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Contact</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:leadMinSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total (min)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total (min)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:leadMaxSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total (max)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total (max)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:leadExpectedSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total espéré</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total espéré</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunityMinSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total (min)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total (min)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunityMaxSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total (max)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total (max)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:opportunityExpectedSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total espéré</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total espéré</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:quoteSum" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Total</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Total</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

@@ -1,0 +1,121 @@
+-------------------------------------------------------------------
+     
+                         openCRX/Store
+
+-------------------------------------------------------------------
+
+1/ What this guide is for
+   ----------------------
+
+   This README describes how to setup an run the openCRX/Store.
+      
+
+2/ Installation
+   ------------
+
+   Build binaries
+   --------------
+   First you need to download and install openCRX as described in the 
+   README of distribution opencrx-2.0.0.
+   
+   Second download the openCRX/Store distribution, i.e. 
+   opencrx-2.0.0-store.jre-1.5.zip.
+
+   Here are the step-by-step instructions:
+   
+	 1. Extract openCRX/Core to any directory, e.g. c:\pj
+	 2. Create directory opt in the folder c:\pj\opencrx-2.0.0
+	 3. Expand openMDX/Core, openMDX/Security and openMDX/WebSphere
+	    to directory opt
+	 4. Expand openCRX/Store to c:\pj	 
+	 5. The directory structure should look as follows:
+	 
+	 		c:\pj
+			+ opencrx-2.0.0
+			  + core
+			  + jre-1.5
+			  + store
+			  + opt
+			    + openmdx-2.0.0
+			      + ant
+			      + apache	       
+			      + core
+			      + eclipse
+			      + java2
+			      + jaysoft
+			      + jre-1.2
+			      + jre-1.5
+			      + planetj
+			      + security
+			      + source-archive
+			      + websphere-6
+			      + security
+	       
+	 6. Open a shell and cd to c:\pj\opencrx-2.0.0\store
+	 7. ant install-src
+	 8. ant deliverables
+	 9. ant assemble
+             
+   Deploy
+   ------
+   The store application opencrx-store-CRX-Web.ear is located in the folder
+   c:\pj\opencrx-2.0.0\jre-1.5\store\deployment-unit. Deploy opencrx-store-CRX-Web.ear
+   to the same application server / location where you have deployed openCRX/Core. 
+   
+   Restart the application server if necessary.
+   
+   Run
+   ---
+   The openCRX/Store is available at URL 
+   http://localhost:8080/opencrx-store-CRX/Store.jsp. Adapt host and port to your
+   environment. 
+   
+   The store is managed by the store administrator. The store administrator is
+   responsible for createing product categories, manage products and prices and
+   process open orders. The store administrator can be created as follows:
+   
+   1. Register a new user, e.g. storeadmin
+   2. Login to openCRX using the standard GUI. Lookup the newly created account
+      in the tab 'Accounts'. Open the tab Property Sets -> opencrx-store:Properties
+      and edit the property 'UserType'. Change the value from 'Regular' to 'Administrator'.
+   3. In the store GUI logout and login as storeadmin. Add categories and products
+      as required.
+   
+   In order to work properly, openCRX/Store requires the configuration of a sales tax type.
+   This is done as follows:
+   1. Login to openCRX using the standard GUI
+   2. Go to Products -> Sales Tax Type
+   3. Create a new Sales Tax Type with name 'Sales Tax 8.25%'. Set the field 'Tax rate
+      in %' to 8.25%. 
+      
+   That's all. The store is now ready for use.
+   
+   All actions performed using the openCRX/Store GUI are mapped to the openCRX API, i.e.
+   all persistent data managed by the store can be inspected using the standard openCRX
+   GUI. The mapping is as follows:
+   
+   Store                    mapped to      openCRX
+   ----------------------------------------------------------------------
+   User                                    Account / Properties
+   Product category                        Product classification
+   Product                                 Product
+   Product price                           BasePrice / PriceLevel
+   Order                                   SalesOrder / SalesOrderPosition
+   
+   Configuration options
+   ---------------------
+   The store has the following configuration options. The options are set in the
+   web.xml of opencrx-store-CRX-Web.ear.
+   
+   * root (default is provider/CRX/segment/Standard). The store operates on one 
+     openCRX segment. By default it is the segment 'Standard'. Multiple instances of 
+     the store can be deployed where each instance points to another segment. In 
+     this case the value of root must be configured accordingly.
+   * currencyCode (default is USD = 840). The store is a single-currency application.
+     The actual currency can be configured by setting the option currencyCode.
+   * salesTaxTypeName (default is 'Sales Tax 8.25%'). The store is a single-sales tax
+     type application. The sales tax type to be used can be configured with the
+     option salesTaxTypeName.
+                          
+---
+End of README

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE weblogic-ejb-jar PUBLIC '-//BEA Systems, Inc.//DTD WebLogic 6.0.0 EJB//EN' 'http://www.bea.com/servers/wls810/dtd/weblogic-ejb-jar.dtd'>
+<weblogic-ejb-jar>
+	<weblogic-enterprise-bean>
+		<ejb-name>opencrx_core_CRX_gateway_mandatory</ejb-name>
+		<stateless-session-descriptor>
+			<pool>
+				<max-beans-in-free-pool>100</max-beans-in-free-pool>
+				<initial-beans-in-free-pool>1</initial-beans-in-free-pool>
+			</pool>
+		</stateless-session-descriptor>		
+		<reference-descriptor>
+			<ejb-local-reference-description>
+				<ejb-ref-name>ejb/dataprovider[0]</ejb-ref-name>
+				<jndi-name>org.opencrx.core.CRX.local.mandatory.kernel</jndi-name>
+			</ejb-local-reference-description>
+		</reference-descriptor>
+		<enable-call-by-reference>true</enable-call-by-reference>
+		<jndi-name>org.opencrx.core.CRX.mandatory.gateway</jndi-name>
+		<local-jndi-name>org.opencrx.core.CRX.local.mandatory.gateway</local-jndi-name>
+	</weblogic-enterprise-bean>
+	<weblogic-enterprise-bean>
+		<ejb-name>opencrx_core_CRX_gateway_noOrNew</ejb-name>
+		<stateless-session-descriptor>
+			<pool>
+				<max-beans-in-free-pool>100</max-beans-in-free-pool>
+				<initial-beans-in-free-pool>1</initial-beans-in-free-pool>
+			</pool>
+		</stateless-session-descriptor>
+		<reference-descriptor>
+			<ejb-local-reference-description>
+				<ejb-ref-name>ejb/server</ejb-ref-name>
+				<jndi-name>org.opencrx.core.CRX.local.mandatory.gateway</jndi-name>
+			</ejb-local-reference-description>
+		</reference-descriptor>
+		<enable-call-by-reference>true</enable-call-by-reference>
+		<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
+		<local-jndi-name>org.opencrx.core.CRX.local.noOrNew.gateway</local-jndi-name>
+	</weblogic-enterprise-bean>
+</weblogic-ejb-jar>

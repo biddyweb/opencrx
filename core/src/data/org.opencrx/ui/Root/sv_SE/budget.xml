@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Budgetar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Alla budgetar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetMilestone" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Budgetmilstolpe</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budgetmilstolpe</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Budget</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budget</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:toBeFulfilledByOrganizationalUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Organisationsenhet</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Att uppfyllas av organisationsenhet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kund</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Att uppfyllas av kund</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:underlying" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baserad på</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baserad på</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:budgetType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budgettyp</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:startingFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Från</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Från</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:endingAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:targetValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Budgeterat värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budgeterat värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:actualValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Faktiskt värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Faktiskt värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Milstolpe</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budgetmilstolpe</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:targetValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Budgeterat värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Budgeterat värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:actualValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Faktiskt värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Faktiskt värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

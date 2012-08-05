@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>用户主页</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有用户主页</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:userHome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>用户主页</_item>
+                      </label>
+                      <toolTip>
+                        <_item>用户主页</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:alert" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>通知</_item>
+                      </label>
+                      <toolTip>
+                        <_item>通知</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»访问历史</_item>
+                      </label>
+                      <toolTip>
+                        <_item>访问历史</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»收藏夹</_item>
+                      </label>
+                      <toolTip>
+                        <_item>收藏夹</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»图形报表</_item>
+                      </label>
+                      <toolTip>
+                        <_item>图形报表</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>搜索工具</_item>
+                      </label>
+                      <toolTip>
+                        <_item>搜索工具</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>我的主页</_item>
+                      </label>
+                      <toolTip>
+                        <_item>我的主页</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>图形报表</_item>
+                      </label>
+                      <toolTip>
+                        <_item>图形报表</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>选项</_item>
+                      </label>
+                      <toolTip>
+                        <_item>选项</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>日历</_item>
+                      </label>
+                      <toolTip>
+                        <_item>日历</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20:Group:20" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>图形</_item>
+                      </label>
+                      <toolTip>
+                        <_item>图形</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-mail 选项</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-mail 选项</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>用户设置</_item>
+                      </label>
+                      <toolTip>
+                        <_item>用户设置</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>联系人</_item>
+                      </label>
+                      <toolTip>
+                        <_item>联系人</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeekName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeek" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>工作周</_item>
+                      </label>
+                      <toolTip>
+                        <_item>工作周</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标题 / 来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标题 / 来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标题 / 来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标题 / 来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标题 / 来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标题 / 来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标题 / 来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标题 / 来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3MimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:sendMailSubjectPrefix" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-mail 主题前缀</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-mail 主题前缀</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:webAccessUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Web访问地址</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Web访问地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:primaryGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>主用户组</_item>
+                      </label>
+                      <toolTip>
+                        <_item>主用户组</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:storeSettingsOnLogoff" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>登出时保存设置</_item>
+                      </label>
+                      <toolTip>
+                        <_item>登出时保存设置</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:settings" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>用户设置</_item>
+                      </label>
+                      <toolTip>
+                        <_item>用户设置</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>通知</_item>
+                      </label>
+                      <toolTip>
+                        <_item>通知</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:alertState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:importance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>重要性</_item>
+                      </label>
+                      <toolTip>
+                        <_item>重要性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:reference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>引用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>引用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>创建时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>创建时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标识为已读</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标识为已读</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标识为已接受</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标识为已接受</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>收藏夹</_item>
+                      </label>
+                      <toolTip>
+                        <_item>收藏夹</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:reference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>引用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>引用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>最近已访问</_item>
+                      </label>
+                      <toolTip>
+                        <_item>最近已访问</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory:reference" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>引用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>引用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>图形</_item>
+                      </label>
+                      <toolTip>
+                        <_item>图形</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chartName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chart" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>图形</_item>
+                      </label>
+                      <toolTip>
+                        <_item>图形</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入项目</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>语言</_item>
+                      </label>
+                      <toolTip>
+                        <_item>语言</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>项目</_item>
+                      </label>
+                      <toolTip>
+                        <_item>项目</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>项目名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>项目名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态信息</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态信息</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:importedObject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入对象</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入对象</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>新建用户</_item>
+                      </label>
+                      <toolTip>
+                        <_item>新建用户</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:principalName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>主体名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>主体名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>联系人</_item>
+                      </label>
+                      <toolTip>
+                        <_item>联系人</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:primaryUserGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>主用户组</_item>
+                      </label>
+                      <toolTip>
+                        <_item>主用户组</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>初始密码</_item>
+                      </label>
+                      <toolTip>
+                        <_item>初始密码</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPasswordVerification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>再次输入密码</_item>
+                      </label>
+                      <toolTip>
+                        <_item>再次输入密码</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态信息</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态信息</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:createdUserHome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>已创建用户主页</_item>
+                      </label>
+                      <toolTip>
+                        <_item>已创建用户主页</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入用户</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入用户</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>项目</_item>
+                      </label>
+                      <toolTip>
+                        <_item>项目</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:itemName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>项目名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>项目名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersResult:statusMessage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态信息</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态信息</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>重新计算并刷新</_item>
+                      </label>
+                      <toolTip>
+                        <_item>重新计算并刷新</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>修改密码</_item>
+                      </label>
+                      <toolTip>
+                        <_item>修改密码</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:oldPassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>旧密码</_item>
+                      </label>
+                      <toolTip>
+                        <_item>旧密码</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPassword" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>新密码</_item>
+                      </label>
+                      <toolTip>
+                        <_item>新密码</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPasswordVerification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>再次输入密码</_item>
+                      </label>
+                      <toolTip>
+                        <_item>再次输入密码</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordResult:status" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

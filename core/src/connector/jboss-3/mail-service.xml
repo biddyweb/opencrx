@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server>
+<server>
+  <mbean code="org.jboss.mail.MailService" name="jboss:service=Mail">
+    <attribute name="JNDIName">java:/mail/provider/CRX</attribute>
+    <attribute name="User">test</attribute>
+    <attribute name="Password">test</attribute>
+    <attribute name="Configuration">
+       <configuration>
+
+		  <!-- Outbound -->
+          <property name="mail.transport.protocol" value="smtp"/>
+          <property name="mail.smtp.starttls.enable" value="true"/>
+          <property name="mail.smtp.auth" value="true"/>
+          <property name="mail.smtp.host" value="mail.dot.org"/>
+          <property name="mail.smtp.port" value="25"/>
+          <property name="mail.smtp.user" value="test"/>
+          <property name="mail.from" value="noreply@dot.org"/>
+
+		<!-- Inbound POP3 -->
+          <property name="mail.store.protocol" value="pop3"/>
+          <property name="mail.pop3.host" value="mail.dot.org"/>
+          <property name="mail.pop3.port" value="110"/>
+          <property name="mail.pop3.auth" value="true"/>
+          <property name="mail.pop3.user" value="test"/>
+          <property name="mail.pop3.password" value="test"/>
+
+		<!-- Inbound POP3S -->
+<!--		
+          <property name="mail.store.protocol" value="pop3s"/>
+-->
+          <property name="mail.pop3s.host" value="mail.dot.org"/>
+          <property name="mail.pop3s.port" value="995"/>
+          <property name="mail.pop3s.auth" value="true"/>
+          <property name="mail.pop3s.user" value="test"/>
+          <property name="mail.pop3s.password" value="test"/>
+
+		<!-- Inbound IMAP -->
+<!--		
+          <property name="mail.store.protocol" value="imap"/>
+-->
+          <property name="mail.imap.host" value="mail.dot.org"/>
+          <property name="mail.imap.port" value="143"/>
+          <property name="mail.imap.auth" value="true"/>
+          <property name="mail.imap.user" value="test"/>
+          <property name="mail.imap.password" value="test"/>
+
+		<!-- Inbound IMAPS -->
+<!--		
+          <property name="mail.store.protocol" value="imaps"/>
+-->
+          <property name="mail.imaps.host" value="mail.dot.org"/>
+          <property name="mail.imaps.port" value="993"/>
+          <property name="mail.imaps.auth" value="true"/>
+          <property name="mail.imaps.user" value="test"/>
+          <property name="mail.imaps.password" value="test"/>
+          
+          <property name="mail.debug" value="true"/>
+       </configuration>
+       <depends>jboss:service=Naming</depends>
+    </attribute>
+  </mbean>
+</server>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--xtools2_universal_type_manager-->
+<uml:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.ibm.com/xtools/1.5.0/Notation" xmlns:uml="http://www.eclipse.org/uml2/1.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.0/Umlnotation" xmi:id="_uOXAMP_AEdub5_UKUpdSMg" name="authorization1" appliedProfile="_uOXANP_AEdub5_UKUpdSMg _uOXAN__AEdub5_UKUpdSMg _uOXAOv_AEdub5_UKUpdSMg _uOXAPf_AEdub5_UKUpdSMg _uOXAQP_AEdub5_UKUpdSMg">
+  <eAnnotations xmi:id="_uOXAMf_AEdub5_UKUpdSMg" source="uml2.diagrams"/>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_uOXANP_AEdub5_UKUpdSMg">
+    <eAnnotations xmi:id="_uOXANf_AEdub5_UKUpdSMg" source="attributes">
+      <details xmi:id="_uOXANv_AEdub5_UKUpdSMg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_uOXAN__AEdub5_UKUpdSMg">
+    <eAnnotations xmi:id="_uOXAOP_AEdub5_UKUpdSMg" source="attributes">
+      <details xmi:id="_uOXAOf_AEdub5_UKUpdSMg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_uOXAOv_AEdub5_UKUpdSMg">
+    <eAnnotations xmi:id="_uOXAO__AEdub5_UKUpdSMg" source="attributes">
+      <details xmi:id="_uOXAPP_AEdub5_UKUpdSMg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_uOXAPf_AEdub5_UKUpdSMg">
+    <eAnnotations xmi:id="_uOXAPv_AEdub5_UKUpdSMg" source="attributes">
+      <details xmi:id="_uOXAP__AEdub5_UKUpdSMg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+    <importedProfile href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_uOXAQP_AEdub5_UKUpdSMg">
+    <eAnnotations xmi:id="_uOXAQf_AEdub5_UKUpdSMg" source="attributes">
+      <details xmi:id="_uOXAQv_AEdub5_UKUpdSMg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+    <importedProfile href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+  </packageImport>
+  <packageImport xmi:id="_uOXAQ__AEdub5_UKUpdSMg">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML2_LIBRARIES/UML2PrimitiveTypes.library.uml2#_EfRZoK86EdieaYgxtVWN8Q"/>
+  </packageImport>
+  <ownedMember xmi:type="uml:Package" xmi:id="_WTQ5AP_AEdub5_UKUpdSMg" name="authorization1">
+    <eAnnotations xmi:id="_WTQ5Af_AEdub5_UKUpdSMg" source="uml2.diagrams">
+      <contents xmi:type="notation:Diagram" xmi:id="_ZQgtQP_AEdub5_UKUpdSMg" type="Class" name="Main">
+        <children xmi:id="_cSX7wP_AEdub5_UKUpdSMg" targetEdges="_rXYMAP_AEdub5_UKUpdSMg">
+          <children xmi:id="_cSX7w__AEdub5_UKUpdSMg" type="ImageCompartment">
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+            <layoutConstraint xmi:type="notation:Size" xmi:id="_cSX7xP_AEdub5_UKUpdSMg" width="1320" height="1320"/>
+          </children>
+          <children xmi:id="_cSX7xf_AEdub5_UKUpdSMg" type="Stereotype">
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          </children>
+          <children xmi:id="_cSX7xv_AEdub5_UKUpdSMg" type="Name">
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          </children>
+          <children xmi:id="_cSX7x__AEdub5_UKUpdSMg" visible="false" type="AttributeCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_cSX7yP_AEdub5_UKUpdSMg"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          </children>
+          <children xmi:id="_cSX7yf_AEdub5_UKUpdSMg" visible="false" type="OperationCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_cSX7yv_AEdub5_UKUpdSMg"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          </children>
+          <children xmi:id="_cSX7y__AEdub5_UKUpdSMg" visible="false" type="SignalCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_cSX7zP_AEdub5_UKUpdSMg"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          </children>
+          <children xmi:id="_cSX7zf_AEdub5_UKUpdSMg" visible="false" type="StructureCompartment">
+            <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_cSX7zv_AEdub5_UKUpdSMg"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          </children>
+          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_cSX7wf_AEdub5_UKUpdSMg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
+          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cSX7wv_AEdub5_UKUpdSMg" x="1268" y="951" width="4339" height="1058"/>
+        </children>
+        <children xmi:id="_kYDCYP_AEdub5_UKUpdSMg" sourceEdges="_rXYMAP_AEdub5_UKUpdSMg" element="_kX5RYP_AEdub5_UKUpdSMg">
+          <children xmi:id="_kYDCY__AEdub5_UKUpdSMg" type="ImageCompartment" element="_kX5RYP_AEdub5_UKUpdSMg">
+            <layoutConstraint xmi:type="notation:Size" xmi:id="_kYDCZP_AEdub5_UKUpdSMg" width="1320" height="1320"/>
+          </children>
+          <children xmi:id="_kYDCZf_AEdub5_UKUpdSMg" type="Stereotype" element="_kX5RYP_AEdub5_UKUpdSMg"/>
+          <children xmi:id="_kYDCZv_AEdub5_UKUpdSMg" type="Name" element="_kX5RYP_AEdub5_UKUpdSMg"/>
+          <children xmi:id="_kYDCZ__AEdub5_UKUpdSMg" type="AttributeCompartment" element="_kX5RYP_AEdub5_UKUpdSMg">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_kYDCaP_AEdub5_UKUpdSMg"/>
+          </children>
+          <children xmi:id="_kYDCaf_AEdub5_UKUpdSMg" type="OperationCompartment" element="_kX5RYP_AEdub5_UKUpdSMg">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_kYDCav_AEdub5_UKUpdSMg"/>
+          </children>
+          <children xmi:id="_kYDCa__AEdub5_UKUpdSMg" visible="false" type="SignalCompartment" element="_kX5RYP_AEdub5_UKUpdSMg">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_kYDCbP_AEdub5_UKUpdSMg"/>
+          </children>
+          <children xmi:id="_kYDCbf_AEdub5_UKUpdSMg" visible="false" type="StructureCompartment" element="_kX5RYP_AEdub5_UKUpdSMg">
+            <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_kYDCbv_AEdub5_UKUpdSMg"/>
+          </children>
+          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_kYDCYf_AEdub5_UKUpdSMg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="13369343" lineColor="3342489" showStereotype="Text"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kYDCYv_AEdub5_UKUpdSMg" x="1281" y="2791" width="4313"/>
+        </children>
+        <children xmi:id="_oJvLUP_AEdub5_UKUpdSMg" type="Note">
+          <children xmi:id="_oJvLUf_AEdub5_UKUpdSMg" type="DiagramName"/>
+          <children xmi:id="_oJvLUv_AEdub5_UKUpdSMg" type="Description"/>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_oJvLU__AEdub5_UKUpdSMg" fontName="Arial" fontHeight="11" description="Extend openMDX/Security in order to make it part of the openCRX models. The class CrxPolicy is not used.&#xD;&#xA;" fillColor="16775658" lineColor="3342489"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_oJvLVP_AEdub5_UKUpdSMg" x="1219" y="4722" width="7332" height="1686"/>
+        </children>
+        <styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_ZQgtQf_AEdub5_UKUpdSMg"/>
+        <edges xmi:id="_rXYMAP_AEdub5_UKUpdSMg" element="_rXObAP_AEdub5_UKUpdSMg" source="_kYDCYP_AEdub5_UKUpdSMg" target="_cSX7wP_AEdub5_UKUpdSMg">
+          <children xmi:id="_rXYMA__AEdub5_UKUpdSMg" type="NameLabel" element="_rXObAP_AEdub5_UKUpdSMg">
+            <children xmi:id="_rXYMBf_AEdub5_UKUpdSMg" type="Stereotype" element="_rXObAP_AEdub5_UKUpdSMg"/>
+            <children xmi:id="_rXYMBv_AEdub5_UKUpdSMg" type="Name" element="_rXObAP_AEdub5_UKUpdSMg"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rXYMBP_AEdub5_UKUpdSMg" y="-185"/>
+          </children>
+          <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_rXYMAf_AEdub5_UKUpdSMg" fontName="Arial" fontHeight="11" lineColor="3342489" showStereotype="Text"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_rXYMAv_AEdub5_UKUpdSMg" points="[9, -25, 9, 50]$[38, -63, 38, 12]"/>
+        </edges>
+      </contents>
+    </eAnnotations>
+    <ownedMember xmi:type="uml:Class" xmi:id="_kX5RYP_AEdub5_UKUpdSMg" name="CrxPolicy">
+      <generalization xmi:id="_rXObAP_AEdub5_UKUpdSMg">
+        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.authorization1.emx#_3C7B8A60016D4183BAA70268?authorization1/authorization1/Policy"/>
+      </generalization>
+    </ownedMember>
+  </ownedMember>
+</uml:Model>

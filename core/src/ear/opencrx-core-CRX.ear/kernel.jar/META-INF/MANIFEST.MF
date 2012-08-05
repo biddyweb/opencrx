@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Class-Path: APP-INF/lib/openmdx-application.jar APP-INF/lib/openmdx-base.jar APP-INF/lib/openmdx-security.jar APP-INF/lib/opencrx-kernel.jar APP-INF/lib/opencrx-security.jar APP-INF/lib/opencrx-mail.jar APP-INF/lib/opencrx-extension.jar APP-INF/lib/opencrx-application.jar APP-INF/lib/application-resources.jar APP-INF/lib/janino.jar APP-INF/lib/FontBox.jar APP-INF/lib/PDFBox.jar APP-INF/lib/poi.jar APP-INF/lib/poi-scratchpad.jar

@@ -1,0 +1,37 @@
+<Context path="/opencrx-syncml-CRX" docBase="${catalina.home}/webapps/opencrx-syncml-CRX.war" debug="0" privileged="true">
+	<Resource name="jdbc/syncml" auth="Container" type="javax.sql.DataSource"/>
+	<ResourceParams name="jdbc/syncml">
+		<parameter>
+			<name>factory</name>
+			<value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
+		</parameter>
+		<parameter>
+			<name>maxActive</name>
+			<value>100</value>
+		</parameter>
+		<parameter>
+			<name>maxIdle</name>
+			<value>30</value>
+		</parameter>
+		<parameter>
+			<name>maxWait</name>
+			<value>10000</value>
+		</parameter>
+		<parameter>
+			<name>username</name>
+			<value>system</value>
+		</parameter>
+		<parameter>
+			<name>password</name>
+			<value>manager99</value>
+		</parameter>
+		<parameter>
+			<name>driverClassName</name>
+			<value>com.microsoft.sqlserver.jdbc.SQLServerDriver</value>
+		</parameter>
+		<parameter>
+			<name>url</name>
+			<value>jdbc:sqlserver://localhost:1433;databaseName=syncml;selectMethod=cursor</value>
+		</parameter>
+	</ResourceParams>
+</Context>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Télécopie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Télécopie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:faxRecipient" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Destinataires</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Destinataires</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:sender" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Expéditeur</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Expéditeur</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:sendDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Envoyé</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Envoyé</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Document</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Document</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:template" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modèle</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Modèle</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipient" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Destinataire</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Destinataire</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipient:party" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Numéro téléphone</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Numéro de téléphone</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipient:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipientGroup" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Groupe numéro téléphone</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Groupe numéro de téléphone</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipientGroup:party" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Groupe numéro téléphone</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Groupe numéro de téléphone</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipientGroup:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFaxRecipient:party" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Numéro(s) téléphone</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Numéro(s) de téléphone</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFaxRecipient:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Type</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Type</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

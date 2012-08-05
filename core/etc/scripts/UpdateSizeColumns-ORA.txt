@@ -1,0 +1,1 @@
+ant -Ddb.jdbc.url="jdbc:oracle:thin:@localhost:1521:XE" -Ddb.jdbc.driver="oracle.jdbc.driver.OracleDriver" -Ddb.jdbc.driver.classpath="..\opt\oracle\jre-1.5\oracle-10\lib\ojdbc14.jar" -Ddb.username="CRX" -Ddb.password="manager99" update-size-columns-1_11_0

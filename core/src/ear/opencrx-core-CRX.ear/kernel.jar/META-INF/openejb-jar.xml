@@ -1,0 +1,21 @@
+<openejb-jar
+    xmlns="http://www.openejb.org/xml/ns/openejb-jar"
+    xmlns:naming="http://geronimo.apache.org/xml/ns/naming"
+    xmlns:sys="http://geronimo.apache.org/xml/ns/deployment"
+    configId="kernel_jar"
+    parentId="opencrx-core-CRX-App_ear">
+ <enterprise-beans>
+ 	
+    <session>
+        <ejb-name>opencrx_core_CRX_kernel_mandatory</ejb-name>
+        <jndi-name>org.opencrx.core.CRX.mandatory.kernel</jndi-name>
+        <local-jndi-name>org.opencrx.core.CRX.local.mandatory.kernel</local-jndi-name>
+    <naming:resource-ref>
+        <naming:ref-name>jdbc/datasource[0]</naming:ref-name>
+        <naming:resource-link>jdbc_opencrx_CRX</naming:resource-link>
+    </naming:resource-ref>
+    </session>
+   
+ </enterprise-beans>
+    
+</openejb-jar>

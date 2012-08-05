@@ -1,0 +1,1123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productOffering" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ofertas de Produtos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ofertas de Produtos</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:complexProductBundleType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipos complexos de pacotes de produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipos complexos de pacotes de produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productBundleType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipos de Pacote de Produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipos de Pacote de Produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:bundledProductType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipos de produtos empacotados</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipos de produtos empacotados</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProductType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo de produto empacotado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo de produto empacotado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleContainer:productBundle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pacotes de produtos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pacotes de produtos</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Oferta de Produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Oferta de Produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering:basePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preços Base</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preços Base</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering:detailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição Detalhada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição Detalhada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering:defaultPriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível de Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível de Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundleType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipos complexos de pacotes de produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipos complexos de pacotes de produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundleType:basePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preços Base excedentes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preços Base excedentes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundleType:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundleType:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundleType:detailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição Detalhada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição Detalhada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundleType:defaultPriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível de Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível de Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo de Pacote de Produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo de Pacote de Produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:bundledProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produtos empacotados</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produtos empacotados</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:basePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preços Base excedentes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preços Base excedentes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:detailedDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição Detalhada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição Detalhada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:defaultPriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível de Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível de Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductBundle:parent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível superior</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível superior</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pacote de produto complexo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pacote de produto complexo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundle:basePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preços Base excedentes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preços Base excedentes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundle:type" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo de pacote de produto complexo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo de pacote de produto complexo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundle:defaultPriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível de Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível de Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pacote de Produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pacote de Produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundle:basePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preços Base excedentes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preços Base excedentes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundle:type" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo de Pacote</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo de Pacote</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundle:defaultPriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível de Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível de Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableComplexProductBundle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pacote de produtos complexos selecionáveis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pacote de produtos complexos selecionáveis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableComplexProductBundle:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>&amp;nbsp;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableComplexProductBundle:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableProductBundle" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pacote de Produto Selecionável</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pacote de Produto Selecionável</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableProductBundle:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableProductBundle:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produto empacotado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produto empacotado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProduct:basePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preços Base excedentes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preços Base excedentes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProduct:type" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo de produto associado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo de produto associado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProduct:defaultPriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nível de Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nível de Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableBundledProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pacote de Produto Selecionável</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pacote de Produto Selecionável</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableBundledProduct:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableBundledProduct:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceOverrideEnabled:Pane:Attr:Tab:10:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceOverrideEnabled:discountIsPercentage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Desconto em %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Desconto em %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceOverrideEnabled:discount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Desconto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Desconto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceOverrideEnabled:overridePrice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preço Excedente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preço Excedente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceOverrideEnabled:pricingRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Regra de Preço</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Regra de Preço</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:itemNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>nr. do item</_item>
+                      </label>
+                      <toolTip>
+                        <_item>nr. do item</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:itemNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>nr. do item</_item>
+                      </label>
+                      <toolTip>
+                        <_item>nr. do item</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOffering:itemNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>nr. do item</_item>
+                      </label>
+                      <toolTip>
+                        <_item>nr. do item</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:allowModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Permite Modificação</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Permite Modificação</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:allowRemoval" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Permite Remover</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Permite Remover</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:minPositions" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Posição Max</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Posição Max</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:maxPositions" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Posição Max</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Posição Max</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:defaultPositions" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Posições default</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Posições default</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:minQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>quantidade Min</_item>
+                      </label>
+                      <toolTip>
+                        <_item>quantidade Min</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:maxQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Quantidade Max</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Quantidade Max</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:offsetQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>quantidade de offset</_item>
+                      </label>
+                      <toolTip>
+                        <_item>quantidade de offset</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:defaultQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Quantidade default</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Quantidade default</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ContractPositionConstrained:minMaxQuantityHandling" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>[min..max] manuseio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>[min..max] manuseio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOfferingPosition:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductOfferingPosition:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:EditableProductOfferingPosition:selectableItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Itens Selecionáveis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Itens Selecionáveis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundlePosition:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundlePosition:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundlePosition:parentPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Posição pai</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Posição pai</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundlePosition:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>&amp;nbsp;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundlePosition:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ComplexProductBundlePosition:parentPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Posição pai</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Posição pai</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProductPosition:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProductPosition:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:BundledProductPosition:parentPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Posição pai</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Posição pai</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItem:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItem:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItem:selector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selecionado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selecionado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItem:itemNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>nr. do item</_item>
+                      </label>
+                      <toolTip>
+                        <_item>nr. do item</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItemWithQuantity:minQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>quantidade Min</_item>
+                      </label>
+                      <toolTip>
+                        <_item>quantidade Min</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItemWithQuantity:maxQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Quantidade Max</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Quantidade Max</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItemWithQuantity:defaultQuantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Quantidade default</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Quantidade default</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableItemWithQuantity:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Quantidade</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Quantidade</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableProductConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Configuração de Produto Selecionável</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Configuração de Produto Selecionável</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableProductConfiguration:Pane:Attr:Tab:0:Group:18" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SelectableProductConfiguration:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baseado em</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baseado em</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleContainer:Pane:Op:Tab:renumberProductBundles" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Renumerar pacotes de produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Renumerar pacotes de produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleContainer:Pane:Op:Tab:renumberProductBundles:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleContainer:Pane:Op:Tab:renumberProductBundles:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductBundle:Pane:Op:Tab:changeOrder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modifica ordem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Modifica ordem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductBundle:Pane:Op:Tab:changeOrder:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ChangeOrderParams:newOrder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nova ordem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nova ordem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductBundle:Pane:Op:Tab:changeOrder:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:Pane:Op:Tab:renumberBundledProducts" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Renumerar produtos empacotados</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Renumerar produtos empacotados</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:Pane:Op:Tab:renumberBundledProducts:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductBundleType:Pane:Op:Tab:renumberBundledProducts:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractBundledProduct:Pane:Op:Tab:assignProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Atribuir produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Atribuir produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractBundledProduct:Pane:Op:Tab:assignProduct:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AssignProductParams:product" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractBundledProduct:Pane:Op:Tab:assignProduct:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>
