@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.31 2008/09/08 13:24:32 cmu Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.35 2008/09/29 10:10:26 wfro Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.35 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/08 13:24:32 $
+ * Date:        $Date: 2008/09/29 10:10:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,8 +89,10 @@ org.openmdx.kernel.id.*
   <meta name="targetType" content="_self">
   <meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
   <meta name="forClass" content="org:opencrx:kernel:document1:Document">
+  <meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
   <meta name="order" content="org:opencrx:kernel:generic:CrxObject:uploadMedia">
   <meta name="order" content="org:opencrx:kernel:document1:Document:uploadMedia">
+  <meta name="order" content="org:opencrx:kernel:home1:UserHome:uploadMedia">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
   <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
@@ -140,8 +142,8 @@ org.openmdx.kernel.id.*
 				try {
 					List items = upload.parseRequest(
 					  request,
-					  100000, // request size threshold
-					  4000000, // max request size
+            15000000, // request size threshold [memory limit]
+            15000000, // max request size [overall limit]
 					  app.getTempDirectory().getPath()
 					);
 					for(Iterator i = items.iterator(); i.hasNext(); ) {
@@ -253,6 +255,7 @@ org.openmdx.kernel.id.*
 
 							RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
+							// CrxObject
 							if (obj instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
 								org.opencrx.kernel.generic.jmi1.CrxObject crxObject =
 									(org.opencrx.kernel.generic.jmi1.CrxObject)obj;
@@ -289,44 +292,79 @@ org.openmdx.kernel.id.*
 									);
 								}
 							}
-							else {
-								if (obj instanceof org.opencrx.kernel.document1.jmi1.Document) {
-									org.opencrx.kernel.document1.jmi1.Document document =
-										(org.opencrx.kernel.document1.jmi1.Document)obj;
-									org.opencrx.kernel.document1.jmi1.DocumentAttachment documentAttachment = null;
-									if(replaceExisting) {
-										for(Iterator i = document.getAttachment().iterator(); i.hasNext(); ) {
-											org.opencrx.kernel.document1.jmi1.DocumentAttachment a = (org.opencrx.kernel.document1.jmi1.DocumentAttachment)i.next();
-											if(a.getContentName().equals(contentName)) {
-												documentAttachment = a;
-												break;
-											}
+							// UserHome
+							else if (obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
+							    org.opencrx.kernel.home1.jmi1.UserHome userHome =
+									(org.opencrx.kernel.home1.jmi1.UserHome)obj;
+								org.opencrx.kernel.home1.jmi1.Media media = null;
+								if(replaceExisting) {
+									for(Iterator i = userHome.getChart().iterator(); i.hasNext(); ) {
+										org.opencrx.kernel.home1.jmi1.Media m = (org.opencrx.kernel.home1.jmi1.Media)i.next();
+										if(m.getContentName().equals(contentName)) {
+											media = m;
+											break;
 										}
 									}
-									// Add media to document object
-									boolean isNew = false;
-									if(documentAttachment == null) {
-										org.opencrx.kernel.document1.jmi1.Document1Package documentPkg = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm);
-										documentAttachment = documentPkg.getDocumentAttachment().createDocumentAttachment();
-										documentAttachment.refInitialize(false, false);
-										isNew = true;
-									}
-									documentAttachment.setName(description.length() > 0 ? description : contentName);
-									if(isNew) {
-										documentAttachment.setDescription(description.length() > 0 ? description : contentName);
-									}
-									documentAttachment.setContentName(contentName);
-									documentAttachment.setContentMimeType(contentMimeType);
-									documentAttachment.setContent(
-										org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
+								}
+								boolean isNew = false;
+								if(media == null) {
+									org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
+									media = homePkg.getMedia().createMedia();
+									media.refInitialize(false, false);
+									isNew = true;
+								}
+								if(isNew) {
+									media.setDescription(description.length() > 0 ? description : contentName);
+								}
+								media.setContentName(contentName);
+								media.setContentMimeType(contentMimeType);
+								media.setContent(
+									org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
+								);
+								if(isNew) {
+								    userHome.addChart(
+										false,
+										uuids.next().toString(),
+										media
 									);
-									if(isNew) {
-										document.addAttachment(
-											false,
-											uuids.next().toString(),
-											documentAttachment
-										);
+								}
+							}
+							else if (obj instanceof org.opencrx.kernel.document1.jmi1.Document) {
+								org.opencrx.kernel.document1.jmi1.Document document =
+									(org.opencrx.kernel.document1.jmi1.Document)obj;
+								org.opencrx.kernel.document1.jmi1.DocumentAttachment documentAttachment = null;
+								if(replaceExisting) {
+									for(Iterator i = document.getAttachment().iterator(); i.hasNext(); ) {
+										org.opencrx.kernel.document1.jmi1.DocumentAttachment a = (org.opencrx.kernel.document1.jmi1.DocumentAttachment)i.next();
+										if(a.getContentName().equals(contentName)) {
+											documentAttachment = a;
+											break;
+										}
 									}
+								}
+								// Add media to document object
+								boolean isNew = false;
+								if(documentAttachment == null) {
+									org.opencrx.kernel.document1.jmi1.Document1Package documentPkg = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm);
+									documentAttachment = documentPkg.getDocumentAttachment().createDocumentAttachment();
+									documentAttachment.refInitialize(false, false);
+									isNew = true;
+								}
+								documentAttachment.setName(description.length() > 0 ? description : contentName);
+								if(isNew) {
+									documentAttachment.setDescription(description.length() > 0 ? description : contentName);
+								}
+								documentAttachment.setContentName(contentName);
+								documentAttachment.setContentMimeType(contentMimeType);
+								documentAttachment.setContent(
+									org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
+								);
+								if(isNew) {
+									document.addAttachment(
+										false,
+										uuids.next().toString(),
+										documentAttachment
+									);
 								}
 							}
 

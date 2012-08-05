@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.343 2008/09/20 09:53:20 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.346 2008/10/13 21:28:36 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.343 $
- * = Date:        $Date: 2008/09/20 09:53:20 $
+ * = Revision:    $Revision: 1.346 $
+ * = Date:        $Date: 2008/10/13 21:28:36 $
  * = Copyright:   (c) 2003-2007 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,7 +62,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.2.0"/>
+	<property name="openmdx.version" value="2.2.1"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -315,7 +315,9 @@
 			<replacestring from="MODEL_PACKAGE_EXT_9" to="${model.package.ext.9}"/>
 			<replacestring from="Provider qualifiedName=&quot;CRX&quot;" to="Provider qualifiedName=&quot;${provider.name}&quot;"/>
 			<replacestring from="%IMPLEMENTATION_VERSION%" to="${project.implementation.version}"/>
-			<replacestring from="imap:143" to="imap:${imap.listenPort}"/>			
+			<replacestring from="&lt;!-- EXTENDED_ACCESS_LEVEL_BASIC_ENABLE_BEGIN" to="${extended.access.level.basic.enable.begin}"/>
+			<replacestring from="EXTENDED_ACCESS_LEVEL_BASIC_ENABLE_END -->" to="${extended.access.level.basic.enable.end}"/>
+			<replacestring from="imap:143" to="imap:${imap.listenPort}"/>
 		</tokenfilter>
 	</openmdx:archivefilterchain>
 	<!-- ******************************************************************* -->

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BooleanPropertyDataBinding.java,v 1.2 2007/12/10 22:37:32 wfro Exp $
- * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Name:        $Id: BooleanPropertyDataBinding.java,v 1.3 2008/10/01 00:28:29 wfro Exp $
+ * Description: BooleanPropertyDataBinding
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/10 22:37:32 $
+ * Date:        $Date: 2008/10/01 00:28:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

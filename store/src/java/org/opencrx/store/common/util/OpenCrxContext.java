@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OpenCrxContext.java,v 1.10 2007/12/18 17:39:01 wfro Exp $
+ * Name:        $Id: OpenCrxContext.java,v 1.11 2008/10/13 13:27:29 wfro Exp $
  * Description: openCRX context
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/18 17:39:01 $
+ * Date:        $Date: 2008/10/13 13:27:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,7 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
-import org.openmdx.base.jmi1.Authority;
+import org.opencrx.kernel.utils.Utils;
 
 public class OpenCrxContext {
 
@@ -80,34 +80,19 @@ public class OpenCrxContext {
         this.currencyCode = storeCurrencyCode;
         this.storeLocale = storeLocale;
         this.salesTaxTypeName = storeSalesTaxTypeName;
-        this.basePackage = (org.opencrx.kernel.base.jmi1.BasePackage)((Authority)persistenceManager.getObjectById(
-            Authority.class,
-            org.opencrx.kernel.base.jmi1.BasePackage.AUTHORITY_XRI
-        )).refImmediatePackage();
-        this.genericPackage = (org.opencrx.kernel.generic.jmi1.GenericPackage)((Authority)persistenceManager.getObjectById(
-            Authority.class,
-            org.opencrx.kernel.generic.jmi1.GenericPackage.AUTHORITY_XRI
-        )).refImmediatePackage();
-        this.accountPackage = (Account1Package)((Authority)persistenceManager.getObjectById(
-            Authority.class,
-            Account1Package.AUTHORITY_XRI
-        )).refImmediatePackage();
+        this.basePackage = Utils.getBasePackage(persistenceManager);
+        this.genericPackage = Utils.getGenericPackage(persistenceManager);
+        this.accountPackage = Utils.getAccountPackage(persistenceManager);
         this.accountSegment = 
             (org.opencrx.kernel.account1.jmi1.Segment)persistenceManager.getObjectById(
                 "xri:@openmdx:org.opencrx.kernel.account1/provider/" + this.providerName + "/segment/" + this.segmentName
             );
-        this.contractPackage = (Contract1Package)((Authority)persistenceManager.getObjectById(
-            Authority.class,
-            Contract1Package.AUTHORITY_XRI
-        )).refImmediatePackage();
+        this.contractPackage = Utils.getContractPackage(persistenceManager);
         this.contractSegment = 
             (org.opencrx.kernel.contract1.jmi1.Segment)persistenceManager.getObjectById(
                 "xri:@openmdx:org.opencrx.kernel.contract1/provider/" + this.providerName + "/segment/" + this.segmentName
             );
-        this.productPackage = (Product1Package)((Authority)persistenceManager.getObjectById(
-            Authority.class,
-            Product1Package.AUTHORITY_XRI
-        )).refImmediatePackage();
+        this.productPackage = Utils.getProductPackage(persistenceManager);
         this.productSegment = 
             (org.opencrx.kernel.product1.jmi1.Segment)persistenceManager.getObjectById(
                 "xri:@openmdx:org.opencrx.kernel.product1/provider/" + this.providerName + "/segment/" + this.segmentName

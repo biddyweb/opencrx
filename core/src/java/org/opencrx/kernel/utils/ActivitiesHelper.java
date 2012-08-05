@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivitiesHelper.java,v 1.2 2008/08/27 11:24:41 wfro Exp $
+ * Name:        $Id: ActivitiesHelper.java,v 1.3 2008/10/15 13:49:49 wfro Exp $
  * Description: ActivitiesHelper
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/27 11:24:41 $
+ * Date:        $Date: 2008/10/15 13:49:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -96,7 +96,7 @@ public class ActivitiesHelper {
     public int parseFilteredActivitiesUri(
        String uri
     ) throws IllegalArgumentException  {
-        List<String> l = splitUri(uri, true);
+        List<String> l = splitUri(uri);
         if(l.size() >= 3) {
             // URL pattern is
             // ./provider.name/segment.name/tracker|milestone|category|home/calendar.name[/filter/filter.name]
@@ -331,22 +331,9 @@ public class ActivitiesHelper {
     
     //-----------------------------------------------------------------------
     public static List<String> splitUri(
-        String uri, 
-        boolean decoded
+        String uri 
     ) throws IllegalArgumentException  {
         try {
-            /*Remove all "." and ".." components */
-            if (decoded) {
-                uri = new URI(null, null, uri, null).toString();
-            }
-            uri = new URI(uri).normalize().getPath();
-            uri = URLDecoder.decode(uri, "UTF-8");
-            if (!uri.startsWith("/")) {
-                return null;
-            }
-            if (uri.endsWith("/")) {
-                uri = uri.substring(0, uri.length() - 1);
-            }
             String[] ss = uri.split("/");
             int pathLength = ss.length - 1;  // First element is empty string
             if (pathLength < 2) {

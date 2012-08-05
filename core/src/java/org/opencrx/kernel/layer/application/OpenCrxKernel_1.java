@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxKernel_1.java,v 1.268 2008/05/28 09:34:53 wfro Exp $
+ * Name:        $Id: OpenCrxKernel_1.java,v 1.269 2008/10/06 08:38:46 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.268 $
+ * Revision:    $Revision: 1.269 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/28 09:34:53 $
+ * Date:        $Date: 2008/10/06 08:38:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -251,7 +251,7 @@ public class OpenCrxKernel_1
         // Local manager
         // Header with indicator for local delegations. Used in #prolog and #epilog
         ServiceHeader localHeader = new ServiceHeader(
-            (String[])header.getPrincipalChain().toArray(new String[header.getPrincipalChain().size()]),
+            header.getPrincipalChain().toArray(new String[header.getPrincipalChain().size()]),
             this.localCorrelationId = this.uidAsString(),
             false,
             header.getQualityOfService(),
@@ -265,12 +265,12 @@ public class OpenCrxKernel_1
             ),
             false
         );
-        ObjectFactory_1_0 localObjectFactory = new Manager_1(
-            new Connection_1(
-                localProvider,
-                true
-            )
+        Connection_1 localConnection = new Connection_1(
+            localProvider,
+            true
         );
+        localConnection.setModel(this.model);
+        ObjectFactory_1_0 localObjectFactory = new Manager_1(localConnection);
         this.localPkg = new RefRootPackage_1(
             localObjectFactory,
             null, // impls

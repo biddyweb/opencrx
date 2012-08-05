@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.24 2008/09/02 15:41:59 wfro Exp $
+ * Name:        $Id: IndexerServlet.java,v 1.25 2008/10/08 14:12:17 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/02 15:41:59 $
+ * Date:        $Date: 2008/10/08 14:12:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,6 +73,7 @@ import org.opencrx.kernel.base.jmi1.UpdateIndexResult;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
 /**
@@ -151,12 +152,25 @@ public class IndexerServlet
                 (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
             );
             for(org.opencrx.kernel.base.jmi1.Indexed indexedSegment: indexedSegments) {
-                long startedAt = System.currentTimeMillis();                
-                UpdateIndexResult result = indexedSegment.updateIndex();
-                if(result.getNumberOfIndexedObjects() > 0) {
-                    long duration = System.currentTimeMillis() - startedAt;
-                    System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (#" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
+                long startedAt = System.currentTimeMillis();
+                try {
+                    UpdateIndexResult result = indexedSegment.updateIndex();
+                    if(result.getNumberOfIndexedObjects() > 0) {
+                        long duration = System.currentTimeMillis() - startedAt;
+                        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (#" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
+                    }
                 }
+                catch(Exception e) {
+                    ServiceException e0 = new ServiceException(
+                        e,
+                        BasicException.Code.DEFAULT_DOMAIN,
+                        BasicException.Code.PROCESSING_FAILURE,
+                        "Unable to update index",
+                        new BasicException.Parameter("segment.xri", indexedSegment.refMofId())
+                    );
+                    e0.log();
+                    System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+                }        
             }
             try {
                 pm.close();

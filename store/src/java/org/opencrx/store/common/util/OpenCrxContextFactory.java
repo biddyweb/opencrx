@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OpenCrxContextFactory.java,v 1.7 2007/12/12 14:34:10 wfro Exp $
+ * Name:        $Id: OpenCrxContextFactory.java,v 1.9 2008/10/13 13:27:29 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/12 14:34:10 $
+ * Date:        $Date: 2008/10/13 13:27:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,9 +55,7 @@
  */
 package org.opencrx.store.common.util;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -68,12 +66,12 @@ import javax.naming.InitialContext;
 import javax.servlet.http.HttpSession;
 
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.spi.PersistenceManagerFactory_1;
 import org.openmdx.base.object.jdo.ConfigurableProperties_2_0;
 import org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
 import org.openmdx.compatibility.base.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
 import org.openmdx.model1.accessor.basic.cci.Model_1_0;
-import org.openmdx.model1.accessor.basic.spi.Model_1;
 
 /**
  * @author OAZM (initial implementation)
@@ -86,39 +84,13 @@ public class OpenCrxContextFactory {
         HttpSession session
     ) throws Exception {
 
-        // Load models
+        // Get model
         if(OpenCrxContextFactory.model == null) {
-            Model_1_0 model = new Model_1();
-            model.addModels(OPENCRX_MODEL_PACKAGES);
-        }
-        
+            OpenCrxContextFactory.model = Utils.createModel();
+        }        
         // Get persistence manager factory
         if(OpenCrxContextFactory.persistenceManagerFactory == null) {
-            Map configuration = new HashMap();
-            Context initialContext = new InitialContext();
-            configuration.put(
-                Dataprovider_1ConnectionFactory.class.getName(),
-                new Dataprovider_1ConnectionFactoryImpl(
-                    initialContext,
-                    "data",
-                    new String[]{"java:comp/env/ejb"}
-                )
-            );
-            configuration.put(
-                ConfigurableProperties_2_0.FACTORY_CLASS,
-                PersistenceManagerFactory_1.class.getName()
-            );
-            configuration.put(
-                ConfigurableProperties_2_0.OPTIMISTIC,
-                Boolean.TRUE.toString()
-            );
-            configuration.put(
-                ConfigurableProperties_2_0.BINDING_PACKAGE_SUFFIX,
-                "jmi1"
-            );            
-            OpenCrxContextFactory.persistenceManagerFactory = JDOHelper.getPersistenceManagerFactory(
-                configuration
-            );            
+            OpenCrxContextFactory.persistenceManagerFactory = Utils.getRemotePersistenceManagerFactory();
         }
         String localeAsString = session.getServletContext().getInitParameter("locale");
         Locale locale = new Locale(localeAsString.substring(0,2), localeAsString.substring(3,5));
@@ -142,47 +114,6 @@ public class OpenCrxContextFactory {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    private static final List OPENCRX_MODEL_PACKAGES = Arrays.asList(
-        new String[]{
-            "org:w3c",
-            "org:openmdx:base",
-            "org:openmdx:datastore1",
-            "org:openmdx:filter1",
-            "org:opencrx",
-            "org:opencrx:kernel",
-            "org:opencrx:kernel:base",
-            "org:opencrx:kernel:generic",
-            "org:opencrx:kernel:document1",
-            "org:opencrx:kernel:workflow1",
-            "org:opencrx:kernel:building1",
-            "org:opencrx:kernel:address1",
-            "org:opencrx:kernel:account1",
-            "org:opencrx:kernel:product1",
-            "org:opencrx:kernel:contract1",
-            "org:opencrx:kernel:activity1",
-            "org:opencrx:kernel:forecast1",
-            "org:opencrx:kernel:code1",
-            "org:opencrx:kernel:uom1",
-            "org:oasis_open",
-            "org:openmdx:generic1",
-            "org:openmdx:compatibility:view1",
-            "org:opencrx:kernel:home1",
-            "org:opencrx:security",
-            "org:openmdx:security:realm1",
-            "org:openmdx:security:authorization1",
-            "org:openmdx:security:authentication1",
-            "org:opencrx:security:identity1",
-            "org:opencrx:security:realm1",
-            "org:opencrx:kernel:reservation1",
-            "org:opencrx:kernel:admin1",
-            "org:openmdx:compatibility:document1",
-            "org:opencrx:kernel:model1",
-            "org:opencrx:kernel:ras1",
-            "org:opencrx:kernel:depot1",
-            "org:openmdx:compatibility:state1",               
-        }
-    );
-    
     private static PersistenceManagerFactory persistenceManagerFactory = null;
     private static Model_1_0 model = null;
     

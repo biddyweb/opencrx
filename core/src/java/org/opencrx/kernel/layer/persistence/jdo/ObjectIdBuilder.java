@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ObjectIdBuilder.java,v 1.23 2008/08/20 10:49:57 wfro Exp $
+ * Name:        $Id: ObjectIdBuilder.java,v 1.25 2008/10/06 17:04:53 wfro Exp $
  * Description: ObjectIdBuilder
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/20 10:49:57 $
+ * Date:        $Date: 2008/10/06 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.openmdx.base.exception.RuntimeServiceException;
-import org.openmdx.compatibility.base.exception.StackedException;
 import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.naming.jdo2.AbstractObjectIdBuilder;
 import org.openmdx.kernel.exception.BasicException;
@@ -88,8 +87,8 @@ public class ObjectIdBuilder
             }
             if(components.isEmpty()) {
                 throw new RuntimeServiceException(
-                    StackedException.DEFAULT_DOMAIN,
-                    StackedException.ASSERTION_FAILURE, 
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.ASSERTION_FAILURE, 
                     new BasicException.Parameter[]{
                         new BasicException.Parameter("objectId", parentObjectId)
                     },
@@ -102,8 +101,8 @@ public class ObjectIdBuilder
                 }
             }
             throw new RuntimeServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.ASSERTION_FAILURE, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.ASSERTION_FAILURE, 
                 new BasicException.Parameter[]{
                     new BasicException.Parameter("objectId", parentObjectId)
                 },
@@ -139,8 +138,8 @@ public class ObjectIdBuilder
         }
         if(objectId == null) {
             throw new RuntimeServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.ASSERTION_FAILURE, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.ASSERTION_FAILURE, 
                 new BasicException.Parameter[]{
                     new BasicException.Parameter("path", path)
                 },
@@ -162,8 +161,8 @@ public class ObjectIdBuilder
       }
       if(components.isEmpty()) {
           throw new RuntimeServiceException(
-              StackedException.DEFAULT_DOMAIN,
-              StackedException.ASSERTION_FAILURE, 
+              BasicException.Code.DEFAULT_DOMAIN,
+              BasicException.Code.ASSERTION_FAILURE, 
               new BasicException.Parameter[]{
                   new BasicException.Parameter("objectId", objectId)
               },
@@ -179,8 +178,8 @@ public class ObjectIdBuilder
       }
       if(type == null) {
           throw new RuntimeServiceException(
-              StackedException.DEFAULT_DOMAIN,
-              StackedException.ASSERTION_FAILURE, 
+              BasicException.Code.DEFAULT_DOMAIN,
+              BasicException.Code.ASSERTION_FAILURE, 
               new BasicException.Parameter[]{
                   new BasicException.Parameter("objectId", objectId)
               },
@@ -193,8 +192,8 @@ public class ObjectIdBuilder
           if(":*".equals(type.get(i))) {
               if(pos >= components.size()) {
                   throw new RuntimeServiceException(
-                      StackedException.DEFAULT_DOMAIN,
-                      StackedException.ASSERTION_FAILURE, 
+                      BasicException.Code.DEFAULT_DOMAIN,
+                      BasicException.Code.ASSERTION_FAILURE, 
                       new BasicException.Parameter[]{
                           new BasicException.Parameter("objectId", objectId),
                           new BasicException.Parameter("type", type)
@@ -212,8 +211,8 @@ public class ObjectIdBuilder
       Path path = new Path(objectIdComponents);
       if(path.size() % 2 == 0) {
           throw new RuntimeServiceException(
-              StackedException.DEFAULT_DOMAIN,
-              StackedException.ASSERTION_FAILURE, 
+              BasicException.Code.DEFAULT_DOMAIN,
+              BasicException.Code.ASSERTION_FAILURE, 
               new BasicException.Parameter[]{
                   new BasicException.Parameter("path", path)
               },
@@ -382,7 +381,6 @@ public class ObjectIdBuilder
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/workReportEntry/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/resource/:*/assignedActivity/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*/position/:*"),
-        new Path("xri:@openmdx::*/provider/:*/segment/:*/:*/:*/chart/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*"),
         new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filterProperty/:*"),
         new Path("xri:@openmdx::*/provider/:*/segment/:*/:*/:*/productReference/:*"),
@@ -651,7 +649,6 @@ public class ObjectIdBuilder
         org.opencrx.kernel.activity1.jdo2.WorkReportEntry.CLASS,
         org.opencrx.kernel.activity1.jdo2.Activity.CLASS,
         org.opencrx.kernel.contract1.jdo2.AbstractQuotePosition.CLASS,
-        org.opencrx.kernel.home1.jdo2.Chart.CLASS,
         org.opencrx.kernel.activity1.jdo2.ActivityFilterGroup.CLASS,
         org.opencrx.kernel.activity1.jdo2.ActivityFilterProperty.CLASS,
         org.opencrx.kernel.activity1.jdo2.ProductReference.CLASS,
@@ -920,7 +917,6 @@ public class ObjectIdBuilder
         "workReportEntry1",
         "assignedActivity",
         "quotePos",
-        "chart",
         "activityFilter2",
         "activityFilterProperty2",
         "productRef1",

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityTracker" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Urmăritor de activităţi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Urmăritor de activităţi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCategory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Categorii</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Categorii</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:filteredActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Activităţi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Activităţi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtre de activităţi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtre de activităţi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityNote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Note de activităţi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Note de activităţi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Creatori de activităţi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Creatori de activităţi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:followUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>De urmărit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>De urmărit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:workReportEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Raport de lucru</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Raport de lucru</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nume</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nume</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descriere</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descriere</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:defaultCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Creator de activitate implicit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Creator de activitate implicit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Repere</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Repere</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone:scheduledDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dată programată</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dată programată</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCategory" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Categorie de activitate</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Categorie de activitate</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Urmăritor de activitate</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Urmăritor de activitate</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:estimateEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (efort estimat)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (efort estimat)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:estimateEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (efort estimat)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (efort estimat)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:estimateMaxDeviation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deviaţie maximă în %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Deviaţie maximă în %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:sumEstimateEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Σ hh (efort estimat)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Σ hh (efort estimat)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:sumEstimateEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Σ mm (efort estimat)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Σ mm (efort estimat)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:welcome" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bun venit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bun venit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Efort real calculat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Efort real calculat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Intrare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Intrare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rezultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rezultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>hh (efort real)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>hh (efort real)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (efort real)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (efort real)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:refreshItems" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Recalculează şi Actualizează</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Recalculează şi Actualizează</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:refreshItems:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Intrare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Intrare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:refreshItems:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rezultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rezultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

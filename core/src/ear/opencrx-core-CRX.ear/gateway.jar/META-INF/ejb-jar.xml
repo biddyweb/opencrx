@@ -398,11 +398,6 @@
 				<env-entry-value>org:openmdx:base</env-entry-value>
 			</env-entry>		
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[2]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:compatibility:view1</env-entry-value>
-			</env-entry>				
-			<env-entry>
 			  <env-entry-name>KERNEL/INTERCEPTION</env-entry-name>
 			  <env-entry-type>java.lang.String</env-entry-type>
 			  <env-entry-value>org.openmdx.compatibility.base.dataprovider.layer.interception.Entity_1</env-entry-value>

@@ -133,221 +133,216 @@
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[2]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:datastore1</env-entry-value>
+				<env-entry-value>org:openmdx:state2</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[3]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx</env-entry-value>
+				<env-entry-value>org:openmdx:datastore1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[4]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:base</env-entry-value>
+				<env-entry-value>org:opencrx</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[5]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:generic</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:base</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[6]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:document1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:generic</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[7]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:workflow1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:document1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[8]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:building1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:workflow1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[9]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:address1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:building1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[10]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:account1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:address1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[11]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:product1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:account1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[12]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:contract1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:product1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[13]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:activity1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:contract1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[14]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:forecast1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:activity1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[15]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:code1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:forecast1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[16]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:opencrx:kernel:uom1</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:code1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[17]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:oasis_open</env-entry-value>
+				<env-entry-value>org:opencrx:kernel:uom1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[18]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:generic1</env-entry-value>
+				<env-entry-value>org:oasis_open</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[19]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:compatibility:view1</env-entry-value>
+				<env-entry-value>org:openmdx:generic1</env-entry-value>
 			</env-entry>
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[20]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:home1</env-entry-value>
 			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[21]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:compatibility:state1</env-entry-value>
-			</env-entry>
+			<env-entry>				
+				<env-entry-name>KERNEL/modelPackage[21]</env-entry-name>				
+				<env-entry-type>java.lang.String</env-entry-type>				
+				<env-entry-value>org:openmdx:compatibility:state1</env-entry-value>			
+			</env-entry>						
 			<env-entry>
 				<env-entry-name>KERNEL/modelPackage[22]</env-entry-name>
-				<env-entry-type>java.lang.String</env-entry-type>
-				<env-entry-value>org:openmdx:compatibility:role1</env-entry-value>
-			</env-entry>
-			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[23]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:reservation1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[24]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[23]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:admin1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[25]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[24]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:openmdx:compatibility:document1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[26]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[25]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:model1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[27]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[26]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:ras1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[28]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[27]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel:depot1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[29]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[28]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:security:identity1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[30]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[29]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:openmdx:security:realm1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[31]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[30]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:openmdx:security:authorization1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[32]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[31]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:openmdx:security:authentication1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[33]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[32]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:openmdx:filter1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[34]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[33]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:security:realm1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[35]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[34]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:kernel</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[36]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[35]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>org:opencrx:security</env-entry-value>
 			</env-entry>
 			<!-- EXTERNAL_MODEL_ENABLE_BEGIN
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[37]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[36]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_1</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[38]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[37]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_2</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[39]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[38]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_3</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[40]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[39]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_4</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[41]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[40]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_5</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[42]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[41]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_6</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[43]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[42]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_7</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[44]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[43]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_8</env-entry-value>
 			</env-entry>
 			<env-entry>
-				<env-entry-name>KERNEL/modelPackage[45]</env-entry-name>
+				<env-entry-name>KERNEL/modelPackage[44]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>MODEL_PACKAGE_EXT_9</env-entry-value>
 			</env-entry>
@@ -468,6 +463,13 @@
 				<env-entry-type>java.lang.Boolean</env-entry-type>
 				<env-entry-value>true</env-entry-value>
 			</env-entry>
+			<!-- EXTENDED_ACCESS_LEVEL_BASIC_ENABLE_BEGIN
+			<env-entry>
+				<env-entry-name>MODEL/useExtendedAccessLevelBasic</env-entry-name>
+				<env-entry-type>java.lang.Boolean</env-entry-type>
+				<env-entry-value>true</env-entry-value>
+			</env-entry>
+			EXTENDED_ACCESS_LEVEL_BASIC_ENABLE_END -->
 			<!-- Give AccessControl_1 access to realm, identity, authentication and authorization objects -->
 			<env-entry>
 				<env-entry-name>MODEL/delegationPath[0]</env-entry-name>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.13 2008/07/07 14:02:45 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.17 2008/10/13 12:32:24 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/07 14:02:45 $
+ * Date:        $Date: 2008/10/13 12:32:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -92,7 +93,7 @@ import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.id.UUIDs;
+import org.w3c.cci2.BinaryLargeObjects;
 
 public class UserHomes {
 
@@ -116,7 +117,7 @@ public class UserHomes {
                         Quantors.THERE_EXISTS,
                         "alertState",
                         FilterOperators.IS_GREATER_OR_EQUAL,                              
-                        new Short[]{new Short((short)3)}
+                        new Short((short)3)
                     )
                 },
                 0,
@@ -132,7 +133,7 @@ public class UserHomes {
                     userHome.refGetPath()
                 )
             );
-        }                
+        }
     }
     
     //-------------------------------------------------------------------------
@@ -157,67 +158,52 @@ public class UserHomes {
     
     //-------------------------------------------------------------------------
     public void refreshCharts(
-      DataproviderObject_1_0 userHome
+        DataproviderObject_1_0 userHome
     ) throws ServiceException {
-
-      Path chartReference = userHome.path().getChild("chart");
-      List charts = new ArrayList();
-      
-      // calculate new charts      
-      // id=0,1
-      charts.addAll(
-        Arrays.asList(
-          this.backend.getContracts().calculateUserHomeCharts(
-            userHome.path(),
-            chartReference
-          )
-        )
-      );
-      // id=2,3
-      charts.addAll(
-        Arrays.asList(
-          this.backend.getActivities().calculateUserHomeCharts(
-            userHome.path(),
-            chartReference
-          )
-        )      
-      );
-      
-      // replace existing charts with new charts
-      Set exclude = new HashSet();
-      for(Iterator i = charts.iterator(); i.hasNext(); ) {
-          DataproviderObject chart = (DataproviderObject)i.next();
-          try {
-              DataproviderObject existing = this.backend.retrieveObjectForModification(
-                  chart.path()
-              );
-              existing.attributeNames().clear();
-              existing.addClones(chart, true);
-              exclude.add(chart.path());
-          }
-          catch(ServiceException e) {
-              try {
-	              if(e.getExceptionCode() == BasicException.Code.NOT_FOUND) {
-	                  this.backend.getDelegatingRequests().addCreateRequest(
-	                      chart
-	                  );
-	                  exclude.add(chart.path());
-	              }
-              }
-              catch(ServiceException e0) {
-                  AppLog.error(e0.getMessage(), e0.getCause());
-              }
-          }
-      }
-      
-      // remove old charts
-      this.backend.removeAll(
-          chartReference,
-          null,
-          0,
-          Integer.MAX_VALUE,
-          exclude
-      );
+        Path chartReference = userHome.path().getChild("chart");
+        List<DataproviderObject> charts = new ArrayList<DataproviderObject>();      
+        // Calculate new charts 
+        // id=0,1
+        charts.addAll(
+            Arrays.asList(
+                this.backend.getContracts().calculateUserHomeCharts(
+                    userHome.path(),
+                    chartReference
+                )
+            )
+        );
+        // id=2,3
+        charts.addAll(
+            Arrays.asList(
+                this.backend.getActivities().calculateUserHomeCharts(
+                    userHome.path(),
+                    chartReference
+                )
+            )      
+        );      
+        // Replace existing charts with new charts
+        for(Iterator<DataproviderObject> i = charts.iterator(); i.hasNext(); ) {
+            DataproviderObject chart = i.next();
+            try {
+                DataproviderObject existing = this.backend.retrieveObjectForModification(
+                    chart.path()
+                );
+                existing.attributeNames().clear();
+                existing.addClones(chart, true);
+            }
+            catch(ServiceException e) {
+                try {
+                    if(e.getExceptionCode() == BasicException.Code.NOT_FOUND) {
+                        this.backend.getDelegatingRequests().addCreateRequest(
+                            chart
+                        );
+                    }
+                }
+                catch(ServiceException e0) {
+                    AppLog.error(e0.getMessage(), e0.getCause());
+                }
+            }
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -652,7 +638,7 @@ public class UserHomes {
                         Quantors.THERE_EXISTS,
                         "aliasName",
                         FilterOperators.IS_IN,
-                        new String[]{aliasName}
+                        aliasName
                     )
                 };
             }
@@ -662,7 +648,7 @@ public class UserHomes {
                         Quantors.THERE_EXISTS,
                         "fullName",
                         FilterOperators.IS_IN,
-                        new String[]{fullName}
+                        fullName
                     )
                 };
             }
@@ -854,14 +840,22 @@ public class UserHomes {
                     ) {
                         DataproviderObject_1_0 chart = (DataproviderObject_1_0)j.next();
                         if(chart.path().equals(userHome.getValues("chart" + i).get(0))) {
-                            userHome.values("favoriteChart" + i).addAll(
-                                chart.values("chart")
+                            ByteArrayOutputStream content = new ByteArrayOutputStream();
+                            try {
+                                BinaryLargeObjects.streamCopy(
+                                    (InputStream)chart.values("content").get(0), 
+                                    0L, 
+                                    content
+                                );
+                            } catch(Exception e) {}
+                            userHome.values("favoriteChart" + i).add(
+                                content.toByteArray()
                             );
                             userHome.values("favoriteChart" + i + "MimeType").addAll(
-                                chart.values("chartMimeType")
+                                chart.values("contentMimeType")
                             );
                             userHome.values("favoriteChart" + i + "Name").addAll(
-                                chart.values("chartName")
+                                chart.values("contentName")
                             );
                             userHome.values("favoriteChart" + i + "Description").addAll(
                                 chart.values("description")
@@ -892,7 +886,7 @@ public class UserHomes {
                         Quantors.THERE_EXISTS,
                         "keywords",
                         FilterOperators.IS_LIKE,
-                        new String[]{"%" + words[i] + "%"}
+                        "%" + words[i] + "%"
                     )
                 );
             }
@@ -906,7 +900,7 @@ public class UserHomes {
                         Quantors.THERE_EXISTS,
                         "keywords",
                         FilterOperators.IS_UNLIKE,
-                        new String[]{"%" + words[i] + "%"}
+                        "%" + words[i] + "%"
                     )
                 );
             }
@@ -922,7 +916,7 @@ public class UserHomes {
                     Quantors.THERE_EXISTS,
                     "keywords",
                     FilterOperators.IS_LIKE,
-                    words
+                    (Object[])words
                 )
             );
         }

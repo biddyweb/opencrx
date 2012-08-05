@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ChartValue.java,v 1.2 2008/03/26 10:55:24 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: ChartValue.java,v 1.3 2008/10/01 00:28:28 wfro Exp $
  * Description: ChartValue class
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/03/26 10:55:24 $
+ * Date:        $Date: 2008/10/01 00:28:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.23 2008/09/16 09:41:51 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.24 2008/10/06 21:08:46 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/16 09:41:51 $
+ * Date:        $Date: 2008/10/06 21:08:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,6 @@
  */
 package org.opencrx.kernel.backend;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -121,17 +120,13 @@ public class Accounts {
 				            Quantors.THERE_EXISTS,
 				            "identity",
 				            FilterOperators.IS_LIKE,
-				            new String[]{
-				                "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*/contactMembership/:*"
-				            }
+				            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*/contactMembership/:*"
 				        ),
 		                new FilterProperty(
 				            Quantors.THERE_EXISTS,
 				            "contact",
 				            FilterOperators.IS_IN,
-				            new Object[]{
-				                contact.path()
-				            }
+				            contact.path()
 				        )
 	                }
 	            )
@@ -146,17 +141,13 @@ public class Accounts {
 				            Quantors.THERE_EXISTS,
 				            "identity",
 				            FilterOperators.IS_LIKE,
-				            new String[]{
-				                "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*/organizationalUnit/:*/contactMembership/:*"
-				            }
+				            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*/organizationalUnit/:*/contactMembership/:*"
 				        ),
 		                new FilterProperty(
 				            Quantors.THERE_EXISTS,
 				            "contact",
 				            FilterOperators.IS_IN,
-				            new Object[]{
-				                contact.path()
-				            }
+				            contact.path()
 				        )
 	                }
 	            )
@@ -464,10 +455,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{
-                                (forCounting ? Database_1_Attributes.HINT_COUNT : "") +
-                                filterProperty.values("clause").get(0)
-                            }
+                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
                         )
                     );
                     filter.add(
@@ -475,7 +463,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + SystemAttributes.OBJECT_CLASS,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                            Database_1_Attributes.QUERY_FILTER_CLASS
                         )
                     );
                     // stringParam
@@ -485,7 +473,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new String[values.size()])
+                            values.toArray()
                         )
                     );
                     // integerParam
@@ -495,7 +483,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Integer[values.size()])
+                            values.toArray()
                         )
                     );
                     // decimalParam
@@ -505,7 +493,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new BigDecimal[values.size()])
+                            values.toArray()
                         )
                     );
                     // booleanParam
@@ -515,7 +503,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Boolean[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateParam
@@ -533,7 +521,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new XMLGregorianCalendar[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateTimeParam
@@ -551,7 +539,7 @@ public class Accounts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Date[values.size()])
+                            values.toArray()
                         )
                     );
                     hasQueryFilterClause = true;
@@ -623,9 +611,7 @@ public class Accounts {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{
-                        Database_1_Attributes.HINT_COUNT + "(1=1)"
-                    }
+                    Database_1_Attributes.HINT_COUNT + "(1=1)"
                 )
             );
             filter.add(
@@ -633,7 +619,7 @@ public class Accounts {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + SystemAttributes.OBJECT_CLASS,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                    Database_1_Attributes.QUERY_FILTER_CLASS
                 )
             );            
         }

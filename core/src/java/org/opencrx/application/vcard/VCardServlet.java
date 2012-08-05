@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VCardServlet.java,v 1.4 2008/09/04 21:53:22 wfro Exp $
+ * Name:        $Id: VCardServlet.java,v 1.5 2008/10/14 11:27:23 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/04 21:53:22 $
+ * Date:        $Date: 2008/10/14 11:27:23 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -206,7 +206,10 @@ public class VCardServlet extends HttpServlet {
                 maxAccountsValue
         ).intValue();
         // Return all accounts in VCF format
-        if(RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter("resource"))) {
+        if(
+            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter(PARAMETER_NAME_RESOURCE)) ||
+            RESOURCE_TYPE_VCF.equals(req.getParameter(PARAMETER_NAME_TYPE))
+        ) {
             try {
                 resp.setCharacterEncoding("UTF-8");
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -248,8 +251,8 @@ public class VCardServlet extends HttpServlet {
         String filterId = req.getParameter("id");
         AccountsHelper accountsHelper = this.getAccountsHelper(pm, filterId);
         if(
-            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter("resource")) ||
-            RESOURCE_FORMAT_VCF.equals(req.getParameter("resource"))
+            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter(PARAMETER_NAME_RESOURCE)) ||
+            RESOURCE_TYPE_VCF.equals(req.getParameter(PARAMETER_NAME_TYPE))
         ) {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setCharacterEncoding("UTF-8");
@@ -337,7 +340,10 @@ public class VCardServlet extends HttpServlet {
     
     protected final static String CONFIGURATION_ID = "VCardServlet";    
     protected final static String RESOURCE_NAME_ACCOUNTS_VCF = "accounts.vcf";
-    protected final static String RESOURCE_FORMAT_VCF = "vcf";
+    protected final static String RESOURCE_TYPE_VCF = "vcf";
+    protected final static String PARAMETER_NAME_TYPE = "type";
+    protected final static String PARAMETER_NAME_RESOURCE = "resource";
+    
     protected static final int MAX_ACCOUNTS = 500;
     
     protected PersistenceManagerFactory persistenceManagerFactory = null;

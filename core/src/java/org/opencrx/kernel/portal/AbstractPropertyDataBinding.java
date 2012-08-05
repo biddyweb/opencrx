@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AbstractPropertyDataBinding.java,v 1.4 2008/02/12 19:49:06 wfro Exp $
- * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: AbstractPropertyDataBinding.java,v 1.5 2008/10/01 00:28:30 wfro Exp $
+ * Description: AbstractPropertyDataBinding
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:49:06 $
+ * Date:        $Date: 2008/10/01 00:28:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.35 2008/06/06 09:53:27 wfro Exp $
+ * Name:        $Id: Products.java,v 1.36 2008/10/06 21:08:47 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.35 $
+ * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/06 09:53:27 $
+ * Date:        $Date: 2008/10/06 21:08:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -491,10 +491,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{
-                                (forCounting ? Database_1_Attributes.HINT_COUNT : "") +
-                                filterProperty.values("clause").get(0)
-                            }
+                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
                         )
                     );
                     filter.add(
@@ -512,7 +509,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new String[values.size()])
+                            values.toArray()
                         )
                     );
                     // integerParam
@@ -522,7 +519,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Integer[values.size()])
+                            values.toArray()
                         )
                     );
                     // decimalParam
@@ -532,7 +529,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new BigDecimal[values.size()])
+                            values.toArray()
                         )
                     );
                     // booleanParam
@@ -542,7 +539,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Boolean[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateParam
@@ -560,7 +557,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new XMLGregorianCalendar[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateTimeParam
@@ -578,7 +575,7 @@ public class Products {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Date[values.size()])
+                            values.toArray()
                         )
                     );
                     hasQueryFilterClause = true;
@@ -688,7 +685,7 @@ public class Products {
                 Quantors.THERE_EXISTS,
                 "priceLevel",
                 FilterOperators.IS_IN,
-                new Object[]{priceLevel.path()}                    
+                priceLevel.path()                    
             )
         );
         if(applyPriceFilter) {
@@ -708,7 +705,7 @@ public class Products {
                         Quantors.THERE_EXISTS,
                         "usage",
                         FilterOperators.IS_IN,
-                        priceLevel.values("priceUsage").toArray()                  
+                        priceLevel.values("priceUsage").toArray()            
                     )
                 );                
             }
@@ -764,7 +761,7 @@ public class Products {
                     Quantors.THERE_EXISTS,
                     "priceLevel",
                     FilterOperators.IS_IN,
-                    new Object[]{priceLevel.path()}                    
+                    priceLevel.path()                    
                 )
             );            
         }
@@ -1136,9 +1133,7 @@ public class Products {
                     Quantors.THERE_EXISTS,
                     SystemAttributes.MODIFIED_AT,
                     FilterOperators.IS_GREATER_OR_EQUAL,
-                    new String[]{
-                        DateFormat.getInstance().format(includeProductsModifiedSince)
-                    }
+                    DateFormat.getInstance().format(includeProductsModifiedSince)
                 )
             );
         }        
@@ -1472,9 +1467,7 @@ public class Products {
                     Quantors.THERE_EXISTS,
                     SystemAttributes.MODIFIED_AT,
                     FilterOperators.IS_GREATER_OR_EQUAL,
-                    new String[]{
-                        DateFormat.getInstance().format(includeProductsCreatedSince)
-                    }
+                    DateFormat.getInstance().format(includeProductsCreatedSince)
                 )
             );
         }

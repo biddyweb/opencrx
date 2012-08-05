@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.26 2008/09/02 15:41:59 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.27 2008/10/11 22:56:54 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.26 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/02 15:41:59 $
+ * Date:        $Date: 2008/10/11 22:56:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,9 +58,10 @@ package org.opencrx.kernel.workflow.servlet;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -356,6 +357,7 @@ public class WorkflowHandlerServlet
                         req,
                         res
                     );
+                    this.runningSegments.remove(id);
                 } 
                 catch(Exception e) {
                     AppLog.warning(e.getMessage(), e.getCause());
@@ -406,7 +408,7 @@ public class WorkflowHandlerServlet
     private static final long MAX_RETRY_DELAY_MILLIS = 604800000L; // 7 days
     
     private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final List<String> runningSegments = new ArrayList<String>();
+    private final Set<String> runningSegments = new HashSet<String>();
     private long startedAt = System.currentTimeMillis();
     private Model_1_3 model = null;
 }

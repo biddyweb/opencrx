@@ -341,7 +341,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:createdAt">
+									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Creatable:createdAt">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -363,7 +363,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:createdBy">
+									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Creatable:createdBy">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -402,7 +402,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:modifiedAt">
+									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedAt">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -425,7 +425,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:modifiedBy">
+									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedBy">
 										<_object>
 											<active>true</active>
 											<toolTip>

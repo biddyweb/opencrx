@@ -7,6 +7,77 @@
 
 
 ==============================================================================
+Version 2.2.1                                                       2008-10-14
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10008166: FormattedNoteDataBinding
+      DataBinding which allows to format Title / Text of a Note. This allows to 
+      improve the customizing of grids containing notes. The data binding 
+      concatenates title and text of a Note to one string separated by a <br />.
+      The title is set to bold. The title is filled up with &nbsp; according
+      to the longest line of the text up to a maximum of 140 characters.
+      
+      Here is an example which shows how to configure the column 'formattedNote' 
+      of an ActivityFollowUp:
+      
+      1. Configure a feature definition for formattedNote:
+      
+			<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
+				<_object>
+				  <type>org:w3c:string</type>
+				  <multiplicity>0..1</multiplicity>
+				  <changeable>false</changeable>
+				</_object>
+				<_content/>
+				</org.openmdx.ui1.StructuralFeatureDefinition>
+			</featureDefinition>							
+
+      2. Configure an element definition for formattedNote:
+      
+			<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
+				<_object>
+					<active>true</active>
+					<toolTip>
+						<_item>Title / Text</_item>
+					</toolTip>
+					<label>
+						<_item>Title / Text</_item>
+					</label>
+					<order>
+						<_item>90</_item>
+						<_item>70</_item>
+						<_item>10</_item>
+					</order>
+					<orderObjectContainer>
+						<_item>0</_item>
+						<_item>10</_item>
+						<_item>0</_item>
+					</orderObjectContainer>
+					<dataBindingName>org.opencrx.kernel.portal.FormattedNoteDataBinding</dataBindingName>
+				</_object>
+				<_content/>
+			</org.openmdx.ui1.ElementDefinition>
+      
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008163
+      home1: replace Chart by Media. Replace class Chart by Media.
+      
+      
+2.1.  FIXED BUGS
+      none
+
+
+2.2   REMOVED FEATURES
+      none
+      
+
+==============================================================================
 Version 2.2.0                                                       2008-09-02
 ==============================================================================
 

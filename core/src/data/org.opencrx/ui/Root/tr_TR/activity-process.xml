@@ -66,6 +66,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Başlık / Metin</_item>
+											</toolTip>
+											<label>
+												<_item>Başlık / Metin</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
+										<_object>
+                      <label>
+                        <_item>Ekleniş</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nesnenin eklenme tarih-zamanı (asla değişmez)</_item>
+                      </toolTip>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:modifiedAt" _operation="create">
                     <_object>
                       <label>

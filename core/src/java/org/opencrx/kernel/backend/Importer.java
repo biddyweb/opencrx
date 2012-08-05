@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.1 2008/05/09 18:14:36 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.2 2008/10/06 17:12:53 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/09 18:14:36 $
+ * Date:        $Date: 2008/10/06 17:12:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -358,7 +358,7 @@ public class Importer {
                 super.process(is);
             }
             catch(ServiceException e) {
-                BasicException be = e.getStackedException(0);
+                BasicException be = e.getCause(null);
                 this.errors.add(be.getDescription() + " (" + Arrays.asList(be.getParameters()) + ")");
             }
         }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.12 2008/09/05 10:10:47 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.15 2008/10/15 11:02:46 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/05 10:10:47 $
+ * Date:        $Date: 2008/10/15 11:02:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,6 +88,7 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
+import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.WebKeys;
 
@@ -163,24 +164,21 @@ public class ICalServlet extends FreeBusyServlet {
             String tz = req.getParameter(PARAMETER_NAME_USER_TZ);
             tz = tz == null ? TimeZone.getDefault().getID() : tz;
             TimeZone timeZone = TimeZone.getTimeZone(tz);
-            int tzRawOffsetHours = (timeZone.getRawOffset() / 3600000);
-            // Reformat to GMT
-            tz = "GMT" + (tzRawOffsetHours >= 0 ? "+" : "") + tzRawOffsetHours;
-            timeZone = TimeZone.getTimeZone(tz);
             // Date formatter
-            SimpleDateFormat dateFormatUser = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(
+            SimpleDateFormat dateFormatLocale = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(
                 DateFormat.MEDIUM, 
                 DateFormat.LONG, 
                 locale
             );
-            dateFormatUser.applyPattern("MMM dd yyyy HH:mm:ss 'GMT'Z");
-            dateFormatUser.setTimeZone(timeZone);        
+            dateFormatLocale.applyPattern("MMM dd yyyy HH:mm:ss '" + tz + "'");
+            dateFormatLocale.setTimeZone(timeZone);        
             SimpleDateFormat dateFormatEnUs = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(
                 DateFormat.MEDIUM, 
                 DateFormat.LONG, 
                 new Locale("en", "US")
             );
-            dateFormatEnUs.applyLocalizedPattern("MMM dd, yyyy hh:mm:ss a 'GMT'Z");
+            int offsetHours = ((timeZone.getRawOffset() + timeZone.getDSTSavings()) / 3600000);                
+            dateFormatEnUs.applyLocalizedPattern("MMM dd, yyyy hh:mm:ss a 'GMT" + (offsetHours >= 0 ? "+" : "-") + offsetHours + ":00'");
             dateFormatEnUs.setTimeZone(timeZone);
             org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = 
                 this.getComponentConfiguration(
@@ -322,13 +320,13 @@ public class ICalServlet extends FreeBusyServlet {
                 p.write("             var bandInfos = [\n");
                 p.write("               Timeline.createHotZoneBandInfo({\n");
                 p.write("                   zones: [\n");
-                p.write("                       {   start:    \"Jan 01 1960 00:00:00 GMT-0600\",\n");
-                p.write("                           end:      \"Dec 31 2050 00:00:00 GMT-0600\",\n");
+                p.write("                       {   start:    \"Jan 01 1960 00:00:00\",\n");
+                p.write("                           end:      \"Dec 31 2050 00:00:00\",\n");
                 p.write("                           magnify:  30,\n");
                 p.write("                           unit:     Timeline.DateTime.DAY\n");
                 p.write("                       }\n");
                 p.write("                   ],\n");
-                p.write("                   timeZone: " + tzRawOffsetHours + ",\n");
+                p.write("                   timeZone: " + offsetHours + ",\n");
                 p.write("                   eventSource: eventSource,\n");
                 p.write("                   date: \"" + dateFormatEnUs.format(new Date()) + "\",\n");               
                 p.write("                   width: \"70%\",\n");
@@ -337,13 +335,13 @@ public class ICalServlet extends FreeBusyServlet {
                 p.write("               }),\n");
                 p.write("               Timeline.createHotZoneBandInfo({\n");
                 p.write("                   zones: [\n");
-                p.write("                       {   start:    \"Jan 01 1960 00:00:00 GMT-0600\",\n");
-                p.write("                           end:      \"Dec 31 2050 00:00:00 GMT-0600\",\n");
+                p.write("                       {   start:    \"Jan 01 1960 00:00:00\",\n");
+                p.write("                           end:      \"Dec 31 2050 00:00:00\",\n");
                 p.write("                           magnify:  10,\n");
                 p.write("                           unit:     Timeline.DateTime.MONTH\n");
                 p.write("                       }\n");
                 p.write("                   ],\n");
-                p.write("                   timeZone: " + tzRawOffsetHours + ",\n");
+                p.write("                   timeZone: " + offsetHours + ",\n");
                 p.write("                   showEventText: false,\n");
                 p.write("                   trackHeight: 0.5,\n");
                 p.write("                   trackGap: 0.2,\n");        
@@ -397,7 +395,7 @@ public class ICalServlet extends FreeBusyServlet {
                 p.write("             <input type=\"hidden\" name=\"height\" id=\"height\" value=\"" + (Math.max(500, (height + 200) % 1300)) + "\">\n");
                 p.write("             <input type=\"image\" src=\"images/magnify.gif\" alt=\"\" border=\"0\" align=\"absbottom\" />");
                 p.write("           </td>\n");
-                p.write("           <td>" + dateFormatUser.format(new Date()).replace(" ", "&nbsp;") + "</td>\n");
+                p.write("           <td>" + dateFormatLocale.format(new Date()).replace(" ", "&nbsp;") + "</td>\n");
                 p.write("         </tr>\n");
                 p.write("       </table>\n");
                 p.write("     </form>\n");
@@ -455,6 +453,8 @@ public class ICalServlet extends FreeBusyServlet {
         ) {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setCharacterEncoding("UTF-8");
+            // Required by Sunbird 0.9+
+            resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));
             BufferedReader reader = new BufferedReader(req.getReader());
             boolean allowCreation = false;
             String l = null;

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.10 2008/08/26 08:23:35 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.14 2008/10/11 22:25:14 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/26 08:23:35 $
+ * Date:        $Date: 2008/10/11 22:25:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -499,7 +499,7 @@ public class Utils {
             "org:opencrx:kernel:uom1",
             "org:oasis_open",
             "org:openmdx:generic1",
-            "org:openmdx:compatibility:view1",
+            "org:openmdx:state2",
             "org:opencrx:kernel:home1",
             "org:openmdx:security:realm1",
             "org:openmdx:security:authorization1",
@@ -512,7 +512,7 @@ public class Utils {
             "org:opencrx:kernel:model1",
             "org:opencrx:kernel:ras1",
             "org:opencrx:kernel:depot1",
-            "org:openmdx:compatibility:state1",
+            "org:openmdx:compatibility:state1",            
             "org:opencrx:kernel",
             "org:opencrx:security"
         }

@@ -3365,7 +3365,7 @@ Timeline.GregorianDateLabeller.prototype.labelPrecise=function(date){
 return Timeline.DateTime.removeTimeZoneOffset(
 date,
 this._timeZone
-).toUTCString();
+).toUTCString().replace(' GMT', '');
 };
 
 Timeline.GregorianDateLabeller.prototype.defaultLabelInterval=function(date,intervalUnit){
@@ -3421,7 +3421,7 @@ emphasized=
 (intervalUnit==Timeline.DateTime.CENTURY&&y%1000==0);
 break;
 default:
-text=date.toUTCString();
+text=date.toUTCString().replace(' GMT', '');
 }
 return{text:text,emphasized:emphasized};
 }

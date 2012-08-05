@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.54 2008/09/16 23:05:11 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.60 2008/10/06 21:08:47 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.54 $
+ * Revision:    $Revision: 1.60 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/16 23:05:11 $
+ * Date:        $Date: 2008/10/06 21:08:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -268,6 +268,7 @@ public class Activities {
         }                        
         pm.currentTransaction().begin();                    
         calendar = activityPkg.getCalendar().createCalendar();
+        calendar.refInitialize(false, false);
         calendar.setName(calendarName);
         calendar.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -279,6 +280,7 @@ public class Activities {
         );
         // Sunday
         WeekDay weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)1);
         weekDay.setWorkingDay(false);
         calendar.getOwningGroup().addAll(
@@ -305,6 +307,7 @@ public class Activities {
         );
         // Tuesday
         weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)3);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -319,6 +322,7 @@ public class Activities {
         );
         // Wednesday
         weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)4);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -333,6 +337,7 @@ public class Activities {
         );
         // Thursday
         weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)5);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -347,6 +352,7 @@ public class Activities {
         );
         // Friday
         weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)6);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -361,6 +367,7 @@ public class Activities {
         );
         // Saturday
         weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)7);
         weekDay.setWorkingDay(false);
         calendar.getOwningGroup().addAll(
@@ -395,6 +402,7 @@ public class Activities {
         // Create email process
         pm.currentTransaction().begin();                    
         process = activityPkg.getActivityProcess().createActivityProcess();
+        process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_EMAILS);
         process.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -406,6 +414,7 @@ public class Activities {
         );
         // State New
         ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
+        newState.refInitialize(false, false);
         newState.setName("New");
         newState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -417,6 +426,7 @@ public class Activities {
         );
         // State Open
         ActivityProcessState openState = activityPkg.getActivityProcessState().createActivityProcessState();
+        openState.refInitialize(false, false);
         openState.setName("Open");
         openState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -428,6 +438,7 @@ public class Activities {
         );
         // State Closed
         ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
+        closedState.refInitialize(false, false);
         closedState.setName("Closed");
         closedState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -443,6 +454,7 @@ public class Activities {
         process.setStartState(newState);                    
         // Transition Assign: New->Open
         ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Assign");
         processTransition.setPrevState(newState);
         processTransition.setNextState(openState);
@@ -458,6 +470,7 @@ public class Activities {
         );
         // Create SetAssignedToAction
         SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
         setAssignedToAction.getOwningGroup().addAll(
@@ -470,6 +483,7 @@ public class Activities {
         );
         // Create SetActualStartAction
         SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
+        setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
         setActualStartAction.getOwningGroup().addAll(
@@ -482,6 +496,7 @@ public class Activities {
         );
         // Transition Add Note: Open->Open
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Add Note");
         processTransition.setPrevState(openState);
         processTransition.setNextState(openState);
@@ -497,6 +512,7 @@ public class Activities {
         );
         // Transition Export: Open->Open
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Export as mail attachment");
         processTransition.setPrevState(openState);
         processTransition.setNextState(openState);
@@ -512,6 +528,7 @@ public class Activities {
         );
         // Create WorkflowAction for ExportMail
         WfAction wfAction = activityPkg.getWfAction().createWfAction();
+        wfAction.refInitialize(false, false);
         wfAction.setName("Export Mail");
         wfAction.setName("Export Mail as attachment to current user");
         wfAction.setWfProcess(
@@ -529,6 +546,7 @@ public class Activities {
         );
         // Transition Send: Open->Open
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Send as mail");
         processTransition.setPrevState(openState);
         processTransition.setNextState(openState);
@@ -544,6 +562,7 @@ public class Activities {
         );
         // Create WorkflowAction for SendMail
         wfAction = activityPkg.getWfAction().createWfAction();
+        wfAction.refInitialize(false, false);
         wfAction.setName("Send Mail");
         wfAction.setName("Send as mail");
         wfAction.setWfProcess(
@@ -561,6 +580,7 @@ public class Activities {
         );
         // Transition Close: Open->Closed
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Close");
         processTransition.setPrevState(openState);
         processTransition.setNextState(closedState);
@@ -576,6 +596,7 @@ public class Activities {
         );
         // Create SetActualEndAction
         SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
         setActualEndAction.getOwningGroup().addAll(
@@ -612,6 +633,7 @@ public class Activities {
         // Create process
         pm.currentTransaction().begin();                    
         process = activityPkg.getActivityProcess().createActivityProcess();
+        process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING);
         process.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -623,6 +645,7 @@ public class Activities {
         );
         // State New
         ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
+        newState.refInitialize(false, false);
         newState.setName("New");
         newState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -634,6 +657,7 @@ public class Activities {
         );
         // State In Progress
         ActivityProcessState inProgressState = activityPkg.getActivityProcessState().createActivityProcessState();
+        inProgressState.refInitialize(false, false);
         inProgressState.setName("In Progress");
         inProgressState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -645,6 +669,7 @@ public class Activities {
         );
         // State Complete
         ActivityProcessState completeState = activityPkg.getActivityProcessState().createActivityProcessState();
+        completeState.refInitialize(false, false);
         completeState.setName("Complete");
         completeState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -656,6 +681,7 @@ public class Activities {
         );
         // State Closed
         ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
+        closedState.refInitialize(false, false);
         closedState.setName("Closed");
         closedState.getOwningGroup().addAll(
             activitySegment.getOwningGroup()
@@ -671,6 +697,7 @@ public class Activities {
         process.setStartState(newState);                    
         // Transition Add Note: Open->Open
         ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Add Note");
         processTransition.setPrevState(inProgressState);
         processTransition.setNextState(inProgressState);
@@ -686,6 +713,7 @@ public class Activities {
         );
         // Transition Assign: New->In Progress
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Assign");
         processTransition.setPrevState(newState);
         processTransition.setNextState(inProgressState);
@@ -701,6 +729,7 @@ public class Activities {
         );
         // Create SetAssignedToAction
         SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
         setAssignedToAction.getOwningGroup().addAll(
@@ -713,6 +742,7 @@ public class Activities {
         );
         // Create SetActualStartAction
         SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
+        setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
         setActualStartAction.getOwningGroup().addAll(
@@ -725,6 +755,7 @@ public class Activities {
         );
         // Transition Close: Complete->Closed
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Close");
         processTransition.setPrevState(completeState);
         processTransition.setNextState(closedState);
@@ -740,6 +771,7 @@ public class Activities {
         );
         // Transition Complete: In Progress->Complete
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Complete");
         processTransition.setPrevState(inProgressState);
         processTransition.setNextState(completeState);
@@ -755,6 +787,7 @@ public class Activities {
         );
         // Create SetActualEndAction
         SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
         setActualEndAction.getOwningGroup().addAll(
@@ -767,6 +800,7 @@ public class Activities {
         );
         // Create SetAssignedToAction
         setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to reporting contact");
         setAssignedToAction.getOwningGroup().addAll(
@@ -779,6 +813,7 @@ public class Activities {
         );
         // Transition Create: New->New
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Create");
         processTransition.setPrevState(newState);
         processTransition.setNextState(newState);
@@ -794,6 +829,7 @@ public class Activities {
         );        
         // Transition Reopen: Complete->In Progress
         processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.refInitialize(false, false);
         processTransition.setName("Reopen");
         processTransition.setPrevState(completeState);
         processTransition.setNextState(inProgressState);
@@ -809,6 +845,7 @@ public class Activities {
         );        
         // Create SetAssignedToAction
         setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
         setAssignedToAction.getOwningGroup().addAll(
@@ -847,6 +884,7 @@ public class Activities {
         }                
         pm.currentTransaction().begin();
         activityType = activityPkg.getActivityType().createActivityType();
+        activityType.refInitialize(false, false);
         activityType.setName(activityTypeName);
         activityType.setActivityClass(activityClass);
         activityType.setControlledBy(activityProcess);
@@ -883,6 +921,7 @@ public class Activities {
         }        
         pm.currentTransaction().begin();
         activityTracker = activityPkg.getActivityTracker().createActivityTracker();
+        activityTracker.refInitialize(false, false);
         activityTracker.setName(trackerName);
         activityTracker.getOwningGroup().addAll(
             owningGroups == null
@@ -921,6 +960,7 @@ public class Activities {
         Activity1Package activityPkg = Utils.getActivityPackage(pm);
         pm.currentTransaction().begin();
         activityCreator = activityPkg.getActivityCreator().createActivityCreator();
+        activityCreator.refInitialize(false, false);
         activityCreator.setName(creatorName);
         activityCreator.setPriority((short)0);
         activityCreator.getOwningGroup().addAll(
@@ -957,13 +997,13 @@ public class Activities {
                     Quantors.THERE_EXISTS,
                     SystemAttributes.OBJECT_CLASS,
                     FilterOperators.IS_IN,
-                    new String[]{objectClass}
+                    objectClass
                 ),
                 new FilterProperty(
                     Quantors.THERE_EXISTS,
                     "percentComplete",
                     FilterOperators.IS_LESS,
-                    new Number[]{new Short((short)100)}
+                    new Short((short)100)
                 )
             },
             AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
@@ -1013,159 +1053,148 @@ public class Activities {
 
     //-------------------------------------------------------------------------
     DataproviderObject[] calculateUserHomeCharts(
-      Path userHome,
-      Path chartReference
+        Path userHome,
+        Path chartReference
     ) throws ServiceException {
+        java.text.DateFormat dateFormat = 
+            java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, new Locale("en_US")); 
+        java.text.DateFormat timeFormat = 
+            java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, new Locale("en_US"));
+        String createdAt = dateFormat.format(new Date()) + " " + timeFormat.format(new Date());
+        // try to get full name of contact
+        String fullName = "";
+        try {
+            fullName = (String)this.backend.retrieveObject(
+                (Path)this.backend.retrieveObject(userHome).values("contact").get(0)
+            ).values("fullName").get(0);
+        } catch(Exception e) {}
+        DataproviderObject[] charts = new DataproviderObject[2];
+        String chartTitle = null;
+        /**
+         * Assigned Activities Overview
+         */
+        chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Overview (" + createdAt + ")";
+        charts[0] = new DataproviderObject(
+            chartReference.getChild("2")
+        );
+        charts[0].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Media");
+        charts[0].values("description").add(chartTitle);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(os);
 
-      java.text.DateFormat dateFormat = 
-          java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, new Locale("en_US")); 
-      java.text.DateFormat timeFormat = 
-          java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, new Locale("en_US"));
-      String createdAt = dateFormat.format(new Date()) + " " + timeFormat.format(new Date());
-      // try to get full name of contact
-      String fullName = "";
-      try {
-          fullName = (String)this.backend.retrieveObject(
-              (Path)this.backend.retrieveObject(userHome).values("contact").get(0)
-          ).values("fullName").get(0);
-      } catch(Exception e) {}
-      
-      DataproviderObject[] charts = new DataproviderObject[2];
-      String chartTitle = null;
-      
-      /**
-       * Assigned Activities Overview
-       */
-      chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Overview (" + createdAt + ")";
-      
-      charts[0] = new DataproviderObject(
-        chartReference.getChild("2")
-      );
-      charts[0].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Chart");
-      charts[0].values("description").add(chartTitle);
-      ByteArrayOutputStream os = new ByteArrayOutputStream();
-      PrintWriter pw = new PrintWriter(os);
+        pw.println("BEGIN:VND.OPENDMDX-CHART");
+        pw.println("VERSION:1.0");
+        pw.println("COUNT:1");
 
-      pw.println("BEGIN:VND.OPENDMDX-CHART");
-      pw.println("VERSION:1.0");
-      pw.println("COUNT:1");
+        pw.println("CHART[0].TYPE:HORIZBAR");
+        pw.println("CHART[0].LABEL:" + chartTitle);
+        pw.println("CHART[0].SCALEXTITLE:#Activities");
+        pw.println("CHART[0].SCALEYTITLE:Activity type");
+        pw.println("CHART[0].COUNT:" + ACTIVITY_TYPES.length);
 
-      pw.println("CHART[0].TYPE:HORIZBAR");
-      pw.println("CHART[0].LABEL:" + chartTitle);
-      pw.println("CHART[0].SCALEXTITLE:#Activities");
-      pw.println("CHART[0].SCALEYTITLE:Activity type");
-      pw.println("CHART[0].COUNT:" + ACTIVITY_TYPES.length);
-      
-      int[] counts = new int[ACTIVITY_TYPES.length];
-      int[] timeDistribution = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-      Path assignedActivityReference = userHome.getChild("assignedActivity");
-      for(
-          int i = 0; 
-          i < ACTIVITY_TYPES.length; 
-          i++
-      ) {
-          String activityTypeName = (String)this.backend.getCodes().getLongText(
-              CODEVALUENAME_ACTIVITY_TYPE,
-              (short)0, 
-              true
-          ).get(new Short((short)i));          
-          pw.println("CHART[0].LABEL[" + i + "]:" + activityTypeName);
-          counts[i] = 
-              this.calculateOpenActivityTimeDistribution(
-                  assignedActivityReference, 
-                  ACTIVITY_TYPES[i], 
-                  timeDistribution, 
-                  "scheduledStart", 
-                  true
-              );
-      }         
-      int maxValue = 0;
-      for(int i = 0; i < counts.length; i++) {
-        pw.println("CHART[0].VAL[" + i + "]:" + counts[i]);
-        pw.println("CHART[0].BORDER[" + i + "]:#000066");
-        pw.println("CHART[0].FILL[" + i + "]:#F6D66D");
-        maxValue = Math.max(maxValue, counts[i]);
-      }
-      pw.println("CHART[0].MINVALUE:0");
-      pw.println("CHART[0].MAXVALUE:" + maxValue);      
-      pw.println("END:VND.OPENDMDX-CHART");      
-      try {
-        pw.flush();
-        os.close();
-      } catch(Exception e) {}
-      charts[0].values("chart").add(
-        os.toByteArray()
-      );
-      charts[0].values("chartMimeType").add("application/vnd.openmdx-chart");
-      charts[0].values("chartName").add(
-        Utils.toFilename(chartTitle + ".txt")
-      );
+        int[] counts = new int[ACTIVITY_TYPES.length];
+        int[] timeDistribution = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        Path assignedActivityReference = userHome.getChild("assignedActivity");
+        for(
+            int i = 0; 
+            i < ACTIVITY_TYPES.length; 
+            i++
+        ) {
+            String activityTypeName = (String)this.backend.getCodes().getLongText(
+                CODEVALUENAME_ACTIVITY_TYPE,
+                (short)0, 
+                true
+            ).get(new Short((short)i));          
+            pw.println("CHART[0].LABEL[" + i + "]:" + activityTypeName);
+            counts[i] = 
+                this.calculateOpenActivityTimeDistribution(
+                    assignedActivityReference, 
+                    ACTIVITY_TYPES[i], 
+                    timeDistribution, 
+                    "scheduledStart", 
+                    true
+                );
+        }         
+        int maxValue = 0;
+        for(int i = 0; i < counts.length; i++) {
+            pw.println("CHART[0].VAL[" + i + "]:" + counts[i]);
+            pw.println("CHART[0].BORDER[" + i + "]:#000066");
+            pw.println("CHART[0].FILL[" + i + "]:#F6D66D");
+            maxValue = Math.max(maxValue, counts[i]);
+        }
+        pw.println("CHART[0].MINVALUE:0");
+        pw.println("CHART[0].MAXVALUE:" + maxValue);      
+        pw.println("END:VND.OPENDMDX-CHART");      
+        try {
+            pw.flush();
+            os.close();
+        } catch(Exception e) {}
+        charts[0].values("content").add(
+            os.toByteArray()
+        );
+        charts[0].values("contentMimeType").add("application/vnd.openmdx-chart");
+        charts[0].values("contentName").add(
+            Utils.toFilename(chartTitle) + ".txt"
+        );
+        /**
+         * Assigned Activities Age Distribution
+         */
+        chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Age Distribution (" + createdAt + ")";
+        charts[1] = new DataproviderObject(
+            chartReference.getChild("3")
+        );
+        charts[1].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Media");
+        charts[1].values("description").add(chartTitle);
+        os = new ByteArrayOutputStream();
+        pw = new PrintWriter(os);
 
-      /**
-       * Assigned Activities Age Distribution
-       */
-      chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Age Distribution (" + createdAt + ")";
-      
-      charts[1] = new DataproviderObject(
-        chartReference.getChild("3")
-      );
-      charts[1].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Chart");
-      charts[1].values("description").add(chartTitle);
-      os = new ByteArrayOutputStream();
-      pw = new PrintWriter(os);
+        pw.println("BEGIN:VND.OPENDMDX-CHART");
+        pw.println("VERSION:1.0");
+        pw.println("COUNT:1");
 
-      pw.println("BEGIN:VND.OPENDMDX-CHART");
-      pw.println("VERSION:1.0");
-      pw.println("COUNT:1");
+        pw.println("CHART[0].TYPE:VERTBAR");
+        pw.println("CHART[0].LABEL:" + chartTitle);
+        pw.println("CHART[0].SCALEXTITLE:#Days");
+        pw.println("CHART[0].SCALEYTITLE:#Activities");
+        pw.println("CHART[0].COUNT:15");
 
-      pw.println("CHART[0].TYPE:VERTBAR");
-      pw.println("CHART[0].LABEL:" + chartTitle);
-      pw.println("CHART[0].SCALEXTITLE:#Days");
-      pw.println("CHART[0].SCALEYTITLE:#Activities");
-      pw.println("CHART[0].COUNT:15");
-      
-      pw.println("CHART[0].LABEL[0]:past due");
-      pw.println("CHART[0].LABEL[1]:today");
-      pw.println("CHART[0].LABEL[2]:1");
-      pw.println("CHART[0].LABEL[3]:2");
-      pw.println("CHART[0].LABEL[4]:3");
-      pw.println("CHART[0].LABEL[5]:4");
-      pw.println("CHART[0].LABEL[6]:5");
-      pw.println("CHART[0].LABEL[7]:6");
-      pw.println("CHART[0].LABEL[8]:7");
-      pw.println("CHART[0].LABEL[9]:..14");
-      pw.println("CHART[0].LABEL[10]:..30");
-      pw.println("CHART[0].LABEL[11]:..90");
-      pw.println("CHART[0].LABEL[12]:..180");
-      pw.println("CHART[0].LABEL[13]:..360");
-      pw.println("CHART[0].LABEL[14]:>360 days");
-      
-      maxValue = 0;
-      for(int i = 0; i < 15; i++) {
-        pw.println("CHART[0].VAL[" + i + "]:" + timeDistribution[i]);
-        pw.println("CHART[0].BORDER[" + i + "]:#000066");
-        pw.println("CHART[0].FILL[" + i + "]:#F6D66D");
-        maxValue = Math.max(maxValue, timeDistribution[i]);
-      }
-
-      pw.println("CHART[0].MINVALUE:0");
-      pw.println("CHART[0].MAXVALUE:" + maxValue);
-      
-      pw.println("END:VND.OPENDMDX-CHART");
-      
-      try {
-        pw.flush();
-        os.close();
-      } catch(Exception e) {}
-      charts[1].values("chart").add(
-        os.toByteArray()
-      );
-      charts[1].values("chartMimeType").add("application/vnd.openmdx-chart");
-      charts[1].values("chartName").add(
-        Utils.toFilename(chartTitle + ".txt")
-      );
-
-      return charts;
+        pw.println("CHART[0].LABEL[0]:past due");
+        pw.println("CHART[0].LABEL[1]:today");
+        pw.println("CHART[0].LABEL[2]:1");
+        pw.println("CHART[0].LABEL[3]:2");
+        pw.println("CHART[0].LABEL[4]:3");
+        pw.println("CHART[0].LABEL[5]:4");
+        pw.println("CHART[0].LABEL[6]:5");
+        pw.println("CHART[0].LABEL[7]:6");
+        pw.println("CHART[0].LABEL[8]:7");
+        pw.println("CHART[0].LABEL[9]:..14");
+        pw.println("CHART[0].LABEL[10]:..30");
+        pw.println("CHART[0].LABEL[11]:..90");
+        pw.println("CHART[0].LABEL[12]:..180");
+        pw.println("CHART[0].LABEL[13]:..360");
+        pw.println("CHART[0].LABEL[14]:>360 days");      
+        maxValue = 0;
+        for(int i = 0; i < 15; i++) {
+            pw.println("CHART[0].VAL[" + i + "]:" + timeDistribution[i]);
+            pw.println("CHART[0].BORDER[" + i + "]:#000066");
+            pw.println("CHART[0].FILL[" + i + "]:#F6D66D");
+            maxValue = Math.max(maxValue, timeDistribution[i]);
+        }
+        pw.println("CHART[0].MINVALUE:0");
+        pw.println("CHART[0].MAXVALUE:" + maxValue);      
+        pw.println("END:VND.OPENDMDX-CHART");
+        try {
+            pw.flush();
+            os.close();
+        } catch(Exception e) {}
+        charts[1].values("content").add(
+            os.toByteArray()
+        );
+        charts[1].values("contentMimeType").add("application/vnd.openmdx-chart");
+        charts[1].values("contentName").add(
+            Utils.toFilename(chartTitle) + ".txt"
+        );
+        return charts;
     }
     
     //-------------------------------------------------------------------------
@@ -2077,7 +2106,7 @@ public class Activities {
                     Quantors.THERE_EXISTS,
                     "resource",
                     FilterOperators.IS_IN,
-                    new Object[]{resourceIdentity}
+                    resourceIdentity
                 )
             }
         );
@@ -2443,11 +2472,9 @@ public class Activities {
                                     Quantors.THERE_EXISTS,
                                     "contact",
                                     FilterOperators.IS_IN,
-                                    new Object[]{
-                                        this.backend.getUserHomes().getUserHome(
-                                            activityIdentity
-                                        ).values("contact").get(0)
-                                    }
+                                    this.backend.getUserHomes().getUserHome(
+                                        activityIdentity
+                                    ).values("contact").get(0)
                                 )
                             }
                         );
@@ -2592,7 +2619,7 @@ public class Activities {
                                             Quantors.THERE_EXISTS,
                                             "newPercentComplete",
                                             FilterOperators.IS_IN,
-                                            new Object[]{updatedActivity.values("percentComplete").get(0)}
+                                            updatedActivity.values("percentComplete").get(0)
                                         )
                                     },
                                     AttributeSelectors.ALL_ATTRIBUTES,
@@ -2617,7 +2644,7 @@ public class Activities {
                                             Quantors.THERE_EXISTS,
                                             "newActivityState",
                                             FilterOperators.IS_IN,
-                                            new Object[]{updatedActivity.values("activityState").get(0)}
+                                            updatedActivity.values("activityState").get(0)
                                         )
                                     },
                                     AttributeSelectors.ALL_ATTRIBUTES,
@@ -2683,10 +2710,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{
-                                (forCounting ? Database_1_Attributes.HINT_COUNT : "") +
-                                filterProperty.values("clause").get(0)
-                            }
+                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
                         )
                     );
                     filter.add(
@@ -2694,7 +2718,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + SystemAttributes.OBJECT_CLASS,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                            Database_1_Attributes.QUERY_FILTER_CLASS
                         )
                     );
                     // stringParam
@@ -2704,7 +2728,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new String[values.size()])
+                            values.toArray()
                         )
                     );
                     // integerParam
@@ -2714,7 +2738,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Integer[values.size()])
+                            values.toArray()
                         )
                     );
                     // decimalParam
@@ -2724,7 +2748,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new BigDecimal[values.size()])
+                            values.toArray()
                         )
                     );
                     // booleanParam
@@ -2734,7 +2758,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Boolean[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateParam
@@ -2752,7 +2776,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new XMLGregorianCalendar[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateTimeParam
@@ -2770,7 +2794,7 @@ public class Activities {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Date[values.size()])
+                            values.toArray()
                         )
                     );
                     hasQueryFilterClause = true;
@@ -2924,9 +2948,7 @@ public class Activities {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{
-                        Database_1_Attributes.HINT_COUNT + "(1=1)"
-                    }
+                    Database_1_Attributes.HINT_COUNT + "(1=1)"
                 )
             );
             filter.add(
@@ -2934,7 +2956,7 @@ public class Activities {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + SystemAttributes.OBJECT_CLASS,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                    Database_1_Attributes.QUERY_FILTER_CLASS
                 )
             );            
         }
@@ -2962,7 +2984,7 @@ public class Activities {
                         Quantors.THERE_EXISTS,
                         "dateOfDay",
                         FilterOperators.IS_IN,
-                        new String[]{dateOfDay}
+                        dateOfDay
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -2984,7 +3006,7 @@ public class Activities {
                         Quantors.THERE_EXISTS,
                         "dayOfWeek",
                         FilterOperators.IS_IN,
-                        new Number[]{new Short((short)dayOfWeek)}
+                        new Short((short)dayOfWeek)
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -3080,7 +3102,7 @@ public class Activities {
                         Quantors.THERE_EXISTS,
                         filterAttribute,
                         FilterOperators.IS_IN,
-                        new Object[]{activityIdentity.getPrefix(7)}                        
+                        activityIdentity.getPrefix(7)                        
                     )
                 },
                 AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,

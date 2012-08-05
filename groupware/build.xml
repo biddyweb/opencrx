@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.57 2008/09/19 23:44:32 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.60 2008/10/14 15:29:56 wfro Exp $
  * = Description: openCRX/Groupware build.xml
- * = Revision:    $Revision: 1.57 $
- * = Date:        $Date: 2008/09/19 23:44:32 $
+ * = Revision:    $Revision: 1.60 $
+ * = Date:        $Date: 2008/10/14 15:29:56 $
  * = Copyright:   (c) 2003-2007 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.2.0"/>
+	<property name="openmdx.version" value="2.2.1"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
 	<import file="../../openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
@@ -147,7 +147,6 @@
 			<replacestring from="opencrx_core_CRX" to="opencrx_core_${provider.name}"/>
 			<replacestring from="opencrx-core-CRX" to="opencrx-core-${provider.name}"/>
 			<replacestring from="opencrx-groupware-CRX" to="opencrx-groupware-${provider.name}"/>
-			<replacestring from="opencrx-wiki-CRX" to="opencrx-wiki-${provider.name}"/>
 			<replacestring from="opencrx-ldap-CRX" to="opencrx-ldap-${provider.name}"/>
 			<replacestring from="ds-cfg-base-dn: dc=CRX,dc=opencrx,dc=org" to="ds-cfg-base-dn: ${ldap.baseDN}"/>		
 			<replacestring from="userPassword: {CLEAR}changeit" to="userPassword: {CLEAR}${ldap.rootPassword}"/>		
@@ -277,8 +276,6 @@
 		<antcall target="-custom-opencrx-groupware-ear-">
 			<param name="app.source.name" value="opencrx-groupware-CRX"/>
 			<param name="app.target.name" value="opencrx-groupware-${provider.name}"/>
-			<param name="wiki.source.name" value="opencrx-wiki-CRX"/>
-			<param name="wiki.target.name" value="opencrx-wiki-${provider.name}"/>
 			<param name="ldap.source.name" value="opencrx-ldap-CRX"/>
 			<param name="ldap.target.name" value="opencrx-ldap-${provider.name}"/>
 		</antcall>
@@ -290,57 +287,6 @@
 		<mkdir dir="${tmp.dir}"/>
 		<mkdir dir="${build.dir}/module/${app.target.name}"/>
 		<mkdir dir="${deliver.dir}/deployment-unit"/>
-		<!-- opencrx-wiki.war -->
-		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${wiki.target.name}.war" duplicate="preserve">
-			<openmdx:archivemanifest refid="project.manifest"/>
-			<manifest>
-				<attribute name="Specification-Title" value="${project.specification.title} Wiki WAR"/>
-				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
-				<attribute name="Class-Path" value="APP-INF/lib/opencrx-kernel.jar APP-INF/lib/opencrx-extension.jar APP-INF/lib/opencrx-application.jar APP-INF/lib/opencrx-security.jar APP-INF/lib/openmdx-application.jar APP-INF/lib/openmdx-base.jar APP-INF/lib/openmdx-websphere.iiop-client.jar APP-INF/lib/openmdx-security.jar APP-INF/lib/application-resources.jar APP-INF/lib/urlrewrite.jar"/>
-			</manifest>
-			<zipfileset dir="${data.home}/src/data/${data.dir}.wiki/WEB-INF" prefix="WEB-INF">
-				<include name="web.xml"/>
-				<include name="*.xml"/>
-				<patternset refid="jboss-3.edition.pattern"/>
-				<patternset refid="weblogic-7.edition.pattern"/>
-				<patternset refid="websphere-5.edition.pattern"/>
-				<patternset refid="sun-8.edition.pattern"/>
-				<patternset refid="orion-9.edition.pattern"/>
-				<patternset refid="jonas-4.edition.pattern"/>
-				<exclude name="*/*"/> <!-- no subdirs -->
-			</zipfileset>			
-			<zipfileset dir="src/data/${data.dir.generic}.wiki/WEB-INF" prefix="WEB-INF">
-				<include name="web.xml"/>
-				<include name="*.xml"/>
-				<exclude name="*/*"/> <!-- no subdirs -->
-			</zipfileset>			
-			<zipfileset dir="src/ear/${app.source.name}.ear/${wiki.source.name}.war/WEB-INF" prefix="WEB-INF">
-				<include name="web.xml"/>
-				<patternset refid="jboss-3.edition.pattern"/>
-				<patternset refid="weblogic-7.edition.pattern"/>
-				<patternset refid="websphere-5.edition.pattern"/>
-				<patternset refid="sun-8.edition.pattern"/>
-				<patternset refid="orion-9.edition.pattern"/>
-				<patternset refid="jonas-4.edition.pattern"/>
-				<patternset refid="tomcat-6.edition.pattern"/>
-				<exclude name="*/*"/> <!-- no subdirs -->
-			</zipfileset>
-			<zipfileset dir="src/data/org.opencrx.wiki">
-				<include name="**/*.cfg"/>
-				<include name="**/*.vm"/>
-				<include name="**/*.html"/>
-				<include name="**/*.png"/>
-				<include name="**/*.properties"/>
-			</zipfileset>
-			<zipfileset dir="../${build.target.platform}/groupware/lib" prefix="WEB-INF/lib">
-				<include name="opencrx-groupware.jar"/>
-			</zipfileset>
-			<!-- Replace Apache Commons Logging by SLF4J logging facade -->
-			<zipfileset dir="${openmdx.home}/java2/${build.target.platform}/extension/lib" prefix="WEB-INF/lib">
-				<include name="jcl104-over-slf4j.jar"/>
-			</zipfileset>			
-			<openmdx:archivefilterchain refid="groupware.archive.filter"/>
-		</openmdx:archive>
 		<!-- opencrx-ldap.war -->
 		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${ldap.target.name}.war" duplicate="preserve">
 			<openmdx:archivemanifest refid="project.manifest"/>
@@ -394,9 +340,6 @@
 				<attribute name="Specification-Title" value="${project.specification.title} Groupware EAR"/>
 				<attribute name="Implementation-Title" value="EAR for ${build.target.platform}"/>
 			</manifest>
-			<fileset dir="${build.dir}/module/${app.target.name}">
-				<include name="${wiki.target.name}.war"/>
-			</fileset>
 			<fileset dir="${build.dir}/module/${app.target.name}">
 				<include name="${ldap.target.name}.war"/>
 			</fileset>

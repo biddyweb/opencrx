@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Search.jsp,v 1.10 2008/06/26 08:43:46 wfro Exp $
+ * Name:        $Id: Search.jsp,v 1.11 2008/10/06 11:04:18 cmu Exp $
  * Description: Search.jsp
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/26 08:43:46 $
+ * Date:        $Date: 2008/10/06 11:04:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -103,13 +103,13 @@ org.openmdx.application.log.*
 </head>
 <body>
   <table><tr><td>
-<%  
+<%
 	  try {
 		String searchExpression = request.getParameter("searchExpression");
 		// Lookup object by its XRI
 		if(searchExpression.startsWith("xri:")) {
 			try {
-				RefObject_1_0 object = (RefObject_1_0)pm.getObjectById(new Path(searchExpression));
+				RefObject_1_0 object = (RefObject_1_0)pm.getObjectById(new Path(searchExpression.trim()));
 				Action nextAction = new ObjectReference(object, app).getSelectObjectAction();
 				response.sendRedirect(
 					request.getContextPath() + "/" + nextAction.getEncodedHRef()
@@ -121,7 +121,7 @@ org.openmdx.application.log.*
 		else {
 			// Get home1 package
 			org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
-			org.opencrx.kernel.home1.jmi1.UserHome userHome = 
+			org.opencrx.kernel.home1.jmi1.UserHome userHome =
 				(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
 			org.opencrx.kernel.home1.jmi1.SearchResult searchResult = null;
 			try {
@@ -137,7 +137,7 @@ org.openmdx.application.log.*
 				} catch(Exception e0) {}
 			}
 			if((searchResult != null) && (searchResult.getObjectFinder() != null)) {
-				org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = 
+				org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder =
 					(org.opencrx.kernel.home1.jmi1.ObjectFinder)pm.getObjectById(new Path(searchResult.getObjectFinder().refMofId()));
 				Action nextAction = new ObjectReference(objectFinder, app).getSelectObjectAction();
 				response.sendRedirect(

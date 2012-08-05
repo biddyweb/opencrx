@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.21 2008/07/07 14:03:00 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.22 2008/09/29 09:18:41 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/07 14:03:00 $
+ * Date:        $Date: 2008/09/29 09:18:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -550,9 +550,7 @@ public class OpenCrxSecurity_1
                         Quantors.THERE_EXISTS,
                         SystemAttributes.OBJECT_CLASS,
                         FilterOperators.IS_IN,
-                        new String[]{
-                            "org:opencrx:security:realm1:PrincipalGroup"   
-                        }
+                        "org:opencrx:security:realm1:PrincipalGroup"   
                     )
                 );                    
             }
@@ -565,8 +563,7 @@ public class OpenCrxSecurity_1
                     new FilterProperty(
                         Quantors.FOR_ALL,
                         SystemAttributes.OBJECT_CLASS,
-                        FilterOperators.IS_IN,
-                        new String[]{}
+                        FilterOperators.IS_IN
                     )
                 );
             }

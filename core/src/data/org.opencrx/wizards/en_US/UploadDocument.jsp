@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.14 2008/08/12 15:09:33 cmu Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.15 2008/10/07 07:02:02 cmu Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/12 15:09:33 $
+ * Date:        $Date: 2008/10/07 07:02:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -451,7 +451,7 @@ org.openmdx.kernel.id.*
                   (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(new Path(owningGroup00));
           			org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = basePkg.createModifyOwningGroupParams(
           				newPrincipalGroup,
-          				(short)1
+          				(short)1 // recursive
           			);
                 document.addOwningGroup(modifyOwningGroupParams);
                 pm.currentTransaction().commit();

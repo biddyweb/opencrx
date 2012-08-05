@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:member" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Membrii</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Membrii</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:member" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Membrii (dezactivat)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Membrii (dezactivat)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Grup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Grup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractGroup:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Numele grupului</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Numele grupului</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Membru</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Membru</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:account" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Membru</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Membru</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nume</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nume</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descriere</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descriere</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Roluri</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Roluri</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Apartenenţa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Apartenenţa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nume</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nume</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descriere</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descriere</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Valabil de la</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Valabil de la</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Valabil până la</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Valabil până la</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:memberRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Roluri</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Roluri</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:member" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Membru</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Membru</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dezactivat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Obiect dezactivat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

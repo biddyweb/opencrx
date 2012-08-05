@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.12 2008/09/16 23:05:12 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.13 2008/10/06 21:08:48 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/16 23:05:12 $
+ * Date:        $Date: 2008/10/06 21:08:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,6 @@
  */
 package org.opencrx.kernel.backend;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -121,10 +120,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{
-                                (forCounting ? Database_1_Attributes.HINT_COUNT : "") +
-                                filterProperty.values("clause").get(0)
-                            }
+                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
                         )
                     );
                     filter.add(
@@ -132,7 +128,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + SystemAttributes.OBJECT_CLASS,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                            Database_1_Attributes.QUERY_FILTER_CLASS
                         )
                     );
                     // stringParam
@@ -142,7 +138,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new String[values.size()])
+                            values.toArray()
                         )
                     );
                     // integerParam
@@ -152,7 +148,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Integer[values.size()])
+                            values.toArray()
                         )
                     );
                     // decimalParam
@@ -162,7 +158,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new BigDecimal[values.size()])
+                            values.toArray()
                         )
                     );
                     // booleanParam
@@ -172,7 +168,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Boolean[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateParam
@@ -190,7 +186,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new XMLGregorianCalendar[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateTimeParam
@@ -208,7 +204,7 @@ public class Addresses {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Date[values.size()])
+                            values.toArray()
                         )
                     );
                     hasQueryFilterClause = true;
@@ -297,9 +293,7 @@ public class Addresses {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{
-                        Database_1_Attributes.HINT_COUNT + "(1=1)"
-                    }
+                    Database_1_Attributes.HINT_COUNT + "(1=1)"
                 )
             );
             filter.add(
@@ -307,7 +301,7 @@ public class Addresses {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + SystemAttributes.OBJECT_CLASS,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                    Database_1_Attributes.QUERY_FILTER_CLASS
                 )
             );            
         }        

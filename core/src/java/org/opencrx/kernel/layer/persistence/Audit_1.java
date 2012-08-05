@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.28 2008/06/19 14:55:13 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.30 2008/09/30 14:10:09 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.28 $
+ * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/19 14:55:13 $
+ * Date:        $Date: 2008/09/30 14:10:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -442,7 +442,7 @@ public class Audit_1
                     Quantors.THERE_EXISTS,
                     "auditee",
                     FilterOperators.IS_IN,
-                    new String[]{request.path().getParent().toXri()}
+                    request.path().getParent().toXri()
                 )
             );
             DataproviderObject[] auditEntries = super.find(
@@ -512,13 +512,17 @@ public class Audit_1
     public DataproviderReply replace(
         ServiceHeader header,
         DataproviderRequest request
-    ) throws ServiceException {
-        
-        // Ignore replace requests for top-level objects such as segments,
-        // providers, authorities
-        if(request.path().size() > 5) {
-            if(this.isAuditSegment(header, request.path())) {
-    
+    ) throws ServiceException {        
+        // Ignore replace requests for top-level objects such as segments 
+        // (if not user is segment admin) providers, authorities
+        String principalName = header.getPrincipalChain().size() == 0 ? 
+            null : 
+            (String)header.getPrincipalChain().get(0);        
+        if(
+            (request.path().size() > 5) ||
+            ((request.path().size() == 5) && principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) 
+        ) {
+            if(this.isAuditSegment(header, request.path())) {    
                 // Create audit entry
                 DataproviderObject_1_0 existing = super.get(
                     header,
@@ -528,8 +532,7 @@ public class Audit_1
                         AttributeSelectors.ALL_ATTRIBUTES,
                         null
                     )
-                ).getObject();
-                
+                ).getObject();                
                 // Create ObjectModificationAuditEntry and add it to segment
                 if(this.isAuditee(existing)) {
                     DataproviderObject auditEntry = new DataproviderObject(

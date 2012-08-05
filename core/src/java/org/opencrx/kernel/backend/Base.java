@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.15 2008/06/30 08:13:12 wfro Exp $
+ * Name:        $Id: Base.java,v 1.17 2008/10/15 11:28:02 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/30 08:13:12 $
+ * Date:        $Date: 2008/10/15 11:28:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -135,9 +135,7 @@ public class Base {
                         Quantors.THERE_EXISTS,
                         "language",
                         FilterOperators.IS_IN,
-                        new Object[]{
-                                new Integer(language)
-                        }
+                        new Integer(language)
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -169,7 +167,11 @@ public class Base {
         Integer resendDelayInSeconds,
         Path reference
     ) throws ServiceException {
-        StringTokenizer tokenizer = new StringTokenizer(toUsers, ";, ");
+        StringTokenizer tokenizer = new StringTokenizer(
+            toUsers == null ? 
+                "" : 
+                toUsers, ";, "
+        );
         while(tokenizer.hasMoreTokens()) {
             String toUser = tokenizer.nextToken();
             DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(
@@ -191,15 +193,13 @@ public class Base {
                             Quantors.THERE_EXISTS,                            
                             "reference", 
                             FilterOperators.IS_IN,
-                            new Path[]{alertReference}
+                            alertReference
                         ),
                         new FilterProperty(
                             Quantors.THERE_EXISTS,                            
                             SystemAttributes.CREATED_AT, 
                             FilterOperators.IS_GREATER_OR_EQUAL,
-                            new String[]{
-                                org.openmdx.base.text.format.DateFormat.getInstance().format(new Date(System.currentTimeMillis() - 1000*(resendDelayInSeconds == null ? 0 : resendDelayInSeconds.intValue())))
-                            }
+                            org.openmdx.base.text.format.DateFormat.getInstance().format(new Date(System.currentTimeMillis() - 1000*(resendDelayInSeconds == null ? 0 : resendDelayInSeconds.intValue())))
                         )
                     }
                 );

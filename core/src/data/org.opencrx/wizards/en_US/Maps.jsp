@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Maps.jsp,v 1.17 2008/06/26 00:34:33 wfro Exp $
+ * Name:        $Id: Maps.jsp,v 1.18 2008/10/06 11:11:49 cmu Exp $
  * Description: prepare calls to mapping services like GoogleMaps
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/26 00:34:33 $
+ * Date:        $Date: 2008/10/06 11:11:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -122,7 +122,9 @@ org.openmdx.application.log.*
   <table class="gridTableFull">
     <tr class="gridTableHeaderFull">
       <td align=left colspan="2"><a href="http://maps.google.com/" target="_bland">Google Maps</a></td>
+<!--  does not work anymore...
       <td align=left colspan="2"><a href="http://local.live.com/" target="_bland">Live Search</a></td>
+-->
     </tr>
 <%
   String[] streetPatterns = {
@@ -157,10 +159,10 @@ org.openmdx.application.log.*
       if (obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
         org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)obj;
         // Get account1 package
-		org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
+        org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
         // get Postaladdresses of this account
         org.opencrx.kernel.account1.cci2.PostalAddressQuery addressFilter = accountPkg.createPostalAddressQuery();
-		// TODO: verify
+        // TODO: verify
         addressFilter.forAllDisabled().isFalse();
         for (
           Iterator i = account.getAddress(addressFilter).iterator();
@@ -246,12 +248,14 @@ org.openmdx.application.log.*
           <td>
             <a href="<%= googleMapsUrl %>"><%= htmlAddress %></a><br />
           </td>
+<!--
           <td>
             <a href="<%= liveSearchUrl %>" target="_blank"><img src="../../images/edit.gif" alt="" /></a><br />
           </td>
           <td>
             <a href="<%= liveSearchUrl %>"><%= htmlAddress %></a><br />
           </td>
+-->
         </tr>
 <%
 //        if (firstAddress && !l.hasNext()) {
@@ -266,9 +270,11 @@ org.openmdx.application.log.*
         </td>
         <td>
         </td>
+<!--
         <td colspan="2">
           <a href="<%= liveSearchAllUrl %>" target="_blank"><img src="../../images/edit.gif" alt="" /> All addresses on the same map</a><br />
         </td>
+-->
       </tr>
 <%
     }

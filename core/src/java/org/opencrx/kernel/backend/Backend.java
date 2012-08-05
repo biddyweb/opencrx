@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Backend.java,v 1.22 2008/07/10 22:31:40 wfro Exp $
+ * Name:        $Id: Backend.java,v 1.23 2008/10/06 17:12:53 wfro Exp $
  * Description: Backend
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/10 22:31:40 $
+ * Date:        $Date: 2008/10/06 17:12:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -821,9 +821,9 @@ public class Backend {
                             OpenCrxException.DOMAIN,
                             OpenCrxException.MEDIA_ACCESS_FAILURE,
                             new BasicException.Parameter[]{
-                                    new BasicException.Parameter("param0", DateFormat.getInstance().format(e.getTimestamp()))        
+                                new BasicException.Parameter("param0", DateFormat.getInstance().format(e.getCause().getTimestamp()))        
                             },
-                            e.getDescription()
+                            e.getCause().getDescription()
                         );
                     }
                     else {

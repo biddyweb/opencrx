@@ -174,7 +174,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:createdAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Creatable:createdAt" _operation="create">
                     <_object>
                       <label>
                         <_item>Gemaakt op</_item>
@@ -185,7 +185,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:createdBy" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Creatable:createdBy" _operation="create">
                     <_object>
                       <label>
                         <_item>gemaakt door</_item>
@@ -207,7 +207,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:modifiedAt" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedAt" _operation="create">
                     <_object>
                       <label>
                         <_item>Aangepast op</_item>
@@ -218,7 +218,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:modifiedBy" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedBy" _operation="create">
                     <_object>
                       <label>
                         <_item>Aangepast door</_item>

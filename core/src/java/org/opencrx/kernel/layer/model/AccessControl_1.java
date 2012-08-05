@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.72 2008/08/31 21:30:53 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.77 2008/10/07 14:58:34 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.72 $
+ * Revision:    $Revision: 1.77 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/31 21:30:53 $
+ * Date:        $Date: 2008/10/07 14:58:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,7 +89,6 @@ import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.dataprovider.layer.model.Standard_1;
 import org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0;
 import org.openmdx.compatibility.base.dataprovider.transport.adapter.Switch_1;
-import org.openmdx.compatibility.base.exception.StackedException;
 import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
@@ -381,7 +380,7 @@ public class AccessControl_1
         } 
         
         // realmIdentity
-        if(configuration.values(ConfigurationKeys.REALM_IDENTITY).size() > 0) {
+        if(!configuration.values(ConfigurationKeys.REALM_IDENTITY).isEmpty()) {
             this.realmIdentity = new Path((String)configuration.values(ConfigurationKeys.REALM_IDENTITY).get(0));
         }
         else {
@@ -391,9 +390,8 @@ public class AccessControl_1
                 null,
                 "A realm identity must be configured with option 'realmIdentity'"
             );
-        } 
-        
-        // configure router
+        }         
+        // Configure router
         SparseList dataproviderSource = configuration.values(
             SharedConfigurationEntries.DATAPROVIDER_CONNECTION
         );
@@ -450,6 +448,11 @@ public class AccessControl_1
                 this.getDelegation()
             );
         }
+        // useExtendedAccessLevelBasic
+        this.useExtendedAccessLevelBasic = configuration.values("useExtendedAccessLevelBasic").isEmpty() ?
+            false :
+            ((Boolean)configuration.values("useExtendedAccessLevelBasic").get(0)).booleanValue();
+        
         // Init inheritFromParentTypes
         this.inheritFromParentTypes = this.getInheritFromParentTypes();
     }
@@ -628,7 +631,8 @@ public class AccessControl_1
 	                memberships = this.currentSecurityContext.getMemberships(
 		                this.requestingPrincipal,
                         this.requestingUser,
-		                ((Number)parent.values("accessLevelUpdate").get(0)).shortValue()
+		                ((Number)parent.values("accessLevelUpdate").get(0)).shortValue(),
+		                this.useExtendedAccessLevelBasic
 	                );
 	            }
 	            if(memberships != null) {
@@ -764,8 +768,8 @@ public class AccessControl_1
                 if(SystemAttributes.OBJECT_IDENTITY.equals(p.name())) {
                     if(p.values().size() > 1) {
                         throw new ServiceException(
-                            StackedException.DEFAULT_DOMAIN,
-                            StackedException.NOT_SUPPORTED, 
+                            BasicException.Code.DEFAULT_DOMAIN,
+                            BasicException.Code.NOT_SUPPORTED, 
                             new BasicException.Parameter[]{
                                 new BasicException.Parameter("filter", filter)
                             },
@@ -778,8 +782,8 @@ public class AccessControl_1
             }
             if(!isExtent) {
                 throw new ServiceException(
-                    StackedException.DEFAULT_DOMAIN,
-                    StackedException.NOT_SUPPORTED, 
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.NOT_SUPPORTED, 
                     new BasicException.Parameter[]{
                         new BasicException.Parameter("filter", filter)
                     },
@@ -837,7 +841,8 @@ public class AccessControl_1
                     memberships = this.currentSecurityContext.getMemberships(
     	                this.requestingPrincipal,
                         this.requestingUser,
-    	                ((Number)parent.values("accessLevelBrowse").get(0)).shortValue()
+    	                ((Number)parent.values("accessLevelBrowse").get(0)).shortValue(),
+    	                this.useExtendedAccessLevelBasic
                     );
                 }
                 // allowedPrincipals == null --> global access. Do not restrict to allowed subjects
@@ -847,7 +852,7 @@ public class AccessControl_1
     	                    Quantors.THERE_EXISTS,
     	                    "owner",
     	                    FilterOperators.IS_IN,
-    	                    memberships.toArray(new String[memberships.size()])
+    	                    memberships.toArray()
     	                )
     	            );
                 }
@@ -893,7 +898,8 @@ public class AccessControl_1
 	                memberships = this.currentSecurityContext.getMemberships(
 		                this.requestingPrincipal,
                         this.requestingUser,
-		                ((Number)parent.values("accessLevelBrowse").get(0)).shortValue()
+		                ((Number)parent.values("accessLevelBrowse").get(0)).shortValue(),
+		                this.useExtendedAccessLevelBasic
 	                );
 	            }
 	            if(memberships != null) {
@@ -960,7 +966,8 @@ public class AccessControl_1
                 memberships = this.currentSecurityContext.getMemberships(
 	                this.requestingPrincipal,
                     this.requestingUser,
-	                ((Number)existingObject.values("accessLevelDelete").get(0)).shortValue()
+	                ((Number)existingObject.values("accessLevelDelete").get(0)).shortValue(),
+	                this.useExtendedAccessLevelBasic
                 );
             }
             if(memberships != null) {
@@ -1016,7 +1023,8 @@ public class AccessControl_1
                 memberships = this.currentSecurityContext.getMemberships(
 	                this.requestingPrincipal,
                     this.requestingUser,
-	                ((Number)existingObject.values("accessLevelUpdate").get(0)).shortValue()
+	                ((Number)existingObject.values("accessLevelUpdate").get(0)).shortValue(),
+	                this.useExtendedAccessLevelBasic
                 );
             }
             if(memberships != null) {
@@ -1146,7 +1154,8 @@ public class AccessControl_1
                 memberships = this.currentSecurityContext.getMemberships(
                     principal,
                     user,
-                    ((Number)parent.values("accessLevelBrowse").get(0)).shortValue()
+                    ((Number)parent.values("accessLevelBrowse").get(0)).shortValue(),
+                    this.useExtendedAccessLevelBasic
                 );
             }
             if(memberships != null) {
@@ -1168,7 +1177,8 @@ public class AccessControl_1
                 memberships = this.currentSecurityContext.getMemberships(
                     principal,
                     user,
-                    ((Number)object.values("accessLevelDelete").get(0)).shortValue()
+                    ((Number)object.values("accessLevelDelete").get(0)).shortValue(),
+                    this.useExtendedAccessLevelBasic
                 );
             }
             if(memberships != null) {
@@ -1190,7 +1200,8 @@ public class AccessControl_1
                 memberships = this.currentSecurityContext.getMemberships(
                     principal,
                     user,
-                    ((Number)object.values("accessLevelUpdate").get(0)).shortValue()
+                    ((Number)object.values("accessLevelUpdate").get(0)).shortValue(),
+                    this.useExtendedAccessLevelBasic
                 );
             }
             if(memberships != null) {
@@ -1224,7 +1235,8 @@ public class AccessControl_1
     protected RequestCollection delegation = null;
     private Dataprovider_1_0 router = null;
     private Model_1_0 model = null;
-
+    private boolean useExtendedAccessLevelBasic = false;
+    
     // Subject cache as map with identity as key and subject as value.
     private Map securityContexts = new HashMap();
     

@@ -23,7 +23,7 @@ public static org.opencrx.kernel.product1.jmi1.GetPriceLevelResult getPriceLevel
     java.math.BigDecimal quantity,
     java.util.Date pricingDate
 ) {
-	return return org.opencrx.kernel.backend.Products.getLowestPricePriceLevel(
+	return org.opencrx.kernel.backend.Products.getLowestPricePriceLevel(
 		rootPkg,
 		pricingRule,
 		contract,

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.7 2008/04/12 20:20:30 wfro Exp $
+ * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.8 2008/10/01 00:28:29 wfro Exp $
  * Description: FilteredActivitiesDataBinding
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/12 20:20:30 $
+ * Date:        $Date: 2008/10/01 00:28:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

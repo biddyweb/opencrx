@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.19 2008/04/15 18:16:29 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.20 2008/09/29 09:19:08 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/15 18:16:29 $
+ * Date:        $Date: 2008/09/29 09:19:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -499,7 +499,7 @@ public class Indexed_1
                 Quantors.THERE_EXISTS,
                 "indexedObject",
                 FilterOperators.IS_IN,
-                new Path[]{objectIdentity}
+                objectIdentity
             )
         );
         return super.find(

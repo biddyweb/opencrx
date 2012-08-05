@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: CheckDb.java,v 1.22 2007/08/18 21:46:16 wfro Exp $
+ * Name:        $Id: CheckDb.java,v 1.23 2008/10/06 17:04:53 wfro Exp $
  * Description: Convert database RID columns from numeric to string format
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/08/18 21:46:16 $
+ * Date:        $Date: 2008/10/06 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -78,7 +78,6 @@ import javax.naming.NamingException;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.base.exception.StackedException;
 import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 
@@ -121,8 +120,8 @@ public class CheckDb {
         catch(SQLException ex) {
             throw new ServiceException(
               ex, 
-              StackedException.DEFAULT_DOMAIN,
-              StackedException.MEDIA_ACCESS_FAILURE, 
+              BasicException.Code.DEFAULT_DOMAIN,
+              BasicException.Code.MEDIA_ACCESS_FAILURE, 
               new BasicException.Parameter[]{
                 new BasicException.Parameter("reference", reference),
                 new BasicException.Parameter("statement", statement)
@@ -133,8 +132,8 @@ public class CheckDb {
         catch(Exception ex) {
             throw new ServiceException(
               ex, 
-              StackedException.DEFAULT_DOMAIN,
-              StackedException.GENERIC, 
+              BasicException.Code.DEFAULT_DOMAIN,
+              BasicException.Code.GENERIC, 
               null, 
               ex.toString()
             );
@@ -490,8 +489,8 @@ public class CheckDb {
                                 }
                                 else {
                                     throw new ServiceException(
-                                        StackedException.DEFAULT_DOMAIN,
-                                        StackedException.NOT_SUPPORTED, 
+                                        BasicException.Code.DEFAULT_DOMAIN,
+                                        BasicException.Code.NOT_SUPPORTED, 
                                         new BasicException.Parameter[]{
                                           new BasicException.Parameter("database product name", databaseProductName)
                                         },
@@ -906,8 +905,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1082,8 +1081,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1230,8 +1229,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1265,8 +1264,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1300,8 +1299,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1335,8 +1334,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1372,8 +1371,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1407,8 +1406,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },
@@ -1487,8 +1486,8 @@ public class CheckDb {
         }
         else {
             throw new ServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.NOT_SUPPORTED, 
+                BasicException.Code.DEFAULT_DOMAIN,
+                BasicException.Code.NOT_SUPPORTED, 
                 new BasicException.Parameter[]{
                   new BasicException.Parameter("database product name", databaseProductName)
                 },

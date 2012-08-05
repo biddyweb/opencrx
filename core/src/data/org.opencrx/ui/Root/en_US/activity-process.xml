@@ -10,6 +10,16 @@
 						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
 							<_object></_object>
 							<_content>
+								<featureDefinition>
+								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
+									<_object>
+									  <type>org:w3c:string</type>
+									  <multiplicity>0..1</multiplicity>
+									  <changeable>false</changeable>
+									</_object>
+									<_content/>
+								  </org.openmdx.ui1.StructuralFeatureDefinition>
+								</featureDefinition>							
 								<elementDefinition>
 									<!-- Segment -->
 									<!-- Grid Tab -->
@@ -31,7 +41,6 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-
 									<!-- ActivityFollowUp -->
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp">
@@ -64,6 +73,11 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>50</_item>
+												<_item>0</_item>
+											</orderObjectContainer>											
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -82,6 +96,11 @@
 												<_item>0</_item>
 												<_item>80</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>0</_item>
+											</orderObjectContainer>																						
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -99,6 +118,34 @@
 												<_item>0</_item>
 												<_item>90</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>5</_item>
+												<_item>0</_item>
+											</orderObjectContainer>																						
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Title / Text</_item>
+											</toolTip>
+											<label>
+												<_item>Title / Text</_item>
+											</label>
+											<order>
+												<_item>90</_item>
+												<_item>70</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+											<dataBindingName>org.opencrx.kernel.portal.FormattedNoteDataBinding</dataBindingName>																						
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -113,7 +160,24 @@
 											</label>
 											<orderObjectContainer>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>40</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>time and date when object was created (never modified)</_item>
+											</toolTip>
+											<label>
+												<_item>Created at</_item>
+											</label>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>45</_item>
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
@@ -134,6 +198,11 @@
 												<_item>10</_item>
 												<_item>10</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>60</_item>
+												<_item>0</_item>
+											</orderObjectContainer>																						
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -151,10 +220,14 @@
 												<_item>20</_item>
 												<_item>10</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>70</_item>
+												<_item>0</_item>
+											</orderObjectContainer>																						
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-
 									<!-- ActivityProcess-->
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcess">

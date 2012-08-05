@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Çizelgeler</_item>
+                        <_item>»Ortam</_item>
                       </label>
                       <toolTip>
-                        <_item>Çizelgeler</_item>
+                        <_item>İliştirilmiş Ortam</_item>
                       </toolTip>
                     </_object>
                     <_content/>

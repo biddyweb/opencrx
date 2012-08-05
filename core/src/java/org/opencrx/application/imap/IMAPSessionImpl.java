@@ -1119,7 +1119,11 @@ public class IMAPSessionImpl implements Runnable {
         String name
     ) throws MessagingException {
         for(IMAPFolderImpl folder: this.getSubscribedFolders()) {
-            if(folder.getFullName().equalsIgnoreCase(name)) { 
+            if(
+                folder.getFullName().equalsIgnoreCase(name) || 
+                // Required for some Outlook versions
+                folder.getFullName().replace("/", "").equalsIgnoreCase(name)
+            ) { 
                 return folder;
             }
         }

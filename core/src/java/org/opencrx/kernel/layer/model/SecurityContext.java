@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.19 2008/02/15 15:27:04 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.21 2008/10/07 14:37:49 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/15 15:27:04 $
+ * Date:        $Date: 2008/10/07 14:37:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -380,13 +380,14 @@ public class SecurityContext {
     protected Set<String> getMemberships(
         DataproviderObject_1_0 principal,
         DataproviderObject_1_0 user,
-        short accessLevel
+        short accessLevel,
+        boolean useExtendedAccessLevelBasic
     ) {
         // GLOBAL
         if(!this.isActive || (accessLevel == SecurityKeys.ACCESS_LEVEL_GLOBAL)) {
             return null;
         }
-        Set allowedPrincipals = new HashSet();
+        Set<String> allowedPrincipals = new HashSet<String>();
         try {
             // PRIVATE --> grant requesting user access to all owned objects
             if(accessLevel >= SecurityKeys.ACCESS_LEVEL_PRIVATE) {
@@ -399,15 +400,17 @@ public class SecurityContext {
             }
             // BASIC, DEEP --> all direct subgroups, supergroups 
             if((accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) || (accessLevel == SecurityKeys.ACCESS_LEVEL_BASIC)) {
-	            for(Iterator i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
-	                Path groupIdentity = (Path)i.next();
-	                allowedPrincipals.addAll(
-	                    this.getSubgroups(this.plugin.getQualifiedPrincipalName(groupIdentity))
-	                );
+	            if(useExtendedAccessLevelBasic) {
+	                for(Iterator i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
+	                    Path groupIdentity = (Path)i.next();
+	                    allowedPrincipals.addAll(
+	                        this.getSubgroups(this.plugin.getQualifiedPrincipalName(groupIdentity))
+	                    );
+	                }	                
 	            }
-                // add all supergroups
-	            for(Iterator i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
-	                Path groupIdentity = (Path)i.next();
+                // Add all supergroups
+	            for(Iterator<Path> i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
+	                Path groupIdentity = i.next();
 	                allowedPrincipals.addAll(
 	                    this.getSupergroups(this.plugin.getQualifiedPrincipalName(groupIdentity))
 	                );
@@ -415,12 +418,18 @@ public class SecurityContext {
             }
             // DEEP --> all subgroups of direct and supergroups
             if(accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) {
-	            // add all subgroups of all supergroups
-	            for(Iterator i = new HashSet(allowedPrincipals).iterator(); i.hasNext(); ) {
+	            // All subgroups of all supergroups
+	            for(Iterator<String> i = new HashSet(allowedPrincipals).iterator(); i.hasNext(); ) {
 	                allowedPrincipals.addAll(
-	                    this.getSubgroups((String)i.next())
+	                    this.getSubgroups(i.next())
 	                );
 	            }
+                // ... and their supergroups
+                for(Iterator<String> i = new HashSet(allowedPrincipals).iterator(); i.hasNext(); ) {
+                    allowedPrincipals.addAll(
+                        this.getSupergroups(i.next())
+                    );
+                }
             }
         }
         catch(ServiceException e) {

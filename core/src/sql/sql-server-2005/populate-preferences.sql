@@ -6439,14 +6439,14 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 140, 'OOCKE1_CHART'
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 140, 'OOCKE1_MEDIA'
 )  
 GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 140, 'OOCKE1_CHART_'
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 140, 'OOCKE1_MEDIA_'
 )  
 GO
 

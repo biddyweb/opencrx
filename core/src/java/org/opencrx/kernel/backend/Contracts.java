@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.33 2008/07/08 23:11:53 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.37 2008/10/14 08:07:28 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.33 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/08 23:11:53 $
+ * Date:        $Date: 2008/10/14 08:07:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -1196,9 +1196,7 @@ public class Contracts {
 			              Quantors.THERE_EXISTS,
 			              "origin",
 			              FilterOperators.IS_IN,
-			              new Object[]{
-			                  contractIdentity
-			              }
+			              contractIdentity
 	                  )
 	              }
               );
@@ -1625,13 +1623,13 @@ public class Contracts {
                     Quantors.THERE_EXISTS,
                     "priceLevel",
                     FilterOperators.IS_IN,
-                    new Object[]{priceLevelIdentity}                        
+                    priceLevelIdentity                        
                 ),
                 new FilterProperty(
                     Quantors.THERE_EXISTS,
                     "uom",
                     FilterOperators.IS_IN,
-                    new Object[]{priceUomIdentity}                        
+                    priceUomIdentity                        
                 )
             };
             AppLog.trace("Lookup of prices with filter", Arrays.asList(priceFilter));
@@ -1849,7 +1847,7 @@ public class Contracts {
                           Quantors.THERE_EXISTS, 
                           "parentPosition", 
                           FilterOperators.IS_IN, 
-                          new Path[]{parentPositionIdentity}
+                          parentPositionIdentity
                       )
                   },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1964,7 +1962,7 @@ public class Contracts {
                                 Quantors.THERE_EXISTS,
                                 "isDefault",
                                 FilterOperators.IS_IN,
-                                new Object[]{Boolean.TRUE}
+                                Boolean.TRUE
                             )
                         }
                     );
@@ -2249,13 +2247,13 @@ public class Contracts {
                   Quantors.THERE_EXISTS,
                   SystemAttributes.OBJECT_CLASS,
                   FilterOperators.IS_IN,
-                  new String[]{objectClass}
+                  objectClass
               ),
               new FilterProperty(
                   Quantors.THERE_EXISTS,
                   "contractState",
                   FilterOperators.IS_LESS,
-                  new Number[]{new Short((short)closedThreshold)}
+                  new Short((short)closedThreshold)
               )
           },
           AttributeSelectors.ALL_ATTRIBUTES,
@@ -2294,8 +2292,10 @@ public class Contracts {
         }
         return count;
       }
-      catch(ServiceException e) {
-        return 0;
+      catch(Exception e) {
+          ServiceException e0 = new ServiceException(e);
+          AppLog.warning("Error when iterating objects on reference", Arrays.asList(reference, e.getMessage()));
+          return 0;
       }
     }
 
@@ -2330,7 +2330,7 @@ public class Contracts {
       charts[0] = new DataproviderObject(
         chartReference.getChild("0")
       );
-      charts[0].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Chart");
+      charts[0].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Media");
       charts[0].values("description").add(chartTitle);
       ByteArrayOutputStream os = new ByteArrayOutputStream();
       PrintWriter pw = new PrintWriter(os);
@@ -2408,12 +2408,12 @@ public class Contracts {
         pw.flush();
         os.close();
       } catch(Exception e) {}
-      charts[0].values("chart").add(
+      charts[0].values("content").add(
         os.toByteArray()
       );
-      charts[0].values("chartMimeType").add("application/vnd.openmdx-chart");
-      charts[0].values("chartName").add(
-        Utils.toFilename(chartTitle + ".txt")
+      charts[0].values("contentMimeType").add("application/vnd.openmdx-chart");
+      charts[0].values("contentName").add(
+        Utils.toFilename(chartTitle) + ".txt"
       );
       
       /**
@@ -2424,7 +2424,7 @@ public class Contracts {
       charts[1] = new DataproviderObject(
         chartReference.getChild("1")
       );
-      charts[1].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Chart");
+      charts[1].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Media");
       charts[1].values("description").add(chartTitle);
       os = new ByteArrayOutputStream();
       pw = new PrintWriter(os);
@@ -2473,12 +2473,12 @@ public class Contracts {
         pw.flush();
         os.close();
       } catch(Exception e) {}
-      charts[1].values("chart").add(
+      charts[1].values("content").add(
         os.toByteArray()
       );
-      charts[1].values("chartMimeType").add("application/vnd.openmdx-chart");
-      charts[1].values("chartName").add(
-        Utils.toFilename(chartTitle + ".txt")
+      charts[1].values("contentMimeType").add("application/vnd.openmdx-chart");
+      charts[1].values("contentName").add(
+        Utils.toFilename(chartTitle) + ".txt"
       );
 
       return charts;
@@ -2499,7 +2499,7 @@ public class Contracts {
                           Quantors.THERE_EXISTS, 
                           "parentPosition", 
                           FilterOperators.IS_IN, 
-                          new Path[]{parentPositionIdentity}
+                          parentPositionIdentity
                       )
                   },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -2638,7 +2638,7 @@ public class Contracts {
                         Quantors.THERE_EXISTS, 
                         "parentPosition", 
                         FilterOperators.IS_IN, 
-                        new Path[]{position.path()}
+                        position.path()
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -2699,7 +2699,7 @@ public class Contracts {
                     Quantors.THERE_EXISTS,
                     "involved",
                     FilterOperators.IS_IN,
-                    new Path[]{position.path()}
+                    position.path()
                 )
             }            
         );
@@ -3064,7 +3064,7 @@ public class Contracts {
                             Quantors.THERE_EXISTS,
                             "involved",
                             FilterOperators.IS_IN,
-                            new Path[]{position.path()}
+                            position.path()
                         )
                       }
                     : new FilterProperty[]{
@@ -3072,13 +3072,13 @@ public class Contracts {
                             Quantors.THERE_EXISTS,
                             "involved",
                             FilterOperators.IS_IN,
-                            new Path[]{position.path()}
+                            position.path()
                         ),
                         new FilterProperty(
                             Quantors.THERE_EXISTS,                        
                             SystemAttributes.CREATED_AT,
                             FilterOperators.IS_GREATER,
-                            new String[]{org.openmdx.base.text.format.DateFormat.getInstance().format(positionModificationsSince)}
+                            org.openmdx.base.text.format.DateFormat.getInstance().format(positionModificationsSince)
                         )
                     },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -3382,10 +3382,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{
-                                (forCounting ? Database_1_Attributes.HINT_COUNT : "") +
-                                filterProperty.values("clause").get(0)
-                            }
+                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterProperty.values("clause").get(0)
                         )
                     );
                     filter.add(
@@ -3393,7 +3390,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + SystemAttributes.OBJECT_CLASS,
                             FilterOperators.PIGGY_BACK,
-                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                            Database_1_Attributes.QUERY_FILTER_CLASS
                         )
                     );
                     // stringParam
@@ -3403,7 +3400,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new String[values.size()])
+                            values.toArray()
                         )
                     );
                     // integerParam
@@ -3413,7 +3410,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Integer[values.size()])
+                            values.toArray()
                         )
                     );
                     // decimalParam
@@ -3423,7 +3420,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new BigDecimal[values.size()])
+                            values.toArray()
                         )
                     );
                     // booleanParam
@@ -3433,7 +3430,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Boolean[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateParam
@@ -3451,7 +3448,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new XMLGregorianCalendar[values.size()])
+                            values.toArray()
                         )
                     );
                     // dateTimeParam
@@ -3469,7 +3466,7 @@ public class Contracts {
                             Quantors.PIGGY_BACK,
                             queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
                             FilterOperators.PIGGY_BACK,
-                            values.toArray(new Date[values.size()])
+                            values.toArray()
                         )
                     );
                     hasQueryFilterClause = true;
@@ -3581,9 +3578,7 @@ public class Contracts {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{
-                        Database_1_Attributes.HINT_COUNT + "(1=1)"
-                    }
+                    Database_1_Attributes.HINT_COUNT + "(1=1)"
                 )
             );
             filter.add(
@@ -3591,7 +3586,7 @@ public class Contracts {
                     Quantors.PIGGY_BACK,
                     queryFilterContext + SystemAttributes.OBJECT_CLASS,
                     FilterOperators.PIGGY_BACK,
-                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                    Database_1_Attributes.QUERY_FILTER_CLASS
                 )
             );            
         }

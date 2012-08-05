@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.36 2008/08/29 15:46:14 wfro Exp $
- * Description: Evaluator
- * Revision:    $Revision: 1.36 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: PortalExtension.java,v 1.40 2008/10/07 14:01:56 wfro Exp $
+ * Description: PortalExtension
+ * Revision:    $Revision: 1.40 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/29 15:46:14 $
+ * Date:        $Date: 2008/10/07 14:01:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -162,7 +162,7 @@ public class PortalExtension
                     Quantors.FOR_ALL,
                     "disabled",
                     FilterOperators.IS_IN,
-                    new Boolean[]{Boolean.FALSE}
+                    Boolean.FALSE
                 )                    
             );
         }
@@ -248,11 +248,18 @@ public class PortalExtension
               return toS(obj.getActivityNumber()).trim() + ": " + toS(obj.getName());
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp) {
-              org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)refObj;              
-              RefObject_1_0 activity = (RefObject_1_0)application.getPmData().getObjectById(
-                  followUp.refGetPath().getParent().getParent()
-              );
-              return this.getTitle(activity, locale, localeAsString, application) + ": " + toS(followUp.getTitle());
+              org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)refObj;
+              org.opencrx.kernel.activity1.jmi1.Activity activity = null;
+              // In case of NO_PERMISSION
+              try {
+                  activity = (org.opencrx.kernel.activity1.jmi1.Activity)application.getPmData().getObjectById(
+                      followUp.refGetPath().getParent().getParent()
+                  );
+                  activity.getName();
+              } catch(Exception e) {}
+              return 
+                  (activity == null ? "" : this.getTitle(activity, locale, localeAsString, application) + ": ") + 
+                  toS(followUp.getTitle());
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroupMember) {
               org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)refObj;
@@ -1047,6 +1054,9 @@ public class PortalExtension
         }
         else if(FilteredActivitiesDataBinding.class.getName().equals(dataBindingName)) {
             return new FilteredActivitiesDataBinding(application.getCurrentUserRole());
+        }
+        else if(FormattedNoteDataBinding.class.getName().equals(dataBindingName)) {
+            return new FormattedNoteDataBinding();
         }
         else {
             return super.getDataBinding(

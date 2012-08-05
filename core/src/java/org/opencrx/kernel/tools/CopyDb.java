@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.32 2008/09/17 14:09:43 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.33 2008/10/06 17:04:53 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.33 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/17 14:09:43 $
+ * Date:        $Date: 2008/10/06 17:04:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,7 +81,6 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.application.configuration.Configuration;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1Jdbc2;
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.LayerConfigurationEntries;
-import org.openmdx.compatibility.base.exception.StackedException;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.model1.accessor.basic.spi.Model_1;
 
@@ -164,8 +163,8 @@ public class CopyDb {
             }
             else {
                 throw new ServiceException(
-                    StackedException.DEFAULT_DOMAIN,
-                    StackedException.NOT_SUPPORTED, 
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.NOT_SUPPORTED, 
                     new BasicException.Parameter[]{
                       new BasicException.Parameter("database product name", databaseProductName)
                     },

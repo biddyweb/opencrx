@@ -182,7 +182,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>11</_item>
+												<_item>13</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -204,7 +204,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>12</_item>
+												<_item>14</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -226,7 +226,7 @@
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>13</_item>
+												<_item>15</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -257,11 +257,16 @@
 											<label>
 												<_item>Nick Name</_item>
 											</label>
-											<order>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>60</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>16</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

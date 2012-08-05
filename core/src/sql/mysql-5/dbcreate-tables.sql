@@ -521,11 +521,6 @@ CREATE TABLE  `oocke1_activity_` (
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `oocke1_activity_number_seq`;
-CREATE TABLE  `oocke1_activity_number_seq` (
-  `nextval` bigint(20) default NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `oocke1_activitycreator`;
 CREATE TABLE  `oocke1_activitycreator` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -4891,13 +4886,6 @@ CREATE TABLE  `oocke1_involvedobject_` (
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `oocke1_join_accthasassbudget`;
-CREATE TABLE  `oocke1_join_accthasassbudget` (
-  `ACCOUNT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `ASSIGNED_BUDGET` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`ACCOUNT`,`ASSIGNED_BUDGET`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `oocke1_join_actcontainswre`;
 CREATE TABLE  `oocke1_join_actcontainswre` (
   `ACTIVITY` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -4933,13 +4921,6 @@ CREATE TABLE  `oocke1_join_fcperiodhasquote` (
   PRIMARY KEY  (`FORECAST_PERIOD`,`QUOTE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `oocke1_join_filterincldescontr`;
-CREATE TABLE  `oocke1_join_filterincldescontr` (
-  `CONTRACT_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `FILTERED_CONTRACT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`CONTRACT_FILTER`,`FILTERED_CONTRACT`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `oocke1_join_filterincludesacct`;
 CREATE TABLE  `oocke1_join_filterincludesacct` (
   `ACCOUNT_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -4959,13 +4940,6 @@ CREATE TABLE  `oocke1_join_filterincludesaddr` (
   `ADDRESS_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `FILTERED_ADDRESS` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`ADDRESS_FILTER`,`FILTERED_ADDRESS`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_join_filterincludescontr`;
-CREATE TABLE  `oocke1_join_filterincludescontr` (
-  `CONTRACT_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `FILTERED_CONTRACT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`CONTRACT_FILTER`,`FILTERED_CONTRACT`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_join_filterincludesprod`;
@@ -5022,13 +4996,6 @@ CREATE TABLE  `oocke1_join_finderhasidxprod` (
   `OBJECT_FINDER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `INDEX_ENTRY_PRODUCT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_FINDER`,`INDEX_ENTRY_PRODUCT`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_join_fldcontainsfld`;
-CREATE TABLE  `oocke1_join_fldcontainsfld` (
-  `PARENT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `FOLDER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`PARENT`,`FOLDER`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_join_plhasassple`;
@@ -5547,11 +5514,6 @@ CREATE TABLE  `oocke1_orgunitrelship_` (
   `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_position_number_seq`;
-CREATE TABLE  `oocke1_position_number_seq` (
-  `nextval` bigint(20) default NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_pricelevel`;
@@ -7866,13 +7828,6 @@ CREATE TABLE  `oocke1_workrecord_` (
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `oocke1he_objectfinderselectedaccounts`;
-CREATE TABLE  `oocke1he_objectfinderselectedaccounts` (
-  `OBJECT_FINDER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `INDEX_ENTRY_ACCOUNT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_FINDER`,`INDEX_ENTRY_ACCOUNT`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `oocse1_authenticationcontext`;
 CREATE TABLE  `oocse1_authenticationcontext` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -8127,19 +8082,4 @@ CREATE TABLE  `oocse1_subject_` (
   `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oom0base_authority`;
-CREATE TABLE  `oom0base_authority` (
-  `AUTHORITY_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`AUTHORITY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oom0base_provider`;
-CREATE TABLE  `oom0base_provider` (
-  `PROVIDER_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `AUTHORITY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`PROVIDER_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

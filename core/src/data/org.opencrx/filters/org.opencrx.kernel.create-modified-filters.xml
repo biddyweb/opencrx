@@ -2,7 +2,7 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="66">
+			<array class="java.lang.String" length="96">
 				<void index="0">
 					<string>org:opencrx:kernel:activity1:Absence:note</string>
 				</void>
@@ -202,6 +202,101 @@
 				<void index="65">
 					<string>org:opencrx:kernel:product1:Product:basePrice</string>
 				</void>
+
+				<void index="66">
+					<string>org:opencrx:kernel:contract1:Lead:media</string>
+				</void>
+				<void index="67">
+					<string>org:opencrx:kernel:contract1:Opportunity:media</string>
+				</void>
+				<void index="68">
+					<string>org:opencrx:kernel:contract1:Quote:media</string>
+				</void>
+				<void index="69">
+					<string>org:opencrx:kernel:contract1:SalesOrder:media</string>
+				</void>
+				<void index="70">
+					<string>org:opencrx:kernel:contract1:Invoice:media</string>
+				</void>
+
+				<void index="71">
+					<string>org:opencrx:kernel:account1:Contact:member</string>
+				</void>
+				<void index="72">
+					<string>org:opencrx:kernel:account1:LegalEntity:member</string>
+				</void>
+				<void index="73">
+					<string>org:opencrx:kernel:account1:Group:member</string>
+				</void>
+				<void index="74">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:member</string>
+				</void>
+				<void index="75">
+					<string>org:opencrx:kernel:account1:Contact:accountMembership</string>
+				</void>
+				<void index="76">
+					<string>org:opencrx:kernel:account1:LegalEntity:accountMembership</string>
+				</void>
+				<void index="77">
+					<string>org:opencrx:kernel:account1:Group:accountMembership</string>
+				</void>
+				<void index="78">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:accountMembership</string>
+				</void>
+				<void index="79">
+					<string>org:opencrx:kernel:account1:Contact:assignedContract</string>
+				</void>
+				<void index="80">
+					<string>org:opencrx:kernel:account1:Group:assignedContract</string>
+				</void>
+				<void index="81">
+					<string>org:opencrx:kernel:account1:LegalEntity:assignedContract</string>
+				</void>
+				<void index="82">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:assignedContract</string>
+				</void>
+				<void index="83">
+					<string>org:opencrx:kernel:account1:Contact:assignedBudget</string>
+				</void>
+				<void index="84">
+					<string>org:opencrx:kernel:account1:Group:assignedBudget</string>
+				</void>
+				<void index="85">
+					<string>org:opencrx:kernel:account1:LegalEntity:assignedBudget</string>
+				</void>
+				<void index="86">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:assignedBudget</string>
+				</void>
+				<void index="87">
+					<string>org:opencrx:kernel:account1:Contact:media</string>
+				</void>
+				<void index="88">
+					<string>org:opencrx:kernel:account1:Group:media</string>
+				</void>
+				<void index="89">
+					<string>org:opencrx:kernel:account1:LegalEntity:media</string>
+				</void>
+				<void index="90">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:media</string>
+				</void>
+				<void index="91">
+					<string>org:opencrx:kernel:account1:Contact:note</string>
+				</void>
+				<void index="92">
+					<string>org:opencrx:kernel:account1:Group:note</string>
+				</void>
+				<void index="93">
+					<string>org:opencrx:kernel:account1:LegalEntity:note</string>
+				</void>
+				<void index="94">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:note</string>
+				</void>
+
+				<void index="95">
+					<string>org:opencrx:kernel:forecast1:Segment:budget</string>
+				</void>
+
+
 			</array>
 		</void>
 		<void property="filter">
@@ -209,7 +304,7 @@
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Created At [reverse chronological order]</string>
+							<string>° Created At [reverse chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_down_star.gif</string>
@@ -236,7 +331,7 @@
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Created At [chronological order]</string>
+							<string>° Created At [chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_star.gif</string>
@@ -263,7 +358,7 @@
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Modified At [reverse chronological order]</string>
+							<string>° Modified At [reverse chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_down_time.gif</string>
@@ -290,7 +385,7 @@
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Modified At [chronological order]</string>
+							<string>° Modified At [chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>

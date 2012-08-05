@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.25 2008/08/18 12:54:32 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.26 2008/10/13 09:05:10 wfro Exp $
  * = Description: openCRX/sql build.xml
- * = Revision:    $Revision: 1.25 $
- * = Date:        $Date: 2008/08/18 12:54:32 $
+ * = Revision:    $Revision: 1.26 $
+ * = Date:        $Date: 2008/10/13 09:05:10 $
  * = Copyright:   (c) 2003-2008 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,6 +62,9 @@
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
+		<exec executable="gcc">
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/delete-segment.sql delete-segment.tsql"/>
+		</exec>
 		<copy file="populate-preferences.tsql" tofile="postgresql-8/populate-preferences.sql">
 			<filterchain>
 				<tokenfilter>
@@ -79,6 +82,9 @@
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		</exec>
+		<exec executable="gcc">
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/delete-segment.sql delete-segment.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="sql-server-2005/populate-preferences.sql">
 			<filterchain>
@@ -98,6 +104,9 @@
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
+		<exec executable="gcc">
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/delete-segment.sql delete-segment.tsql"/>
+		</exec>
 		<copy file="populate-preferences.tsql" tofile="mysql-5/populate-preferences.sql">
 			<filterchain>
 				<tokenfilter>
@@ -115,6 +124,9 @@
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		</exec>
+		<exec executable="gcc">
+		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/delete-segment.sql delete-segment.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="oracle-8/populate-preferences.sql">
 			<filterchain>
@@ -134,6 +146,9 @@
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
 		</exec>
+		<exec executable="gcc">
+		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/delete-segment.sql delete-segment.tsql"/>
+		</exec>
 		<copy file="populate-preferences.tsql" tofile="db2-9/populate-preferences.sql">
 			<filterchain>
 				<tokenfilter>
@@ -151,6 +166,9 @@
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		</exec>
+		<exec executable="gcc">
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/delete-segment.sql delete-segment.tsql"/>
 		</exec>
 		<copy file="populate-preferences.tsql" tofile="hsqldb-1/populate-preferences.sql">
 			<filterchain>

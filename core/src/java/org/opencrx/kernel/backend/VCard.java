@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.15 2008/05/24 23:09:07 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.17 2008/10/14 11:27:24 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/24 23:09:07 $
+ * Date:        $Date: 2008/10/14 11:27:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,6 +64,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,8 +79,6 @@ import java.util.Map.Entry;
 
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
-import org.opencrx.kernel.account1.jmi1.EmailAddress;
-import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
@@ -114,6 +114,29 @@ public class VCard {
     }
 
     //-------------------------------------------------------------------------
+    protected String getUtcDateTime(
+        String dateTime,
+        SimpleDateFormat dateTimeFormatter
+    ) throws ParseException {
+        Date date = null;
+        if(dateTime.endsWith("Z")) {
+            if(dateTime.length() == 16) {
+                date = DateFormat.getInstance().parse(dateTime.substring(0, 15) + ".000Z");
+            }
+            else {
+                date = DateFormat.getInstance().parse(dateTime);
+            }
+        }
+        else if(dateTime.length() == 8) {
+            date = DateFormat.getInstance().parse(dateTime + "T000000.000Z");
+        }
+        else {
+            date = dateTimeFormatter.parse(dateTime);
+        }
+        return DateFormat.getInstance().format(date);
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * Update sourceVcard with account values and return merged vcard. 
      */
@@ -122,9 +145,10 @@ public class VCard {
         String sourceVcard,
         List<String> statusMessage
     ) throws ServiceException {
+        boolean isContact = this.backend.isContact(account);
         // N
         String n = null;        
-        if(this.backend.isContact(account)) {
+        if(isContact) {
             if(!account.values("lastName").isEmpty()) {
                 String lastName = (String)account.values("lastName").get(0);
                 String firstName = account.values("firstName").isEmpty() ? "" : (String)account.values("firstName").get(0);
@@ -142,7 +166,7 @@ public class VCard {
         }
         // FN
         String fn = null;
-        if(this.backend.isContact(account)) {
+        if(isContact) {
             String firstName = account.values("firstName").isEmpty() ? "" : (String)account.values("firstName").get(0);
             String lastName = account.values("lastName").isEmpty() ? "" : (String)account.values("lastName").get(0);
             String middleName = account.values("middleName").isEmpty() ? "" : (String)account.values("middleName").get(0);
@@ -157,16 +181,23 @@ public class VCard {
         String rev = DateFormat.getInstance().format(new Date());        
         // ORG
         String org = null;
-        if(this.backend.isContact(account)) {
+        if(isContact) {
             if(!account.values("jobTitle").isEmpty()) {
                 org = (String)account.values("organization").get(0);
             }
         }
         // TITLE
         String title = null;
-        if(this.backend.isContact(account)) {
+        if(isContact) {
             if(!account.values("jobTitle").isEmpty()) {
                 title = (String)account.values("jobTitle").get(0);
+            }
+        }
+        // BDAY
+        String bday = null;
+        if(isContact) {
+            if(!account.values("birthdate").isEmpty()) {
+                bday = (String)account.values("birthdate").get(0);
             }
         }
         AccountAddress[] addresses = new AccountAddress[11];
@@ -326,6 +357,7 @@ public class VCard {
                 "TEL;WORK;VOICE:\n" +
                 "TEL;HOME;VOICE:\n" +
                 "TEL;CELL;VOICE:\n" +
+                (isContact ? "BDAY:\n" : "") +
                 "TEL;FAX:\n" +
                 "TEL;HOME;FAX:\n" +
                 "ADR;WORK;ENCODING=QUOTED-PRINTABLE:;;\n" +
@@ -376,6 +408,10 @@ public class VCard {
                     // TITLE
                     if((title != null) && (title.length() > 0)) {
                         targetVcard.println("TITLE:" + title);
+                    }
+                    // BDAY
+                    if((bday != null) && (bday.length() > 0)) {
+                        targetVcard.println("BDAY:" + bday.substring(0, 15) + "Z");
                     }
                     // TEL;WORK;VOICE
                     if((telWorkVoice != null) && (telWorkVoice.length() > 0)) {
@@ -435,6 +471,8 @@ public class VCard {
                         tagStart.toUpperCase().startsWith("ORG");
                     isUpdatableTag |= 
                         tagStart.toUpperCase().startsWith("TITLE");
+                    isUpdatableTag |= 
+                        tagStart.toUpperCase().startsWith("BDAY");
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("TEL;WORK;VOICE");
                     isUpdatableTag |=
@@ -640,9 +678,12 @@ public class VCard {
         short locale,
         List<String> report
     ) throws ServiceException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(DATETIME_FORMAT);
+        dateTimeFormatter.setLenient(false);
+        boolean isContact = this.backend.isContact(account);
         // name
         String name = vcard.get("N");
-        if(this.backend.isContact(account)) {
+        if(isContact) {
             if((name != null) && (name.indexOf(";") >= 0)) {
                 String[] nameTokens = new String[]{"", "", "", "", ""};
                 StringTokenizer tokenizer = new StringTokenizer(name, ";", true);
@@ -689,6 +730,18 @@ public class VCard {
             String organization = vcard.get("ORG");
             if((organization != null) && (organization.length() > 0)) {
                 account.clearValues("organization").add(organization);
+            }
+            // bday
+            String bday = vcard.get("BDAY");
+            if((bday != null) && (bday.length() > 0)) {
+                try {
+                    account.clearValues("birthdate").add(
+                        this.getUtcDateTime(
+                            bday, 
+                            dateTimeFormatter
+                        )
+                    );
+                } catch(Exception e) {}
             }
             this.backend.getAccounts().updateFullName(
                 account, 
@@ -1080,25 +1133,19 @@ public class VCard {
                         Quantors.THERE_EXISTS,
                         "identity",
                         FilterOperators.IS_LIKE,
-                        new String[]{
-                            accountSegmentIdentity.getDescendant(new String[]{"account", ":*", "address", ":*"}).toXri()
-                        } 
+                        accountSegmentIdentity.getDescendant(new String[]{"account", ":*", "address", ":*"}).toXri()
                     ),
                     new FilterProperty(
                         Quantors.THERE_EXISTS,
                         SystemAttributes.OBJECT_CLASS,
                         FilterOperators.IS_IN,
-                        new String[]{
-                            "org:opencrx:kernel:account1:EMailAddress"
-                        }
+                        "org:opencrx:kernel:account1:EMailAddress"
                     ),
                     new FilterProperty(
                         Quantors.THERE_EXISTS,
                         "emailAddress",
                         FilterOperators.IS_IN,
-                        new String[]{
-                            lookupEmail
-                        }
+                        lookupEmail
                     )
                 }
             );
@@ -1127,6 +1174,7 @@ public class VCard {
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
+    public static final String DATETIME_FORMAT =  "yyyyMMdd'T'HHmmss";
     public static final String MIME_TYPE = "text/x-vcard";
     public static final String PROD_ID = "//OPENCRX//Groupware Version 2//EN";
     

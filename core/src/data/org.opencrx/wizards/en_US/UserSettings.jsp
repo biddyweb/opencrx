@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.35 2008/08/12 21:50:00 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.37 2008/10/01 14:24:31 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.35 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/12 21:50:00 $
+ * Date:        $Date: 2008/10/01 14:24:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,7 @@ org.openmdx.portal.servlet.wizards.*,
 org.openmdx.compatibility.base.naming.*,
 org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*,
+org.opencrx.kernel.backend.*,
 org.opencrx.kernel.layer.application.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
@@ -153,6 +154,7 @@ org.openmdx.base.exception.*
 	org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
 	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 	org.opencrx.security.realm1.jmi1.Realm1Package realmPkg = org.opencrx.kernel.utils.Utils.getRealmPackage(pm);
+	org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
 	// Get user home segment
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
@@ -481,9 +483,7 @@ org.openmdx.base.exception.*
 						privateCreator.setName(userHome.refGetPath().getBase() + "~Private");
 						privateCreator.getActivityGroup().add(privateTracker);
 						privateCreator.setActivityType(
-							(org.opencrx.kernel.activity1.jmi1.ActivityType)pm.getObjectById(
-								new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityType/BugsAndFeaturesType")
-							)
+							org.opencrx.kernel.backend.Activities.findActivityType("Bugs + Features", activitySegment, pm)
 						);
 						if(privatePrincipalGroup != null) {
 							privateCreator.getOwningGroup().clear();
@@ -578,7 +578,19 @@ org.openmdx.base.exception.*
 						);
 					}
 					pm.currentTransaction().commit();
-					if(currentUserOwnsHome) {
+					// Assert owningUser of Resource
+					if(!currentUserOwnsHome) {
+					    pm.currentTransaction().begin();
+					    org.opencrx.kernel.base.jmi1.SetOwningUserParams setOwningUserParams = basePkg.createSetOwningUserParams(
+					        (short)SecureObject.MODE_RECURSIVE,
+					        userHome.getOwningUser()
+					    );
+						resource.setOwningUser(
+						    setOwningUserParams
+						);					    
+					    pm.currentTransaction().commit();
+					}
+   					if(currentUserOwnsHome) {
 						app.saveSettings(false);
 					}
 				}

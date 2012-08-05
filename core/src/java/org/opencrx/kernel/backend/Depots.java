@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.17 2008/06/11 12:04:34 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.18 2008/10/13 12:32:24 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/11 12:04:34 $
+ * Date:        $Date: 2008/10/13 12:32:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -288,13 +288,13 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     SystemAttributes.OBJECT_CLASS,
                     FilterOperators.IS_IN,
-                    new String[]{"org:opencrx:kernel:depot1:CreditBooking"}
+                    "org:opencrx:kernel:depot1:CreditBooking"
                 ),
                 new FilterProperty(
                     Quantors.THERE_EXISTS,
                     "cb",
                     FilterOperators.IS_IN,
-                    new Path[]{compoundBookingIdentity}
+                    compoundBookingIdentity
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -423,7 +423,7 @@ public class Depots {
                                 Quantors.THERE_EXISTS,
                                 "name",
                                 FilterOperators.IS_IN,
-                                new Object[]{bookingTextNames[i]}                            
+                                bookingTextNames[i]                            
                             )
                         },
                         AttributeSelectors.ALL_ATTRIBUTES,
@@ -677,13 +677,13 @@ public class Depots {
                         Quantors.THERE_EXISTS,
                         SystemAttributes.OBJECT_IDENTITY,
                         FilterOperators.IS_LIKE,
-                        new Object[]{depotEntityIdentity.getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
+                        depotEntityIdentity.getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})
                     ),                        
                     new FilterProperty(
                         Quantors.THERE_EXISTS,
                         "depotNumber",
                         FilterOperators.IS_IN,
-                        new Object[]{depotNumber}                            
+                        depotNumber                            
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -712,7 +712,7 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     "name",
                     FilterOperators.IS_IN,
-                    new Object[]{positionName}                            
+                    positionName                            
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -977,7 +977,7 @@ public class Depots {
                                 Quantors.THERE_EXISTS,
                                 "position",
                                 FilterOperators.IS_IN,
-                                new Object[]{position.path()}
+                                position.path()
                             )
                         },
                         AttributeSelectors.ALL_ATTRIBUTES,
@@ -1106,7 +1106,7 @@ public class Depots {
                         Quantors.THERE_EXISTS,
                         "bookingPeriod",
                         FilterOperators.IS_IN,
-                        new Object[]{bookingPeriod.path()}
+                        bookingPeriod.path()
                     )
                 },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -1203,7 +1203,7 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     "reversalOf",
                     FilterOperators.IS_IN,
-                    new Path[]{compoundBooking.refGetPath()}
+                    compoundBooking.refGetPath()
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1252,7 +1252,7 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     "cb",
                     FilterOperators.IS_IN,
-                    new Path[]{compoundBooking.refGetPath()}
+                    compoundBooking.refGetPath()
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1343,7 +1343,7 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     "cb",
                     FilterOperators.IS_IN,
-                    new Path[]{compoundBooking.refGetPath()}
+                    compoundBooking.refGetPath()
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1410,7 +1410,7 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     "cb",
                     FilterOperators.IS_IN,
-                    new Path[]{compoundBookingIdentity}
+                    compoundBookingIdentity
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1510,17 +1510,15 @@ public class Depots {
                     Quantors.THERE_EXISTS,
                     "identity",
                     FilterOperators.IS_LIKE,
-                    new Object[]{
-                        segmentIdentity.getDescendant(
-                            new String[]{"booking", ":*"}
-                        )
-                    }                            
+                    segmentIdentity.getDescendant(
+                        new String[]{"booking", ":*"}
+                    )
                 ),
                 new FilterProperty(
                     Quantors.THERE_EXISTS,
                     "position",
                     FilterOperators.IS_LIKE,
-                    new Object[]{positionPattern}
+                    positionPattern
                 )
             },
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1773,7 +1771,7 @@ public class Depots {
                             Quantors.THERE_EXISTS,
                             "basedOn",
                             FilterOperators.IS_IN,
-                            new Object[]{basedOnProductIdentity}
+                            basedOnProductIdentity
                         )
                     },
                     AttributeSelectors.ALL_ATTRIBUTES,
@@ -1791,13 +1789,13 @@ public class Depots {
                             Quantors.THERE_EXISTS,
                             "basedOn",
                             FilterOperators.IS_IN,
-                            new Object[]{basedOnProductIdentity}
+                            basedOnProductIdentity
                         ),
                         new FilterProperty(
                             Quantors.THERE_EXISTS,
                             "qualifier",
                             FilterOperators.IS_IN,
-                            new Object[]{depotPositionQualifier}
+                            depotPositionQualifier
                         )
                     },
                     AttributeSelectors.ALL_ATTRIBUTES,
@@ -1827,7 +1825,7 @@ public class Depots {
                                 Quantors.THERE_EXISTS,
                                 "product",
                                 FilterOperators.IS_IN,
-                                new Object[]{productIdentity}
+                                productIdentity
                             )
                         },
                         AttributeSelectors.ALL_ATTRIBUTES,
@@ -1844,13 +1842,13 @@ public class Depots {
                                 Quantors.THERE_EXISTS,
                                 "product",
                                 FilterOperators.IS_IN,
-                                new Object[]{productIdentity}
+                                productIdentity
                             ),
                             new FilterProperty(
                                 Quantors.THERE_EXISTS,
                                 "qualifier",
                                 FilterOperators.IS_IN,
-                                new Object[]{depotPositionQualifier}
+                                depotPositionQualifier
                             )
                         },
                         AttributeSelectors.ALL_ATTRIBUTES,
