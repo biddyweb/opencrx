@@ -71,6 +71,25 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:reminder">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reminders</_item>
+											</toolTip>
+											<label>
+												<_item>Reminders</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+											<showMaxMember>7</showMaxMember>
+											<maxMember>11</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory">
 										<_object>
 											<active>true</active>
@@ -433,7 +452,7 @@
 											<label>
 												<_item>Alert</_item>
 											</label>
-											<iconKey>org:opencrx:kernel:home1:Alert</iconKey>
+											<iconKey>Alert</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -549,12 +568,12 @@
 											<label>
 												<_item>Created at</_item>
 											</label>
-											<!--                                            
-                                            <orderFieldGroup>
-                                                <_item>0</_item>
-                                                <_item>0</_item>
-                                                <_item>3</_item>
-                                            </orderFieldGroup>
+<!--                                            
+                      <orderFieldGroup>
+                          <_item>0</_item>
+                          <_item>0</_item>
+                          <_item>3</_item>
+                      </orderFieldGroup>
 -->
 											<orderObjectContainer>
 												<_item>0</_item>
@@ -586,7 +605,6 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<iconKey>org:opencrx:kernel:OpMarkAsRead</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -666,6 +684,314 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- Reminder -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder">
+										<_object>
+											<active>true</active>
+											<changeable>true</changeable>
+											<toolTip>
+												<_item>Reminder</_item>
+											</toolTip>
+											<label>
+												<_item>Reminder</_item>
+											</label>
+											<iconKey>Reminder</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in Details Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:triggerAction">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Trigger action</_item>
+											</toolTip>
+											<label>
+												<_item>Trigger action</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>90</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:triggerAt">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<mandatory>true</mandatory>
+											<toolTip>
+												<_item>Initial trigger at</_item>
+											</toolTip>
+											<label>
+												<_item>Initial trigger at</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:autocalcTriggerAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Auto calc trigger at</_item>
+											</toolTip>
+											<label>
+												<_item>Auto calc trigger at</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>100</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:triggerEndAt">
+										<_object>
+											<active>true</active>
+											<mandatory>true</mandatory>
+											<toolTip>
+												<_item>No triggers after</_item>
+											</toolTip>
+											<label>
+												<_item>No triggers after</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>110</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:description">
+										<_object>
+											<spanRow>4</spanRow>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:reference">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reference</_item>
+											</toolTip>
+											<label>
+												<_item>Reference</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>5</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:reminderState">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>State</_item>
+											</toolTip>
+											<label>
+												<_item>State</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:disabled">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Disabled</_item>
+											</toolTip>
+											<label>
+												<_item>Disabled</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Grid enhancement -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:createdAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Created at</_item>
+											</toolTip>
+											<label>
+												<_item>Created at</_item>
+											</label>
+<!--                                            
+                      <orderFieldGroup>
+                          <_item>0</_item>
+                          <_item>0</_item>
+                          <_item>3</_item>
+                      </orderFieldGroup>
+-->
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>30</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:alarmRepeat">
+										<_object>
+											<active>true</active>
+											<mandatory>true</mandatory>
+											<toolTip>
+												<_item>Repeat X times</_item>
+											</toolTip>
+											<label>
+												<_item>Repeat X times</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:alarmIntervalMinutes">
+										<_object>
+											<active>true</active>
+											<mandatory>true</mandatory>
+											<toolTip>
+												<_item>Repeat every X minutes</_item>
+											</toolTip>
+											<label>
+												<_item>Repeat every X minutes</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:lastAlarmAt">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<mandatory>true</mandatory>
+											<toolTip>
+												<_item>Alarm was triggered at</_item>
+											</toolTip>
+											<label>
+												<_item>Alarm was triggered at</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:Pane:Attr:Tab:0:Group:40">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item></_item>
+                      </toolTip>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:attachUrl">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Attach URL</_item>
+											</toolTip>
+											<label>
+												<_item>Attach URL</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>40</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<!-- QuickAccess -->
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess">

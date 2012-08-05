@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestQuery.java,v 1.17 2011/05/04 13:58:28 wfro Exp $
+ * Name:        $Id: TestQuery.java,v 1.23 2011/10/22 11:07:47 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/05/04 13:58:28 $
+ * Date:        $Date: 2011/10/22 11:07:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -74,13 +74,24 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.opencrx.kernel.account1.cci2.AbstractGroupQuery;
+import org.opencrx.kernel.account1.cci2.AccountAddressQuery;
+import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.cci2.ContactQuery;
+import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
+import org.opencrx.kernel.account1.cci2.GroupQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.account1.jmi1.EMailAddress;
+import org.opencrx.kernel.account1.jmi1.Group;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.MeetingQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.contract1.cci2.SalesOrderPositionQuery;
+import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
+import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.product1.cci2.AccountAssignmentProductQuery;
 import org.opencrx.kernel.product1.cci2.ProductQuery;
@@ -127,7 +138,7 @@ public class TestQuery {
         public void run(
         ) throws ServiceException, IOException, ParseException{
             this.testSimpleCciQueries();
-            this.testQueryFilters();
+            this.testQueryExtensions();
             this.testNestedQueries();
             this.testExtent();
             this.testAccountAssignmentsQuery();  
@@ -147,7 +158,7 @@ public class TestQuery {
 	        }
 	    }
 
-	    protected void testQueryFilters(
+	    protected void testQueryExtensions(
 	    ) throws ServiceException{
 	        try {
 	        	org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
@@ -159,8 +170,8 @@ public class TestQuery {
 	        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
 	        			org.opencrx.kernel.contract1.jmi1.SalesOrder.class
 	        		);
-	        	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(salesOrderQuery);
-            	queryFilter.setClause(
+	        	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(salesOrderQuery);
+            	queryExtension.setClause(
             		"EXISTS (" + 
             		"  SELECT 0 FROM " + 
             		"    OOCKE1_CONTRACTPOSITION cp " + 
@@ -205,52 +216,111 @@ public class TestQuery {
 		    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
 		        		new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
 		    		);
-	        	// Test 1
-	        	org.opencrx.kernel.contract1.cci2.SalesOrderQuery salesOrderQuery = 
-	        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
-	        			org.opencrx.kernel.contract1.jmi1.SalesOrder.class
-	        		);
-	        	salesOrderQuery.thereExistsPosition().thereExistsConfiguration().name().like("CropScan.*");
-	        	salesOrderQuery.thereExistsPosition().thereExistsConfiguration().thereExistsProperty().name().equalTo("FieldUri");
-	        	List<org.opencrx.kernel.contract1.jmi1.SalesOrder> salesOrders = contractSegment.getSalesOrder(salesOrderQuery);
-	        	assertTrue(salesOrderQuery.toString(), !salesOrders.isEmpty());
-	        	// Test 2
-	        	salesOrderQuery = 
-	        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
-	        			org.opencrx.kernel.contract1.jmi1.SalesOrder.class
-	        		);
-	        	salesOrderQuery.thereExistsSalesRep().thereExistsFullName().like("F.*");
-	        	salesOrders = contractSegment.getSalesOrder(salesOrderQuery);
-	        	assertTrue(salesOrderQuery.toString(), !salesOrders.isEmpty());
-	        	// Test 3
-	        	org.opencrx.kernel.home1.jmi1.UserHome guest = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
-	        		new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", "guest")
-	        	);
-	        	assertNotNull("UserHome guest", guest);
-	        	org.opencrx.kernel.product1.cci2.ProductQuery productQuery = (org.opencrx.kernel.product1.cci2.ProductQuery)this.pm.newQuery(
-	        		org.opencrx.kernel.product1.jmi1.Product.class
-	        	);
-	        	productQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(guest.getContact());
-	        	List<org.opencrx.kernel.product1.jmi1.Product> products = productSegment.getProduct(productQuery);
-	        	assertTrue(productQuery.toString(), !products.isEmpty());	     
+		    	// Test 0: Get addresses where owner of the address is member of a group
+		    	{
+			    	GroupQuery groupQuery = (GroupQuery)this.pm.newQuery(Group.class);
+			    	groupQuery.orderByName().ascending();
+			    	List<Group> groups = accountSegment.getAccount(groupQuery);
+			    	for(Group group: groups) {
+			    		AccountAddressQuery addressQuery = (AccountAddressQuery)this.pm.newQuery(AccountAddress.class);
+			    		addressQuery.account().thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
+			    		addressQuery.account().thereExistsAccountMembership().distance().equalTo(-1);
+			    		List<AccountAddress> addresses = accountSegment.getAddress(addressQuery);
+			    		System.out.println("Group " + group.getName() + " has addresses " + !addresses.isEmpty());
+			    	}
+		    	}
+		    	// Test 2: Accounts with assigned activities matching name .*Test.*
+		    	{
+		    		AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
+		    		accountQuery.thereExistsAssignedActivity().name().like(".*Test.*");
+		    		List<Account> accounts = accountSegment.getAccount(accountQuery);
+		    		int count = 0;
+		    		for(Account account: accounts) {
+		    			System.out.println("Account " + account.getFullName() + " has assigned activities matching name like .*Test.*");
+		    			count++;
+		    			if(count > 50) break;		    			
+		    		}
+		    	}
+	        	// Test 3: Get sales orders which have a position which a configuration with name "CropScan.*" and a property "FieldUri"
+		    	{
+		        	SalesOrderQuery salesOrderQuery = 
+		        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
+		        			org.opencrx.kernel.contract1.jmi1.SalesOrder.class
+		        		);
+		        	salesOrderQuery.thereExistsPosition().thereExistsConfiguration().name().like("CropScan.*");
+		        	salesOrderQuery.thereExistsPosition().thereExistsConfiguration().thereExistsProperty().name().equalTo("FieldUri");
+		        	List<SalesOrder> salesOrders = contractSegment.getSalesOrder(salesOrderQuery);
+		        	assertTrue(salesOrderQuery.toString(), !salesOrders.isEmpty());
+		    	}
 	        	// Test 4
-	        	AbstractGroupQuery groupQuery = (AbstractGroupQuery)this.pm.newQuery(AbstractGroup.class);
-	        	List<AbstractGroup> groups = accountSegment.getAccount(groupQuery);
-	        	int ni = 0;
-	        	for(AbstractGroup group: groups) {
-		        	MeetingQuery meetingQuery = (MeetingQuery)this.pm.newQuery(Meeting.class);	        	
-		        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
-		        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().distance().equalTo(-1);
-		        	List<Meeting> meetings = activitySegment.getActivity(meetingQuery);
-		        	int nj = 0;
-		        	for(Meeting meeting: meetings) {
-		        		System.out.println("Meeting " + meeting.getActivityNumber() + " has party where account is member of group " + group.getName());
-		        		nj++;
-		        		if(nj > 50) break;
+		    	{
+		        	SalesOrderQuery salesOrderQuery = 
+		        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
+		        			org.opencrx.kernel.contract1.jmi1.SalesOrder.class
+		        		);
+		        	salesOrderQuery.thereExistsSalesRep().thereExistsFullName().like("F.*");
+		        	List<SalesOrder> salesOrders = contractSegment.getSalesOrder(salesOrderQuery);
+		        	assertTrue(salesOrderQuery.toString(), !salesOrders.isEmpty());
+		    	}
+	        	// Test 5
+		    	{
+		        	org.opencrx.kernel.home1.jmi1.UserHome guest = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
+		        		new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", "guest")
+		        	);
+		        	assertNotNull("UserHome guest", guest);
+		        	org.opencrx.kernel.product1.cci2.ProductQuery productQuery = (org.opencrx.kernel.product1.cci2.ProductQuery)this.pm.newQuery(
+		        		org.opencrx.kernel.product1.jmi1.Product.class
+		        	);
+		        	productQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(guest.getContact());
+		        	List<org.opencrx.kernel.product1.jmi1.Product> products = productSegment.getProduct(productQuery);
+		        	assertTrue(productQuery.toString(), !products.isEmpty());
+		    	}
+	        	// Test 6
+		    	{
+		        	AbstractGroupQuery groupQuery = (AbstractGroupQuery)this.pm.newQuery(AbstractGroup.class);
+		        	List<AbstractGroup> groups = accountSegment.getAccount(groupQuery);
+		        	int ni = 0;
+		        	for(AbstractGroup group: groups) {
+			        	MeetingQuery meetingQuery = (MeetingQuery)this.pm.newQuery(Meeting.class);	        	
+			        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
+			        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().distance().equalTo(-1);
+			        	List<Meeting> meetings = activitySegment.getActivity(meetingQuery);
+			        	int nj = 0;
+			        	for(Meeting meeting: meetings) {
+			        		System.out.println("Meeting " + meeting.getActivityNumber() + " has party where account is member of group " + group.getName());
+			        		nj++;
+			        		if(nj > 50) break;
+			        	}
+			        	ni++;
+			        	if(ni > 500) break;
 		        	}
-		        	ni++;
-		        	if(ni > 500) break;
-	        	}		       
+		    	}
+	        	// Test 7: Get accounts which have only notes with title "Test"
+		    	{
+		        	AccountQuery accountQuery = (AccountQuery)this.pm.newQuery(Account.class);
+		        	accountQuery.forAllNote().thereExistsTitle().equalTo("Test");
+		        	accountQuery.orderByFullName().ascending();
+		        	List<Account> accounts = accountSegment.getAccount(accountQuery);
+		        	int n = 0;
+		        	for(Account account: accounts) {
+		        		System.out.println("Account " + account.getFullName() + " (" + account.refMofId() + ")" + " has only notes with Title 'Test'");
+		        		n++;
+		        		if(n > 100) break;
+		        	}
+		    	}
+		    	// Test 8: Get contacts where email matches
+		    	{
+		    		ContactQuery contactQuery = (ContactQuery)pm.newQuery(Contact.class);
+		    		EMailAddressQuery emailAddressQuery = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+		    		emailAddressQuery.thereExistsEmailAddress().like(".*com");
+		    		contactQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(emailAddressQuery));
+		    		int n = 0;
+		    		for(Contact contact: accountSegment.<Contact>getAccount(contactQuery)) {
+		        		System.out.println("Contact " + contact.getFullName() + " (" + contact.refMofId() + ")" + " has an email address like '.*com'");
+		        		n++;
+		        		if(n > 100) break;		    			
+		    		}
+		    	}
 	        } finally {
 	        }
 	    }

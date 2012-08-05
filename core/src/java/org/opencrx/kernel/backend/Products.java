@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.91 2010/12/09 12:45:56 wfro Exp $
+ * Name:        $Id: Products.java,v 1.94 2011/06/29 14:17:10 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.91 $
+ * Revision:    $Revision: 1.94 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/09 12:45:56 $
+ * Date:        $Date: 2011/06/29 14:17:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,15 +74,22 @@ import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
+import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractContract;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
+import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery;
 import org.opencrx.kernel.product1.cci2.PriceListEntryQuery;
+import org.opencrx.kernel.product1.cci2.PricingRuleQuery;
 import org.opencrx.kernel.product1.cci2.ProductBasePriceQuery;
 import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.AbstractFilterProduct;
 import org.opencrx.kernel.product1.jmi1.AbstractPriceLevel;
+import org.opencrx.kernel.product1.jmi1.AbstractProduct;
+import org.opencrx.kernel.product1.jmi1.AccountAssignment;
 import org.opencrx.kernel.product1.jmi1.CategoryFilterProperty;
 import org.opencrx.kernel.product1.jmi1.ConfiguredProduct;
 import org.opencrx.kernel.product1.jmi1.DefaultSalesTaxTypeFilterProperty;
@@ -102,8 +109,10 @@ import org.opencrx.kernel.product1.jmi1.ProductConfigurationType;
 import org.opencrx.kernel.product1.jmi1.ProductFilterProperty;
 import org.opencrx.kernel.product1.jmi1.ProductPhasePriceLevel;
 import org.opencrx.kernel.product1.jmi1.ProductQueryFilterProperty;
+import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
@@ -267,6 +276,19 @@ public class Products extends AbstractImpl {
             : pricingRules.iterator().next();
     }
 
+    //-------------------------------------------------------------------------
+    protected PricingRule getDefaultPricingRule(
+        org.opencrx.kernel.product1.jmi1.Segment productSegment
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(productSegment);
+    	PricingRuleQuery query = (PricingRuleQuery)pm.newQuery(PricingRule.class);
+    	query.thereExistsIsDefault().isTrue();
+    	List<PricingRule> pricingRules = productSegment.getPricingRule(query);
+    	return pricingRules.isEmpty() ?
+    		null :
+    			pricingRules.iterator().next();
+    }
+        
     //-----------------------------------------------------------------------
     /**
      * @return Returns the product segment.
@@ -327,7 +349,7 @@ public class Products extends AbstractImpl {
      */
     public int cloneProductConfigurationSet(
     	org.opencrx.kernel.product1.jmi1.ProductConfigurationSet from,
-    	AbstractContractPosition to,
+    	SalesContractPosition to,
         boolean cloneDefaultOnly,
         boolean updateCurrentConfig,
         org.opencrx.security.realm1.jmi1.User owningUser,
@@ -1330,10 +1352,10 @@ public class Products extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public org.opencrx.kernel.product1.jmi1.GetPriceLevelResult getPriceLevel(
-        org.opencrx.kernel.product1.jmi1.PricingRule pricingRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
-        org.opencrx.kernel.product1.jmi1.AbstractProduct product,
-        org.opencrx.kernel.uom1.jmi1.Uom priceUom,
+        PricingRule pricingRule,
+        AbstractContract contract,
+        AbstractProduct product,
+        Uom priceUom,
         BigDecimal quantity,
         Date pricingDate
     ) throws ServiceException {
@@ -1354,11 +1376,11 @@ public class Products extends AbstractImpl {
             Method m = c.getMethod(
                 "getPriceLevel", 
                 new Class[] {
-                    org.openmdx.base.accessor.jmi.cci.RefPackage_1_0.class,
-                    org.opencrx.kernel.product1.jmi1.PricingRule.class, 
-                    org.opencrx.kernel.contract1.jmi1.AbstractContract.class,
-                    org.opencrx.kernel.product1.jmi1.AbstractProduct.class,
-                    org.opencrx.kernel.uom1.jmi1.Uom.class,
+                    RefPackage_1_0.class,
+                    PricingRule.class, 
+                    AbstractContract.class,
+                    AbstractProduct.class,
+                    Uom.class,
                     java.math.BigDecimal.class,
                     java.util.Date.class
                 }
@@ -1501,37 +1523,35 @@ public class Products extends AbstractImpl {
         
     //-------------------------------------------------------------------------
     public static org.opencrx.kernel.product1.jmi1.GetPriceLevelResult getLowestPricePriceLevel(
-        org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
-        org.opencrx.kernel.product1.jmi1.PricingRule pricingRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
-        org.opencrx.kernel.product1.jmi1.AbstractProduct product,
-        org.opencrx.kernel.uom1.jmi1.Uom priceUom,
-        java.math.BigDecimal quantity,
-        java.util.Date pricingDate
+        RefPackage_1_0 rootPkg,
+        PricingRule pricingRule,
+        AbstractContract contract,
+        AbstractProduct product,
+        Uom priceUom,
+        BigDecimal quantity,
+        Date pricingDate
     ) {
         boolean loggingActivated = false;
         if (loggingActivated) {
           System.out.println("pricing rule LowestPriceRule invoked: get lowest price");
         }
-        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel = null;    
+        AbstractPriceLevel priceLevel = null;    
         short statusCode = (short)0;
         String statusMessage = null;
-        java.math.BigDecimal lowestPrice = null;
-        java.math.BigDecimal lowestPriceCustomerDiscount = null;
-        java.lang.Boolean lowestPriceCustomerDiscountIsPercentage = null;
-        org.opencrx.kernel.account1.jmi1.Account lowestPriceCustomer = null;
-        java.math.BigDecimal lowestPriceAfterDiscount = null;
-        if((contract != null) && (pricingRule != null) && (priceUom != null)) {
-        	PersistenceManager pm = JDOHelper.getPersistenceManager(pricingRule);
+        BigDecimal lowestPrice = null;
+        BigDecimal lowestPriceCustomerDiscount = null;
+        Boolean lowestPriceCustomerDiscountIsPercentage = null;
+        Account lowestPriceCustomer = null;
+        BigDecimal lowestPriceAfterDiscount = null;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(pricingRule);
+        if((contract instanceof SalesContract) && (pricingRule != null) && (priceUom != null)) {
+        	SalesContract salesContract = (SalesContract)contract;
             try {
-              org.opencrx.kernel.product1.jmi1.Segment productSegment = 
-                  (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
-                      pricingRule.refGetPath().getParent().getParent()
-                  );
-              org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery priceLevelFilter = (org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.AbstractPriceLevel.class);
+              org.opencrx.kernel.product1.jmi1.Segment productSegment = Products.getInstance().getProductSegment(pm, pricingRule.refGetPath().get(2), pricingRule.refGetPath().get(4));
+              AbstractPriceLevelQuery priceLevelFilter = (AbstractPriceLevelQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.AbstractPriceLevel.class);
               priceLevelFilter.forAllDisabled().isFalse();           
-              List<org.opencrx.kernel.product1.jmi1.AbstractPriceLevel> priceLevels = productSegment.getPriceLevel(priceLevelFilter);
-              for(org.opencrx.kernel.product1.jmi1.AbstractPriceLevel candidate: priceLevels) {
+              List<AbstractPriceLevel> priceLevels = productSegment.getPriceLevel(priceLevelFilter);
+              for(AbstractPriceLevel candidate: priceLevels) {
                   boolean candidateMatches = false;
                   boolean validFromMatches = (pricingDate == null) || (candidate.getValidFrom() == null) || candidate.getValidFrom().compareTo(pricingDate) <= 0;
                   boolean validToMatches = (pricingDate == null) || (candidate.getValidTo() == null) || candidate.getValidTo().compareTo(pricingDate) >= 0;
@@ -1540,7 +1560,7 @@ public class Products extends AbstractImpl {
                   }
                   candidateMatches = validFromMatches && validToMatches;
                   if(
-                      (contract.getContractCurrency() == candidate.getPriceCurrency()) &&
+                      (salesContract.getContractCurrency() == candidate.getPriceCurrency()) &&
                       candidateMatches
                   ) {
                       if (loggingActivated) {
@@ -1550,22 +1570,21 @@ public class Products extends AbstractImpl {
                       // Test whether candidate price level defines lower price
                       Boolean discountIsPercentage = null;
                       java.math.BigDecimal discount = null;
-                      org.opencrx.kernel.account1.jmi1.Account discountCustomer = null;
+                      Account discountCustomer = null;
                       if(product != null) {
                           boolean customerFiltered = false;
                           boolean customerAssigned = false;
-                          org.opencrx.kernel.account1.jmi1.Account customer = contract.getCustomer();
+                          Account customer = salesContract.getCustomer();
                           if (customer != null) {
-                              org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = 
-                            	  (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
+                              AccountQuery accountFilter = (AccountQuery)pm.newQuery(Account.class);
                               accountFilter.identity().equalTo(
                                   new String(customer.refMofId())
                               );
                               customerFiltered = !candidate.getFilteredAccount(accountFilter).isEmpty();
                               if (customer != null) {
                                   // check whether there exists an accountAssignment
-                            	  Collection<org.opencrx.kernel.product1.jmi1.AccountAssignment> accountAssignments = candidate.getAssignedAccount();
-                                  for(org.opencrx.kernel.product1.jmi1.AccountAssignment accountAssignment: accountAssignments) {
+                            	  Collection<AccountAssignment> accountAssignments = candidate.getAssignedAccount();
+                                  for(AccountAssignment accountAssignment: accountAssignments) {
                                       try {
                                         boolean assignmentValidFromMatches = (accountAssignment.getValidFrom() == null) || (accountAssignment.getValidFrom().compareTo(pricingDate) <= 0);
                                         boolean assignmentValidToMatches = (accountAssignment.getValidTo() == null) || (accountAssignment.getValidTo().compareTo(pricingDate) >= 0);
@@ -1591,8 +1610,8 @@ public class Products extends AbstractImpl {
                                 System.out.println("customer is " + (customer == null ? "undefined" : "") + (customerFiltered ? "filtered " : "") + (customerAssigned ? "assigned" : ""));
                               }
                               // test whether candidate price level defines lower price
-                              Collection<org.opencrx.kernel.product1.jmi1.ProductBasePrice> basePrices = product.getBasePrice();
-                              for(org.opencrx.kernel.product1.jmi1.ProductBasePrice basePrice: basePrices) {
+                              Collection<ProductBasePrice> basePrices = product.getBasePrice();
+                              for(ProductBasePrice basePrice: basePrices) {
                                   boolean quantityFromMatches = (quantity == null) || (basePrice.getQuantityFrom() == null) || basePrice.getQuantityFrom().compareTo(quantity) <= 0;
                                   boolean quantityToMatches = (quantity == null) || (basePrice.getQuantityTo() == null) || basePrice.getQuantityTo().compareTo(quantity) >= 0;
                                   boolean priceUomMatches = (basePrice.getUom() == null)  || priceUom.equals(basePrice.getUom());
@@ -1649,16 +1668,12 @@ public class Products extends AbstractImpl {
           }
           catch(Exception e) {
               statusCode = 1;
-              org.openmdx.base.exception.ServiceException e0 = new org.openmdx.base.exception.ServiceException(e);
+              ServiceException e0 = new org.openmdx.base.exception.ServiceException(e);
               statusMessage = e0.getMessage();
               e0.log();
           }
         }
-        org.opencrx.kernel.product1.jmi1.Product1Package productPkg =
-            (org.opencrx.kernel.product1.jmi1.Product1Package)rootPkg.refPackage(
-            	org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
-            );        
-        org.opencrx.kernel.product1.jmi1.GetPriceLevelResult result = productPkg.createGetPriceLevelResult(
+        org.opencrx.kernel.product1.jmi1.GetPriceLevelResult result = Utils.getProductPackage(pm).createGetPriceLevelResult(
             lowestPriceCustomer,
             lowestPriceCustomerDiscount,
             lowestPriceCustomerDiscountIsPercentage,

@@ -36,6 +36,31 @@
 											</additionalElementDefinition>
 										</_content>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zugewiesene Adressen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zugewiesene Adressen</_item>
+                      </toolTip>
+                    </_object>
+										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Zugewiesene Adressen (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>Zugewiesene Adressen (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
+										</_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:assignedAddress" _operation="create">
                     <_object>
                       <label>
@@ -80,6 +105,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:authority">
+										<_object>
+											<toolTip>
+												<_item>Verwaltet durch</_item>
+											</toolTip>
+											<label>
+												<_item>Verwaltet durch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:identity" _operation="create">
                     <_object>
                       <label>
@@ -91,6 +127,164 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<!-- Operations -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress">
+										<_object>
+											<toolTip>
+												<_item>Diese Adresse in andere Adresse überführen</_item>
+											</toolTip>
+											<label>
+												<_item>Diese Adresse in andere Adresse überführen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress:Group:in">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:updateRelationshipsSince">
+										<_object>
+											<toolTip>
+												<_item>Beziehungen nach ... aktualisieren</_item>
+											</toolTip>
+											<label>
+												<_item>Beziehungen nach ... aktualisieren</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:updateRelationshipsBefore">
+										<_object>
+											<toolTip>
+												<_item>Beziehungen vor ... aktualisieren</_item>
+											</toolTip>
+											<label>
+												<_item>Beziehungen vor ... aktualisieren</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:targetAddress">
+										<_object>
+											<toolTip>
+												<_item>Ziel-Adresse</_item>
+											</toolTip>
+											<label>
+												<_item>Ziel-Adresse</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress:Group:result">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressResult:count">
+										<_object>
+											<toolTip>
+												<_item>Anzahl aktualisierte Beziehungen</_item>
+											</toolTip>
+											<label>
+												<_item>Anzahl aktualisierte Beziehungen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount">
+										<_object>
+											<toolTip>
+												<_item>Diese Adresse zu einem anderen Kontakt verschieben</_item>
+											</toolTip>
+											<label>
+												<_item>Diese Adresse zu einem anderen Kontakt verschieben</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount:Group:in">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:updateRelationshipsSince">
+										<_object>
+											<toolTip>
+												<_item>Beziehungen nach ... aktualisieren</_item>
+											</toolTip>
+											<label>
+												<_item>Beziehungen nach ... aktualisieren</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:updateRelationshipsBefore">
+										<_object>
+											<toolTip>
+												<_item>Beziehungen vor ... aktualisieren</_item>
+											</toolTip>
+											<label>
+												<_item>Beziehungen vor ... aktualisieren</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:targetAccount">
+										<_object>
+											<toolTip>
+												<_item>Ziel-Kontakt</_item>
+											</toolTip>
+											<label>
+												<_item>Ziel-Kontakt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount:Group:result">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountResult:count">
+										<_object>
+											<toolTip>
+												<_item>Anzahl aktualisierte Beziehungen</_item>
+											</toolTip>
+											<label>
+												<_item>Anzahl aktualisierte Beziehungen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotAddress:identity" _operation="create">
                     <_object>
                       <label>
@@ -828,6 +1022,17 @@
                       </label>
                       <toolTip>
                         <_item>Adresse der Webseite</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:tz" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zeitzone</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zeitzone</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -31,6 +31,7 @@ import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.ActivityClass;
 import org.opencrx.kernel.backend.MimeMessageImpl;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.openmdx.base.exception.ServiceException;
@@ -272,7 +273,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
 	            for(ActivityCreator creator: activityCreators) {
 	                if(
 	                    (creator.getActivityType() != null) && 
-	                    (creator.getActivityType().getActivityClass() == Activities.ACTIVITY_CLASS_EMAIL)
+	                    (creator.getActivityType().getActivityClass() == ActivityClass.EMAIL.getValue())
 	                ) {
 	                    emailCreator = creator;
 	                    break;

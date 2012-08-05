@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityKeys.java,v 1.18 2010/06/14 15:05:09 wfro Exp $
+ * Name:        $Id: SecurityKeys.java,v 1.20 2011/12/21 13:45:15 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/14 15:05:09 $
+ * Date:        $Date: 2011/12/21 13:45:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,15 +86,42 @@ public class SecurityKeys {
 
     // Encodings
     public static final String PASSWORD_ENCODING_SCHEME = "Base64:";
+
+    // Actions for permissions
+    public enum Action {
+    	
+    	DELETE("delete"),
+    	UPDATE("update"),
+    	READ("read"),
+    	RUN_AS("runAs");
+    	
+    	private final String name;
+    	
+    	private Action(
+    		String name
+    	) {
+    		this.name = name;
+    	}
+    	
+    	public String getName(
+    	) {
+    		return this.name;
+    	}
     
-    //-----------------------------------------------------------------------
-    // Variables
-    //-----------------------------------------------------------------------
+    	public String toString(
+    	) {
+    		return this.name;
+    	}
+    	
+    }
+
+    // Access levels
     public static final short ACCESS_LEVEL_NA = 0;
     public static final short ACCESS_LEVEL_PRIVATE = 1;
     public static final short ACCESS_LEVEL_BASIC = 2;
     public static final short ACCESS_LEVEL_DEEP = 3;
     public static final short ACCESS_LEVEL_GLOBAL = 4;
+    
 }
 
 //--- End of File -----------------------------------------------------------

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Forecasts.java,v 1.5 2010/11/04 16:00:57 wfro Exp $
+ * Name:        $Id: Forecasts.java,v 1.7 2011/12/18 22:14:52 wfro Exp $
  * Description: Forecasts
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/04 16:00:57 $
+ * Date:        $Date: 2011/12/18 22:14:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,7 +70,8 @@ import org.opencrx.kernel.contract1.cci2.OpportunityPositionQuery;
 import org.opencrx.kernel.contract1.cci2.QuotePositionQuery;
 import org.opencrx.kernel.contract1.cci2.SalesOrderPositionQuery;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
-import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
+import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.InvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.OpportunityPosition;
 import org.opencrx.kernel.contract1.jmi1.QuotePosition;
@@ -111,6 +112,20 @@ public class Forecasts extends AbstractImpl {
 		
 	}
 	    
+    //-----------------------------------------------------------------------
+    /**
+     * @return Returns the forecast segment.
+     */
+    public org.opencrx.kernel.forecast1.jmi1.Segment getForecastSegment(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        return (org.opencrx.kernel.forecast1.jmi1.Segment) pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.forecast1").getDescendant("provider", providerName, "segment", segmentName)
+        );
+    }
+
     //-----------------------------------------------------------------------
 	/**
 	 * Invoked by jdoPreStore() can be overriden by custom-specific extension.
@@ -234,17 +249,17 @@ public class Forecasts extends AbstractImpl {
 				BigDecimal quantity = null;
 				if(budgetPosition instanceof QuantityBasedSalesVolumeBudgetPosition) {
 					QuantityBasedSalesVolumeBudgetPosition quantityBasedBudgetPosition = (QuantityBasedSalesVolumeBudgetPosition)budgetPosition;
-					if(contributionSource instanceof AbstractContractPosition) {
-						AbstractContractPosition contractPosition = (AbstractContractPosition)contributionSource;
+					if(contributionSource instanceof SalesContractPosition) {
+						SalesContractPosition contractPosition = (SalesContractPosition)contributionSource;
 						quantity = contractPosition.getQuantity();
 						matches = quantityBasedBudgetPosition.getUom() == null || quantityBasedBudgetPosition.getUom().equals(contractPosition.getUom());
 					}
 				}
 				else if(budgetPosition instanceof ValueBasedSalesVolumeBudgetPosition) {
 					ValueBasedSalesVolumeBudgetPosition valueBasedBudgetPosition = (ValueBasedSalesVolumeBudgetPosition)budgetPosition;
-					if(contributionSource instanceof AbstractContractPosition) {
-						AbstractContractPosition contractPosition = (AbstractContractPosition)contributionSource;
-						AbstractContract contract = (AbstractContract)pm.getObjectById(contractPosition.refGetPath().getParent().getParent());				
+					if(contributionSource instanceof SalesContractPosition) {
+						SalesContractPosition contractPosition = (SalesContractPosition)contributionSource;
+						SalesContract contract = (SalesContract)pm.getObjectById(contractPosition.refGetPath().getParent().getParent());				
 						matches =  valueBasedBudgetPosition.getCurrency() == contract.getContractCurrency();
 						switch(valueBasedBudgetPosition.getValueType()) {
 							case VALUE_TYPE_NA:

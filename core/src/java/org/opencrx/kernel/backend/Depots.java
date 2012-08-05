@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.45 2010/12/09 12:45:56 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.48 2011/12/18 22:14:17 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/09 12:45:56 $
+ * Date:        $Date: 2011/12/18 22:14:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -119,6 +119,20 @@ public class Depots extends AbstractImpl {
 		
 	}
 	
+    //-----------------------------------------------------------------------
+    /**
+     * @return Returns the depot segment.
+     */
+    public org.opencrx.kernel.depot1.jmi1.Segment getDepotSegment(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        return (org.opencrx.kernel.depot1.jmi1.Segment) pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.depot1").getDescendant("provider", providerName, "segment", segmentName)
+        );
+    }
+
     //-----------------------------------------------------------------------
     public void testForOpenPosition(
         Date valueDate,
@@ -427,9 +441,6 @@ public class Depots extends AbstractImpl {
                    new BasicException.Parameter("param1", debitPositions[i].getName())
                );                            
             }
-        }
-        if(valueDate == null) {
-            valueDate = new Date();
         }
         Date bookingDate = new Date();
         // Create compound booking        
@@ -1148,32 +1159,29 @@ public class Depots extends AbstractImpl {
         PersistenceManager pm
     ) throws ServiceException {
         Path depotSegmentIdentity = bookingElementIdentity.getPrefix(5);
-        Path identityPattern = new Path(
-            "xri:@openmdx:org.opencrx.kernel.depot1" + 
-            "/provider/" + bookingElementIdentity.get(2) + 
-            "/segment/" + bookingElementIdentity.get(4) +
-            "/entity/" + bookingElementIdentity.get(6)
-        );        
-        identityPattern.add("depotHolder");
+        Path identityPattern = new Path("xri://@openmdx*org.opencrx.kernel.depot1").getDescendant( 
+            "provider", bookingElementIdentity.get(2), 
+            "segment", bookingElementIdentity.get(4),
+            "entity", bookingElementIdentity.get(6),
+            "depotHolder"
+        );
         if(bookingElementIdentity.size() > 8) {
-            identityPattern.add(bookingElementIdentity.get(8));
-            identityPattern.add("depot");
+            identityPattern = identityPattern.getDescendant(bookingElementIdentity.get(8), "depot");
             if(bookingElementIdentity.size() > 10) {               
-                identityPattern.add(bookingElementIdentity.get(10));
-                identityPattern.add("position");
-                if(bookingElementIdentity.size() > 12) {               
-                    identityPattern.add(bookingElementIdentity.get(12));
+                identityPattern = identityPattern.getDescendant(bookingElementIdentity.get(10), "position");
+                if(bookingElementIdentity.size() > 12) {
+                	identityPattern = identityPattern.getDescendant(bookingElementIdentity.get(12));
                 }
                 else {
-                    identityPattern.add(":*");                    
+                    identityPattern = identityPattern.getDescendant(":*");                    
                 }
             }
             else {
-                identityPattern.add(":*");
+            	identityPattern = identityPattern.getDescendant(":*");
             }
         }
         else {
-            identityPattern.add(":*");
+        	identityPattern = identityPattern.getDescendant(":*");
         }
         SingleBookingQuery bookingQuery = (SingleBookingQuery)pm.newQuery(SingleBooking.class);
         bookingQuery.identity().like(

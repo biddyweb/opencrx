@@ -22,6 +22,40 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGroup">
+										<_object>
+											<toolTip>
+												<_item>Suchliste Verträge</_item>
+											</toolTip>
+											<label>
+												<_item>Suchliste Verträge</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGroup:name">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGroup:description">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGlobal" _operation="create">
                     <_object>
                       <label>

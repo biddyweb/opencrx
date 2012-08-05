@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterUpdateStatusWizard.jsp,v 1.1 2010/10/06 12:52:03 wfro Exp $
+ * Name:        $Id: TwitterUpdateStatusWizard.jsp,v 1.3 2011/10/05 16:35:58 wfro Exp $
  * Description: TwitterUpdateStatusWizard
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/06 12:52:03 $
+ * Date:        $Date: 2011/10/05 16:35:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,7 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 twitter4j.*,
-twitter4j.http.*
+twitter4j.auth.*
 " %><%
 	final String NOTE_TITLE_PREFIX = "Status updated for";
 	
@@ -169,11 +169,12 @@ twitter4j.http.*
             		twitterAccount.getAccessToken(),
             		twitterAccount.getAccessTokenSecret()
             	);
-            	Twitter twitter = twitterFactory.getOAuthAuthorizedInstance(
-            		org.opencrx.application.twitter.TwitterUtils.getConsumerKey(twitterAccount, configuration),
-            		org.opencrx.application.twitter.TwitterUtils.getConsumerSecret(twitterAccount, configuration),
-            		accessToken
-            	);
+            	Twitter twitter = twitterFactory.getInstance();
+            	twitter.setOAuthConsumer(
+               		org.opencrx.application.twitter.TwitterUtils.getConsumerKey(twitterAccount, configuration),
+               		org.opencrx.application.twitter.TwitterUtils.getConsumerSecret(twitterAccount, configuration)
+               	);
+            	twitter.setOAuthAccessToken(accessToken);
                	try {
 	            	Status status = twitter.updateStatus(
 	            		text

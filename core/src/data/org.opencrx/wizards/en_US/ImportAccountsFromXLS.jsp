@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.27 2010/05/12 10:28:24 cmu Exp $
- * Description: import accounts from Excel Sheet
- * Revision:    $Revision: 1.27 $
+ * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.30 2011/11/02 16:30:55 cmu Exp $
+ * Description: import accounts from Excel Sheet (xls or xslx format)
+ * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/12 10:28:24 $
+ * Date:        $Date: 2011/11/02 16:30:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ org.opencrx.kernel.portal.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
+org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
@@ -81,6 +82,8 @@ org.openmdx.base.exception.*,
 org.openmdx.kernel.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.apache.poi.hssf.usermodel.*,
+org.apache.poi.xssf.usermodel.*,
+org.apache.poi.ss.usermodel.*,
 org.apache.poi.hssf.util.*,
 org.apache.poi.poifs.filesystem.POIFSFileSystem
 " %>
@@ -292,7 +295,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                     member.setValidFrom(new java.util.Date());
                     parentAccount.addMember(
                         false,
-                        org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                        org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                         member
                     );
                 }
@@ -343,7 +346,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                     note.refInitialize(false, false);
                     account.addNote(
                         false,
-                        org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                        org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                         note
                     );
                 }
@@ -364,7 +367,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
         String href = "";
         if (crxObject != null) {
             Action parentAction = new Action(
-                Action.EVENT_SELECT_OBJECT,
+                SelectObjectAction.EVENT_ID,
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, crxObject.refMofId())
                 },
@@ -555,10 +558,10 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 <%@page import="org.opencrx.kernel.generic.jmi1.CrxObject"%><html>
 
 <head>
-  <title>Import Accounts from Excel Sheet (XLS)</title>
+  <title>Import Accounts from Excel Sheet (xls or xslx format)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="UNUSEDlabel" content="Import Accounts from Excel Sheet (XLS)">
-  <meta name="UNUSEDtoolTip" content="Import Accounts from Excel Sheet (XLS)">
+  <meta name="UNUSEDlabel" content="Import Accounts from Excel Sheet (XLS/XSLX)">
+  <meta name="UNUSEDtoolTip" content="Import Accounts from Excel Sheet (XLS/XSLX)">
   <meta name="targetType" content="_self">
   <meta name="forClass" content="org:opencrx:kernel:account1:Segment">
   <meta name="order" content="org:opencrx:kernel:account1:Segment:importAccountsFromXLS">
@@ -785,20 +788,21 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 */
 
                       // verify whether File exists
-                      POIFSFileSystem fs = null;
-                      try {
-                        fs = new POIFSFileSystem(new FileInputStream(location));
-                      } catch (Exception e) {}
+				              Workbook wb = null;
+				              try {
+				            	  wb = WorkbookFactory.create(new FileInputStream(location));
+				              } catch (Exception e) {
+				            	  new ServiceException(e).log();
+				              }
 
-                      if(permissionOk && actionOk && (fs != null)) {
+                      if(permissionOk && actionOk && (wb != null)) {
                           continueToExit = true;
 
                           try {
-                              HSSFWorkbook workbook = new HSSFWorkbook(fs);
                               //for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                               // read first sheet only!!!
                               for (int i = 0; i < 1; i++) {
-                                  HSSFSheet sheet = workbook.getSheetAt(i);
+                                  Sheet sheet = wb.getSheetAt(i);
                                   int linesRead = 0;
                                   int contactsUpdated = 0;
                                   int contactsCreated = 0;
@@ -815,7 +819,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                   Iterator rows = sheet.rowIterator();
                                   int nRow = 0;
                                   int maxCell = 0;
-                                  HSSFRow row = null;
+                                  Row row = null;
 
                                   Map attributeMap = new TreeMap();
                                   if (rows.hasNext()) {
@@ -825,19 +829,19 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       <tr class="attributes">
                                           <td>Row<br><%= formatter.format(nRow) %></td>
 <%
-                                          row = (HSSFRow) rows.next();
+                                          row = (Row) rows.next();
                                           try {
                                               Iterator cells = row.cellIterator();
                                               int nCell = 0;
                                               while (cells.hasNext()) {
-                                                  HSSFCell cell = (HSSFCell)cells.next();
-                                                  nCell = cell.getCellNum();
+                                                  Cell cell = (Cell)cells.next();
+                                                  nCell = cell.getColumnIndex();
                                                   if (nCell > maxCell) {
                                                       maxCell = nCell;
                                                   }
                                                   try {
                                                       if (
-                                                          (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) &&
+                                                          (cell.getCellType() == Cell.CELL_TYPE_STRING) &&
                                                           (cell.getStringCellValue() != null)
                                                       ) {
                                                           boolean isSearchAttribute = false;
@@ -906,7 +910,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       boolean isDtypeUnspecifiedAccount = false;
                                       String className = DTYPE_CONTACT; // default
 
-                                      row = (HSSFRow) rows.next();
+                                      row = (Row) rows.next();
                                       String extString0 = null;
                                       String firstName = null;
                                       String lastName = null;
@@ -932,9 +936,9 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                               int currentCell = 0;
                                               appendErrorRow = null;
                                               while (cells.hasNext()) {
-                                                  //HSSFCell cell = (HSSFCell)row.getCell((short)0);
-                                                  HSSFCell cell = (HSSFCell)cells.next();
-                                                  nCell = cell.getCellNum();
+                                                  //Cell cell = (Cell)row.getCell((short)0);
+                                                  Cell cell = (Cell)cells.next();
+                                                  nCell = cell.getColumnIndex();
                                                   if (nCell > currentCell) {
 %>
                                                       <td colspan="<%= nCell-currentCell %>" class="empty">&nbsp;</td>
@@ -943,7 +947,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                   currentCell = nCell+1;
                                                   try {
                                                       cellId =  "id='r" + nRow + (attributeMap.get(formatter.format(nCell))).toString().toUpperCase() + "'";
-                                                      if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+                                                      if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
                                                           String cellValue = cell.getStringCellValue().trim();
                                                           valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
                                                           if (nCell == idxDtype) {
@@ -983,19 +987,19 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 %>
                                                           <td <%= cellId %>><%= cellValue != null ? (cellValue.replace("\r\n", EOL_HTML)).replace("\n", EOL_HTML) : "" %></td>
 <%
-                                                      } else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                                                      } else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                                                           BigDecimal cellValue = new BigDecimal(cell.getNumericCellValue());
                                                           valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
 %>
                                                           <td <%= cellId %>><%= cellValue %></td>
 <%
-                                                      } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
+                                                      } else if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
                                                           boolean cellValue = cell.getBooleanCellValue();
                                                           valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
 %>
                                                           <td <%= cellId %>><%= cellValue ? "TRUE" : "FALSE" %></td>
 <%
-                                                      } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+                                                      } else if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
 %>
                                                           <td <%= cellId %> class="empty">&nbsp;</td>
 <%
@@ -1151,7 +1155,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                           // more than 1 match
                                                           updateExisting = false;;
                                                           Action action = new Action(
-                                                              Action.EVENT_SELECT_OBJECT,
+                                                        	  SelectObjectAction.EVENT_ID,
                                                               new Action.Parameter[]{
                                                                   new Action.Parameter(Action.PARAMETER_OBJECTXRI, matchingContact.refMofId())
                                                               },
@@ -1181,7 +1185,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                           contact.setExtString0(extString0);
                                                           accountSegment.addAccount(
                                                               false,
-                                                              org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                                                              org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                                                               contact
                                                           );
                                                           pm.currentTransaction().commit();
@@ -1205,7 +1209,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                               if (contact != null) {
                                                   // update new or existing contact
                                                   Action action = new Action(
-                                                      Action.EVENT_SELECT_OBJECT,
+                                                	  SelectObjectAction.EVENT_ID,
                                                       new Action.Parameter[]{
                                                           new Action.Parameter(Action.PARAMETER_OBJECTXRI, contact.refMofId())
                                                       },
@@ -1498,7 +1502,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                           // more than 1 match
                                                           updateExisting = false;;
                                                           Action action = new Action(
-                                                              Action.EVENT_SELECT_OBJECT,
+                                                        	  SelectObjectAction.EVENT_ID,
                                                               new Action.Parameter[]{
                                                                   new Action.Parameter(Action.PARAMETER_OBJECTXRI, matchingAbstractGroup.refMofId())
                                                               },
@@ -1539,7 +1543,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               group.setExtString0(extString0);
                                                               accountSegment.addAccount(
                                                                   false,
-                                                                  org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                                                                   group
                                                               );
                                                           } else if (isDtypeLegalEntity) {
@@ -1549,7 +1553,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               legalEntity.setExtString0(extString0);
                                                               accountSegment.addAccount(
                                                                   false,
-                                                                  org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                                                                   legalEntity
                                                               );
                                                           } else if (isDtypeUnspecifiedAccount) {
@@ -1559,7 +1563,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               unspecifiedAccount.setExtString0(extString0);
                                                               accountSegment.addAccount(
                                                                   false,
-                                                                  org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                                                                   unspecifiedAccount
                                                               );
                                                           }
@@ -1594,7 +1598,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                               if (abstractGroup != null) {
                                                   // update new or existing abstractGroup
                                                   Action action = new Action(
-                                                      Action.EVENT_SELECT_OBJECT,
+                                                	  SelectObjectAction.EVENT_ID,
                                                       new Action.Parameter[]{
                                                           new Action.Parameter(Action.PARAMETER_OBJECTXRI, abstractGroup.refMofId())
                                                       },
@@ -2130,7 +2134,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 %>
                                   <tr class="sheetInfo">
                                       <td colspan="<%= maxCell+2 %>">
-                                          Sheet: <b><%= workbook.getSheetName(i) %></b> |
+                                          Sheet: <b><%= sheet.getSheetName() %></b> |
                                           data lines <b>read: <%= linesRead %></b><br>
                                       </td>
                                   </tr>
@@ -2192,7 +2196,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                       // Go back to previous view
                       Action nextAction =
                         new Action(
-                                Action.EVENT_SELECT_OBJECT,
+                          SelectObjectAction.EVENT_ID,
                           new Action.Parameter[]{
                             new Action.Parameter(Action.PARAMETER_OBJECTXRI, objectXri)
                             },
@@ -2233,7 +2237,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
         </div>
       </noscript>
       <div id="etitle" style="height:20px;">
-         Import Accounts from Excel Sheet (XLS) - 1 account per row<br>
+         Import Accounts from Excel Sheet (XLS / XSLX) - 1 account per row<br>
       </div>
 
       <div class="panel" id="panelObj0" style="display: block">

@@ -1,18 +1,18 @@
 ﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
- * Project:				 openCRX/Core, http://www.opencrx.org/
- * Name:						$Id: CreateWorkAndExpenseRecord.jsp,v 1.57 2011/04/06 08:11:47 cmu Exp $
- * Description:		 Create Work Record
- * Revision:				$Revision: 1.57 $
- * Owner:					 CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:						$Date: 2011/04/06 08:11:47 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:		$Id: CreateWorkAndExpenseRecord.jsp,v 1.70 2011/12/16 09:35:26 cmu Exp $
+ * Description:	Create Work Record
+ * Revision:	$Revision: 1.70 $
+ * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
+ * Date:		$Date: 2011/12/16 09:35:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,6 +64,7 @@ javax.xml.datatype.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
+org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
@@ -107,6 +108,8 @@ org.openmdx.base.text.conversion.*
 	) {
 
 		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
+		date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+		date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 		date.set(GregorianCalendar.YEAR, Integer.valueOf(dateAsString.substring(0, 4)));
 		date.set(GregorianCalendar.MONTH, Integer.valueOf(dateAsString.substring(4, 6)) - 1);
 		date.set(GregorianCalendar.DAY_OF_MONTH, Integer.valueOf(dateAsString.substring(6, 8)));
@@ -115,6 +118,14 @@ org.openmdx.base.text.conversion.*
 		date.set(GregorianCalendar.SECOND, 0);
 		date.set(GregorianCalendar.MILLISECOND, 0);
 		return date;
+	}
+
+	public static int getDayOfWeek(
+			String dateAsString,
+			ApplicationContext app
+		) {
+			GregorianCalendar date = getDateAsCalendar(dateAsString, app);
+			return date.get(date.DAY_OF_WEEK);
 	}
 
 	private static String decimalMinutesToHhMm(
@@ -193,7 +204,7 @@ org.openmdx.base.text.conversion.*
 					calendarDay.setDateOfDay(cal);
 					calendar.addCalendarDay(
 						false,
-						org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+						org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 						calendarDay
 					);
 				}
@@ -254,11 +265,11 @@ org.openmdx.base.text.conversion.*
 			"Piece(s)", "Unit(s)"
 	};
 
-	final String featureRecordType = "org:opencrx:kernel:activity1:WorkAndExpenseRecord:recordType";
-	final String featureRecordTypeWork = "org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:recordType";
-	final String featureRecordTypeExpense = "org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:recordType";
-	final String featureBillingCurrency = "org:opencrx:kernel:activity1:WorkAndExpenseRecord:billingCurrency";
-	final String featurePaymentType = "org:opencrx:kernel:activity1:WorkAndExpenseRecord:paymentType";
+	final String featureRecordType = "workAndExpenseType";
+	final String featureRecordTypeWork = "workAndExpenseTypeWorkOnly";
+	final String featureRecordTypeExpense = "workAndExpenseTypeExpenseOnly";
+	final String featureBillingCurrency = "currency";
+	final String featurePaymentType = "paymenttype";
 
 	final String contactTargetFinder = "org:opencrx:kernel:activity1:Resource:contact";
 
@@ -330,6 +341,7 @@ org.openmdx.base.text.conversion.*
 	int tabIndex = 1000; // calendar
 
 	boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
+	boolean mustReload = false;
 	boolean creationFailed = false;
 
 	String command = request.getParameter("command");
@@ -497,10 +509,7 @@ org.openmdx.base.text.conversion.*
 			} else {
 					// default is current users Contact (as defined in current user's UserHome
 					// get UserHome
-					org.opencrx.kernel.home1.jmi1.UserHome myUserHome =
-						(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-							new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
-						);
+					org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
 					if (myUserHome.getContact() != null) {
 						contact = myUserHome.getContact();
 					}
@@ -552,7 +561,7 @@ org.openmdx.base.text.conversion.*
 	} catch (Exception e) {}
 
 	if (activityXri == null) {activityXri = request.getParameter("activityXri");}
-	String recordType	= request.getParameter("recordType")	== null ? Integer.toString(org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD) : request.getParameter("recordType");	// Parameter recordType
+	String recordType	= request.getParameter("recordType")	== null ? Integer.toString(Activities.WorkRecordType.STANDARD.getValue()) : request.getParameter("recordType");	// Parameter recordType
 	String name				= request.getParameter("name")				== null ? ""	: request.getParameter("name");				// Parameter name
 	String description = request.getParameter("description")	== null ? ""	: request.getParameter("description"); // Parameter description
 	String effortHH		= (request.getParameter("effortHH")		== null || request.getParameter("effortHH").length() == 0) ? "8" : request.getParameter("effortHH");		// Parameter effortHH
@@ -587,14 +596,15 @@ org.openmdx.base.text.conversion.*
 	String isFullMonth	= isFirstCall ? "" : request.getParameter("isFullMonth");
 
 	String selectedDateStr = request.getParameter("selectedDateStr"); // // YYYYMMDD
-	if(selectedDateStr == null || selectedDateStr.length() != 8) {
-		selectedDateStr = getDateAsString(
-			new GregorianCalendar().get(GregorianCalendar.YEAR),
-			new GregorianCalendar().get(GregorianCalendar.MONTH) + 1,
-			new GregorianCalendar().get(GregorianCalendar.DAY_OF_MONTH)
-		);
-	}
+	GregorianCalendar today = new GregorianCalendar(app.getCurrentLocale());
+	today.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+	String todayStr = getDateAsString(today);
+	//System.out.println("todayStr = " + todayStr + " [time = " + today.getTime() + " tz  = " + today.getTimeZone().getDisplayName() + "]");
 
+	if(selectedDateStr == null || selectedDateStr.length() != 8) {
+		selectedDateStr = todayStr;
+	}
+	
 	if(actionPrevMonth || actionSelectDateP) {
 		GregorianCalendar date = getDateAsCalendar(selectedDateStr, app); //
 		date.add(GregorianCalendar.MONTH, -1);
@@ -628,6 +638,8 @@ org.openmdx.base.text.conversion.*
 	}
 
 	GregorianCalendar calendar = new GregorianCalendar(app.getCurrentLocale());
+	calendar.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+	calendar.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 	calendar.set(GregorianCalendar.YEAR, calendarYear);
 	calendar.set(GregorianCalendar.MONTH, calendarMonth);
 	calendar.set(GregorianCalendar.DAY_OF_MONTH, 1);
@@ -1081,6 +1093,7 @@ org.openmdx.base.text.conversion.*
 			margin: 0px 10px 20px 0px;
 			padding: 5px 0px 5px 15px;
 			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
 			border: 1.5px solid #DDD;
 			background-color: #EEE;
 		}
@@ -1235,7 +1248,7 @@ org.openmdx.base.text.conversion.*
 					<input type="hidden" name="command" id="command" value="none"/>
 					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-					<input type="hidden" name="selectedDateStr" value="<%= selectedDateStr %>" />
+					<input type="hidden" name="selectedDateStr" id="selectedDateStr" value="<%= selectedDateStr %>" />
 					<input type="hidden" name="isExpenseRecord" id="isExpenseRecord" value="<%= isWorkRecord ? "" : "isExpenseRecord"	%>" />
 					<input type="hidden" name="isWorkRecordInPercent" id="isWorkRecordInPercent" value="<%= !isWorkRecordInPercent ? "" : "isWorkRecordInPercent"	%>" />
 					<input type="hidden" name="hasProjects" id="hasProjects" value="<%= hasProjects ? "hasProjects" : ""	%>" />
@@ -1279,7 +1292,7 @@ org.openmdx.base.text.conversion.*
 										<table id="calWizard" cellspacing="1">
 											<thead>
 												<tr>
-													<th style="text-align:center;padding:0px 10px;">#</th>
+													<th style="text-align:center;padding:0px 10px;cursor:pointer;" title="today" onclick="javascript:$('selectedDateStr').value='<%= todayStr %>';$('reload.button').click();">#</th>
 <%
 													GregorianCalendar dayInWeekCalendar = (GregorianCalendar)calendar.clone();
 													while(dayInWeekCalendar.get(GregorianCalendar.DAY_OF_WEEK) != dayInWeekCalendar.getFirstDayOfWeek()) {
@@ -1301,6 +1314,8 @@ org.openmdx.base.text.conversion.*
 														selectedWeekOfYear = getDateAsCalendar(selectedDateStr, app).get(GregorianCalendar.WEEK_OF_YEAR);
 												}
 												GregorianCalendar calendarPrevMonth = new GregorianCalendar(app.getCurrentLocale());
+												calendarPrevMonth.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+												calendarPrevMonth.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 												calendarPrevMonth.set(GregorianCalendar.YEAR, calendarYear);
 												calendarPrevMonth.set(GregorianCalendar.MONTH, calendarMonth);
 												calendarPrevMonth.set(GregorianCalendar.DAY_OF_MONTH, 1);
@@ -1435,6 +1450,7 @@ org.openmdx.base.text.conversion.*
 													</select>
 <%
 											} else {
+												if (resourceXri == null) {mustReload = true;}
 %>
 												<select id="resourceXri" name="resourceXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('isResourceChange').value='true';$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
@@ -1923,7 +1939,7 @@ org.openmdx.base.text.conversion.*
 														Map.Entry option = (Map.Entry)options.next();
 														short value = Short.parseShort((option.getKey()).toString());
 														String selectedModifier = Short.parseShort(recordType) == value ? "selected" : "";
-														if (!isWorkRecordInPercent || value == org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD) {
+														if (!isWorkRecordInPercent || value == Activities.WorkRecordType.STANDARD.getValue()) {
 %>
 																<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
 <%
@@ -1985,9 +2001,9 @@ org.openmdx.base.text.conversion.*
 											if ((resourceXri != null) && (resourceXri.length() > 0) && (resourceXri.compareTo("*") != 0)) {
 												org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
 												try {
-														if (recordType.compareTo(String.valueOf(org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD)) == 0) {
+														if (recordType.compareTo(String.valueOf(Activities.WorkRecordType.STANDARD.getValue())) == 0) {
 																rate = res.getStandardRate() != null ? quantityf.format(res.getStandardRate()) : "0.000";
-														} else if (recordType.compareTo(String.valueOf(org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_OVERTIME)) == 0) {
+														} else if (recordType.compareTo(String.valueOf(Activities.WorkRecordType.OVERTIME.getValue())) == 0) {
 																rate = res.getOvertimeRate() != null ? quantityf.format(res.getOvertimeRate()) : "0.000";
 														}
 												} catch (Exception e) {}
@@ -2085,6 +2101,8 @@ org.openmdx.base.text.conversion.*
 													calDayName = calendardayf.format(getDateAsCalendar(selectedDateStr, app).getTime());
 												} catch (Exception e) {}
 												String calDayLoad = null;
+												short defaultLoad = 100;
+												
 												boolean isCurrentUsersResource = false;
 												if (isWorkRecordInPercent) {
 													// try to get Default Calendar of Resource
@@ -2093,6 +2111,24 @@ org.openmdx.base.text.conversion.*
 														if (currentResource != null) {
 																if (currentResource.getCalendar() != null) {
 																	cal = currentResource.getCalendar();
+
+																	// get default load from WeekDay 
+																	org.opencrx.kernel.activity1.cci2.WeekDayQuery weekDayQuery = (org.opencrx.kernel.activity1.cci2.WeekDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.WeekDay.class);
+																	weekDayQuery.dayOfWeek().equalTo(new Short((short)getDayOfWeek(selectedDateStr, app)));
+																	Collection daysOfWeek = cal.getWeekDay(weekDayQuery);
+																	if(!daysOfWeek.isEmpty()) {
+																		org.opencrx.kernel.activity1.jmi1.WeekDay weekDay = (org.opencrx.kernel.activity1.jmi1.WeekDay)daysOfWeek.iterator().next();
+																		if (weekDay.getWorkDurationHours() != null) {
+																				defaultLoad = weekDay.getWorkDurationHours().shortValue();
+																				if (defaultLoad < 0) {
+																						defaultLoad = 0;
+																				}
+																				if (defaultLoad > 100) {
+																						defaultLoad = 100;
+																				}
+																		}
+																	}
+																
 																	// try to get CalendarDay
 																	org.opencrx.kernel.activity1.cci2.CalendarDayQuery calendarDayQuery = (org.opencrx.kernel.activity1.cci2.CalendarDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
 																	calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(selectedDateStr, app).getTime());
@@ -2111,10 +2147,7 @@ org.openmdx.base.text.conversion.*
 																}
 																// default is current users Contact (as defined in current user's UserHome
 																// get UserHome
-																org.opencrx.kernel.home1.jmi1.UserHome myUserHome =
-																	(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-																		new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
-																	);
+																org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
 																if (
 																		(myUserHome.getContact() != null) &&
 																		(currentResource.getContact() != null) &&
@@ -2123,46 +2156,59 @@ org.openmdx.base.text.conversion.*
 																	isCurrentUsersResource = true;
 																}
 																
-																if (cal != null && calDay != null && isCurrentUsersResource) {
+																if (cal != null && calDay != null /*&& isCurrentUsersResource*/) {
+																		String calendarDayName = null;
 																		//System.out.println("UPDATE: " + request.getParameter("ACTION.updateCalendarDay"));
-																		if (request.getParameter("ACTION.updateCalendarDay") != null) {
-																				try {
-																						String calendarDayName = request.getParameter("ACTION.updateCalendarDay");
-																						if (calendarDayName != null && calendarDayName.length() > 9) {
-																								calDay = createOrUpdateCalendarDay(
-																										calendarDayName,
-																										calendarDayName.substring(0,8),
-																										cal,
-																										calDay,
-																										activitySegment,
-																										pm
-																								);
-																								String[] calDayNameSplit = calendarDayName.split("@");
-																								if (calDayNameSplit.length>=2) {
-																										calDayName = calDayNameSplit[0];
-																										calDayLoad = calDayNameSplit[1];
-																								}
-																						}
-																				} catch (Exception e) {
-																						new ServiceException(e).log();
+																		if (request.getParameter("load." + selectedDateStr) != null && request.getParameter("load." + selectedDateStr).length() > 0) {
+																				calendarDayName = selectedDateStr + "@" + request.getParameter("load." + selectedDateStr);
+																		} else {
+																				if (request.getParameter("ACTION.updateCalendarDay") != null && request.getParameter("ACTION.updateCalendarDay").length() > 9) {
+																						calendarDayName = request.getParameter("ACTION.updateCalendarDay");
 																				}
 																		}
+	
+																		if (calendarDayName != null && calendarDayName.compareTo(calDay.getName()) != 0) {
+																			System.out.println(new java.util.Date() + "UPDATE: " + calendarDayName);
+																			try {
+																					calDay = createOrUpdateCalendarDay(
+																							calendarDayName,
+																							calendarDayName.substring(0,8),
+																							cal,
+																							calDay,
+																							activitySegment,
+																							pm
+																					);
+																			} catch (Exception e) {
+																					new ServiceException(e).log();
+																			}
+																			String[] calDayNameSplit = calendarDayName.split("@");
+																			if (calDayNameSplit.length>=2) {
+																					calDayName = calDayNameSplit[0];
+																					calDayLoad = calDayNameSplit[1];
+																			}
+																		}
 																}
-																if (cal != null && calDay == null && isCurrentUsersResource) {
-																		//System.out.println("CREATE: " + request.getParameter("ACTION.createCalendarDay"));
-																		if (request.getParameter("ACTION.createCalendarDay") != null) {
+																if (cal != null && calDay == null /*&& isCurrentUsersResource*/) {
+																		String calendarDayName = null;
+																		if (request.getParameter("load." + selectedDateStr) != null && request.getParameter("load." + selectedDateStr).length() > 0) {
+																				calendarDayName = selectedDateStr + "@" + request.getParameter("load." + selectedDateStr);
+																		} else {
+																				if (request.getParameter("ACTION.createCalendarDay") != null && request.getParameter("ACTION.createCalendarDay").length() > 9) {
+																						calendarDayName = request.getParameter("ACTION.createCalendarDay");
+																				}
+																		}
+																			
+																		if (calendarDayName != null) {
+																				System.out.println(new java.util.Date() + "CREATE: " + calendarDayName);
 																				try {
-																						String calendarDayName = request.getParameter("ACTION.createCalendarDay");
-																						if (calendarDayName != null && calendarDayName.length() > 9) {
-																								calDay = createOrUpdateCalendarDay(
-																										calendarDayName,
-																										calendarDayName.substring(0,8),
-																										cal,
-																										null,
-																										activitySegment,
-																										pm
-																								);
-																						}
+																						calDay = createOrUpdateCalendarDay(
+																								calendarDayName,
+																								calendarDayName.substring(0,8),
+																								cal,
+																								null,
+																								activitySegment,
+																								pm
+																						);
 																				} catch (Exception e) {
 																						new ServiceException(e).log();
 																				}
@@ -2173,7 +2219,7 @@ org.openmdx.base.text.conversion.*
 																		try {
 																				if (calDayName != null && calDayName.length() > 0) {
 																						calDay = createOrUpdateCalendarDay(
-																								calDayName + "@100",
+																								calDayName + "@" + defaultLoad,
 																								calDayName,
 																								cal,
 																								null,
@@ -2200,26 +2246,26 @@ org.openmdx.base.text.conversion.*
 															<%= cal != null && cal.getName() != null ? cal.getName() : "--" %>
 													</td>
 													<td style="vertical-align:bottom;padding-right:30px;">
-															<%= app.getLabel(CALENDARDAY_CLASS) %>:&nbsp;&nbsp;<%= calDay != null && calDay.getName() != null ? calDay.getName() : "--" %><br>
+															<%= calDay != null && calDay.getName() != null ? app.getLabel(CALENDARDAY_CLASS) + ":  " + calDay.getName() : "Default Load: " + defaultLoad + "%" %><br>
 <%
 															if (cal != null && calDay != null && calDay.getName() != null) {
 																	// change options
 %>
 																	<input type="hidden" name="currentCalendarDayXri" id="currentCalendarDayXri" value="<%= calDay.refMofId() %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("0") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("25") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("50") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("75") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	   style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("0") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("25") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("50") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("75") == 0 ? "border:2px black solid;" : "" %>" />
 																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("100") == 0 ? "border:2px black solid;" : "" %>" />
 <%
-															} else if (cal != null && isCurrentUsersResource) {
+															} else if (cal != null /*&& isCurrentUsersResource*/) {
 																	// create options
 %>
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	 style="font-size:10px;font-weight:bold;width:4em;" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	style="font-size:10px;font-weight:bold;width:4em;" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	style="font-size:10px;font-weight:bold;width:4em;" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	style="font-size:10px;font-weight:bold;width:4em;" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	   style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==   0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	 style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==  25 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	 style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==  50 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	 style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==  75 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad == 100 ? "border:2px black solid;" : "" %>" />
 
 <%
 															}
@@ -2348,9 +2394,7 @@ org.openmdx.base.text.conversion.*
 								org.opencrx.kernel.home1.jmi1.UserHome myUserHome = null;
 								try {
 										// get UserHome
-										myUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-													new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
-										);
+										myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
 								} catch (Exception e) {
 										new ServiceException(e).log();
 								};
@@ -2403,7 +2447,6 @@ org.openmdx.base.text.conversion.*
 									</tr>
 								</table>
 								</fieldset>
-
 							</td>
 						</tr>
 						<tr>
@@ -2425,7 +2468,7 @@ org.openmdx.base.text.conversion.*
 							<td></td>
 							<td>
 									<input type="submit" id="add.button" name="add.button" <%= noActivitiesFound || noResourcesFound ? "disabled" : "" %> tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %>" onclick="<%= SUBMIT_HANDLER %>" />
-									<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="<%= SUBMIT_HANDLER %>" />
+									<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>" />
 							</td>
 						</tr>
 					</table>
@@ -2521,6 +2564,8 @@ org.openmdx.base.text.conversion.*
 									) {
 											org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
 											GregorianCalendar startedAtCal = new GregorianCalendar(app.getCurrentLocale());
+											startedAtCal.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+											startedAtCal.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 											String sortKey = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
 											try {
 													if (workAndExpenseRecord.getStartedAt() == null) {
@@ -2603,19 +2648,21 @@ org.openmdx.base.text.conversion.*
 												org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
 
 												GregorianCalendar startedAtDate = new GregorianCalendar(app.getCurrentLocale());
+												startedAtDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 												startedAtDate.setTime(workAndExpenseRecord.getStartedAt());
 												startedAtCurrent = getDateAsString(startedAtDate);
 												boolean matchWithFormStartedAt =
 														startedAtCurrent.compareTo(selectedDateStr) == 0;
 												GregorianCalendar creationDate = new GregorianCalendar(app.getCurrentLocale());
-												GregorianCalendar today = new GregorianCalendar(app.getCurrentLocale());
+												creationDate.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+												creationDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 												creationDate.setTime(workAndExpenseRecord.getCreatedAt());
 												boolean matchWithFormJustCreated = workAndExpenseRecord.refMofId().compareTo((isWorkRecord ? lastCreatedWorkRecordXri : lastCreatedExpenseRecordXri)) == 0;
 
 												org.opencrx.kernel.activity1.jmi1.Activity activity = workAndExpenseRecord.getActivity();
 												String recordHref = "";
 												Action action = new Action(
-														Action.EVENT_SELECT_OBJECT,
+														SelectObjectAction.EVENT_ID,
 														new Action.Parameter[]{
 																new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
 														},
@@ -2626,7 +2673,7 @@ org.openmdx.base.text.conversion.*
 												String activityHref = "";
 												if (activity != null) {
 													action = new Action(
-															Action.EVENT_SELECT_OBJECT,
+															SelectObjectAction.EVENT_ID,
 															new Action.Parameter[]{
 																	new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
 															},
@@ -2804,6 +2851,7 @@ org.openmdx.base.text.conversion.*
 		</div> <!-- content-wrap -->
 	</div> <!-- wrap -->
 </div> <!-- container -->
+<%= mustReload ? "<script language='javascript' type='text/javascript'>$('reload.button').click();</script>" : "" %>
 </body>
 </html>
 <%

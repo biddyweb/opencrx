@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IMAPServer.java,v 1.14 2010/09/24 15:54:28 wfro Exp $
+ * Name:        $Id: IMAPServer.java,v 1.15 2011/10/07 14:36:20 wfro Exp $
  * Description: IMAPServer
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/24 15:54:28 $
+ * Date:        $Date: 2011/10/07 14:36:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -116,7 +116,7 @@ public class IMAPServer extends AbstractServer {
     }
 	
     //-----------------------------------------------------------------------
-    private String encodeFolderName(
+    protected String encodeFolderName(
         String name
     ) {
         // Slash is qualified name separator. Do not allow in folder names

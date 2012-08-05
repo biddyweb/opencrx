@@ -1,18 +1,18 @@
 ﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
- * Project:					openCRX/Core, http://www.opencrx.org/
- * Name:						$Id: WorkAndExpenseReport.jsp,v 1.47 2011/04/06 12:58:10 cmu Exp $
- * Description:			Create Work And Expsense Report
- * Revision:				$Revision: 1.47 $
- * Owner:						CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:						$Date: 2011/04/06 12:58:10 $
+ * Project:				openCRX/Core, http://www.opencrx.org/
+ * Name:				$Id: WorkAndExpenseReport.jsp,v 1.59 2011/12/16 09:35:26 cmu Exp $
+ * Description:			Create Work And Expense Report
+ * Revision:			$Revision: 1.59 $
+ * Owner:				CRIXP Corp., Switzerland, http://www.crixp.com
+ * Date:				$Date: 2011/12/16 09:35:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,7 @@ java.text.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
+org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
@@ -108,6 +109,8 @@ org.apache.poi.hssf.util.*
 		ApplicationContext app
 	) {
 		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
+		date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+		date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 		date.set(GregorianCalendar.YEAR, Integer.valueOf(dateAsString.substring(0, 4)));
 		date.set(GregorianCalendar.MONTH, Integer.valueOf(dateAsString.substring(4, 6)) - 1);
 		date.set(GregorianCalendar.DAY_OF_MONTH, Integer.valueOf(dateAsString.substring(6)));
@@ -124,6 +127,8 @@ org.apache.poi.hssf.util.*
 		ApplicationContext app
 	) {
 		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
+		date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+		date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 		try {
 			date.set(GregorianCalendar.YEAR, Integer.valueOf(dateAsString.substring(6, 10)));
 			date.set(GregorianCalendar.MONTH, Integer.valueOf(dateAsString.substring(3, 5)) - 1);
@@ -136,6 +141,14 @@ org.apache.poi.hssf.util.*
 				date = null;
 		}
 		return date;
+	}
+
+	public static int getDayOfWeek(
+			String dateAsString,
+			ApplicationContext app
+		) {
+			GregorianCalendar date = getDateAsCalendar(dateAsString, app);
+			return date.get(date.DAY_OF_WEEK);
 	}
 
 	private static String decimalMinutesToHhMm(
@@ -157,6 +170,7 @@ org.apache.poi.hssf.util.*
 		String calDayName,
 		Set resourcesToday,
 		Map dayPercentageTotals,
+		Map dayLoads,
 		javax.jdo.PersistenceManager pm
 	) {
 		NumberFormat formatter0 = new DecimalFormat("0");
@@ -273,9 +287,9 @@ org.apache.poi.hssf.util.*
 			"Piece(s)", "Unit(s)"
 	};
 
-	final String FEATURE_RECORD_TYPE = "org:opencrx:kernel:activity1:WorkAndExpenseRecord:recordType";
-	final String FEATURE_PRIORITY = "org:opencrx:kernel:activity1:Activity:priority";
-	final String FEATURE_BILLING_CURRENCY = "org:opencrx:kernel:activity1:WorkAndExpenseRecord:billingCurrency";
+	final String FEATURE_RECORD_TYPE = "workAndExpenseType";
+	final String FEATURE_PRIORITY = "priority";
+	final String FEATURE_BILLING_CURRENCY = "currency";
 
 	final String FEATURE_CONTACT_TARGET_FINDER = "org:opencrx:kernel:activity1:Resource:contact";
 
@@ -439,6 +453,11 @@ org.apache.poi.hssf.util.*
 	HSSFDataFormat wformat = wb.createDataFormat();
 	weightStyle.setDataFormat(wformat.getFormat("#,##0.000"));
 
+	HSSFCellStyle percentStyle = wb.createCellStyle();
+	percentStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+	HSSFDataFormat pformat = wb.createDataFormat();
+	percentStyle.setDataFormat(wformat.getFormat("0.00%"));
+
 	String contactXri = null;
 	String resourceXri = null;
 	String activityFilter = null;
@@ -552,6 +571,8 @@ org.apache.poi.hssf.util.*
 
 		// determine initial setting of selector
 		GregorianCalendar selectorDate = new GregorianCalendar(app.getCurrentLocale());
+		selectorDate.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+		selectorDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 		selectorDate.set(GregorianCalendar.DAY_OF_MONTH, 1);
 		selectorDate.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		selectorDate.set(GregorianCalendar.MINUTE, 0);
@@ -584,10 +605,7 @@ org.apache.poi.hssf.util.*
 			} else {
 					// default is current users Contact (as defined in current user's UserHome
 					// get UserHome
-					org.opencrx.kernel.home1.jmi1.UserHome myUserHome =
-						(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-							new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
-						);
+					org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
 					if (myUserHome.getContact() != null) {
 						contact = myUserHome.getContact();
 					}
@@ -774,6 +792,7 @@ org.apache.poi.hssf.util.*
 			margin: 0px 10px 20px 0px;
 			padding: 5px 0px 5px 15px;
 			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
 			border: 1.5px solid #DDD;
 			background-color: #EEE;
 		}
@@ -906,6 +925,8 @@ org.apache.poi.hssf.util.*
 												<option <%= isManualEntry ? "selected" : ""	%> value="*">&mdash;&mdash;&mdash;&gt;</option>
 <%
 												GregorianCalendar now = new GregorianCalendar(app.getCurrentLocale());
+												now.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+												now.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 												if (isManualEntry) {
 														if (scheduledStartDateOK) {
 																reportBeginOfPeriod = (GregorianCalendar)scheduledStartDate.clone();
@@ -918,6 +939,8 @@ org.apache.poi.hssf.util.*
 												// full months
 												for (int i=-7; i <= 7; i++) {
 														GregorianCalendar beginOfPeriod = new GregorianCalendar(app.getCurrentLocale());
+														beginOfPeriod.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+														beginOfPeriod.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 														beginOfPeriod.set(GregorianCalendar.DAY_OF_MONTH, 1);
 														beginOfPeriod.add(GregorianCalendar.MONTH, i);
 														beginOfPeriod.set(GregorianCalendar.HOUR_OF_DAY, 0);
@@ -1579,7 +1602,7 @@ org.apache.poi.hssf.util.*
 							<td>
 								<input type="submit" id="EVICT_RELOAD" name="EVICT_RELOAD" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="<%= SUBMIT_HANDLER %>" />
 								<input type="submit" id="reload.button" name="reload.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="<%= SUBMIT_HANDLER %>" style="display:none;" />
-								<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="<%= SUBMIT_HANDLER %>" />
+								<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>" />
 							</td>
 						</tr>
 					</table>
@@ -1788,9 +1811,15 @@ org.apache.poi.hssf.util.*
 							} catch (Exception e) {
 								activityNumber = "-";
 							}
+							String resourceKey = "*";
+							try {
+									if (workAndExpenseRecord != null && workAndExpenseRecord.getResource() != null) {
+											resourceKey = workAndExpenseRecord.getResource().refMofId();
+									}
+							} catch (Exception e) {}
 							if (
 								((selectedActivities == null) || (selectedActivities.containsKey(activityNumber))) &&
-								((selectedResources	== null) || (selectedResources.containsKey(workAndExpenseRecord.getResource().refMofId())))
+								((selectedResources	== null) || (selectedResources.containsKey(resourceKey)))
 							) {
 								String sortKey =
 									(workAndExpenseRecord.getStartedAt() != null ? dtsortf.format(workAndExpenseRecord.getStartedAt()) : "yyyyMMddHHmmss") + "-" +
@@ -1976,6 +2005,8 @@ org.apache.poi.hssf.util.*
 								String WWDDsumTimeKey = null;
 								try {
 									GregorianCalendar cal = new GregorianCalendar(app.getCurrentLocale());
+									cal.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+									cal.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 									cal.setTime(workAndExpenseRecord.getStartedAt());
 									WWDDKey =
 										yyyyf.format(cal.getTime()) +
@@ -2053,7 +2084,7 @@ org.apache.poi.hssf.util.*
 					String resHref = "";
 					if (resource != null) {
 						Action action = new Action(
-								Action.EVENT_SELECT_OBJECT,
+								SelectObjectAction.EVENT_ID,
 								new Action.Parameter[]{
 										new Action.Parameter(Action.PARAMETER_OBJECTXRI, resource.refMofId())
 								},
@@ -2067,7 +2098,7 @@ org.apache.poi.hssf.util.*
 					String contactHref = "";
 					if (contact != null) {
 						Action action = new Action(
-								Action.EVENT_SELECT_OBJECT,
+								SelectObjectAction.EVENT_ID,
 								new Action.Parameter[]{
 										new Action.Parameter(Action.PARAMETER_OBJECTXRI, contact.refMofId())
 								},
@@ -2081,7 +2112,7 @@ org.apache.poi.hssf.util.*
 					String activityGroupHref = "*";
 					if (activityGroup != null) {
 						Action action = new Action(
-								Action.EVENT_SELECT_OBJECT,
+								SelectObjectAction.EVENT_ID,
 								new Action.Parameter[]{
 										new Action.Parameter(Action.PARAMETER_OBJECTXRI, activityGroup.refMofId())
 								},
@@ -2101,7 +2132,7 @@ org.apache.poi.hssf.util.*
 					}
 					if (act != null) {
 						Action action = new Action(
-								Action.EVENT_SELECT_OBJECT,
+								SelectObjectAction.EVENT_ID,
 								new Action.Parameter[]{
 										new Action.Parameter(Action.PARAMETER_OBJECTXRI, act.refMofId())
 								},
@@ -2208,15 +2239,16 @@ org.apache.poi.hssf.util.*
 
 							boolean showFullStartedAtDate = (!isWorkRecordInPercent) && (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
 
-							sheetRecords.setColumnWidth((short)0, (short)1200);
-							sheetRecords.setColumnWidth((short)1, (short)4500);
-							sheetRecords.setColumnWidth((short)2, (short)1000);
-							sheetRecords.setColumnWidth((short)3, (short)4500);
-							sheetRecords.setColumnWidth((short)4, (short) 400);
-							sheetRecords.setColumnWidth((short)5, (short)9000);
-							sheetRecords.setColumnWidth((short)6, (short)3000);
-							sheetRecords.setColumnWidth((short)7, (short)4000);
-							sheetRecords.setColumnWidth((short)8, (short)4000);
+							sheetRecords.setColumnWidth((short)0, (short)1200); //A
+							sheetRecords.setColumnWidth((short)1, (short)4500); //B - startedAt
+							sheetRecords.setColumnWidth((short)2, (short)1000); //C
+							sheetRecords.setColumnWidth((short)3, (short)4500); //D - endedAt
+							sheetRecords.setColumnWidth((short)4, (short) 400); //E
+							sheetRecords.setColumnWidth((short)5, (short)9000); //F - activity
+							sheetRecords.setColumnWidth((short)6, (short)3000); //G - name
+							sheetRecords.setColumnWidth((short)7, (short)4000); //H - description
+							sheetRecords.setColumnWidth((short)8, (short)4000); //I - resource
+							sheetRecords.setColumnWidth((short)9, (short)4000); //J
 
 							nRow = REPORT_STARTING_ROW;
 							row = sheetRecords.createRow(nRow++);
@@ -2228,13 +2260,13 @@ org.apache.poi.hssf.util.*
 							cell = row.createCell(nCell++);
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()));
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()));
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()));
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()));
 							if (isWorkRecord) {
 									if (isWorkRecordInPercent) {
 											cell = row.createCell(nCell++);	cell.setCellValue("%"); cell.setCellStyle(quantityStyle);
 											sheetRecords.setColumnWidth((short) 3, (short)0);
-											sheetRecords.setColumnWidth((short) 8, (short)1800);
-											sheetRecords.setColumnWidth((short) 9, (short)0);
+											sheetRecords.setColumnWidth((short) 9, (short)1800);
 											sheetRecords.setColumnWidth((short)10, (short)0);
 											sheetRecords.setColumnWidth((short)11, (short)0);
 											sheetRecords.setColumnWidth((short)12, (short)0);
@@ -2242,35 +2274,35 @@ org.apache.poi.hssf.util.*
 											sheetRecords.setColumnWidth((short)14, (short)0);
 											sheetRecords.setColumnWidth((short)15, (short)0);
 											sheetRecords.setColumnWidth((short)16, (short)0);
-											sheetRecords.setColumnWidth((short)17, (short)2000);
-											sheetRecords.setColumnWidth((short)17, (short)2000);
+											sheetRecords.setColumnWidth((short)17, (short)3000);
+											sheetRecords.setColumnWidth((short)18, (short)3000);
 									} else {
 											cell = row.createCell(nCell++);	cell.setCellValue("hh:mm"); cell.setCellStyle(timeStyle);
-											sheetRecords.setColumnWidth((short) 8, (short)1800);
 											sheetRecords.setColumnWidth((short) 9, (short)1800);
-											sheetRecords.setColumnWidth((short)10, (short)1200);
-											sheetRecords.setColumnWidth((short)11, (short)3000);
+											sheetRecords.setColumnWidth((short)10, (short)1800);
+											sheetRecords.setColumnWidth((short)11, (short)1200);
 											sheetRecords.setColumnWidth((short)12, (short)3000);
 											sheetRecords.setColumnWidth((short)13, (short)3000);
-											sheetRecords.setColumnWidth((short)14, (short)1000);
-											sheetRecords.setColumnWidth((short)15, (short)4000);
-											sheetRecords.setColumnWidth((short)16, (short)6000);
+											sheetRecords.setColumnWidth((short)14, (short)3000);
+											sheetRecords.setColumnWidth((short)15, (short)1000);
+											sheetRecords.setColumnWidth((short)16, (short)4000);
+											sheetRecords.setColumnWidth((short)17, (short)6000);
 									}
 							} else {
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
 									cell = row.createCell(nCell++);
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()));
-									sheetRecords.setColumnWidth((short) 8, (short)2000);
-									sheetRecords.setColumnWidth((short) 9, (short)1000);
-									sheetRecords.setColumnWidth((short)10, (short)3000);
+									sheetRecords.setColumnWidth((short) 9, (short)2000);
+									sheetRecords.setColumnWidth((short)10, (short)1000);
 									sheetRecords.setColumnWidth((short)11, (short)3000);
-									sheetRecords.setColumnWidth((short)12, (short)1800);
-									sheetRecords.setColumnWidth((short)13, (short)1200);
-									sheetRecords.setColumnWidth((short)14, (short)3000);
+									sheetRecords.setColumnWidth((short)12, (short)3000);
+									sheetRecords.setColumnWidth((short)13, (short)1800);
+									sheetRecords.setColumnWidth((short)14, (short)1200);
 									sheetRecords.setColumnWidth((short)15, (short)3000);
 									sheetRecords.setColumnWidth((short)16, (short)3000);
-									sheetRecords.setColumnWidth((short)17, (short)6000);
+									sheetRecords.setColumnWidth((short)17, (short)3000);
+									sheetRecords.setColumnWidth((short)18, (short)6000);
 							}
 							cell = row.createCell(nCell++);
 							cell = row.createCell(nCell++);
@@ -2289,10 +2321,11 @@ org.apache.poi.hssf.util.*
 											cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
 									}
 							}
-							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()));
-							if (isWorkRecordInPercent && !hasMultipleResources) {
-									cell = row.createCell(nCell++);	cell.setCellValue("SUM"); cell.setCellStyle(rightAlignStyle);
+							if (isWorkRecordInPercent) {
 									cell = row.createCell(nCell++);	cell.setCellValue("Day Load"); cell.setCellStyle(rightAlignStyle);
+									if (!hasMultipleResources) {
+											cell = row.createCell(nCell++);	cell.setCellValue("SUM"); cell.setCellStyle(rightAlignStyle);
+									}
 							}
 
 /*--------------------------------------------------------------
@@ -2330,6 +2363,7 @@ org.apache.poi.hssf.util.*
 									}
 %>
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+									<td class="smallheaderR"><%= isWorkRecordInPercent ? "Day Load" : "" %></td>
 									<td class="smallheaderR"><%= isWorkRecordInPercent && !hasMultipleResources ? "&sum;" : "" %></td>
 								</tr>
 <%
@@ -2347,12 +2381,14 @@ org.apache.poi.hssf.util.*
 									org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)i.next();
 
 									GregorianCalendar startedAtDate = new GregorianCalendar(app.getCurrentLocale());
+									startedAtDate.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+									startedAtDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 									startedAtDate.setTime(workAndExpenseRecord.getStartedAt());
 									startedAtCurrent = getDateAsString(startedAtDate);
 
 									String recordHref = "";
 									Action action = new Action(
-											Action.EVENT_SELECT_OBJECT,
+											SelectObjectAction.EVENT_ID,
 											new Action.Parameter[]{
 													new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
 											},
@@ -2371,7 +2407,7 @@ org.apache.poi.hssf.util.*
 										(isWorkRecordInPercent || (activity.getPriority() >= priority))
 									) {
 										action = new Action(
-											Action.EVENT_SELECT_OBJECT,
+											SelectObjectAction.EVENT_ID,
 											new Action.Parameter[]{
 													new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
 											},
@@ -2382,7 +2418,7 @@ org.apache.poi.hssf.util.*
 										String resourceHref = "";
 										if (workAndExpenseRecord.getResource() != null) {
 											action = new Action(
-													Action.EVENT_SELECT_OBJECT,
+													SelectObjectAction.EVENT_ID,
 													new Action.Parameter[]{
 															new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.getResource().refMofId())
 													},
@@ -2397,8 +2433,9 @@ org.apache.poi.hssf.util.*
 												isDayBreak = true;
 												if (isWorkRecordInPercent && hasMultipleResources && !isFirstRow) {
 														// calculate list of Resources whose sum of allocations for the current day does not equal 100%
-														resourceErrorMsg = resourceErrorMsgUpdate(resourceErrorMsg, calDayName, resourcesToday, dayPercentageTotals, pm);
+														resourceErrorMsg = resourceErrorMsgUpdate(resourceErrorMsg, calDayName, resourcesToday, dayPercentageTotals, dayLoads, pm);
 														if (resourceErrorMsg != null) {
+															  resourceErrorMsg = dateonlyf.format(getDateAsCalendar(calDayName, app).getTime()) + ": " + resourceErrorMsg;
 																row = sheetRecords.createRow(nRow++);
 																nCell = 0;
 																cell = row.createCell(nCell++);	
@@ -2407,7 +2444,7 @@ org.apache.poi.hssf.util.*
 																dayErrorMessages.put(calDayName, resourceErrorMsg);
 %>
 																<tr class='break'>
-																	<td colspan="11"><%= resourceErrorMsg %></td>
+																	<td colspan="12"><%= resourceErrorMsg %></td>
 																</tr>
 <%
 														}
@@ -2435,6 +2472,7 @@ org.apache.poi.hssf.util.*
 										} catch (Exception e) {}
 										String calDayLoad = null;
 										double dayLoad = 100.0;
+										short defaultLoad = 100;
 
 										if (isWorkRecordInPercent) {
 											// try to get Default Calendar of Resource
@@ -2443,6 +2481,26 @@ org.apache.poi.hssf.util.*
 												if (currentResource != null) {
 														if (currentResource.getCalendar() != null) {
 															cal = currentResource.getCalendar();
+															
+															// get default load from WeekDay 
+															org.opencrx.kernel.activity1.cci2.WeekDayQuery weekDayQuery = (org.opencrx.kernel.activity1.cci2.WeekDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.WeekDay.class);
+															weekDayQuery.dayOfWeek().equalTo(new Short((short)getDayOfWeek(startedAtCurrent, app)));
+															Collection daysOfWeek = cal.getWeekDay(weekDayQuery);
+															if(!daysOfWeek.isEmpty()) {
+																org.opencrx.kernel.activity1.jmi1.WeekDay weekDay = (org.opencrx.kernel.activity1.jmi1.WeekDay)daysOfWeek.iterator().next();
+																if (weekDay.getWorkDurationHours() != null) {
+																		defaultLoad = weekDay.getWorkDurationHours().shortValue();
+																		if (defaultLoad < 0) {
+																				defaultLoad = 0;
+																		}
+																		if (defaultLoad > 100) {
+																				defaultLoad = 100;
+																		}
+																}
+															}
+															if (defaultLoad != 100) {
+																dayLoad = (double)defaultLoad;
+															}
 															// try to get CalendarDay
 															org.opencrx.kernel.activity1.cci2.CalendarDayQuery calendarDayQuery = (org.opencrx.kernel.activity1.cci2.CalendarDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
 															calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(calDayName, app).getTime());
@@ -2544,6 +2602,7 @@ org.apache.poi.hssf.util.*
 											cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
 										}
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getName());
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "");
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getResource() != null ? (new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle() : "");
 										cell = row.createCell(nCell++);
 										if (workAndExpenseRecord.getQuantity() != null) {
@@ -2586,15 +2645,16 @@ org.apache.poi.hssf.util.*
 														cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
 														cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
 												}
-										}
-										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "");
-										if (isWorkRecordInPercent && !hasMultipleResources) {
-												cell = row.createCell(nCell++);
-												preLastSumCell = lastSumCell;
-												lastSumCell = cell;
-												cell.setCellValue(formatter0.format(dailySum.doubleValue())); cell.setCellStyle(quantityStyle);
-												cell = row.createCell(nCell++);
-												cell.setCellValue((calDayLoad == null ? "undef --> " : "") + formatter0.format(dayLoad)); cell.setCellStyle(quantityStyle);
+												if (isWorkRecordInPercent) {
+														cell = row.createCell(nCell++);
+														cell.setCellValue((calDayLoad == null ? "undef --> " : "") + formatter0.format(dayLoad)); cell.setCellStyle(quantityStyle);
+														if (!hasMultipleResources) {
+															cell = row.createCell(nCell++);
+															preLastSumCell = lastSumCell;
+															lastSumCell = cell;
+															cell.setCellValue(formatter0.format(dailySum.doubleValue())); cell.setCellStyle(quantityStyle);
+														}
+												}
 										}
 
 %>
@@ -2629,10 +2689,14 @@ org.apache.poi.hssf.util.*
 											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "" %></a></td>
 <%
 											if (isWorkRecordInPercent) {
+%>
+													<td class="padded_r"><%= formatter0.format(dayLoad) %>%</td>
+							
+<%
 													if (!hasMultipleResources) {
 %>
 														<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter++ %>">
-															<%= formatter0.format(dailySum.doubleValue()) %>
+															<%= formatter0.format(dailySum.doubleValue()) %>&nbsp;
 <%
 																if (!isDayBreak) {
 																		if (preLastSumCell != null) {
@@ -2658,6 +2722,7 @@ org.apache.poi.hssf.util.*
 											} else {
 %>
 													<td class="padded_r"></td>
+													<td class="padded_r"></td>
 <%
 											}
 %>
@@ -2668,7 +2733,7 @@ org.apache.poi.hssf.util.*
 								}
 								if (isWorkRecordInPercent && hasMultipleResources && !isFirstRow) {
 										// calculate list of Resources whose sum of allocations for the current day does not equal 100%
-										resourceErrorMsg = resourceErrorMsgUpdate(resourceErrorMsg, calDayName, resourcesToday, dayPercentageTotals, pm);
+										resourceErrorMsg = resourceErrorMsgUpdate(resourceErrorMsg, calDayName, resourcesToday, dayPercentageTotals, dayLoads, pm);
 								}
 								if (resourceErrorMsg != null) {
 										row = sheetRecords.createRow(nRow++);
@@ -2679,7 +2744,7 @@ org.apache.poi.hssf.util.*
 										dayErrorMessages.put(calDayName, resourceErrorMsg);
 %>
 										<tr class='break'>
-											<td colspan="11"><%= resourceErrorMsg %></td>
+											<td colspan="12"><%= resourceErrorMsg %></td>
 										</tr>
 <%
 								}
@@ -2699,6 +2764,8 @@ org.apache.poi.hssf.util.*
 								GregorianCalendar calendarBeginOfWeek = null;
 								if (earliestDate != null && latestDate != null) {
 									calendarBeginOfWeek = new GregorianCalendar(app.getCurrentLocale());
+									calendarBeginOfWeek.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+									calendarBeginOfWeek.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 									calendarBeginOfWeek.setTime(earliestDate);
 									while (calendarBeginOfWeek.get(GregorianCalendar.DAY_OF_WEEK) != calendarBeginOfWeek.getFirstDayOfWeek()) {
 											calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, -1);
@@ -2969,7 +3036,7 @@ org.apache.poi.hssf.util.*
 										org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path((String)activities.get(activityNumber)));
 										String activityHref = "";
 										Action action = new Action(
-												Action.EVENT_SELECT_OBJECT,
+												SelectObjectAction.EVENT_ID,
 												new Action.Parameter[]{
 														new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
 												},
@@ -3117,8 +3184,11 @@ org.apache.poi.hssf.util.*
 <%
 								nRow = REPORT_STARTING_ROW;
 								row = sheetResources.createRow(nRow++);
+								HSSFRow rowBelow = sheetResources.createRow(nRow++);
+								HSSFCell cellBelow = null;
 								nCell = 0;
-								cell = row.createCell(nCell++);	cell.setCellValue(app.getLabel(RESOURCE_CLASS)); cell.setCellStyle(rightAlignStyle);
+								cell = row.createCell(nCell);	cell.setCellValue(app.getLabel(RESOURCE_CLASS)); cell.setCellStyle(rightAlignStyle);
+								cellBelow = rowBelow.createCell(nCell++);	cellBelow.setCellValue(userView.getFieldLabel(RESOURCE_CLASS, "description", app.getCurrentLocaleAsIndex())); cellBelow.setCellStyle(rightAlignStyle);
 								sheetResources.setColumnWidth((short)0, (short)12000);
 
 								for (Iterator i = resourceTotals.keySet().iterator(); i.hasNext();) {
@@ -3128,9 +3198,12 @@ org.apache.poi.hssf.util.*
 											resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
 									} catch (Exception e) {}
 									if (resource != null) {
-											cell = row.createCell(nCell++);	
+											cell = row.createCell(nCell);	
 											cell.setCellValue(resource.getName() != null ? resource.getName() : resource.refMofId()); 
 											cell.setCellStyle(rightAlignStyle);
+											cellBelow = rowBelow.createCell(nCell++);	
+											cellBelow.setCellValue(resource.getDescription() != null ? resource.getDescription() : ""); 
+											cellBelow.setCellStyle(rightAlignStyle);
 									}
 								}
 
@@ -3145,7 +3218,7 @@ org.apache.poi.hssf.util.*
 										row = sheetResources.createRow(nRow++);
 										nCell = 0;
 										cell = row.createCell(nCell++);
-										cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
+										cell.setCellValue(activity.getName() + " (#" + activity.getActivityNumber() + ")");
 
 										for (Iterator i = resourceTotals.keySet().iterator(); i.hasNext();) {
 												resourceXri = (String)i.next();
@@ -3168,7 +3241,7 @@ org.apache.poi.hssf.util.*
 																activityTotal = DactivityTotal.doubleValue() / DresourceTotal.doubleValue();
 																resourceTotal = DresourceTotal.doubleValue();
 																
-																cell.setCellValue(activityTotal * 100.0); cell.setCellStyle(weightStyle);
+																cell.setCellValue(activityTotal); cell.setCellStyle(percentStyle);
 														}
 												}
 										}
@@ -3229,7 +3302,7 @@ org.apache.poi.hssf.util.*
 										org.opencrx.kernel.activity1.jmi1.ActivityGroup actGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(new Path((String)activityGroups.get(agkey)));
 										String actGroupHref = "";
 										Action action = new Action(
-												Action.EVENT_SELECT_OBJECT,
+												SelectObjectAction.EVENT_ID,
 												new Action.Parameter[]{
 														new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
 												},
@@ -3303,7 +3376,7 @@ org.apache.poi.hssf.util.*
 												org.opencrx.kernel.activity1.jmi1.ActivityGroup actGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)a.next();
 												String actGroupHref = "";
 												Action action = new Action(
-														Action.EVENT_SELECT_OBJECT,
+														SelectObjectAction.EVENT_ID,
 														new Action.Parameter[]{
 																new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
 														},
@@ -3435,7 +3508,7 @@ org.apache.poi.hssf.util.*
 														org.opencrx.kernel.activity1.jmi1.ActivityGroup lActivityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(new Path(keyParts[0]));
 														if (lActivityGroup != null) {
 															Action action = new Action(
-																	Action.EVENT_SELECT_OBJECT,
+																	SelectObjectAction.EVENT_ID,
 																	new Action.Parameter[]{
 																			new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivityGroup.refMofId())
 																	},
@@ -3451,7 +3524,7 @@ org.apache.poi.hssf.util.*
 														org.opencrx.kernel.activity1.jmi1.Activity lActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(keyParts[1]));
 														if (lActivity != null) {
 															Action action = new Action(
-																	Action.EVENT_SELECT_OBJECT,
+																	SelectObjectAction.EVENT_ID,
 																	new Action.Parameter[]{
 																			new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivity.refMofId())
 																	},
@@ -3467,7 +3540,7 @@ org.apache.poi.hssf.util.*
 														org.opencrx.kernel.activity1.jmi1.Resource lResource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(keyParts[2]));
 														if (lResource != null) {
 															Action action = new Action(
-																	Action.EVENT_SELECT_OBJECT,
+																	SelectObjectAction.EVENT_ID,
 																	new Action.Parameter[]{
 																			new Action.Parameter(Action.PARAMETER_OBJECTXRI, lResource.refMofId())
 																	},

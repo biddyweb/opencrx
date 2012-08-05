@@ -15,7 +15,7 @@
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:base:ImportParams:locale</_item>
-												<_item>org:opencrx:kernel:base:ExportParams:locale</_item>
+												<_item>org:opencrx:kernel:base:ExportProfile:locale</_item>
 												<_item>org:opencrx:kernel:account1:ExportVCardParams:locale</_item>
 												<_item>org:opencrx:kernel:activity1:ExportICalendarParams:locale</_item>
 											</name>

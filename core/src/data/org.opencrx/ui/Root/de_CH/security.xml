@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:Policy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Policy</_item>
+                        <_item>Security Policy</_item>
                       </label>
                       <toolTip>
-                        <_item>Policy</_item>
+                        <_item>Security Policy</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -110,6 +110,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <!--
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelClassPrivilege" _operation="create">
                     <_object>
                       <label>
@@ -143,6 +144,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  -->
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Privilege:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
@@ -451,29 +453,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:isFinal" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Basisgruppe</_item>
-											</toolTip>
-											<label>
-												<_item>Basisgruppe</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:subject" _operation="create">
                     <_object>
                       <label>
-                        <_item>Benutzergruppe</_item>
+                        <_item>Subject</_item>
                       </label>
                       <toolTip>
-                        <_item>Benutzergruppe</_item>
+                        <_item>Subject</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:grantedRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Erlaubte Rollen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Erlaubte Rollen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:Principal:grantedRole" _operation="create">
                     <_object>
                       <label>
                         <_item>Erlaubte Rollen</_item>

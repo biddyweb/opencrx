@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: NewsServlet.java,v 1.15 2010/10/02 00:17:40 wfro Exp $
+ * Name:        $Id: NewsServlet.java,v 1.16 2011/07/07 22:38:09 wfro Exp $
  * Description: NewsServlet
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 00:17:40 $
+ * Date:        $Date: 2011/07/07 22:38:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -85,6 +85,7 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.action.SelectObjectAction;
 
 public class NewsServlet extends HttpServlet {
 
@@ -235,7 +236,7 @@ public class NewsServlet extends HttpServlet {
 	                        );
 	                        Action selectReferencedObjectAction = 
 	                            new Action(
-	                                Action.EVENT_SELECT_OBJECT, 
+	                                SelectObjectAction.EVENT_ID, 
 	                                new Action.Parameter[]{
 	                                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, reference.refGetPath().toXri())
 	                                },
@@ -244,11 +245,11 @@ public class NewsServlet extends HttpServlet {
 	                            );         
 	                        String linkReferencedObject = 
 	                            UserHomes.getInstance().getWebAccessUrl(userHome) + 
-	                            "?event=" + Action.EVENT_SELECT_OBJECT + 
+	                            "?event=" + SelectObjectAction.EVENT_ID + 
 	                            "&parameter=" + selectReferencedObjectAction.getParameter();
 	                        Action selectAlertAction = 
 	                            new Action(
-	                                Action.EVENT_SELECT_OBJECT, 
+	                                SelectObjectAction.EVENT_ID, 
 	                                new Action.Parameter[]{
 	                                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, alert.refGetPath().toXri())
 	                                },
@@ -257,7 +258,7 @@ public class NewsServlet extends HttpServlet {
 	                            );         
 	                        String linkAlert = 
 	                            UserHomes.getInstance().getWebAccessUrl(userHome) + 
-	                            "?event=" + Action.EVENT_SELECT_OBJECT + 
+	                            "?event=" + SelectObjectAction.EVENT_ID + 
 	                            "&parameter=" + selectAlertAction.getParameter();
 	                        p.write(
 	                            "    <item>\n" +

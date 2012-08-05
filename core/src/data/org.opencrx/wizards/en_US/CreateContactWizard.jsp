@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: CreateContactWizard.jsp,v 1.30 2010/06/01 17:16:44 wfro Exp $
+ * Name:        $Id: CreateContactWizard.jsp,v 1.32 2011/10/22 12:01:53 wfro Exp $
  * Description: CreateContact wizard
- * Revision:    $Revision: 1.30 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/01 17:16:44 $
+ * Date:        $Date: 2011/10/22 12:01:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,7 +91,7 @@ org.openmdx.base.naming.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	String formName = "CreateContactForm";
+	String formName = "ContactForm";
 	String wizardName = "CreateContactWizard";
 
 	// Get Parameters
@@ -207,9 +207,9 @@ org.openmdx.base.naming.*
 	    String phoneNumberHome = (String)formValues.get("org:opencrx:kernel:account1:Contact:address!phoneNumberFull");
 	    String phoneNumberBusiness = (String)formValues.get("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull");
 	    String postalCityHome = (String)formValues.get("org:opencrx:kernel:account1:Contact:address!postalCity");
-	    String postalCityBusiness = (String)formValues.get("org:opencrx:kernel:account1:Contact:address*Business!postalCity");
+	    String postalCityBusiness = (String)formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCity");
 	    List postalStreetHome = (List)formValues.get("org:opencrx:kernel:account1:Contact:address!postalStreet");
-	    List postalStreetBusiness = (List)formValues.get("org:opencrx:kernel:account1:Contact:address*Business!postalStreet");
+	    List postalStreetBusiness = (List)formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalStreet");
 	    String emailHome = (String)formValues.get("org:opencrx:kernel:account1:Contact:address!emailAddress");
 	    String emailBusiness = (String)formValues.get("org:opencrx:kernel:account1:Account:address*Business!emailAddress");
       final String wildcard = ".*";
@@ -226,38 +226,32 @@ org.openmdx.base.naming.*
 	        contactQuery.thereExistsAliasName().like("(?i)" + wildcard + aliasName + wildcard);
 	    }
 	    String queryFilterClause = null;
-	    List stringParams = new ArrayList();
+	    List<String> stringParams = new ArrayList<String>();
 	    int stringParamIndex = 0;
 	    if(phoneNumberMobile != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full LIKE ?s" + stringParamIndex++ + ")";
-	        //queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full = ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + phoneNumberMobile + wildcard);
+	    	org.opencrx.kernel.account1.cci2.PhoneNumberQuery query = (org.opencrx.kernel.account1.cci2.PhoneNumberQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PhoneNumber.class);
+	    	query.thereExistsPhoneNumberFull().like(wildcard + phoneNumberMobile + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(phoneNumberHome != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + phoneNumberHome + wildcard);
+	    	org.opencrx.kernel.account1.cci2.PhoneNumberQuery query = (org.opencrx.kernel.account1.cci2.PhoneNumberQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PhoneNumber.class);
+	    	query.thereExistsPhoneNumberFull().like(wildcard + phoneNumberHome + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(phoneNumberBusiness != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.phone_number_full LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + phoneNumberBusiness + wildcard);
+	    	org.opencrx.kernel.account1.cci2.PhoneNumberQuery query = (org.opencrx.kernel.account1.cci2.PhoneNumberQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PhoneNumber.class);
+	    	query.thereExistsPhoneNumberFull().like(wildcard + phoneNumberBusiness + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(postalCityHome != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.postal_city LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + postalCityHome + wildcard);
+	    	org.opencrx.kernel.account1.cci2.PostalAddressQuery query = (org.opencrx.kernel.account1.cci2.PostalAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
+	    	query.thereExistsPostalCity().like(wildcard + postalCityHome + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(postalCityBusiness != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.postal_city LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + postalCityBusiness + wildcard);
+	    	org.opencrx.kernel.account1.cci2.PostalAddressQuery query = (org.opencrx.kernel.account1.cci2.PostalAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
+	    	query.thereExistsPostalCity().like(wildcard + postalCityBusiness + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(postalStreetHome != null) {
 	        for(int i = 0; i < postalStreetHome.size(); i++) {
@@ -276,16 +270,14 @@ org.openmdx.base.naming.*
 	        }
 	    }
 	    if(emailHome != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.email_address LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + emailHome + wildcard);
+	    	org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
+	    	query.thereExistsEmailAddress().like(wildcard + emailHome + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(emailBusiness != null) {
-	        hasQueryProperty = true;
-	        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
-	        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE adr.email_address LIKE ?s" + stringParamIndex++ + ")";
-	        stringParams.add(wildcard + emailBusiness + wildcard);
+	    	org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
+	    	query.thereExistsEmailAddress().like(wildcard + emailBusiness + wildcard);
+	    	contactQuery.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));
 	    }
 	    if(queryFilterClause != null) {
 	    	org.openmdx.base.query.Extension queryFilter = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(contactQuery);

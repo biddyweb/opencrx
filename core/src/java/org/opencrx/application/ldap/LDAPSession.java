@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LDAPSession.java,v 1.12 2011/03/30 15:47:03 wfro Exp $
+ * Name:        $Id: LDAPSession.java,v 1.14 2011/11/04 09:51:15 wfro Exp $
  * Description: LDAPSession
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/30 15:47:03 $
+ * Date:        $Date: 2011/11/04 09:51:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -294,8 +294,8 @@ public class LDAPSession extends AbstractSession {
                     int scope = reqBer.parseEnumeration();
                     reqBer.parseEnumeration();
                     int sizeLimit = reqBer.parseInt();
-                    if (sizeLimit > 300 || sizeLimit == 0) {
-                        sizeLimit = 300;
+                    if (sizeLimit > SIZE_LIMIT || sizeLimit == 0) {
+                        sizeLimit = SIZE_LIMIT;
                     }
                     int timeLimit = reqBer.parseInt();
                     reqBer.parseBoolean();
@@ -349,22 +349,45 @@ public class LDAPSession extends AbstractSession {
     	BerDecoder reqBer,
     	PersistenceManager pm
     ) throws IOException {
-    	Matcher personsMatcher = PERSONS_PATTERN.matcher(dn);
-    	// Get accounts
-    	if(personsMatcher.matches()) {
-    		AccountQueryHelper accountsFilterHelper = new AccountQueryHelper(pm);
-    		try {
-	    		accountsFilterHelper.parseQueryId(
-	    			"/" + this.server.getProviderName() + "/" + this.segmentName + "/filter/" + personsMatcher.group(1)
-	    		);
-	    		LDAPFilter filter = this.parseFilter(reqBer);
-	    		return new LDAPAccountQuery(
-	    			accountsFilterHelper,
-	    			filter
-	    		);
-    		} catch(Exception e) {
-    			new ServiceException(e).log();
-    		}
+    	// Account filter
+    	{
+	    	Matcher personsMatcher = PERSONS_FILTER_PATTERN.matcher(dn);
+	    	// Get accounts
+	    	if(personsMatcher.matches()) {
+	    		AccountQueryHelper accountsQuery = new AccountQueryHelper(pm);
+	    		try {
+		    		accountsQuery.parseQueryId(
+		    			"/" + this.server.getProviderName() + "/" + this.segmentName + "/filter/" + personsMatcher.group(1)
+		    		);
+		    		LDAPFilter filter = this.parseFilter(reqBer);
+		    		return new LDAPAccountQuery(
+		    			accountsQuery,
+		    			filter
+		    		);
+	    		} catch(Exception e) {
+	    			new ServiceException(e).log();
+	    		}
+	    	}
+    	}
+    	// Account group
+    	{
+	    	Matcher personsMatcher = PERSONS_GROUP_PATTERN.matcher(dn);
+	    	// Get accounts
+	    	if(personsMatcher.matches()) {
+	    		AccountQueryHelper accountsQuery = new AccountQueryHelper(pm);
+	    		try {
+		    		accountsQuery.parseQueryId(
+		    			"/" + this.server.getProviderName() + "/" + this.segmentName + "/group/" + personsMatcher.group(1)
+		    		);
+		    		LDAPFilter filter = this.parseFilter(reqBer);
+		    		return new LDAPAccountQuery(
+		    			accountsQuery,
+		    			filter
+		    		);
+	    		} catch(Exception e) {
+	    			new ServiceException(e).log();
+	    		}
+	    	}
     	}
     	return null;
     }
@@ -601,13 +624,13 @@ public class LDAPSession extends AbstractSession {
         	return codes == null ? 
         		Short.toString(postalAddress.getPostalCountry()) :
         			(String)codes.getLongText(
-        				"org:opencrx:kernel:address1:PostalAddressable:postalCountry", 
+        				"country", 
         				(short)0, 
         				true, 
         				true
         			).get(
         				postalAddress.getPostalCountry()
-        			);    		
+        			);
     	}
     	
 		@Override
@@ -1008,7 +1031,10 @@ public class LDAPSession extends AbstractSession {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    static final Pattern PERSONS_PATTERN = Pattern.compile("ou=filter/(.+?),ou=Persons");
+    public static final int SIZE_LIMIT = 1000;
+    
+    static final Pattern PERSONS_FILTER_PATTERN = Pattern.compile("ou=filter/(.+?),ou=Persons");
+    static final Pattern PERSONS_GROUP_PATTERN = Pattern.compile("ou=group/(.+?),ou=Persons");
 
     static final List<String> PERSON_OBJECT_CLASSES = Arrays.asList(
     	"top", 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SyncHandler.java,v 1.51 2011/03/04 16:28:00 wfro Exp $
+ * Name:        $Id: SyncHandler.java,v 1.52 2011/09/08 19:15:39 wfro Exp $
  * Description: AirSync Client SyncHandler
- * Revision:    $Revision: 1.51 $
+ * Revision:    $Revision: 1.52 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/04 16:28:00 $
+ * Date:        $Date: 2011/09/08 19:15:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -557,7 +557,7 @@ public class SyncHandler extends AbstractClientHandler {
 						    	logger.log(Level.FINE, out.toString());
 							}
 							slicePos += this.batchSize;
-							if(slicePos >= changedDataItems.size()) {
+							if(changedDataItems == null || slicePos >= changedDataItems.size()) {
 								break;
 							}
 							changedDataItemsSlice = changedDataItems.subList(

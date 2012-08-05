@@ -187,7 +187,7 @@
     <styles xmi:type="notation:RoutingStyle" xmi:id="_HTe_IUjZEd-hZsNYMNcVzA" routing="Rectilinear"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_HTe_IkjZEd-hZsNYMNcVzA" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Association" href="../../org.opencrx.kernel.activity1.uml#_tHqmcHbGEdqt7sneMxHhWw"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_HTe_I0jZEd-hZsNYMNcVzA" points="[0, 0, -513, -49]$[471, 45, -42, -4]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_HTe_I0jZEd-hZsNYMNcVzA" points="[-197, -30, 0, 232]$[-197, -232, 0, 30]"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_McqfcEjZEd-hZsNYMNcVzA" type="4001" source="_HTLdIEjZEd-hZsNYMNcVzA" target="_McKJIEjZEd-hZsNYMNcVzA" routing="Rectilinear" lineColor="2763429">
     <children xmi:type="notation:DecorationNode" xmi:id="_Mcqfc0jZEd-hZsNYMNcVzA" type="6018">
@@ -195,7 +195,7 @@
     </children>
     <styles xmi:type="notation:FontStyle" xmi:id="_McqfcUjZEd-hZsNYMNcVzA" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.activity1.uml#_9aetoHbGEdqt7sneMxHhWw"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_McqfckjZEd-hZsNYMNcVzA" points="[-39, -23, 384, 217]$[-423, -240, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_McqfckjZEd-hZsNYMNcVzA" points="[75, -30, -2, 62]$[75, -62, -2, 30]"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_RQ7fsEjZEd-hZsNYMNcVzA" type="4001" source="_HTLdIEjZEd-hZsNYMNcVzA" target="_RQPjMEjZEd-hZsNYMNcVzA" routing="Rectilinear" lineColor="2763429">
     <children xmi:type="notation:DecorationNode" xmi:id="_RQ7fs0jZEd-hZsNYMNcVzA" type="6018">
@@ -203,6 +203,6 @@
     </children>
     <styles xmi:type="notation:FontStyle" xmi:id="_RQ7fsUjZEd-hZsNYMNcVzA" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.activity1.uml#_9DX1MHbGEdqt7sneMxHhWw"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RQ7fskjZEd-hZsNYMNcVzA" points="[-39, -23, 384, 217]$[-423, -240, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RQ7fskjZEd-hZsNYMNcVzA" points="[229, -30, -7, 62]$[229, -62, -7, 30]"/>
   </edges>
 </notation:Diagram>

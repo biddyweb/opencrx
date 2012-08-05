@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailReplyToWizard.jsp,v 1.4 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: EMailReplyToWizard.jsp,v 1.8 2011/11/28 14:02:52 wfro Exp $
  * Description: EMailReplyToWizard
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2011/11/28 14:02:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -103,6 +103,7 @@ org.opencrx.kernel.backend.*
 		org.opencrx.kernel.activity1.jmi1.EMail eMailActivity = (org.opencrx.kernel.activity1.jmi1.EMail)obj;
 		if(eMailActivity.getLastAppliedCreator() != null) {
 			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
+				eMailActivity.getCreationContext(),
 				eMailActivity.getDescription(),
 				eMailActivity.getDetailedDescription(),
 				eMailActivity.getDueBy(),
@@ -137,15 +138,15 @@ org.opencrx.kernel.backend.*
 			 	Collection<org.opencrx.kernel.activity1.jmi1.EMailRecipient> recipients = eMailActivity.getEmailRecipient();
 			 	for(org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient: recipients) {
 			 		if(
-			 			recipient.getPartyType() == Activities.PARTY_TYPE_TO ||
-			 			recipient.getPartyType() == Activities.PARTY_TYPE_CC
+			 			recipient.getPartyType() == Activities.PartyType.EMAIL_TO.getValue() ||
+			 			recipient.getPartyType() == Activities.PartyType.EMAIL_CC.getValue()
 			 		) {
 				 		org.opencrx.kernel.activity1.jmi1.EMailRecipient newRecipient = pm.newInstance(org.opencrx.kernel.activity1.jmi1.EMailRecipient.class);
 				 		newRecipient.refInitialize(false, false);
 				 		newRecipient.setParty(recipient.getParty());
-				 		newRecipient.setPartyType(Activities.PARTY_TYPE_CC);
+				 		newRecipient.setPartyType(Activities.PartyType.EMAIL_CC.getValue());
 				 		replyToEMailActivity.addEmailRecipient(
-				 			Activities.getInstance().getUidAsString(),
+				 			org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 				 			newRecipient
 				 		);			 			
 			 		}
@@ -155,9 +156,9 @@ org.opencrx.kernel.backend.*
 			 		org.opencrx.kernel.activity1.jmi1.EMailRecipient newRecipient = pm.newInstance(org.opencrx.kernel.activity1.jmi1.EMailRecipient.class);
 			 		newRecipient.refInitialize(false, false);
 			 		newRecipient.setParty(eMailActivity.getSender());
-			 		newRecipient.setPartyType(Activities.PARTY_TYPE_TO);
+			 		newRecipient.setPartyType(Activities.PartyType.EMAIL_TO.getValue());
 			 		replyToEMailActivity.addEmailRecipient(
-			 			Activities.getInstance().getUidAsString(),
+			 			org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 			 			newRecipient
 			 		);
 			 	}
@@ -177,7 +178,7 @@ org.opencrx.kernel.backend.*
 			 	linkTo.setActivityLinkType((short)97); // is derived from
 			 	linkTo.setLinkTo(eMailActivity);
 			 	replyToEMailActivity.addActivityLinkTo(
-			 		Activities.getInstance().getUidAsString(),
+			 		org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 			 		linkTo
 			 	);
 			 	pm.currentTransaction().commit();

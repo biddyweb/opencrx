@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EventTXmlFormat.java,v 1.31 2010/06/18 12:31:22 wfro Exp $
+ * Name:        $Id: EventTXmlFormat.java,v 1.32 2011/11/30 11:23:46 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/18 12:31:22 $
+ * Date:        $Date: 2011/11/30 11:23:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -234,8 +234,9 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 					AttendeeT attendeeT = new AttendeeT();
 					attendeeT.setEmail(parseDOMString(DOMUtils.getUniqueElement(eAttendee, "Calendar:", "Attendee_Email")));
 					attendeeT.setName(parseDOMString(DOMUtils.getUniqueElement(eAttendee, "Calendar:", "Attendee_Name")));
+					Element attendeeStatus = DOMUtils.getUniqueElement(eData, "Calendar:", "Attendee_Status");					
 					attendeeT.setAttendeeStatus(
-						AttendeeStatus.toAttendeeStatus(parseDOMNoNullInt(DOMUtils.getUniqueElement(eData, "Calendar:", "Attendee_Status")))
+						attendeeStatus == null ? null : AttendeeStatus.toAttendeeStatus(parseDOMNoNullInt(attendeeStatus))
 					);
 					attendeeT.setAttendeeType(
 						AttendeeType.toAttendeeType(parseDOMNoNullInt(DOMUtils.getUniqueElement(eData, "Calendar:", "Attendee_Type")))

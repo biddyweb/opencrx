@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PhoneNumberImpl.java,v 1.1 2009/04/16 21:44:46 wfro Exp $
+ * Name:        $Id: PhoneNumberImpl.java,v 1.2 2011/06/15 15:28:40 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/16 21:44:46 $
+ * Date:        $Date: 2011/06/15 15:28:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,13 +55,16 @@
  */
 package org.opencrx.kernel.depot1.aop2;
 
+import javax.jdo.JDOUserException;
 import javax.jdo.listener.StoreCallback;
 
-import org.opencrx.kernel.address1.aop2.PhoneNumberAddressableImpl;
+import org.opencrx.kernel.backend.Addresses;
+import org.openmdx.base.aop2.AbstractObject;
+import org.openmdx.base.exception.ServiceException;
 
 public class PhoneNumberImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.PhoneNumber,N extends org.opencrx.kernel.depot1.cci2.PhoneNumber,C extends Void>
-	extends PhoneNumberAddressableImpl<S,N,C>
+	extends AbstractObject<S,N,C>
 	implements StoreCallback {
 
     //-----------------------------------------------------------------------
@@ -76,7 +79,19 @@ public class PhoneNumberImpl
 	@Override
     public void jdoPreStore(
     ) {
-		super.jdoPreStore();
-    }
-    
+    	try {
+    		Addresses.getInstance().updatePhoneNumber(
+    			this.sameObject() 
+    		);
+    		super.jdoPreStore();
+    	}
+    	catch(ServiceException e) {
+    		throw new JDOUserException(
+    			"jdoPreStore failed",
+    			e,
+    			this.sameObject()
+    		);
+    	}
+	}
+        
 }

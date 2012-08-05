@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.43 2011/01/23 22:16:15 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.45 2011/11/23 10:09:03 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/23 22:16:15 $
+ * Date:        $Date: 2011/11/23 10:09:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,17 +72,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams;
 import org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery;
-import org.opencrx.kernel.home1.jmi1.Home1Package;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
-import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
@@ -243,18 +243,12 @@ public class WorkflowHandlerServlet
                 pm,
                 providerName,
                 segmentName                
-            );            
-            
-            // Get activity segment
-            Home1Package userHomePackage = Utils.getHomePackage(pm);
-            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = 
-                (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-                );
-    
-            WfProcessInstanceQuery query = userHomePackage.createWfProcessInstanceQuery();
-            query.identity().like(
-                userHomeSegment.refGetPath().getDescendant("userHome", ":*", "wfProcessInstance", ":*").toResourcePattern()
+            );                        
+            // Get user homes segment
+            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+            WfProcessInstanceQuery query = (WfProcessInstanceQuery)PersistenceHelper.newQuery(
+            	pm.getExtent(WfProcessInstance.class),
+            	userHomeSegment.refGetPath().getDescendant("userHome", ":*", "wfProcessInstance", ":*")
             );
             query.startedOn().isNull();
             query.orderByStepCounter().ascending();

@@ -17,6 +17,7 @@
 												<_item>org:opencrx:kernel:activity1:Activity:activityState</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityStateFilterProperty:activityState</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityProcessTransition:newActivityState</_item>
+												<_item>org:opencrx:kernel:home1:Reminder:reminderState</_item>
 											</name>
 										</_object>
 										<_content>

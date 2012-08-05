@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: utilities.xml,v 1.23 2010/04/19 00:16:32 wfro Exp $
+ * = Name:        $Id: utilities.xml,v 1.24 2011/11/06 23:05:28 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.23 $
- * = Date:        $Date: 2010/04/19 00:16:32 $
+ * = Revision:    $Revision: 1.24 $
+ * = Date:        $Date: 2011/11/06 23:05:28 $
  * = Copyright:   (c) 2003-2010 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -96,16 +96,6 @@
 	* -code-merge
 	********************************************************************-->
 	<target name="-code-merge">
-
-    <antcontrib:propertyregex 
-      property="arg.locale.list"
-      input="${arg.locale}"
-      regexp="/"
-      replace=" --locale="
-      global="true"
-      defaultValue="${arg.locale}"
-    />
-
 		<java 
 			classname="org.openmdx.portal.utility.CodeUtility" 
 			fork="true" 
@@ -125,7 +115,7 @@
 			<arg value="--targetDir"/>
 			<arg value="${arg.targetDir}"/>
 			<arg value="--locale"/>
-			<arg value="${arg.locale.list}"/>
+			<arg value="${arg.locale}"/>
 		</java>
 	</target>
 
@@ -133,16 +123,6 @@
 	* -code-split
 	********************************************************************-->
 	<target name="-code-split">
-
-    <antcontrib:propertyregex 
-      property="arg.locale.list"
-      input="${arg.locale}"
-      regexp="/"
-      replace=" --locale="
-      global="true"
-      defaultValue="${arg.locale}"
-    />
-
 		<java 
 			classname="org.openmdx.portal.utility.CodeUtility" 
 			fork="true" 
@@ -162,7 +142,7 @@
 			<arg value="--targetDir"/>
 			<arg value="${arg.targetDir}"/>
 			<arg value="--locale"/>
-			<arg value="${arg.locale.list}"/>
+			<arg value="${arg.locale}"/>
 		</java>
 	</target>
 
@@ -170,16 +150,6 @@
 	* -ui-merge
 	********************************************************************-->
 	<target name="-ui-merge">
-
-    <antcontrib:propertyregex 
-      property="arg.locale.list"
-      input="${arg.locale}"
-      regexp="/"
-      replace=" --locale="
-      global="true"
-      defaultValue="${arg.locale}"
-    />
-
 		<java 
 			classname="org.openmdx.portal.utility.UiUtility" 
 			fork="true" 
@@ -201,7 +171,7 @@
 			<arg value="--format"/>
 			<arg value="${arg.format}"/>
 			<arg value="--locale"/>
-			<arg value="${arg.locale.list}"/>
+			<arg value="${arg.locale}"/>
 		</java>
 	</target>
 
@@ -209,16 +179,6 @@
 	* -ui-split
 	********************************************************************-->
 	<target name="-ui-split">
-
-    <antcontrib:propertyregex 
-      property="arg.locale.list"
-      input="${arg.locale}"
-      regexp="/"
-      replace=" --locale="
-      global="true"
-      defaultValue="${arg.locale}"
-    />
-
 		<java 
 			classname="org.openmdx.portal.utility.UiUtility" 
 			fork="true" 
@@ -240,7 +200,7 @@
 			<arg value="--format"/>
 			<arg value="${arg.format}"/>
 			<arg value="--locale"/>
-			<arg value="${arg.locale.list}"/>
+			<arg value="${arg.locale}"/>
 		</java>
 	</target>
 

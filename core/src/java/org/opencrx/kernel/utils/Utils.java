@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.54 2011/02/02 16:31:44 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.57 2011/12/21 13:46:50 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.54 $
+ * Revision:    $Revision: 1.57 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/02 16:31:44 $
+ * Date:        $Date: 2011/12/21 13:46:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,12 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -102,7 +107,9 @@ import org.openmdx.base.mof.cci.AggregationKind;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.ConfigurableProperty;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.transaction.TransactionAttributeType;
@@ -111,6 +118,8 @@ import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.attribute.DateValue;
+import org.openmdx.security.realm1.jmi1.Permission;
+import org.openmdx.security.realm1.jmi1.Role;
 
 public abstract class Utils {
 
@@ -614,10 +623,149 @@ public abstract class Utils {
         return newContext;
     }
 
+    //-----------------------------------------------------------------------
+    public static org.openmdx.security.realm1.jmi1.Principal getRequestingPrincipal(
+    	PersistenceManager pm,
+    	String providerName,
+    	String segmentName
+    ) {
+    	List<String> principalChain = UserObjects.getPrincipalChain(pm);
+    	if(principalChain.isEmpty()) return null;
+    	return (org.openmdx.security.realm1.jmi1.Principal)pm.getObjectById(
+			new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName, "principal", principalChain.get(0))
+        );
+    }
+    
+    //-----------------------------------------------------------------------
+    public static boolean principalIsMemberOf(
+    	org.openmdx.security.realm1.jmi1.Principal principal,
+    	String... principalGroups
+    ) {
+    	if(principal != null && principalGroups != null) {
+	    	List<String> groups = Arrays.asList(principalGroups);
+	    	Collection<org.openmdx.security.realm1.jmi1.Group> memberships = principal.getIsMemberOf();
+	    	for(org.openmdx.security.realm1.jmi1.Group membership: memberships) {
+	    		if(groups.contains(membership.getName())) {
+	    			return true;
+	    		}
+	    	}
+    	}
+    	return false;
+    }
+
+    //-------------------------------------------------------------------------
+    public static List<String> getPermissions(
+    	org.openmdx.security.realm1.jmi1.Principal principal,
+    	String action
+    ) throws ServiceException {
+    	List<String> permissions = new ArrayList<String>();
+    	if(principal instanceof org.opencrx.security.realm1.jmi1.Principal) {
+			List<Role> roles = ((org.opencrx.security.realm1.jmi1.Principal)principal).getGrantedRole();
+			for(Role role: roles) {
+				for(Permission permission: role.<Permission>getPermission()) {
+					if(permission.getAction().contains(action)) {
+						permissions.add(permission.getName());
+					}
+				}
+			}
+    	}
+		return permissions;
+    }
+    
+    //-------------------------------------------------------------------------
+    /**
+     *  Checks whether there exists a permission matching the pattern
+     *  'object:authority/object path@runAsPrincipal'
+     */
+    public static boolean hasObjectRunAsPermission(
+    	Path objectIdentity,
+    	List<String> runAsPermissions
+    ) {
+    	for(String runAsPermission: runAsPermissions) {
+    		if(runAsPermission.startsWith("object:")) {
+    			String[] components = runAsPermission.substring(7, runAsPermission.indexOf("@")).split("/");
+    			if(components.length > 0) {
+    				Path pattern = new Path("xri://@openmdx*" + components[0]).getDescendant("provider", objectIdentity.get(2), "segment", objectIdentity.get(4));
+    				for(int j = 1; j < components.length; j++) {
+    					pattern = pattern.getDescendant(components[j]);
+    				}
+            		if(objectIdentity.isLike(pattern)) {
+            			return true;
+            		}
+    			}
+    		}
+    	}
+    	return false;
+    }
+
+    //-------------------------------------------------------------------------
+    public static DateFormat getTimeFormat(
+        String language
+    ) {
+        Map<String,DateFormat> timeFormatters = cachedTimeFormat.get();
+        DateFormat timeFormat = timeFormatters.get(language);
+        if(timeFormat == null) {
+            timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, new Locale(language)); 
+            timeFormatters.put(
+                language,
+                timeFormat
+            );
+        }
+        return timeFormat; 
+    }
+    
+    //-------------------------------------------------------------------------
+    public static DecimalFormat getDecimalFormat(
+        String language
+    ) {
+        Map<String,DecimalFormat> decimalFormatters = cachedDecimalFormat.get();
+        DecimalFormat decimalFormat = decimalFormatters.get(language);
+        if(decimalFormat == null) {
+            decimalFormat = (DecimalFormat)DecimalFormat.getInstance(new Locale(language)); 
+            decimalFormatters.put(
+                language,
+                decimalFormat
+            );
+        }
+        return decimalFormat; 
+    }
+
+    //-------------------------------------------------------------------------
+    public static DateFormat getDateFormat(
+        String language
+    ) {
+        Map<String,DateFormat> dateFormatters = cachedDateFormat.get();
+        DateFormat dateFormat = dateFormatters.get(language);
+        if(dateFormat == null) {
+            dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, new Locale(language));
+            dateFormatters.put(
+                language,
+                dateFormat
+            );
+        }
+        return dateFormat;
+    }
+        
     //-------------------------------------------------------------------------
     // Members
 	//-------------------------------------------------------------------------
     private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
+    
+    private static ThreadLocal<Map<String,DateFormat>> cachedDateFormat = new ThreadLocal<Map<String,DateFormat>>() {
+        protected synchronized Map<String,DateFormat> initialValue() {
+            return new HashMap<String,DateFormat>();
+        }
+    };
+    private static ThreadLocal<Map<String,DateFormat>> cachedTimeFormat = new ThreadLocal<Map<String,DateFormat>>() {
+        protected synchronized Map<String,DateFormat> initialValue() {
+            return new HashMap<String,DateFormat>();
+        }
+    };
+    private static ThreadLocal<Map<String,DecimalFormat>> cachedDecimalFormat = new ThreadLocal<Map<String,DecimalFormat>>() {
+        protected synchronized Map<String,DecimalFormat> initialValue() {
+            return new HashMap<String,DecimalFormat>();
+        }
+    };
     
 }
 

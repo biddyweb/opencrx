@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AssignableImpl.java,v 1.4 2009/04/20 17:56:44 wfro Exp $
+ * Name:        $Id: AssignableImpl.java,v 1.5 2011/12/21 13:42:39 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:44 $
+ * Date:        $Date: 2011/12/21 13:42:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,11 @@
  */
 package org.opencrx.kernel.base.aop2;
 
+import javax.jdo.JDOHelper;
+
 import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.generic.SecurityKeys.Action;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
@@ -76,10 +80,22 @@ public class AssignableImpl
     public org.openmdx.base.jmi1.Void assignToMe(
     ) {
         try {
+        	boolean useRunAsPrincipal = false;
+        	if(JDOHelper.isPersistent(this.sameObject())) {
+	        	String providerName = this.sameObject().refGetPath().get(2);
+	        	String segmentName = this.sameObject().refGetPath().get(4);
+	        	useRunAsPrincipal = Utils.hasObjectRunAsPermission(
+	        		this.sameObject().refGetPath(), 
+	        		Utils.getPermissions(
+	        			Utils.getRequestingPrincipal(this.sameManager(), providerName, segmentName), 
+	        			Action.RUN_AS.getName()
+	        		)
+	        	);
+        	}
             Base.getInstance().assignToMe(
                 this.sameObject(),
-                true,
-                null
+                true, // overwrite
+                useRunAsPrincipal
             );
             return super.newVoid();
         }

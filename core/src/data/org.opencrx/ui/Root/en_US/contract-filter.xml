@@ -32,6 +32,60 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<!-- ContractFilterGroup-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Saved Search - Contracts</_item>
+											</toolTip>
+											<label>
+												<_item>Saved Search - Contracts</_item>
+											</label>
+											<iconKey>ContractFilterGroup</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!-- FieldGroups -->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGroup:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGroup:description">
+										<_object>
+											<active>true</active>
+											<spanRow>4</spanRow>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<!-- ContractFilterGlobal-->
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGlobal">

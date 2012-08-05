@@ -143,6 +143,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressAccountMembershipFilterProperty" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Suchkriterium - Kontaktmitgliedschaft</_item>
+											</toolTip>
+											<label>
+												<_item>Search Criteria - Kontaktmitgliedschaft</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressAccountMembershipFilterProperty:account" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Kontakt</_item>
+											</toolTip>
+											<label>
+												<_item>Kontakt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressDisabledFilterProperty" _operation="create">
                     <_object>
                       <label>

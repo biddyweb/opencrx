@@ -10,13 +10,11 @@
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="2">
-
-				<!-- Aktive PriceLevel, d.h. es gilt
-              validFromMatches && validToMatches
-              wobei (mit pricingDate = today):
-                    boolean validFromMatches = (l.getValidFrom() == null) || l.getValidFrom().compareTo(pricingDate) <= 0;
-                    boolean validToMatches = (l.getValidTo() == null) || l.getValidTo().compareTo(pricingDate) >= 0;
-         -->
+				<!-- Active price levels
+				validFromMatches && validToMatches where
+                    boolean validFromMatches = (l.getValidFrom() == null) || l.getValidFrom().compareTo(today) <= 0;
+                    boolean validToMatches = (l.getValidTo() == null) || l.getValidTo().compareTo(today) >= 0;
+				-->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -26,7 +24,7 @@
 							<string>spacer.gif</string>
 						</void>
 						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="2">
+							<array class="org.openmdx.base.query.Condition" length="3">
 								<void index="0">
 									<object class="org.openmdx.base.query.PiggyBackCondition">
 										<void property="quantor">
@@ -63,7 +61,27 @@
 										<void property="value">
 											<array class="java.lang.String" length="1">
 												<void index="0">
-													<string>EXISTS (SELECT 0 FROM OOCKE1_PRICELEVEL pl WHERE (pl.object_id = v.object_id) and ((pl.disabled is null) or (not pl.disabled)) and ((pl.valid_from is null) or (pl.valid_from &lt; current_timestamp)) and ((pl.valid_to is null) or (pl.valid_to &gt; current_timestamp)))</string>
+													<string>EXISTS (SELECT 0 FROM OOCKE1_PRICELEVEL pl WHERE (pl.object_id = v.object_id) and ((pl.valid_from is null) or (pl.valid_from &lt; current_timestamp)) and ((pl.valid_to is null) or (pl.valid_to &gt; current_timestamp)))</string>
+												</void>
+											</array>
+										</void>
+									</object>
+								</void>
+								<void index="2">
+									<object class="org.openmdx.base.query.IsInCondition">
+										<void property="quantor">
+											<short>1</short> <!-- for all -->
+										</void>
+										<void property="feature">
+											<string>disabled</string>
+										</void>
+										<void property="fulfil">
+											<boolean>false</boolean>
+										</void>
+										<void property="value">
+											<array class="java.lang.Boolean" length="1">
+												<void index="0">
+													<boolean>true</boolean>
 												</void>
 											</array>
 										</void>

@@ -33,7 +33,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Unter-Aktivität</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Unter-Aktivität</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel der Notiz</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:title" _operation="create">
                     <_object>
                       <label>
                         <_item>Titel</_item>
@@ -110,7 +132,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:text" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Text</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Text</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktivität</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktivität</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:activity" _operation="create">
                     <_object>
                       <label>
                         <_item>Aktivität</_item>
@@ -319,6 +363,65 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<!-- SubActivityTransition-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition">
+										<_object>
+											<toolTip>
+												<_item>Unter-Aktivität Transition</_item>
+											</toolTip>
+											<label>
+												<_item>Unter-Aktivität Transition</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:subActivityNamePattern">
+										<_object>
+											<toolTip>
+												<_item>${A} Titel Aktivität, ${N} Transitionsname, ${F} Titel Arbeitsschritt, ${G} Aktivitätsgruppenname</_item>
+											</toolTip>
+											<label>
+												<_item>Unter-Aktivität Namensmuster</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:templateNamePattern">
+										<_object>
+											<toolTip>
+												<_item>${A} Titel Aktivität, ${N} Transitionsname, ${F} Titel Arbeitsschritt, ${G} Aktivitätsgruppenname</_item>
+											</toolTip>
+											<label>
+												<_item>Vorlage Namensmuster</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:activityCreator">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätenerzeuger</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätenerzeuger</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:useCreatorAsTemplate">
+										<_object>
+											<toolTip>
+												<_item>Erzeuger als Vorlage?</_item>
+											</toolTip>
+											<label>
+												<_item>Erzeuger als Vorlage?</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessAction:name" _operation="create">
                     <_object>
                       <label>

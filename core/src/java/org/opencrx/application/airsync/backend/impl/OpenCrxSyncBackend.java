@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSyncBackend.java,v 1.45 2011/03/04 16:28:56 wfro Exp $
+ * Name:        $Id: OpenCrxSyncBackend.java,v 1.49 2011/12/16 13:41:40 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/04 16:28:56 $
+ * Date:        $Date: 2011/12/16 13:41:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -102,7 +102,6 @@ import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountMembership;
 import org.opencrx.kernel.account1.jmi1.Contact;
-import org.opencrx.kernel.account1.jmi1.Group;
 import org.opencrx.kernel.account1.jmi1.Member;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Absence;
@@ -122,10 +121,13 @@ import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Task;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.ActivityClass;
+import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.Documents;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.UserHomes;
+import org.opencrx.kernel.backend.UserHomes.AlertState;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.cci2.FolderAssignmentQuery;
 import org.opencrx.kernel.document1.jmi1.Document;
@@ -402,10 +404,10 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					try {
 						// In case of Contact folders disable relationship (Member) 
 						// instead of contact object itself
-						if(folder instanceof Group && refObj instanceof GenericAccount) {
+						if(folder instanceof AbstractGroup && refObj instanceof GenericAccount) {
 							MemberQuery memberQuery = (MemberQuery)pm.newQuery(Member.class);
 							memberQuery.thereExistsAccount().equalTo(refObj);
-							List<Member> members = ((Group)folder).getMember(memberQuery);
+							List<Member> members = ((AbstractGroup)folder).getMember(memberQuery);
 							pm.currentTransaction().begin();
 							for(Member member: members) {
 								member.setDisabled(true);
@@ -415,7 +417,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						// In case of alert mark alert as accepted
 						else if(refObj instanceof Alert) {
 							pm.currentTransaction().begin();
-							((Alert)refObj).setAlertState(UserHomes.ALERT_STATE_ACCEPTED);
+							((Alert)refObj).setAlertState(AlertState.ACCEPTED.getValue());
 							pm.currentTransaction().commit();
 						} 
 						// In case of Document folders disable folder assignment 
@@ -506,12 +508,13 @@ public class OpenCrxSyncBackend implements SyncBackend {
 		Activity activity = null;
 		if(creator != null) {
 			NewActivityParams params = Utils.getActivityPackage(pm).createNewActivityParams(
+				null, // creationContext
 				null, // description 
 				detailedDescription, 
 				null, // dueBy
 				ICalendar.ICAL_TYPE_NA, 
 				name, 
-				Activities.PRIORITY_NORMAL, 
+				Priority.NORMAL.getValue(), 
 				null, // reportingContact 
 				null, // scheduledEnd 
 				scheduledStart
@@ -590,7 +593,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							EventT eventT = (EventT)data;
 							object = this.createActivity(
 								(ActivityGroup)folderAddDelete,
-								Activities.ACTIVITY_CLASS_MEETING,
+								ActivityClass.MEETING.getValue(),
 								eventT.getSubject(),
 								this.datatypeMapper.normalizeMultilineString(eventT.getBody()),
 								eventT.getStartTime()
@@ -599,15 +602,12 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						break;
 						
 					case Contacts:
-						if(folderAddDelete instanceof Group) {
+						if(folderAddDelete instanceof AbstractGroup) {
 							pm.currentTransaction().begin();
-							Group group = (Group)folderAddDelete;
+							AbstractGroup group = (AbstractGroup)folderAddDelete;
 							String providerName = group.refGetPath().get(2);
 							String segmentName = group.refGetPath().get(4);
-							org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
-								(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-									new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-								);
+							org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
 							ContactT contactT = (ContactT)data;
 							Account account = this.datatypeMapper.newAccount(pm, contactT);
 							account.refInitialize(false, false);
@@ -649,7 +649,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							TaskT taskT = (TaskT)data;
 							object = this.createActivity(
 								(ActivityGroup)folderAddDelete,
-								Activities.ACTIVITY_CLASS_TASK,
+								ActivityClass.TASK.getValue(),
 								taskT.getSubject(),
 								this.datatypeMapper.normalizeMultilineString(taskT.getBody()),
 								taskT.getStartdate()
@@ -662,7 +662,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							EmailT emailT = (EmailT)data;
 							object = this.createActivity(
 								(ActivityGroup)folderAddDelete,
-								Activities.ACTIVITY_CLASS_EMAIL,
+								ActivityClass.EMAIL.getValue(),
 								emailT.getSubject(),
 								null, // detailedDescription
 								emailT.getDateReceived()
@@ -696,7 +696,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							case Contacts:
 								// Assert that membership exists
 								Account account = (Account)object;
-								Group group = (Group)folderChange;
+								AbstractGroup group = (AbstractGroup)folderChange;
 								ContactT contactT = (ContactT)data;								
 								MemberQuery memberQuery = (MemberQuery)pm.newQuery(Member.class);
 								memberQuery.thereExistsAccount().equalTo(account);
@@ -812,10 +812,10 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					}
 				}
 				// Move contact
-				else if(srcFolder instanceof Group && dstFolder instanceof Group && item instanceof Contact) {
+				else if(srcFolder instanceof AbstractGroup && dstFolder instanceof AbstractGroup && item instanceof Contact) {
 					Contact contact = (Contact)item;
-					Group srcGroup = (Group)srcFolder;
-					Group dstGroup = (Group)dstFolder;
+					AbstractGroup srcGroup = (AbstractGroup)srcFolder;
+					AbstractGroup dstGroup = (AbstractGroup)dstFolder;
 					MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
 					query.thereExistsAccount().equalTo(contact);
 					List<Member> members = srcGroup.getMember(query);
@@ -1017,8 +1017,8 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				}
 			}
 			// Contacts
-			else if(folder instanceof Group) {
-				Group group = (Group)folder;
+			else if(folder instanceof AbstractGroup) {
+				AbstractGroup group = (AbstractGroup)folder;
 				Set<Path> changedContacts = new HashSet<Path>();
 				// Get all changed contacts
 				AccountMembershipQuery query = (AccountMembershipQuery)pm.newQuery(AccountMembership.class);
@@ -1081,7 +1081,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				if(state == SyncDataItem.State.NEW) {
 					query.createdAt().greaterThan(since);
 					query.orderByCreatedAt().ascending();
-					query.alertState().equalTo(UserHomes.ALERT_STATE_NEW);
+					query.alertState().equalTo(AlertState.NEW.getValue());
 					List<Alert> alerts = home.getAlert(query);
 					int n = 0;
 					for(Alert alert: alerts) {
@@ -1233,8 +1233,8 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				}
 			}
 			// Contacts
-			else if(folder instanceof Group) {
-				Group group = (Group)folder;
+			else if(folder instanceof AbstractGroup) {
+				AbstractGroup group = (AbstractGroup)folder;
 				Set<Path> deletedContacts = new HashSet<Path>();
 				// Get contacts where membership is disabled
 				AccountMembershipQuery query = (AccountMembershipQuery)pm.newQuery(AccountMembership.class);
@@ -1267,7 +1267,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				// Consider alerts as deleted if their state was modified to >= accepted
 				query.modifiedAt().greaterThan(since);
 				query.modifiedAt().lessThanOrEqualTo(to);
-				query.alertState().equalTo(UserHomes.ALERT_STATE_ACCEPTED);		
+				query.alertState().equalTo(AlertState.ACCEPTED.getValue());		
 				query.orderByModifiedAt().ascending();
 				List<Alert> alerts = home.getAlert(query);
 				for(Alert alert: alerts) {
@@ -1375,7 +1375,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					if(feed instanceof ActivityFilterCalendarFeed) {
 						// Meeting
 						syncFolder = new SyncFolder();
-						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_MEETING);
+						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.MEETING.getValue());
 						syncFolder.setFolderType(
 							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
 								FolderType.DEFAULT_CALENDAR_FOLDER :
@@ -1386,14 +1386,14 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						changedFolders.add(syncFolder);
 						// EMail
 						syncFolder = new SyncFolder();
-						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_EMAIL);
+						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.EMAIL.getValue());
 						syncFolder.setFolderType(FolderType.USER_CREATED_EMAIL_FOLDER);
 						syncFolder.setDisplayName(feed.getName() + " - Mails");
 						syncFolder.setParentId("0");
 						changedFolders.add(syncFolder);
 						// Tasks
 						syncFolder = new SyncFolder();
-						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_TASK);
+						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.TASK.getValue());
 						syncFolder.setFolderType(
 							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
 								FolderType.DEFAULT_TASKS_FOLDER :
@@ -1411,9 +1411,9 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						// Create a folder for each creator
 						for(ActivityCreator activityCreator: activityCreators) {
 							int activityClass = activityCreator.getActivityType().getActivityClass();
-							if(activityClass == Activities.ACTIVITY_CLASS_MEETING) {
+							if(activityClass == ActivityClass.MEETING.getValue()) {
 								syncFolder = new SyncFolder();
-								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_MEETING);
+								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.MEETING.getValue());
 								syncFolder.setFolderType(
 									feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
 										FolderType.DEFAULT_CALENDAR_FOLDER :
@@ -1422,16 +1422,16 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								syncFolder.setDisplayName(feed.getName() + " - Calendar");
 								syncFolder.setParentId("0");
 								changedFolders.add(syncFolder);
-							} else if(activityClass == Activities.ACTIVITY_CLASS_EMAIL) {
+							} else if(activityClass == ActivityClass.EMAIL.getValue()) {
 								syncFolder = new SyncFolder();
-								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_EMAIL);
+								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.EMAIL.getValue());
 								syncFolder.setFolderType(FolderType.USER_CREATED_EMAIL_FOLDER);
 								syncFolder.setDisplayName(feed.getName() + " - Mails");
 								syncFolder.setParentId("0");
 								changedFolders.add(syncFolder);
-							} else if(activityClass == Activities.ACTIVITY_CLASS_TASK) {
+							} else if(activityClass == ActivityClass.TASK.getValue()) {
 								syncFolder = new SyncFolder();
-								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_TASK);
+								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.TASK.getValue());
 								syncFolder.setFolderType(
 									feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
 										FolderType.DEFAULT_TASKS_FOLDER :

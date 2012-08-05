@@ -110,6 +110,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <!--
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelClassPrivilege" _operation="create">
                     <_object>
                       <label>
@@ -143,6 +144,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  -->
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Privilege:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
@@ -452,6 +454,17 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:grantedRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Přidělené role</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Přidělené role</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:Principal:grantedRole" _operation="create">
                     <_object>
                       <label>
                         <_item>Přidělené role</_item>

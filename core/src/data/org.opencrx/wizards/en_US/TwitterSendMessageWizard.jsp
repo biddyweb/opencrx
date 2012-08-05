@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterSendMessageWizard.jsp,v 1.4 2010/12/06 18:32:41 wfro Exp $
+ * Name:        $Id: TwitterSendMessageWizard.jsp,v 1.6 2011/10/05 16:35:58 wfro Exp $
  * Description: TwitterSendMessageWizard
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/06 18:32:41 $
+ * Date:        $Date: 2011/10/05 16:35:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,7 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 twitter4j.*,
-twitter4j.http.*
+twitter4j.auth.*
 " %><%
 	final String NOTE_TITLE_PREFIX = "Message sent to";
 	
@@ -210,11 +210,12 @@ twitter4j.http.*
             		twitterAccount.getAccessToken(),
             		twitterAccount.getAccessTokenSecret()
             	);
-            	Twitter twitter = twitterFactory.getOAuthAuthorizedInstance(
+            	Twitter twitter = twitterFactory.getInstance();
+            	twitter.setOAuthConsumer(
             		org.opencrx.application.twitter.TwitterUtils.getConsumerKey(twitterAccount, configuration),
-            		org.opencrx.application.twitter.TwitterUtils.getConsumerSecret(twitterAccount, configuration),
-            		accessToken
+            		org.opencrx.application.twitter.TwitterUtils.getConsumerSecret(twitterAccount, configuration)
             	);
+            	twitter.setOAuthAccessToken(accessToken);
                 StringTokenizer users = new StringTokenizer(toUsers, " ,", false);
                 while(users.hasMoreTokens()) {
                 	String user = users.nextToken();

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aggancio</_item>
+                        <_item>Lead</_item>
                       </label>
                       <toolTip>
-                        <_item>Aggancio</_item>
+                        <_item>Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:lead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Agganci</_item>
+                        <_item>Leads</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti gli Agganci</_item>
+                        <_item>Tutti i Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -61,7 +61,7 @@
                         <_item>Nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome dell&apos;Aggancio</_item>
+                        <_item>Nome del Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -83,7 +83,7 @@
                         <_item>Numero</_item>
                       </label>
                       <toolTip>
-                        <_item>Numero dell&apos;Aggancio</_item>
+                        <_item>Numero del Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -94,7 +94,7 @@
                         <_item>Origine</_item>
                       </label>
                       <toolTip>
-                        <_item>Origine Aggancio</_item>
+                        <_item>Origine Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Valutazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Valutazione dell&apos;Aggancio</_item>
+                        <_item>Valutazione del Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.104 2011/03/16 15:34:27 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.134 2012/01/06 15:34:42 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.104 $
+ * Revision:    $Revision: 1.134 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/16 15:34:27 $
+ * Date:        $Date: 2012/01/06 15:34:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,42 +56,46 @@
 package org.opencrx.kernel.portal;
 
 import java.io.Serializable;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefStruct;
 
-import org.opencrx.kernel.activity1.jmi1.InvolvedObject;
-import org.opencrx.kernel.address1.jmi1.Addressable;
-import org.opencrx.kernel.address1.jmi1.RoomAddressable;
+import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
+import org.opencrx.kernel.activity1.cci2.ActivityQuery;
+import org.opencrx.kernel.activity1.cci2.ResourceQuery;
+import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
+import org.opencrx.kernel.activity1.jmi1.ActivityType;
+import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Addresses;
-import org.opencrx.kernel.building1.jmi1.AbstractBuildingUnit;
-import org.opencrx.kernel.code1.jmi1.SimpleEntry;
-import org.opencrx.kernel.contract1.jmi1.ContractRole;
-import org.opencrx.kernel.depot1.jmi1.Depot;
-import org.opencrx.kernel.depot1.jmi1.DepotContract;
-import org.opencrx.kernel.depot1.jmi1.DepotEntity;
-import org.opencrx.kernel.depot1.jmi1.DepotPosition;
-import org.opencrx.kernel.depot1.jmi1.DepotReport;
-import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
-import org.opencrx.kernel.document1.jmi1.Media;
+import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.backend.SecureObject;
+import org.opencrx.kernel.code1.jmi1.AbstractEntry;
+import org.opencrx.kernel.code1.jmi1.CodeValueContainer;
+import org.opencrx.kernel.contract1.jmi1.ContractCreator;
+import org.opencrx.kernel.contract1.jmi1.ContractType;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
+import org.opencrx.kernel.portal.action.GridExportAsXlsAction;
+import org.opencrx.kernel.portal.action.GridExportAsXmlAction;
+import org.opencrx.kernel.portal.action.GridExportIncludingCompositesAsXmlAction;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.accessor.jmi.spi.RefMetaObject_1;
@@ -99,6 +103,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.spi.PersistenceManagers;
 import org.openmdx.base.persistence.spi.QueryExtension;
 import org.openmdx.base.query.Condition;
 import org.openmdx.base.query.Extension;
@@ -106,6 +111,7 @@ import org.openmdx.base.query.IsInCondition;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.ActionFactory_1_0;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.Autocompleter_1_0;
 import org.openmdx.portal.servlet.Codes;
@@ -114,32 +120,83 @@ import org.openmdx.portal.servlet.DefaultPortalExtension;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ValueListAutocompleter;
 import org.openmdx.portal.servlet.ViewPort;
+import org.openmdx.portal.servlet.WebKeys;
 import org.openmdx.portal.servlet.control.Control;
+import org.openmdx.portal.servlet.view.Grid;
 import org.openmdx.portal.servlet.view.ObjectView;
 import org.openmdx.portal.servlet.view.ShowObjectView;
+import org.openmdx.security.realm1.jmi1.Principal;
 
 public class PortalExtension 
     extends DefaultPortalExtension
     implements Serializable {
 
-    //-------------------------------------------------------------------------
-    private DateFormat getDateFormat(
-        String language
-    ) {
-        Map<String,DateFormat> dateFormatters = PortalExtension.cachedDateFormat.get();
-        DateFormat dateFormat = dateFormatters.get(language);
-        if(dateFormat == null) {
-            dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, new Locale(language));
-            dateFormatters.put(
-                language,
-                dateFormat
-            );
+	static class CachedPermission implements Comparable<CachedPermission> {
+		
+		public CachedPermission(
+			String permission,
+			String action
+		) {
+			this.permission = permission;
+			this.action = action;
+		}
+		
+		@Override
+        public int compareTo(
+        	CachedPermission that
+        ) {
+        	int compare = this.permission.compareTo(that.permission);
+        	return compare == 0 ?
+        		this.action.compareTo(that.action) : 
+        			compare;	        		
         }
-        return dateFormat;
-    }
-    
+		
+		@Override
+        public String toString(
+        ) {
+			return this.permission + "|" + this.action;
+        }
+
+		public String permission;
+		public String action;
+
+	}
+	
+	static class PermissionsCache {
+	
+		public PermissionsCache(
+			Collection<org.openmdx.security.realm1.jmi1.Permission> permissions			
+		) {
+			this.expiresAt = System.currentTimeMillis() + TTL;
+			this.permissions = new TreeSet<CachedPermission>();
+			for(org.openmdx.security.realm1.jmi1.Permission permission: permissions) {
+				for(String action: permission.getAction()) {
+					this.permissions.add(new CachedPermission(permission.getName(), action));
+				}
+			}
+		}
+		
+		public boolean containsPermission(
+			String permission,
+			String action
+		) {
+			return this.permissions.contains(
+				new CachedPermission(permission, action)
+			);
+		}
+		
+		public boolean isExpired(
+		) {
+			return System.currentTimeMillis() > this.expiresAt;
+		}
+		
+		private final Set<CachedPermission> permissions;
+		private final long expiresAt;
+		private static final long TTL = 60000;
+		
+	}
+	
     //-------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
     @Override
     public List<Condition> getFindObjectsBaseFilter(
         ApplicationContext application,
@@ -157,7 +214,7 @@ public class PortalExtension
             Model_1_0 model = application.getModel();
             ModelElement_1_0 parentDef = ((RefMetaObject_1)context.refMetaObject()).getElementDef();                
             ModelElement_1_0 referenceDef = 
-                (ModelElement_1_0)((Map)parentDef.objGetValue("reference")).get(referenceName);
+                (ModelElement_1_0)((Map<?,?>)parentDef.objGetValue("reference")).get(referenceName);
             if(referenceDef != null) {
                 ModelElement_1_0 referencedType = model.getElement(referenceDef.objGetValue("type"));                
                 excludeDisabled = model.getAttributeDefs(referencedType, true, false).containsKey("disabled");
@@ -178,46 +235,13 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
-    private DateFormat getTimeFormat(
-        String language
-    ) {
-        Map<String,DateFormat> timeFormatters = PortalExtension.cachedTimeFormat.get();
-        DateFormat timeFormat = timeFormatters.get(language);
-        if(timeFormat == null) {
-            timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, new Locale(language)); 
-            timeFormatters.put(
-                language,
-                timeFormat
-            );
-        }
-        return timeFormat; 
-    }
-    
-    //-------------------------------------------------------------------------
-    private DecimalFormat getDecimalFormat(
-        String language
-    ) {
-        Map<String,DecimalFormat> decimalFormatters = PortalExtension.cachedDecimalFormat.get();
-        DecimalFormat decimalFormat = decimalFormatters.get(language);
-        if(decimalFormat == null) {
-            decimalFormat = (DecimalFormat)DecimalFormat.getInstance(new Locale(language)); 
-            decimalFormatters.put(
-                language,
-                decimalFormat
-            );
-        }
-        return decimalFormat; 
-    }
-
-    //-------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
     @Override
     public String getTitle(
         RefObject_1_0 refObj,
         short locale,
         String localeAsString,
         boolean asShortTitle,
-        ApplicationContext application
+        ApplicationContext app
     ) {
         if(refObj == null) {
             return "#NULL";
@@ -226,330 +250,21 @@ public class PortalExtension
             return "Untitled";
         }        
         try {
-          PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
-          Codes codes = application.getCodes();
-          String language = localeAsString.substring(0, 2);
-          DateFormat dateFormat = this.getDateFormat(language);
-          DateFormat timeFormat =  this.getTimeFormat(language);
-          DecimalFormat decimalFormat = this.getDecimalFormat(language);
-          
-          if(refObj instanceof org.openmdx.base.jmi1.Segment) {
-              return application.getLabel(refObj.refClass().refMofId());
-          }
-          else if(refObj instanceof org.opencrx.kernel.account1.jmi1.Account) {
-              org.opencrx.kernel.account1.jmi1.Account obj = (org.opencrx.kernel.account1.jmi1.Account)refObj;
-              return this.toNbspS(obj.getFullName());
-          }
-          else if(refObj instanceof org.opencrx.kernel.product1.jmi1.ProductBasePrice) {
-              org.opencrx.kernel.product1.jmi1.ProductBasePrice obj = (org.opencrx.kernel.product1.jmi1.ProductBasePrice)refObj;
-              Map<Object,Object> currencyTexts = codes.getLongText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", locale, true, true);
-              try {
-                  return this.toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
-              }
-              catch(Exception e) {
-                  return this.toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " N/A";                  
-              }
-          }          
-          else if(refObj instanceof org.opencrx.kernel.product1.jmi1.PriceListEntry) {
-              org.opencrx.kernel.product1.jmi1.PriceListEntry obj = (org.opencrx.kernel.product1.jmi1.PriceListEntry)refObj;
-              return this.toS(obj.getProductName());
-          }          
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
-              org.opencrx.kernel.activity1.jmi1.Activity obj = (org.opencrx.kernel.activity1.jmi1.Activity)refObj;
-              return this.toS(obj.getActivityNumber()).trim() + ": " + this.toS(obj.getName());
-          }
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityProcessState) {
-              org.opencrx.kernel.activity1.jmi1.ActivityProcessState obj = (org.opencrx.kernel.activity1.jmi1.ActivityProcessState)refObj;
-              return this.toNbspS(obj.getName());
-          }
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp) {
-              org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)refObj;
-              org.opencrx.kernel.activity1.jmi1.Activity activity = null;
-              // In case of NO_PERMISSION
-              try {
-                  activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(
-                      followUp.refGetPath().getParent().getParent()
-                  );
-                  activity.getName();
-              } 
-              catch(Exception e) {}
-              return 
-                  (activity == null ? "" : this.getTitle(activity, locale, localeAsString, asShortTitle, application) + ": ") + 
-                  this.toS(followUp.getTitle());
-          }
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment) {
-              org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment obj = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)refObj;
-              return obj == null ? 
-                  "Untitled" : 
-                  this.getTitle(obj.getActivityGroup(), locale, localeAsString, asShortTitle, application);
-          }
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroupMember) {
-              org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)refObj;
-              org.opencrx.kernel.account1.jmi1.AccountAddress address = member.getAddress();
-              if(address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
-                  org.opencrx.kernel.account1.jmi1.Account account = 
-                      (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
-                          address.refGetPath().getParent().getParent()
-                      );
-                  return this.getTitle(address, locale, localeAsString, asShortTitle, application) + " / " + account.getFullName();
-              }
-              else {
-                  return address  == null ? 
-                      "Untitled" : 
-                      this.getTitle(address, locale, localeAsString, asShortTitle, application);                
-              }
-          }
-          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AbstractActivityParty) {
-              RefObject_1_0 party = null;
-              if(
-                  (refObj instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipient) ||
-                  (refObj instanceof org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient)
-              ) {
-                  org.opencrx.kernel.account1.jmi1.AccountAddress address = null;
-                  if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipient) {
-                      org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient = (org.opencrx.kernel.activity1.jmi1.EMailRecipient)refObj;
-                      address = recipient.getParty();
-                      if(address instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
-                          String title = this.getTitle(address, locale, localeAsString, asShortTitle, application);
-                          if(asShortTitle) {
-                        	  return title;
-                          }
-                          else {
-	                          org.opencrx.kernel.activity1.jmi1.EMail email = (org.opencrx.kernel.activity1.jmi1.EMail)pm.getObjectById(
-	                              recipient.refGetPath().getParent().getParent()
-	                          );
-	                          String messageSubject = email.getMessageSubject() == null ? 
-	                        	  "" :
-	                        	  URLEncoder.encode(email.getMessageSubject(), "UTF-8").replace("+", "%20");
-	                          String messageBody = email.getMessageBody() == null ?
-	                        	  "" :
-	                        	  URLEncoder.encode(email.getMessageBody(), "UTF-8").replace("+", "%20");
-	                          // Browser limit
-	                          if(messageBody.length() > 1500) {
-	                              messageBody = messageBody.substring(0, 1500);
-	                          }
-	                          return title + (title.indexOf("@") > 0 ? "?subject=" + messageSubject + "&body=" + messageBody : "");
-                          }
-                      }
-                  }
-                  else {
-                      org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient recipient = (org.opencrx.kernel.activity1.jmi1.PhoneCallRecipient)refObj;
-                      address = recipient.getParty();                      
-                  }
-                  if(address instanceof org.opencrx.kernel.account1.jmi1.PhoneNumber) {
-                      org.opencrx.kernel.account1.jmi1.Account account = 
-                          (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
-                              address.refGetPath().getParent().getParent()
-                          );
-                      return this.getTitle(address, locale, localeAsString, asShortTitle, application) + " / " + account.getFullName();
-                  }
-                  else {
-                      return address  == null ? 
-                          "Untitled" : 
-                          this.getTitle(address, locale, localeAsString, asShortTitle, application);                
-                  }                  
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup)refObj).getParty();
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.IncidentParty) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.IncidentParty)refObj).getParty();
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MailingRecipient) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.MailingRecipient)refObj).getParty();
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup)refObj).getParty();
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.MeetingParty) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.MeetingParty)refObj).getParty();
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.TaskParty) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.TaskParty)refObj).getParty();
-              }
-              else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.PhoneCallRecipientGroup) {
-                  party = ((org.opencrx.kernel.activity1.jmi1.PhoneCallRecipientGroup)refObj).getParty();                  
-              }
-              return party == null ? 
-                  "Untitled" :
-                  this.getTitle(party, locale, localeAsString, asShortTitle, application);
-          }
-          else if(refObj instanceof org.opencrx.kernel.contract1.jmi1.AccountAddress) {
-             return refObj.refGetValue("address") == null ? 
-                 "Untitled" : 
-                 this.getTitle((RefObject_1_0)refObj.refGetValue("address"), locale, localeAsString, asShortTitle, application);
-          }
-          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.EMailAddressable) {
-              return "* " + this.toS(refObj.refGetValue("emailAddress"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.contract1.jmi1.AbstractContractPosition) {
-              return this.toS(refObj.refGetValue("lineItemNumber"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.product1.jmi1.AbstractProduct) {
-              org.opencrx.kernel.product1.jmi1.AbstractProduct product = (org.opencrx.kernel.product1.jmi1.AbstractProduct)refObj;
-              return product.getProductNumber() == null || product.getProductNumber().length() == 0 || product.getProductNumber().equals(product.getName()) ? 
-            	  this.toS(product.getName()) : 
-            		  this.toS(product.getName() + " / " + product.getProductNumber()); 
-          }
-          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PostalAddressable) {
-              String address = "";
-              int nLines = 0;
-              for(String l: (List<String>)refObj.refGetValue("postalAddressLine")) {
-                  String line = this.toS(l);
-                  if(nLines > 0) address += "<br />";
-                  address += line;
-                  nLines++;
-              }
-              for(String l: (List<String>)refObj.refGetValue("postalStreet")) {
-                  String street = this.toS(l);
-                  if(nLines > 0) address += "<br />";
-                  address += street;
-                  nLines++;
-              }
-              Object postalCountry = refObj.refGetValue("postalCountry");
-              String postalCountryS = postalCountry == null
-                  ? ""
-                  : codes == null
-                      ? "" + postalCountry
-                      : this.toS(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", locale, true, true).get(postalCountry));
-              return address + "<br />" + this.toS(refObj.refGetValue("postalCode")) + " " + this.toS(refObj.refGetValue("postalCity")) + "<br />" + postalCountryS;
-          }
-          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PhoneNumberAddressable) {
-              return "* " + this.toS(refObj.refGetValue("phoneNumberFull"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.RoomAddressable) {
-              RoomAddressable obj = (RoomAddressable)refObj;
-              if(refObj instanceof Addressable) {              
-                  AbstractBuildingUnit building = ((Addressable)refObj).getBuilding();
-                  if(building == null) {
-                      return this.toS(obj.getRoomNumber());                  
-                  }
-                  else {
-                      return this.getTitle(building, locale, localeAsString, asShortTitle, application) + " " +  this.toS(obj.getRoomNumber());
-                  }
-              }
-              else {
-                  return this.toS(obj.getRoomNumber());
-              }
-          }
-          else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Rating) {
-              return this.toS(refObj.refGetValue("ratingLevel"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.account1.jmi1.RevenueReport) {
-              return this.toS(refObj.refGetValue("reportNumber"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.address1.jmi1.WebAddressable) {
-              return "* " + this.toS(refObj.refGetValue("webUrl"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.code1.jmi1.CodeValueEntry) {
-              return this.toS(refObj.refGetValue("shortText"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Description) {
-              return this.toS(refObj.refGetValue("language"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.document1.jmi1.Document) {
-              org.opencrx.kernel.document1.jmi1.Document document = (org.opencrx.kernel.document1.jmi1.Document)refObj;
-              if(document.getQualifiedName() != null) {
-                  return this.toS(document.getQualifiedName());
-              }
-              else if(document.getName() != null) {
-                  return this.toS(document.getName());                  
-              }
-              else {
-                  return this.toS(document.getDocumentNumber());
-              }
-          }
-          else if(refObj instanceof org.opencrx.kernel.account1.jmi1.Member) {
-              return (refObj.refGetValue("account") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("account"), locale, localeAsString, asShortTitle, application));
-          }    
-          else if(refObj instanceof org.opencrx.kernel.account1.jmi1.ContactRelationship) {
-              return (refObj.refGetValue("toContact") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("toContact"), locale, localeAsString, asShortTitle, application));
-          }
-          else if(refObj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-              org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)refObj;
-              if(userHome == null) {
-                  return "Untitled"; 
-              }
-              else {
-                  return this.getTitle(userHome.getContact(), locale, localeAsString, asShortTitle, application);
-              }
-          }
-          else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
-              return (refObj.refGetValue("reference") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), locale, localeAsString, asShortTitle, application));
-          }
-          else if(refObj instanceof org.opencrx.kernel.home1.jmi1.WfProcessInstance) {
-              return (refObj.refGetValue("process") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("process"), locale, localeAsString, asShortTitle, application) + " " + this.toS(refObj.refGetValue("startedOn")));
-          }      
-          else if(refObj instanceof org.opencrx.kernel.base.jmi1.AuditEntry) {
-              Object createdAt = refObj.refGetValue(SystemAttributes.CREATED_AT);
-              return (refObj.refGetValue(SystemAttributes.CREATED_AT) == null) ? "Untitled" : dateFormat.format(createdAt) + " " + timeFormat.format(createdAt);
-          }
-          else if(refObj instanceof org.opencrx.kernel.base.jmi1.Note) {
-              return this.toS(refObj.refGetValue("title"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.base.jmi1.Chart) {
-              return this.toS(refObj.refGetValue("description"));
-          }
-          else if(refObj instanceof org.opencrx.kernel.model1.jmi1.Element) {
-              String title = this.toS(refObj.refGetValue("qualifiedName"));              
-              if(title.indexOf(":") > 0) {
-                  int pos = title.lastIndexOf(":");
-                  title = title.substring(pos + 1) + " (" + title.substring(0, pos) + ")";
-              }
-              return title;
-          }
-          else if(refObj instanceof DepotEntity) {
-              DepotEntity obj = (DepotEntity)refObj;
-              return obj.getDepotEntityNumber() == null ? this.toS(obj.getName()) : this.toS(obj.getDepotEntityNumber());
-          }
-          else if(refObj instanceof DepotContract) {
-              DepotContract obj = (DepotContract)refObj;
-              return obj.getDepotHolderNumber() == null ? this.toS(obj.getName()) : this.toS(obj.getDepotHolderNumber());
-          }
-          else if(refObj instanceof Depot) {
-              Depot obj = (Depot)refObj;
-              return obj.getDepotNumber() == null ? this.toS(obj.getName()) : this.toS(obj.getDepotNumber());          
-          }
-          else if(refObj instanceof DepotPosition) {
-              DepotPosition obj = (DepotPosition)refObj;
-              String depotTitle = this.getTitle(obj.getDepot(), locale, localeAsString, asShortTitle, application);
-              return depotTitle + " / " + this.toS(obj.getName());                    
-          }
-          else if(refObj instanceof DepotReport) {
-              DepotReport obj = (DepotReport)refObj;
-              String depotTitle = this.getTitle(obj.getDepot(), locale, localeAsString, asShortTitle, application);
-              return depotTitle + " / " + this.toS(obj.getName());                    
-          }
-          else if(refObj instanceof DepotReportItemPosition) {
-              DepotReportItemPosition obj = (DepotReportItemPosition)refObj;
-              return obj.getPositionName();
-          }
-          else if(refObj instanceof SimpleEntry) {
-              SimpleEntry obj = (SimpleEntry)refObj;
-              return this.toS(obj.getEntryValue());
-          }
-          else if(refObj instanceof Media) {
-              Media obj = (Media)refObj;
-              return this.toS(obj.getContentName());
-          }
-          else if(refObj instanceof ContractRole) {
-              ContractRole contractRole = (ContractRole)refObj;
-              return 
-                  this.getTitle(contractRole.getContract(), locale, localeAsString, asShortTitle, application) + " / " + 
-                  this.getTitle(contractRole.getAccount(), locale, localeAsString, asShortTitle, application) + " / " + 
-                  this.getTitle(contractRole.getContractReferenceHolder(), locale, localeAsString, asShortTitle, application);
-          }
-          else if(refObj instanceof InvolvedObject) {
-              InvolvedObject involved = (InvolvedObject)refObj;
-              return this.getTitle(involved.getInvolved(), locale, localeAsString, asShortTitle, application);
-          }
-          else if(refObj instanceof org.opencrx.kernel.account1.jmi1.AccountAssignment) {
-              org.opencrx.kernel.account1.jmi1.AccountAssignment obj = (org.opencrx.kernel.account1.jmi1.AccountAssignment)refObj;
-              return this.getTitle(obj.getAccount(), locale, localeAsString, asShortTitle, application);
-          }          
-          else {
-              return super.getTitle(refObj, locale, localeAsString, asShortTitle, application);
-          }
+        	Codes codes = app.getCodes();
+        	if(refObj instanceof org.openmdx.base.jmi1.Segment) {
+        		return app.getLabel(refObj.refClass().refMofId());
+        	}
+        	else {
+        		String title = Base.getInstance().getTitle(
+        			refObj, 
+        			codes, 
+        			locale, 
+        			asShortTitle
+        		);
+        		return title == null ?
+        			super.getTitle(refObj, locale, localeAsString, asShortTitle, app) :
+        				title;
+        	}
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
@@ -560,11 +275,79 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
+    protected boolean hasPermission(
+    	org.openmdx.security.realm1.jmi1.Principal principal,
+    	String permission,
+    	String specificPermission,
+    	String action
+    ) {
+    	String actionGrant = null;
+    	String actionRevoke = null;
+    	if(action.startsWith(WebKeys.GRANT_PREFIX)) {
+    		actionGrant = action;
+    		actionRevoke = WebKeys.REVOKE_PREFIX + action.substring(1);
+    	} else if(action.startsWith(WebKeys.REVOKE_PREFIX)) {
+    		actionGrant = WebKeys.GRANT_PREFIX + action.substring(1);
+    		actionRevoke = action;
+    	}
+		Boolean allow = null;    	
+    	if(
+    		actionGrant != null &&
+    		actionRevoke != null &&
+    		principal instanceof org.opencrx.security.realm1.jmi1.Principal
+    	) {
+    		org.opencrx.security.realm1.jmi1.Principal requestingPrincipal = (org.opencrx.security.realm1.jmi1.Principal)principal;
+    		List<org.openmdx.security.realm1.jmi1.Role> roles = requestingPrincipal.getGrantedRole();
+    		List<org.openmdx.security.realm1.jmi1.Role> validatedRoles = new ArrayList<org.openmdx.security.realm1.jmi1.Role>();
+    		for(Iterator<org.openmdx.security.realm1.jmi1.Role> i = roles.iterator(); i.hasNext(); ) {
+    			try {
+    				validatedRoles.add(i.next());
+    			} catch(Exception e) {
+    				SysLog.warning("Role can not be accessed. Ignoring.", e.getMessage());
+    				new ServiceException(e).log();
+    			}
+    		}
+    		for(org.openmdx.security.realm1.jmi1.Role role: validatedRoles) {
+    			if(!Boolean.TRUE.equals(role.isDisabled())) {
+	    			PermissionsCache cache = cachedPermissionsByRole.get(role.getName());
+	    			if(cache == null || cache.isExpired()) {
+		    			Collection<org.openmdx.security.realm1.jmi1.Permission> permissions = role.getPermission();
+	    				cachedPermissionsByRole.put(
+	    					role.getName(),
+	    					cache = new PermissionsCache(permissions)
+	    				);
+	    			}
+	    			if(cache.containsPermission(permission, actionGrant)) {
+	    				allow = true;
+	    			}
+	    			if(cache.containsPermission(permission, actionRevoke)) {
+	    				allow = false;
+	    			}
+	    			if(specificPermission != null) {
+	    				if(cache.containsPermission(specificPermission, actionGrant)) {
+	    					allow = true;
+	    				}
+	    				if(cache.containsPermission(specificPermission, actionRevoke)) {
+	    					allow = false;
+	    				}
+	    			}
+    			}
+    		}
+    	}
+    	return allow == null ? 
+    		false :
+    			action.startsWith(WebKeys.GRANT_PREFIX) ?
+    				allow :
+    					!allow;    
+    }
+
+    //-------------------------------------------------------------------------
     @Override
-    public boolean isEnabled(
+    public boolean hasPermission(
         String elementName, 
         RefObject_1_0 refObj,
-        ApplicationContext context
+        ApplicationContext app,
+        String action
     ) {
         if(refObj instanceof org.opencrx.kernel.depot1.jmi1.CompoundBooking) {
             try {
@@ -587,24 +370,61 @@ public class PortalExtension
                 SysLog.warning(e0.getMessage(), e0.getCause());                
             }
         }
-        return super.isEnabled(
+    	if(refObj != null) {
+	    	PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
+	    	String providerName = app.getUserHomeIdentityAsPath().get(2);
+	    	String segmentName = app.getUserHomeIdentityAsPath().get(4);
+	    	org.openmdx.security.realm1.jmi1.Principal principal = Utils.getRequestingPrincipal(pm, providerName, segmentName);
+	    	String specificElementName = null;
+	    	if(elementName.indexOf(":") > 0) {
+	    		specificElementName = refObj.refClass().refMofId() + elementName.substring(elementName.lastIndexOf(":"));
+	    	}
+	    	boolean hasPermission = this.hasPermission(
+	    		principal, 
+	    		elementName, 
+	    		specificElementName, 
+	    		action
+	    	);
+	    	if(hasPermission) {
+	    		return true;
+	    	}
+    	}
+        return super.hasPermission(
             elementName, 
             refObj,
-            context
+            app,
+            action
         );
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public boolean isEnabled(
+    public boolean hasPermission(
         Control control, 
         RefObject_1_0 refObj,
-        ApplicationContext application
+        ApplicationContext app,
+        String action       
     ) {
-        return super.isEnabled(
+    	if(refObj != null) {
+	    	PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
+	    	String providerName = app.getUserHomeIdentityAsPath().get(2);
+	    	String segmentName = app.getUserHomeIdentityAsPath().get(4);
+	    	org.openmdx.security.realm1.jmi1.Principal principal = Utils.getRequestingPrincipal(pm, providerName, segmentName);
+	    	boolean hasPermission = this.hasPermission(
+	    		principal, 
+	    		control.getId(), 
+	    		null, // specificPermission
+	    		action
+	    	);
+	    	if(hasPermission) {
+	    		return true;
+	    	}
+    	}
+        return super.hasPermission(
             control, 
             refObj, 
-            application
+            app,
+            action
         );
     }
     
@@ -639,17 +459,17 @@ public class PortalExtension
         String stringParam = app.getWildcardFilterValue(filterValue); 
         String stringParam0 = stringParam.startsWith("(?i)") ? stringParam.substring(4) : stringParam;
         String stringParam1 = stringParam.startsWith("(?i)") ? stringParam.substring(4).toUpperCase() : stringParam.toUpperCase();
-        if("org:opencrx:kernel:contract1:AbstractContract:salesRep".equals(qualifiedReferenceName)) {
+        if("org:opencrx:kernel:contract1:SalesContract:salesRep".equals(qualifiedReferenceName)) {
             clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";
             stringParams.add(stringParam0);
             stringParams.add(stringParam1);            	
         }
-        else if("org:opencrx:kernel:contract1:AbstractContract:customer".equals(qualifiedReferenceName)) {
+        else if("org:opencrx:kernel:contract1:SalesContract:customer".equals(qualifiedReferenceName)) {
         	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
             stringParams.add(stringParam0);
             stringParams.add(stringParam1);            	
         }
-        else if("org:opencrx:kernel:contract1:AbstractContract:supplier".equals(qualifiedReferenceName)) {
+        else if("org:opencrx:kernel:contract1:SalesContract:supplier".equals(qualifiedReferenceName)) {
         	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
             stringParams.add(stringParam0);
             stringParams.add(stringParam1);            	
@@ -658,7 +478,17 @@ public class PortalExtension
         	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
             stringParams.add(stringParam0);
             stringParams.add(stringParam1);            	
-        }        
+        }
+        else if("org:opencrx:kernel:activity1:Activity:reportingContact".equals(qualifiedReferenceName)) {
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.rep_contact = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
+        else if("org:opencrx:kernel:activity1:Activity:reportingAccount".equals(qualifiedReferenceName)) {
+        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.rep_acct = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+        }
         else if("org:opencrx:kernel:product1:PriceListEntry:product".equals(qualifiedReferenceName)) {
         	clause = "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND (UPPER(p.name) LIKE UPPER(" + s0 + ") OR UPPER(p.name) LIKE " + s1 + "))";
             stringParams.add(stringParam0);
@@ -733,7 +563,7 @@ public class PortalExtension
         	app
         );
     }
-    
+
     //-------------------------------------------------------------------------
     @Override
     public int getGridPageSize(
@@ -773,27 +603,43 @@ public class PortalExtension
     //-------------------------------------------------------------------------
     @Override
     public Autocompleter_1_0 getAutocompleter(
-        ApplicationContext application,
+        ApplicationContext app,
         RefObject_1_0 context,
         String qualifiedFeatureName
     ) {
-        RefPackage_1_0 rootPkg = (RefPackage_1_0)context.refOutermostPackage();
-        // Derive autocomplete lookup root from root object 0
-        
-        // org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(context);
+    	// org:opencrx:kernel:contract1:CreateContractParams:contractType
+    	// org:opencrx:kernel:contract1:CreateSalesContractParams:contractType
         if(
+        	"org:opencrx:kernel:contract1:CreateContractParams:contractType".equals(qualifiedFeatureName) ||
+        	"org:opencrx:kernel:contract1:CreateSalesContractParams:contractType".equals(qualifiedFeatureName)        	
+        ) {
+            List<ObjectReference> selectableValues = null;
+            if(context instanceof ContractCreator) {
+                selectableValues = new ArrayList<ObjectReference>();
+            	ContractCreator contractCreator = (ContractCreator)context;
+            	List<ContractType> contractTypes = contractCreator.getContractType();
+            	for(ContractType contractType: contractTypes) {
+                    selectableValues.add(
+                        new ObjectReference(contractType, app)
+                    );            		
+            	}
+            }
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(selectableValues);
+        }
+        // org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition
+    	// org:opencrx:kernel:activity1:LinkToAndFollowUpParams:transition
+        else if(
         	"org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition".equals(qualifiedFeatureName) ||
         	"org:opencrx:kernel:activity1:LinkToAndFollowUpParams:transition".equals(qualifiedFeatureName)        	
         ) {
             List<ObjectReference> selectableValues = null;
-            if(context instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
-                org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)context;
-                org.opencrx.kernel.activity1.jmi1.ActivityType activityType = null;
-                org.opencrx.kernel.activity1.jmi1.ActivityProcessState processState = null;
-                org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-                    (org.opencrx.kernel.activity1.jmi1.Activity1Package)rootPkg.refPackage(
-                        org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
-                    );
+            if(context instanceof Activity) {
+                Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)context;
+                ActivityType activityType = null;
+                ActivityProcessState processState = null;
                 try {
                     activityType = activity.getActivityType();
                     processState = activity.getProcessState();
@@ -802,56 +648,56 @@ public class PortalExtension
                     selectableValues = new ArrayList<ObjectReference>();
                     org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = activityType.getControlledBy();
                     processState = activity.getProcessState();
-                    org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery transitionFilter = activityPkg.createActivityProcessTransitionQuery();
+                    ActivityProcessTransitionQuery transitionFilter = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
                     transitionFilter.orderByNewPercentComplete().ascending();
                     List<org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition> transitions = activityProcess.getTransition(transitionFilter);
                     for(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition: transitions) {
                         if(transition.getPrevState().equals(processState)) {
                             selectableValues.add(
-                                new ObjectReference(transition, application)
+                                new ObjectReference(transition, app)
                             );
                         }
                     }
                 }
             }
-            return selectableValues == null
-                ? null
-                : new ValueListAutocompleter(selectableValues);
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(selectableValues);
         }
         // org:opencrx:kernel:activity1:ActivityAssignToParams:resource
         else if("org:opencrx:kernel:activity1:ActivityAssignToParams:resource".equals(qualifiedFeatureName)) {
             List<ObjectReference> selectableValues = null;
-            if(context instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
-                org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)context;
-            	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
-                Path activityIdentity = activity.refGetPath();
-                org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
-                    (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-                    activityIdentity.getPrefix(activityIdentity.size() - 2)
-                );
-                org.opencrx.kernel.activity1.cci2.ResourceQuery query = 
-                	(org.opencrx.kernel.activity1.cci2.ResourceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
-                query.forAllDisabled().isFalse();
-                query.contact().isNonNull();
-                query.orderByName().ascending();
-                selectableValues = new ArrayList<ObjectReference>();
-                int count = 0;
-                List<org.opencrx.kernel.activity1.jmi1.Resource> resources = activitySegment.getResource(query);
-                for(org.opencrx.kernel.activity1.jmi1.Resource resource: resources) {
-                    if(resource != null) {
-                        selectableValues.add(
-                            new ObjectReference(resource, application)
-                        );
-                    }
-                }
-                // Show at most 20 values in drop down. Otherwise show lookup
-                if(count >= 20) {
-                    selectableValues = null;
-                }
+            if(context instanceof Activity) {
+                Activity activity = (Activity)context;
+            	try {
+	                org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(
+	                	pm, 
+	                	activity.refGetPath().get(2), 
+	                	activity.refGetPath().get(4)
+	                );
+	                ResourceQuery query = (ResourceQuery)pm.newQuery(Resource.class);
+	                query.forAllDisabled().isFalse();
+	                query.contact().isNonNull();
+	                query.orderByName().ascending();
+	                selectableValues = new ArrayList<ObjectReference>();
+	                int count = 0;
+	                List<Resource> resources = activitySegment.getResource(query);
+	                for(Resource resource: resources) {
+	                    if(resource != null) {
+	                        selectableValues.add(
+	                            new ObjectReference(resource, app)
+	                        );
+	                    }
+	                }
+	                // Show at most 20 values in drop down. Otherwise show lookup
+	                if(count >= 20) {
+	                    selectableValues = null;
+	                }
+	            } catch(Exception e) {}
             }
             return selectableValues == null ? 
             	null : 
-            	new ValueListAutocompleter(selectableValues);
+            		new ValueListAutocompleter(selectableValues);
         }
         // org:opencrx:kernel:activity1:ResourceAddWorkRecordByPeriodParams:activity
         // org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity
@@ -860,26 +706,21 @@ public class PortalExtension
             "org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity".equals(qualifiedFeatureName)
         ) {
             List<ObjectReference> selectableValues = null;
-            if(context instanceof org.opencrx.kernel.activity1.jmi1.Resource) {
-                org.opencrx.kernel.activity1.jmi1.Resource resource = 
-                    (org.opencrx.kernel.activity1.jmi1.Resource)context;
-                org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-                    (org.opencrx.kernel.activity1.jmi1.Activity1Package)rootPkg.refPackage(
-                        org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
-                    );
-                org.opencrx.kernel.activity1.cci2.ActivityQuery filter = activityPkg.createActivityQuery();
+            if(context instanceof Resource) {
+                Resource resource = (Resource)context;
+                ActivityQuery filter = (ActivityQuery)pm.newQuery(Activity.class);
                 filter.thereExistsPercentComplete().lessThan(new Short((short)100));
                 filter.orderByActivityNumber().ascending();
                 selectableValues = new ArrayList<ObjectReference>();
                 int count = 0;
-                List<org.opencrx.kernel.activity1.jmi1.Activity> activities = resource.getAssignedActivity(filter);
+                List<Activity> activities = resource.getAssignedActivity(filter);
                 for(
-                    Iterator<org.opencrx.kernel.activity1.jmi1.Activity> i = activities.iterator(); 
+                    Iterator<Activity> i = activities.iterator(); 
                     i.hasNext() && count < 20; 
                     count++
                 ) {
                     selectableValues.add(
-                        new ObjectReference(i.next(), application)
+                        new ObjectReference(i.next(), app)
                     );
                 }
                 // Show at most 20 values in drop down. Otherwise show lookup
@@ -887,9 +728,9 @@ public class PortalExtension
                     selectableValues = null;
                 }
             }
-            return selectableValues == null
-                ? null
-                : new ValueListAutocompleter(selectableValues);
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(selectableValues);
         }
         // org:opencrx:kernel:base:Property:....
         else if(
@@ -906,23 +747,22 @@ public class PortalExtension
                 try {
                     if(property.getDomain() != null) {
                         selectableValues = new ArrayList<String>();
-                        org.opencrx.kernel.code1.jmi1.CodeValueContainer domain = property.getDomain();
-                        Collection<org.opencrx.kernel.code1.jmi1.AbstractEntry> entries = domain.getEntry();
-                        for(org.opencrx.kernel.code1.jmi1.AbstractEntry entry: entries) {
+                        CodeValueContainer domain = property.getDomain();
+                        Collection<AbstractEntry> entries = domain.getEntry();
+                        for(AbstractEntry entry: entries) {
                             selectableValues.add(
-                                entry.getEntryValue() != null 
-                                    ? entry.getEntryValue()
+                                entry.getEntryValue() != null ? 
+                                	entry.getEntryValue()
                                     // get qualifier as value if no entryValue is specified
                                     : new Path(entry.refMofId()).getBase()
                             );
                         }
                     }
-                } 
-                catch(Exception e) {}
+                } catch(Exception e) {}
             }
-            return selectableValues == null
-                ? null
-                : new ValueListAutocompleter(selectableValues);
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(selectableValues);
         }
         // org:opencrx:kernel:base:ExportItemParams:itemMimeType
         else if(
@@ -931,35 +771,34 @@ public class PortalExtension
             List<String> selectableValues = new ArrayList<String>();
             selectableValues.add("application/x-excel");
             selectableValues.add("text/xml");
-            return selectableValues == null
-                ? null
-                : new ValueListAutocompleter(selectableValues);
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(selectableValues);
         }
         // org:opencrx:kernel:base:ExportItemParams:exportProfile
-        if("org:opencrx:kernel:base:ExportItemParams:exportProfile".equals(qualifiedFeatureName)) {
+        else if("org:opencrx:kernel:base:ExportItemParams:exportProfile".equals(qualifiedFeatureName)) {
             List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.base.jmi1.Exporter) {
-                PersistenceManager pm = JDOHelper.getPersistenceManager(context);
                 String providerName = context.refGetPath().get(2);
                 String segmentName = context.refGetPath().get(4);
-                String currentPrincipal = application.getUserHomeIdentity().getBase();
+                String currentPrincipal = app.getUserHomeIdentityAsPath().getBase();
                 String adminPrincipal = SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName;
                 // Collect export profiles from current user
                 try {
                     org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-                        new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + currentPrincipal)
+                        new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", currentPrincipal)
                     );
                     org.opencrx.kernel.home1.cci2.ExportProfileQuery exportProfileQuery = Utils.getHomePackage(pm).createExportProfileQuery();
                     exportProfileQuery.orderByName().ascending();
                     Collection<org.opencrx.kernel.home1.jmi1.ExportProfile> exportProfiles = userHome.getExportProfile();
                     for(org.opencrx.kernel.home1.jmi1.ExportProfile exportProfile: exportProfiles) {
                         for(String forClass: exportProfile.getForClass()) {
-                            if(application.getModel().isSubtypeOf(context.refClass().refMofId(), forClass)) {
+                            if(app.getModel().isSubtypeOf(context.refClass().refMofId(), forClass)) {
                                 if(selectableValues == null) {
                                     selectableValues = new ArrayList<ObjectReference>();
                                 }
                                 selectableValues.add(
-                                    new ObjectReference(exportProfile, application)
+                                    new ObjectReference(exportProfile, app)
                                 );
                                 break;
                             }
@@ -971,19 +810,19 @@ public class PortalExtension
                 try {
                     if(!currentPrincipal.equals(adminPrincipal)) {
                         org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-                            new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + adminPrincipal)
+                            new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", adminPrincipal)
                         );
                         org.opencrx.kernel.home1.cci2.ExportProfileQuery exportProfileQuery = Utils.getHomePackage(pm).createExportProfileQuery();
                         exportProfileQuery.orderByName().ascending();
                         Collection<org.opencrx.kernel.home1.jmi1.ExportProfile> exportProfiles = userHome.getExportProfile();
                         for(org.opencrx.kernel.home1.jmi1.ExportProfile exportProfile: exportProfiles) {
                             for(String forClass: exportProfile.getForClass()) {
-                                if(application.getModel().isSubtypeOf(context.refClass().refMofId(), forClass)) {
+                                if(app.getModel().isSubtypeOf(context.refClass().refMofId(), forClass)) {
                                     if(selectableValues == null) {
                                         selectableValues = new ArrayList<ObjectReference>();
                                     }
                                     selectableValues.add(
-                                        new ObjectReference(exportProfile, application)
+                                        new ObjectReference(exportProfile, app)
                                     );
                                     break;
                                 }
@@ -993,20 +832,32 @@ public class PortalExtension
                 }
                 catch(Exception e) {}
             }
-            return selectableValues == null
-                ? null
-                : new ValueListAutocompleter(selectableValues);
-        }        
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(selectableValues);
+        }
+        // org:opencrx:kernel:address1:Addressable:tz
+        else if("org:opencrx:kernel:address1:Addressable:tz".equals(qualifiedFeatureName)) {
+        	Set<String> selectableValues = new TreeSet<String>();
+        	selectableValues.add("");
+            String[] timezones = java.util.TimeZone.getAvailableIDs();
+            for(int i = 0; i < timezones.length; i++) {
+            	String timezoneID = timezones[i].trim();
+            	selectableValues.add(timezoneID);
+            }
+            return selectableValues == null ? 
+            	null : 
+            		new ValueListAutocompleter(new ArrayList<String>(selectableValues));
+        }
         else {
             return super.getAutocompleter(
-                application,
+                app,
                 context,
                 qualifiedFeatureName
             );
         }
     }
 
-    
     //-------------------------------------------------------------------------
     @Override
     public ObjectView getLookupView(
@@ -1019,9 +870,8 @@ public class PortalExtension
         Model_1_0 model = application.getModel();
         // start from customer if the current object is a contract and the 
         // lookup type is AccountAddress
-        if(startFrom instanceof org.opencrx.kernel.contract1.jmi1.AbstractContract) {
-            org.opencrx.kernel.contract1.jmi1.AbstractContract contract = 
-                (org.opencrx.kernel.contract1.jmi1.AbstractContract)startFrom;
+        if(startFrom instanceof SalesContract) {
+            SalesContract contract = (SalesContract)startFrom;
             org.opencrx.kernel.account1.jmi1.Account customer = null;
             try {
                 customer = contract.getCustomer();
@@ -1094,7 +944,7 @@ public class PortalExtension
                     org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
                 );
             Path activitySegmentIdentity = 
-                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName);
+                new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(activitySegmentIdentity);
             int currentPos = 0;
@@ -1296,9 +1146,251 @@ public class PortalExtension
     		return super.getNewUserRole(app, requestedObjectIdentity);
     	}
     }
+    
+	//-------------------------------------------------------------------------
+	@Override
+    public List<Action> getGridActions(
+    	ObjectView view,
+    	Grid grid
+    ) throws ServiceException {
+		ApplicationContext app = view.getApplicationContext();
+	    List<Action> actions = new ArrayList<Action>(super.getGridActions(view, grid));
+	    org.openmdx.ui1.jmi1.Element uiExport = app.getUiElement("org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem");
+	    String lExport = app.getCurrentLocaleAsIndex() < uiExport.getToolTip().size() ?
+	    	uiExport.getToolTip().get(app.getCurrentLocaleAsIndex()) :
+	    		uiExport.getToolTip().get(0);
+	    Action exportAsXmlAction = new Action(
+            GridExportAsXmlAction.EVENT_ID, 
+            new Action.Parameter[]{
+                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+            },
+            lExport + " --> XML", 
+            true
+          );
+	    actions.add(exportAsXmlAction);
+	    Action exportAsXlsAction = new Action(
+            GridExportAsXlsAction.EVENT_ID, 
+            new Action.Parameter[]{
+                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+            },
+            lExport + " --> XLS", 
+            true
+          );
+	    actions.add(exportAsXlsAction);
+	    Action exportIncludingCompositesAsXmlAction = new Action(
+            GridExportIncludingCompositesAsXmlAction.EVENT_ID, 
+            new Action.Parameter[]{
+                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+            },
+            lExport + "+ --> XML", 
+            true
+          );
+	    actions.add(exportIncludingCompositesAsXmlAction);
+	    return actions;
+    }
+	
+	//-------------------------------------------------------------------------
+	@Override
+    public ActionFactory_1_0 getActionFactory(
+    ) {
+		return this.actionFactory;
+    }
 
+    //-------------------------------------------------------------------------
+    protected List<org.openmdx.security.realm1.jmi1.Group> getGroupMembership(
+        org.openmdx.security.realm1.jmi1.Principal loginPrincipal,
+        String realmName,
+        PersistenceManager pm
+    ) {
+        try {
+            String loginPrincipalName = new Path(loginPrincipal.refMofId()).getBase();            
+            Path loginPrincipalIdentity = loginPrincipal.refGetPath();
+            SysLog.detail("Group membership for segment", realmName);
+            SysLog.detail("Group membership for principal", loginPrincipalIdentity);
+            org.openmdx.security.realm1.jmi1.Principal principal = 
+                (org.openmdx.security.realm1.jmi1.Principal)pm.getObjectById(
+                    loginPrincipalIdentity.getPrefix(loginPrincipalIdentity.size()-3).getDescendant(
+                        new String[]{realmName, "principal", loginPrincipalName}
+                    )
+                );
+            return principal.getIsMemberOf();
+        }
+        catch(Exception e) {
+        	SysLog.detail("Can not retrieve group membership", e);
+            new ServiceException(e).log();
+            return null;
+        }
+    }
+    
+    //-------------------------------------------------------------------------
+    @Override
+    public boolean checkPrincipal(
+        Path realmIdentity,
+        String principalName,
+        PersistenceManager pm
+    ) throws ServiceException {
+        org.openmdx.security.realm1.jmi1.Principal principal = SecureObject.getInstance().findPrincipal(principalName, realmIdentity, pm);
+        if(principal == null) {
+        	SysLog.info("principal not found in realm", "realm=" + realmIdentity + ", principal=" + principalName);
+            return false;
+        }
+        return !Boolean.TRUE.equals(principal.isDisabled());
+    }
+    
+    //-------------------------------------------------------------------------
+    /**
+     * Return set of roles for specified principal in given realm.
+     * This role mapper is based on the openMDX/Security model. 
+     */
+    @Override
+    public List<String> getUserRoles(
+        Path loginRealmIdentity,
+        String loginPrincipalName,
+        PersistenceManager pm
+    ) throws ServiceException {
+    	List<String> principalChain = PersistenceManagers.toPrincipalChain(loginPrincipalName);
+    	org.openmdx.security.realm1.jmi1.Realm loginRealm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(loginRealmIdentity);
+        List<String> roleNames = new ArrayList<String>();
+        // Get principals owned by subject
+        org.openmdx.security.realm1.jmi1.Principal primaryLoginPrincipal = loginRealm.getPrincipal(principalChain.get(0));
+        org.openmdx.security.realm1.jmi1.Subject subject = primaryLoginPrincipal.getSubject();
+        org.openmdx.security.realm1.cci2.PrincipalQuery principalQuery = (org.openmdx.security.realm1.cci2.PrincipalQuery)pm.newQuery(org.openmdx.security.realm1.jmi1.Principal.class);
+        principalQuery.thereExistsSubject().equalTo(subject);
+        List<org.openmdx.security.realm1.jmi1.Principal> allLoginPrincipals = loginRealm.getPrincipal(principalQuery);        
+        // Reverse sort user roles by their last login date
+        org.openmdx.security.realm1.jmi1.Segment realmSegment = 
+            (org.openmdx.security.realm1.jmi1.Segment)pm.getObjectById(loginRealm.refGetPath().getParent().getParent());
+        // Iterate all realms
+        long leastRecentLoginAt = 0L;
+        Collection<org.openmdx.security.realm1.jmi1.Realm> realms = realmSegment.getRealm();
+        for(org.openmdx.security.realm1.jmi1.Realm realm: realms) {
+        	SysLog.detail("Checking realm", realm);
+            // Skip login realm
+            if(!realm.equals(loginRealm)) {
+                for(org.openmdx.security.realm1.jmi1.Principal loginPrincipal: allLoginPrincipals) {
+                    String id = loginPrincipal.refGetPath().getBase();
+                    List<String> principalIds = new ArrayList<String>();
+                	principalIds.add(id);
+                    if(id.equals(principalChain.get(0)) && !id.equals(loginPrincipalName)) {
+                    	principalIds.add(loginPrincipalName);
+                    }
+                    for(String principalId: principalIds) {
+	                    SysLog.detail("Checking principal", principalId);
+	                    org.openmdx.security.realm1.jmi1.Principal principal = SecureObject.getInstance().findPrincipal(principalId, realm.refGetPath(), pm);
+	                    String realmName = realm.getName();
+	                    // Do not include root realm in roles except if principal is root
+	                    if(principal != null && !Boolean.TRUE.equals(principal.isDisabled()) ) {
+	                        try {
+	                            List<org.openmdx.security.realm1.jmi1.Group> groups = this.getGroupMembership(
+	                                principal,
+	                                realmName,
+	                                pm
+	                            );
+	                            SysLog.detail("Principal groups", groups);
+	                            if(groups != null) {
+	                                long lastLoginAt = 0L;
+	                                try {
+	                                    Date at = (Date)principal.refGetValue("lastLoginAt");
+	                                    if(at != null) {
+	                                        lastLoginAt = at.getTime();
+	                                    }
+	                                } catch(Exception e) {}
+	                                String roleId = principalId + "@" + realmName;
+	                                SysLog.detail("Checking role", roleId);
+	                                if(
+	                                    !roleNames.contains(roleId) &&
+	                                    (!ROOT_REALM_NAME.equals(realmName) || ROOT_PRINCIPAL_NAME.equals(principalId))                                    
+	                                ) {
+	                                	SysLog.detail("Adding role", roleId);
+	                                    roleNames.add(
+	                                        lastLoginAt > leastRecentLoginAt ? 0 : roleNames.size(),
+	                                        roleId
+	                                    );
+	                                }
+	                                try {
+	                                    for(org.openmdx.security.realm1.jmi1.Group userGroup: groups) {
+	                                    	SysLog.detail("Checking group", userGroup);
+	                                        String userGroupIdentity = userGroup.refGetPath().getBase();
+	                                        if(SecurityKeys.PRINCIPAL_GROUP_ADMINISTRATORS.equals(userGroupIdentity)) {
+	                                            roleId = ADMIN_PRINCIPAL_PREFIX + realmName + "@" + realmName;
+	                                            if(!roleNames.contains(roleId)) {
+	                                            	SysLog.detail("Adding role", roleId);
+	                                                roleNames.add(
+	                                                    lastLoginAt > leastRecentLoginAt ? 1 : roleNames.size(),
+	                                                    roleId
+	                                                );
+	                                            }
+	                                        }
+	                                    }
+	                                }
+	                                // Ignore errors while inspecting groups
+	                                catch(Exception e) {}
+	                                leastRecentLoginAt = Math.max(lastLoginAt, leastRecentLoginAt);
+	                            }
+	                        }
+	                        // Ignore errors while inspecting user roles (e.g. subject can not be found)
+	                        catch(Exception e) {}
+	                    }
+                    }
+                }
+            }
+        }
+        return roleNames;
+    }
+
+    //-----------------------------------------------------------------------
+    @Override
+    public String getAdminPrincipal(
+        String realmName
+    ) {
+        return ADMIN_PRINCIPAL_PREFIX + realmName;
+    }
+  
+    //-----------------------------------------------------------------------
+    @Override
+    public boolean isRootPrincipal(
+        String principalName
+    ) {
+        return principalName.startsWith(ROOT_PRINCIPAL_NAME);
+    }
+    
+    //-----------------------------------------------------------------------
+    @Override
+    public void setLastLoginAt(
+    	Path realmIdentity,
+    	String segmentName,
+    	String principalName,
+    	PersistenceManager pm    	
+    ) throws ServiceException {
+        try {
+        	List<String> principalChain = PersistenceManagers.toPrincipalChain(principalName);
+            Principal principal = (Principal)pm.getObjectById(
+            	realmIdentity.getParent().getDescendant(
+                    new String[]{segmentName, "principal", principalChain.get(0)}
+                )
+            );              
+            // Don't care if feature 'lastLoginAt does not exist on principal
+            pm.currentTransaction().begin();
+            principal.refSetValue("lastLoginAt", new Date());
+            pm.currentTransaction().commit();
+        } 
+        catch(Exception e) {
+            try {
+                pm.currentTransaction().rollback();
+            } catch(Exception e0) {}
+            SysLog.info("Unable to set last login date. For more info see detail log", e.getMessage());
+            SysLog.detail(e.getMessage(), e.getCause());
+        }
+    }
+    
+	//-------------------------------------------------------------------------
+	// Members
 	//-------------------------------------------------------------------------
     private static final long serialVersionUID = 3761691203816992816L;
+
+    private final ActionFactory_1_0 actionFactory = new ActionFactory();
+	
+    private static Map<String,PermissionsCache> cachedPermissionsByRole = new ConcurrentHashMap<String,PermissionsCache>();
     
     private static final Set<String> CLASSES_WITH_USER_DEFINABLE_QUALIFER =
         new HashSet<String>(Arrays.asList(
@@ -1310,22 +1402,6 @@ public class PortalExtension
                 "org:opencrx:kernel:uom1:Uom"
             }
         ));
-    
-    private static ThreadLocal<Map<String,DateFormat>> cachedDateFormat = new ThreadLocal<Map<String,DateFormat>>() {
-        protected synchronized Map<String,DateFormat> initialValue() {
-            return new HashMap<String,DateFormat>();
-        }
-    };
-    private static ThreadLocal<Map<String,DateFormat>> cachedTimeFormat = new ThreadLocal<Map<String,DateFormat>>() {
-        protected synchronized Map<String,DateFormat> initialValue() {
-            return new HashMap<String,DateFormat>();
-        }
-    };
-    private static ThreadLocal<Map<String,DecimalFormat>> cachedDecimalFormat = new ThreadLocal<Map<String,DecimalFormat>>() {
-        protected synchronized Map<String,DecimalFormat> initialValue() {
-            return new HashMap<String,DecimalFormat>();
-        }
-    };
     
 }
 

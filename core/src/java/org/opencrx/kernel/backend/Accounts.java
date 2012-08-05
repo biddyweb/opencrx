@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.84 2011/04/13 13:15:03 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.99 2011/12/23 09:57:21 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.84 $
+ * Revision:    $Revision: 1.99 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/04/13 13:15:03 $
+ * Date:        $Date: 2011/12/23 09:57:21 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@ package org.opencrx.kernel.backend;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -75,6 +76,7 @@ import org.opencrx.kernel.account1.jmi1.AbstractFilterAddress;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.opencrx.kernel.account1.jmi1.AddressAccountMembershipFilterProperty;
 import org.opencrx.kernel.account1.jmi1.AddressCategoryFilterProperty;
 import org.opencrx.kernel.account1.jmi1.AddressDisabledFilterProperty;
 import org.opencrx.kernel.account1.jmi1.AddressFilterProperty;
@@ -89,13 +91,26 @@ import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.Room;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
+import org.opencrx.kernel.activity1.cci2.AddressGroupMemberQuery;
+import org.opencrx.kernel.activity1.cci2.EMailQuery;
+import org.opencrx.kernel.activity1.cci2.EMailRecipientQuery;
+import org.opencrx.kernel.activity1.cci2.IncidentPartyQuery;
+import org.opencrx.kernel.activity1.cci2.MeetingPartyQuery;
+import org.opencrx.kernel.activity1.cci2.TaskPartyQuery;
+import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
+import org.opencrx.kernel.activity1.jmi1.EMail;
+import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
+import org.opencrx.kernel.activity1.jmi1.IncidentParty;
+import org.opencrx.kernel.activity1.jmi1.MeetingParty;
+import org.opencrx.kernel.activity1.jmi1.TaskParty;
 import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.AbstractContract;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
 import org.opencrx.kernel.contract1.jmi1.Quote;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
+import org.opencrx.kernel.generic.SecurityKeys;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -131,24 +146,12 @@ public class Accounts extends AbstractImpl {
     	account.setAccountRating(account.getAccountRating());
     }
     	
-    //-----------------------------------------------------------------------
-    public String getVCardUid(
-    	String vcard
-    ) {
-    	String uid = null;
-    	if(vcard.indexOf("UID:") > 0) {
-    		int start = vcard.indexOf("UID:");
-    		int end = vcard.indexOf("\n", start);
-    		if(end > start) {
-    			uid = vcard.substring(start + 4, end).trim();
-    		}
-    	}    	
-    	return uid;
-    }
-
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated use contract creators instead.
+     */
     public void initContract(
-        AbstractContract contract,
+        SalesContract contract,
         Account account,
         String name,
         String description
@@ -165,12 +168,15 @@ public class Accounts extends AbstractImpl {
         );
         Base.getInstance().assignToMe(
             contract,
-            true,
-            null
+            true, // overwrite
+            false // useRunAsPrincipal
         );
     }
-    
+
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated use contract creators instead
+     */
     public Lead createLead(
         Account account,
         String name,
@@ -179,31 +185,18 @@ public class Accounts extends AbstractImpl {
         Lead basedOn
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
-        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
-        	);
-    	Lead contract = null;
-    	if(basedOn != null) {
-    		contract = (Lead)Cloneable.getInstance().cloneObject(
-    			basedOn, 
-    			contractSegment, 
-    			"lead", 
-    			null, // object marshallers
-    			null, // reference filter
-    			null, // owning user
-    			null // owningGroup
-    		);    		
-    	}
-    	else {
-	        contract = pm.newInstance(Lead.class);
-	        contract.refInitialize(false, false);
-	        contractSegment.addLead(
-	        	false,
-	        	this.getUidAsString(),
-	        	contract
-	        );
-    	}
+    	String providerName = account.refGetPath().get(2);
+    	String segmentName = account.refGetPath().get(4);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(
+        	pm, 
+        	providerName, 
+        	segmentName
+        );
+    	Lead contract = (Lead)Contracts.getInstance().createContract(
+    		contractSegment, 
+    		Contracts.CONTRACT_TYPE_LEAD, 
+    		basedOn
+    	);
         contract.setNextStep(nextStep);    	
         this.initContract(
             contract,
@@ -215,6 +208,9 @@ public class Accounts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated use contract creators instead
+     */
     public Opportunity createOpportunity(
         Account account,
         String name,
@@ -223,31 +219,18 @@ public class Accounts extends AbstractImpl {
         Opportunity basedOn
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
-        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
-        	);
-    	Opportunity contract = null;
-    	if(basedOn != null) {
-    		contract = (Opportunity)Cloneable.getInstance().cloneObject(
-    			basedOn, 
-    			contractSegment, 
-    			"opportunity", 
-    			null, // object marshallers
-    			null, // reference filter
-    			null, // owning user
-    			null // owningGroup
-    		);    		
-    	}
-    	else {
-	        contract = pm.newInstance(Opportunity.class);
-	        contract.refInitialize(false, false);
-	        contractSegment.addOpportunity(
-	        	false,
-	        	this.getUidAsString(),
-	        	contract
-	        );
-    	}
+    	String providerName = account.refGetPath().get(2);
+    	String segmentName = account.refGetPath().get(4);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(
+        	pm, 
+        	providerName, 
+        	segmentName
+        );
+    	Opportunity contract = (Opportunity)Contracts.getInstance().createContract(
+    		contractSegment, 
+    		Contracts.CONTRACT_TYPE_OPPORTUNITY, 
+    		basedOn
+    	);
         contract.setNextStep(nextStep);    	
         this.initContract(
             contract,
@@ -259,6 +242,9 @@ public class Accounts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated use contract creators instead
+     */
     public Quote createQuote(
         Account account,
         String name,
@@ -266,31 +252,18 @@ public class Accounts extends AbstractImpl {
         Quote basedOn
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
-        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
-        	);
-    	Quote contract = null;
-    	if(basedOn != null) {
-    		contract = (Quote)Cloneable.getInstance().cloneObject(
-    			basedOn, 
-    			contractSegment, 
-    			"quote", 
-    			null, // object marshallers
-    			null, // reference filter
-    			null, // owning user
-    			null // owningGroup
-    		);    		
-    	}
-    	else {
-	        contract = pm.newInstance(Quote.class);
-	        contract.refInitialize(false, false);
-	        contractSegment.addQuote(
-	        	false,
-	        	this.getUidAsString(),
-	        	contract
-	        );
-    	}
+    	String providerName = account.refGetPath().get(2);
+    	String segmentName = account.refGetPath().get(4);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(
+        	pm, 
+        	providerName, 
+        	segmentName
+        );
+    	Quote contract = (Quote)Contracts.getInstance().createContract(
+    		contractSegment, 
+    		Contracts.CONTRACT_TYPE_QUOTE, 
+    		basedOn
+    	);
         this.initContract(
             contract,
             account,
@@ -301,6 +274,9 @@ public class Accounts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated use contract creators instead
+     */
     public SalesOrder createSalesOrder(
         Account account,
         String name,
@@ -308,31 +284,18 @@ public class Accounts extends AbstractImpl {
         SalesOrder basedOn
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
-        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
-        	);
-    	SalesOrder contract = null;
-    	if(basedOn != null) {
-    		contract = (SalesOrder)Cloneable.getInstance().cloneObject(
-    			basedOn, 
-    			contractSegment, 
-    			"salesOrder", 
-    			null, // object marshallers
-    			null, // reference filter
-    			null, // owning user
-    			null // owningGroup
-    		);    		
-    	}
-    	else {
-	        contract = pm.newInstance(SalesOrder.class);
-	        contract.refInitialize(false, false);
-	        contractSegment.addSalesOrder(
-	        	false,
-	        	this.getUidAsString(),
-	        	contract
-	        );
-    	}
+    	String providerName = account.refGetPath().get(2);
+    	String segmentName = account.refGetPath().get(4);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(
+        	pm, 
+        	providerName, 
+        	segmentName
+        );
+    	SalesOrder contract = (SalesOrder)Contracts.getInstance().createContract(
+    		contractSegment, 
+    		Contracts.CONTRACT_TYPE_SALES_ORDER, 
+    		basedOn
+    	);
         this.initContract(
             contract,
             account,
@@ -343,6 +306,9 @@ public class Accounts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated use contract creators instead
+     */
     public Invoice createInvoice(
         Account account,
         String name,
@@ -350,31 +316,18 @@ public class Accounts extends AbstractImpl {
         Invoice basedOn
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
-        	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + account.refGetPath().get(2) + "/segment/" + account.refGetPath().get(4))
-        	);
-    	Invoice contract = null;
-    	if(basedOn != null) {
-    		contract = (Invoice)Cloneable.getInstance().cloneObject(
-    			basedOn, 
-    			contractSegment, 
-    			"invoice", 
-    			null, // object marshallers
-    			null, // reference filter
-    			null, // owning user
-    			null // owningGroup
-    		);    		
-    	}
-    	else {
-	        contract = pm.newInstance(Invoice.class);
-	        contract.refInitialize(false, false);
-	        contractSegment.addInvoice(
-	        	false,
-	        	this.getUidAsString(),
-	        	contract
-	        );
-    	}
+    	String providerName = account.refGetPath().get(2);
+    	String segmentName = account.refGetPath().get(4);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(
+        	pm, 
+        	providerName, 
+        	segmentName
+        );
+    	Invoice contract = (Invoice)Contracts.getInstance().createContract(
+    		contractSegment, 
+    		Contracts.CONTRACT_TYPE_INVOICE, 
+    		basedOn
+    	);
         this.initContract(
             contract,
             account,
@@ -423,7 +376,7 @@ public class Accounts extends AbstractImpl {
             vcard == null ? "" : vcard
         );
         // Assertion externalLink().contains(vcard uid)
-        String uid = this.getVCardUid(vcard);
+        String uid = VCard.getInstance().getVCardUid(vcard);
         boolean vcardLinkMatches = false;
         boolean hasVCardLink = false;
         for(String externalLink: account.getExternalLink()) {
@@ -455,6 +408,38 @@ public class Accounts extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
+    public void updateAddress(
+    	AccountAddress address
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(address);
+    	if(address instanceof PhoneNumber) {
+    		Addresses.getInstance().updatePhoneNumber(
+    			(PhoneNumber)address 
+    		);    		
+    	}
+		// Mark account as dirty updates VCard, ...
+		this.markAccountAsDirty(
+			(Account)pm.getObjectById(
+				address.refGetPath().getParent().getParent()
+			)
+		);
+    }
+    
+    //-------------------------------------------------------------------------
+    public void removeAddress(
+    	AccountAddress address,
+    	boolean preDelete
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(address);
+		// Mark account as dirty updates VCard, ...
+		this.markAccountAsDirty(
+			(Account)pm.getObjectById(
+				address.refGetPath().getParent().getParent()
+			)
+		);
+    }
+    
+    //-------------------------------------------------------------------------
     public int countFilteredAccount(
     	AbstractFilterAccount accountFilter
     ) throws ServiceException {
@@ -485,12 +470,6 @@ public class Accounts extends AbstractImpl {
     //-----------------------------------------------------------------------
     /**
      * Search accounts containing the given email address.
-     * 
-     * @param rootPkg          The root package to be used for this request
-     * @param providerName     The name of the current provider
-     * @param segmentName      The name of the current segment
-     * @param emailAddress     The email address
-     * @return                 A List of accounts containing the email address
      */
     public List<EMailAddress> lookupEmailAddress(
         PersistenceManager pm,
@@ -498,31 +477,100 @@ public class Accounts extends AbstractImpl {
         String segmentName,
         String emailAddress
     ) {
-        EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
             this.getAccountSegment(
                 pm,
                 providerName,
                 segmentName
             );
-        query.thereExistsEmailAddress().like(
-           "(?i).*" + emailAddress.replace(".", "\\.") + ".*" 
-        );
-       	query.forAllDisabled().isFalse();
-       	List<EMailAddress> addresses = accountSegment.getAddress(query);
-       	if(addresses.isEmpty() || addresses.size() == 1) {
-       		return addresses;
-       	}
-       	else {
-       		List<EMailAddress> activeAddresses = new ArrayList<EMailAddress>();
-       		for(EMailAddress address: addresses) {
-       			Account account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
-       			if(account.isDisabled() == null || !account.isDisabled()) {
-       				activeAddresses.add(address);
-       			}
-       		}
-       		return activeAddresses;
-       	}
+        List<EMailAddress> addresses = Collections.emptyList();
+        // Phase 1: exact match, case-sensitive
+        {
+            EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+            query.orderByModifiedAt().descending();
+            query.thereExistsEmailAddress().equalTo(emailAddress);
+           	query.forAllDisabled().isFalse();
+           	addresses = accountSegment.getAddress(query);
+        }        
+        // Phase 2: exact match, case-insensitive
+        if(addresses.isEmpty()) { 
+            EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+            query.orderByModifiedAt().descending();
+            query.thereExistsEmailAddress().like(
+               "(?i)" + emailAddress.replace(".", "\\.") 
+            );
+           	query.forAllDisabled().isFalse();
+           	addresses = accountSegment.getAddress(query);
+        }
+        // Phase 3: Search email address with wildcard pattern        
+        if(addresses.isEmpty()) { 
+	        EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+	        query.orderByModifiedAt().descending();
+	        query.thereExistsEmailAddress().like(
+	           "(?i).*" + emailAddress.replace(".", "\\.") + ".*" 
+	        );
+	       	query.forAllDisabled().isFalse();
+	       	addresses = accountSegment.getAddress(query);
+        }
+        // Active addresses ordered by length. The best match should
+        // be the first element in the returned list
+   		List<EMailAddress> activeAddresses = new ArrayList<EMailAddress>();
+   		for(EMailAddress address: addresses) {
+   			Account account = address.getAccount();
+   			if(account.isDisabled() == null || !account.isDisabled()) {
+   				int index = 0;
+   				while(index < activeAddresses.size()) {
+   					if(address.getEmailAddress().length() < activeAddresses.get(index).getEmailAddress().length()) {
+   						break;
+   					}
+   					index++;
+   				}
+   				activeAddresses.add(index, address);
+   			}
+   		}
+   		return activeAddresses;
+    }
+
+    //-------------------------------------------------------------------------
+    public List<EMailAddress> lookupEmailAddress(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName,
+        String email,
+        boolean forceCreate
+    ) throws ServiceException {
+    	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+    		pm, 
+    		providerName, 
+    		segmentName, 
+    		email
+    	);
+    	if(forceCreate && emailAddresses.isEmpty()) {
+    		PersistenceManager pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
+    			SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+    			null
+    		);
+        	Account segmentAdmin = (Account)pmAdmin.getObjectById(
+        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", (SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName))
+        	);
+        	if(segmentAdmin != null) {
+        		pmAdmin.currentTransaction().begin();
+        		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
+        		emailAddress.refInitialize(false, false);
+        		emailAddress.setEmailAddress(email);
+        		emailAddress.setEmailType((short)1);
+        		segmentAdmin.addAddress(
+        			this.getUidAsString(),
+        			emailAddress
+        		);
+        		pmAdmin.currentTransaction().commit();
+        		emailAddresses = Collections.singletonList(
+        			(EMailAddress)pm.getObjectById(emailAddress.refGetPath())
+        		);
+        	}
+        	pmAdmin.close();
+    	}
+    	return emailAddresses;
     }
 
     //-------------------------------------------------------------------------
@@ -540,24 +588,31 @@ public class Accounts extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public String getPrimaryBusinessEMail(
-        Account account
+        Account account,
+        String hint
     ) throws ServiceException {
         Collection<AccountAddress> addresses = account.getAddress();
         String emailAddress = null;
         for(AccountAddress address: addresses) {
             if(address instanceof EMailAddress) {
-                String adr = ((EMailAddress)address).getEmailAddress();
-                if((emailAddress == null) && (adr != null)) {
-                    emailAddress = adr;
+                String addr = ((EMailAddress)address).getEmailAddress();
+                if(emailAddress == null || (hint != null && !hint.isEmpty())) {
+                	if(emailAddress == null) {
+                		emailAddress = addr;                		
+                	} else {
+                		if(hint.equals(addr)) {
+                			emailAddress = addr;
+                		}
+                	}
                 }
-                if(adr != null && address.isMain() && address.getUsage().contains(Addresses.USAGE_BUSINESS)) {
-                    emailAddress = adr;
+                if(addr != null && address.isMain() && address.getUsage().contains(Addresses.USAGE_BUSINESS)) {
+                    emailAddress = addr;
                 }
             }
         }
         return emailAddress;
     }
-	    
+
     //-------------------------------------------------------------------------
     public String getPrimaryBusinessPhone(
         Account account
@@ -577,7 +632,7 @@ public class Accounts extends AbstractImpl {
         }
         return phoneNumber;
     }
-	    
+
     //-------------------------------------------------------------------------
     /**
      * Return main home and business addresses of given account.
@@ -586,7 +641,7 @@ public class Accounts extends AbstractImpl {
      *         mail home, mail business, mobile, phone other} 
      */
     public org.opencrx.kernel.account1.jmi1.AccountAddress[] getMainAddresses(
-        org.opencrx.kernel.account1.jmi1.Account account
+        Account account
     ) {
         int currentOrderBusinessMail = 0;
         int currentOrderHomeMail = 0;
@@ -668,7 +723,7 @@ public class Accounts extends AbstractImpl {
             account,
             Addresses.USAGE_BUSINESS
         );
-        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+        for(AccountAddress address: addresses) {
             if(address instanceof WebAddress) {
                 WebAddress webAddress = (WebAddress)address;
                 boolean isMain = false;
@@ -728,7 +783,7 @@ public class Accounts extends AbstractImpl {
             account,
             Addresses.USAGE_OTHER
         );
-        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+        for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                
                 boolean isMain = false;
@@ -748,7 +803,7 @@ public class Accounts extends AbstractImpl {
             account,
             Addresses.USAGE_HOME_FAX
         );
-        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+        for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                
                 boolean isMain = false;
@@ -768,7 +823,7 @@ public class Accounts extends AbstractImpl {
             account,
             Addresses.USAGE_BUSINESS_FAX
         );
-        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+        for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                                
                 boolean isMain = false;
@@ -788,7 +843,7 @@ public class Accounts extends AbstractImpl {
             account,
             Addresses.USAGE_MOBILE
         );
-        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+        for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;     
                 boolean isMain = false;
@@ -1067,6 +1122,35 @@ public class Accounts extends AbstractImpl {
 	                			break;
                     	}
                 	}
+                    else if(filterProperty instanceof AddressAccountMembershipFilterProperty) {
+                    	AddressAccountMembershipFilterProperty p = (AddressAccountMembershipFilterProperty)filterProperty;
+                    	switch(Quantifier.valueOf(quantor)) {
+	                		case FOR_ALL:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN:
+	                                	query.account().thereExistsAccountMembership().forAllAccountFrom().elementOf(p.getAccount());
+	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
+	                					break;
+	                				case IS_NOT_IN:
+	                                	query.account().thereExistsAccountMembership().forAllAccountFrom().notAnElementOf(p.getAccount());
+	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
+	                					break;
+	                			}
+	                			break;
+	                		default:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN:
+	                                	query.account().thereExistsAccountMembership().thereExistsAccountFrom().elementOf(p.getAccount());
+	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
+	                					break;
+	                				case IS_NOT_IN:
+	                                	query.account().thereExistsAccountMembership().thereExistsAccountFrom().notAnElementOf(p.getAccount());
+	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
+	                					break;
+	                			}
+	                			break;
+	                    }
+                    }
                 }
             }
         }
@@ -1093,6 +1177,226 @@ public class Accounts extends AbstractImpl {
         return addresses.size();
     }
         
+    //-------------------------------------------------------------------------
+    public int moveAddressToAccount(
+    	AccountAddress source,
+        Account targetAccount,
+        Date updateRelationshipsSince,
+        Date updateRelationshipsBefore        
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(source);
+    	
+    	// Clone address
+    	AccountAddress target = null;
+    	// Try to find address on target account. Clone it if it does not exist.
+    	if(source instanceof EMailAddress) {
+    		EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+    		query.thereExistsEmailAddress().equalTo(((EMailAddress)source).getEmailAddress());
+    		List<EMailAddress> addresses = targetAccount.getAddress(query);
+    		target = addresses.isEmpty() ? null : addresses.iterator().next();
+    	} else if(source instanceof PhoneNumber) {
+    		PhoneNumberQuery query = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
+    		query.thereExistsPhoneNumberFull().equalTo(((PhoneNumber)source).getPhoneNumberFull());
+    		List<PhoneNumber> addresses = targetAccount.getAddress(query);
+    		target = addresses.isEmpty() ? null : addresses.iterator().next();
+    	} else if(source instanceof WebAddress) {
+    		WebAddressQuery query = (WebAddressQuery)pm.newQuery(WebAddress.class);
+    		query.thereExistsWebUrl().equalTo(((WebAddress)source).getWebUrl());
+    		List<WebAddress> addresses = targetAccount.getAddress(query);
+    		target = addresses.isEmpty() ? null : addresses.iterator().next();    	
+    	} else if(source instanceof Room) {
+    		RoomQuery query = (RoomQuery)pm.newQuery(Room.class);
+    		query.thereExistsRoomNumber().equalTo(((Room)source).getRoomNumber());
+    		List<Room> addresses = targetAccount.getAddress(query);
+    		target = addresses.isEmpty() ? null : addresses.iterator().next();    		
+    	}
+    	if(target == null) {
+	    	target = (AccountAddress)Cloneable.getInstance().cloneObject(
+	    		source, 
+	    		targetAccount, 
+	    		source.refGetPath().getParent().getBase(), 
+	    		null, // objectMarshallers
+	    		"", // referenceFilterAsString
+	    		targetAccount.getOwningUser(), 
+	    		targetAccount.getOwningGroup()
+	    	);
+    	}
+    	return this.moveAddress(
+    		source, 
+    		target, 
+    		updateRelationshipsSince, 
+    		updateRelationshipsBefore
+    	);
+    }
+    
+    //-------------------------------------------------------------------------
+    public int moveAddress(
+    	AccountAddress source,
+        AccountAddress target,
+        Date updateRelationshipsSince,
+        Date updateRelationshipsBefore        
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(source);
+    	String providerName = source.refGetPath().get(2);
+    	String segmentName = source.refGetPath().get(4);
+    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
+    	Account sourceAccount = source.getAccount();
+    	Account targetAccount = target.getAccount();
+    	int count = 0;
+    	// Update activity1::AddressGroupMember::address
+    	{
+	    	AddressGroupMemberQuery query = (AddressGroupMemberQuery)PersistenceHelper.newQuery(
+	    		pm.getExtent(AddressGroupMember.class),
+	    		activitySegment.refGetPath().getDescendant("addressGroup", ":*", "member", ":*")
+	    	);
+	    	query.thereExistsAddress().equalTo(source);
+	    	if(updateRelationshipsSince != null) {
+	    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
+	    	}
+	    	if(updateRelationshipsBefore != null) {
+	    		query.createdAt().lessThanOrEqualTo(updateRelationshipsBefore);
+	    	}
+	    	List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
+	    	List<AddressGroupMember> addressGroupMembers = activitySegment.getExtent(query);
+	    	members.addAll(addressGroupMembers);
+	    	for(AddressGroupMember member: members) {
+	    		member.setAddress(target);
+	    		count++;
+	    	}
+    	}
+    	// Update activity1::EMail::sender
+    	{
+	    	EMailQuery query = (EMailQuery)PersistenceHelper.newQuery(
+	    		pm.getExtent(EMail.class),
+	    		activitySegment.refGetPath().getDescendant("activity", ":*")
+	    	);
+	    	query.thereExistsSender().equalTo(source);
+	    	if(updateRelationshipsSince != null) {
+	    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
+	    	}
+	    	if(updateRelationshipsBefore != null) {
+	    		query.createdAt().lessThanOrEqualTo(updateRelationshipsBefore);
+	    	}
+	    	List<EMail> members = new ArrayList<EMail>();
+	    	List<EMail> emails = activitySegment.getActivity(query);
+	    	members.addAll(emails);
+	    	for(EMail member: members) {
+	    		member.setSender(target);
+	    		count++;
+	    	}
+    	}
+    	
+    	// Update e-mail recipients
+    	{
+	    	EMailRecipientQuery query = (EMailRecipientQuery)PersistenceHelper.newQuery(
+	    		pm.getExtent(EMailRecipient.class),
+	    		activitySegment.refGetPath().getDescendant("activity", ":*", "emailRecipient", ":*")
+	    	);
+	    	query.thereExistsParty().equalTo(source);
+	    	if(updateRelationshipsSince != null) {
+	    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
+	    	}
+	    	if(updateRelationshipsBefore != null) {
+	    		query.createdAt().lessThanOrEqualTo(updateRelationshipsBefore);
+	    	}
+	    	List<EMailRecipient> members = new ArrayList<EMailRecipient>();
+	    	List<EMailRecipient> recipients = activitySegment.getExtent(query);
+	    	members.addAll(recipients);
+	    	for(EMailRecipient member: members) {
+	    		member.setParty(target);
+	    		count++;
+	    	}
+    	}
+    	
+    	// Update incident parties
+    	{
+    		if(source instanceof EMailAddress) {
+		    	IncidentPartyQuery query = (IncidentPartyQuery)PersistenceHelper.newQuery(
+		    		pm.getExtent(IncidentParty.class),
+		    		activitySegment.refGetPath().getDescendant("activity", ":*", "incidentParty", ":*")
+		    	);
+		    	query.thereExistsParty().equalTo(sourceAccount);
+		    	query.thereExistsEmailHint().equalTo(((EMailAddress)source).getEmailAddress());
+		    	if(updateRelationshipsSince != null) {
+		    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
+		    	}
+		    	if(updateRelationshipsBefore != null) {
+		    		query.createdAt().lessThanOrEqualTo(updateRelationshipsBefore);
+		    	}
+		    	List<IncidentParty> members = new ArrayList<IncidentParty>();
+		    	List<IncidentParty> parties = activitySegment.getExtent(query);
+		    	members.addAll(parties);
+		    	for(IncidentParty member: members) {
+		    		member.setParty(targetAccount);		    		
+		    		count++;
+		    	}
+    		}
+    	}
+
+    	// Update meeting parties
+    	{
+    		if(source instanceof EMailAddress) {
+		    	MeetingPartyQuery query = (MeetingPartyQuery)PersistenceHelper.newQuery(
+		    		pm.getExtent(MeetingParty.class),
+		    		activitySegment.refGetPath().getDescendant("activity", ":*", "meetingParty", ":*")
+		    	);
+		    	query.thereExistsParty().equalTo(sourceAccount);
+		    	query.thereExistsEmailHint().equalTo(((EMailAddress)source).getEmailAddress());
+		    	if(updateRelationshipsSince != null) {
+		    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
+		    	}
+		    	if(updateRelationshipsBefore != null) {
+		    		query.createdAt().lessThanOrEqualTo(updateRelationshipsBefore);
+		    	}
+		    	List<MeetingParty> members = new ArrayList<MeetingParty>();
+		    	List<MeetingParty> parties = activitySegment.getExtent(query);
+		    	members.addAll(parties);
+		    	for(MeetingParty member: members) {
+		    		member.setParty(targetAccount);		    		
+		    		count++;
+		    	}
+    		}	    	
+    	}
+    	
+    	// Update task parties
+    	{
+    		if(source instanceof EMailAddress) {
+		    	TaskPartyQuery query = (TaskPartyQuery)PersistenceHelper.newQuery(
+		    		pm.getExtent(TaskParty.class),
+		    		activitySegment.refGetPath().getDescendant("activity", ":*", "taskParty", ":*")
+		    	);
+		    	query.thereExistsParty().equalTo(sourceAccount);
+		    	query.thereExistsEmailHint().equalTo(((EMailAddress)source).getEmailAddress());
+		    	if(updateRelationshipsSince != null) {
+		    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
+		    	}
+		    	if(updateRelationshipsBefore != null) {
+		    		query.createdAt().lessThanOrEqualTo(updateRelationshipsBefore);
+		    	}
+		    	List<TaskParty> members = new ArrayList<TaskParty>();
+		    	List<TaskParty> parties = activitySegment.getExtent(query);
+		    	members.addAll(parties);
+		    	for(TaskParty member: members) {
+		    		member.setParty(targetAccount);		    		
+		    		count++;
+		    	}
+    		}
+    	}
+
+    	// Disable source address
+    	source.setDisabled(true);
+    	
+    	return count;
+    }
+
+    //-----------------------------------------------------------------------
+    public void removeAccount(
+        Account account,
+        boolean preDelete
+    ) throws ServiceException {
+    	// Override for custom-specific implementation
+    }
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

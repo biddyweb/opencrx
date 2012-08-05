@@ -1,4 +1,60 @@
-﻿<%@  page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %>
+﻿<%@  page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %><%
+/**
+ * ====================================================================
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:		$Id: ManageMembers.jsp,v 1.37 2011/12/21 16:05:03 cmu Exp $
+ * Description:	Manage members
+ * Revision:	$Revision: 1.37 $
+ * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
+ * Date:		$Date: 2011/12/21 16:05:03 $
+ * ====================================================================
+ *
+ * This software is published under the BSD license
+ * as listed below.
+ *
+ * Copyright (c) 2009-2011, CRIXP Corp., Switzerland
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
+ *
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ *
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * ------------------
+ *
+ * This product includes software developed by the Apache Software
+ * Foundation (http://www.apache.org/).
+ *
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
+ */
+%>
 <%@ page session="true" import="
 java.util.*,
 java.io.*,
@@ -177,7 +233,7 @@ org.apache.poi.hssf.util.*
     cell = row.createCell(nCell++);
     cell.setCellStyle(topAlignedStyle);
     if (contact != null) {
-        if (contact.getSalutationCode() != 0) {cell.setCellValue((String)(codes.getShortText("org:opencrx:kernel:account1:Contact:salutationCode", app.getCurrentLocaleAsIndex(), true, true).get(contact.getSalutationCode())));}
+        if (contact.getSalutationCode() != 0) {cell.setCellValue((String)(codes.getShortText("salutationCode", app.getCurrentLocaleAsIndex(), true, true).get(contact.getSalutationCode())));}
     }
 
     //FirstName
@@ -274,7 +330,7 @@ org.apache.poi.hssf.util.*
         cell.setCellStyle(topAlignedStyle);
         Short svalue = (Short)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalCountry");
         if (svalue != null && ((short)svalue) != 0) {
-            value = (String)(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
+            value = (String)(codes.getLongText("country", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
             if (value != null && (value.split("\\[").length>0)) {
                 cell.setCellValue((value.split("\\[")[0]).trim());
             }
@@ -435,7 +491,7 @@ org.apache.poi.hssf.util.*
     cell.setCellStyle(topAlignedStyle);
     Short svalue = (Short)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalCountry");
     if (svalue != null && ((short)svalue) != 0) {
-        value = (String)(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
+        value = (String)(codes.getLongText("country", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
         if (value != null && (value.split("\\[").length>0)) {
             cell.setCellValue((value.split("\\[")[0]).trim());
         }
@@ -497,7 +553,7 @@ org.apache.poi.hssf.util.*
                 if (rolesText.length() > 0) {
                     rolesText += ";";
                 }
-                rolesText += (String)codes.getLongText("org:opencrx:kernel:account1:Member:memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short(((Short)roles.next()).shortValue()));
+                rolesText += (String)codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short(((Short)roles.next()).shortValue()));
     	      }
     	      memberRoleList.add(rolesText);
         }
@@ -1099,7 +1155,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						            newMember.setName(accountTarget.getFullName());
 						            accountSource.addMember(
 						              false,
-						              org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+						              org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 						              newMember
 						            );
 						            pm.currentTransaction().commit();
@@ -1283,7 +1339,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 				          &nbsp;&nbsp;
 				          <INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
 				          <!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
-				          <INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+				          <INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
 				          <INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
 
 <%
@@ -1295,7 +1351,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 <%
 		        }
 %>
-				          <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
+				          <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
 				          <br>
 				        </td>
 				        <td id="waitMsg" style="display:none;">
@@ -1502,7 +1558,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                               newMember.setName(accountTarget.getFullName());
                               accountSource.addMember(
                                 false,
-                                org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                                org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                                 newMember
                               );
                               pm.currentTransaction().commit();
@@ -1579,7 +1635,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                           Iterator r = member.getMemberRole().iterator();
                           r.hasNext();
                       ) {
-                          memberRoles += (String)(codes.getLongText("org:opencrx:kernel:account1:Member:memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short((Short)r.next()))) + "<br />";
+                          memberRoles += (String)(codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short((Short)r.next()))) + "<br />";
                       }
                       if ((member.getName() == null || member.getName().length() == 0) && member.getAccount() != null) {
                           // set member.name (a mandatory attribute)
@@ -1621,8 +1677,8 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                       // is enabled member
 %>
                       <td align="left" title="<%= app.getLabel(MEMBER_CLASS) %>">
-                        <INPUT type="image" src="../../images/checked.gif" name="disable" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="font-size:10px;font-weight:bold;" />&nbsp;&nbsp;
-                        <INPUT type="image" src="../../images/delete.gif" name="delete" tabindex="<%= tabIndex++ %>" value="X" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="font-size:10px;font-weight:bold;" title="<%= app.getTexts().getDeleteTitle() %>" />
+												<button type="submit" name="disable" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/checked.gif" /></button>&nbsp;&nbsp;
+												<button type="submit" name="delete" tabindex="<%= tabIndex++ %>" value="X" title="<%= app.getTexts().getDeleteTitle() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/delete.gif" /></button>
                       </td>
                       <td align="left" <%= isMember ? "onclick='javascript:window.open(\"" + memberHref + "\");'" : "" %>><%= memberRoles %></td>
                       <td align="center" <%= isMember ? "onclick='javascript:window.open(\"" + memberHref + "\");'" : "" %>><%= member.getValidFrom() != null ? timeFormat.format(member.getValidFrom()) : "--" %></td>
@@ -1634,8 +1690,8 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                       // is disabled member
 %>
                       <td align="left" title="<%= app.getLabel(MEMBER_CLASS) %> (<%= userView.getFieldLabel(MEMBER_CLASS, "disabled", app.getCurrentLocaleAsIndex()) %>)">
-                        <INPUT type="image" src="../../images/ifneedbe.gif" name="enable" tabindex="<%= tabIndex++ %>" value="*" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="font-size:10px;font-weight:bold;" /> (<%= userView.getFieldLabel(MEMBER_CLASS, "disabled", app.getCurrentLocaleAsIndex()) %>)&nbsp;&nbsp;
-                        <INPUT type="image" src="../../images/delete.gif" name="delete" tabindex="<%= tabIndex++ %>" value="X" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="font-size:10px;font-weight:bold;" title="<%= app.getTexts().getDeleteTitle() %>" />
+												<button type="submit" name="enable" tabindex="<%= tabIndex++ %>" value="*" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/ifneedbe.gif" /></button> (<%= userView.getFieldLabel(MEMBER_CLASS, "disabled", app.getCurrentLocaleAsIndex()) %>)&nbsp;&nbsp;
+												<button type="submit" name="delete" tabindex="<%= tabIndex++ %>" value="X" title="<%= app.getTexts().getDeleteTitle() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= member.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/delete.gif" /></button>
                       </td>
                       <td align="left" <%= isMember ? "onclick='javascript:window.open(\"" + memberHref + "\");'" : "" %>><%= memberRoles %></td>
                       <td align="center" <%= isMember ? "onclick='javascript:window.open(\"" + memberHref + "\");'" : "" %>><%= member.getValidFrom() != null ? timeFormat.format(member.getValidFrom()) : "--" %></td>
@@ -1646,7 +1702,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                     } else {
                       // not a member
 %>
-                      <td align="left"><INPUT type="image" src="../../images/notchecked.gif" name="create" tabindex="<%= tabIndex++ %>" value="+" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= account.refMofId() %>';" style="font-size:10px;font-weight:bold;" /></td>
+                      <td align="left"><button type="submit" name="create" tabindex="<%= tabIndex++ %>" value="+" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= account.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/notchecked.gif" /></button></td>
                       <td align="left"></td>
                       <td colspan="4">&nbsp;</td>
 <%
@@ -1676,7 +1732,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                                 Iterator r = currentMember.getMemberRole().iterator();
                                 r.hasNext();
                             ) {
-                                currentMemberRoles += (String)(codes.getLongText("org:opencrx:kernel:account1:Member:memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short((Short)r.next()))) + "<br />";
+                                currentMemberRoles += (String)(codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short((Short)r.next()))) + "<br />";
                             }
 %>
                             <tr class="gridTableRowFull" style="<%= isEnabled ? "color:white;background-color:" + colorDuplicate + ";" : "font-style:italic;" %>"><!-- 6 columns -->
@@ -1688,11 +1744,11 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 <%
                               if (isEnabled) {
 %>
-                                  <INPUT type="image" src="../../images/checked.gif" name="disable" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= currentMember.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
+																	<button type="submit" name="disable" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= currentMember.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/checked.gif" /></button>
 <%
                               } else {
 %>
-                                  <INPUT type="image" src="../../images/ifneedbe.gif" name="enable" tabindex="<%= tabIndex++ %>" value="*" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= currentMember.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
+																	<button type="submit" name="enable" tabindex="<%= tabIndex++ %>" value="*" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= currentMember.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/ifneedbe.gif" /></button>
                                   (<%= userView.getFieldLabel(MEMBER_CLASS, "disabled", app.getCurrentLocaleAsIndex()) %>)
 <%
                               }
@@ -1857,8 +1913,8 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
         }
       </script>
       <br />
-      <INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-      <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
+      <INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+      <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
       <br />&nbsp;
 <%
       if (downloadAction != null) {

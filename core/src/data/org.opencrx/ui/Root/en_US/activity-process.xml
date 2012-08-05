@@ -64,10 +64,45 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Sub-Activity</_item>
+											</toolTip>
+											<label>
+												<_item>Sub-Activity</_item>
+											</label>
+											<iconKey>SubActivity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<!--Tab Definition-->
 									<!--FieldGroups in General Tab-->
 									<!-- ElementDefinition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:title">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Title</_item>
+											</toolTip>
+											<label>
+												<_item>Title</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>50</_item>
+												<_item>0</_item>
+											</orderObjectContainer>											
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:title">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -237,7 +272,52 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:text">
+										<_object>
+											<active>true</active>
+											<spanRow>15</spanRow>
+											<toolTip>
+												<_item>Text</_item>
+											</toolTip>
+											<label>
+												<_item>Text</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>60</_item>
+												<_item>0</_item>
+											</orderObjectContainer>																						
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:activity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity</_item>
+											</toolTip>
+											<label>
+												<_item>Activity</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>70</_item>
+												<_item>0</_item>
+											</orderObjectContainer>																						
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:activity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -573,6 +653,94 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- SubActivityTransition-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Sub-Activity Transition</_item>
+											</toolTip>
+											<label>
+												<_item>Sub-Activity Transition</_item>
+											</label>
+											<iconKey>SubActivityTransition</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:subActivityNamePattern">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>${A} title of activity, ${N} transition name, ${F} follow-up title, ${G} activity group name</_item>
+											</toolTip>
+											<label>
+												<_item>Sub-Activity name pattern</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:templateNamePattern">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>${A} title of activity, ${N} transition name, ${F} follow-up title, ${G} activity group name</_item>
+											</toolTip>
+											<label>
+												<_item>Template name pattern</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:activityCreator">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity creator</_item>
+											</toolTip>
+											<label>
+												<_item>Activity creator</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:useCreatorAsTemplate">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Use creator as template</_item>
+											</toolTip>
+											<label>
+												<_item>Use creator as template</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
 												<_item>90</_item>
 											</order>
 										</_object>

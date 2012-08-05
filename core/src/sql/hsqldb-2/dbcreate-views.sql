@@ -1,7 +1,7 @@
 -- This software is published under the BSD license
 -- as listed below.
 --
--- Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+-- Copyright (c) 2004-2011, CRIXP Corp., Switzerland
 -- All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -43,12 +43,14 @@
 -- openMDX (http://www.openmdx.org/)                                         
 DROP VIEW OOCKE1_JOIN_ACCTHASPROD ;
 DROP VIEW OOCKE1_JOIN_ACCTHASASSACT ;
+DROP VIEW OOCKE1_JOIN_ACCTHASASSADDRESS ;
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSACT ;
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSFLUP ;
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSNOTE ;
 DROP VIEW OOCKE1_JOIN_CBHASBK ;
 DROP VIEW OOCKE1_JOIN_CLFCLASSIFIESTELT ;
 DROP VIEW OOCKE1_JOIN_CONTACTISMEMBEROF ;
+DROP VIEW OOCKE1_JOIN_CONTGCONTAINSCONTR ;
 DROP VIEW OOCKE1_JOIN_CPOSHASPOSMOD ;
 DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEP ;
 DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEPG ;
@@ -58,6 +60,7 @@ DROP VIEW OOCKE1_JOIN_ENTITYCONTAINSDEP ;
 DROP VIEW OOCKE1_JOIN_FLDCONTAINSFLD ;
 DROP VIEW OOCKE1_JOIN_HOMEHASASSACT ;
 DROP VIEW OOCKE1_JOIN_NSCONTAINSELT ;
+DROP VIEW OOCKE1_JOIN_OBJHASASSREMINDER ;
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM ;
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSFAC ;
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ ;
@@ -80,8 +83,11 @@ DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY ;
 DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY_ ;
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY ;
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_ ;
+
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY ;
+
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ ;
+
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR ;
 
 DROP VIEW OOCKE1_JOIN_ACCTHASASSCONTR ;
@@ -180,6 +186,13 @@ INNER JOIN
 ON
     (act.contract = c0.object_id) ;
 
+
+CREATE VIEW OOCKE1_JOIN_ACCTHASASSADDRESS AS
+SELECT
+    addr.object_id AS assigned_address,
+    addr.authority AS account
+FROM
+    OOCKE1_ADDRESS addr ;
 
 
 CREATE VIEW OOCKE1_JOIN_ACCTHASPROD AS
@@ -432,6 +445,14 @@ ON
     (e.container = n.object_id) ;
 
 
+CREATE VIEW OOCKE1_JOIN_OBJHASASSREMINDER AS
+SELECT
+    r.reference AS crx_object,
+    r.object_id AS assigned_reminder
+FROM
+    OOCKE1_REMINDER r ;
+
+
 CREATE VIEW OOCKE1_JOIN_RESHASASSIGNEDACT AS
 SELECT
     a.object_id AS assigned_activity,
@@ -610,6 +631,18 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bu
 ON
     (adr.building = bu.object_id) ;
+
+
+CREATE VIEW OOCKE1_JOIN_CONTGCONTAINSCONTR AS
+SELECT
+   ga.contract_group AS contract_group,
+   (ga."P$$PARENT") AS filtered_contract
+FROM
+   OOCKE1_CONTRACTGROUP g
+INNER JOIN
+   OOCKE1_CONTRACTGROUPASS ga
+ON
+   (ga.contract_group = g.object_id) ;
 
 
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSBU AS
@@ -1501,115 +1534,6 @@ ON
 WHERE
     (ass0.dtype = 'org:opencrx:kernel:account1:Member')
 
-
-
-
-UNION ALL
-
-SELECT DISTINCT
-
-
-
-    (ass."P$$PARENT") || '*' || (ass0.object_id) || '*3'
-
-
-
-    AS object_id,
-    ass."P$$PARENT" AS "P$$PARENT",
-    ass0."P$$PARENT" AS account_from,
-    ass0."P$$PARENT" AS account_from_id,
-    ass0.account AS account_to,
-    ass0.account AS account_to_id,
-    ass0.created_at,
-    ass0.created_by_,
-    ass0.modified_at,
-    ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-
-
-
-    AS dtype,
-    ass0.access_level_browse,
-    ass0.access_level_update,
-    ass0.access_level_delete,
-    ass0.owner_,
-    ass0.name,
-    ass0.description,
-    ass0.quality,
-    ass0.for_use_by_,
-    ass0.valid_from,
-    ass0.valid_to,
-    ass0.object_id AS member,
-    ass0.disabled,
-    ass0.member_role_0,
-    ass0.member_role_1,
-    ass0.member_role_2,
-    ass0.member_role_3,
-    ass0.member_role_4,
-    3 AS distance
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    (ass0.account = ass."P$$PARENT") OR
-    (ass0."P$$PARENT" = ass."P$$PARENT")
-WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member')
-
-UNION ALL
-
-SELECT DISTINCT
-
-
-
-    (ass."P$$PARENT") || '*' || (ass0.object_id) || '*-3'
-
-
-
-    AS object_id,
-    ass."P$$PARENT" AS "P$$PARENT",
-    ass0."P$$PARENT" AS account_from,
-    ass0."P$$PARENT" AS account_from_id,
-    ass0.account AS account_to,
-    ass0.account AS account_to_id,
-    ass0.created_at,
-    ass0.created_by_,
-    ass0.modified_at,
-    ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-
-
-
-    AS dtype,
-    ass0.access_level_browse,
-    ass0.access_level_update,
-    ass0.access_level_delete,
-    ass0.owner_,
-    ass0.name,
-    ass0.description,
-    ass0.quality,
-    ass0.for_use_by_,
-    ass0.valid_from,
-    ass0.valid_to,
-    ass0.object_id AS member,
-    ass0.disabled,
-    ass0.member_role_0,
-    ass0.member_role_1,
-    ass0.member_role_2,
-    ass0.member_role_3,
-    ass0.member_role_4,
-    -3 AS distance
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    (ass0."P$$PARENT" = ass.account) OR
-    (ass0.account = ass.account)
-WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member')
-
 ;
 
 
@@ -2053,59 +1977,21 @@ FROM
 
 CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
-    CASE
-        WHEN r.name = 'Default' THEN p.name
-        ELSE r.name ||
-
-
-
-
-
-'\'
-
-        || p.name
-    END AS principal_name,
-    (SELECT c2.passwd FROM OOMSE2_PRINCIPAL p2 INNER JOIN OOMSE2_REALM r2 ON p2."P$$PARENT" = r2.object_id INNER JOIN OOMSE2_CREDENTIAL c2 ON (p2.credential = c2.object_id) WHERE r2.name = 'Default' AND p.name = p2.name) AS passwd
+    p.name AS principal_name,
+    c.passwd
 FROM
-    OOMSE2_REALM r
-INNER JOIN
     OOMSE2_PRINCIPAL p
-ON
-    p."P$$PARENT" = r.object_id
 INNER JOIN
-    OOMSE2_PRINCIPAL p1
+    OOMSE2_CREDENTIAL c
 ON
-    p.name = p1.name
-INNER JOIN
-    OOMSE2_REALM r1
-ON
-    p1."P$$PARENT" = r1.object_id
-INNER JOIN
-    OOMSE2_CREDENTIAL c1
-ON
-    p1.credential = c1.object_id
-WHERE
-    r.name <> 'Root' AND
-    r1.name = 'Default' ;
+    (p.credential = c.object_id) ;
 
 
 CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
-    CASE
-        WHEN realm.name = 'Default' THEN p.name
-        ELSE realm.name ||
-
-
-
-
-
-'\'
-
-        || p.name
-    END AS principal_name,
+    p.name AS principal_name,
     r.name AS role_name
 FROM
- OOMSE2_REALM realm,
     OOMSE2_PRINCIPAL_ pg,
     OOMSE2_PRINCIPAL p,
     OOMSE2_PRINCIPAL_ pn,
@@ -2114,5 +2000,4 @@ WHERE
     (p.object_id = pn.object_id) AND
     (pn.is_member_of = pg.object_id) AND
     (pg.granted_role = r.object_id) AND
-    (p.object_id LIKE 'principal/%/Root/Default/%') AND
-    (realm.name <> 'Root') ;
+    (p.object_id LIKE 'principal/%/Root/Default/%') ;

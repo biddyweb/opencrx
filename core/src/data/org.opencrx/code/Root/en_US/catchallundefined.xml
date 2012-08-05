@@ -14,16 +14,16 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="catchall" _operation="set">
 										<_object>
 											<name>
+												<_item>org:opencrx:kernel:contract1:AbstractContract:contractRole</_item>
 												<_item>org:opencrx:kernel:contract1:SalesOrder:submitStatus</_item>
 												<_item>org:opencrx:kernel:contract1:ContractLinkFrom:linkType</_item>
 												<_item>org:opencrx:kernel:contract1:ContractLinkTo:linkType</_item>
+												<_item>org:opencrx:kernel:contract1:SalesVolumeTarget:priceLevelRole</_item>
 												<_item>org:opencrx:kernel:forecast1:AbstractBudget:budgetType</_item>
 												<_item>org:opencrx:kernel:building1:BuildingUnit:buildingUnitType</_item>
 												<_item>org:opencrx:kernel:building1:Facility:facilityType</_item>
 												<_item>org:opencrx:kernel:building1:InventoryItem:inventoryItemType</_item>
 												<_item>org:opencrx:kernel:product1:AbstractPriceLevel:paymentMethod</_item>
-												<_item>org:opencrx:kernel:product1:AbstractProduct:productType</_item>
-												<_item>org:opencrx:kernel:product1:PriceListEntry:productType</_item>
 												<_item>org:opencrx:kernel:product1:ProductTypeFilterProperty:productType</_item>
 												<_item>org:opencrx:kernel:workflow1:WfStep:stepCode</_item>
 												<_item>org:opencrx:kernel:workflow1:WfStep:stepType</_item>

@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailForwardWizard.jsp,v 1.5 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: EMailForwardWizard.jsp,v 1.9 2011/11/28 14:04:37 wfro Exp $
  * Description: EMailForwardToWizard
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/11/28 14:04:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -103,6 +103,7 @@ org.opencrx.kernel.backend.*
 		org.opencrx.kernel.activity1.jmi1.EMail eMailActivity = (org.opencrx.kernel.activity1.jmi1.EMail)obj;
 		if(eMailActivity.getLastAppliedCreator() != null) {
 			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
+				eMailActivity.getCreationContext(),
 				eMailActivity.getDescription(),
 				eMailActivity.getDetailedDescription(),
 				eMailActivity.getDueBy(),
@@ -111,7 +112,7 @@ org.opencrx.kernel.backend.*
 				eMailActivity.getPriority(),
 				eMailActivity.getReportingContact(),
 				eMailActivity.getScheduledEnd(),
-				eMailActivity.getScheduledStart()								
+				eMailActivity.getScheduledStart()
 			);
 			pm.currentTransaction().begin();
 			org.opencrx.kernel.activity1.jmi1.NewActivityResult result = eMailActivity.getLastAppliedCreator().newActivity(params);
@@ -130,10 +131,10 @@ org.opencrx.kernel.backend.*
 			 	newMessageBody.append("From:        " + (eMailActivity.getSender() == null ? "" : ((org.opencrx.kernel.account1.jmi1.EMailAddress)eMailActivity.getSender()).getEmailAddress()) + "\n");
 			 	Collection<org.opencrx.kernel.activity1.jmi1.EMailRecipient> recipients = eMailActivity.getEmailRecipient();
 			 	for(org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient: recipients) {
-			 		if(recipient.getPartyType() == Activities.PARTY_TYPE_TO) {
+			 		if(recipient.getPartyType() == Activities.PartyType.EMAIL_TO.getValue()) {
 					 	newMessageBody.append("To:        " + ((org.opencrx.kernel.account1.jmi1.EMailAddress)recipient.getParty()).getEmailAddress() + "\n");			 			
 			 		}
-			 		else if(recipient.getPartyType() == Activities.PARTY_TYPE_CC) {
+			 		else if(recipient.getPartyType() == Activities.PartyType.EMAIL_CC.getValue()) {
 					 	newMessageBody.append("CC:        " + ((org.opencrx.kernel.account1.jmi1.EMailAddress)recipient.getParty()).getEmailAddress() + "\n");			 			
 			 		}
 			 	}
@@ -160,7 +161,7 @@ org.opencrx.kernel.backend.*
 			 	linkTo.setActivityLinkType((short)97); // is derived from
 			 	linkTo.setLinkTo(eMailActivity);
 			 	forwardEMailActivity.addActivityLinkTo(
-			 		Activities.getInstance().getUidAsString(),
+			 		org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 			 		linkTo
 			 	);
 			 	pm.currentTransaction().commit();

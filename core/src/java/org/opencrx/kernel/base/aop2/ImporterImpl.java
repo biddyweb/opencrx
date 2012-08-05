@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImporterImpl.java,v 1.10 2010/09/16 00:17:51 wfro Exp $
+ * Name:        $Id: ImporterImpl.java,v 1.12 2011/08/22 12:25:00 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/16 00:17:51 $
+ * Date:        $Date: 2011/08/22 12:25:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,7 +70,6 @@ import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
-import org.openmdx.kernel.log.SysLog;
 
 public class ImporterImpl
 	<S extends org.opencrx.kernel.base.jmi1.Importer,N extends org.opencrx.kernel.base.cci2.Importer,C extends Void>
@@ -91,12 +90,12 @@ public class ImporterImpl
         try {
             short locale = params.getLocale();
             byte[] item = params.getItem();
+            String itemName = params.getItemName();
             String itemMimeType = params.getItemMimeType();
-            SysLog.trace("import MIME_TYPE", itemMimeType);
             List<String> report = new ArrayList<String>();
             List<String> errors = new ArrayList<String>();
             BasicObject importedObject = null; 
-            if(VCard.MIME_TYPE.equals(itemMimeType)) {
+            if(VCard.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(VCard.FILE_EXTENSION)) {
             	if(this.sameObject() instanceof Account) {
 	                importedObject = VCard.getInstance().importItem(
 	                	item, 
@@ -107,7 +106,7 @@ public class ImporterImpl
 	                );
             	}
             }
-            else if(ICalendar.MIME_TYPE.equals(itemMimeType)) {
+            else if(ICalendar.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(ICalendar.FILE_EXTENSION)) {
             	if(this.sameObject() instanceof Activity) {
 	            	importedObject = ICalendar.getInstance().importItem(
 	            		item, 
@@ -118,7 +117,7 @@ public class ImporterImpl
 	            	);
             	}
             }
-            else if(Importer.MIME_TYPE.equals(itemMimeType)) {
+            else if(Importer.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(Importer.FILE_EXTENSION)) {
                 importedObject = (BasicObject)Importer.getInstance().importItem(
                 	item,
                 	locale,

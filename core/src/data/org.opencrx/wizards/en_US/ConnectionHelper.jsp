@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ConnectionHelper.jsp,v 1.26 2011/03/24 12:09:15 cmu Exp $
+ * Name:        $Id: ConnectionHelper.jsp,v 1.28 2011/11/28 14:18:20 wfro Exp $
  * Description: Generate vCard/iCal/CalDAV URLs
- * Revision:    $Revision: 1.26 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/24 12:09:15 $
+ * Date:        $Date: 2011/11/28 14:18:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009,2010 CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2011 CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -248,7 +248,7 @@ org.openmdx.kernel.log.*
     String sourceType          = request.getParameter("sourceType")          != null ? request.getParameter("sourceType"         ) : optionSourceActivities;    // [freebusy|activities|bdays|webdav]
     String optionType          = request.getParameter("optionType")          != null ? request.getParameter("optionType"         ) : optionTypeIcs;             // [AirSync|CalDAV|ics|xml|html] activities
     String optionNonOwningUser = request.getParameter("optionNonOwningUser") != null ? request.getParameter("optionNonOwningUser") : optionValueFALSE;          // [true|false]     allow option .../user/<user>/...
-    String optionUsernameEmail = request.getParameter("optionUsernameEmail") != null ? request.getParameter("optionUsernameEmail") : app.getLoginPrincipalId(); // [user name|e-mail address] for option .../user/<user>/...
+    String optionUsernameEmail = request.getParameter("optionUsernameEmail") != null ? request.getParameter("optionUsernameEmail") : app.getLoginPrincipal(); // [user name|e-mail address] for option .../user/<user>/...
     String optionDisabled      = request.getParameter("optionDisabled")      != null ? request.getParameter("optionDisabled"     ) : optionValueFALSE;          // [true|false]     activities, freebusy
     String optionAlarm         = request.getParameter("optionAlarm")         != null ? request.getParameter("optionAlarm"        ) : optionValueFALSE;          // [true|false]     bdays
     String optionIcalType      = request.getParameter("optionIcalType")      != null ? request.getParameter("optionIcalType"     ) : optionIcalTypeEvent;       // [VTODO|VEVENT]   bdays
@@ -270,7 +270,7 @@ org.openmdx.kernel.log.*
     int tabIndex = 0;
 
     // get current userHome
-    org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+    org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
 
     org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
     org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(

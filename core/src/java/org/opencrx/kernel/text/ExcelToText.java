@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExcelToText.java,v 1.4 2009/12/29 15:42:54 wfro Exp $
+ * Name:        $Id: ExcelToText.java,v 1.5 2011/08/26 12:29:36 wfro Exp $
  * Description: ExcelToText
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/29 15:42:54 $
+ * Date:        $Date: 2011/08/26 12:29:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -140,10 +140,10 @@ public class ExcelToText implements HSSFListener {
                             this.text.append(" ");
                             curentRow = rowNum;
                         }
-                        if (bof2.isValue()) {
+                        try {
                             String value = sstrec.getString(bof2.getSSTIndex()).toString();
                             this.text.append(value + " ");
-                        }
+                        } catch(Exception e) {}
                     }
                     if (record instanceof NumberRecord) {
                         NumberRecord bof2 = (NumberRecord) record;
@@ -169,11 +169,6 @@ public class ExcelToText implements HSSFListener {
                 this.sstrec = (SSTRecord) record;
                 break;
             case DSFRecord.sid:
-                DSFRecord rec = (DSFRecord) record;
-                short is = rec.getDsf();
-                if (is != 0) {
-                    this.dsfFlag = true;
-                }
                 break;
     
             case TextObjectRecord.sid:
@@ -204,7 +199,6 @@ public class ExcelToText implements HSSFListener {
     // -----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected boolean dsfFlag = false;
     protected final StringBuilder text;
     protected SSTRecord sstrec = null;
 

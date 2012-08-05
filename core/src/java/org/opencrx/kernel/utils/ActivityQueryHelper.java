@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivityQueryHelper.java,v 1.3 2010/12/15 11:57:00 wfro Exp $
+ * Name:        $Id: ActivityQueryHelper.java,v 1.4 2011/07/24 22:44:16 wfro Exp $
  * Description: ActivitiesQueryHelper
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 11:57:00 $
+ * Date:        $Date: 2011/07/24 22:44:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,14 +72,18 @@ import org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity;
 import org.opencrx.kernel.activity1.jmi1.Activity;
-import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
+import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
+import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.home1.cci2.UserHomeQuery;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 import org.w3c.format.DateTimeFormat;
@@ -108,7 +112,7 @@ public class ActivityQueryHelper {
      */
     public int parseQueryId(
        String id
-    ) throws IllegalArgumentException  {
+    ) throws ServiceException {
     	this.queryId = id;
         List<String> l = ActivityQueryHelper.splitUri(id);
         if(l.size() >= 3) {
@@ -134,15 +138,8 @@ public class ActivityQueryHelper {
             else if("null".equals(this.calendarName)) {
                 return l.size();
             }
-            this.activityPackage = Utils.getActivityPackage(this.pm); 
-            this.activitySegment = 
-                (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-                );
-            this.userHomeSegment = 
-                (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-                );
+            this.activitySegment = Activities.getInstance().getActivitySegment(this.pm, providerName, segmentName);
+            this.userHomeSegment = UserHomes.getInstance().getUserHomeSegment(this.pm, providerName, segmentName);
             this.activityGroup = null;
             this.userHome = null;
             this.activityFilter = null;
@@ -154,19 +151,19 @@ public class ActivityQueryHelper {
             ) {
                 List<? extends ActivityGroup> activityGroups = Collections.emptyList();
                 if("milestone".equals(calendarType)) {
-                    ActivityMilestoneQuery query = this.activityPackage.createActivityMilestoneQuery();
+                    ActivityMilestoneQuery query = (ActivityMilestoneQuery)this.pm.newQuery(ActivityMilestone.class);
                     query.name().equalTo(this.calendarName);
                     List<org.opencrx.kernel.activity1.jmi1.ActivityMilestone> milestones = this.activitySegment.getActivityMilestone(query);
                     activityGroups = milestones;
                 }
                 else if("category".equals(calendarType)) {
-                    ActivityCategoryQuery query = this.activityPackage.createActivityCategoryQuery();
+                    ActivityCategoryQuery query = (ActivityCategoryQuery)this.pm.newQuery(ActivityCategory.class);
                     query.name().equalTo(this.calendarName);
                     List<org.opencrx.kernel.activity1.jmi1.ActivityCategory> categories = this.activitySegment.getActivityCategory(query);
                     activityGroups = categories;
                 }
                 else if("tracker".equals(calendarType)) {
-                    ActivityTrackerQuery query = this.activityPackage.createActivityTrackerQuery();
+                    ActivityTrackerQuery query = (ActivityTrackerQuery)this.pm.newQuery(ActivityTracker.class);
                     query.name().equalTo(this.calendarName);
                     List<org.opencrx.kernel.activity1.jmi1.ActivityTracker> trackers = this.activitySegment.getActivityTracker(query);
                     activityGroups = trackers;
@@ -174,9 +171,9 @@ public class ActivityQueryHelper {
                 if(!activityGroups.isEmpty()) {
                     this.activityGroup = activityGroups.iterator().next();
                     if(this.filterName != null) {
-                        ActivityFilterGroupQuery query = this.activityPackage.createActivityFilterGroupQuery();
+                        ActivityFilterGroupQuery query = (ActivityFilterGroupQuery)this.pm.newQuery(ActivityFilterGroup.class);
                         query.name().equalTo(this.filterName);
-                        List<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup> activityFilters = this.activityGroup.getActivityFilter(query);
+                        List<ActivityFilterGroup> activityFilters = this.activityGroup.getActivityFilter(query);
                         if(!activityFilters.isEmpty()) {
                             this.activityFilter = activityFilters.iterator().next();
                         }
@@ -184,9 +181,9 @@ public class ActivityQueryHelper {
                 }                
             }
             else if("globalfilter".equals(calendarType) || "filter".equals(calendarType)) {
-                ActivityFilterGlobalQuery query = this.activityPackage.createActivityFilterGlobalQuery();
+                ActivityFilterGlobalQuery query = (ActivityFilterGlobalQuery)this.pm.newQuery(ActivityFilterGlobal.class);
                 query.name().equalTo(this.calendarName);
-                List<org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal> globalFilters = this.activitySegment.getActivityFilter(query);
+                List<ActivityFilterGlobal> globalFilters = this.activitySegment.getActivityFilter(query);
                 this.activityFilter = globalFilters.iterator().next();
             }
             else if("userhome".equals(calendarType) || "home".equals(calendarType)) {
@@ -206,7 +203,7 @@ public class ActivityQueryHelper {
             	}
             }
             else if("resource".equals(calendarType)) {
-                ResourceQuery query = this.activityPackage.createResourceQuery();
+                ResourceQuery query = (ResourceQuery)this.pm.newQuery(Resource.class);
                 query.name().equalTo(this.calendarName);
                 List<Resource> resources = this.activitySegment.getResource(query);
                 this.resource = resources.iterator().next();
@@ -403,7 +400,6 @@ public class ActivityQueryHelper {
     protected UserHome userHome = null;
     protected Resource resource = null;
     protected AbstractFilterActivity activityFilter = null;
-    protected Activity1Package activityPackage = null;    
     protected org.opencrx.kernel.activity1.jmi1.Segment activitySegment = null;
     protected org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = null;
     protected String calendarName = null;

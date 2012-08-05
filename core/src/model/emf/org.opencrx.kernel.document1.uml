@@ -357,9 +357,9 @@
                 <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_UTDUUuceEdm9Uq_PGOuigA" name="folder" type="_BTE4wOcdEdm9Uq_PGOuigA" isReadOnly="true" aggregation="shared" association="_UTDUUOceEdm9Uq_PGOuigA">
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fFKzEeceEdm9Uq_PGOuigA" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fFKzEOceEdm9Uq_PGOuigA"/>
+            <ownedAttribute xmi:id="_UTDUUuceEdm9Uq_PGOuigA" name="subFolder" type="_BTE4wOcdEdm9Uq_PGOuigA" isReadOnly="true" aggregation="shared" association="_UTDUUOceEdm9Uq_PGOuigA">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_u8CaAKmjEeCNILiaUYCMLA" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_u8EPMKmjEeCNILiaUYCMLA"/>
               <qualifier xmi:id="_NcPQsOciEdm9Uq_PGOuigA" name="id" visibility="private">
                 <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>

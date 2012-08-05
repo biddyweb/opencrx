@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.105 2011/04/15 13:03:28 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.113 2011/12/23 13:49:49 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.105 $
+ * Revision:    $Revision: 1.113 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/04/15 13:03:28 $
+ * Date:        $Date: 2011/12/23 13:49:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,6 +80,7 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
@@ -91,10 +92,12 @@ import org.opencrx.kernel.home1.cci2.AlertQuery;
 import org.opencrx.kernel.home1.cci2.EMailAccountQuery;
 import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
 import org.opencrx.kernel.home1.jmi1.ActivityGroupCalendarFeed;
+import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.ContactsFeed;
 import org.opencrx.kernel.home1.jmi1.DocumentFeed;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.ObjectFinder;
+import org.opencrx.kernel.home1.jmi1.Reminder;
 import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
@@ -105,6 +108,7 @@ import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.UserObjects;
+import org.openmdx.base.persistence.spi.PersistenceManagers;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.UserSettings;
@@ -134,27 +138,21 @@ public class UserHomes extends AbstractImpl {
     public void markAsAccepted(
         org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
-        alert.setAlertState(
-            ALERT_STATE_ACCEPTED
-        );        
+        alert.setAlertState(AlertState.ACCEPTED.getValue());
     }
     
     //-------------------------------------------------------------------------
     public void markAsRead(
         org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
-        alert.setAlertState(
-            ALERT_STATE_READ
-        );        
+        alert.setAlertState(AlertState.READ.getValue());
     }
     
     //-------------------------------------------------------------------------
     public void markAsNew(
         org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
-        alert.setAlertState(
-            ALERT_STATE_NEW
-        );        
+        alert.setAlertState(AlertState.NEW.getValue());
     }
     
     //-----------------------------------------------------------------------
@@ -181,12 +179,12 @@ public class UserHomes extends AbstractImpl {
         	final Date NOW_MINUS_1M = new Date(System.currentTimeMillis() - 30L * 86400L * 1000L);
         	final Date NOW_MINUS_3M = new Date(System.currentTimeMillis() - 90L * 86400L * 1000L);
             AlertQuery alertQuery = (AlertQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Alert.class);
-            alertQuery.alertState().lessThan(ALERT_STATE_EXPIRED);
+            alertQuery.alertState().lessThan(AlertState.EXPIRED.getValue());
             alertQuery.orderByCreatedAt().descending();
             List<Path> alertIdentities = new ArrayList<Path>();
-            List<org.opencrx.kernel.home1.jmi1.Alert> alerts = userHome.getAlert(alertQuery);
+            List<Alert> alerts = userHome.getAlert(alertQuery);
             int n = 0;
-            for(org.opencrx.kernel.home1.jmi1.Alert alert: alerts) {
+            for(Alert alert: alerts) {
         		alertIdentities.add(alert.refGetPath());
         		n++;            	
         		if(n > 25) break;
@@ -194,7 +192,7 @@ public class UserHomes extends AbstractImpl {
             // Update state
             Set<ContextCapable> references = new HashSet<ContextCapable>();
             for(Path alertIdentity: alertIdentities) {
-            	org.opencrx.kernel.home1.jmi1.Alert alert = (org.opencrx.kernel.home1.jmi1.Alert)pm.getObjectById(alertIdentity);
+            	Alert alert = (Alert)pm.getObjectById(alertIdentity);
             	ContextCapable reference = null;
             	try {
             		reference = alert.getReference();
@@ -202,9 +200,9 @@ public class UserHomes extends AbstractImpl {
             	// Set state to expired if 
             	// * if it is accepted and older than three months
             	if(
-            		(alert.getAlertState() == ALERT_STATE_ACCEPTED && alert.getCreatedAt().compareTo(NOW_MINUS_3M) < 0)
+            		(alert.getAlertState() == AlertState.ACCEPTED.getValue() && alert.getCreatedAt().compareTo(NOW_MINUS_3M) < 0)
             	) {
-                	alert.setAlertState(ALERT_STATE_EXPIRED);
+                	alert.setAlertState(AlertState.EXPIRED.getValue());
             	}
             	// Set state to accepted if 
             	// * its reference is not valid or duplicate or
@@ -212,9 +210,9 @@ public class UserHomes extends AbstractImpl {
             	else if(
             		(reference == null) || 
             		references.contains(reference) || 
-            		(alert.getAlertState() < ALERT_STATE_ACCEPTED && alert.getCreatedAt().compareTo(NOW_MINUS_1M) < 0)
+            		(alert.getAlertState() < AlertState.ACCEPTED.getValue() && alert.getCreatedAt().compareTo(NOW_MINUS_1M) < 0)
             	) {
-                	alert.setAlertState(ALERT_STATE_ACCEPTED);
+                	alert.setAlertState(AlertState.ACCEPTED.getValue());
             	}
             	if(reference != null) {
             		references.add(reference);
@@ -228,6 +226,15 @@ public class UserHomes extends AbstractImpl {
       Path from,
       PersistenceManager pm
     ) throws ServiceException {
+    	return this.getUserHome(from, pm, false);
+    }
+    
+    //-------------------------------------------------------------------------
+    public UserHome getUserHome(
+      Path from,
+      PersistenceManager pm,
+      boolean useRunAsPrincipal
+    ) throws ServiceException {
     	List<String> principalChain = UserObjects.getPrincipalChain(pm);
     	return (UserHome)pm.getObjectById(
     		new Path(new String[]{
@@ -237,8 +244,10 @@ public class UserHomes extends AbstractImpl {
               "segment",
               from.get(4),
               "userHome",
-              principalChain.get(0)
-            })    		
+              useRunAsPrincipal && principalChain.size() > 1 ? 
+            	  principalChain.get(1) : 
+            		  principalChain.get(0)
+            })
     	);
     }
     
@@ -248,7 +257,18 @@ public class UserHomes extends AbstractImpl {
         Path from,
         PersistenceManager pm
     ) throws ServiceException {
-        if(user == null) return null;
+    	return this.getUserHome(user, from, pm, false);
+    }
+
+    //-------------------------------------------------------------------------
+    public UserHome getUserHome(
+        String user,
+        Path from,
+        PersistenceManager pm,
+        boolean useRunAsPrincipal
+    ) throws ServiceException {
+    	List<String> principalChain = PersistenceManagers.toPrincipalChain(user);
+        if(principalChain.isEmpty()) return null;
         Path userHomePath = new Path(
             new String[]{
               "org:opencrx:kernel:home1",
@@ -257,12 +277,14 @@ public class UserHomes extends AbstractImpl {
               "segment",
               from.get(4),
               "userHome",
-              user
+              useRunAsPrincipal && principalChain.size() > 1 ? 
+            	  principalChain.get(1) : 
+            		  principalChain.get(0)
             }
         );
         return (UserHome)pm.getObjectById(userHomePath);
     }
-      
+
     //-------------------------------------------------------------------------
     private byte[] getPasswordDigest(
         String password,
@@ -427,7 +449,7 @@ public class UserHomes extends AbstractImpl {
             newPassword
         );
     }
-    
+
     //-------------------------------------------------------------------------
     public UserHome createUserHome(
         org.openmdx.security.realm1.jmi1.Realm realm,
@@ -1354,6 +1376,7 @@ public class UserHomes extends AbstractImpl {
 						pm
 					)
 				);
+				privateEMailsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);
 				if(privatePrincipalGroup != null) {
 					privateEMailsCreator.getOwningGroup().clear();
 					privateEMailsCreator.getOwningGroup().add(privatePrincipalGroup);
@@ -1365,7 +1388,7 @@ public class UserHomes extends AbstractImpl {
 				);
 			}
 			if(privateEMailsCreator.getIcalType() == ICalendar.ICAL_TYPE_NA) {
-				privateEMailsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);			
+				privateEMailsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);
 			}
 			// Private Task creator
 			ActivityCreator privateTasksCreator = null;
@@ -1387,6 +1410,7 @@ public class UserHomes extends AbstractImpl {
 						pm
 					)
 				);
+				privateTasksCreator.setIcalType(ICalendar.ICAL_TYPE_VTODO);
 				if(privatePrincipalGroup != null) {
 					privateTasksCreator.getOwningGroup().clear();
 					privateTasksCreator.getOwningGroup().add(privatePrincipalGroup);
@@ -1398,7 +1422,7 @@ public class UserHomes extends AbstractImpl {
 				);
 			}
 			if(privateTasksCreator.getIcalType() == ICalendar.ICAL_TYPE_NA) {
-				privateTasksCreator.setIcalType(ICalendar.ICAL_TYPE_VTODO);			
+				privateTasksCreator.setIcalType(ICalendar.ICAL_TYPE_VTODO);
 			}
 			// Private Meeting creator
 			ActivityCreator privateMeetingsCreator = null;
@@ -1420,6 +1444,7 @@ public class UserHomes extends AbstractImpl {
 						pm
 					)
 				);
+				privateMeetingsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);
 				if(privatePrincipalGroup != null) {
 					privateMeetingsCreator.getOwningGroup().clear();
 					privateMeetingsCreator.getOwningGroup().add(privatePrincipalGroup);
@@ -1436,10 +1461,11 @@ public class UserHomes extends AbstractImpl {
 			// Set default creator on tracker
 			privateTracker.setDefaultCreator(privateIncidentsCreator);
 			// Resource
-			org.opencrx.kernel.activity1.jmi1.Resource resource = Activities.getInstance().findResource(
-				activitySegment,
-				userHome
-			);
+			org.opencrx.kernel.activity1.jmi1.Resource resource = null;
+			try {
+				// Get resource specific for principal
+				resource = activitySegment.getResource(principalName);
+			} catch(Exception e) {}
 			if(resource == null) {
 				resource = pm.newInstance(Resource.class);
 				resource.refInitialize(false, false);
@@ -1462,7 +1488,7 @@ public class UserHomes extends AbstractImpl {
 				privateAccountGroup = (org.opencrx.kernel.account1.jmi1.Group)pm.getObjectById(
 					new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", principalName + Activities.PRIVATE_GROUP_SUFFIX)
 				);
-			} catch(Exception e) {}		
+			} catch(Exception e) {}
 			if(privateAccountGroup == null) {
 				privateAccountGroup = pm.newInstance(org.opencrx.kernel.account1.jmi1.Group.class);
 				privateAccountGroup.refInitialize(false, false);
@@ -1648,6 +1674,58 @@ public class UserHomes extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    public void updateReminder(
+    	Reminder reminder
+    ) throws ServiceException {
+    	Date now = new Date();
+        if(JDOHelper.isNew(reminder)) {
+        	if(reminder.getAlarmRepeat() == null) {
+        		reminder.setAlarmRepeat(1);
+        	}
+        	if(reminder.getAlarmIntervalMinutes() == null) {
+        		reminder.setAlarmIntervalMinutes(15);
+        	}
+        	if(
+        		Boolean.TRUE.equals(reminder.isAutocalcTriggerAt()) ||
+        		reminder.getTriggerAt() == null
+        	) {
+        		ContextCapable reference = null;
+        		try {
+        			reference = reminder.getReference();
+        		} catch(Exception e) {}
+        		if(reference instanceof Activity) {
+        			if(reminder.isAutocalcTriggerAt() == null) {
+        				reminder.setAutocalcTriggerAt(Boolean.TRUE);
+        			}
+        			reminder.setTriggerEndAt(((Activity)reference).getScheduledStart());
+        			reminder.setReminderState(((Activity)reference).getActivityState());
+        		} else {
+        			if(reminder.isAutocalcTriggerAt() == null) {        			
+        				reminder.setAutocalcTriggerAt(Boolean.FALSE);
+        			}
+        			reminder.setTriggerAt(now);
+        			reminder.setTriggerEndAt(now);
+        		}
+        	}
+        }
+    	if(Boolean.TRUE.equals(reminder.isAutocalcTriggerAt())) {
+    		if(reminder.getTriggerEndAt() != null) {
+				Date newTriggerAt = new Date(
+					reminder.getTriggerEndAt().getTime() - 
+					(reminder.getAlarmRepeat() == null ? 1 : reminder.getAlarmRepeat()) * (reminder.getAlarmIntervalMinutes() == null ? 15 : reminder.getAlarmIntervalMinutes()) * 60000L
+				);
+    			reminder.setTriggerAt(newTriggerAt);    			
+    		}
+    	}
+    	// If triggerAt is in the future adjust lastAlarmAt
+    	if(JDOHelper.isNew(reminder) || reminder.getTriggerAt().compareTo(now) > 0) {
+			reminder.setLastAlarmAt(
+				new Date(reminder.getTriggerAt().getTime() - reminder.getAlarmIntervalMinutes() * 60000L) 
+			);
+    	}
+    }
+
+    //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------    
     public static final short CHANGE_PASSWORD_OK = 0;
@@ -1660,12 +1738,29 @@ public class UserHomes extends AbstractImpl {
     public static final short OLD_PASSWORD_VERIFICATION_MISMATCH = 7;
     public static final short PASSWORD_POLICY_VIOLATION = 8;
 
-    public static final short ALERT_STATE_NA = 0;
-    public static final short ALERT_STATE_NEW = 1;
-    public static final short ALERT_STATE_READ = 2;
-    public static final short ALERT_STATE_ACCEPTED = 3;
-    public static final short ALERT_STATE_EXPIRED = 4;
-    
+	public enum AlertState {
+		
+	    NA((short)0),
+	    NEW((short)1),
+	    READ((short)2),
+	    ACCEPTED((short)3),
+	    EXPIRED((short)4);
+		
+		private short value;
+		
+		private AlertState(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+		
+	}
+
 }
 
 //--- End of File -----------------------------------------------------------

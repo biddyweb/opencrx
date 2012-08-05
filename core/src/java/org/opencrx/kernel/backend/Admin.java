@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.32 2010/08/27 16:33:55 wfro Exp $
+ * Name:        $Id: Admin.java,v 1.34 2011/08/12 23:35:49 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/27 16:33:55 $
+ * Date:        $Date: 2011/08/12 23:35:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -255,6 +255,35 @@ public class Admin extends AbstractImpl {
     }
     
     //-----------------------------------------------------------------------
+    public org.openmdx.security.authorization1.jmi1.Policy createPolicy(
+    	PersistenceManager pm,
+    	String providerName,
+    	String segmentName
+    ) {
+        // Create policy for segment
+        Path policyIdentity = SecureObject.getPolicyIdentity(providerName, segmentName);
+        org.openmdx.security.authorization1.jmi1.Policy policy = null;
+        try {
+        	policy = ( org.openmdx.security.authorization1.jmi1.Policy)pm.getObjectById(policyIdentity);
+        } catch(Exception e) {}
+        if(policy == null) {
+            org.openmdx.security.authorization1.jmi1.Segment policySegment = 
+            	(org.openmdx.security.authorization1.jmi1.Segment)pm.getObjectById(
+            		policyIdentity.getParent().getParent()
+            	);
+            policy = pm.newInstance(org.openmdx.security.authorization1.jmi1.Policy.class);
+            policy.refInitialize(false, false);
+            policy.setDescription(segmentName + " Policy");
+            policySegment.addPolicy(
+            	false,
+            	segmentName,
+            	policy
+            );
+        }    
+        return policy;
+    }
+    
+    //-----------------------------------------------------------------------
     /*
      * Creates a new segment and segment administrators. <segmentName>:ADMIN_PRINCIPAL 
      * is the owner of all created objects. 
@@ -325,14 +354,19 @@ public class Admin extends AbstractImpl {
         ) {
             errors.add("admin principal for segment " + segmentName + " must match " + adminPrincipalName);
             return;            
-        }        
+        }
+        // Create policy for segment
+        this.createPolicy(
+        	pm, 
+        	providerName, 
+        	segmentName
+        );
         // Create realm for segment
         Path realmIdentity = SecureObject.getRealmIdentity(providerName, segmentName);
         org.openmdx.security.realm1.jmi1.Realm realm = null;
         try {
         	realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(realmIdentity);
-        }
-        catch(Exception e) {}
+        } catch(Exception e) {}
         if(realm == null) {
             org.openmdx.security.realm1.jmi1.Segment realmSegment = 
             	(org.openmdx.security.realm1.jmi1.Segment)pm.getObjectById(

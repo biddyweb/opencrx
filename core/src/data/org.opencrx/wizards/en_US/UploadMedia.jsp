@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.45 2010/04/27 17:02:44 wfro Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.47 2011/11/23 06:41:06 cmu Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.47 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 17:02:44 $
+ * Date:        $Date: 2011/11/23 06:41:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -95,6 +95,7 @@ org.openmdx.kernel.id.*
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
   <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
+	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
   <link rel='shortcut icon' href='../../images/favicon.ico' />
  	<style type="text/css" media="all">
     /* Add/Edit page specific settings */
@@ -131,6 +132,7 @@ org.openmdx.kernel.id.*
 		final String MEDIA_CLASS = "org:opencrx:kernel:document1:Media";
 		final String MEDIACONTENT_CLASS = "org:opencrx:kernel:document1:MediaContent";
 		final String UPLOAD_FILE_FIELD_NAME = "uploadFile";
+		List filecb = new ArrayList();
 		try {
 
 			Map parameterMap = request.getParameterMap();
@@ -145,6 +147,7 @@ org.openmdx.kernel.id.*
 						50000000, // max request size [overall limit]
 					  app.getTempDirectory().getPath()
 					);
+					int fileCounter = 0;
 					for(Iterator i = items.iterator(); i.hasNext(); ) {
 					  FileItem item = (FileItem)i.next();
 					  if(item.isFormField()) {
@@ -163,11 +166,12 @@ org.openmdx.kernel.id.*
 						}
 						// add to parameter map if file received
 						else if(item.getSize() > 0) {
+								fileCounter++;
 						  parameterMap.put(
 							item.getFieldName(),
 							new String[]{item.getName()}
 						  );
-						  String location = app.getTempFileName(item.getFieldName(), "");
+							  String location = app.getTempFileName(fileCounter + "." + item.getFieldName(), "");
 
 						  // bytes
 						  File outFile = new File(location);
@@ -183,9 +187,16 @@ org.openmdx.kernel.id.*
 							sep = item.getName().lastIndexOf("\\");
 						  }
 						  pw.println(item.getName().substring(sep + 1));
+						//System.out.println("location = " + location + " / name = " + item.getName().substring(sep + 1));
 						  pw.close();
 						}
 					  }
+					}
+					int recount = 1;
+					while (recount <= fileCounter) {
+						boolean isChecked = parameterMap.get("filecb" + recount) != null;
+						filecb.add(new Boolean(isChecked));
+						recount++;
 					}
 				}
 				catch(FileUploadException e) {
@@ -209,7 +220,7 @@ org.openmdx.kernel.id.*
 
 			String[] objectXris = (String[])parameterMap.get("xri");
 			String objectXri = (objectXris == null) || (objectXris.length == 0) ? "" : objectXris[0];
-			String location = app.getTempFileName(UPLOAD_FILE_FIELD_NAME, "");
+			String location = app.getTempFileName("1." + UPLOAD_FILE_FIELD_NAME, "");
 
 			if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 				response.sendRedirect(
@@ -228,7 +239,9 @@ org.openmdx.kernel.id.*
 			}
 			else if(actionOk) {
 
-				if(
+				int fileCounter = 1;
+				location = app.getTempFileName(fileCounter + "." + UPLOAD_FILE_FIELD_NAME, "");
+				while(
 					new File(location + ".INFO").exists() &&
 					new File(location).exists() &&
 					(new File(location).length() > 0)
@@ -253,8 +266,13 @@ org.openmdx.kernel.id.*
 
 							RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
+							boolean isChecked = false;
+							try {
+									isChecked = filecb.get(fileCounter-1) != null && ((Boolean)filecb.get(fileCounter-1)).booleanValue();
+							} catch (Exception e) {}
+
 							// CrxObject
-							if (obj instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
+							if (isChecked && obj instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
 								org.opencrx.kernel.generic.jmi1.CrxObject crxObject =
 									(org.opencrx.kernel.generic.jmi1.CrxObject)obj;
 								org.opencrx.kernel.generic.jmi1.Media media = null;
@@ -291,7 +309,7 @@ org.openmdx.kernel.id.*
 								}
 							}
 							// UserHome
-							else if (obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
+							else if (isChecked && obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
 							    org.opencrx.kernel.home1.jmi1.UserHome userHome =
 									(org.opencrx.kernel.home1.jmi1.UserHome)obj;
 								org.opencrx.kernel.home1.jmi1.Media media = null;
@@ -327,7 +345,7 @@ org.openmdx.kernel.id.*
 									);
 								}
 							}
-							else if (obj instanceof org.opencrx.kernel.document1.jmi1.Document) {
+							else if (isChecked && obj instanceof org.opencrx.kernel.document1.jmi1.Document) {
 								org.opencrx.kernel.document1.jmi1.Document document =
 									(org.opencrx.kernel.document1.jmi1.Document)obj;
 								org.opencrx.kernel.document1.jmi1.DocumentAttachment documentAttachment = null;
@@ -369,14 +387,6 @@ org.openmdx.kernel.id.*
 							pm.currentTransaction().commit();
 							new File(location).delete();
 
-							// Go to created document
-							Action nextAction = new ObjectReference(
-								obj,
-								app
-							).getSelectObjectAction();
-							response.sendRedirect(
-								request.getContextPath() + "/" + nextAction.getEncodedHRef()
-							);
 						}
 						catch(Exception e) {
 							try {
@@ -384,7 +394,17 @@ org.openmdx.kernel.id.*
 							} catch(Exception e0) {}
 						}
 					}
+					fileCounter++;
+					location = app.getTempFileName(fileCounter + "." + UPLOAD_FILE_FIELD_NAME, "");
 				}
+				// return to calling object
+				Action nextAction = new ObjectReference(
+					(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+					app
+				).getSelectObjectAction();
+				response.sendRedirect(
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
+				);
 			}
 			else {
 				File uploadFile = new File(location);
@@ -424,14 +444,46 @@ org.openmdx.kernel.id.*
      			<tr>
      				<td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
      				<td >
-     					<input type="file" name="<%= UPLOAD_FILE_FIELD_NAME %>" tabindex="200" />&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ReplaceExisting.CheckBox" value="false" tabindex="300" />
+     					<input name="<%= UPLOAD_FILE_FIELD_NAME %>" id="<%= UPLOAD_FILE_FIELD_NAME %>" style="border:1px solid #ddd;" title="drop files here" type="file" multiple="multiple" tabindex="200" onChange="javascript:makeFileList();" />
+     					&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ReplaceExisting.CheckBox" value="false" tabindex="300" />
 <%
               switch (app.getCurrentLocaleAsIndex()) {
-                case 0:  %><%= "Replace existing file with same name" %><% break;
-                case 1:  %><%= "Datei mit gleichem Namen ersetzen"    %><% break;
-                default: %><%= "Replace existing with same name"      %><% break;
+                case 0:  %><%= "Replace existing file(s) with same name" %><% break;
+                case 1:  %><%= "Datei(en) mit gleichem Namen ersetzen"   %><% break;
+                default: %><%= "Replace existing file(s) with same name" %><% break;
               }
 %>
+							<div id="fileList"></div>
+							<script type="text/javascript">
+								$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='75px';
+							
+								function makeFileList() {
+									$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='';
+									var input = $("<%= UPLOAD_FILE_FIELD_NAME %>");
+									var outerdiv = $("fileList");
+									while (outerdiv.hasChildNodes()) {
+										outerdiv.removeChild(outerdiv.firstChild);
+									}
+									for (var i = 0; i < input.files.length; i++) {
+										var div = document.createElement("div");
+										var cb = document.createElement("input");
+										cb.type = "checkbox";
+										cb.name = "filecb"+(i+1);
+						        cb.id = "filecb"+(i+1);
+						        cb.value = input.files[i].name;
+						        cb.checked = true;
+						        var text = document.createTextNode(input.files[i].name);
+										div.appendChild(cb);
+										div.appendChild(text);
+										outerdiv.appendChild(div);
+									}
+									if(!outerdiv.hasChildNodes()) {
+										outerdiv.innerHTML = '--';
+										$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='75px';
+									}
+								}
+							</script>
+
      				</td>
      				<td class="addon" >
 	        </tr>

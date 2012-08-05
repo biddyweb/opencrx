@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderItemManager.java,v 1.13 2010/08/30 15:35:40 wfro Exp $
+ * Name:        $Id: OrderItemManager.java,v 1.14 2011/05/18 14:08:29 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/30 15:35:40 $
+ * Date:        $Date: 2011/05/18 14:08:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -246,8 +246,8 @@ public final class OrderItemManager
 	                    params
 	                );
 	                tx.commit();
-	                org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = 
-	                    (org.opencrx.kernel.contract1.jmi1.AbstractContractPosition)pm.getObjectById(
+	                org.opencrx.kernel.contract1.jmi1.SalesContractPosition position = 
+	                    (org.opencrx.kernel.contract1.jmi1.SalesContractPosition)pm.getObjectById(
 	                        result.getPosition().refGetPath()
 	                    ); 
 	                org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = this.getSalesTaxType(pm);                

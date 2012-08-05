@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendAlert.java,v 1.31 2010/11/05 16:09:07 wfro Exp $
+ * Name:        $Id: SendAlert.java,v 1.32 2011/06/10 14:55:02 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/05 16:09:07 $
+ * Date:        $Date: 2011/06/10 14:55:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,7 @@ import java.util.Map.Entry;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.activity1.jmi1.Activity;
-import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.SynchWorkflow_2_0;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
@@ -109,7 +109,7 @@ public class SendAlert
 	                description,
 	                targetObject instanceof Activity ? 
 	                	((Activity)targetObject).getPriority() : 
-	                		Activities.PRIORITY_NORMAL, // importance
+	                		Priority.NORMAL.getValue(), // importance
 	                60, // resend delay is 1 minute
 	                targetObject
 	            );

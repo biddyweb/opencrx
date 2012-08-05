@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncServlet.java,v 1.11 2010/09/21 12:18:49 wfro Exp $
+ * Name:        $Id: SyncServlet.java,v 1.12 2011/11/16 12:31:53 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/21 12:18:49 $
+ * Date:        $Date: 2011/11/16 12:31:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -130,7 +130,6 @@ public class SyncServlet extends HttpServlet {
 	}
 	
 	//-----------------------------------------------------------------------
-	@SuppressWarnings("unchecked")
 	protected void logRequest(
 		HttpServletRequest request, 
 		String command
@@ -212,8 +211,7 @@ public class SyncServlet extends HttpServlet {
 		try {
 			handler.handle(
 				syncRequest,
-				syncResponse,
-				true
+				syncResponse
 			);
 		} catch(Exception e) {
 			new ServiceException(e).log();

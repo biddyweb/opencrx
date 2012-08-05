@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: InvoiceImpl.java,v 1.8 2009/07/21 11:09:11 wfro Exp $
+ * Name:        $Id: InvoiceImpl.java,v 1.9 2011/05/11 18:02:22 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/21 11:09:11 $
+ * Date:        $Date: 2011/05/11 18:02:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,7 +64,7 @@ import org.openmdx.base.exception.ServiceException;
 
 public class InvoiceImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.Invoice,N extends org.opencrx.kernel.contract1.cci2.Invoice,C extends Void>
-	extends AbstractContractImpl<S,N,C>
+	extends SalesContractImpl<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------

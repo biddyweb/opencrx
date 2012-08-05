@@ -449,6 +449,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:assignedReminder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Wiedervorlagen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Wiedervorlagen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
@@ -1230,6 +1241,17 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:locale" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Sprache</_item>
+											</toolTip>
+											<label>
+												<_item>Sprache</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass" _operation="create">
 										<_object>
 											<toolTip>
@@ -1241,13 +1263,13 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:exportParams" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Referenzfilter</_item>
+												<_item>Exportparameter</_item>
 											</toolTip>
 											<label>
-												<_item>Referenzfilter</_item>
+												<_item>Exportparameter</_item>
 											</label>
 										</_object>
 										<_content/>

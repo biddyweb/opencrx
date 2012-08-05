@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Search.jsp,v 1.16 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: Search.jsp,v 1.17 2011/08/20 07:25:28 cmu Exp $
  * Description: Search.jsp
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/08/20 07:25:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -119,7 +119,7 @@ org.openmdx.portal.servlet.wizards.*
 			org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
 			org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
 			try {
-  			userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+  			userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
 			}
 			catch(Exception e) {
 			  // no or broken userhome --> would not be able to build ObjectFinder

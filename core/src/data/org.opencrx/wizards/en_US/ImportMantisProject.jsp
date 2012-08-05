@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ImportMantisProject.jsp,v 1.22 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: ImportMantisProject.jsp,v 1.23 2011/12/12 10:31:18 cmu Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/12/12 10:31:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -366,7 +366,7 @@ org.openmdx.kernel.id.*
 	        <tr>
 	          <td class="label">
 	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="Import" />
-      			<INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="Cancel" />
+      			<INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
 	          </td>
 	          <td>&nbsp;</td>
 	          <td class="addon"></td>

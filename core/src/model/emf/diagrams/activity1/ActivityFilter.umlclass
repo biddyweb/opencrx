@@ -1125,7 +1125,7 @@
     <styles xmi:type="notation:RoutingStyle" xmi:id="_yysOcUlCEd-mx4C5PQDATw" routing="Rectilinear"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_yysOcklCEd-mx4C5PQDATw" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Association" href="../../org.opencrx.kernel.activity1.uml#_RHc0wG5GEdq2_7SCieKOqA"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_yysOc0lCEd-mx4C5PQDATw" points="[0, 0, -687, -135]$[447, 87, -240, -48]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_yysOc0lCEd-mx4C5PQDATw" points="[-254, -30, 289, 264]$[-254, -232, 289, 62]"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_yyuDoElCEd-mx4C5PQDATw" type="4005" source="_yxvMMElCEd-mx4C5PQDATw" target="_cJOHMElCEd-mx4C5PQDATw">
     <children xmi:type="notation:DecorationNode" xmi:id="_yyuDpElCEd-mx4C5PQDATw" visible="false" type="6003">

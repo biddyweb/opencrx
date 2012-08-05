@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.79 2010/11/28 15:43:59 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.91 2011/12/18 22:45:12 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.79 $
+ * Revision:    $Revision: 1.91 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/28 15:43:59 $
+ * Date:        $Date: 2011/12/18 22:45:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,6 +71,7 @@ org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
 org.openmdx.kernel.log.*,
 org.opencrx.kernel.backend.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
@@ -397,7 +398,7 @@ org.openmdx.base.text.conversion.*
 		String exportProfileName,
 		String[] forClass,
 		String mimeType,
-		String referenceFilter,
+		String exportParams,
 		org.opencrx.kernel.document1.jmi1.Document template,
 		javax.jdo.PersistenceManager pm,
 		org.opencrx.kernel.home1.jmi1.UserHome userHome,
@@ -418,7 +419,7 @@ org.openmdx.base.text.conversion.*
 				Arrays.asList(forClass)
 			);
 			exportProfile.setMimeType(mimeType);
-			exportProfile.setReferenceFilter(referenceFilter);
+			exportProfile.setExportParams(exportParams);
 			exportProfile.setTemplate(template);
 			exportProfile.getOwningGroup().addAll(allUsers);
 			userHome.addExportProfile(
@@ -564,15 +565,6 @@ org.openmdx.base.text.conversion.*
 	final String MAILMERGE_TEMPLATE_NAME_LETTER = "Letter Template";
 	final String MAILMERGE_TEMPLATE_NAME_LABEL = "Label Template";
 
-	final String CONTRACT_TEMPLATE_FOLDER_NAME_OPPORTUNITY = "Opportunity Templates";
-	final String CONTRACT_TEMPLATE_OPPORTUNITY = "Opportunity with Positions (RTF)";
-	final String CONTRACT_TEMPLATE_FOLDER_NAME_QUOTE = "Quote Templates";
-	final String CONTRACT_TEMPLATE_QUOTE = "Quote with Positions (RTF)";
-	final String CONTRACT_TEMPLATE_FOLDER_NAME_SALESORDER = "Sales Order Templates";
-	final String CONTRACT_TEMPLATE_SALESORDER = "Sales Order with Positions (RTF)";
-	final String CONTRACT_TEMPLATE_FOLDER_NAME_INVOICE = "Invoice Templates";
-	final String CONTRACT_TEMPLATE_INVOICE = "Invoice with Positions (RTF)";
-
 	final String SALES_TAX_TYPE_NAME_8_5 = "Sales Tax 8.5%";
 
 	final String REPORT_TEMPLATE_FOLDER_NAME = "Report Templates";
@@ -626,26 +618,14 @@ org.openmdx.base.text.conversion.*
 		return;
 	}
 
-	org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-	);
-	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-	);
-	org.opencrx.kernel.product1.jmi1.Segment productSegment = (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName)
-	);
-	org.opencrx.kernel.contract1.jmi1.Segment contractSegment = (org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName)
-	);
-	org.opencrx.kernel.document1.jmi1.Segment documentSegment = (org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName)
-	);
-	org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
-	);
+	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
+	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
+	org.opencrx.kernel.product1.jmi1.Segment productSegment = Products.getInstance().getProductSegment(pm, providerName, segmentName);
+	org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(pm, providerName, segmentName);
+	org.opencrx.kernel.document1.jmi1.Segment documentSegment = Documents.getInstance().getDocumentSegment(pm, providerName, segmentName);
+	org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, providerName, segmentName);
 	org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-		app.getUserHomeIdentity()
+		app.getUserHomeIdentityAsPath()
 	);
 
 	boolean currentUserIsAdmin =
@@ -680,7 +660,7 @@ org.openmdx.base.text.conversion.*
 					providerName,
 					segmentName
 				);
-			List allUsers = new ArrayList();
+			List<org.opencrx.security.realm1.jmi1.PrincipalGroup> allUsers = new ArrayList<org.opencrx.security.realm1.jmi1.PrincipalGroup>();
 			allUsers.add(usersPrincipalGroup);
 			allUsers.add(administratorsPrincipalGroup);
 
@@ -693,10 +673,12 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.getInstance().initEmailProcess(
 					pm,
 					providerName,
-					segmentName
+					segmentName,
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
-			org.opencrx.kernel.activity1.jmi1.ActivityProcessState emailProcessStateNew  = null;
-			org.opencrx.kernel.activity1.jmi1.ActivityProcessState emailProcessStateOpen   = null;
+			org.opencrx.kernel.activity1.jmi1.ActivityProcessState emailProcessStateNew = null;
+			org.opencrx.kernel.activity1.jmi1.ActivityProcessState emailProcessStateOpen = null;
 			for(Iterator i = emailProcess.getState().iterator(); i.hasNext(); ) {
 				org.opencrx.kernel.activity1.jmi1.ActivityProcessState state = (org.opencrx.kernel.activity1.jmi1.ActivityProcessState)i.next();
 				if("New".equals(state.getName())) {
@@ -710,7 +692,9 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.getInstance().initBugAndFeatureTrackingProcess(
 					pm,
 					providerName,
-					segmentName
+					segmentName,
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityProcessState bugAndFeatureTrackingProcessStateNew = null;
 			org.opencrx.kernel.activity1.jmi1.ActivityProcessState bugAndFeatureTrackingProcessStateInProgress  = null;
@@ -727,53 +711,50 @@ org.openmdx.base.text.conversion.*
 				org.opencrx.kernel.backend.Activities.CALENDAR_NAME_DEFAULT_BUSINESS,
 				pm,
 				providerName,
-				segmentName
+				segmentName,
+				allUsers,
+				SecurityKeys.ACCESS_LEVEL_PRIVATE
 			);
 			// Activity Types
 			org.opencrx.kernel.activity1.jmi1.ActivityType bugsAndFeaturesType =
 				org.opencrx.kernel.backend.Activities.getInstance().initActivityType(
-					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES,
-					org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_INCIDENT,
 					bugAndFeatureTrackingProcess,
-					pm,
-					providerName,
-					segmentName
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES,
+					Activities.ActivityClass.INCIDENT.getValue(),
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityType emailsType =
 				org.opencrx.kernel.backend.Activities.getInstance().initActivityType(
-					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
-					org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_EMAIL,
 					emailProcess,
-					pm,
-					providerName,
-					segmentName
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
+					Activities.ActivityClass.EMAIL.getValue(),
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityType tasksType =
 				org.opencrx.kernel.backend.Activities.getInstance().initActivityType(
-					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS,
-					org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_TASK,
 					bugAndFeatureTrackingProcess,
-					pm,
-					providerName,
-					segmentName
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS,
+					Activities.ActivityClass.TASK.getValue(),
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityType meetingsType =
 				org.opencrx.kernel.backend.Activities.getInstance().initActivityType(
-					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_MEETINGS,
-					org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_MEETING,
 					bugAndFeatureTrackingProcess,
-					pm,
-					providerName,
-					segmentName
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_MEETINGS,
+					Activities.ActivityClass.MEETING.getValue(),
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityType phoneCallsType =
 				org.opencrx.kernel.backend.Activities.getInstance().initActivityType(
-					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS,
-					org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_PHONE_CALL,
 					bugAndFeatureTrackingProcess,
-					pm,
-					providerName,
-					segmentName
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS,
+					Activities.ActivityClass.PHONE_CALL.getValue(),
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
 			// Activity Trackers
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker bugsAndFeaturesTracker =
@@ -841,105 +822,81 @@ org.openmdx.base.text.conversion.*
 					segmentName
 				);
 			// Activity Creators
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES,
-				bugsAndFeaturesType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{bugsAndFeaturesTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS,
-				emailsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{emailsTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS,
-				tasksType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{tasksTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS,
-				emailsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{pollsTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS,
-				emailsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{meetingRoomsTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
-				meetingsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{meetingsTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS,
-				phoneCallsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{phoneCallsTracker}),
-				allUsers,
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS,
-				emailsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
-				Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup}),
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS,
-				tasksType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
-				Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup}),
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS,
-				meetingsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
-				Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup}),
-				pm,
-				providerName,
-				segmentName
-			);
-			org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
-				org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS,
-				phoneCallsType,
-				Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
-				Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup}),
-				pm,
-				providerName,
-				segmentName
-			);
+			try {
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES,					
+					bugsAndFeaturesType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{bugsAndFeaturesTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS,
+					emailsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{emailsTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS,
+					tasksType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{tasksTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS,
+					emailsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{pollsTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS,
+					emailsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{meetingRoomsTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
+					meetingsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{meetingsTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS,
+					phoneCallsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{phoneCallsTracker}),
+					allUsers
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS,
+					emailsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
+					Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup})
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS,
+					tasksType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
+					Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup})
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS,
+					meetingsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
+					Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup})
+				);
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityCreator(
+					org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS,
+					phoneCallsType,
+					Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{publicTracker}),
+					Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup})
+				);
+			} catch (Exception e) {
+				new ServiceException(e).log();
+				try {
+					pm.currentTransaction().rollback();
+					pm.currentTransaction().begin();
+				} catch (Exception re) {}
+			}
+			
 			// PricingRule
 			org.opencrx.kernel.backend.Products.getInstance().initPricingRule(
 				org.opencrx.kernel.backend.Products.PRICING_RULE_NAME_LOWEST_PRICE,
@@ -1282,64 +1239,6 @@ org.openmdx.base.text.conversion.*
 				allUsers
 			);
 
-			// Contract Templates
-			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderOpportunity = initDocumentFolder(
-				CONTRACT_TEMPLATE_FOLDER_NAME_OPPORTUNITY,
-				documentSegment,
-				allUsers
-			);
-			initDocument(
-				CONTRACT_TEMPLATE_OPPORTUNITY,
-				getServletContext().getResource("/documents/Template_Opportunity.rtf"),
-				"text/rtf",
-				CONTRACT_TEMPLATE_OPPORTUNITY,
-				templateFolderOpportunity,
-				documentSegment,
-				allUsers
-			);
-			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderQuote = initDocumentFolder(
-				CONTRACT_TEMPLATE_FOLDER_NAME_QUOTE,
-				documentSegment,
-				allUsers
-			);
-			initDocument(
-				CONTRACT_TEMPLATE_QUOTE,
-				getServletContext().getResource("/documents/Template_Quote.rtf"),
-				"text/rtf",
-				CONTRACT_TEMPLATE_QUOTE,
-				templateFolderQuote,
-				documentSegment,
-				allUsers
-			);
-			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderSalesOrder = initDocumentFolder(
-				CONTRACT_TEMPLATE_FOLDER_NAME_SALESORDER,
-				documentSegment,
-				allUsers
-			);
-			initDocument(
-				CONTRACT_TEMPLATE_SALESORDER,
-				getServletContext().getResource("/documents/Template_SalesOrder.rtf"),
-				"text/rtf",
-				CONTRACT_TEMPLATE_SALESORDER,
-				templateFolderSalesOrder,
-				documentSegment,
-				allUsers
-			);
-			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderInvoice = initDocumentFolder(
-				CONTRACT_TEMPLATE_FOLDER_NAME_INVOICE,
-				documentSegment,
-				allUsers
-			);
-			initDocument(
-				CONTRACT_TEMPLATE_INVOICE,
-				getServletContext().getResource("/documents/Template_Invoice.rtf"),
-				"text/rtf",
-				CONTRACT_TEMPLATE_INVOICE,
-				templateFolderInvoice,
-				documentSegment,
-				allUsers
-			);
-
 			// Report Templates
 			templateFolder = initDocumentFolder(
 				REPORT_TEMPLATE_FOLDER_NAME,
@@ -1586,6 +1485,7 @@ org.openmdx.base.text.conversion.*
     }
     input.button{
     	-moz-border-radius: 4px;
+    	-webkit-border-radius: 4px;
     	width: 120px;
     	border: 1px solid silver;
     }
@@ -1626,446 +1526,432 @@ org.openmdx.base.text.conversion.*
     <div id="content-wrap">
     	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 
-	<div class="col1">
-		<fieldset>
-			<legend>Activity and Incident Management</legend>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Activity Processes</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING %></label></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityProcess(org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityProcess(org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Calendars</h2></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.CALENDAR_NAME_DEFAULT_BUSINESS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findCalendar(org.opencrx.kernel.backend.Activities.CALENDAR_NAME_DEFAULT_BUSINESS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Activity Types</h2></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_MEETINGS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Activity Trackers</h2></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_TASKS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PUBLIC %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PUBLIC, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Activity Creators</h2></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS %></td>
-					<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS, activitySegment) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset>
-			<legend>Workflows and Topics</legend>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Topics</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_LEAD_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_LEAD_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Workflows</h2></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_EXPORT_MAIL %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_EXPORT_MAIL, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.ExportMailWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_PRINT_CONSOLE %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_PRINT_CONSOLE, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_ALERT %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_ALERT, workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-		</fieldset>
-	</div>
-	<div class="col2">
-		<fieldset>
-			<legend>Products</legend>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Pricing Rules</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= org.opencrx.kernel.backend.Products.PRICING_RULE_NAME_LOWEST_PRICE %></td>
-					<td><%= org.opencrx.kernel.backend.Products.getInstance().findPricingRule(org.opencrx.kernel.backend.Products.PRICING_RULE_NAME_LOWEST_PRICE, productSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Sales Tax Types</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= SALES_TAX_TYPE_NAME_8_5 %></td>
-					<td><%= findSalesTaxType(SALES_TAX_TYPE_NAME_8_5, productSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset>
-			<legend>Contracts</legend>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Calculation Rules</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= org.opencrx.kernel.backend.Contracts.CALCULATION_RULE_NAME_DEFAULT %></td>
-					<td><%= org.opencrx.kernel.backend.Contracts.getInstance().findCalculationRule(org.opencrx.kernel.backend.Contracts.CALCULATION_RULE_NAME_DEFAULT, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset>
-			<legend>Reports</legend>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Account Filters</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= ACCOUNT_FILTER_NAME_ALL %></td>
-					<td><%= findAccountFilter(ACCOUNT_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-        <tr>
-          <td width="400px"><%= ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD %></td>
-          <td><%= findAccountFilter(ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, accountSegment, pm) == null ? MISSING : OK %></td>
-        </tr>
-				<tr>
-					<td width="400px"><%= ADDRESS_FILTER_NAME_ALL %></td>
-					<td><%= findAddressFilter(ADDRESS_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Contract Filters</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= CONTRACT_FILTER_NAME_LEAD_FORECAST %></td>
-					<td><%= findContractFilter(CONTRACT_FILTER_NAME_LEAD_FORECAST, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST %></td>
-					<td><%= findContractFilter(CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_FILTER_NAME_QUOTE_FORECAST %></td>
-					<td><%= findContractFilter(CONTRACT_FILTER_NAME_QUOTE_FORECAST, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_FILTER_NAME_WON_LEADS %></td>
-					<td><%= findContractFilter(CONTRACT_FILTER_NAME_WON_LEADS, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_FILTER_NAME_WON_OPPORTUNITIES %></td>
-					<td><%= findContractFilter(CONTRACT_FILTER_NAME_WON_OPPORTUNITIES, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_FILTER_NAME_WON_QUOTES %></td>
-					<td><%= findContractFilter(CONTRACT_FILTER_NAME_WON_QUOTES, contractSegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Activity Filters</h2></td>
-				</tr>
-				<tr>
-					<td><%= ACTIVITY_FILTER_NAME_PHONE_CALLS %></td>
-					<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= ACTIVITY_FILTER_NAME_MEETINGS %></td>
-					<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= ACTIVITY_FILTER_NAME_NEW_ACTIVITIES %></td>
-					<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_NEW_ACTIVITIES, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES %></td>
-					<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES, activitySegment, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Export Profiles</h2></td>
-				</tr>
-				<tr>
-					<td><%= EXPORT_PROFILE_NAME_CONTRACT_LIST %></td>
-					<td><%= findExportProfile(EXPORT_PROFILE_NAME_CONTRACT_LIST, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST %></td>
-					<td><%= findExportProfile(EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= EXPORT_PROFILE_NAME_ACTIVITY_LIST %></td>
-					<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACTIVITY_LIST, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST %></td>
-					<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST %></td>
-					<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= EXPORT_PROFILE_NAME_ACCOUNT_LIST %></td>
-					<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACCOUNT_LIST, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Mail Merge Templates</h2></td>
-				</tr>
-				<tr>
-					<td><%= MAILMERGE_TEMPLATE_NAME_LETTER %></td>
-					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LETTER, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= MAILMERGE_TEMPLATE_NAME_LABEL %></td>
-					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LABEL, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Contract Templates</h2></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_TEMPLATE_OPPORTUNITY %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_OPPORTUNITY, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_TEMPLATE_QUOTE %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_QUOTE, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_TEMPLATE_SALESORDER %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_SALESORDER, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= CONTRACT_TEMPLATE_INVOICE %></td>
-					<td><%= findDocument(CONTRACT_TEMPLATE_INVOICE, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td colspan="2"><h2>Report Templates</h2></td>
-				</tr>
-				<tr>
-					<td><%= REPORT_TEMPLATE_NAME_CONTRACT_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_LIST, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= REPORT_TEMPLATE_NAME_ACTIVITY_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_LIST, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_LIST %></td>
-					<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_LIST, documentSegment) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset>
-			<legend>Menues</legend>
-			<table>
-				<tr>
-					<td colspan="2"><h2>Favorites</h2></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= FAVORITE_NAME_CREATE_ACTIVITY %></td>
-					<td><%= findFavorite(FAVORITE_NAME_CREATE_ACTIVITY, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= FAVORITE_NAME_CREATE_CONTACT %></td>
-					<td><%= findFavorite(FAVORITE_NAME_CREATE_CONTACT, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= FAVORITE_NAME_CREATE_CONTRACT %></td>
-					<td><%= findFavorite(FAVORITE_NAME_CREATE_CONTRACT, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= FAVORITE_NAME_CREATE_LEAD %></td>
-					<td><%= findFavorite(FAVORITE_NAME_CREATE_LEAD, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-				<tr>
-					<td width="400px"><%= FAVORITE_NAME_SCHEDULE_EVENT %></td>
-					<td><%= findFavorite(FAVORITE_NAME_SCHEDULE_EVENT, userHome, pm) == null ? MISSING : OK %></td>
-				</tr>
-			</table>
-		</fieldset>
-	</div>
-	<br />
 	<form method="post" action="<%= WIZARD_NAME %>">
+		<div class="col1">
+			<fieldset>
+				<legend>Activity and Incident Management</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Activity Processes</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING %></label></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityProcess(org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityProcess(org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Calendars</h2></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.CALENDAR_NAME_DEFAULT_BUSINESS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findCalendar(org.opencrx.kernel.backend.Activities.CALENDAR_NAME_DEFAULT_BUSINESS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Activity Types</h2></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_MEETINGS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Activity Trackers</h2></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_TASKS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_TASKS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_POLLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PUBLIC %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityTracker(org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_PUBLIC, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Activity Creators</h2></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_TASKS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_POLLS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_MEETINGS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityCreator(org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS, activitySegment) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset>
+				<legend>Workflows and Topics</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Topics</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_LEAD_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_LEAD_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_REMINDER_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_REMINDER_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Workflows</h2></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_EXPORT_MAIL %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_EXPORT_MAIL, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.ExportMailWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_PRINT_CONSOLE %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_PRINT_CONSOLE, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_ALERT %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_ALERT, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+		</div>
+		<div class="col2">
+			<fieldset>
+				<legend>Products</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Pricing Rules</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= org.opencrx.kernel.backend.Products.PRICING_RULE_NAME_LOWEST_PRICE %></td>
+						<td><%= org.opencrx.kernel.backend.Products.getInstance().findPricingRule(org.opencrx.kernel.backend.Products.PRICING_RULE_NAME_LOWEST_PRICE, productSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Sales Tax Types</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= SALES_TAX_TYPE_NAME_8_5 %></td>
+						<td><%= findSalesTaxType(SALES_TAX_TYPE_NAME_8_5, productSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset>
+				<legend>Contracts</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Calculation Rules</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= org.opencrx.kernel.backend.Contracts.CALCULATION_RULE_NAME_DEFAULT %></td>
+						<td><%= org.opencrx.kernel.backend.Contracts.getInstance().findCalculationRule(org.opencrx.kernel.backend.Contracts.CALCULATION_RULE_NAME_DEFAULT, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset>
+				<legend>Reports</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Account Filters</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= ACCOUNT_FILTER_NAME_ALL %></td>
+						<td><%= findAccountFilter(ACCOUNT_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+	        <tr>
+	          <td width="400px"><%= ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD %></td>
+	          <td><%= findAccountFilter(ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, accountSegment, pm) == null ? MISSING : OK %></td>
+	        </tr>
+					<tr>
+						<td width="400px"><%= ADDRESS_FILTER_NAME_ALL %></td>
+						<td><%= findAddressFilter(ADDRESS_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Contract Filters</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= CONTRACT_FILTER_NAME_LEAD_FORECAST %></td>
+						<td><%= findContractFilter(CONTRACT_FILTER_NAME_LEAD_FORECAST, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST %></td>
+						<td><%= findContractFilter(CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= CONTRACT_FILTER_NAME_QUOTE_FORECAST %></td>
+						<td><%= findContractFilter(CONTRACT_FILTER_NAME_QUOTE_FORECAST, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= CONTRACT_FILTER_NAME_WON_LEADS %></td>
+						<td><%= findContractFilter(CONTRACT_FILTER_NAME_WON_LEADS, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= CONTRACT_FILTER_NAME_WON_OPPORTUNITIES %></td>
+						<td><%= findContractFilter(CONTRACT_FILTER_NAME_WON_OPPORTUNITIES, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= CONTRACT_FILTER_NAME_WON_QUOTES %></td>
+						<td><%= findContractFilter(CONTRACT_FILTER_NAME_WON_QUOTES, contractSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Activity Filters</h2></td>
+					</tr>
+					<tr>
+						<td><%= ACTIVITY_FILTER_NAME_PHONE_CALLS %></td>
+						<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_PHONE_CALLS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= ACTIVITY_FILTER_NAME_MEETINGS %></td>
+						<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_MEETINGS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= ACTIVITY_FILTER_NAME_NEW_ACTIVITIES %></td>
+						<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_NEW_ACTIVITIES, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES %></td>
+						<td><%= findActivityFilter(ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Export Profiles</h2></td>
+					</tr>
+					<tr>
+						<td><%= EXPORT_PROFILE_NAME_CONTRACT_LIST %></td>
+						<td><%= findExportProfile(EXPORT_PROFILE_NAME_CONTRACT_LIST, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST %></td>
+						<td><%= findExportProfile(EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= EXPORT_PROFILE_NAME_ACTIVITY_LIST %></td>
+						<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACTIVITY_LIST, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST %></td>
+						<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST %></td>
+						<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= EXPORT_PROFILE_NAME_ACCOUNT_LIST %></td>
+						<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACCOUNT_LIST, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Mail Merge Templates</h2></td>
+					</tr>
+					<tr>
+						<td><%= MAILMERGE_TEMPLATE_NAME_LETTER %></td>
+						<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LETTER, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= MAILMERGE_TEMPLATE_NAME_LABEL %></td>
+						<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LABEL, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td colspan="2"><h2>Report Templates</h2></td>
+					</tr>
+					<tr>
+						<td><%= REPORT_TEMPLATE_NAME_CONTRACT_LIST %></td>
+						<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_LIST, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST %></td>
+						<td><%= findDocument(REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= REPORT_TEMPLATE_NAME_ACTIVITY_LIST %></td>
+						<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_LIST, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST %></td>
+						<td><%= findDocument(REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST %></td>
+						<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= REPORT_TEMPLATE_NAME_ACCOUNT_LIST %></td>
+						<td><%= findDocument(REPORT_TEMPLATE_NAME_ACCOUNT_LIST, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset>
+				<legend>Menues</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Favorites</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= FAVORITE_NAME_CREATE_ACTIVITY %></td>
+						<td><%= findFavorite(FAVORITE_NAME_CREATE_ACTIVITY, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= FAVORITE_NAME_CREATE_CONTACT %></td>
+						<td><%= findFavorite(FAVORITE_NAME_CREATE_CONTACT, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= FAVORITE_NAME_CREATE_CONTRACT %></td>
+						<td><%= findFavorite(FAVORITE_NAME_CREATE_CONTRACT, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= FAVORITE_NAME_CREATE_LEAD %></td>
+						<td><%= findFavorite(FAVORITE_NAME_CREATE_LEAD, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= FAVORITE_NAME_SCHEDULE_EVENT %></td>
+						<td><%= findFavorite(FAVORITE_NAME_SCHEDULE_EVENT, userHome, pm) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+		</div>
+		<br />
+
 		<div class="buttons">
 			<input type="hidden" name="command" value="setup"/>
 			<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
@@ -2073,11 +1959,11 @@ org.openmdx.base.text.conversion.*
 <%
 			if(currentUserIsAdmin) {
 %>
-				<input type="submit" value="Setup" class="button"/>
+				<input type="submit" value="<%= app.getTexts().getSaveTitle() %>" />
 <%
 			}
 %>
-			<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" class="button" />
+			<input type="button" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" />
 			<%= currentUserIsAdmin ? "" : "<h2>This wizard requires admin permissions.</h2>" %>
 			<br>
 		</div>

@@ -47,7 +47,7 @@
 
 <Resource id="jdbc_opencrx_CRX" type="DataSource">
  JdbcDriver org.hsqldb.jdbcDriver
- JdbcUrl jdbc:hsqldb:hsql://127.0.0.1:9001/CRX_2_8
+ JdbcUrl jdbc:hsqldb:hsql://127.0.0.1:$HSQLDB_PORT/CRX
  UserName sa
  Password manager99
  JtaManaged true
@@ -56,7 +56,7 @@
  <!--
  <Resource id="jdbc_opencrx_CRX" type="DataSource">
   JdbcDriver org.postgresql.Driver
-  JdbcUrl jdbc:postgresql://localhost/CRX_2_8
+  JdbcUrl jdbc:postgresql://localhost/CRX
   UserName postgres
   Password manager99
   JtaManaged true
@@ -67,7 +67,7 @@
  <Resource id="jdbc_opencrx_CRX" type="DataSource">
   JdbcDriver oracle.jdbc.driver.OracleDriver
   JdbcUrl jdbc:oracle:thin:@127.0.0.1:1521:XE
-  UserName CRX_2_8
+  UserName CRX
   Password manager99
   JtaManaged true
  </Resource>
@@ -76,7 +76,7 @@
  <!--
  <Resource id="jdbc_opencrx_CRX" type="DataSource">
   JdbcDriver com.ibm.db2.jcc.DB2Driver
-  JdbcUrl jdbc:db2://127.0.0.1:50000/CRX_2_8
+  JdbcUrl jdbc:db2://127.0.0.1:50000/CRX
   UserName db2inst1
   Password manager99
   JtaManaged true
@@ -85,7 +85,7 @@
  <!--
  <Resource id="jdbc_opencrx_CRX" type="DataSource">
   JdbcDriver com.mysql.jdbc.Driver
-  JdbcUrl jdbc:mysql://127.0.0.1:3306/CRX_2_8
+  JdbcUrl jdbc:mysql://127.0.0.1:3306/CRX
   UserName root
   Password manager99
   JtaManaged true
@@ -95,7 +95,7 @@
  <!--
  <Resource id="jdbc_opencrx_CRX" type="DataSource">
   JdbcDriver com.microsoft.sqlserver.jdbc.SQLServerDriver
-  JdbcUrl jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX_2_8;selectMethod=cursor
+  JdbcUrl jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX;selectMethod=cursor
   UserName sa
   Password manager99
   JtaManaged true

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.34 2010/11/28 15:43:35 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.35 2011/12/18 22:43:04 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.35 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/28 15:43:35 $
+ * Date:        $Date: 2011/12/18 22:43:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,11 +82,12 @@ import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
-import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.PrintConsole;
 import org.opencrx.kernel.workflow.SendAlert;
+import org.opencrx.kernel.workflow1.cci2.TopicQuery;
+import org.opencrx.kernel.workflow1.cci2.WfProcessQuery;
+import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
-import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
@@ -124,7 +125,7 @@ public class Workflows extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-            new Path("xri://@openmdx*org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
+            new Path("xri://@openmdx*org.opencrx.kernel.workflow1").getDescendant("provider", providerName, "segment", segmentName)
         );
     }
     
@@ -134,13 +135,12 @@ public class Workflows extends AbstractImpl {
         org.opencrx.kernel.workflow1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.workflow1.jmi1.Workflow1Package workflowPkg = org.opencrx.kernel.utils.Utils.getWorkflowPackage(pm);
-        org.opencrx.kernel.workflow1.cci2.TopicQuery topicQuery = workflowPkg.createTopicQuery();
+        TopicQuery topicQuery = (TopicQuery)pm.newQuery(Topic.class);
         topicQuery.name().equalTo(name);
-        List<org.opencrx.kernel.workflow1.jmi1.Topic> topics = segment.getTopic(topicQuery);
-        return topics.isEmpty()
-            ? null
-            : topics.iterator().next();
+        List<Topic> topics = segment.getTopic(topicQuery);
+        return topics.isEmpty() ? 
+        	null : 
+        		topics.iterator().next();
     }
 
     //-----------------------------------------------------------------------
@@ -149,19 +149,16 @@ public class Workflows extends AbstractImpl {
         org.opencrx.kernel.workflow1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.workflow1.jmi1.Workflow1Package workflowPkg = org.opencrx.kernel.utils.Utils.getWorkflowPackage(pm);
-        org.opencrx.kernel.workflow1.cci2.WfProcessQuery wfProcessQuery = workflowPkg.createWfProcessQuery();
+        WfProcessQuery wfProcessQuery = (WfProcessQuery)pm.newQuery(WfProcess.class);
         wfProcessQuery.name().equalTo(name);
-        List<org.opencrx.kernel.workflow1.jmi1.WfProcess> wfProcesses = segment.getWfProcess(wfProcessQuery);
-        return wfProcesses.isEmpty()
-            ? null
-            : wfProcesses.iterator().next();
+        List<WfProcess> wfProcesses = segment.getWfProcess(wfProcessQuery);
+        return wfProcesses.isEmpty() ? 
+        	null :
+        		wfProcesses.iterator().next();
     }
-        
+
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.workflow1.jmi1.Topic initTopic(
-        PersistenceManager pm,
-        Workflow1Package workflowPackage,
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
         String id,
         String name,
@@ -169,14 +166,17 @@ public class Workflows extends AbstractImpl {
         String topicPathPattern,
         WfProcess[] actions
     ) {
-        org.opencrx.kernel.workflow1.jmi1.Topic topic = null;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(workflowSegment);
+        Topic topic = null;
         try {
             topic = workflowSegment.getTopic(id);
         } 
         catch(Exception e) {}
+        // Do not touch existing topics
         if(topic == null) {
             pm.currentTransaction().begin();
-            topic = workflowPackage.getTopic().createTopic();
+            topic = pm.newInstance(Topic.class);
+            topic.refInitialize(false, false);
             topic.setName(name);
             topic.setDescription(description);
             topic.setTopicPathPattern(topicPathPattern);
@@ -187,19 +187,16 @@ public class Workflows extends AbstractImpl {
                 workflowSegment.getOwningGroup()
             );
             workflowSegment.addTopic(
-                false,                     
                 id,
                 topic
             );
             pm.currentTransaction().commit();
-        }         
+        }
         return topic;
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.workflow1.jmi1.WfProcess initWorkflow(
-        PersistenceManager pm,
-        Workflow1Package workflowPackage,
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
         String id,
         String name,
@@ -207,15 +204,17 @@ public class Workflows extends AbstractImpl {
         Boolean isSynchronous,
         org.opencrx.kernel.base.jmi1.Property[] properties 
     ) {
-        org.opencrx.kernel.workflow1.jmi1.WfProcess wfProcess = null;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(workflowSegment);
+        WfProcess wfProcess = null;
         try {
-            wfProcess = (org.opencrx.kernel.workflow1.jmi1.WfProcess)workflowSegment.getWfProcess(id);
+            wfProcess = (WfProcess)workflowSegment.getWfProcess(id);
         }
         catch(Exception e) {}
         if(wfProcess == null) {
             // Add process
             pm.currentTransaction().begin();
-            wfProcess = workflowPackage.getWfProcess().createWfProcess();
+            wfProcess = pm.newInstance(WfProcess.class);
+            wfProcess.refInitialize(false, false);
             wfProcess.setName(name);
             wfProcess.setDescription(description);
             wfProcess.setSynchronous(isSynchronous);
@@ -252,7 +251,6 @@ public class Workflows extends AbstractImpl {
         String providerName,
         String segmentName
     ) throws ServiceException {
-        Workflow1Package workflowPackage = Utils.getWorkflowPackage(pm);
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = this.getWorkflowSegment(
             pm, 
             providerName, 
@@ -260,8 +258,6 @@ public class Workflows extends AbstractImpl {
         );
         // ExportMailWorkflow 
         this.initWorkflow(
-            pm,
-            workflowPackage,
             workflowSegment,
             WORKFLOW_EXPORT_MAIL,
             ExportMailWorkflow.class.getName(),
@@ -271,8 +267,6 @@ public class Workflows extends AbstractImpl {
         );        
         // SendMailWorkflow
         this.initWorkflow(
-            pm,
-            workflowPackage,
             workflowSegment,
             WORKFLOW_SEND_MAIL,
             SendMailWorkflow.class.getName(),
@@ -282,8 +276,6 @@ public class Workflows extends AbstractImpl {
         );        
         // SendMailNotificationWorkflow
         WfProcess sendMailNotificationWorkflow = this.initWorkflow(
-            pm,
-            workflowPackage,
             workflowSegment,
             WORKFLOW_SEND_MAIL_NOTIFICATION,
             SendMailNotificationWorkflow.class.getName(),
@@ -293,8 +285,6 @@ public class Workflows extends AbstractImpl {
         );        
         // SendAlert
         WfProcess sendAlertWorkflow = this.initWorkflow(
-            pm,
-            workflowPackage,
             workflowSegment,
             WORKFLOW_SEND_ALERT,
             org.opencrx.kernel.workflow.SendAlert.class.getName(),
@@ -304,8 +294,6 @@ public class Workflows extends AbstractImpl {
         );        
         // PrintConsole
         this.initWorkflow(
-            pm,
-            workflowPackage,
             workflowSegment,
             WORKFLOW_PRINT_CONSOLE,
             org.opencrx.kernel.workflow.PrintConsole.class.getName(),
@@ -315,8 +303,6 @@ public class Workflows extends AbstractImpl {
         );
         // SendDirectMessage
         WfProcess sendDirectMessageWorkflow = this.initWorkflow(
-            pm,
-            workflowPackage,
             workflowSegment,
             WORKFLOW_SEND_DIRECT_MESSAGE_TWITTER,
             org.opencrx.application.twitter.SendDirectMessageWorkflow.class.getName(),
@@ -334,8 +320,6 @@ public class Workflows extends AbstractImpl {
             sendDirectMessageWorkflow
         };
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "AccountModifications",            
             TOPIC_NAME_ACCOUNT_MODIFICATIONS,
@@ -344,8 +328,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "ActivityFollowUpModifications",            
             TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS,
@@ -354,8 +336,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "ActivityModifications",            
             TOPIC_NAME_ACTIVITY_MODIFICATIONS,
@@ -364,8 +344,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "BookingModifications",            
             TOPIC_NAME_BOOKING_MODIFICATIONS,
@@ -374,8 +352,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "Competitor Modifications",            
             TOPIC_NAME_COMPETITOR_MODIFICATIONS,
@@ -384,8 +360,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "CompoundBookingModifications",            
             TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS,
@@ -394,8 +368,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "InvoiceModifications",            
             TOPIC_NAME_INVOICE_MODIFICATIONS,
@@ -404,8 +376,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "LeadModifications",            
             TOPIC_NAME_LEAD_MODIFICATIONS,
@@ -414,8 +384,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "OpportunityModifications",            
             TOPIC_NAME_OPPORTUNITY_MODIFICATIONS,
@@ -424,8 +392,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "OrganizationModifications",            
             TOPIC_NAME_ORGANIZATION_MODIFICATIONS,
@@ -434,8 +400,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "ProductModifications",            
             TOPIC_NAME_PRODUCT_MODIFICATIONS,
@@ -444,8 +408,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "QuoteModifications",            
             TOPIC_NAME_QUOTE_MODIFICATIONS,
@@ -454,8 +416,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "SalesOrderModifications",            
             TOPIC_NAME_SALES_ORDER_MODIFICATIONS,
@@ -464,8 +424,6 @@ public class Workflows extends AbstractImpl {
             sendAlertActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "AlertModifications",            
             TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL,
@@ -474,14 +432,20 @@ public class Workflows extends AbstractImpl {
             sendMailNotificationsActions
         );
         this.initTopic(
-            pm,
-            workflowPackage,
             workflowSegment,
             "AlertModificationsTwitter",            
             TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER,
             "Send direct message for new alerts to Twitter",
             "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/alert/:*",
             sendDirectMessageToTwitterActions
+        );
+        this.initTopic(
+            workflowSegment,
+            "ReminderModifications",            
+            TOPIC_NAME_REMINDER_MODIFICATIONS,
+            "Send alert for reminders with new alarm",
+            "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/reminder/:*",
+            sendAlertActions
         );
     }
 
@@ -775,6 +739,7 @@ public class Workflows extends AbstractImpl {
     public static final String TOPIC_NAME_PRODUCT_MODIFICATIONS = "Product Modifications";
     public static final String TOPIC_NAME_QUOTE_MODIFICATIONS = "Quote Modifications";
     public static final String TOPIC_NAME_SALES_ORDER_MODIFICATIONS = "SalesOrder Modifications";
+    public static final String TOPIC_NAME_REMINDER_MODIFICATIONS = "Reminder Modifications (Alert)";
     
     public static final String WORKFLOW_NAME_PRINT_CONSOLE = PrintConsole.class.getName();
     public static final String WORKFLOW_NAME_SEND_ALERT = SendAlert.class.getName();

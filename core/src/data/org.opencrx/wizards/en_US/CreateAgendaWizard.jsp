@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateAgendaWizard.jsp,v 1.21 2010/12/10 16:34:21 cmu Exp $
+ * Name:        $Id: CreateAgendaWizard.jsp,v 1.23 2011/09/03 13:31:59 wfro Exp $
  * Description: CreateAgendaWizard
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/10 16:34:21 $
+ * Date:        $Date: 2011/09/03 13:31:59 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,8 @@
 java.util.*,
 java.io.*,
 java.text.*,
-org.opencrx.kernel.backend.Activities,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
@@ -174,85 +175,69 @@ org.openmdx.base.naming.*
 	    	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
 		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_MEETINGS,
-		    	    Activities.ACTIVITY_CLASS_MEETING,
 		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
 		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
+		    	    Activities.ACTIVITY_TYPE_NAME_MEETINGS,
+		    	    Activities.ActivityClass.MEETING.getValue(),
+		    	    null, // owningGroups
+		    	    SecurityKeys.ACCESS_LEVEL_NA
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
+	    	    allUsers
 	    	);
 	    	// ActivityCreator SalesVisit
 	    	Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_SALES_VISITS,
 		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_SALES_VISITS,
-		    	    Activities.ACTIVITY_CLASS_SALES_VISIT,
 		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
 		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
+		    	    Activities.ACTIVITY_TYPE_NAME_SALES_VISITS,
+		    	    Activities.ActivityClass.SALES_VISIT.getValue(),
+		    	    null, // owningGroups
+		    	    SecurityKeys.ACCESS_LEVEL_NA
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
+	    	    allUsers
 	    	);
 	    	// ActivityCreator Absence
 	    	Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_ABSENCES,
 		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_ABSENCES,
-		    	    Activities.ACTIVITY_CLASS_ABSENCE,
 		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
 		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
+		    	    Activities.ACTIVITY_TYPE_NAME_ABSENCES,
+		    	    Activities.ActivityClass.ABSENCE.getValue(),
+		    	    null, // owningGroups
+		    	    SecurityKeys.ACCESS_LEVEL_NA
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
+	    	    allUsers
 	    	);
 	    	// ActivityCreator Task
 	    	Activities.getInstance().initActivityCreator(
 	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_TASKS,
 		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_TASKS,
-		    	    Activities.ACTIVITY_CLASS_TASK,
 		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,
 		    	        pm
 		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
+		    	    Activities.ACTIVITY_TYPE_NAME_TASKS,
+		    	    Activities.ActivityClass.TASK.getValue(),
+		    	    null, // owningGroups
+		    	    SecurityKeys.ACCESS_LEVEL_NA
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
+	    	    allUsers
 	    	);
 	    	// Update tracker
 	        pm.currentTransaction().begin();

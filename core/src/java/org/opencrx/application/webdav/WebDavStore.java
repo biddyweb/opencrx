@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WebDavStore.java,v 1.11 2011/03/01 22:34:09 wfro Exp $
+ * Name:        $Id: WebDavStore.java,v 1.12 2011/07/08 22:46:27 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/01 22:34:09 $
+ * Date:        $Date: 2011/07/08 22:46:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -163,7 +163,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 				// Do not create if folder with same name exists
 				DocumentFolderQuery query = (DocumentFolderQuery)pm.newQuery(DocumentFolder.class);
 				query.name().equalTo(name);
-				List<DocumentFolder> folders = parentFolder.getFolder(query);
+				List<DocumentFolder> folders = parentFolder.getSubFolder(query);
 				if(folders.isEmpty()) {				
 					org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
 						(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
@@ -265,7 +265,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 				// Is it a folder?
 				DocumentFolderQuery folderQuery = documentCollectionResource.getFolderQuery();
 				folderQuery.name().equalTo(name);
-				List<DocumentFolder> documentFolders = documentCollectionResource.getObject().getFolder(folderQuery);
+				List<DocumentFolder> documentFolders = documentCollectionResource.getObject().getSubFolder(folderQuery);
 				if(!documentFolders.isEmpty()) {
 					documentCollectionResource = new DocumentFolderResource(
 						requestContext,

@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EditDocumentRevisionWizard.jsp,v 1.1 2010/05/14 23:39:57 wfro Exp $
+ * Name:        $Id: EditDocumentRevisionWizard.jsp,v 1.2 2011/11/28 14:01:59 wfro Exp $
  * Description: EditDocumentRevisionWizard
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/14 23:39:57 $
+ * Date:        $Date: 2011/11/28 14:01:59 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -172,7 +172,7 @@ org.openmdx.base.naming.*
     			newHeadRevision.setContentName(document.getName());
     			newHeadRevision.setContentMimeType("text/plain");
     		}
-			newHeadRevision.setAuthor(app.getLoginPrincipalId());
+			newHeadRevision.setAuthor(app.getLoginPrincipal());
     		String text = (String)formValues.get("org:opencrx:kernel:base:Note:text");    		
     		newHeadRevision.setContent(
     			org.w3c.cci2.BinaryLargeObjects.valueOf(

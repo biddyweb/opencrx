@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.55 2011/03/02 14:41:46 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.59 2011/12/16 16:30:22 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.55 $
+ * Revision:    $Revision: 1.59 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/02 14:41:46 $
+ * Date:        $Date: 2011/12/16 16:30:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,10 +63,12 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -79,18 +81,22 @@ import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
+import org.opencrx.kernel.backend.ICalendar.AlarmAction;
+import org.opencrx.kernel.home1.jmi1.Reminder;
 import org.opencrx.kernel.utils.AccountQueryHelper;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.WebKeys;
+import org.openmdx.portal.servlet.action.SelectObjectAction;
 
 public class ICalServlet extends FreeBusyServlet {
 
@@ -124,7 +130,7 @@ public class ICalServlet extends FreeBusyServlet {
     ) {
         return req.getUserPrincipal() == null ?
             null :
-            this.persistenceManagerFactory.getPersistenceManager(
+            this.pmf.getPersistenceManager(
                 req.getUserPrincipal().getName(),
                 UUIDs.getGenerator().next().toString()
             );
@@ -155,7 +161,7 @@ public class ICalServlet extends FreeBusyServlet {
     ) {
         Action selectActivityAction = 
             new Action(
-                Action.EVENT_SELECT_OBJECT, 
+                SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
                 },
@@ -165,9 +171,42 @@ public class ICalServlet extends FreeBusyServlet {
         return 
         	req.getContextPath().replace("-ical-", "-core-") + "/" + 
         	WebKeys.SERVLET_NAME + 
-        	"?event=" + Action.EVENT_SELECT_OBJECT + 
+        	"?event=" + SelectObjectAction.EVENT_ID + 
         	"&amp;parameter=" + selectActivityAction.getParameterEncoded(); 
     }
+    
+	//-----------------------------------------------------------------------
+	protected void printAlarms(
+		PrintWriter p,
+		Activity event
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
+        Collection<Reminder> reminders = event.getAssignedReminder();
+        List<String> principalChain = UserObjects.getPrincipalChain(pm);
+        for(Reminder reminder: reminders) {
+        	if(reminder.refGetPath().get(6).equals(principalChain.get(0))) {
+        		p.println("BEGIN:VALARM");
+        		AlarmAction action = AlarmAction.valueOf(reminder.getTriggerAction());
+        		p.println("ACTION:" + action.toString());
+        		long triggerMinutes = (reminder.getTriggerAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
+        		p.println("TRIGGER:" + (triggerMinutes < 0 ? "-" : "+") + "PT" + Math.abs(triggerMinutes) + "M");
+        		p.println("REPEAT:" + (reminder.getAlarmRepeat() == null ? 1 :reminder.getAlarmRepeat()));
+        		p.println("DURATION:PT" + (reminder.getAlarmIntervalMinutes() == null ? 15 :reminder.getAlarmIntervalMinutes()) + "M");
+        		p.println("SUMMARY:" + reminder.getName());
+        		if(reminder.getDescription() != null) {
+        			p.println("DESCRIPTION:" + reminder.getDescription());
+        		}
+        		if(reminder.getAttachUrl() != null) {
+        			if(action == AlarmAction.AUDIO) {
+        				p.println("ATTACH;FMTTYPE=audio/basic:" + reminder.getAttachUrl());
+        			} else {        			
+        				p.println("ATTACH:" + reminder.getAttachUrl());
+        			}
+        		}
+        		p.println("END:VALARM");
+        	}
+        }
+	}
     
     //-----------------------------------------------------------------------
     protected void printICal(
@@ -208,6 +247,7 @@ public class ICalServlet extends FreeBusyServlet {
             		p.write("URL:" + url + "\n");
             	}
             }
+            this.printAlarms(p, activity);
             p.write("END:VEVENT\n");
         }
         else if(ical.indexOf("BEGIN:VTODO") >= 0) {
@@ -232,6 +272,7 @@ public class ICalServlet extends FreeBusyServlet {
             		p.write("URL:" + url + "\n");
             	}
             }
+            this.printAlarms(p, activity);
             p.write("END:VTODO\n");                        
         }
     }
@@ -619,7 +660,7 @@ public class ICalServlet extends FreeBusyServlet {
 								        date.add(GregorianCalendar.DAY_OF_MONTH, 1);
 								        dtEnd = "DTEND;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
 								        dtDue = "DUE;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
-								        String emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(account);
+								        String emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(account, null);
 								        String attendee = null;
 								        if(emailAddress != null) {
 											String fullName = contact.getFullName();

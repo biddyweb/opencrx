@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestUtils.java,v 1.3 2010/10/15 14:46:45 wfro Exp $
+ * Name:        $Id: TestUtils.java,v 1.4 2011/10/28 09:34:22 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/15 14:46:45 $
+ * Date:        $Date: 2011/10/28 09:34:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.backend.Accounts;
+import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -77,7 +79,6 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 
 import test.org.opencrx.generic.AbstractTest;
@@ -122,10 +123,7 @@ public class TestUtils {
 	    protected void testTraverseObjectTree(
 	    ) throws ServiceException{
 	        try {
-	        	org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
-	        		(org.opencrx.kernel.contract1.jmi1.Segment)this.pm.getObjectById(
-		        		new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName)
-		        	);
+	        	org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getInstance().getContractSegment(pm, providerName, segmentName);
 	        	Collection<SalesOrder> salesOrders = contractSegment.getSalesOrder();
 	        	int count = 0;
 	        	for(SalesOrder salesOrder: salesOrders) {
@@ -154,10 +152,7 @@ public class TestUtils {
 
 	    protected void testSecureObject(
 	    ) throws ServiceException {
-        	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-        		(org.opencrx.kernel.account1.jmi1.Segment)this.pm.getObjectById(
-	        		new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-	        	);
+        	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
         	Collection<Account> accounts = accountSegment.getAccount();
         	int count = 0;
         	for(Account account: accounts) {

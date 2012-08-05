@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: PingHandler.java,v 1.18 2010/08/24 17:46:12 wfro Exp $
+ * Name:        $Id: PingHandler.java,v 1.19 2011/11/11 14:01:12 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/24 17:46:12 $
+ * Date:        $Date: 2011/11/11 14:01:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -155,7 +155,7 @@ public class PingHandler extends AbstractServerHandler {
 			// If no ping parameters are provided try to get info from last cached ping
 			cachedPingRequestFile = this.getTempFile(
 				request,
-				request.getDeviceId()
+				request.getUserId() + "@" + request.getDeviceId()
 			);
 			if(cachedPingRequestFile.exists()) {
 				try {

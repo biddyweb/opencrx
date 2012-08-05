@@ -36,7 +36,7 @@
 											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="customer">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>customer</featureName>
 														<order>100</order>			
 													</_object>
@@ -116,7 +116,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>												
 												<org.openmdx.ui1.FormFieldDefinition id="contractCurrency">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>contractCurrency</featureName>
 														<order>600</order>	
 													</_object>

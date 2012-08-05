@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.19 2010/01/24 22:30:06 wfro Exp $
+ * Name:        $Id: ProjectExporter.java,v 1.21 2011/07/07 22:37:26 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/24 22:30:06 $
+ * Date:        $Date: 2011/07/07 22:37:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -84,12 +84,13 @@ import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
-import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.WorkRecordType;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.action.SelectObjectAction;
 
 
 public class ProjectExporter {
@@ -193,8 +194,8 @@ public class ProjectExporter {
           this.uid = uid;
           ActivityWorkRecordQuery workRecordQuery = (ActivityWorkRecordQuery)pm.newQuery(ActivityWorkRecord.class);
           workRecordQuery.recordType().elementOf(
-        	  Activities.WORKRECORD_TYPE_WORK_OVERTIME, 
-        	  Activities.WORKRECORD_TYPE_WORK_STANDARD
+        	  WorkRecordType.OVERTIME.getValue(), 
+        	  WorkRecordType.STANDARD.getValue()
           );
           List<ActivityWorkRecord> workRecords = ra.getWorkRecord(workRecordQuery);
           BigDecimal totalAmount = new BigDecimal(0.0);
@@ -927,7 +928,7 @@ public class ProjectExporter {
         else {
             Action action = 
                 new Action(
-                    Action.EVENT_SELECT_OBJECT, 
+                    SelectObjectAction.EVENT_ID, 
                     new Action.Parameter[]{
                         new Action.Parameter(Action.PARAMETER_OBJECTXRI, identity)
                     },

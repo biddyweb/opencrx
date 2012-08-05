@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BulkEmail.jsp,v 1.8 2010/10/20 17:16:22 cmu Exp $
+ * Name:        $Id: BulkEmail.jsp,v 1.14 2011/11/28 14:36:26 wfro Exp $
  * Description: create Bulk E-mail (e.g. for campaign)
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/20 17:16:22 $
+ * Date:        $Date: 2011/11/28 14:36:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,7 @@ org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
+org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -271,7 +272,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
         final String ADDRESSGROUP_CLASS = "org:opencrx:kernel:activity1:AddressGroup";
         final String EMAIL_CLASS = "org:opencrx:kernel:activity1:EMail";
         final String EMAILADDRESS_CLASS = "org:opencrx:kernel:account1:EMailAddress";
-        final String featurePartyTypeEMailRecipient = "org:opencrx:kernel:activity1:EMailRecipient:partyType";
+        final String featurePartyTypeEMailRecipient = "partytypeAbstractActivityParty";
         final Short CODE_FROM = 210;
         final Short CODE_TO = 220;
         final Short CODE_BCC = 240;
@@ -446,42 +447,23 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
             org.opencrx.kernel.account1.jmi1.Contact contact = null;
             // get UserHome
-            org.opencrx.kernel.home1.jmi1.UserHome userHome =
-              (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
-               );
+            org.opencrx.kernel.home1.jmi1.UserHome userHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
             contact = userHome.getContact();
 
             // create Email Activity
             pm.currentTransaction().begin();
             //System.out.println("creating new Activity");
             org.opencrx.kernel.activity1.jmi1.NewActivityParams params = activityPkg.createNewActivityParams(
-              // String description
-              activityDescription,
-
-              // String detailedDescription
-              null,
-
-              // Date dueBy
-              today,
-
-              // Date icalType
-              (short)0,
-
-              // String name
-              activityName,
-
-              // short Priority
-              (short)2,
-
-              // Contact reportingContact (might be null)
-              contact,
-
-              // Date scheduledEnd,
-              today,
-
-              // Date scheduledStart
-              today
+            	null, // creationContext              
+              	activityDescription, // String description              
+              	null, // String detailedDescription              
+              	today, // Date dueBy              
+              	(short)0, // Date icalType              
+              	activityName, // String name              
+              	(short)2, // short Priority              
+              	contact, // Contact reportingContact (might be null)              
+              	today, // Date scheduledEnd              
+              	today // Date scheduledStart
             );
             org.opencrx.kernel.activity1.jmi1.NewActivityResult result = currentActivityCreator.newActivity(params);
             pm.currentTransaction().commit();
@@ -511,7 +493,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               emailRecipient.setPartyType((short)CODE_TO); // TO
               newActivity.addEmailRecipient(
                 false,
-                org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+                org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                 emailRecipient
               );
             }
@@ -523,7 +505,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               emailRecipientGroup.setPartyType((short)CODE_BCC); // BCC
               newActivity.addEmailRecipient(
                 false,
-                org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+                org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                 emailRecipientGroup
               );
             }
@@ -552,7 +534,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                 );
         				newActivity.addMedia(
         					false,
-        					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+        					org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
         					media
         				);
         		  } catch(Exception e) {}
@@ -609,7 +591,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               // navigate to created Activity
               Action nextAction =
                 new Action(
-            			Action.EVENT_SELECT_OBJECT,
+            	  SelectObjectAction.EVENT_ID,
                   new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, newActivity.refMofId())
                     },

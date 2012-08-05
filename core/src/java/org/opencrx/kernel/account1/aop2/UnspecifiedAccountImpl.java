@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UnspecifiedAccountImpl.java,v 1.1 2009/05/25 08:46:14 wfro Exp $
+ * Name:        $Id: UnspecifiedAccountImpl.java,v 1.2 2011/09/28 11:08:34 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/25 08:46:14 $
+ * Date:        $Date: 2011/09/28 11:08:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,12 +55,13 @@
  */
 package org.opencrx.kernel.account1.aop2;
 
+import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 public class UnspecifiedAccountImpl
 	<S extends org.opencrx.kernel.account1.jmi1.UnspecifiedAccount,N extends org.opencrx.kernel.account1.cci2.UnspecifiedAccount,C extends Void>
 	extends AccountImpl<S,N,C>
-	implements StoreCallback {
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
     public UnspecifiedAccountImpl(
@@ -77,4 +78,11 @@ public class UnspecifiedAccountImpl
 		super.jdoPreStore();
 	}
 	
+    //-----------------------------------------------------------------------
+    @Override
+    public void jdoPreDelete(
+    ) {
+    	super.jdoPreDelete();
+    }
+    
 }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentCollectionResource.java,v 1.4 2010/12/06 15:39:39 wfro Exp $
+ * Name:        $Id: DocumentCollectionResource.java,v 1.5 2011/07/08 22:46:27 wfro Exp $
  * Description: AccountCollectionResource
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/06 15:39:39 $
+ * Date:        $Date: 2011/07/08 22:46:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -308,7 +308,7 @@ public abstract class DocumentCollectionResource extends WebDavResource {
         DocumentFolderQuery folderQuery = this.getFolderQuery();
         DocumentFolderCollection documentFolderCollection = new DocumentFolderCollection(
         	this.getRequestContext(),
-        	this.getObject().getFolder(folderQuery)
+        	this.getObject().getSubFolder(folderQuery)
         );
         return new ChainingCollection(
         	documentFolderCollection,

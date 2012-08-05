@@ -33,7 +33,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:competitor" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Kontaktpersonen</_item>
+											</toolTip>
+											<label>
+												<_item>Kontaktpersonen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:groupAssignment">
+										<_object>
+											<toolTip>
+												<_item>Zugewiesene Gruppen</_item>
+											</toolTip>
+											<label>
+												<_item>Zugewiesene Gruppen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:competitor" _operation="create">
                     <_object>
                       <label>
                         <_item>Konkurrenten</_item>
@@ -77,7 +99,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:positionModification" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GenericContract" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Allgemeiner Vertrag</_item>
+											</toolTip>
+											<label>
+												<_item>Allgemeiner Vertrag</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:positionModification" _operation="create">
                     <_object>
                       <label>
                         <_item>Positionsmodifikationen</_item>
@@ -88,7 +121,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:removedPosition" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:removedPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>Gelöschte Positionen</_item>
@@ -99,7 +132,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:inventoryCb" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:inventoryCb" _operation="create">
                     <_object>
                       <label>
                         <_item>Inventarbuchungen</_item>
@@ -110,7 +143,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Attr:Tab:0:Group:40" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Attr:Tab:0:Group:40" _operation="create">
                     <_object>
                       <label>
                         <_item>Angaben zur Preisbildung</_item>
@@ -121,7 +154,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Attr:Tab:0:Group:50" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Attr:Tab:0:Group:50" _operation="create">
                     <_object>
                       <label>
                         <_item>Finanzinformationen</_item>
@@ -132,7 +165,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:customer" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:customer" _operation="create">
                     <_object>
                       <label>
                         <_item>Kunde</_item>
@@ -176,7 +209,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:salesRep" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:salesRep" _operation="create">
                     <_object>
                       <label>
                         <_item>Verkäufer/-in</_item>
@@ -187,7 +220,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:broker" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:broker" _operation="create">
                     <_object>
                       <label>
                         <_item>Vermittler</_item>
@@ -212,6 +245,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractRole" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Vertragsrolle</_item>
+											</toolTip>
+											<label>
+												<_item>Vertragsrolle</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractState" _operation="create">
                     <_object>
                       <label>
@@ -278,7 +322,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:supplier" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:lastAppliedCreator" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Vertragserzeuger</_item>
+											</toolTip>
+											<label>
+												<_item>Vertragserzeuger</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:supplier" _operation="create">
                     <_object>
                       <label>
                         <_item>Lieferant</_item>
@@ -289,7 +344,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:pricingRule" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:pricingRule" _operation="create">
                     <_object>
                       <label>
                         <_item>Preisbildungsregel</_item>
@@ -300,7 +355,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:calcRule" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:calcRule" _operation="create">
                     <_object>
                       <label>
                         <_item>Berechnungsregel</_item>
@@ -311,7 +366,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:pricingState" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:pricingState" _operation="create">
                     <_object>
                       <label>
                         <_item>Status Preisbildung</_item>
@@ -322,7 +377,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:pricingDate" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:pricingDate" _operation="create">
                     <_object>
                       <label>
                         <_item>Preisbildungszeitpunkt</_item>
@@ -333,7 +388,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractCurrency" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:contractCurrency" _operation="create">
                     <_object>
                       <label>
                         <_item>Währung</_item>
@@ -344,7 +399,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:paymentTerms" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:paymentTerms" _operation="create">
                     <_object>
                       <label>
                         <_item>Zahlungskonditionen</_item>
@@ -355,7 +410,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalSalesCommission" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalSalesCommission" _operation="create">
                     <_object>
                       <label>
                         <_item>Verkaufskommission</_item>
@@ -366,7 +421,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalBaseAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalBaseAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Total Basisbetrag</_item>
@@ -377,7 +432,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalDiscountAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalDiscountAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Total Discount</_item>
@@ -388,7 +443,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Total (exkl. Steuern)</_item>
@@ -399,7 +454,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalTaxAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalTaxAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Total Steuern</_item>
@@ -410,7 +465,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmountIncludingTax" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalAmountIncludingTax" _operation="create">
                     <_object>
                       <label>
                         <_item>Total (inkl. Steuern)</_item>
@@ -553,7 +608,52 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reapplyContractCreator" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Vertragserzeuger noch einmal anwenden</_item>
+											</toolTip>
+											<label>
+												<_item>Vertragserzeuger noch einmal anwenden</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reapplyContractCreator:Group:in" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ReapplyContractCreatorParams:contractCreator" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Vertragserzeuger</_item>
+											</toolTip>
+											<label>
+												<_item>Vertragserzeuger</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reapplyContractCreator:Group:result" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>Position kreieren</_item>
@@ -564,7 +664,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createPosition:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Eingabe</_item>
@@ -652,7 +752,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createPosition:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Resultat</_item>
@@ -674,7 +774,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:updateInventory" _operation="create">
                     <_object>
                       <label>
                         <_item>Inventar nachführen</_item>
@@ -685,7 +785,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:updateInventory:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Eingabe</_item>
@@ -696,7 +796,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:updateInventory:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Resultat</_item>
@@ -718,7 +818,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:removePendingInventoryBookings" _operation="create">
                     <_object>
                       <label>
                         <_item>Provisorische Inventarbuchungen löschen</_item>
@@ -729,7 +829,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:removePendingInventoryBookings:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Eingabe</_item>
@@ -740,7 +840,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:removePendingInventoryBookings:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Resultat</_item>
@@ -751,7 +851,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:reprice" _operation="create">
                     <_object>
                       <label>
                         <_item>Preisberechnung ausführen</_item>
@@ -762,7 +862,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:reprice:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Eingabe</_item>
@@ -773,7 +873,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:reprice:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Resultat</_item>
@@ -785,7 +885,7 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:assignSalesVolumeBudgets">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:assignSalesVolumeBudgets">
 										<_object>
 											<toolTip>
 												<_item>Umsatzziele zuweisen</_item>
@@ -796,7 +896,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:assignSalesVolumeBudgets:Group:in">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:assignSalesVolumeBudgets:Group:in">
 										<_object>
 											<toolTip>
 												<_item>Eingabe</_item>
@@ -807,7 +907,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:assignSalesVolumeBudgets:Group:result">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:assignSalesVolumeBudgets:Group:result">
 										<_object>
 											<toolTip>
 												<_item>Resultat</_item>

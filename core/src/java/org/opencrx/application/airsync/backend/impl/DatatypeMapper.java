@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMapper.java,v 1.37 2011/04/29 09:32:25 wfro Exp $
+ * Name:        $Id: DatatypeMapper.java,v 1.45 2011/12/23 09:55:29 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/04/29 09:32:25 $
+ * Date:        $Date: 2011/12/23 09:55:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -109,8 +109,6 @@ import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.activity1.jmi1.Absence;
 import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
-import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
-import org.opencrx.kernel.activity1.jmi1.AbstractPhoneCallRecipient;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
@@ -120,16 +118,16 @@ import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.ExternalActivity;
 import org.opencrx.kernel.activity1.jmi1.Incident;
-import org.opencrx.kernel.activity1.jmi1.IncidentParty;
 import org.opencrx.kernel.activity1.jmi1.Mailing;
-import org.opencrx.kernel.activity1.jmi1.MailingRecipient;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
-import org.opencrx.kernel.activity1.jmi1.MeetingParty;
 import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Task;
-import org.opencrx.kernel.activity1.jmi1.TaskParty;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.PartyStatus;
+import org.opencrx.kernel.backend.Activities.PartyType;
+import org.opencrx.kernel.backend.Activities.Priority;
+import org.opencrx.kernel.backend.UserHomes.AlertState;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
@@ -409,7 +407,7 @@ public class DatatypeMapper {
 		vcard.append("BEGIN:VCARD\n");		
 		vcard.append("VERSION:2.1\n");
 		if(account.getVcard() != null) {
-			String uid = Accounts.getInstance().getVCardUid(account.getVcard());
+			String uid = VCard.getInstance().getVCardUid(account.getVcard());
 			if(uid != null) {
 				vcard.append("UID:" + uid + "\n");
 			}
@@ -729,12 +727,24 @@ public class DatatypeMapper {
                 String partyType = attendeeT.getAttendeeType() == AttendeeType.OPTIONAL ? 
                 	"OPT-PARTICIPANT" : 
                 		"REQ-PARTICIPANT";
+                PartyStatus partyStatus = null;
+                if(attendeeT.getAttendeeStatus() == AttendeeStatus.ACCEPT) {
+                	partyStatus = PartyStatus.ACCEPTED;
+                } else if(attendeeT.getAttendeeStatus() == AttendeeStatus.DECLINE) {
+                	partyStatus = PartyStatus.DECLINED;
+                } else if(attendeeT.getAttendeeStatus() == AttendeeStatus.TENTATIVE) {
+                	partyStatus = PartyStatus.TENTATIVE;
+                } else if(attendeeT.getAttendeeStatus() == AttendeeStatus.NOT_RESPONDED) {
+                	partyStatus = PartyStatus.NEEDS_ACTION;
+	            } else if(attendeeT.getAttendeeStatus() == AttendeeStatus.RESPONSE_UNKNOWN) {
+	            	partyStatus = PartyStatus.NEEDS_ACTION;
+	            }
                 if(attendeeT.getName() == null) {
-                    vevent.append("ATTENDEE;CN=" + parseEmailAddress(attendeeT.getEmail()) + ";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + parseEmailAddress(attendeeT.getEmail()) + "\n");          
+                    vevent.append("ATTENDEE;CN=" + parseEmailAddress(attendeeT.getEmail()) + ";ROLE=" + partyType + ";" + (partyStatus == null ? "" : ";PARTSTAT=" + partyStatus.toString().replace("_", "-")) + ";RSVP=TRUE:MAILTO:" + parseEmailAddress(attendeeT.getEmail()) + "\n");          
                 }
                 else {
-                    vevent.append("ATTENDEE;CN=\"" + attendeeT.getName() + " (" + parseEmailAddress(attendeeT.getEmail()) + ")\";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + parseEmailAddress(attendeeT.getEmail()) + "\n");            
-                }				
+                    vevent.append("ATTENDEE;CN=\"" + attendeeT.getName() + " (" + parseEmailAddress(attendeeT.getEmail()) + ")\";ROLE=" + partyType + (partyStatus == null ? "" : ";PARTSTAT=" + partyStatus.toString().replace("_", "-")) + ";RSVP=TRUE:MAILTO:" + parseEmailAddress(attendeeT.getEmail()) + "\n");            
+                }
 			}
 		}
 		if(eventT.getExceptions() != null && !eventT.getExceptions().isEmpty()) {
@@ -808,7 +818,7 @@ public class DatatypeMapper {
 	        if(!senderAddresses.isEmpty()) {
 	            from = senderAddresses.iterator().next();
 	            email.setSender(from);
-	        } 		
+	        }
 			// TO
 			List<String> addresses = new ArrayList<String>();
 			for(AddressT addressT: emailT.getTo()) {
@@ -818,7 +828,7 @@ public class DatatypeMapper {
 			Activities.getInstance().mapAddressesToEMailRecipients(
 				email, 
 				addressesTo, 
-				RecipientType.TO 
+				PartyType.EMAIL_TO 
 			);
 			// CC
 			addresses = new ArrayList<String>();
@@ -829,7 +839,7 @@ public class DatatypeMapper {
 			Activities.getInstance().mapAddressesToEMailRecipients(
 				email, 
 				addressesCc, 
-				RecipientType.CC 
+				PartyType.EMAIL_CC 
 			);
 			// BCC
 			addresses = new ArrayList<String>();
@@ -840,7 +850,7 @@ public class DatatypeMapper {
 			Activities.getInstance().mapAddressesToEMailRecipients(
 				email, 
 				addressesBcc, 
-				RecipientType.BCC 
+				PartyType.EMAIL_BCC 
 			);
 	        // Add originator and recipients to a note
 			String recipientsAsText = Activities.getInstance().getRecipientsAsNoteText(
@@ -862,13 +872,13 @@ public class DatatypeMapper {
 			);
 			switch(emailT.getImportance()) {
 				case LOW:
-					email.setPriority(Activities.PRIORITY_LOW);
+					email.setPriority(Priority.LOW.getValue());
 					break;
 				case NORMAL:
-					email.setPriority(Activities.PRIORITY_NORMAL);
+					email.setPriority(Priority.NORMAL.getValue());
 					break;
 				case HIGH:
-					email.setPriority(Activities.PRIORITY_HIGH);
+					email.setPriority(Priority.HIGH.getValue());
 					break;
 			}
 			email.setSendDate(emailT.getDateReceived());
@@ -890,9 +900,9 @@ public class DatatypeMapper {
 		RequestContext requestContext		
 	) throws ServiceException {
 		if(emailT.isRead()) {
-			alert.setAlertState(UserHomes.ALERT_STATE_READ);
+			alert.setAlertState(AlertState.READ.getValue());
 		} else {
-			alert.setAlertState(UserHomes.ALERT_STATE_NEW);
+			alert.setAlertState(AlertState.NEW.getValue());
 		}
 	}
 	
@@ -1167,87 +1177,77 @@ public class DatatypeMapper {
 	) throws ServiceException {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
         List<AttendeeT> attendeesT = new ArrayList<AttendeeT>();
-        List<AbstractActivityParty> participants = new ArrayList<AbstractActivityParty>();
-        if(activity instanceof EMail) {
-        	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient();
-        	participants.addAll(c);
-        }
-        else if(activity instanceof Incident) {
-        	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty();
-        	participants.addAll(c);
-        }
-        else if(activity instanceof Mailing) {
-        	Collection<MailingRecipient> c = ((Mailing)activity).getMailingRecipient();
-        	participants.addAll(c);
-        }
-        else if(activity instanceof Meeting) {
-        	Collection<MeetingParty> c = ((Meeting)activity).getMeetingParty();
-        	participants.addAll(c);
-        }
-        else if(activity instanceof PhoneCall) {
-        	Collection<AbstractPhoneCallRecipient> c = ((PhoneCall)activity).getPhoneCallRecipient();
-        	participants.addAll(c);
-        }
-        else if(activity instanceof Task) {
-        	Collection<TaskParty> c = ((Task)activity).getTaskParty();
-        	participants.addAll(c);
-        }
-        for(AbstractActivityParty participant: participants) {
-        	RefObject_1_0 party = null;
-        	try {
-        		party = (RefObject_1_0)participant.refGetValue("party");
-        	}
-        	catch(Exception e) {}
-            if(party != null) {
-                try {
-                    Account account = null;
-                    String emailAddress = null;
-                    // Party is Contact
-                    if(party instanceof Account) {
-                        account = (Account)party;
-                        emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(
-                            account
-                        );
-                    }
-                    // Party is address
-                    else if(party instanceof EMailAddress) {
-                        account = (Account)pm.getObjectById(
-                            party.refGetPath().getParent().getParent()
-                        );
-                        emailAddress = ((EMailAddress)party).getEmailAddress();
-                    }
-                    AttendeeType partyType = participant.getPartyType() == ICalendar.PARTY_TYPE_OPTIONAL ? 
-                    	AttendeeType.OPTIONAL : 
-                    		AttendeeType.REQUIRED;
-                    if(emailAddress != null) {
-                        String fullName = account == null ? null : account.getFullName();
-                        if(fullName == null) {
-                            attendeesT.add(
-                            	new AttendeeT(
-                            		emailAddress,
-                            		emailAddress,
-                            		AttendeeStatus.RESPONSE_UNKNOWN,
-                            		partyType
-                            	)
-                            );          
-                        }
-                        else {
-                            attendeesT.add(
-                            	new AttendeeT(
-                            		emailAddress,
-                            		fullName,
-                            		AttendeeStatus.RESPONSE_UNKNOWN,
-                            		partyType
-                            	)
-                            );            
-                        }
-                    }
-                }
-                catch(ServiceException e) {
-                    if(e.getExceptionCode() != BasicException.Code.AUTHORIZATION_FAILURE) {
-                        throw e;
-                    }
-                }
+        List<AbstractActivityParty> parties = Activities.getInstance().getActivityParties(activity);
+        for(AbstractActivityParty party: parties) {
+        	if(party.getPartyType() != Activities.PartyType.NA.getValue()) {
+	        	RefObject_1_0 partyHolder = null;
+	        	try {
+	        		partyHolder = (RefObject_1_0)party.refGetValue("party");
+	        	} catch(Exception e) {}
+	            if(partyHolder != null) {
+	                try {
+	                    Account account = null;
+	                    String emailAddress = null;
+	                    // Party is Contact
+	                    if(partyHolder instanceof Account) {
+	                        account = (Account)partyHolder;
+	                        emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(
+	                            account,
+	                            party.getEmailHint()
+	                        );
+	                    }
+	                    // Party is address
+	                    else if(partyHolder instanceof EMailAddress) {
+	                        account = (Account)pm.getObjectById(
+	                            partyHolder.refGetPath().getParent().getParent()
+	                        );
+	                        emailAddress = ((EMailAddress)partyHolder).getEmailAddress();
+	                    }
+	                    AttendeeType partyType = party.getPartyType() == Activities.PartyType.OPTIONAL.getValue() ? 
+	                    	AttendeeType.OPTIONAL : 
+	                    		party.getPartyType() == Activities.PartyType.REQUIRED.getValue() ? 
+	                    			AttendeeType.REQUIRED :
+	                    				null;
+	                    if(partyType != null && emailAddress != null) {
+	                    	AttendeeStatus attendeeStatus = AttendeeStatus.RESPONSE_UNKNOWN;
+	                    	if(party.getPartyStatus() == PartyStatus.ACCEPTED.getValue()) {
+	                    		attendeeStatus = AttendeeStatus.ACCEPT;	                    		
+	                    	} else if(party.getPartyStatus() == PartyStatus.DECLINED.getValue()) {
+	                    		attendeeStatus = AttendeeStatus.DECLINE;
+	                    	} else if(party.getPartyStatus() == PartyStatus.TENTATIVE.getValue()) {
+	                    		attendeeStatus = AttendeeStatus.TENTATIVE;	                    		
+	                    	} else if(party.getPartyStatus() == PartyStatus.NEEDS_ACTION.getValue()) {
+	                    		attendeeStatus = AttendeeStatus.NOT_RESPONDED;	                    		
+	                    	}
+	                        String fullName = account == null ? null : account.getFullName();
+	                        if(fullName == null) {
+	                            attendeesT.add(
+	                            	new AttendeeT(
+	                            		emailAddress,
+	                            		emailAddress,
+	                            		attendeeStatus,
+	                            		partyType
+	                            	)
+	                            );          
+	                        }
+	                        else {
+	                            attendeesT.add(
+	                            	new AttendeeT(
+	                            		emailAddress,
+	                            		fullName,
+	                            		attendeeStatus,
+	                            		partyType
+	                            	)
+	                            );
+	                        }
+	                    }
+	                }
+	                catch(ServiceException e) {
+	                    if(e.getExceptionCode() != BasicException.Code.AUTHORIZATION_FAILURE) {
+	                        throw e;
+	                    }
+	                }
+	            }
             }
         }
         return attendeesT;
@@ -1439,28 +1439,36 @@ public class DatatypeMapper {
 	) {
 		Short priority = activity.getPriority();
 		if(priority != null) {
-	        switch(priority.intValue()) {
-		        case Activities.PRIORITY_LOW: return Importance.LOW; // low                            
-		        case Activities.PRIORITY_NORMAL: return Importance.NORMAL; // normal
-		        case Activities.PRIORITY_HIGH: return Importance.HIGH; // high
-		        case Activities.PRIORITY_URGENT: return Importance.HIGH; // urgent
-		        case Activities.PRIORITY_IMMEDIATE: return Importance.HIGH; // immediate
+	        if(priority == Priority.LOW.getValue()) {
+	        	return Importance.LOW;
+	        } else if(priority == Priority.NORMAL.getValue()) {
+	        	return Importance.NORMAL;
+	        } else if(priority == Priority.HIGH.getValue()) {
+	        	return Importance.HIGH;
+	        } else if(priority == Priority.URGENT.getValue()) {
+	        	return Importance.HIGH;
+	        } else if(priority == Priority.IMMEDIATE.getValue()) {
+	        	return Importance.HIGH;
 	        }
 		}
 		return Importance.NORMAL;
-    }		
+    }
 
 	private Importance getImportance(
 		Alert alert
 	) {
 		Short importance = alert.getImportance();
 		if(importance != null) {
-	        switch(importance.intValue()) {
-		        case Activities.PRIORITY_LOW: return Importance.LOW; // low                            
-		        case Activities.PRIORITY_NORMAL: return Importance.NORMAL; // normal
-		        case Activities.PRIORITY_HIGH: return Importance.HIGH; // high
-		        case Activities.PRIORITY_URGENT: return Importance.HIGH; // urgent
-		        case Activities.PRIORITY_IMMEDIATE: return Importance.HIGH; // immediate
+	        if(importance == Priority.LOW.getValue()) {
+	        	return Importance.LOW;
+	        } else if(importance == Priority.NORMAL.getValue()) {
+	        	return Importance.NORMAL;
+	        } else if(importance == Priority.HIGH.getValue()) {
+	        	return Importance.HIGH;
+	        } else if(importance == Priority.URGENT.getValue()) {
+	        	return Importance.HIGH;
+	        } else if(importance == Priority.IMMEDIATE.getValue()) {
+	        	return Importance.HIGH;
 	        }
 		}
 		return Importance.NORMAL;
@@ -1591,11 +1599,48 @@ public class DatatypeMapper {
 		// data
 		EventT eventT = new EventT();
 		if(!noData) {
-			Contact assignedTo = event.getAssignedTo();
-			if(assignedTo != null) {
-				eventT.setOrganizerName(assignedTo.getFullName());
-				eventT.setOrganizerEmail(Accounts.getInstance().getPrimaryBusinessEMail(assignedTo));
+			PersistenceManager pm = JDOHelper.getPersistenceManager(event);
+			// Organizer
+			Account organizer = null;
+			String organizerEmail = null;
+			// Try to find party with partyType = PARTY_TYPE_ORGANIZER
+			List<AbstractActivityParty> parties = Activities.getInstance().getActivityParties(event);
+			for(AbstractActivityParty party: parties) {
+				if(party.getPartyType() == Activities.PartyType.OPTIONAL.getValue()) {
+		        	RefObject_1_0 partyHolder = null;
+		        	try {
+		        		partyHolder = (RefObject_1_0)party.refGetValue("party");
+		        	} catch(Exception e) {}
+		            if(partyHolder != null) {
+	                    // Party is Contact
+	                    if(partyHolder instanceof Account) {
+	                        organizer = (Account)partyHolder;
+	                        organizerEmail = Accounts.getInstance().getPrimaryBusinessEMail(
+	                            organizer,
+	                            party.getEmailHint()
+	                        );
+	                    }
+	                    // Party is address
+	                    else if(partyHolder instanceof EMailAddress) {
+	                        organizer = (Account)pm.getObjectById(
+	                            partyHolder.refGetPath().getParent().getParent()
+	                        );
+	                        organizerEmail = ((EMailAddress)partyHolder).getEmailAddress();
+	                    }
+		            }
+				}
 			}
+			// If no organizer party is found fall back to assignedTo
+			if(organizer == null) {
+				organizer = event.getAssignedTo();
+				if(organizer != null) {
+					organizerEmail = Accounts.getInstance().getPrimaryBusinessEMail(organizer, null);					
+				}
+			}
+			if(organizer != null) {
+				eventT.setOrganizerName(organizer.getFullName());
+			}
+			eventT.setOrganizerEmail(organizerEmail);
 			eventT.setBusyStatus(BusyStatus.TENTATIVE);
 			eventT.setLocation(event.getLocation());
 			eventT.setSubject(
@@ -1616,8 +1661,8 @@ public class DatatypeMapper {
 			eventT.setEndTime(event.getScheduledEnd());
 			eventT.setStartTime(event.getScheduledStart());
 			eventT.setAllDayEvent(event.isAllDayEvent());
-			eventT.setMeetingStatus(getCalendarMeetingStatus(event));
-			eventT.setAttendees(getAttendeesT(event));
+			eventT.setMeetingStatus(this.getCalendarMeetingStatus(event));
+			eventT.setAttendees(this.getAttendeesT(event));
 			eventT.setCategories(new ArrayList<String>(event.getCategory()));
 			eventT.setRecurrence(getRecurrence(event));
 			eventT.setExceptions(getExceptions(event));
@@ -1700,7 +1745,7 @@ public class DatatypeMapper {
 			emailT.setCc(cc);
 			emailT.setBcc(bcc);
 			emailT.setRead(
-				alert.getAlertState() != UserHomes.ALERT_STATE_NEW
+				alert.getAlertState() != AlertState.NEW.getValue()
 			);
 		}
 		// data item

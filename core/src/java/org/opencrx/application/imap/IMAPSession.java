@@ -710,13 +710,22 @@ public class IMAPSession extends AbstractSession {
                     }
 				}
 				else if("APPEND".equals(command)) {
+					boolean hasDate = true;
 				    Pattern pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \"(.*)\" \\{([0-9]+)\\}");
 				    Matcher matcher = pattern.matcher(params);
-				    if(matcher.find()) {
+				    boolean matches = matcher.find();
+				    // Date is optional, e.g. KMail
+				    if(!matches) {
+				    	hasDate = false;
+				    	pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \\{([0-9]+)\\}");
+				    	matcher = pattern.matcher(params);
+				    	matches = matcher.find();
+				    }
+				    if(matches) {
 				        try {
-    				        int size = Integer.valueOf(matcher.group(4));
+    				        int size = Integer.valueOf(matcher.group(hasDate ? 4 : 3));
     				        IMAPFolderImpl folder = this.getFolder(matcher.group(1));
-    				        String date = matcher.group(3);
+    				        String date = hasDate ? matcher.group(3) : null;
     				        if(folder != null) {
         	                    this.println("+ OK");
         	                    if(this.getServer().isDebug()) {
@@ -748,7 +757,9 @@ public class IMAPSession extends AbstractSession {
                                     Message message = new MimeMessageImpl(
                                         new ByteArrayInputStream(msg)
                                     );
-                                    message.setHeader("Date", date);
+                                    if(date != null) {
+                                    	message.setHeader("Date", date);
+                                    }
                                     folder.appendMessages(new Message[]{message});
                                     this.println(tag + " OK APPEND complete");        	                        
         	                    }

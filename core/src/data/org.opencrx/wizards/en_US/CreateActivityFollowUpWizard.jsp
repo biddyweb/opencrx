@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityFollowUpWizard.jsp,v 1.8 2010/04/29 08:48:07 cmu Exp $
+ * Name:        $Id: CreateActivityFollowUpWizard.jsp,v 1.12 2011/11/15 17:52:16 cmu Exp $
  * Description: CreateActivityFollowUpWizard
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/29 08:48:07 $
+ * Date:        $Date: 2011/11/15 17:52:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -91,8 +91,7 @@ org.openmdx.base.naming.*
 	Codes codes = app.getCodes();
 	final String FORM_NAME_DOFOLLOWUP = "doFollowUpForm";
 	final String wizardName = "CreateActivityFollowUpWizard.jsp";
-	final String ACTIVITYCREATOR_CLASS = "org:opencrx:kernel:activity1:ActivityCreator";
-	final String ACTIVITYTYPE_CLASS = "org:opencrx:kernel:activity1:ActivityType";
+	final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
 
   try {
     	// Get Parameters
@@ -136,18 +135,36 @@ org.openmdx.base.naming.*
     		pm
     	);
 
-    	// get additional parameters
-      boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
-      if (isFirstCall) {
-          // populate form fields related to activity with activity's attribute values
-          formValues.put("org:opencrx:kernel:activity1:Activity:assignedTo", activity.getAssignedTo() == null ? null : activity.getAssignedTo().refGetPath());
-          formValues.put("org:opencrx:kernel:activity1:Activity:description", activity.getDescription());
-          formValues.put("org:opencrx:kernel:activity1:Activity:location", activity.getLocation());
-          formValues.put("org:opencrx:kernel:activity1:Activity:priority", activity.getPriority());
-          formValues.put("org:opencrx:kernel:activity1:Activity:dueBy", activity.getDueBy());
-      }
+		// get additional parameters
+		boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
+		if (isFirstCall) {
+			// populate form fields related to activity with activity's attribute values
+			formValues.put("org:opencrx:kernel:activity1:Activity:assignedTo", activity.getAssignedTo() == null ? null : activity.getAssignedTo().refGetPath());
+			formValues.put("org:opencrx:kernel:activity1:Activity:description", activity.getDescription());
+			formValues.put("org:opencrx:kernel:activity1:Activity:location", activity.getLocation());
+			formValues.put("org:opencrx:kernel:activity1:Activity:priority", activity.getPriority());
+			formValues.put("org:opencrx:kernel:activity1:Activity:dueBy", activity.getDueBy());
+		}
 
-    	if(actionCreate) {
+		if(request.getParameter("resourceContact") != null) {
+			org.opencrx.kernel.account1.jmi1.Contact resourceContact = null;
+			try {
+				resourceContact = (org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(new Path(request.getParameter("resourceContact")));
+		 	} catch (Exception e) {}
+		 	if (resourceContact != null && request.getParameter("fetchResourceContact") != null && request.getParameter("fetchResourceContact").length() > 0) {
+				formValues.put("org:opencrx:kernel:activity1:Activity:assignedTo", resourceContact.refGetPath());
+		 	}
+		}
+		 	
+ 	    org.opencrx.kernel.account1.jmi1.Contact assignedTo = null;
+ 	    try {
+ 	    	assignedTo = formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo") != null ?
+	 	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
+	 	    		formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo")
+	 	    	) : null;
+ 	    } catch (Exception e) {}
+
+     	if(actionCreate) {
     	    //
     	    // doFollowUp
     	    org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition =
@@ -156,16 +173,12 @@ org.openmdx.base.naming.*
             	);
     	    String followUpTitle = (String)formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpTitle");
     	    String followUpText = (String)formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpText");
-    	    org.opencrx.kernel.account1.jmi1.Contact assignTo = formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo") != null ?
+			org.opencrx.kernel.account1.jmi1.Contact assignTo = formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo") != null ?
     	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
     	    		formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo")
     	    	) : null;
 
             // updateActivity
-    	    org.opencrx.kernel.account1.jmi1.Contact assignedTo = formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo") != null ?
-    	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
-    	    		formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo")
-    	    	) : null;
     	    String description = (String)formValues.get("org:opencrx:kernel:activity1:Activity:description");
     	    String location = (String)formValues.get("org:opencrx:kernel:activity1:Activity:location");
     	    Short priority = (Short)formValues.get("org:opencrx:kernel:activity1:Activity:priority");
@@ -229,10 +242,56 @@ org.openmdx.base.naming.*
       					);
       					p.flush();
 %>
+								<table class="fieldGroup">
+									<div class="fieldGroupName">&nbsp;</div>
+									<tr>
+										<td class="label">
+											<span class="nw"><%= app.getLabel(RESOURCE_CLASS) %>:</span>
+										</td>
+										<td>
+											<input type="hidden" id="fetchResourceContact" name="fetchResourceContact" value="" /> 
+											<select id="resourceContact" name="resourceContact" class="valueL" onchange="javascript:$('fetchResourceContact').value='override';$('Refresh.Button').click();" >
+<%
+				                // get Resources sorted by name(asc)
+												String providerName = obj.refGetPath().get(2);
+												String segmentName = obj.refGetPath().get(4);
+												org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+														new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+													);
+												org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+				                org.opencrx.kernel.activity1.cci2.ResourceQuery recourceFilter = activityPkg.createResourceQuery();
+				                recourceFilter.orderByName().ascending();
+												recourceFilter.forAllDisabled().isFalse();
+												int maxResourceToShow = 200;
+				                for (
+				                  Iterator k = activitySegment.getResource(recourceFilter).iterator();
+				                  k.hasNext() && maxResourceToShow > 0;
+				                  maxResourceToShow--
+				                ) {
+				                	try {
+					                  // get resource
+					            	    org.opencrx.kernel.activity1.jmi1.Resource resource =
+					                    (org.opencrx.kernel.activity1.jmi1.Resource)k.next();
+					            	    org.opencrx.kernel.account1.jmi1.Contact contact = resource.getContact();
+					            	    if (contact != null) {
+						                  String selectedModifier = ((contact != null ) && (assignedTo != null) && (assignedTo.refMofId().compareTo(contact.refMofId()) == 0)) ? "selected" : "";
+%>
+						                  <option <%= selectedModifier %> value="<%= contact.refMofId() %>"><%= resource.getName() + (contact != null ? " (" + contact.getFirstName() + " " + contact.getLastName() + ")": "") %></option>
+<%
+					            	    }
+				                	} catch (Exception e) {}
+				                }
+%>
+				              </select>
+					          </td>
+										<td class="addon"/>
+									</tr>
+								</table>
+
       				</div>
 
       				<input type="submit" class="abutton", name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:$('Command').value=this.name;" />
-      				<input type="submit" class="abutton", name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+      				<input type="submit" class="abutton", name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';" />
       				<input type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
       			</td>
       		</tr>

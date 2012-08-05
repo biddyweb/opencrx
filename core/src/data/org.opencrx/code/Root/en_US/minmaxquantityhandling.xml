@@ -14,8 +14,8 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="minmaxquantityhandling" _operation="set">
 										<_object>
 											<name>
-												<_item>org:opencrx:kernel:product1:AbstractContractPositionConstrained:minMaxQuantityHandling</_item>
-												<_item>org:opencrx:kernel:contract1:AbstractContractPosition:minMaxQuantityHandling</_item>
+												<_item>org:opencrx:kernel:product1:ContractPositionConstrained:minMaxQuantityHandling</_item>
+												<_item>org:opencrx:kernel:contract1:SalesContractPosition:minMaxQuantityHandling</_item>
 											</name>
 										</_object>
 										<_content>

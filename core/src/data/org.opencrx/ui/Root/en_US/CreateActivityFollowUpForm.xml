@@ -51,7 +51,7 @@
                                 <_object>
                                   <forClass>org:opencrx:kernel:activity1:Activity</forClass>
                                   <featureName>followUpText</featureName>
-                                  <spanRow>20</spanRow>
+                                  <spanRow>10</spanRow>
                                   <order>120</order>
                                 </_object>
                                 <_content/>
@@ -79,14 +79,6 @@
                           <_content>
                             <formFieldDefinition>
 
-                              <org.openmdx.ui1.FormFieldDefinition id="assignedTo">
-                                <_object>
-                                  <forClass>org:opencrx:kernel:activity1:Activity</forClass>
-                                  <featureName>assignedTo</featureName>
-                                  <order>200</order>
-                                </_object>
-                                <_content/>
-                              </org.openmdx.ui1.FormFieldDefinition>
                               <org.openmdx.ui1.FormFieldDefinition id="description">
                                 <_object>
                                   <forClass>org:opencrx:kernel:activity1:Activity</forClass>
@@ -117,6 +109,14 @@
                                   <forClass>org:opencrx:kernel:activity1:Activity</forClass>
                                   <featureName>dueBy</featureName>
                                   <order>240</order>
+                                </_object>
+                                <_content/>
+                              </org.openmdx.ui1.FormFieldDefinition>
+                              <org.openmdx.ui1.FormFieldDefinition id="assignedTo">
+                                <_object>
+                                  <forClass>org:opencrx:kernel:activity1:Activity</forClass>
+                                  <featureName>assignedTo</featureName>
+                                  <order>250</order>
                                 </_object>
                                 <_content/>
                               </org.openmdx.ui1.FormFieldDefinition>

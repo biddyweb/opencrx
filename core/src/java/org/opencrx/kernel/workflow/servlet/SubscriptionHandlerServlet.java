@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.66 2011/01/23 22:16:15 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.70 2011/12/27 17:20:24 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.66 $
+ * Revision:    $Revision: 1.70 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/23 22:16:15 $
+ * Date:        $Date: 2011/12/27 17:20:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,6 +80,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.Accounts;
+import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.ActivityState;
+import org.opencrx.kernel.backend.Buildings;
+import org.opencrx.kernel.backend.Contracts;
+import org.opencrx.kernel.backend.Depots;
+import org.opencrx.kernel.backend.Documents;
+import org.opencrx.kernel.backend.Forecasts;
+import org.opencrx.kernel.backend.Models;
+import org.opencrx.kernel.backend.Products;
+import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.cci2.AuditEntryQuery;
 import org.opencrx.kernel.base.jmi1.AuditEntry;
@@ -90,7 +101,9 @@ import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
 import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByParams;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByResult;
+import org.opencrx.kernel.home1.cci2.ReminderQuery;
 import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
+import org.opencrx.kernel.home1.jmi1.Reminder;
 import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
@@ -108,10 +121,12 @@ import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 
 /**
- * The SubscriptionHandlerServlet 'listens' for object modifications on incoming
- * audit entries. For each active subscription (i.e. topic target
- * pattern) which's filter (object identity and attribute filters) matches 
- * the modified object, the corresponding workflows are executed.
+ * The SubscriptionHandlerServlet handles two use cases:
+ * <ul>
+ *   <li>It monitors object modifications by scanning the audit entries. If the modified object has a 
+ *   matching topic, all subscriptions for this topic are handled by executing the configured workflow. 
+ *   <li>It monitors upcoming reminders and performs a sendAlert().
+ * </ul>
  */  
 public class SubscriptionHandlerServlet 
     extends HttpServlet {
@@ -542,7 +557,7 @@ public class SubscriptionHandlerServlet
         HttpServletResponse res        
     ) throws IOException {
         
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
+        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Subscriptions] " + providerName + "/" + segmentName);
 
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
@@ -557,45 +572,21 @@ public class SubscriptionHandlerServlet
             
             // Get auditees
             List<Auditee> auditSegments = new ArrayList<Auditee>();
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
-            );
+            auditSegments.add(Accounts.getInstance().getAccountSegment(pm, providerName, segmentName));
+            auditSegments.add(Activities.getInstance().getActivitySegment(pm, providerName, segmentName));
+            auditSegments.add(Buildings.getInstance().getBuildingSegment(pm, providerName, segmentName));
+            auditSegments.add(Contracts.getInstance().getContractSegment(pm, providerName, segmentName));
+            auditSegments.add(Depots.getInstance().getDepotSegment(pm, providerName, segmentName));
+            auditSegments.add(Documents.getInstance().getDocumentSegment(pm, providerName, segmentName));
+            auditSegments.add(Forecasts.getInstance().getForecastSegment(pm, providerName, segmentName));
+            auditSegments.add(Models.getInstance().getModelSegment(pm, providerName, segmentName));
+            auditSegments.add(Products.getInstance().getProductSegment(pm, providerName, segmentName));
+            auditSegments.add(UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName));
                                 
             // Workflow segment
-            org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-                new Path("xri://@openmdx*org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
-            );
+            org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, providerName, segmentName);
             // User home segment
-            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-                new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-            );                    
+            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
             // Iterate all auditees and check for new audit entries
             for(Auditee auditee: auditSegments) {
                 AuditEntryQuery query = (AuditEntryQuery)pm.newQuery(AuditEntry.class);
@@ -631,6 +622,74 @@ public class SubscriptionHandlerServlet
         }        
     }
     
+    //-----------------------------------------------------------------------    
+    public void handleReminders(
+        String id,
+        String providerName,
+        String segmentName,
+        HttpServletRequest req, 
+        HttpServletResponse res        
+    ) throws IOException {
+        
+        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Reminders] " + providerName + "/" + segmentName);
+
+        try {
+            PersistenceManager pm = this.pmf.getPersistenceManager(
+                "admin-" + segmentName,
+                UUIDs.getGenerator().next().toString()
+            );
+            ReminderQuery reminderQuery = (ReminderQuery)PersistenceHelper.newQuery(
+            	pm.getExtent(Reminder.class), 
+            	new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", ":*", "reminder", ":*")
+            );
+            reminderQuery.forAllDisabled().isFalse();
+            reminderQuery.reminderState().equalTo(ActivityState.OPEN.getValue());
+            org.openmdx.base.query.Extension reminderQueryExtension = PersistenceHelper.newQueryExtension(reminderQuery);
+            // All reminders with no alarm since alarm_interval_minutes until trigger_end_at
+            reminderQueryExtension.setClause(
+            	"(current_timestamp BETWEEN " +  
+            	"last_alarm_at + CAST(CAST(alarm_interval_minutes * 60 as VARCHAR(10)) AS INTERVAL DAY TO SECOND) AND " + 
+            	"trigger_end_at)"
+            );
+            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+            Collection<Reminder> reminders = userHomeSegment.getExtent(reminderQuery);
+            List<Path> matchingReminderIdentities = new ArrayList<Path>();
+            try {
+	            int count = 0;
+	            for(Reminder reminder: reminders) {
+	            	matchingReminderIdentities.add(reminder.refGetPath());
+	            	count++;
+	            	if(count > BATCH_SIZE) break;
+	            }
+            } catch(Exception e) {
+            	SysLog.warning("Unable to determine pending reminders. For more info see log at level detail", e.getMessage());
+            	ServiceException e0 = new ServiceException(e);
+            	SysLog.detail(e0.getMessage(), e0.getCause());
+            }
+            for(Path matchingReminderIdentity: matchingReminderIdentities) {
+            	try {
+            		Reminder reminder = (Reminder)pm.getObjectById(matchingReminderIdentity);
+            		pm.currentTransaction().begin();
+            		reminder.setLastAlarmAt(new Date());
+            		pm.currentTransaction().commit();
+            	}
+            	catch(Exception e) {
+            		new ServiceException(e).log();
+            		try {
+            			pm.currentTransaction().rollback();
+            		} catch(Exception e0) {}
+            	}
+            }
+            try {
+                pm.close();
+            } catch(Exception e) {}
+        }
+        catch(Exception e) {
+            new ServiceException(e).log();
+            System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+        }
+    }
+
     //-----------------------------------------------------------------------
     protected void handleRequest(
         HttpServletRequest req, 
@@ -648,6 +707,13 @@ public class SubscriptionHandlerServlet
 	                    	id,
 	                    	Thread.currentThread()
 	                    );
+	                    this.handleReminders(
+	                    	id,
+	                    	providerName,
+	                    	segmentName,
+	                    	req,
+	                    	res
+	                    );
 	                    this.handleSubscriptions(
 	                        id,
 	                        providerName,
@@ -655,7 +721,7 @@ public class SubscriptionHandlerServlet
 	                        req,
 	                        res
 	                    );
-	                } 
+	                }
 	                catch(Exception e) {
 	                    new ServiceException(e).log();
 	                }
@@ -699,7 +765,7 @@ public class SubscriptionHandlerServlet
             res
         );
     }
-        
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

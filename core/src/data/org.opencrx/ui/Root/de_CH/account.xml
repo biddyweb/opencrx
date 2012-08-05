@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kontakte</_item>
+                        <_item>Kontaktverwaltung</_item>
                       </label>
                       <toolTip>
-                        <_item>alle Kontakte</_item>
+                        <_item>Kontaktverwaltung</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -325,6 +325,45 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Pictured:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Bild</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Bild</_item>
+                      </toolTip>
+                    </_object>
+                    <_content>
+<!--
+                      <alternateElementDefinition>
+                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Bild</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Bild</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AlternateElementDefinition>
+                      </alternateElementDefinition>
+-->
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Pictured:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel / Quelle</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel / Quelle</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
 
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:fullName" _operation="create">
                     <_object>

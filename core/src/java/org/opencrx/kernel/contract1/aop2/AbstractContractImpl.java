@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractImpl.java,v 1.14 2010/11/03 18:30:56 wfro Exp $
+ * Name:        $Id: AbstractContractImpl.java,v 1.16 2011/05/23 12:22:53 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/03 18:30:56 $
+ * Date:        $Date: 2011/05/23 12:22:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,15 +55,9 @@
  */
 package org.opencrx.kernel.contract1.aop2;
 
-import java.util.List;
-
 import javax.jdo.JDOUserException;
 
 import org.opencrx.kernel.backend.Contracts;
-import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
-import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
-import org.opencrx.kernel.forecast1.jmi1.SalesVolumeBudget;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
@@ -81,137 +75,6 @@ public class AbstractContractImpl
     }
 
     //-----------------------------------------------------------------------
-    public org.opencrx.kernel.contract1.jmi1.UpdateInventoryResult updateInventory(
-    ) {
-        try {
-            CompoundBooking compoundBooking = Contracts.getInstance().updateInventory(
-                this.sameObject()
-            );
-            return Utils.getContractPackage(this.sameManager()).createUpdateInventoryResult(
-                compoundBooking
-            );
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }        
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.openmdx.base.jmi1.Void removePendingInventoryBookings(
-    ) {
-        try {
-            Contracts.getInstance().removePendingInventoryBookings(
-                this.sameObject()
-            );
-            return super.newVoid();
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }        
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.openmdx.base.jmi1.Void reprice(
-    ) {
-        try {
-            Contracts.getInstance().repriceContract(
-                this.sameObject()
-            );
-            return super.newVoid();
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }                
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.contract1.jmi1.CreatePositionResult createPosition(
-        org.opencrx.kernel.contract1.jmi1.CreatePositionParams params
-    ) {
-    	try {
-    		AbstractContractPosition position = Contracts.getInstance().createContractPosition(
-	            this.sameObject(),
-	            params.isIgnoreProductConfiguration(),
-	            params.getName(),
-	            params.getQuantity(),
-	            params.getPricingDate(),
-	            params.getProduct(),
-	            params.getUom(),
-	            params.getPriceUom(),
-	            params.getPricingRule()            
-	        );
-	        return Utils.getContractPackage(this.sameManager()).createCreatePositionResult(
-	            position
-	        );
-    	}
-    	catch(Exception e) {
-    		throw new JmiServiceException(e);
-    	}
-    }
-
-    //-----------------------------------------------------------------------
-    public org.openmdx.base.jmi1.Void assignSalesVolumeBudgets(
-    ) {
-    	try {
-    		Contracts.getInstance().assignSalesVolumeBudgets(
-	            this.sameObject()
-	        );
-	        return this.newVoid();
-    	}
-    	catch(Exception e) {
-    		throw new JmiServiceException(e);
-    	}    	
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.contract1.jmi1.FindSalesVolumeBudgetsResult findSalesVolumeBudgets(
-    ) {
-    	try {
-    		List<SalesVolumeBudget> budgets = Contracts.getInstance().findSalesVolumeBudgets(
-	            this.sameObject()
-	        );
-	        return Utils.getContractPackage(this.sameManager()).createFindSalesVolumeBudgetsResult(
-	            budgets
-	        );
-    	}
-    	catch(Exception e) {
-    		throw new JmiServiceException(e);
-    	}    	    	
-    }
-    
-    //-----------------------------------------------------------------------
-    public void setPricingDate(
-        java.util.Date pricingDate
-    ) {
-        try {
-            Contracts.getInstance().updatePricingState(
-                this.sameObject(),
-                Contracts.PRICING_STATE_DIRTY
-            );
-            this.nextObject().setPricingDate(pricingDate);
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }        	    	
-    }
-    
-    //-----------------------------------------------------------------------
-    public void setActiveOn(
-        java.util.Date activeOn
-    ) {
-        try {
-            Contracts.getInstance().updatePricingState(
-                this.sameObject(),
-                Contracts.PRICING_STATE_DIRTY
-            );
-            this.nextObject().setActiveOn(activeOn);
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }        	    	
-    }
-        
-    //-----------------------------------------------------------------------
     public void setContractState(
         short contractState
     ) {
@@ -225,6 +88,22 @@ public class AbstractContractImpl
         catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
+    }
+
+    //-----------------------------------------------------------------------
+    public org.openmdx.base.jmi1.Void reapplyContractCreator(
+        org.opencrx.kernel.contract1.jmi1.ReapplyContractCreatorParams params
+    ) {
+        try {
+            Contracts.getInstance().reapplyContractCreator(
+                this.sameObject(),
+                params.getContractCreator()
+            );
+            return this.newVoid();
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }    	
     }
     
     //-----------------------------------------------------------------------
@@ -265,5 +144,5 @@ public class AbstractContractImpl
     		);
     	}
     }
-	
+
 }

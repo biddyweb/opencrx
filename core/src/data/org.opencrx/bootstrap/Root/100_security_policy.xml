@@ -11,9 +11,10 @@
 							<_object/>
 							<_content>
 								<policy>
+									<!-- Security policy for segment Default (Login) -->
 									<org.openmdx.security.authorization1.Policy id="Default" _operation="create">
 										<_object>
-											<description>Default Security Policy</description>
+											<description>Default Policy</description>
 										</_object>
 										<_content>
 											<role>
@@ -40,6 +41,13 @@
 												</org.openmdx.security.realm1.Role>
 											</role>
 										</_content>
+									</org.openmdx.security.authorization1.Policy>
+									<!-- Security policy for segment Root -->
+									<org.openmdx.security.authorization1.Policy id="Root" _operation="create">
+										<_object>
+											<description>Root Policy</description>
+										</_object>
+										<_content />
 									</org.openmdx.security.authorization1.Policy>
 								</policy>
 							</_content>

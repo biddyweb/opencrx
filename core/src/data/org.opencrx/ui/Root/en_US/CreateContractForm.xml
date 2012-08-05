@@ -46,7 +46,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>				
 												<org.openmdx.ui1.FormFieldDefinition id="customer">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>customer</featureName>
 														<order>200</order>			
 													</_object>
@@ -62,7 +62,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>																											
 												<org.openmdx.ui1.FormFieldDefinition id="contractCurrency">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>contractCurrency</featureName>
 														<order>400</order>			
 													</_object>
@@ -78,7 +78,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>				
 												<org.openmdx.ui1.FormFieldDefinition id="salesRep">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>salesRep</featureName>
 														<order>600</order>			
 													</_object>
@@ -103,7 +103,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>				
 												<org.openmdx.ui1.FormFieldDefinition id="paymentTerms">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>paymentTerms</featureName>
 														<order>1000</order>			
 													</_object>
@@ -135,7 +135,7 @@
 											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="pricingRule">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>pricingRule</featureName>
 														<order>100</order>			
 													</_object>
@@ -143,7 +143,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>				
 												<org.openmdx.ui1.FormFieldDefinition id="calcRule">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContract</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContract</forClass>
 														<featureName>calcRule</featureName>
 														<order>200</order>			
 													</_object>
@@ -301,7 +301,7 @@
 							</_object>
 							<_content>
 								<formFieldGroupDefinition>
-									<org.openmdx.ui1.FormFieldGroupDefinition name="AbstractContractPositionInformation">
+									<org.openmdx.ui1.FormFieldGroupDefinition name="SalesContractPositionInformation">
 										<_object>
 											<label>
 												<_item>Contract Position</_item>
@@ -316,7 +316,7 @@
 											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="quantity">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContractPosition</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContractPosition</forClass>
 														<featureName>quantity</featureName>
 														<order>100</order>			
 													</_object>
@@ -332,7 +332,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>				
 												<org.openmdx.ui1.FormFieldDefinition id="name">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:AbstractContractPosition</forClass>
+														<forClass>org:opencrx:kernel:contract1:SalesContractPosition</forClass>
 														<featureName>name</featureName>
 														<order>300</order>			
 													</_object>

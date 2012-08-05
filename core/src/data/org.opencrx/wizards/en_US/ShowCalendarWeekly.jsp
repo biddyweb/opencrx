@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ShowCalendarWeekly.jsp,v 1.1 2010/12/04 06:47:08 cmu Exp $
+ * Name:        $Id: ShowCalendarWeekly.jsp,v 1.3 2011/11/19 10:59:01 cmu Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/04 06:47:08 $
+ * Date:        $Date: 2011/11/19 10:59:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -105,6 +105,8 @@ org.openmdx.kernel.log.*
 	) {
 
 		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
+		date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+		date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 		date.set(GregorianCalendar.YEAR, Integer.valueOf(dateAsString.substring(0, 4)));
 		date.set(GregorianCalendar.MONTH, Integer.valueOf(dateAsString.substring(4, 6)) - 1);
 		date.set(GregorianCalendar.DAY_OF_MONTH, Integer.valueOf(dateAsString.substring(6, 8)));
@@ -398,11 +400,9 @@ function parseIcal( ics, color ) {
 		}
 
 		if(selectedDateStr == null || selectedDateStr.length() != 8) {
-			selectedDateStr = getDateAsString(
-				new GregorianCalendar().get(GregorianCalendar.YEAR),
-				new GregorianCalendar().get(GregorianCalendar.MONTH) + 1,
-				new GregorianCalendar().get(GregorianCalendar.DAY_OF_MONTH)
-			);
+			GregorianCalendar today = new GregorianCalendar(app.getCurrentLocale());
+			today.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+			selectedDateStr = getDateAsString(today);
 		}
 
 		if(actionPrevWeek) {
@@ -546,6 +546,8 @@ function parseIcal( ics, color ) {
 %>
 			    /*
 			    GregorianCalendar scheduledStart = new GregorianCalendar(app.getCurrentLocale());
+			    scheduledStart.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+			    scheduledStart.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 			    scheduledStart.setTime(act.getScheduledStart());
 			    int tz_dst_offset = (scheduledStart.get(GregorianCalendar.ZONE_OFFSET) + scheduledStart.get(GregorianCalendar.DST_OFFSET))/(60*60*1000);
 			    */

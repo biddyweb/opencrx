@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IntegerPropertyDataBinding.java,v 1.8 2009/10/02 13:34:08 wfro Exp $
+ * Name:        $Id: IntegerPropertyDataBinding.java,v 1.9 2011/10/23 10:26:57 wfro Exp $
  * Description: IntegerPropertyDataBinding
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/02 13:34:08 $
+ * Date:        $Date: 2011/10/23 10:26:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,6 +55,8 @@
  */
 package org.opencrx.kernel.portal;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.IntegerProperty;
@@ -93,15 +95,14 @@ public class IntegerPropertyDataBinding extends AbstractPropertyDataBinding {
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p == null) {
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = 
-                (org.opencrx.kernel.base.jmi1.BasePackage)object.refOutermostPackage().refPackage(
-                    org.opencrx.kernel.base.jmi1.BasePackage.class.getName()
-                );
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+        	p = pm.newInstance(IntegerProperty.class);
+        	p.refInitialize(false, false);
             this.createProperty(
                 object,
                 qualifiedFeatureName,
-                p = basePkg.getIntegerProperty().createIntegerProperty()
-            );                
+                p
+            );
         }
         if(p instanceof IntegerProperty) {
             ((IntegerProperty)p).setIntegerValue(

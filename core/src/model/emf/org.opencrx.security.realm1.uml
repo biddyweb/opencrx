@@ -34,6 +34,14 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_05Kq4F1ZEd25QKCNQi9hiQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_05A54F1ZEd25QKCNQi9hiQ"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_3TYYwsNoEeCwM9ZbEbYdjg" name="grantedRole" association="_3TVVcMNoEeCwM9ZbEbYdjg">
+              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Security%20(EMF)/org.openmdx.security.realm1.uml#_3C7B8A60016D3FC602CD0106"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3TY_0cNoEeCwM9ZbEbYdjg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3TY_0MNoEeCwM9ZbEbYdjg"/>
+              <qualifier xmi:id="_JDoHQMNpEeCwM9ZbEbYdjg" name="index">
+                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+              </qualifier>
+            </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_3C7B8A60016D41826973019E" name="PrincipalGroupHasGrantedRole" memberEnd="_3C7B8A60016D418269730361 _3C7B8A60016D418269730357">
             <ownedEnd xmi:id="_3C7B8A60016D418269730361" name="principalGroup" type="_3C7B8A60016D415745E0031F" isUnique="false" association="_3C7B8A60016D41826973019E">
@@ -45,6 +53,12 @@
             <generalization xmi:id="_uCfssB5CEdqET7ZHRltKzA">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Security%20(EMF)/org.openmdx.security.realm1.uml#_3C7B8A60016D3FC606E402DA"/>
             </generalization>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_3TVVcMNoEeCwM9ZbEbYdjg" name="PrincipalHasGrantedRole" memberEnd="_3TXxsMNoEeCwM9ZbEbYdjg _3TYYwsNoEeCwM9ZbEbYdjg">
+            <ownedEnd xmi:id="_3TXxsMNoEeCwM9ZbEbYdjg" name="principal" type="_3C7B8A60016D415A99CD0095" association="_3TVVcMNoEeCwM9ZbEbYdjg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3TYYwcNoEeCwM9ZbEbYdjg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3TYYwMNoEeCwM9ZbEbYdjg" value="1"/>
+            </ownedEnd>
           </packagedElement>
         </packagedElement>
       </packagedElement>

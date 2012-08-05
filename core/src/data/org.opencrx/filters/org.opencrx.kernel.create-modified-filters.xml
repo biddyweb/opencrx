@@ -2,30 +2,31 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="137">
+			<array class="java.lang.String" length="123">
+
 				<void index="0">
-					<string>org:opencrx:kernel:activity1:Absence:note</string>
+					<string>org:opencrx:kernel:activity1:Incident:workReportEntry</string>
 				</void>
 				<void index="1">
-					<string>org:opencrx:kernel:activity1:EMail:note</string>
+					<string>org:opencrx:kernel:activity1:Mailing:workReportEntry</string>
 				</void>
 				<void index="2">
-					<string>org:opencrx:kernel:activity1:ExternalActivity:note</string>
+					<string>org:opencrx:kernel:activity1:Meeting:workReportEntry</string>
 				</void>
 				<void index="3">
-					<string>org:opencrx:kernel:activity1:Incident:note</string>
+					<string>org:opencrx:kernel:activity1:PhoneCall:workReportEntry</string>
 				</void>
 				<void index="4">
-					<string>org:opencrx:kernel:activity1:Mailing:note</string>
+					<string>org:opencrx:kernel:activity1:Task:workReportEntry</string>
 				</void>
 				<void index="5">
-					<string>org:opencrx:kernel:activity1:Meeting:note</string>
+					<string>org:opencrx:kernel:activity1:Segment:workReportEntry</string>
 				</void>
 				<void index="6">
-					<string>org:opencrx:kernel:activity1:PhoneCall:note</string>
+					<string>org:opencrx:kernel:activity1:Resource:workReportEntry</string>
 				</void>
 				<void index="7">
-					<string>org:opencrx:kernel:activity1:Task:note</string>
+					<string>org:opencrx:kernel:activity1:ActivityTracker:workReportEntry</string>
 				</void>
 				<void index="8">
 					<string>org:opencrx:kernel:activity1:Absence:followUp</string>
@@ -95,22 +96,22 @@
 				<void index="29">
 					<string>org:opencrx:kernel:activity1:ActivityTracker:followUp</string>
 				</void>
+
 				<void index="30">
-					<string>org:opencrx:kernel:contract1:Lead:note</string>
+					<string>org:opencrx:kernel:contract1:Segment:contract</string>
 				</void>
 				<void index="31">
-					<string>org:opencrx:kernel:contract1:Opportunity:note</string>
+					<string>org:opencrx:kernel:contract1:Segment:contractCreator</string>
 				</void>
 				<void index="32">
-					<string>org:opencrx:kernel:contract1:Quote:note</string>
+					<string>org:opencrx:kernel:contract1:Segment:contractGroup</string>
 				</void>
 				<void index="33">
-					<string>org:opencrx:kernel:contract1:SalesOrder:note</string>
+					<string>org:opencrx:kernel:contract1:Segment:contractType</string>
 				</void>
 				<void index="34">
-					<string>org:opencrx:kernel:contract1:Invoice:note</string>
+					<string>org:opencrx:kernel:activity1:ActivityCategory:workReportEntry</string>
 				</void>
-
 				<void index="35">
 					<string>org:opencrx:kernel:account1:Segment:account</string>
 				</void>
@@ -281,23 +282,23 @@
 				<void index="90">
 					<string>org:opencrx:kernel:account1:UnspecifiedAccount:media</string>
 				</void>
+
 				<void index="91">
-					<string>org:opencrx:kernel:account1:Contact:note</string>
+					<string>org:opencrx:kernel:activity1:ActivityMilestone:workReportEntry</string>
 				</void>
 				<void index="92">
-					<string>org:opencrx:kernel:account1:Group:note</string>
+					<string>org:opencrx:kernel:activity1:Absence:workReportEntry</string>
 				</void>
 				<void index="93">
-					<string>org:opencrx:kernel:account1:LegalEntity:note</string>
+					<string>org:opencrx:kernel:activity1:EMail:workReportEntry</string>
 				</void>
 				<void index="94">
-					<string>org:opencrx:kernel:account1:UnspecifiedAccount:note</string>
+					<string>org:opencrx:kernel:activity1:ExternalActivity:workReportEntry</string>
 				</void>
 
 				<void index="95">
-					<string>org:opencrx:kernel:forecast1:Segment:budget</string>
+					<string>org:opencrx:kernel:home1:ActivityFilterCalendarFeed:syncData</string>
 				</void>
-
 
 				<void index="96">
 					<string>org:opencrx:kernel:activity1:Segment:activity</string>
@@ -382,50 +383,7 @@
 				<void index="122">
 					<string>org:opencrx:kernel:home1:ActivityGroupCalendarFeed:syncData</string>
 				</void>
-				<void index="123">
-					<string>org:opencrx:kernel:home1:ActivityFilterCalendarFeed:syncData</string>
-				</void>
 
-				<void index="124">
-					<string>org:opencrx:kernel:activity1:Resource:workReportEntry</string>
-				</void>
-				<void index="125">
-					<string>org:opencrx:kernel:activity1:ActivityTracker:workReportEntry</string>
-				</void>
-				<void index="126">
-					<string>org:opencrx:kernel:activity1:ActivityCategory:workReportEntry</string>
-				</void>
-				<void index="127">
-					<string>org:opencrx:kernel:activity1:ActivityMilestone:workReportEntry</string>
-				</void>
-				<void index="128">
-					<string>org:opencrx:kernel:activity1:Absence:workReportEntry</string>
-				</void>
-				<void index="129">
-					<string>org:opencrx:kernel:activity1:EMail:workReportEntry</string>
-				</void>
-				<void index="130">
-					<string>org:opencrx:kernel:activity1:ExternalActivity:workReportEntry</string>
-				</void>
-				<void index="131">
-					<string>org:opencrx:kernel:activity1:Incident:workReportEntry</string>
-				</void>
-				<void index="132">
-					<string>org:opencrx:kernel:activity1:Mailing:workReportEntry</string>
-				</void>
-				<void index="133">
-					<string>org:opencrx:kernel:activity1:Meeting:workReportEntry</string>
-				</void>
-				<void index="134">
-					<string>org:opencrx:kernel:activity1:PhoneCall:workReportEntry</string>
-				</void>
-				<void index="135">
-					<string>org:opencrx:kernel:activity1:Task:workReportEntry</string>
-				</void>
-				<void index="136">
-					<string>org:opencrx:kernel:activity1:Segment:workReportEntry</string>
-				</void>
-				
 			</array>
 		</void>
 

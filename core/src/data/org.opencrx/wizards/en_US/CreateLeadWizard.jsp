@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateLeadWizard.jsp,v 1.17 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: CreateLeadWizard.jsp,v 1.19 2011/11/02 16:30:55 cmu Exp $
  * Description: CreateLeadWizard
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2011/11/02 16:30:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -145,7 +145,7 @@ org.openmdx.base.naming.*
 	if(obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
 	    org.opencrx.kernel.account1.jmi1.Contact contact = (org.opencrx.kernel.account1.jmi1.Contact)obj;
 	    formValues.put(
-	        "org:opencrx:kernel:contract1:AbstractContract:customer",
+	        "org:opencrx:kernel:contract1:SalesContract:customer",
 	        contact.refGetPath()
 	    );
 	    if(contact.getAliasName() != null) {
@@ -156,9 +156,9 @@ org.openmdx.base.naming.*
 	    }
 	}
 	if(actionCreate) {
-	    org.opencrx.kernel.account1.jmi1.Contact customer = formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer") != null ?
+	    org.opencrx.kernel.account1.jmi1.Contact customer = formValues.get("org:opencrx:kernel:contract1:SalesContract:customer") != null ?
 	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
-	    		formValues.get("org:opencrx:kernel:contract1:AbstractContract:customer")
+	    		formValues.get("org:opencrx:kernel:contract1:SalesContract:customer")
 	    	) : null;
 	    String name = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:name");
 	    String contractNumber = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContract:contractNumber");
@@ -167,7 +167,7 @@ org.openmdx.base.naming.*
 	    Short leadRating = (Short)formValues.get("org:opencrx:kernel:contract1:Lead:leadRating");
 	    Short closeProbability = (Short)formValues.get("org:opencrx:kernel:contract1:Lead:closeProbability");
 	    Short priority = (Short)formValues.get("org:opencrx:kernel:contract1:AbstractContract:priority");
-	    Short contractCurrency = (Short)formValues.get("org:opencrx:kernel:contract1:AbstractContract:contractCurrency");
+	    Short contractCurrency = (Short)formValues.get("org:opencrx:kernel:contract1:SalesContract:contractCurrency");
 	    java.math.BigDecimal estimatedValue = (java.math.BigDecimal)formValues.get("org:opencrx:kernel:contract1:Lead:estimatedValue");
 	    Date estimatedCloseDate = (Date)formValues.get("org:opencrx:kernel:contract1:Lead:estimatedCloseDate");
 	    java.math.BigDecimal estimatedSalesCommission = (java.math.BigDecimal)formValues.get("org:opencrx:kernel:contract1:Lead:estimatedSalesCommission");
@@ -196,7 +196,7 @@ org.openmdx.base.naming.*
 	      	pm.currentTransaction().begin();
 	      	contractSegment.addLead(
 	            false,
-	            org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString(),
+	            org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 	            lead
 	        );
 	        pm.currentTransaction().commit();

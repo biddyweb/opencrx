@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.35 2010/09/30 15:57:43 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.38 2011/08/15 15:54:33 wfro Exp $
  * = Description: openCRX/sql build.xml
- * = Revision:    $Revision: 1.35 $
- * = Date:        $Date: 2010/09/30 15:57:43 $
- * = Copyright:   (c) 2003-2009 CRIXP AG
+ * = Revision:    $Revision: 1.38 $
+ * = Date:        $Date: 2011/08/15 15:54:33 $
+ * = Copyright:   (c) 2003-2011 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,131 +52,18 @@
 -->
 <project name="opencrx-generate-sql-scripts">
 	<target name="generate" description="generate SQL scripts">
-	  <!-- POSTGRESQL_8 -->	
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/dbcreate-views.sql dbcreate-views.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/migrate-from-2.7-to-2.8.sql migrate-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/drop-from-2.7-to-2.8.sql drop-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_8 -opostgresql-8/delete-segment.sql delete-segment.tsql"/>
-		</exec>
-		<copy file="populate-preferences.tsql" tofile="postgresql-8/populate-preferences.sql">
-			<filterchain>
-				<tokenfilter>
-					<replacestring from="COMMAND_TERMINATOR" to=";"/>
-					<replacestring from="COMMAND_SEPARATOR" to=""/>
-				</tokenfilter>			
-			</filterchain>
-		</copy>
-	  <!-- SQL_SERVER_2005 -->	
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/dbcreate-views.sql dbcreate-views.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/migrate-from-2.7-to-2.8.sql migrate-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/drop-from-2.7-to-2.8.sql drop-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2005 -osql-server-2005/delete-segment.sql delete-segment.tsql"/>
-		</exec>
-		<copy file="populate-preferences.tsql" tofile="sql-server-2005/populate-preferences.sql">
-			<filterchain>
-				<tokenfilter>
-					<replacestring from="COMMAND_TERMINATOR" to=""/>
-					<replacestring from="COMMAND_SEPARATOR" to="GO"/>
-				</tokenfilter>			
-			</filterchain>
-		</copy>
-	  <!-- MYSQL_5 -->	
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/dbcreate-views.sql dbcreate-views.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.7-to-2.8.sql migrate-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.7-to-2.8.sql drop-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/delete-segment.sql delete-segment.tsql"/>
-		</exec>
-		<copy file="populate-preferences.tsql" tofile="mysql-5/populate-preferences.sql">
-			<filterchain>
-				<tokenfilter>
-					<replacestring from="COMMAND_TERMINATOR" to=";"/>
-					<replacestring from="COMMAND_SEPARATOR" to=""/>
-				</tokenfilter>			
-			</filterchain>
-		</copy>
-	  <!-- ORACLE_10 -->	
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/dbcreate-views.sql dbcreate-views.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/migrate-from-2.7-to-2.8.sql migrate-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/drop-from-2.7-to-2.8.sql drop-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_10 -ooracle-10/delete-segment.sql delete-segment.tsql"/>
-		</exec>
-		<copy file="populate-preferences.tsql" tofile="oracle-10/populate-preferences.sql">
-			<filterchain>
-				<tokenfilter>
-					<replacestring from="COMMAND_TERMINATOR" to=";"/>
-					<replacestring from="COMMAND_SEPARATOR" to=""/>
-				</tokenfilter>			
-			</filterchain>
-		</copy>
-	  <!-- DB2_8 -->	
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/dbcreate-views.sql dbcreate-views.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/migrate-from-2.7-to-2.8.sql migrate-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/drop-from-2.7-to-2.8.sql drop-from-2.7-to-2.8.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_9 -odb2-9/delete-segment.sql delete-segment.tsql"/>
-		</exec>
-		<copy file="populate-preferences.tsql" tofile="db2-9/populate-preferences.sql">
-			<filterchain>
-				<tokenfilter>
-					<replacestring from="COMMAND_TERMINATOR" to=";"/>
-					<replacestring from="COMMAND_SEPARATOR" to=""/>
-				</tokenfilter>			
-			</filterchain>
-		</copy>
 	  <!-- HSQLDB_2 -->	
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.7-to-2.8.sql migrate-from-2.7-to-2.8.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.8-to-2.9.sql migrate-from-2.8-to-2.9.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.7-to-2.8.sql drop-from-2.7-to-2.8.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.8-to-2.9.sql drop-from-2.8-to-2.9.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/delete-segment.sql delete-segment.tsql"/>
 		</exec>
-		<copy file="populate-preferences.tsql" tofile="hsqldb-2/populate-preferences.sql">
-			<filterchain>
-				<tokenfilter>
-					<replacestring from="COMMAND_TERMINATOR" to=";"/>
-					<replacestring from="COMMAND_SEPARATOR" to=""/>
-				</tokenfilter>			
-			</filterchain>
-		</copy>
 	</target>
 </project>

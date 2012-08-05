@@ -5,7 +5,6 @@ This installer has created an openCRX development environment.
 The SDK contains the sources of the following openCRX projects:
 
 * core: contains the openCRX Core models and functions
-* apps: contains openCRX applications such as the openCRX/Store
 * test-core: contains openCRX JUnit tests 
 
 Each project contains a build.xml which accepts the following

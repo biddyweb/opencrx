@@ -1,7 +1,7 @@
 -- This software is published under the BSD license
 -- as listed below.
 --
--- Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+-- Copyright (c) 2004-2011, CRIXP Corp., Switzerland
 -- All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -620,31 +620,31 @@ DELETE FROM OOCKE1_WORKRECORD WHERE object_id LIKE '%/{provider}/{segment}/%' ;
 DELETE FROM OOCKE1_WORKRECORD_ WHERE object_id LIKE '%/{provider}/{segment}/%' ;
 
 
-DELETE FROM OOCSE1_PERMISSION WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_PERMISSION WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
-DELETE FROM OOCSE1_PERMISSION_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
-
-
-DELETE FROM OOCSE1_POLICY WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
-
-DELETE FROM OOCSE1_POLICY_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_PERMISSION_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
 
-DELETE FROM OOCSE1_PRINCIPAL WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_POLICY WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
-DELETE FROM OOCSE1_PRINCIPAL_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
-
-
-DELETE FROM OOCSE1_PRIVILEGE WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
-
-DELETE FROM OOCSE1_PRIVILEGE_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_POLICY_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
 
-DELETE FROM OOCSE1_REALM WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_PRINCIPAL WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
-DELETE FROM OOCSE1_REALM_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_PRINCIPAL_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
 
-DELETE FROM OOCSE1_ROLE WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_PRIVILEGE WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
 
-DELETE FROM OOCSE1_ROLE_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+DELETE FROM OOMSE2_PRIVILEGE_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+
+
+DELETE FROM OOMSE2_REALM WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+
+DELETE FROM OOMSE2_REALM_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+
+
+DELETE FROM OOMSE2_ROLE WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;
+
+DELETE FROM OOMSE2_ROLE_ WHERE object_id LIKE '%/{provider}/Root/{segment}/%' ;

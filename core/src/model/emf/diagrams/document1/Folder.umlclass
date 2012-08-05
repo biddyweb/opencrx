@@ -407,7 +407,7 @@
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Sbmzh0yREd-pv4i2u0urCw" x="-31" y="5"/>
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_SbmziEyREd-pv4i2u0urCw" type="6005">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_SbmziUyREd-pv4i2u0urCw" x="16" y="-6"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_SbmziUyREd-pv4i2u0urCw" x="16" y="2"/>
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_SbmzikyREd-pv4i2u0urCw" type="6006">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Sbmzi0yREd-pv4i2u0urCw" y="-30"/>

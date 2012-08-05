@@ -20,7 +20,10 @@
 		</field>
 		<field name="product" visibility="cci">
 			<join table="OOCKE1_JOIN_ACCTHASPROD"/>
-		</field>	
+		</field>
+		<field name="assignedAddress" visibility="cci">
+			<join table="OOCKE1_JOIN_ACCTHASASSADDRESS"/>
+		</field>			
 		<field name="vcard" visibility="cci">
 			<column name="VCARD" jdbc-type="CLOB"/>
 		</field>				

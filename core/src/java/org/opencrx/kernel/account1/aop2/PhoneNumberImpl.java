@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PhoneNumberImpl.java,v 1.2 2009/05/23 15:07:51 wfro Exp $
+ * Name:        $Id: PhoneNumberImpl.java,v 1.4 2011/09/28 11:08:34 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/23 15:07:51 $
+ * Date:        $Date: 2011/09/28 11:08:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,18 +55,12 @@
  */
 package org.opencrx.kernel.account1.aop2;
 
-import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
-import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.address1.aop2.PhoneNumberAddressableImpl;
-import org.opencrx.kernel.backend.Accounts;
-import org.openmdx.base.exception.ServiceException;
-
 public class PhoneNumberImpl
 	<S extends org.opencrx.kernel.account1.jmi1.PhoneNumber,N extends org.opencrx.kernel.account1.cci2.PhoneNumber,C extends Void>
-	extends PhoneNumberAddressableImpl<S,N,C>
+	extends AccountAddressImpl<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
@@ -81,44 +75,14 @@ public class PhoneNumberImpl
 	@Override
     public void jdoPreStore(
     ) {
-		try {
-			// Mark account as dirty updates VCard, ...
-			Accounts.getInstance().markAccountAsDirty(
-				(Account)this.sameManager().getObjectById(
-					this.sameObject().refGetPath().getParent().getParent()
-				)
-			);
-			super.jdoPreStore();
-		}
-    	catch(ServiceException e) {
-    		throw new JDOUserException(
-    			"jdoPreStore failed",
-    			e,
-    			this.sameObject()
-    		);
-    	}
-    }
+   		super.jdoPreStore();
+	}
     
     //-----------------------------------------------------------------------
     @Override
     public void jdoPreDelete(
     ) {
-    	try {
-			// Mark account as dirty updates VCard, ...
-			Accounts.getInstance().markAccountAsDirty(
-				(Account)this.sameManager().getObjectById(
-					this.sameObject().refGetPath().getParent().getParent()
-				)
-			);
-    		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
-    		throw new JDOUserException(
-    			"jdoPreDelete failed",
-    			e,
-    			this.sameObject()
-    		);
-    	}
+    	super.jdoPreDelete();
     }
             		
 }

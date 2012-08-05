@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ServerHandler.java,v 1.1 2010/06/02 10:50:12 wfro Exp $
+ * Name:        $Id: ServerHandler.java,v 1.2 2011/11/16 12:31:53 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/02 10:50:12 $
+ * Date:        $Date: 2011/11/16 12:31:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,8 +65,7 @@ public interface ServerHandler {
 
 	public void handle(
 		SyncRequest request, 
-		SyncResponse response,
-		boolean requestHasBody
+		SyncResponse response
 	) throws IOException;
 
 }

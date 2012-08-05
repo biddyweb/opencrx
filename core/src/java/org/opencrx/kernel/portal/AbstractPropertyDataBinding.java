@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractPropertyDataBinding.java,v 1.8 2009/03/08 17:04:54 wfro Exp $
+ * Name:        $Id: AbstractPropertyDataBinding.java,v 1.10 2012/01/06 13:22:51 wfro Exp $
  * Description: AbstractPropertyDataBinding
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:54 $
+ * Date:        $Date: 2012/01/06 13:22:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,8 @@ package org.opencrx.kernel.portal;
 
 import java.util.Collection;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.Property;
@@ -66,9 +68,7 @@ import org.opencrx.kernel.product1.jmi1.ProductConfiguration;
 import org.opencrx.kernel.product1.jmi1.ProductConfigurationSet;
 import org.opencrx.kernel.product1.jmi1.ProductConfigurationType;
 import org.opencrx.kernel.product1.jmi1.ProductConfigurationTypeSet;
-import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.portal.servlet.DataBinding_1_0;
 
 public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
@@ -88,7 +88,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
     }
     
     //-----------------------------------------------------------------------
-    protected Property findProperty(
+    public Property findProperty(
         RefObject object,
         String qualifiedFeatureName
     ) {
@@ -167,6 +167,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
         String qualifiedFeatureName,
         Property property
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(object);
         // ProductConfigurationTypeSet
         if(
             (this.type == AbstractPropertyDataBinding.PropertySetHolderType.ProductConfigurationTypeSet) &&
@@ -187,22 +188,18 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
                 }
             }
             if(configurationType == null) {
-                org.opencrx.kernel.product1.jmi1.Product1Package productPkg = 
-                    (org.opencrx.kernel.product1.jmi1.Product1Package)object.refOutermostPackage().refPackage(
-                        org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
-                    );                
-                configurationType = productPkg.getProductConfigurationType().createProductConfigurationType();
+                configurationType = pm.newInstance(ProductConfigurationType.class);
+                configurationType.refInitialize(false, false);
                 configurationType.setName(propertySetName);
                 productConfigurationTypeSet.addConfigurationType(
-                    UUIDConversion.toUID(uuids.next()),
+                    Utils.getUidAsString(),
                     configurationType
                 );
             }
             // Add property to property set
             property.setName(propertyName);
             configurationType.addProperty(
-                false,
-                UUIDConversion.toUID(uuids.next()),
+                Utils.getUidAsString(),
                 property
             );
         }          
@@ -226,22 +223,18 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
                 }
             }
             if(configuration == null) {
-                org.opencrx.kernel.product1.jmi1.Product1Package productPkg = 
-                    (org.opencrx.kernel.product1.jmi1.Product1Package)object.refOutermostPackage().refPackage(
-                        org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
-                    );                
-                configuration = productPkg.getProductConfiguration().createProductConfiguration();
+                configuration = pm.newInstance(ProductConfiguration.class);
+                configuration.refInitialize(false, false);
                 configuration.setName(propertySetName);
                 productConfigurationSet.addConfiguration(
-                    UUIDConversion.toUID(uuids.next()),
+                    Utils.getUidAsString(),
                     configuration
                 );
             }
             // Add property to property set
             property.setName(propertyName);
             configuration.addProperty(
-                false,
-                UUIDConversion.toUID(uuids.next()),
+                Utils.getUidAsString(),
                 property
             );
         }          
@@ -265,31 +258,25 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
                 }
             }
             if(propertySet == null) {
-                org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = 
-                    (org.opencrx.kernel.generic.jmi1.GenericPackage)object.refOutermostPackage().refPackage(
-                        org.opencrx.kernel.generic.jmi1.GenericPackage.class.getName()
-                    );                
-                propertySet = genericPkg.getPropertySet().createPropertySet();
+                propertySet = pm.newInstance(PropertySet.class);
+                propertySet.refInitialize(false, false);
                 propertySet.setName(propertySetName);
                 crxObject.addPropertySet(
-                    false,
-                    UUIDConversion.toUID(uuids.next()),
+                    Utils.getUidAsString(),
                     propertySet
                 );
             }
             // Add property to property set
             property.setName(propertyName);
             propertySet.addProperty(
-                false,
-                UUIDConversion.toUID(uuids.next()),
+                Utils.getUidAsString(),
                 property
             );
         }          
     }
-    
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    private static final UUIDGenerator uuids = UUIDs.getGenerator();
     private final PropertySetHolderType type;
 }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CardDavStore.java,v 1.6 2010/12/07 16:27:48 wfro Exp $
+ * Name:        $Id: CardDavStore.java,v 1.7 2011/10/07 14:59:19 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/07 16:27:48 $
+ * Date:        $Date: 2011/10/07 14:59:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,8 +77,8 @@ import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.application.uses.net.sf.webdav.exceptions.LockFailedException;
 import org.opencrx.application.uses.net.sf.webdav.exceptions.WebdavException;
 import org.opencrx.kernel.account1.cci2.MemberQuery;
+import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Group;
 import org.opencrx.kernel.account1.jmi1.Member;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Base;
@@ -366,7 +366,7 @@ public class CardDavStore implements WebDavStore {
 		    		new InputStreamReader(content, "UTF-8")
 		    	);
 		    	// Create/Update account
-		    	Group group = ((AccountCollectionResource)parent).getObject().getAccountGroup();
+		    	AbstractGroup group = ((AccountCollectionResource)parent).getObject().getAccountGroup();
 		    	PersistenceManager pm = JDOHelper.getPersistenceManager(group);
 		    	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
 		    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(

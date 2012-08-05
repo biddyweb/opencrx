@@ -22,7 +22,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:competitor" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:competitor" _operation="create">
                     <_object>
                       <label>
                         <_item>Konkurenti</_item>
@@ -44,7 +44,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:inventoryCb" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:inventoryCb" _operation="create">
                     <_object>
                       <label>
                         <_item>rezervace zásoby</_item>
@@ -55,7 +55,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Attr:Tab:0:Group:50" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Attr:Tab:0:Group:50" _operation="create">
                     <_object>
                       <label>
                         <_item>Finanční informace</_item>
@@ -66,7 +66,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:customer" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:customer" _operation="create">
                     <_object>
                       <label>
                         <_item>Účet</_item>
@@ -110,7 +110,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:salesRep" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:salesRep" _operation="create">
                     <_object>
                       <label>
                         <_item>Obch. zástupce</_item>
@@ -198,7 +198,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractCurrency" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:contractCurrency" _operation="create">
                     <_object>
                       <label>
                         <_item>Měna</_item>
@@ -209,7 +209,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:paymentTerms" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:paymentTerms" _operation="create">
                     <_object>
                       <label>
                         <_item>Lhůty splatnosti</_item>
@@ -220,7 +220,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalSalesCommission" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalSalesCommission" _operation="create">
                     <_object>
                       <label>
                         <_item>Provize z prodeje</_item>
@@ -231,7 +231,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalBaseAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalBaseAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Celková základní částka</_item>
@@ -242,7 +242,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalDiscountAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalDiscountAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Celková sleva</_item>
@@ -253,7 +253,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Celkem (bez DPH)</_item>
@@ -264,7 +264,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalTaxAmount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalTaxAmount" _operation="create">
                     <_object>
                       <label>
                         <_item>Celkem DPH</_item>
@@ -275,7 +275,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:totalAmountIncludingTax" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:totalAmountIncludingTax" _operation="create">
                     <_object>
                       <label>
                         <_item>Celkem (vč. DPH)</_item>
@@ -286,7 +286,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>Vytvořit pozici</_item>
@@ -297,7 +297,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createPosition:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -363,7 +363,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createPosition:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Výsledek</_item>
@@ -385,7 +385,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>vytvořit pozici na základě objednávky</_item>
@@ -396,7 +396,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -429,7 +429,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Výsledek</_item>
@@ -451,7 +451,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:updateInventory" _operation="create">
                     <_object>
                       <label>
                         <_item>aktualizovat zásobu</_item>
@@ -462,7 +462,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:updateInventory:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -473,7 +473,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:updateInventory:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Výsledek</_item>
@@ -495,7 +495,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:removePendingInventoryBookings" _operation="create">
                     <_object>
                       <label>
                         <_item>Zrušit aktualizaci zásoby</_item>
@@ -506,7 +506,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:removePendingInventoryBookings:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -517,7 +517,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:removePendingInventoryBookings:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Výsledek</_item>
@@ -528,7 +528,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:reprice:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -539,7 +539,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:Pane:Op:Tab:reprice:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Výsledek</_item>

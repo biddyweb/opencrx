@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityWizard.jsp,v 1.17 2011/03/24 16:07:29 cmu Exp $
+ * Name:        $Id: CreateActivityWizard.jsp,v 1.22 2011/11/16 15:34:18 cmu Exp $
  * Description: CreateActivityWizard
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/24 16:07:29 $
+ * Date:        $Date: 2011/11/16 15:34:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,6 +58,7 @@
 java.util.*,
 java.io.*,
 java.text.*,
+org.opencrx.kernel.portal.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
@@ -69,7 +70,9 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*
+org.openmdx.base.naming.*,
+org.openmdx.kernel.log.*,
+org.openmdx.kernel.exception.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	String servletPath = "." + request.getServletPath();
@@ -88,8 +91,10 @@ org.openmdx.base.naming.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	String formName = "CreateActivityForm";
-	String wizardName = "CreateActivityWizard.jsp";
+	final String formName = "CreateActivityForm";
+	final String wizardName = "CreateActivityWizard.jsp";
+	final String ACTIVITYCREATOR_CLASS = "org:opencrx:kernel:activity1:ActivityCreator";
+	final String ACTIVITYTYPE_CLASS = "org:opencrx:kernel:activity1:ActivityType";
 
 	// Get Parameters
 	String command = request.getParameter("Command");
@@ -111,7 +116,9 @@ org.openmdx.base.naming.*
 	<meta name="UNUSEDtoolTip" content="Create Activity">
 	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:Segment">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCreator">
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:createActivity">
+	<meta name="order" content="org:opencrx:kernel:activity1:ActivityCreator:createActivity">
 -->
 <%
 	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
@@ -130,15 +137,34 @@ org.openmdx.base.naming.*
 		pm
 	);
 	
+	/* if started from an activity creator - preselect this activity creator */
+	if (
+			 formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") == null &&
+			 obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCreator
+	) {
+		formValues.put(
+			"org:opencrx:kernel:activity1:Activity:lastAppliedCreator",
+			obj.refGetPath()
+		);
+	}
+	
 	String errorMsg = "";
 	
 	if(actionCreate) {
 		try{
 	    String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
-	    org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") != null ?
-	    	(org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
-	    		formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator")
-	    	) : null;
+
+			org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = null;
+			try {
+				if (formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") != null) {
+						activityCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
+									formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator")
+								);
+				}
+			} catch (Exception e) {
+				new ServiceException(e).log();
+			}
+	    
 	    org.opencrx.kernel.account1.jmi1.Contact reportingContact = formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact") != null ?
 	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
 	    		formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact")
@@ -162,6 +188,7 @@ org.openmdx.base.naming.*
 	        (activityCreator != null)
 	    ) {
 			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
+				null, // creationContext
 		 	    description,
 		 	    detailedDescription,
 		 	    dueBy,
@@ -254,7 +281,7 @@ org.openmdx.base.naming.*
 					p.flush();
 %>
 				</div>
-				<input type="submit" class="abutton", name="OK" id="OK.Button" tabindex="9000" value="Create" onclick="javascript:$('Command').value=this.name;" />
+				<input type="submit" class="abutton", name="OK" id="OK.Button" tabindex="9000" value="Create" onclick="javascript:$('Command').value=this.name;this.name='---';" />
 				<input type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 			</td>
 		</tr>

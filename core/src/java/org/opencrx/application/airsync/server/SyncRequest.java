@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncRequest.java,v 1.22 2010/06/22 13:27:39 wfro Exp $
+ * Name:        $Id: SyncRequest.java,v 1.23 2011/11/28 09:33:25 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/22 13:27:39 $
+ * Date:        $Date: 2011/11/28 09:33:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.resource.ResourceException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.application.airsync.backend.cci.SyncBackend;
@@ -165,27 +164,22 @@ public class SyncRequest {
 	@Override
     public String toString(
     ) {
-        try {
-            return Records.getRecordFactory().asMappedRecord(
-                SyncRequest.class.getName(),
-                null,
-                new String[]{
-                	"cmd",
-                	"userId",
-                	"deviceId",
-                	"protocolVersion"
-                },
-                new Object[]{
-                    this.cmd,
-                    this.userId,
-                    this.deviceId,
-                    this.protocolVersion
-                }
-            ).toString();
-        } 
-        catch (ResourceException exception) {
-            return super.toString();
-        }
+        return Records.getRecordFactory().asMappedRecord(
+            SyncRequest.class.getName(),
+            null,
+            new String[]{
+            	"cmd",
+            	"userId",
+            	"deviceId",
+            	"protocolVersion"
+            },
+            new Object[]{
+                this.cmd,
+                this.userId,
+                this.deviceId,
+                this.protocolVersion
+            }
+        ).toString();
     }
 
 	//-----------------------------------------------------------------------

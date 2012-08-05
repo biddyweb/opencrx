@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<description>openCRX WebGUI</description>
-	<!-- Compression and caching filter -->
-	<filter>
-		<filter-name>CompressingFilter</filter-name>
-		<filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
-	</filter>
 	<filter>
 		<filter-name>CacheControlFilter</filter-name>
 		<filter-class>org.openmdx.kernel.servlet.ReplyHeaderFilter</filter-class>
@@ -14,10 +9,6 @@
 			<param-value>public, max-age=2592000</param-value>
 		</init-param>
 	</filter>
-	<filter-mapping>
-		<filter-name>CompressingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
 	<filter-mapping>
 		<filter-name>CacheControlFilter</filter-name>
 		<url-pattern>/_style/*</url-pattern>
@@ -36,7 +27,7 @@
 	</filter-mapping>
 	<listener>
 		<listener-class>org.openmdx.portal.servlet.PortalSessionCloser</listener-class>
-	</listener>	
+	</listener>
 	<!-- WorkflowController -->
 	<servlet id="WorkflowController">
 		<servlet-name>WorkflowController</servlet-name>
@@ -44,7 +35,7 @@
 		<!-- Set of realms defines monitored providers/segments -->
 		<init-param>
 			<param-name>realmSegment</param-name>
-			<param-value>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root</param-value>
+			<param-value>xri://@openmdx*org.openmdx.security.realm1/provider/CRX/segment/Root</param-value>
 		</init-param>
 		<init-param>
 			<param-name>excludeRealm[0]</param-name>
@@ -66,6 +57,10 @@
 			<param-name>path[2]</param-name>
 			<param-value>/IndexerServlet</param-value>
 		</init-param>
+		<init-param>
+			<param-name>path[3]</param-name>
+			<param-value>/DocumentScannerServlet</param-value>
+		</init-param>
 		<!-- activate if WorkflowController should be initialized at startup
 		<load-on-startup>10</load-on-startup>
 -->
@@ -85,10 +80,10 @@
 		<servlet-name>IndexerServlet</servlet-name>
 		<servlet-class>org.opencrx.kernel.workflow.servlet.IndexerServlet</servlet-class>
 	</servlet>
-	<!-- GetCaptchaServlet -->
-	<servlet id="GetCaptchaServlet">
-		<servlet-name>GetCaptchaServlet</servlet-name>
-		<servlet-class>org.opencrx.application.captcha.GetCaptchaServlet</servlet-class>
+	<!-- DocumentScannerServlet -->
+	<servlet id="DocumentScannerServlet">
+		<servlet-name>DocumentScannerServlet</servlet-name>
+		<servlet-class>org.opencrx.application.document.DocumentScannerServlet</servlet-class>
 	</servlet>
 	<servlet id="ObjectInspectorServlet">
 		<servlet-name>ObjectInspectorServlet</servlet-name>
@@ -213,7 +208,7 @@
 		<!-- security realm -->
 		<init-param>
 			<param-name>realm</param-name>
-			<param-value>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Default</param-value>
+			<param-value>xri://@openmdx*org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Default</param-value>
 		</init-param>
 		<!-- ui refresh rate -->
 		<init-param>
@@ -228,12 +223,12 @@
 		<!-- ui provider -->
 		<init-param>
 			<param-name>uiSegment</param-name>
-			<param-value>xri:@openmdx:org.openmdx.ui1/provider/CRX/segment/Root</param-value>
+			<param-value>xri://@openmdx*org.openmdx.ui1/provider/CRX/segment/Root</param-value>
 		</init-param>
 		<!-- code tables -->
 		<init-param>
 			<param-name>codeSegment</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.code1/provider/CRX/segment/Root</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.code1/provider/CRX/segment/Root</param-value>
 		</init-param>
 		<!-- evaluator -->
 		<init-param>
@@ -243,12 +238,12 @@
 		<!-- favoritesReference -->
 		<init-param>
 			<param-name>favoritesReference</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}/userHome/${USER}/quickAccess</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}/userHome/${USER}/quickAccess</param-value>
 		</init-param>
 		<!-- userHome -->
 		<init-param>
 			<param-name>userHome</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}/userHome/${USER}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}/userHome/${USER}</param-value>
 		</init-param>
 		<!-- requestSizeMax -->
 		<init-param>
@@ -258,97 +253,92 @@
 		<!-- Admin -->
 		<init-param>
 			<param-name>rootObject[0]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.admin1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.admin1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Home -->
 		<init-param>
 			<param-name>rootObject[1]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}/userHome/${USER}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}/userHome/${USER}</param-value>
 		</init-param>
 		<!-- Accounts -->
 		<init-param>
 			<param-name>rootObject[2]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.account1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Activities -->
 		<init-param>
 			<param-name>rootObject[3]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.activity1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Contract -->
 		<init-param>
 			<param-name>rootObject[4]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.contract1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.contract1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Products -->
 		<init-param>
 			<param-name>rootObject[5]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.product1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.product1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Depots -->
 		<init-param>
 			<param-name>rootObject[6]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.depot1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.depot1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Documents -->
 		<init-param>
 			<param-name>rootObject[7]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.document1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.document1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Buildings -->
 		<init-param>
 			<param-name>rootObject[8]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.building1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.building1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Forecasts -->
 		<init-param>
 			<param-name>rootObject[9]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.forecast1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.forecast1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
-		<!-- Units [user-specific] -->
+		<!-- Units [segment-specific] -->
 		<init-param>
 			<param-name>rootObject[10]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.uom1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Units [root] -->
 		<init-param>
 			<param-name>rootObject[11]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.uom1/provider/CRX/segment/Root</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.uom1/provider/CRX/segment/Root</param-value>
 		</init-param>
 		<!-- Codes -->
 		<init-param>
 			<param-name>rootObject[12]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.code1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.code1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Workflows -->
 		<init-param>
 			<param-name>rootObject[13]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.workflow1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.workflow1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
-		<!-- Datatypes
-		<init-param>
-			<param-name>rootObject[..]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.model1/provider/CRX/segment/${SEGMENT}</param-value>
-		</init-param>-->
 		<!-- UserHomes -->
 		<init-param>
 			<param-name>rootObject[14]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.kernel.home1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Security/Realm -->
 		<init-param>
 			<param-name>rootObject[15]</param-name>
-			<param-value>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.openmdx.security.realm1/provider/CRX/segment/Root/realm/${SEGMENT}</param-value>
 		</init-param>
-		<!-- Security/Authorization -->
+		<!-- Security/Policy -->
 		<init-param>
 			<param-name>rootObject[16]</param-name>
-			<param-value>xri:@openmdx:org.openmdx.security.authorization1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.openmdx.security.authorization1/provider/CRX/segment/Root/policy/${SEGMENT}</param-value>
 		</init-param>
 		<!-- Security/Identity -->
 		<init-param>
 			<param-name>rootObject[17]</param-name>
-			<param-value>xri:@openmdx:org.opencrx.security.identity1/provider/CRX/segment/${SEGMENT}</param-value>
+			<param-value>xri://@openmdx*org.opencrx.security.identity1/provider/CRX/segment/${SEGMENT}</param-value>
 		</init-param>
 		<!-- no listing -->
 		<init-param>
@@ -384,8 +374,8 @@
 		<url-pattern>/IndexerServlet/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>GetCaptchaServlet</servlet-name>
-		<url-pattern>/GetCaptchaServlet/*</url-pattern>
+		<servlet-name>DocumentScannerServlet</servlet-name>
+		<url-pattern>/DocumentScannerServlet/*</url-pattern>
 	</servlet-mapping>
 	<session-config>
 		<session-timeout>30</session-timeout>

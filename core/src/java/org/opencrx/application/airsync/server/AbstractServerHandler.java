@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AbstractServerHandler.java,v 1.6 2010/12/06 10:25:09 wfro Exp $
+ * Name:        $Id: AbstractServerHandler.java,v 1.8 2011/11/16 12:31:53 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/06 10:25:09 $
+ * Date:        $Date: 2011/11/16 12:31:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,8 +56,8 @@
 package org.opencrx.application.airsync.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,8 +66,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.opencrx.application.airsync.backend.cci.SyncBackend;
 import org.opencrx.application.airsync.utils.WbXMLTransformer;
+import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
-import org.openmdx.kernel.log.SysLog;
 import org.w3c.dom.Document;
 
 public abstract class AbstractServerHandler implements ServerHandler {
@@ -96,13 +96,14 @@ public abstract class AbstractServerHandler implements ServerHandler {
 	@Override
 	public void handle(
 		SyncRequest request,
-		SyncResponse response,
-		boolean requestHasBody
+		SyncResponse response
 	) throws IOException {
-		InputStream in = request.getInputStream();
 		Document docRequest = null;
-		if(requestHasBody) {
+		PushbackInputStream in = new PushbackInputStream(request.getInputStream());
+		int b = in.read();
+		if(b >= 0) {
 			try {
+				in.unread(b);
 				docRequest = WbXMLTransformer.transformFromWBXML(in);
 				if(logger.isLoggable(Level.FINEST)) {
 					logger.finest("=-=-=-= Request =-=-=-= ");
@@ -113,12 +114,7 @@ public abstract class AbstractServerHandler implements ServerHandler {
 					logger.finest("=-=-=-= Request =-=-=-= ");
 				}
 			} catch(Exception e) {
-				// null occurs in case of empty messages. Log at level FINE. Others at WARNING
-				SysLog.log(
-					"null".equals(e.getMessage()) ? Level.FINE : Level.WARNING,
-					"Exception occurred when reading WBXML message. For more info see detail log.", e.getMessage()
-				);
-				SysLog.detail(e.getMessage(), e.getCause());
+				new ServiceException(e).log();
 			}
 		}
 		Document docResponse = this.handle(

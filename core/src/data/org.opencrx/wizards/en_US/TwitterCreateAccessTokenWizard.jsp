@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterCreateAccessTokenWizard.jsp,v 1.2 2010/10/02 22:09:20 wfro Exp $
+ * Name:        $Id: TwitterCreateAccessTokenWizard.jsp,v 1.4 2011/12/12 10:31:18 cmu Exp $
  * Description: TwitterCreateAccessTokenWizard
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 22:09:20 $
+ * Date:        $Date: 2011/12/12 10:31:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ java.util.*,
 java.io.*,
 java.text.*,
 twitter4j.*,
-twitter4j.http.*,
+twitter4j.auth.*,
 org.opencrx.kernel.backend.Activities,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
@@ -135,7 +135,8 @@ org.openmdx.base.naming.*
 			segmentName, 
 			rootPm
 		);
-    Twitter twitter = new TwitterFactory().getOAuthAuthorizedInstance(
+    Twitter twitter = new TwitterFactory().getInstance();
+    twitter.setOAuthConsumer(
     	org.opencrx.application.twitter.TwitterUtils.getConsumerKey(twitterAccount, configuration),
     	org.opencrx.application.twitter.TwitterUtils.getConsumerSecret(twitterAccount, configuration)    	
     );
@@ -210,7 +211,7 @@ org.openmdx.base.naming.*
 					}
 %>										
 				</div>
-				<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9000" value="OK" onclick="javascript:$('Command').value=this.name;" />
+				<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 				<input  type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 			</td>
 		</tr>

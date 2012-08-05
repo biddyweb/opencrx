@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DateTimePropertyDataBinding.java,v 1.5 2008/11/28 17:02:53 wfro Exp $
+ * Name:        $Id: DateTimePropertyDataBinding.java,v 1.7 2012/01/06 13:22:51 wfro Exp $
  * Description: DateTimePropertyDataBinding
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/28 17:02:53 $
+ * Date:        $Date: 2012/01/06 13:22:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,8 @@ package org.opencrx.kernel.portal;
 
 import java.util.Date;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -96,16 +98,15 @@ public class DateTimePropertyDataBinding extends AbstractPropertyDataBinding {
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p == null) {
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = 
-                (org.opencrx.kernel.base.jmi1.BasePackage)object.refOutermostPackage().refPackage(
-                    org.opencrx.kernel.base.jmi1.BasePackage.class.getName()
-                );
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+        	p = pm.newInstance(DateTimeProperty.class);
+        	p.refInitialize(false, false);
             this.createProperty(
                 object,
                 qualifiedFeatureName,
-                p = basePkg.getDateTimeProperty().createDateTimeProperty()
+                p
             );                
-        }                
+        }
         if(p instanceof DateTimeProperty) {
             if(newValue instanceof XMLGregorianCalendar) {
                 ((DateTimeProperty)p).setDateTimeValue(((XMLGregorianCalendar)newValue).toGregorianCalendar().getTime());
@@ -115,5 +116,5 @@ public class DateTimePropertyDataBinding extends AbstractPropertyDataBinding {
             }
         }
     }
-        
+
 }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityImpl.java,v 1.37 2010/09/16 00:16:58 wfro Exp $
+ * Name:        $Id: ActivityImpl.java,v 1.38 2011/06/13 22:24:56 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.38 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/16 00:16:58 $
+ * Date:        $Date: 2011/06/13 22:24:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,9 @@ import java.util.List;
 
 import javax.jdo.JDOUserException;
 
+import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.uom1.jmi1.Uom;
@@ -140,17 +142,22 @@ public class ActivityImpl
         org.opencrx.kernel.activity1.jmi1.ReapplyActivityCreatorParams params
     ) {
         try {
-            Activities.getInstance().reapplyActivityCreator(
-                this.sameObject(),
-                params.getActivityCreator() == null ? 
-                	this.sameObject().getLastAppliedCreator() : 
-                	params.getActivityCreator()
-            );
-            return super.newVoid();            
+        	ActivityCreator activityCreator = params.getActivityCreator() == null ? 
+                this.sameObject().getLastAppliedCreator() : 
+                	params.getActivityCreator();
+            if(activityCreator != null) {
+            	List<ActivityGroup> activityGroups = activityCreator.getActivityGroup();
+	            Activities.getInstance().reapplyActivityCreator(
+	                this.sameObject(),
+	                activityCreator,
+	                activityGroups
+	            );
+            }
+            return super.newVoid();
         }
         catch(ServiceException e) {
             throw new JmiServiceException(e);
-        }                    
+        }
     }
     
     //-----------------------------------------------------------------------

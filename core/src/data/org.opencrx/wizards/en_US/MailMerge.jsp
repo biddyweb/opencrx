@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MailMerge.jsp,v 1.33 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: MailMerge.jsp,v 1.34 2011/09/23 09:46:22 wfro Exp $
  * Description: mail merge addresses of group's members --> RTF document
- * Revision:    $Revision: 1.33 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/09/23 09:46:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -152,7 +152,7 @@ org.openmdx.kernel.log.*
    final String TEMPLATE_MIMETYPE1 = "application/rtf";
    final String TEMPLATE_MIMETYPE2 = "text/rtf";
 
-   final String featurePostalCountryCode = "org:opencrx:kernel:address1:PostalAddressable:postalCountry";
+   final String featurePostalCountryCode = "country";
    final String documentName = "MailMerge";
 
    String templateXri   = request.getParameter("templateXri"); // XRI of a mediaContent object

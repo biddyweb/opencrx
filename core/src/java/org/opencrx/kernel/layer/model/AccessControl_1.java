@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.150 2011/04/01 12:28:24 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.163 2011/12/21 14:48:49 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.150 $
+ * Revision:    $Revision: 1.163 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/04/01 12:28:24 $
+ * Date:        $Date: 2011/12/21 14:48:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.kernel.layer.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,9 +66,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.jdo.FetchGroup;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.resource.ResourceException;
@@ -78,7 +81,10 @@ import javax.resource.cci.MappedRecord;
 
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.layer.model.SecurityContext.CachedPrincipal;
+import org.opencrx.kernel.generic.SecurityKeys.Action;
+import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.security.realm1.cci2.PrincipalGroupQuery;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
@@ -90,10 +96,10 @@ import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
 import org.openmdx.application.dataprovider.layer.model.Standard_1;
 import org.openmdx.application.dataprovider.spi.Layer_1;
-import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.accessor.rest.DataManagerFactory_1;
+import org.openmdx.base.collection.Sets;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
@@ -102,13 +108,20 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.ConfigurableProperty;
 import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.cci.MessageRecord;
 import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
+import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
+import org.openmdx.security.realm1.jmi1.Group;
+import org.openmdx.security.realm1.jmi1.Permission;
+import org.openmdx.security.realm1.jmi1.Principal;
+import org.openmdx.security.realm1.jmi1.Realm;
+import org.openmdx.security.realm1.jmi1.Role;
 
 /**
  * openCRX access control plugin. Implements the openCRX access control logic.
@@ -120,7 +133,7 @@ public class AccessControl_1 extends Standard_1 {
 	) {
 	}
 
-    // --------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     public Interaction getInteraction(
         Connection connection
     ) throws ResourceException {
@@ -136,7 +149,716 @@ public class AccessControl_1 extends Standard_1 {
     		principal.getIdentity().getBase()
     	);
     }
-    	
+
+    //-------------------------------------------------------------------------
+    interface GetRunAsPrincipalResult {
+    	CachedPrincipal getPrincipal();
+    	Path getUserIdentity();
+    }
+    
+    //-------------------------------------------------------------------------
+	public class CachedPrincipal {
+	
+		public CachedPrincipal(
+			DefaultRealm realm,
+			Principal principal,
+			Set<String> allSupergroups,
+			long expiresAt
+		) {
+			this.realm = realm;
+			this.principalIdentity = principal.refGetPath();
+			this.isMemberOf = new TreeSet<String>();
+			List<Group> groups = principal.getIsMemberOf();			
+			for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
+				try {
+					Group group = i.next();
+					this.isMemberOf.add(group.refGetPath().getBase());
+				}
+				catch(Exception e) {
+					ServiceException e0 = new ServiceException(
+						e,
+						OpenCrxException.DOMAIN,
+						BasicException.Code.GENERIC,
+						"Unable to principal's group membership",
+						new BasicException.Parameter("principal", principal.refGetPath())
+					);
+					e0.log();
+				}
+			}
+			this.permissions = new HashSet<String[]>();
+			if(principal instanceof org.opencrx.security.realm1.jmi1.Principal) {
+				List<Role> roles = ((org.opencrx.security.realm1.jmi1.Principal)principal).getGrantedRole();
+				for(Role role: roles) {
+					Collection<Permission> permissions = role.getPermission();
+					for(Permission permission: permissions) {
+						for(String action: permission.getAction()) {
+							this.permissions.add(
+								new String[]{permission.getName(), action}
+							);
+						}
+					}
+				}
+			}
+			this.allSupergroups = allSupergroups;
+			this.expiresAt = expiresAt;
+		}
+		
+		public Path getIdentity(
+		) {
+			return this.principalIdentity;
+		}
+		
+		public DefaultRealm getRealm(
+		) {
+			return this.realm;
+		}
+		
+		public void setPrimaryGroup(
+			Path primaryGroup
+		) {
+			this.primaryGroup = primaryGroup;
+		}
+		
+		public Path getPrimaryGroup(
+		) {
+			return this.primaryGroup;
+		}
+		
+		public Set<String> getIsMemberOf(
+		) {
+			return this.isMemberOf;
+		}
+		
+		public Set<String> getPermissions(
+			String action
+		) {
+			Set<String> permissions = new HashSet<String>();
+			for(String[] permission: this.permissions) {
+				if(action.equals(permission[1])) {
+					permissions.add(permission[0]);
+				}
+			}
+			return permissions;
+		}
+		
+		public long getExpiresAt(
+		) {
+			return this.expiresAt;
+		}
+		
+	    private List<PrincipalGroup> getSubgroups(
+	    	PersistenceManager pm
+	    ) throws ServiceException {
+	    	Realm realm = (Realm)pm.getObjectById(this.realm.getRealmIdentity());
+	    	Principal group = (Principal)pm.getObjectById(
+	    		this.principalIdentity
+	    	);
+	    	// Do not calculate subgroups for final groups
+	    	if(group instanceof PrincipalGroup && Boolean.TRUE.equals(((PrincipalGroup)group).isFinal())) {
+	    		return Collections.emptyList();
+	    	}
+		    PrincipalGroupQuery query = (PrincipalGroupQuery)pm.newQuery(PrincipalGroup.class);
+	    	query.thereExistsIsMemberOf().equalTo(group);
+	    	return realm.getPrincipal(query);
+	    }
+
+		private Set<String> getAllSubgroups(
+			PersistenceManager pm
+		) throws ServiceException {
+            Set<String> allSubgroups = new HashSet<String>();
+            allSubgroups.add(AccessControl_1.this.getQualifiedPrincipalName(this.principalIdentity));
+            for(PrincipalGroup subgroup: this.getSubgroups(pm)) {
+            	String qualifiedGroupName = AccessControl_1.this.getQualifiedPrincipalName(subgroup.refGetPath());
+            	if(!allSubgroups.contains(qualifiedGroupName)) {
+                	allSubgroups.addAll(
+                		this.realm.getPrincipal(qualifiedGroupName).getAllSubgroups()
+                	);
+            	}
+            }
+            return allSubgroups;
+		}
+		
+		public Set<String> getAllSubgroups(
+		) throws ServiceException {
+			if(this.allSubgroups == null) {
+				PersistenceManager pm = AccessControl_1.this.newDelegatingPersistenceManager();
+				this.allSubgroups = this.getAllSubgroups(pm);
+                pm.close();
+			}
+			return this.allSubgroups;
+		}
+		
+		public Set<String> getAllSupergroups(
+		) {
+			return this.allSupergroups;
+		}
+		
+		public String toString(
+		) {
+			return this.getIdentity().toString();
+		}
+		
+		private final DefaultRealm realm;
+		private long expiresAt;
+		private final Path principalIdentity;
+		private final Set<String> isMemberOf;
+		private final Set<String[]> permissions;
+		private Set<String> allSubgroups = null;
+		private final Set<String> allSupergroups;
+		private Path primaryGroup;
+	}
+
+    //-------------------------------------------------------------------------
+    public class DefaultRealm {
+        
+        public DefaultRealm(
+            Path realmIdentity
+        ) throws ServiceException {
+            this.realmIdentity = realmIdentity;
+            this.isActive = true;
+            if(System.getProperty(SecurityKeys.ENABLE_SECURITY_PROPERTY) != null) {
+                this.isActive = "true".equals(System.getProperty(SecurityKeys.ENABLE_SECURITY_PROPERTY));
+            }
+            if(!this.isActive) {
+                System.out.println("WARNING: AccessControl_1 is not active. Activate with system property " + SecurityKeys.ENABLE_SECURITY_PROPERTY + "=true. Default is true.");
+            }
+            if(System.getProperty(SecurityKeys.REALM_REFRESH_RATE_MILLIS) != null) {
+            	this.cachedPrincipalsTTL = Long.valueOf(System.getProperty(SecurityKeys.REALM_REFRESH_RATE_MILLIS));
+            }
+        }
+        
+        protected CachedPrincipal getPrincipal(
+            String principalName
+        ) throws ServiceException {
+        	// In case name is qualified
+        	if(principalName.indexOf(":") > 0) {
+        		principalName = principalName.substring(principalName.indexOf(":") + 1);
+        	}
+        	CachedPrincipal cachedPrincipal = this.cachedPrincipals.get(principalName);
+        	if(cachedPrincipal == null || System.currentTimeMillis() > cachedPrincipal.getExpiresAt()) {
+                PersistenceManager pm = AccessControl_1.this.newDelegatingPersistenceManager();
+                Principal principal = null;
+                try {
+                    principal = (Principal)pm.getObjectById(
+                        this.realmIdentity.getDescendant(new String[]{"principal", principalName})
+                    );
+                    Set<String> allSupergroups = new HashSet<String>();
+                    allSupergroups.add(AccessControl_1.this.getQualifiedPrincipalName(principal.refGetPath()));
+                    List<Group> supergroups = principal.getIsMemberOf();
+                    for(Iterator<Group> i = supergroups.iterator(); i.hasNext(); ) {
+                    	try {
+                    		Group supergroup = i.next();
+    	                	String qualifiedGroupName = AccessControl_1.this.getQualifiedPrincipalName(supergroup.refGetPath());
+    	                	if(!allSupergroups.contains(qualifiedGroupName)) {
+    		                	allSupergroups.addAll(
+    		                		this.getPrincipal(qualifiedGroupName).getAllSupergroups()
+    		                	);
+    	                	}
+                    	}
+                    	catch(Exception e) {
+        					ServiceException e0 = new ServiceException(
+        						e,
+        						OpenCrxException.DOMAIN,
+        						BasicException.Code.GENERIC,
+        						"Unable to principal's group membership",
+        						new BasicException.Parameter("principal", principal.refGetPath())
+        					);
+        					e0.log();
+                    	}
+                    }
+                    this.cachedPrincipals.put(
+                        principalName,
+                        cachedPrincipal = new CachedPrincipal(
+                        	this,
+                        	principal,
+                        	allSupergroups,
+                        	System.currentTimeMillis() + this.cachedPrincipalsTTL
+                        )
+                    );
+                }
+                catch(Exception e) {
+                	new ServiceException(e).log();
+                    this.cachedPrincipals.remove(principalName);
+                }
+                finally {
+                	pm.close();
+                }    		
+        	}
+    	    if(cachedPrincipal == null) {
+            	SysLog.warning("principal not found", principalName);
+    	        throw new ServiceException(
+                    BasicException.Code.DEFAULT_DOMAIN,
+                    BasicException.Code.NOT_FOUND, 
+                    "principal not found",
+                    new BasicException.Parameter("realm", this.realmIdentity),
+                    new BasicException.Parameter("principal", principalName)
+    	        );
+    	    }
+    	    return cachedPrincipal;
+        }
+
+        //-----------------------------------------------------------------------
+	    public GetRunAsPrincipalResult getRunAsPrincipal(
+	    	ServiceHeader header,
+	    	DataproviderRequest request,
+	    	LayerInteraction interaction
+	    ) throws ServiceException {
+	        CachedPrincipal principal = this.getPrincipal(
+	        	AccessControl_1.this.getPrincipalName(header)
+	        );
+	        Path userIdentity = AccessControl_1.this.getUser(principal);
+	        // Check for runAs permission
+	        Set<String> runAsPermissions = new HashSet<String>();
+	        if(
+	        	(header.getPrincipalChain().size() >= 2) &&
+	        	this.hasPermission(request, null, null, principal, userIdentity, Action.RUN_AS, runAsPermissions, interaction)
+	        ) {
+	        	boolean hasRunAsPermission = false;
+	        	for(String runAsPermission: runAsPermissions) {
+	        		if(runAsPermission.indexOf("@") > 0) {
+	        			String runAsPrincipalName = runAsPermission.substring(runAsPermission.indexOf("@") + 1);
+	        			if(runAsPrincipalName.equals(header.getPrincipalChain().get(1))) {
+	        				if(hasRunAsPermission) {
+	        	        		SysLog.warning("Multiple runAs permissions found. Accepting first only.", Arrays.asList(header.getPrincipalChain(), principal, runAsPermissions));        					
+	        				}
+	        				else {
+			        			CachedPrincipal runAsPrincipal = this.getPrincipal(runAsPrincipalName);
+			        	        Path runAsUserIdentity = AccessControl_1.this.getUser(runAsPrincipal);
+			        	        SysLog.detail("Applying runAs permission", Arrays.asList(principal, userIdentity, runAsPrincipal, runAsUserIdentity));
+			        	        principal = runAsPrincipal;
+			        	        userIdentity = runAsUserIdentity;
+			        	        hasRunAsPermission = true;
+	        				}
+	        			}
+	        		} else if(!runAsPermission.equals(ALL_PERMISSION)){
+		        		SysLog.warning("Invalid format for runAs permission. Accepted format is 'authority@principal'. Ignoring.", Arrays.asList(principal, runAsPermissions));	        			
+	        		}
+	        	}
+	        }
+	        final CachedPrincipal fPrincipal = principal;
+	        final Path fUserIdentity = userIdentity;
+	        
+	        return new GetRunAsPrincipalResult(){
+				@Override
+                public CachedPrincipal getPrincipal() {
+					return fPrincipal;
+                }
+				@Override
+                public Path getUserIdentity() {
+					return fUserIdentity;
+                }	        	
+	        };
+	    }
+        
+        protected Path getPrimaryGroup(
+        	CachedPrincipal principal
+        ) throws ServiceException {
+            try {
+            	if(principal.getPrimaryGroup() == null) {
+    	            String providerName = principal.getIdentity().get(2);
+    	            String segmentName = principal.getIdentity().get(principal.getIdentity().size()-3);
+    	            PersistenceManager pm = AccessControl_1.this.newDelegatingPersistenceManager();            
+    	            UserHome userHome = (UserHome)pm.getObjectById(
+    	                new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", principal.getIdentity().getBase())
+    	            );
+    	            PrincipalGroup userGroup = userHome.getPrimaryGroup();
+    	            Path primaryGroup = userGroup == null ? 
+    	            	this.getPrincipal(principal.getIdentity().getBase() + "." + SecurityKeys.USER_SUFFIX).getIdentity() : 
+    	            		this.getPrincipal(userGroup.refGetPath().getBase()).getIdentity();
+    	            principal.setPrimaryGroup(primaryGroup);
+    	            pm.close();	            
+            	}
+            	return principal.getPrimaryGroup();
+            }
+            // In case the principal does not have a user home
+            // which defines the primary group fallback to user principal
+            catch(Exception e) {
+            	Path primaryGroup = 
+            		this.getPrincipal(principal.getIdentity().getBase() + "." + SecurityKeys.USER_SUFFIX).getIdentity();
+            	principal.setPrimaryGroup(primaryGroup);
+            	return primaryGroup;
+            }
+        }
+        
+        //-----------------------------------------------------------------------
+        protected Set<String> getPermissions(
+        	DataproviderRequest request,
+        	CachedPrincipal principal,
+        	Path userIdentity,
+            short accessLevel,
+            Action action
+        ) {
+            Set<String> permissions = new HashSet<String>();
+        	//
+        	// Map group memberships to permissions
+        	//
+        	{
+	            // GLOBAL or Root
+	            if(
+	            	!this.isActive || 
+	            	(accessLevel == SecurityKeys.ACCESS_LEVEL_GLOBAL) || 
+	            	principal.getIdentity().getBase().equals(SecurityKeys.ROOT_PRINCIPAL)
+	            ) {
+	                return null;
+	            }
+	            // PRIVATE --> grant requesting user access to all owned objects
+	            if(accessLevel >= SecurityKeys.ACCESS_LEVEL_PRIVATE) {
+	                permissions.add(
+	                    AccessControl_1.this.getQualifiedPrincipalName(principal.getIdentity())
+	                );
+	                permissions.add(
+	                	AccessControl_1.this.getQualifiedPrincipalName(userIdentity)
+	                );
+	            }
+	            // BASIC, DEEP --> all direct subgroups, supergroups 
+	            if(
+	            	(accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) || 
+	            	(accessLevel == SecurityKeys.ACCESS_LEVEL_BASIC)
+	            ) {
+	            	Set<String> groups = principal.getIsMemberOf();
+	                if(AccessControl_1.this.useExtendedAccessLevelBasic) {	            	
+	                    for(String group: groups) {
+	                    	try {
+	                    		CachedPrincipal p = this.getPrincipal(group);
+	    	                    permissions.addAll(
+	    	                        p.getAllSubgroups()
+	    	                    );
+	                    	} catch(Exception e) {
+	                    		new ServiceException(e).log();
+	                    	}
+	                    }
+	                }
+	                // Add all supergroups
+	                for(String group: groups) {
+	                	try {
+	                		CachedPrincipal p = this.getPrincipal(group);
+	    	                permissions.addAll(
+	    	                	p.getAllSupergroups()
+	    	                );
+	                	} catch(Exception e) {
+	                		new ServiceException(e).log();
+	                	}
+	                }
+	            }
+	            // DEEP --> all subgroups of direct and supergroups
+	            if(accessLevel == SecurityKeys.ACCESS_LEVEL_DEEP) {
+	                // All subgroups of all supergroups
+	            	Set<String> newMemberships = new HashSet<String>();
+	                for(String group: permissions) {
+	                	try {
+	                		CachedPrincipal p = this.getPrincipal(group);
+	    	                newMemberships.addAll(
+	    	                	p.getAllSubgroups()
+	    	                );
+	                	} catch(Exception e) {
+	                		new ServiceException(e).log();
+	                	}
+	                }
+	                permissions.addAll(newMemberships);
+	                newMemberships.clear();
+	                // ... and their supergroups
+	                for(String group: permissions) {
+	                	try {
+	                		CachedPrincipal p = this.getPrincipal(group);
+	                        newMemberships.addAll(
+	                            p.getAllSupergroups()
+	                        );
+	                	} catch(Exception e) {
+	                		new ServiceException(e).log();
+	                	}
+	                }
+	                permissions.addAll(newMemberships);
+	            }
+        	}
+        	// Assigned permissions
+        	{
+        		permissions.addAll(
+        			principal.getPermissions(action.getName())
+        		);
+        	}
+            // Member of Root:Administrators --> access level global
+            return permissions.contains(SecurityKeys.ROOT_ADMINISTRATORS_GROUP) ? 
+            	null : 
+            	permissions;
+        }
+
+        //-----------------------------------------------------------------------
+        public Path getRealmIdentity(
+        ) {
+        	return this.realmIdentity;
+        }
+        
+        //-----------------------------------------------------------------------
+        public boolean hasPermission(
+        	DataproviderRequest request,
+        	Object_2Facade secureObject,
+        	Object_2Facade parent,        	
+        	CachedPrincipal principal,
+        	Path userIdentity,
+        	Action action,
+        	Set<String> grantedPermissions,
+        	LayerInteraction interaction
+        ) throws ServiceException {
+			if(secureObject == null && Object_2Facade.isDelegate(request.object())) {
+				secureObject = Facades.asObject(request.object());
+			}
+        	// DELETE
+        	if(action == Action.DELETE) {
+	            Set<String> permissions = new HashSet<String>();
+	            if(secureObject.attributeValuesAsList("accessLevelDelete").isEmpty()) {
+	            	SysLog.error("Missing value for attribute 'accessLevelDelete'", secureObject);
+	            }
+	            else {
+	                permissions = this.getPermissions(
+	                	request,
+		                principal,
+	                    userIdentity,
+		                ((Number)secureObject.attributeValue("accessLevelDelete")).shortValue(),
+		                action
+	                );
+	            }
+	            if(permissions != null) {
+	            	if(grantedPermissions != null) {
+	            		grantedPermissions.addAll(permissions);
+	            	}
+	                permissions.retainAll(secureObject.attributeValuesAsList("owner"));
+		            return !permissions.isEmpty();
+	            } else {
+	            	if(grantedPermissions != null) {
+	            		grantedPermissions.add(ALL_PERMISSION);
+	            	}
+	            	return true;
+	            }
+        	}
+        	// UPDATE
+        	else if(action == Action.UPDATE) {
+	            Set<String> permissions = new HashSet<String>();
+	            if(secureObject.attributeValuesAsList("accessLevelUpdate").isEmpty()) {
+	            	SysLog.error("Missing value for attribute 'accessLevelUpdate'", secureObject);
+	            }
+	            else {
+	                permissions = this.getPermissions(
+	                	request,
+		                principal,
+	                    userIdentity,
+		                ((Number)secureObject.attributeValue("accessLevelUpdate")).shortValue(),
+		                action
+	                );
+	            }
+	            if(permissions != null) {
+	            	if(grantedPermissions != null) {
+	            		grantedPermissions.addAll(permissions);
+	            	}
+	                permissions.retainAll(secureObject.attributeValuesAsList("owner"));
+		            return !permissions.isEmpty();
+	            } else {
+	            	if(grantedPermissions != null) {
+	            		grantedPermissions.add(ALL_PERMISSION);
+	            	}
+	            	return true;
+	            }
+        	}
+        	// READ
+        	else if(action == Action.READ) {
+                Set<String> permissions = new HashSet<String>();
+                if(parent.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
+                	SysLog.error("Missing value for attribute 'accessLevelBrowse'", parent);
+                }
+                else {
+                    permissions = this.getPermissions(
+                    	request,
+                        principal,
+                        userIdentity,
+                        parent == null ? 
+	                    	SecurityKeys.ACCESS_LEVEL_GLOBAL : 
+	                    	((Number)parent.attributeValue("accessLevelBrowse")).shortValue(),                        
+                        action
+                    );
+                }
+                if(permissions != null) {
+                	if(grantedPermissions != null) {
+                		grantedPermissions.addAll(permissions);
+                	}
+                    permissions.retainAll(secureObject.attributeValuesAsList("owner"));
+                    return !permissions.isEmpty();
+                }
+                else {
+	            	if(grantedPermissions != null) {
+	            		grantedPermissions.add(ALL_PERMISSION);
+	            	}
+                	return true;
+                }
+        	}
+        	// RUN_AS
+        	if(action == Action.RUN_AS) {
+        		Set<String> permissions = this.getPermissions(
+                	request,
+                    principal,
+                    userIdentity,
+                   	SecurityKeys.ACCESS_LEVEL_NA, 
+                    action
+                );
+                if(permissions != null) {
+                	// runAs permissions are of the form
+                	// * object:authority/object path@runAsPrincipal', e.g. object:org.opencrx.kernel.activity1/tracker/guest@admin-Standard
+                	// * groupMembership:authority/group path@runAsPrincipal, e.g. groupMembership:org.opencrx.kernel.activity1/tracker/guest@admin-Standard@admin-Standard
+                	for(Iterator<String> i = permissions.iterator(); i.hasNext(); ) {
+                		String permission = i.next();
+                		boolean matches = false;
+                		// object: runAs permission
+                		if(permission.startsWith("object:")) {
+                			String[] components = permission.substring(7, permission.indexOf("@")).split("/");
+                			if(components.length > 0) {
+                				Path pattern = new Path("xri://@openmdx*" + components[0]).getDescendant("provider", request.path().get(2), "segment", request.path().get(4));
+                				for(int j = 1; j < components.length; j++) {
+                					pattern = pattern.getDescendant(components[j]);
+                				}
+                        		if(request.path().isLike(pattern)) {
+                        			matches = true;
+                        		}
+                        		// runAs permission defined for activityCreator implies runAs permission for 
+                        		// activities created with this creator and their composites
+                        		else if(
+                        			secureObject != null &&
+                        			secureObject.getPath().startsWith(new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", request.path().get(2), "segment", request.path().get(4), "activity"))
+                        		) {
+                        			Object_2Facade activity = null;
+                        			if(request.path().isLike(new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", request.path().get(2), "segment", request.path().get(4), "activity", ":*"))) {
+                        				activity = secureObject;
+                        			} else {
+                        				try {
+                        					activity = Facades.asObject(interaction.retrieveObject(secureObject.getPath().getPrefix(7)));
+                        				} catch(Exception e) {}
+                        			}
+                        			if(
+                        				activity != null &&
+                        				activity.attributeValue("lastAppliedCreator") != null &&
+                        				((Path)activity.attributeValue("lastAppliedCreator")).isLike(pattern)
+	                        		) {
+	                        			matches = true;
+	                        		}
+                        		}
+                			}
+                		}
+                		// groupMembership: runAs permission
+                		else if(permission.startsWith("groupMembership:")) {
+	    					// Activity group membership
+	    					if(
+	    						request.path().startsWith(new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", request.path().get(2), "segment", request.path().get(4), "activity")) &&
+	    						request.path().size() >= 7
+	    					) {
+	                			String[] groupIdentityComponents = permission.substring(16, permission.indexOf("@")).split("/");
+	                			if(groupIdentityComponents.length > 0) {
+	                				Path groupIdentity = new Path("xri://@openmdx*" + groupIdentityComponents[0]).getDescendant("provider", request.path().get(2), "segment", request.path().get(4));
+	                				for(int j = 1; j < groupIdentityComponents.length; j++) {
+	                					groupIdentity = groupIdentity.getDescendant(groupIdentityComponents[j]);
+	                				}
+	                				Object_2Facade group = null;
+	                				try {
+	                					group = Facades.asObject(interaction.retrieveObject(groupIdentity));
+	                				} catch(Exception e) {}
+	                				if(group != null) {
+	            						Path activityIdentity = request.path().getPrefix(7);
+	            						MappedRecord[] groupAssignments = interaction.findObjects(activityIdentity.getDescendant("assignedGroup"));
+	            						for(int j = 0; j < groupAssignments.length; j++) {
+	            							Object_2Facade groupAssignment = null;
+	            							try {
+	            								groupAssignment = Facades.asObject(groupAssignments[j]);
+	            							} catch(Exception e) {}
+	            							if(groupAssignment != null) {
+	            								if(group.getPath().equals(groupAssignment.attributeValue("activityGroup"))) {
+	            									matches = true;
+	            									break;
+	            								}
+	            							}
+	            						}
+                					}
+	                			}
+	    					}
+        					else {
+        						// Test for other memberships TBD
+        					}
+                		}
+                		if(!matches) {
+                			i.remove();
+                		}
+                	}
+                	if(grantedPermissions != null) {
+                		grantedPermissions.addAll(permissions);
+                	}
+                    return !permissions.isEmpty();
+                }
+                else {
+	            	if(grantedPermissions != null) {
+	            		grantedPermissions.add(ALL_PERMISSION);
+	            	}
+                	return true;
+                }
+        	}
+        	else {
+            	SysLog.error("Unknown action", action.toString());
+        		return false;
+        	}
+        }
+
+        //-------------------------------------------------------------------------
+        public void restrictQuery(
+        	DataproviderRequest request,
+        	Object_2Facade object,
+        	CachedPrincipal principal,
+            Path userIdentity    	
+        ) throws ServiceException {
+        	Set<String> memberships = new HashSet<String>();    	
+            if(object.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
+            	SysLog.error("Missing attribute value for accessLevelBrowse", object);
+            }
+            else {
+                memberships = this.getPermissions(
+                	request,
+                    principal,
+                    userIdentity,
+                    ((Number)object.attributeValue("accessLevelBrowse")).shortValue(),
+                    Action.READ
+                );
+            }
+            // allowedPrincipals == null --> global access. Do not restrict to allowed subjects
+            if(memberships != null) {
+            	// Restrict access to objects for which user has read access
+            	FilterProperty ownerFilterProperty = null;
+            	for(FilterProperty p: request.attributeFilter()) {
+            		if("owner".equals(p.name())) {
+            			ownerFilterProperty = p;
+            			break;
+            		}
+            	}
+            	if(ownerFilterProperty != null) {
+            		memberships.retainAll(
+            			ownerFilterProperty.values()
+            		);
+            	}
+        		// Add condition for owner
+            	if(!memberships.isEmpty()) {
+    	            request.addAttributeFilterProperty(
+    	                new FilterProperty(
+    	                    Quantifier.THERE_EXISTS.code(),
+    	                    "owner",
+    	                    ConditionType.IS_IN.code(),
+    	                    memberships.toArray()
+    	                )
+    	            );
+            	}
+            }
+        }
+
+        //-----------------------------------------------------------------------
+        // Variables
+        //-----------------------------------------------------------------------    
+        private final Path realmIdentity;        
+        private Map<String,CachedPrincipal> cachedPrincipals = new ConcurrentHashMap<String,CachedPrincipal>();
+        private boolean isActive = true;
+        private long cachedPrincipalsTTL = 120000;        
+    }
+    
     //-------------------------------------------------------------------------
     protected Path getUserIdentity(
     	String qualifiedPrincipalName
@@ -158,7 +880,7 @@ public class AccessControl_1 extends Standard_1 {
         	principalName
         );
     }
-    
+
     //-------------------------------------------------------------------------
     protected Path getUserIdentity(
     	String realmName,
@@ -182,89 +904,11 @@ public class AccessControl_1 extends Standard_1 {
 
     //-------------------------------------------------------------------------
     protected Path getUser(
-    	SecurityContext.CachedPrincipal principal
+    	CachedPrincipal principal
     ) throws ServiceException {
     	return this.getUserIdentity(principal);
     }
         
-    //-------------------------------------------------------------------------
-    protected boolean hasReadAccess(
-    	Object_2Facade objectFacade,
-    	Object_2Facade parentFacade,
-    	SecurityContext securityContext,
-    	SecurityContext.CachedPrincipal requestingPrincipal,
-        Path requestingUser
-    ) throws ServiceException {
-        Set<String> memberships = new HashSet<String>();
-        if(parentFacade.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
-        	SysLog.error("missing attribute value for accessLevelBrowse", parentFacade);
-        }
-        else {
-            memberships = securityContext.getMemberships(
-                requestingPrincipal,
-                requestingUser,
-                ((Number)parentFacade.attributeValue("accessLevelBrowse")).shortValue(),
-                AccessControl_1.this.useExtendedAccessLevelBasic
-            );
-        }
-        if(memberships != null) {
-            memberships.retainAll(objectFacade.attributeValuesAsList("owner"));
-            return !memberships.isEmpty();
-        }
-        else {
-        	return true;
-        }
-    }
-    
-    //-------------------------------------------------------------------------
-    protected void applyBrowseFilter(
-    	Object_2Facade parentFacade,
-    	DataproviderRequest request,
-    	SecurityContext securityContext,
-    	SecurityContext.CachedPrincipal requestingPrincipal,
-        Path requestingUser    	
-    ) throws ServiceException {
-    	Set<String> memberships = new HashSet<String>();    	
-        if(parentFacade.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
-        	SysLog.error("Missing attribute value for accessLevelBrowse", parentFacade);
-        }
-        else {
-            memberships = securityContext.getMemberships(
-                requestingPrincipal,
-                requestingUser,
-                ((Number)parentFacade.attributeValue("accessLevelBrowse")).shortValue(),
-                AccessControl_1.this.useExtendedAccessLevelBasic
-            );
-        }
-        // allowedPrincipals == null --> global access. Do not restrict to allowed subjects
-        if(memberships != null) {
-        	// Optimize query
-        	FilterProperty ownerFilterProperty = null;
-        	for(FilterProperty p: request.attributeFilter()) {
-        		if("owner".equals(p.name())) {
-        			ownerFilterProperty = p;
-        			break;
-        		}
-        	}
-        	if(ownerFilterProperty != null) {
-        		memberships.retainAll(
-        			ownerFilterProperty.values()
-        		);
-        	}
-    		// Add condition for owner
-        	if(!memberships.isEmpty()) {
-	            request.addAttributeFilterProperty(
-	                new FilterProperty(
-	                    Quantifier.THERE_EXISTS.code(),
-	                    "owner",
-	                    ConditionType.IS_IN.code(),
-	                    memberships.toArray()
-	                )
-	            );
-        	}
-        }
-    }
-    
     //-------------------------------------------------------------------------
     protected Path getGroupIdentity(
         Path accessPath,
@@ -318,15 +962,17 @@ public class AccessControl_1 extends Standard_1 {
 	    ) throws ServiceException {
 	        try {
 	        	DataproviderRequest getRequest = new DataproviderRequest(
-	                Object_2Facade.newInstance(identity).getDelegate(),
+	                Query_2Facade.newInstance(identity).getDelegate(),
 	                DataproviderOperations.OBJECT_RETRIEVAL,
-	                AttributeSelectors.ALL_ATTRIBUTES,
-	                new AttributeSpecifier[]{}
+	                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier("owner")
+	                }
 	            );
 	        	DataproviderReply getReply = this.newDataproviderReply();
-		        super.get(
+		        super.get(  
 		            getRequest.getInteractionSpec(),
-		            Query_2Facade.newInstance(getRequest.path()),
+		            Query_2Facade.newInstance(getRequest.object()),
 		            getReply.getResult()
 		        );
 		        return getReply.getObject();
@@ -335,13 +981,42 @@ public class AccessControl_1 extends Standard_1 {
 	        	throw new ServiceException(e);
 	        }
 	    }
-    
+
+	    //-------------------------------------------------------------------------
+	    protected MappedRecord[] findObjects(
+	        Path reference
+	    ) throws ServiceException {
+	        try {
+	        	DataproviderRequest findRequest = new DataproviderRequest(
+		            Query_2Facade.newInstance(reference).getDelegate(),
+                    DataproviderOperations.ITERATION_START,
+                    new FilterProperty[]{},
+                    0, 
+                    Integer.MAX_VALUE,
+                    SortOrder.ASCENDING.code(),
+                    AttributeSelectors.ALL_ATTRIBUTES,
+                    new AttributeSpecifier[]{}
+	            );
+	        	DataproviderReply findReply = this.newDataproviderReply();
+		        super.find(
+		            findRequest.getInteractionSpec(),
+		            Query_2Facade.newInstance(findRequest.object()),
+		            findReply.getResult()
+		        );
+		        return findReply.getObjects();
+	        }
+	        catch (Exception e) {
+	        	new ServiceException(e).log();
+	        	throw new ServiceException(e);
+	        }
+	    }
+
 	    //-------------------------------------------------------------------------
 	    protected String getOwningUserForNewObject(
 	    	Path requestingUser,
 	    	Object_2Facade newObjectFacade,
 	    	Object_2Facade parentFacade,
-	    	SecurityContext securityContext
+	    	DefaultRealm realm
 	    ) throws ServiceException {
 	        String owningUser = null;
 	        // If new object is composite to user home set owning user to owning user of user home
@@ -374,9 +1049,9 @@ public class AccessControl_1 extends Standard_1 {
 	    protected Set<String> getOwningGroupsForNewObject(
 	    	CachedPrincipal requestingPrincipal,
 	    	Object_2Facade newObjectFacade,
-	    	Object_2Facade parentFacade,
-	    	SecurityContext securityContext
+	    	Object_2Facade parentFacade
 	    ) throws ServiceException {
+	    	DefaultRealm realm = requestingPrincipal.getRealm();
 	        Set<String> owningGroup = new HashSet<String>();
 	        if(
 	        	(newObjectFacade.getAttributeValues("owningGroup") != null) && 
@@ -391,10 +1066,13 @@ public class AccessControl_1 extends Standard_1 {
 	        else {
 	        	Path userGroup = requestingPrincipal == null ? 
 	        		null : 
-	        		securityContext.getPrimaryGroup(requestingPrincipal);
+	        		realm.getPrimaryGroup(requestingPrincipal);
 	            owningGroup = new HashSet<String>();
 	            if(parentFacade != null) {
-	                List<String> ownersParent = new ArrayList(parentFacade.attributeValuesAsList("owner"));
+                    @SuppressWarnings({
+                        "rawtypes", "unchecked"
+                    })
+                    List<String> ownersParent = new ArrayList(parentFacade.attributeValuesAsList("owner"));
 	                // Do not inherit group Users at segment-level
 	                if(parentFacade.getPath().size() == 5) {
 	                    ownersParent.remove(
@@ -417,11 +1095,6 @@ public class AccessControl_1 extends Standard_1 {
 	    }
 	    
 	    //-------------------------------------------------------------------------
-	    /**
-	     * Get the direct composite parent of the object with the given access path. 
-	     * If path matches a configured inheritFromParentTypes path then the composite
-	     * parent of the parent is returned, recursively. 
-	     */
 	    private MappedRecord getCachedObject(
 	        ServiceHeader header,
 	        Path path
@@ -450,24 +1123,6 @@ public class AccessControl_1 extends Standard_1 {
 	        if(reference.size() % 2 == 1) {
 	            reference = path.getParent();
 	        }
-	        // Determine the parent according to the access level inheritance configuration
-	        while(true) {
-	            boolean matched = false;
-	            for(
-	                Iterator<Path> i = AccessControl_1.this.inheritFromParentTypes.iterator();
-	                i.hasNext();
-	            ) {
-	                Path referencePattern = i.next();
-	                if(reference.isLike(referencePattern)) {
-	                    matched = true;
-	                    break;
-	                }
-	            }
-	            if(!matched) {
-	                break;
-	            }
-	            reference = reference.getPrefix(reference.size() - 2);
-	        }
 	        // Get parent from cache or retrieve
 	        Path parentPath = reference.getParent();
 	        Object[] entry = objectCache.get(parentPath);
@@ -488,26 +1143,15 @@ public class AccessControl_1 extends Standard_1 {
 	    private void addToObjectCache(
 	    	MappedRecord object
 	    ) throws ServiceException {
-	    	Object_2Facade facade;
-	        try {
-		        facade = Object_2Facade.newInstance(object);
-	        }
-	        catch (ResourceException e) {
-	        	throw new ServiceException(e);
-	        }
+	    	Object_2Facade facade = Facades.asObject(object);
 	        if(facade.getObjectClass() != null) {
-	            try {
-	            	AccessControl_1.getObjectCache().put(
-		                facade.getPath(),
-		                new Object[]{
-		                    Object_2Facade.cloneObject(object),
-		                    new Long(System.currentTimeMillis() + TTL_CACHED_PARENTS)
-		                }
-		            );
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
+            	AccessControl_1.getObjectCache().put(
+	                facade.getPath(),
+	                new Object[]{
+	                    Object_2Facade.cloneObject(object),
+	                    new Long(System.currentTimeMillis() + TTL_CACHED_OBJECTS)
+	                }
+	            );
 	        }
 	        else {
 	        	SysLog.error("Missing object class. Object not added to cache", facade.getPath());
@@ -527,14 +1171,17 @@ public class AccessControl_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-	        SecurityContext securityContext = AccessControl_1.this.getSecurityContext(
+	        DefaultRealm realm = AccessControl_1.this.getRealm(
 	            header,
 	            request
 	        );
-	        SecurityContext.CachedPrincipal requestingPrincipal = securityContext.getPrincipal(
-	        	AccessControl_1.this.getPrincipalName(header)
+	        GetRunAsPrincipalResult getRunAsPrincipalResult = realm.getRunAsPrincipal(
+	        	header, 
+	        	request,
+	        	this
 	        );
-	        Path requestingUser = AccessControl_1.this.getUser(requestingPrincipal);
+	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
+	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
 	        // Check permission. Must have update permission for parent
 	        MappedRecord parent = null;
 	        Object_2Facade parentFacade = null;
@@ -543,53 +1190,47 @@ public class AccessControl_1 extends Standard_1 {
 	                header, 
 	                request.path()
 	            );
-		        parentFacade = ResourceHelper.getObjectFacade(parent);
+		        parentFacade = Facades.asObject(parent);
 		        if(AccessControl_1.this.isSecureObject(parent)) {
-		            Set<String> memberships = new HashSet<String>();
-	                if(parentFacade.attributeValuesAsList("accessLevelUpdate").size() < 1) {
-	                	SysLog.error("missing attribute value for accessLevelUpdate", parent);
-	                }
-	                else {
-	                    memberships = securityContext.getMemberships(
-	                        requestingPrincipal,
-	                        requestingUser,
-	                        ((Number)parentFacade.attributeValue("accessLevelUpdate")).shortValue(),
-	                        AccessControl_1.this.useExtendedAccessLevelBasic
-	                    );
-	                }
-		            if(memberships != null) {
-	                    memberships.retainAll(parentFacade.attributeValuesAsList("owner"));
-			            if(memberships.isEmpty()) {
-			                throw new ServiceException(
-			                    OpenCrxException.DOMAIN,
-			                    OpenCrxException.AUTHORIZATION_FAILURE_CREATE, 
-			                    "No permission to create object.",
-	                            new BasicException.Parameter("object", request.path()),
-	                            new BasicException.Parameter("param0", request.path()),
-	                            new BasicException.Parameter("param1", requestingPrincipal.getIdentity())                                
-			                );
-			            }
+		        	boolean hasPermission = realm.hasPermission(
+		        		request, 
+		        		parentFacade, 
+		        		null, // parent 
+		        		principal, 
+		        		userIdentity, 
+		        		Action.UPDATE, 
+		        		null, // grantedPermissions
+		        		this
+		        	);
+		        	if(!hasPermission) {
+		                throw new ServiceException(
+		                    OpenCrxException.DOMAIN,
+		                    OpenCrxException.AUTHORIZATION_FAILURE_CREATE, 
+		                    "No permission to create object.",
+                            new BasicException.Parameter("object", request.path()),
+                            new BasicException.Parameter("param0", request.path()),
+                            new BasicException.Parameter("param1", principal.getIdentity())                                
+		                );
 		            }
 		        }
 	        }
 	        // Create object
-	        MappedRecord newObject = request.object();
 	        // Set owner in case of secure objects
+	        MappedRecord newObject = request.object();
 	        if(AccessControl_1.this.isSecureObject(newObject)) {
-	            Object_2Facade newObjectFacade = ResourceHelper.getObjectFacade(newObject);
+	            Object_2Facade newObjectFacade = Facades.asObject(newObject);
 	            String owningUser = this.getOwningUserForNewObject(
-	            	requestingUser, 
+	            	userIdentity, 
 	            	newObjectFacade, 
 	            	parentFacade, 
-	            	securityContext
+	            	realm
 	            );
 	            newObjectFacade.attributeValuesAsList("owner").clear();
 	            newObjectFacade.attributeValuesAsList("owner").add(owningUser);		            
 		        Set<String> owningGroup = this.getOwningGroupsForNewObject(
-		        	requestingPrincipal, 
+		        	principal, 
 		        	newObjectFacade, 
-		        	parentFacade, 
-		        	securityContext
+		        	parentFacade 
 		        );
 		        newObjectFacade.attributeValuesAsList("owner").addAll(owningGroup);            
 		        newObjectFacade.getValue().keySet().remove("owningUser");
@@ -639,25 +1280,22 @@ public class AccessControl_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-	        SecurityContext securityContext = AccessControl_1.this.getSecurityContext(
+	        DefaultRealm realm = AccessControl_1.this.getRealm(
 	            header,
 	            request
 	        );
-	        SecurityContext.CachedPrincipal requestingPrincipal = securityContext.getPrincipal(
-	        	AccessControl_1.this.getPrincipalName(header)
+	        GetRunAsPrincipalResult getRunAsPrincipalResult = realm.getRunAsPrincipal(
+	        	header, 
+	        	request,
+	        	this
 	        );
-	        Path requestingUser = AccessControl_1.this.getUser(requestingPrincipal);
+	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
+	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
 	        MappedRecord parent = this.getCachedObject(
 	            header,
 	            request.path()
 	        );
-	        Object_2Facade parentFacade;
-	        try {
-		        parentFacade = Object_2Facade.newInstance(parent);
-	        }
-	        catch (ResourceException e) {
-	        	throw new ServiceException(e);
-	        }
+	        Object_2Facade parentFacade = Facades.asObject(parent);
 	        ModelElement_1_0 referencedType = AccessControl_1.this.getReferencedType(
 	            request.path(),
 	            request.attributeFilter()
@@ -672,9 +1310,8 @@ public class AccessControl_1 extends Standard_1 {
 	        	if(containsSharedAssociation) {
 	        		Number originalSize = input.getSize();
 	        		Number originalPosition = input.getPosition();
-	        		// In case of shared association read first object which is used 
-	        		// to determine the composite parent of the result set. Apply the
-	        		// browse filter of the parent to the query
+	        		// In case of shared association get the composite parent and 
+	        		// restrict query to the parent's security settings
 	        		input.setSize(1);
 	        		input.setPosition(0);
 			        super.find(
@@ -683,36 +1320,30 @@ public class AccessControl_1 extends Standard_1 {
 			        	output
 			        );
 	        		if(!output.isEmpty()) {
-			        	Object_2Facade objectParentFacade;
-			        	try {
-			        		objectParentFacade = Object_2Facade.newInstance(
-				        		this.getCachedObject(
-				        			header, 
-				        			Object_2Facade.getPath(reply.getObject()).getParent()
-				        		)
-				        	);
-			        	} catch(ResourceException e) {
-			        		throw new ServiceException(e);
-			        	}
-			        	AccessControl_1.this.applyBrowseFilter(
-			        		objectParentFacade, 
+			        	Object_2Facade objectParentFacade = Facades.asObject(
+			        		this.getCachedObject(
+			        			header, 
+			        			Object_2Facade.getPath(reply.getObject()).getParent()
+			        		)
+			        	);
+			        	// Restrict query according to security settings of composite parent
+			        	realm.restrictQuery(
 			        		request, 
-			        		securityContext, 
-			        		requestingPrincipal, 
-			        		requestingUser
+			        		objectParentFacade, 
+			        		principal, 
+			        		userIdentity
 			        	);
 	        		}
 	        		input.setPosition(originalPosition);
 	        		input.setSize(originalSize);
 	        		output.clear();
 	        	}
-	        	// Apply the browse filter of the actual parent
-	        	AccessControl_1.this.applyBrowseFilter(
-	        		parentFacade, 
+	        	// Restrict query according to security settings of parent
+	        	realm.restrictQuery(
 	        		request, 
-	        		securityContext, 
-	        		requestingPrincipal, 
-	        		requestingUser
+	        		parentFacade, 
+	        		principal, 
+	        		userIdentity
 	        	);
 		        super.find(
 		        	ispec, 
@@ -748,14 +1379,22 @@ public class AccessControl_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-	        SecurityContext securityContext = AccessControl_1.this.getSecurityContext(
+	        DefaultRealm realm = AccessControl_1.this.getRealm(
 	            header,
 	            request
 	        );
-	        CachedPrincipal requestingPrincipal = securityContext.getPrincipal(
-	        	AccessControl_1.this.getPrincipalName(header)
+	        GetRunAsPrincipalResult getRunAsPrincipalResult = realm.getRunAsPrincipal(
+	        	header, 
+	        	request,
+	        	this
 	        );
-	        Path requestingUser = AccessControl_1.this.getUser(requestingPrincipal);
+	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
+	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
+	        // Need multi-valued attribute 'owner' of retrieved object. This
+	        // is required for permission check in next step --> realm.hasPermission()
+	        try {
+	        	input.setGroups(Sets.asSet(Arrays.asList(FetchGroup.ALL)));
+	        } catch(Exception e) {}
 	        super.get(
 	            ispec,
 	            input,
@@ -767,18 +1406,21 @@ public class AccessControl_1 extends Standard_1 {
 	                header,
 	                request.path()
 	            );
-		        Object_2Facade parentFacade = ResourceHelper.getObjectFacade(parent);
+		        Object_2Facade parentFacade = Facades.asObject(parent);
 		        ModelElement_1_0 referencedType = this.getModel().getTypes(request.path())[2];
 		        if(AccessControl_1.this.isSecureObject(referencedType) && AccessControl_1.this.isSecureObject(parent)) {
-		        	Object_2Facade objectFacade = ResourceHelper.getObjectFacade(reply.getObject());
-		        	boolean hasReadAccess = AccessControl_1.this.hasReadAccess(
+		        	Object_2Facade objectFacade = Facades.asObject(reply.getObject());
+		        	boolean hasPermission = realm.hasPermission(
+		        		request,
 		        		objectFacade, 
 		        		parentFacade, 
-		        		securityContext, 
-		        		requestingPrincipal, 
-		        		requestingUser
+		        		principal, 
+		        		userIdentity,
+		        		Action.READ,
+		        		null, // grantedPermissions
+		        		this
 		        	);
-		        	if(hasReadAccess) {
+		        	if(hasPermission) {
 		            	AccessControl_1.this.completeReply(
 		                    header,
 		                    reply,
@@ -790,11 +1432,11 @@ public class AccessControl_1 extends Standard_1 {
                         throw new ServiceException(
                             BasicException.Code.DEFAULT_DOMAIN,
                             BasicException.Code.AUTHORIZATION_FAILURE, 
-                            "no permission to access requested object.",
+                            "No permission to access requested object.",
                             new BasicException.Parameter("path", request.path()),
                             new BasicException.Parameter("param0", request.path().toXRI()),                                
-                            new BasicException.Parameter("param1", requestingPrincipal.getIdentity().toXRI()), 
-                            new BasicException.Parameter("param2", requestingUser.toXRI()) 
+                            new BasicException.Parameter("param1", principal.getIdentity().toXRI()), 
+                            new BasicException.Parameter("param2", userIdentity.toXRI()) 
                         );
 		            }
 		        }
@@ -820,57 +1462,47 @@ public class AccessControl_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-	        SecurityContext securityContext = AccessControl_1.this.getSecurityContext(
+	        DefaultRealm realm = AccessControl_1.this.getRealm(
 	            header,
 	            request
 	        );
-	        CachedPrincipal requestingPrincipal = securityContext.getPrincipal(
-	        	AccessControl_1.this.getPrincipalName(header)
+	        GetRunAsPrincipalResult getRunAsPrincipalResult = realm.getRunAsPrincipal(
+	        	header, 
+	        	request,
+	        	this
 	        );
-	        Path requestingUser = AccessControl_1.this.getUser(requestingPrincipal);
-	        MappedRecord existingObject = this.retrieveObject(            
+	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
+	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
+	        MappedRecord object = this.retrieveObject(            
 	            request.path()
 	        );
 	        MappedRecord parent = null;
-	        if(AccessControl_1.this.isSecureObject(existingObject)) {            
+	        if(AccessControl_1.this.isSecureObject(object)) {   	        	
 	            parent = this.getCachedObject(
 	                header,
 	                request.path()
 	            );
-	            Object_2Facade existingObjectFacade;
-	            try {
-		            existingObjectFacade = Object_2Facade.newInstance(existingObject);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
-	            // assert that requesting user is allowed to update object
-	            Set<String> memberships = new HashSet<String>();
-	            if(existingObjectFacade.attributeValuesAsList("accessLevelDelete").isEmpty()) {
-	            	SysLog.error("missing attribute value for accessLevelDelete", existingObject);
-	            }
-	            else {
-	                memberships = securityContext.getMemberships(
-		                requestingPrincipal,
-	                    requestingUser,
-		                ((Number)existingObjectFacade.attributeValue("accessLevelDelete")).shortValue(),
-		                AccessControl_1.this.useExtendedAccessLevelBasic
+	            Object_2Facade objectFacade = Facades.asObject(object);
+	            boolean hasPermission = realm.hasPermission(
+	            	request, 
+	            	objectFacade,
+	            	null, // parent
+	            	principal, 
+	            	userIdentity, 
+	            	Action.DELETE,
+	            	null, // grantedPermissions
+	            	this
+	            );
+	            if(!hasPermission) {
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.AUTHORIZATION_FAILURE_DELETE, 
+	                    "No permission to delete requested object.",
+                        new BasicException.Parameter("object", request.path()),
+                        new BasicException.Parameter("param0", request.path().toXRI()),
+                        new BasicException.Parameter("param1", principal.getIdentity().toXRI()),                            
+                        new BasicException.Parameter("param2", userIdentity.toXRI())                            
 	                );
-	            }
-	            if(memberships != null) {
-	                memberships.retainAll(existingObjectFacade.attributeValuesAsList("owner"));
-	                // no permission
-		            if(memberships.isEmpty()) {
-		                throw new ServiceException(
-		                    OpenCrxException.DOMAIN,
-		                    OpenCrxException.AUTHORIZATION_FAILURE_DELETE, 
-		                    "No permission to delete requested object.",
-	                        new BasicException.Parameter("object", request.path()),
-	                        new BasicException.Parameter("param0", request.path().toXRI()),
-	                        new BasicException.Parameter("param1", requestingPrincipal.getIdentity().toXRI()),                            
-	                        new BasicException.Parameter("param2", requestingUser.toXRI())                            
-		                );
-		            }
 	            }
 	        }
 	        objectCache.remove(
@@ -902,62 +1534,47 @@ public class AccessControl_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-	        SecurityContext securityContext = AccessControl_1.this.getSecurityContext(
+	        DefaultRealm realm = AccessControl_1.this.getRealm(
 	            header,
 	            request
 	        );
-	        CachedPrincipal requestingPrincipal = securityContext.getPrincipal(
-	        	AccessControl_1.this.getPrincipalName(header)
+            MappedRecord replacement = request.object();
+            Object_2Facade replacementFacade = Facades.asObject(replacement);
+	        GetRunAsPrincipalResult getRunAsPrincipalResult = realm.getRunAsPrincipal(
+	        	header, 
+	        	request,
+	        	this
 	        );
-	        Path requestingUser = AccessControl_1.this.getUser(requestingPrincipal);
-	        MappedRecord existingObject = this.retrieveObject(
+	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
+	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
+	        MappedRecord object = this.retrieveObject(
 	            request.path()
 	        );
-	        if(AccessControl_1.this.isSecureObject(existingObject)) {
-	            Object_2Facade existingObjectFacade;
-	            try {
-		            existingObjectFacade = Object_2Facade.newInstance(existingObject);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }        	
-	            // assert that requesting user is allowed to update object
-	            Set<String> memberships = new HashSet<String>();
-	            if(existingObjectFacade.attributeValuesAsList("accessLevelUpdate").isEmpty()) {
-	            	SysLog.error("missing attribute value for accessLevelUpdate", existingObject);
-	            }
-	            else {
-	                memberships = securityContext.getMemberships(
-		                requestingPrincipal,
-	                    requestingUser,
-		                ((Number)existingObjectFacade.attributeValue("accessLevelUpdate")).shortValue(),
-		                AccessControl_1.this.useExtendedAccessLevelBasic
+	        if(AccessControl_1.this.isSecureObject(object)) {
+	            Object_2Facade objectFacade = Facades.asObject(object);
+	            boolean hasPermission = 
+	            	realm.hasPermission(
+		            	request, 
+		            	objectFacade, 
+		            	null, // parent
+		            	principal, 
+		            	userIdentity, 
+		            	Action.UPDATE,
+		            	null, // grantedPermissions
+		            	this
+		            );
+	            if(!hasPermission) {
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.AUTHORIZATION_FAILURE_UPDATE, 
+	                    "No permission to update requested object.",
+                        new BasicException.Parameter("object", request.path()),
+                        new BasicException.Parameter("param0", request.path()),
+                        new BasicException.Parameter("param1", principal.getIdentity().toXRI()), 
+                        new BasicException.Parameter("param2", userIdentity.toXRI()) 
 	                );
 	            }
-	            if(memberships != null) {
-	                memberships.retainAll(existingObjectFacade.attributeValuesAsList("owner"));
-	                // no permission
-		            if(memberships.isEmpty()) {
-		                throw new ServiceException(
-		                    OpenCrxException.DOMAIN,
-		                    OpenCrxException.AUTHORIZATION_FAILURE_UPDATE, 
-		                    "No permission to update requested object.",
-	                        new BasicException.Parameter("object", request.path()),
-	                        new BasicException.Parameter("param0", request.path()),
-	                        new BasicException.Parameter("param1", requestingPrincipal.getIdentity().toXRI()), 
-	                        new BasicException.Parameter("param2", requestingUser.toXRI()) 
-		                );
-		            }
-	            }
-	            // derive attribute owner from owningUser and owningGroup
-	            MappedRecord replacement = request.object();
-	            Object_2Facade replacementFacade;
-	            try {
-		            replacementFacade = Object_2Facade.newInstance(replacement);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
+	            // Derive attribute owner from owningUser and owningGroup
 		        // Derive newOwner from owningUser and owningGroup
 		        List<Object> newOwner = new ArrayList<Object>();	        
 		        // owning user
@@ -967,11 +1584,11 @@ public class AccessControl_1 extends Standard_1 {
 		        }
 		        else {
 		            // if no user found set owner to segment administrator
-		            owningUser = existingObjectFacade.attributeValuesAsList("owner").isEmpty() ? 
-		            	requestingUser == null ? 
+		            owningUser = objectFacade.attributeValuesAsList("owner").isEmpty() ? 
+		            	userIdentity == null ? 
 		            		AccessControl_1.this.getQualifiedPrincipalName(replacementFacade.getPath(), SecurityKeys.ADMIN_PRINCIPAL) : 
-		            			AccessControl_1.this.getQualifiedPrincipalName(requestingUser) : 
-		            	(String)existingObjectFacade.attributeValue("owner");
+		            			AccessControl_1.this.getQualifiedPrincipalName(userIdentity) : 
+		            	(String)objectFacade.attributeValue("owner");
 		        }
 		        newOwner.add(owningUser);
 		        // owning group
@@ -989,15 +1606,15 @@ public class AccessControl_1 extends Standard_1 {
 		        }
 		        else {
 	                // keep existing owning group
-	                if(existingObjectFacade.attributeValuesAsList("owner").size() > 1) {
+	                if(objectFacade.attributeValuesAsList("owner").size() > 1) {
 	                    owningGroup.addAll(
-	                    	existingObjectFacade.attributeValuesAsList("owner").subList(1, existingObjectFacade.attributeValuesAsList("owner").size())
+	                    	objectFacade.attributeValuesAsList("owner").subList(1, objectFacade.attributeValuesAsList("owner").size())
 	                    );
 	                }
 		        }
 		        newOwner.addAll(owningGroup);
 		        // Only replace owner if modified
-		        if(!existingObjectFacade.attributeValuesAsList("owner").containsAll(newOwner) || !newOwner.containsAll(existingObjectFacade.attributeValuesAsList("owner"))) {
+		        if(!objectFacade.attributeValuesAsList("owner").containsAll(newOwner) || !newOwner.containsAll(objectFacade.attributeValuesAsList("owner"))) {
 		        	replacementFacade.attributeValuesAsList("owner").clear();
 		        	replacementFacade.attributeValuesAsList("owner").addAll(newOwner);
 		        }
@@ -1017,7 +1634,7 @@ public class AccessControl_1 extends Standard_1 {
 	        );
 	        return true;
 	    }
-	    
+
 	    //-----------------------------------------------------------------------
 	    @Override
 	    public boolean invoke(
@@ -1027,7 +1644,7 @@ public class AccessControl_1 extends Standard_1 {
 	    ) throws ServiceException {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
-	        SecurityContext securityContext = AccessControl_1.this.getSecurityContext(
+	        DefaultRealm realm = AccessControl_1.this.getRealm(
 	            header,
 	            request
 	        );
@@ -1035,18 +1652,12 @@ public class AccessControl_1 extends Standard_1 {
 	            request.path().size() - 2
 	        );
 	        if("checkPermissions".equals(operationName)) {
-	        	AccessControl_1.this.getSecurityContext(
+	        	AccessControl_1.this.getRealm(
 	                header,
 	                request
 	            );
-	            String principalName;
-	            try {
-		            principalName = (String)Object_2Facade.newInstance(request.object()).attributeValue("principalName");
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
-	            CachedPrincipal principal = securityContext.getPrincipal(principalName);    
+	            String principalName = (String)Facades.asObject(request.object()).attributeValue("principalName");
+	            CachedPrincipal principal = realm.getPrincipal(principalName);    
 	            if(principal == null) {
 	                throw new ServiceException(
 	                    OpenCrxException.DOMAIN,
@@ -1058,112 +1669,65 @@ public class AccessControl_1 extends Standard_1 {
 	                );            
 	            }
 	            Path objectIdentity = request.path().getParent().getParent();
-	            Path user = AccessControl_1.this.getUser(principal);
+	            Path userIdentity = AccessControl_1.this.getUser(principal);
 	            MappedRecord parent = objectIdentity.size() <= 5 ?
 	            	null:
 	        		this.getCachedObject(
 		                header,
 		                objectIdentity
 		            );            
-	            Object_2Facade parentFacade;
-	            try {
-		            parentFacade = parent == null ? null : Object_2Facade.newInstance(parent);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
+	            Object_2Facade parentFacade = parent == null ? null : Facades.asObject(parent);
 	            MappedRecord object = this.retrieveObject(            
 	                objectIdentity
 	            );
-	            Object_2Facade facade;
-	            try {
-		            facade = Object_2Facade.newInstance(object);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
+	            Object_2Facade objectFacade = Facades.asObject(object);
 	            MappedRecord result = AccessControl_1.this.createResult(
 	                request,
 	                "org:opencrx:kernel:base:CheckPermissionsResult"
 	            );
-	            Object_2Facade replyFacade;
-	            try {
-		            replyFacade = Object_2Facade.newInstance(result);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
-	            // Check read permission
-	            Set<String> memberships = new HashSet<String>();
-	            if((parentFacade != null) && parentFacade.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
-	            	SysLog.error("missing attribute value for accessLevelBrowse", parent);
-	            }
-	            else {
-	                memberships = securityContext.getMemberships(
-	                    principal,
-	                    user,
-	                    parentFacade == null ? 
-	                    	SecurityKeys.ACCESS_LEVEL_GLOBAL : 
-	                    	((Number)parentFacade.attributeValue("accessLevelBrowse")).shortValue(),
-	                    AccessControl_1.this.useExtendedAccessLevelBasic
-	                );
-	            }
-	            if(memberships != null) {
-	                replyFacade.attributeValuesAsList("membershipForRead").addAll(memberships);
-	                memberships.retainAll(facade.attributeValuesAsList("owner"));
-	            }
-	            else {
-	            	replyFacade.attributeValuesAsList("membershipForRead").add("*");                
-	            }
-	            replyFacade.attributeValuesAsList("hasReadPermission").add(
-	                Boolean.valueOf((memberships == null) || !memberships.isEmpty())
+	            Object_2Facade replyFacade = Facades.asObject(result);
+	            // Read permissions
+	            Set<String> grantedPermissions = new HashSet<String>();
+	            boolean hasPermission = realm.hasPermission(
+	            	request, 
+	            	objectFacade, 
+	            	parentFacade, 
+	            	principal, 
+	            	userIdentity, 
+	            	Action.READ, 
+	            	grantedPermissions,
+	            	this
 	            );
-	            // Check delete permission
-	            memberships = new HashSet<String>();
-	            if(facade.attributeValuesAsList("accessLevelDelete").isEmpty()) {
-	            	SysLog.error("missing attribute value for accessLevelDelete", object);
-	            }
-	            else {
-	                memberships = securityContext.getMemberships(
-	                    principal,
-	                    user,
-	                    ((Number)facade.attributeValue("accessLevelDelete")).shortValue(),
-	                    AccessControl_1.this.useExtendedAccessLevelBasic
-	                );
-	            }
-	            if(memberships != null) {
-	            	replyFacade.attributeValuesAsList("membershipForDelete").addAll(memberships);
-	                memberships.retainAll(facade.attributeValuesAsList("owner"));
-	            }
-	            else {
-	            	replyFacade.attributeValuesAsList("membershipForDelete").add("*");
-	            }
-	            replyFacade.attributeValuesAsList("hasDeletePermission").add(
-	                Boolean.valueOf((memberships == null) || !memberships.isEmpty())
+                replyFacade.attributeValuesAsList("grantedPermissionsRead").addAll(grantedPermissions);
+	            replyFacade.attributeValuesAsList("hasReadPermission").add(hasPermission);
+	            // Delete permissions
+	            grantedPermissions = new HashSet<String>();
+	            hasPermission = realm.hasPermission(
+	            	request, 
+	            	objectFacade, 
+	            	parentFacade, 
+	            	principal, 
+	            	userIdentity, 
+	            	Action.DELETE, 
+	            	grantedPermissions,
+	            	this
 	            );
-	            // Check update permission
-	            memberships = new HashSet<String>();
-	            if(facade.attributeValuesAsList("accessLevelUpdate").isEmpty()) {
-	            	SysLog.error("missing attribute value for accessLevelUpdate", object);
-	            }
-	            else {
-	                memberships = securityContext.getMemberships(
-	                    principal,
-	                    user,
-	                    ((Number)facade.attributeValue("accessLevelUpdate")).shortValue(),
-	                    AccessControl_1.this.useExtendedAccessLevelBasic
-	                );
-	            }
-	            if(memberships != null) {
-	            	replyFacade.attributeValuesAsList("membershipForUpdate").addAll(memberships);
-	                memberships.retainAll(facade.attributeValuesAsList("owner"));
-	            }
-	            else {
-	            	replyFacade.attributeValuesAsList("membershipForUpdate").add("*");                
-	            }
-	            replyFacade.attributeValuesAsList("hasUpdatePermission").add(
-	                Boolean.valueOf((memberships == null) || !memberships.isEmpty())
+                replyFacade.attributeValuesAsList("grantedPermissionsDelete").addAll(grantedPermissions);
+	            replyFacade.attributeValuesAsList("hasDeletePermission").add(hasPermission);
+	            // Update
+	            grantedPermissions = new HashSet<String>();
+	            hasPermission = realm.hasPermission(
+	            	request, 
+	            	objectFacade, 
+	            	parentFacade, 
+	            	principal, 
+	            	userIdentity, 
+	            	Action.UPDATE, 
+	            	grantedPermissions,
+	            	this
 	            );
+                replyFacade.attributeValuesAsList("grantedPermissionsUpdate").addAll(grantedPermissions);
+	            replyFacade.attributeValuesAsList("hasUpdatePermission").add(hasPermission);
 	            // Return result
 	            output.setPath(replyFacade.getPath());
 	            output.setBody(replyFacade.getValue());
@@ -1184,13 +1748,7 @@ public class AccessControl_1 extends Standard_1 {
       ServiceHeader header,
       MappedRecord object
     ) throws ServiceException {
-    	Object_2Facade facade;
-        try {
-	        facade = Object_2Facade.newInstance(object);
-        }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }
+    	Object_2Facade facade = Facades.asObject(object);
     	facade.getValue().keySet().remove("owningUser");
     	facade.getValue().keySet().remove("owningGroup");
         if(!facade.attributeValuesAsList("owner").isEmpty()) {
@@ -1211,47 +1769,22 @@ public class AccessControl_1 extends Standard_1 {
     }
 
     //-------------------------------------------------------------------------
-    protected void completeAccessGrantedByParent(
-      ServiceHeader header,
-      MappedRecord object,
-      MappedRecord accessGrantedByParent
-    ) throws ServiceException {
-        if(accessGrantedByParent != null) {
-            try {
-            	Object_2Facade facade = Object_2Facade.newInstance(object);
-	            facade.attributeValuesAsList("accessGrantedByParent").clear();
-	            facade.attributeValuesAsList("accessGrantedByParent").add(
-	                Object_2Facade.getPath(accessGrantedByParent)
-	            );
-            }
-            catch (ResourceException e) {
-            	throw new ServiceException(e);
-            }
-        }        
-    }
-    
-    //-------------------------------------------------------------------------
     protected void completeObject(
       ServiceHeader header,
       MappedRecord object,
-      MappedRecord accessGrantedByParent
+      MappedRecord parent
     ) throws ServiceException {
         this.completeOwningUserAndGroup(
             header,
             object
         );
-        this.completeAccessGrantedByParent(
-            header,
-            object,
-            accessGrantedByParent
-        );
     }
-    
+
     //-------------------------------------------------------------------------
     protected DataproviderReply completeReply(
       ServiceHeader header,
       DataproviderReply reply,
-      MappedRecord accessGrantedByParent
+      MappedRecord parent
     ) throws ServiceException {
     	if(reply.getResult() != null) {
 	      for(int i = 0; i < reply.getObjects().length; i++) {
@@ -1259,13 +1792,13 @@ public class AccessControl_1 extends Standard_1 {
 	          this.completeObject(
 	              header,
 	              object,
-	              accessGrantedByParent
+	              parent
 	          );
 	      }
     	}
     	return reply;
     }
-        
+
     //-------------------------------------------------------------------------
     protected boolean isPrincipalGroup(
     	MappedRecord object
@@ -1332,34 +1865,11 @@ public class AccessControl_1 extends Standard_1 {
         }    
         return null;
     }
-    
-    //-------------------------------------------------------------------------
-    /**
-     * Returns a list of types as path patterns of object references which inherit
-     * the security settings from the parent object. This option should be used
-     * only for performance improvements and applied only to business objects
-     * which define a self-contained security entity (e.g. contract, its positions, 
-     * depot references and product configurations). Additional paths can be added 
-     * by overriding <code>getInheritFromParentTypes</code>. The API exposes the 
-     * granting parent by the reference <code>SecureObject.accessGrantedByParent</code> 
-     * and is set by completeObject.
-     */
-    //-------------------------------------------------------------------------
-    public List<Path> getInheritFromParentTypes(
-    ) {
-        return Arrays.asList(
-            new Path[]{
-                new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/configuration"),
-                new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/depotReference")
-            }
-        );
-    }
-    
+
     //-------------------------------------------------------------------------
     /* (non-Javadoc)
      * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#activate(short, org.openmdx.compatibility.base.application.configuration.Configuration, org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0)
      */
-    @SuppressWarnings("unchecked")
     public void activate(
         short id, 
         Configuration configuration,
@@ -1383,7 +1893,7 @@ public class AccessControl_1 extends Standard_1 {
             );
         }         
         // Get dataprovider connections
-        this.connectionFactories = new ArrayList(
+        this.connectionFactories = new ArrayList<Object>(
         	configuration.values(
         		SharedConfigurationEntries.DATAPROVIDER_CONNECTION_FACTORY
         	).values()
@@ -1392,10 +1902,8 @@ public class AccessControl_1 extends Standard_1 {
         this.useExtendedAccessLevelBasic = configuration.values("useExtendedAccessLevelBasic").isEmpty() ?
             false :
             ((Boolean)configuration.values("useExtendedAccessLevelBasic").get(0)).booleanValue();        
-        // Init inheritFromParentTypes
-        this.inheritFromParentTypes = this.getInheritFromParentTypes();
     }
-    
+
     //-------------------------------------------------------------------------
     protected String getPrincipalName(
     	ServiceHeader header
@@ -1404,13 +1912,19 @@ public class AccessControl_1 extends Standard_1 {
         	null : 
         	(String)header.getPrincipalChain().get(0);
     }
-    
+
     //-------------------------------------------------------------------------
     /**
-     * Set the current security context to the requesting principal, i.e.
-     * this.requestingPrincipal, this.currentSecurityContext, this.requestingUser.
+     * Allows to provide a custom-specific realm implementation.
      */
-    protected SecurityContext getSecurityContext(
+    protected DefaultRealm newRealm(
+    	Path realmIdentity
+    ) throws ServiceException {
+        return new DefaultRealm(realmIdentity);
+    }
+
+    //-------------------------------------------------------------------------
+    protected DefaultRealm getRealm(
         ServiceHeader header,
         DataproviderRequest request
     ) throws ServiceException {
@@ -1418,17 +1932,16 @@ public class AccessControl_1 extends Standard_1 {
         String realmName = SecurityKeys.ROOT_PRINCIPAL.equals(principalName) ? 
         	"Root" : 
         	request.path().get(4);
-        if(this.securityContexts.get(realmName) == null) {
-            this.securityContexts.put(
+        if(this.cachedRealms.get(realmName) == null) {
+            this.cachedRealms.put(
                 realmName,
-                new SecurityContext(
-                    this, 
+                this.newRealm(
                     this.realmIdentity.getParent().getChild(realmName)
                 )
             );
-        }        
-        SecurityContext securityContext = this.securityContexts.get(realmName);
-        CachedPrincipal requestingPrincipal = securityContext.getPrincipal(principalName);        
+        }
+        DefaultRealm realm = this.cachedRealms.get(realmName);
+        CachedPrincipal requestingPrincipal = realm.getPrincipal(principalName);        
         if(requestingPrincipal == null) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
@@ -1439,10 +1952,10 @@ public class AccessControl_1 extends Standard_1 {
                 new BasicException.Parameter("param1", this.realmIdentity)
             );
         }
-        SysLog.detail("requesting principal", requestingPrincipal);
-        return securityContext;
+        SysLog.detail("Requesting principal", requestingPrincipal);
+        return realm;
     }
-    
+
     //-------------------------------------------------------------------------
     protected ModelElement_1_0 getReferencedType(
         Path accessPath,
@@ -1515,19 +2028,21 @@ public class AccessControl_1 extends Standard_1 {
     protected static final Path USER_HOME_PATH_PATTERN =
         new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*");
 
+    protected static final String ALL_PERMISSION = "*";
+    
     protected List<Object> connectionFactories = null;    
-    protected List<Path> inheritFromParentTypes;
     protected Path realmIdentity = null;
     protected Model_1_0 model = null;
     protected boolean useExtendedAccessLevelBasic = false;
+
+    // Cached realms
+    private Map<String,DefaultRealm> cachedRealms = 
+    	new ConcurrentHashMap<String,DefaultRealm>();
     
-    // Subject cache as map with identity as key and subject as value.
-    private Map<String,SecurityContext> securityContexts = 
-    	new ConcurrentHashMap<String,SecurityContext>();
+    // TTL of cached objects
+    private static final long TTL_CACHED_OBJECTS = 20000L;
     
-    // Cached parents
-    private static final long TTL_CACHED_PARENTS = 20000L;
-    // Entry contains DataproviderObject and expiration date
+    // Entry contains (path,[object,ttl])
     protected static final ConcurrentMap<Path,Object[]> objectCache = 
         new ConcurrentHashMap<Path,Object[]>();
     

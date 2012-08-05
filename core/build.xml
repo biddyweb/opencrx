@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.445 2011/05/06 15:39:22 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.458 2011/11/09 18:28:10 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.445 $
- * = Date:        $Date: 2011/05/06 15:39:22 $
- * = Copyright:   (c) 2003-2010 CRIXP AG
+ * = Revision:    $Revision: 1.458 $
+ * = Date:        $Date: 2011/11/09 18:28:10 $
+ * = Copyright:   (c) 2003-2011 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.8.20"/>
+	<property name="openmdx.version" value="2.9.0"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -145,10 +145,11 @@
 		<path refid="osgi.extension.lib"/>
 		<pathelement location="../codehaus/${build.target.platform}/janino/lib/janino.jar"/>
 		<pathelement location="../apache/${build.target.platform}/poi/lib/poi.jar"/>
+		<pathelement location="../apache/${build.target.platform}/poi/lib/poi-ooxml.jar"/>
 		<pathelement location="../apache/${build.target.platform}/poi/lib/poi-scratchpad.jar"/>
+		<pathelement location="../apache/${build.target.platform}/xmlbeans/lib/xmlbeans.jar"/>
 		<pathelement location="../pdfbox/${build.target.platform}/pdfbox/lib/PDFBox.jar"/>
 		<pathelement location="../pdfbox/${build.target.platform}/pdfbox/lib/FontBox.jar"/>
-		<pathelement location="../octo/${build.target.platform}/captcha/lib/jcaptcha-all.jar"/>
 		<pathelement location="../twitter4j/${build.target.platform}/twitter4j/lib/twitter4j-core.jar"/>
 	</path>
 	<path id="project.bin.classpath">
@@ -159,7 +160,7 @@
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
 		<pathelement location="../opt/mysql/${build.target.platform}/mysql-5/lib/mysql-connector-java-bin.jar"/>
 		<pathelement location="../opt/microsoft/${build.target.platform}/sql-server-2005/lib/sqljdbc4.jar"/>
-		<pathelement location="../opt/postgresql/${build.target.platform}/postgresql-9/lib/postgresql-9.0.jdbc4.jar"/>
+		<pathelement location="../opt/postgresql/${build.target.platform}/postgresql-9/lib/postgresql-9.1.jdbc4.jar"/>
 		<pathelement location="../opt/oracle/${build.target.platform}/oracle-10/lib/ojdbc14.jar"/>
 		<pathelement location="../opt/ibm/${build.target.platform}/db2-9/lib/db2jcc.jar"/>
 		<pathelement location="../opt/ibm/${build.target.platform}/db2-9/lib/db2jcc_license_cu.jar"/>
@@ -332,7 +333,6 @@
 				<include name="apache/${build.target.platform}/**"/>
 				<include name="pdfbox/${build.target.platform}/pdfbox/**"/>
 				<include name="lowagie/${build.target.platform}/itext/**"/>
-				<include name="octo/${build.target.platform}/captcha/**"/>
 				<include name="twitter4j/${build.target.platform}/twitter4j/**"/>
 				<include name="eclipse/${build.target.platform}/${base.dir.name}/**"/>
 			</openmdx:archivefileset>
@@ -684,10 +684,6 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir}/ui" prefix="WEB-INF/config/ui"/>
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}/ui" prefix="WEB-INF/config/ui"/>
 			<zipfileset dir="src/data/${data.dir.generic}/ui" prefix="WEB-INF/config/ui"/>
-			<!-- report -->
-			<zipfileset dir="${data.home}/src/data/${data.dir}/report" prefix="WEB-INF/config/report"/>
-			<zipfileset dir="${data.home}/src/data/${data.dir.base}/report" prefix="WEB-INF/config/report"/>
-			<zipfileset dir="src/data/${data.dir.generic}/report" prefix="WEB-INF/config/report"/>
 			<!-- control -->
 			<zipfileset dir="${data.home}/src/data/${data.dir}/control" prefix="WEB-INF/config/control"/>
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}/control" prefix="WEB-INF/config/control"/>
@@ -1215,21 +1211,19 @@
 				<include name="openmdx-portal.jar"/>
 			</zipfileset>
 			<zipfileset dir="../codehaus/${build.target.platform}/janino/lib" prefix="APP-INF/lib">
-				<include name="janino.jar"/>
+				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="../pdfbox/${build.target.platform}/pdfbox/lib" prefix="APP-INF/lib">
-				<include name="PDFBox.jar"/>
-				<include name="FontBox.jar"/>
+				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="../apache/${build.target.platform}/poi/lib" prefix="APP-INF/lib">
-				<include name="poi.jar"/>
-				<include name="poi-scratchpad.jar"/>
+				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="../octo/${build.target.platform}/captcha/lib" prefix="APP-INF/lib">
-				<include name="jcaptcha-all.jar"/>
+			<zipfileset dir="../apache/${build.target.platform}/xmlbeans/lib" prefix="APP-INF/lib">
+				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="../twitter4j/${build.target.platform}/twitter4j/lib" prefix="APP-INF/lib">
-				<include name="twitter4j-core.jar"/>
+				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/osgi/${build.target.platform}/extension/lib" prefix="APP-INF/lib">
 				<include name="openjpa.jar"/>
@@ -1237,10 +1231,7 @@
 				<include name="commons-lang.jar"/>				
 			</zipfileset>
 			<zipfileset dir="../apache/${build.target.platform}/xmlrpc/lib" prefix="APP-INF/lib">
-				<include name="ws-commons-util.jar"/>
-				<include name="xmlrpc-client.jar"/>
-				<include name="xmlrpc-common.jar"/>
-				<include name="xmlrpc-server.jar"/>
+				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/codehaus/${build.target.platform}/groovy/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>

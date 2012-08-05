@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountQueryHelper.java,v 1.1 2010/11/19 23:32:12 wfro Exp $
+ * Name:        $Id: AccountQueryHelper.java,v 1.3 2011/11/04 09:51:47 wfro Exp $
  * Description: AccountsQueryHelper
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/19 23:32:12 $
+ * Date:        $Date: 2011/11/04 09:51:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,13 +63,15 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.account1.cci2.AbstractGroupQuery;
 import org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
+import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.account1.jmi1.AccountFilterGlobal;
-import org.openmdx.base.naming.Path;
+import org.opencrx.kernel.backend.Accounts;
+import org.openmdx.base.exception.ServiceException;
 import org.w3c.format.DateTimeFormat;
 
 public class AccountQueryHelper {
@@ -84,39 +86,53 @@ public class AccountQueryHelper {
     //-----------------------------------------------------------------------
     public int parseQueryId(
        String id
-    ) throws IllegalArgumentException  {
+    ) throws ServiceException  {
         List<String> l = AccountQueryHelper.splitUri(id);
         if(l.size() >= 3) {
-            // URL pattern is
-            // ./provider.name/segment.name/filter/filter.name
+            // Valid URL patterns are:
+        	// <ul>
+            //   <li>./provider.name/segment.name/filter/filter.name
+        	//   <li>./provider.name/segment.name/group/accountGroup.name
+        	// </ul>
             String providerName = l.get(0);
             String segmentName = l.get(1);
+            this.accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName); 
             this.filterName = null;
+            this.accountFilter = null;
+            this.accountGroupName = null;
+            this.accountGroup = null;
             if("filter".equals(l.get(l.size()-2))) {
                 this.filterName = l.get(l.size()-1);
-            }
-            this.accountPackage = Utils.getAccountPackage(this.pm); 
-            this.accountSegment = 
-                (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-                );
-            this.accountFilter = null;
-            if(this.filterName != null) {
-                AccountFilterGlobalQuery query = this.accountPackage.createAccountFilterGlobalQuery();
+                AccountFilterGlobalQuery query = (AccountFilterGlobalQuery)this.pm.newQuery(AccountFilterGlobal.class);
                 query.name().equalTo(this.filterName);
-                List<org.opencrx.kernel.account1.jmi1.AccountFilterGlobal> accountFilters = this.accountSegment.getAccountFilter(query);
+                List<AccountFilterGlobal> accountFilters = this.accountSegment.getAccountFilter(query);
                 if(!accountFilters.isEmpty()) {
                     this.accountFilter = accountFilters.iterator().next();
+                }
+            } 
+            else if("group".equals(l.get(l.size()-2))) {
+            	this.accountGroupName = l.get(l.size()-1);
+                AbstractGroupQuery query = (AbstractGroupQuery)this.pm.newQuery(AbstractGroup.class);
+                query.name().equalTo(this.accountGroupName);
+                List<AbstractGroup> accountGroups = this.accountSegment.getAccount(query);
+                if(!accountGroups.isEmpty()) {
+                    this.accountGroup = accountGroups.iterator().next();
                 }
             }
         }
         return l.size();
     }
-        
+
     //-----------------------------------------------------------------------
     public AbstractFilterAccount getAccountFilter(
     ) {
         return this.accountFilter;
+    }
+    
+    //-----------------------------------------------------------------------
+    public AbstractGroup getAccountGroup(
+    ) {
+        return this.accountGroup;
     }
     
     //-----------------------------------------------------------------------
@@ -132,17 +148,28 @@ public class AccountQueryHelper {
     }
 
     //-----------------------------------------------------------------------
+    public String getAccountGroupName(
+    ) {
+        return this.accountGroupName;
+    }
+   
+    //-----------------------------------------------------------------------
     public Collection<Account> getFilteredAccounts(
         AccountQuery accountQuery            
     ) {
         if(this.accountFilter != null) {
             return this.accountFilter.getFilteredAccount(accountQuery);
         }
+        else if(this.accountGroup != null) {
+        	accountQuery.thereExistsAccountMembership().thereExistsAccountFrom().elementOf(this.accountGroup);
+        	accountQuery.thereExistsAccountMembership().distance().equalTo(-1);
+        	return this.accountSegment.getAccount(accountQuery);
+        }
         else {
             return Collections.emptyList();
         }
     }
-    
+
     //-----------------------------------------------------------------------
     public static String formatDate(
         Date date
@@ -179,8 +206,9 @@ public class AccountQueryHelper {
     //-----------------------------------------------------------------------
     protected final PersistenceManager pm;
     protected AccountFilterGlobal accountFilter = null;
-    protected Account1Package accountPackage = null;    
+    protected AbstractGroup accountGroup = null;
     protected org.opencrx.kernel.account1.jmi1.Segment accountSegment = null;
     protected String filterName = null;
+    protected String accountGroupName = null;
     
 }

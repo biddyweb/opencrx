@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.50 2010/08/27 18:07:11 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.55 2012/01/06 12:15:52 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.50 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/27 18:07:11 $
+ * Date:        $Date: 2012/01/06 12:15:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,6 +67,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
 
 import javax.resource.ResourceException;
@@ -80,6 +81,7 @@ import org.opencrx.kernel.text.OpenOfficeToText;
 import org.opencrx.kernel.text.PDFToText;
 import org.opencrx.kernel.text.RTFToText;
 import org.opencrx.kernel.text.WordToText;
+import org.opencrx.kernel.text.XmlDocToText;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
@@ -107,7 +109,7 @@ import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
 
 /**
- * This plugin creates audit entries for modified objects.
+ * This plugin indexes objects.
  */
 public class Indexed_1 extends Database_1 {
 
@@ -286,6 +288,23 @@ public class Indexed_1 extends Database_1 {
                                 	SysLog.warning("Can not extract text from Word document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
+                            // application/vnd.openxmlformats
+                            else if(
+                            	(contentMimeType != null && contentMimeType.startsWith("application/vnd.openxmlformats")) ||
+                                contentName.endsWith(".docx") ||
+                                contentName.endsWith(".dotx") ||
+                                contentName.endsWith(".xlsx") ||
+                                contentName.endsWith(".xltx")
+                            ) {
+                                try {
+                                    text = new XmlDocToText().parse(
+                                        (InputStream)value
+                                    );
+                                }
+                                catch(Exception e) {
+                                	SysLog.warning("Can not extract text from XML document", Arrays.asList(new String[]{contentName, e.getMessage()}));
+                                }
+                            }
                             // application/vnd.sun.xml.writer
                             // application/vnd.sun.xml.calc
                             // application/vnd.sun.xml.draw
@@ -418,7 +437,7 @@ public class Indexed_1 extends Database_1 {
 		        // AccountAddress: add keywords of account
 		        if(Indexed_1.this.isAccountAddress(indexed)) {
 		        	DataproviderRequest getRequest = new DataproviderRequest(
-	                    Object_2Facade.newInstance(indexedPath.getPrefix(indexedPath.size() - 2)).getDelegate(),
+	                    Query_2Facade.newInstance(indexedPath.getPrefix(indexedPath.size() - 2)).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
 	                    AttributeSelectors.ALL_ATTRIBUTES,
 	                    null
@@ -426,7 +445,7 @@ public class Indexed_1 extends Database_1 {
 		        	DataproviderReply getReply = super.newDataproviderReply();
 		        	super.get(
 		        		getRequest.getInteractionSpec(), 
-		        		Query_2Facade.newInstance(getRequest.path()), 
+		        		Query_2Facade.newInstance(getRequest.object()), 
 		        		getReply.getResult()
 		        	);
 		            keywords.addAll(	            	
@@ -500,7 +519,7 @@ public class Indexed_1 extends Database_1 {
 		        Path reference = request.path().getParent();
 		        if("indexEntry".equals(reference.getBase())) {
 		        	DataproviderRequest getRequest = new DataproviderRequest(
-	                    Object_2Facade.newInstance(
+	                    Query_2Facade.newInstance(
 	                        request.path().getPrefix(5).getDescendant(new String[]{"indexEntry", request.path().getBase()})
 	                    ).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
@@ -510,7 +529,7 @@ public class Indexed_1 extends Database_1 {
 		        	DataproviderReply getReply = super.newDataproviderReply();
 		        	super.get(
 		        		getRequest.getInteractionSpec(), 
-		        		Query_2Facade.newInstance(getRequest.path()), 
+		        		Query_2Facade.newInstance(getRequest.object()), 
 		        		getReply.getResult()
 		        	);
 		        	Object_2Facade indexEntryFacade = Object_2Facade.newInstance(getReply.getObject());
@@ -720,20 +739,11 @@ public class Indexed_1 extends Database_1 {
 		                    ) {
 		                        Path concreteType = new Path("");
 		                        for(int i = 0; i < type.size(); i++) {
-		                            // authority
-		                            if(i == 0) {
-		                                concreteType.add(indexedIdentity.get(0));
-		                            }
-		                            // provider name
-		                            else if(i == 2) {
-		                                concreteType.add(indexedIdentity.get(2));
-		                            }
-		                            // segment name
-		                            else if(i == 4) {
-		                                concreteType.add(indexedIdentity.get(4));
+		                            if(i == 0 || i == 2 || i == 4) {
+		                            	concreteType = concreteType.getChild(indexedIdentity.get(i));
 		                            }
 		                            else {
-		                                concreteType.add(type.get(i));
+		                            	concreteType = concreteType.getChild(type.get(i));
 		                            }
 		                        }
 		                        String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.uidAsString() + ":";
@@ -745,9 +755,7 @@ public class Indexed_1 extends Database_1 {
 		                                    Quantifier.THERE_EXISTS.code(),
 		                                    SystemAttributes.OBJECT_IDENTITY,
 		                                    ConditionType.IS_LIKE.code(),
-		                                    new Object[]{
-		                                        concreteType.toUri()
-		                                    }
+		                                    new Object[]{concreteType.toXRI()}
 		                                ),
 		                                // All objects which do not have an up-to-date index entry
 		                                new FilterProperty(
@@ -772,14 +780,12 @@ public class Indexed_1 extends Database_1 {
 		                            null
 		                        );
 		                        DataproviderReply findReply = super.newDataproviderReply();
-	                            SysLog.detail("> Finding objects to be indexed " + findRequest.object());		                        			                        
 		                        super.find(
 		                        	findRequest.getInteractionSpec(), 
 		                        	Query_2Facade.newInstance(findRequest.object()), 
 		                        	findReply.getResult()
 		                        );
 		                        MappedRecord[] objectsToBeIndexed = findReply.getObjects();
-	                            SysLog.detail("Indexing #objects", objectsToBeIndexed.length);		                        	
 		                        for(int i = 0; i < objectsToBeIndexed.length; i++) {
 		                            try {
 		                            	Path objectToBeIndexedPath = Object_2Facade.getPath(objectsToBeIndexed[i]);
@@ -802,8 +808,8 @@ public class Indexed_1 extends Database_1 {
 		                                numberOfIndexedObjects++;
 		                            }
 		                            catch(Exception e) {
-		                            	SysLog.warning("Can not index", objectsToBeIndexed[i]);
-		                            	SysLog.info(e.getMessage(), e.getCause());
+		                            	SysLog.log(Level.WARNING, "Unable to index {0}. The reason is {1}. See log at level detail for more info.", objectsToBeIndexed[i], e.getMessage());
+		                            	SysLog.detail(e.getMessage(), e.getCause());
 		                            }
 		                        }
 		                    }
@@ -820,7 +826,7 @@ public class Indexed_1 extends Database_1 {
 		            	DataproviderReply getReply = super.newDataproviderReply();
 		            	super.get(
 		            		getRequest.getInteractionSpec(), 
-		            		Query_2Facade.newInstance(getRequest.path()), 
+		            		Query_2Facade.newInstance(getRequest.object()), 
 		            		getReply.getResult()
 		            	);
 		            	MappedRecord indexed = getReply.getObject();

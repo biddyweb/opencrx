@@ -241,7 +241,7 @@ org.openmdx.kernel.log.*
         </td></tr></table>
       </form>
 
-      <INPUT type="Submit" name="Print.Button" tabindex="1010" value="Print" onClick="javascript:window.print();" />
+      <INPUT type="Button" name="Print.Button" tabindex="1010" value="Print" onClick="javascript:window.print();" />
       <INPUT type="Submit" name="Cancel.Button" tabindex="1020" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
 <%
     }

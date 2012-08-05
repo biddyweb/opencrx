@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.66 2010/10/02 22:13:52 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.68 2011/11/28 09:41:02 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.66 $
+ * Revision:    $Revision: 1.68 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 22:13:52 $
+ * Date:        $Date: 2011/11/28 09:41:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,7 +81,6 @@ import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.spi.Layer_1;
-import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -89,6 +88,7 @@ import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
+import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.w3c.format.DateTimeFormat;
@@ -281,7 +281,7 @@ public class Audit_1 extends Indexed_1 {
 	        	MappedRecord segment;
 	            try {
 	            	DataproviderRequest getRequest = new DataproviderRequest(
-	                    Object_2Facade.newInstance(p).getDelegate(),
+	                    Query_2Facade.newInstance(p).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
 	                    AttributeSelectors.ALL_ATTRIBUTES,
 	                    null
@@ -289,7 +289,7 @@ public class Audit_1 extends Indexed_1 {
 	            	DataproviderReply getReply = super.newDataproviderReply();
 		            super.get(	            	
 		                getRequest.getInteractionSpec(),
-		                Query_2Facade.newInstance(getRequest.path()),
+		                Query_2Facade.newInstance(getRequest.object()),
 		                getReply.getResult()
 		            );
 		            segment = getReply.getObject();
@@ -319,7 +319,7 @@ public class Audit_1 extends Indexed_1 {
 		        Path reference = request.path().getParent();
 		        if("audit".equals(reference.getBase())) {
 		        	DataproviderRequest getRequest = new DataproviderRequest(
-	                    Object_2Facade.newInstance(
+	                    Query_2Facade.newInstance(
 	                        request.path().getPrefix(5).getDescendant(new String[]{"audit", request.path().getBase()})
 	                    ).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
@@ -329,7 +329,7 @@ public class Audit_1 extends Indexed_1 {
 		        	DataproviderReply getReply = super.newDataproviderReply();
 		        	super.get(
 		        		getRequest.getInteractionSpec(),
-		        		Query_2Facade.newInstance(getRequest.path()),
+		        		Query_2Facade.newInstance(getRequest.object()),
 		        		getReply.getResult()
 		        	);
 		        	MappedRecord auditEntry = getReply.getObject(); 
@@ -473,7 +473,7 @@ public class Audit_1 extends Indexed_1 {
 		            if(this.isAuditSegment(header, request.path())) {    
 		                // Create audit entry
 		            	DataproviderRequest getRequest = new DataproviderRequest(
-	                        request.object(),
+	                        Query_2Facade.newInstance(request.path()).getDelegate(),
 	                        DataproviderOperations.OBJECT_RETRIEVAL,
 	                        AttributeSelectors.ALL_ATTRIBUTES,
 	                        null
@@ -481,7 +481,7 @@ public class Audit_1 extends Indexed_1 {
 		            	DataproviderReply getReply = super.newDataproviderReply();
 		            	super.get(
 		            		getRequest.getInteractionSpec(), 
-		            		Query_2Facade.newInstance(getRequest.path()), 
+		            		Query_2Facade.newInstance(getRequest.object()), 
 		            		getReply.getResult()
 		            	);
 		            	MappedRecord existing = getReply.getObject();
@@ -505,13 +505,7 @@ public class Audit_1 extends Indexed_1 {
 		                    // image) which are not modified. This produces a before image
 		                    // which contains the attribute values before modification of
 		                    // modified object attributes.
-		                    MappedRecord beforeImage;
-	                        try {
-		                        beforeImage = Object_2Facade.cloneObject(existing);
-	                        }
-	                        catch (ResourceException e) {
-	                        	throw new ServiceException(e);
-	                        }            
+		                    MappedRecord beforeImage = Object_2Facade.cloneObject(existing);
 		                    Object_2Facade.getValue(beforeImage).keySet().retainAll(
 		                        Object_2Facade.getValue(request.object()).keySet()
 		                    );
@@ -667,7 +661,7 @@ public class Audit_1 extends Indexed_1 {
 		        ) {
 		            // Create audit entry
 		        	DataproviderRequest getRequest = new DataproviderRequest(
-	                    request.object(),
+	                    Query_2Facade.newInstance(request.path()).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
 	                    AttributeSelectors.ALL_ATTRIBUTES,
 	                    null
@@ -675,7 +669,7 @@ public class Audit_1 extends Indexed_1 {
 		        	DataproviderReply getReply = super.newDataproviderReply();
 		        	super.get(
 		        		getRequest.getInteractionSpec(), 
-		        		Query_2Facade.newInstance(getRequest.path()), 
+		        		Query_2Facade.newInstance(getRequest.object()), 
 		        		getReply.getResult()
 		        	);
 		        	MappedRecord existing = getReply.getObject();
@@ -745,7 +739,7 @@ public class Audit_1 extends Indexed_1 {
 		        if("testAndSetVisitedBy".equals(operation)) {
 		            Path auditEntryIdentity = request.path().getPrefix(request.path().size() - 2);
 		            DataproviderRequest getRequest = new DataproviderRequest(
-	                    Object_2Facade.newInstance(auditEntryIdentity).getDelegate(),
+	                    Query_2Facade.newInstance(auditEntryIdentity).getDelegate(),
 	                    DataproviderOperations.OBJECT_RETRIEVAL,
 	                    AttributeSelectors.ALL_ATTRIBUTES,
 	                    null
@@ -753,7 +747,7 @@ public class Audit_1 extends Indexed_1 {
 		            DataproviderReply getReply = super.newDataproviderReply();
 		            super.get(
 		            	getRequest.getInteractionSpec(), 
-		            	Query_2Facade.newInstance(getRequest.path()), 
+		            	Query_2Facade.newInstance(getRequest.object()), 
 		            	getReply.getResult()
 		            );
 		            MappedRecord auditEntry = getReply.getObject();
@@ -877,8 +871,8 @@ public class Audit_1 extends Indexed_1 {
         if(o2 == null) {
           return new HashSet<String>();
         }
-        Object_2Facade o1Facade = ResourceHelper.getObjectFacade(o1);
-        Object_2Facade o2Facade = ResourceHelper.getObjectFacade(o2);
+        Object_2Facade o1Facade = Facades.asObject(o1);
+        Object_2Facade o2Facade = Facades.asObject(o2);
         // touch all o1 attributes in o2
         for(
           Iterator<String> i = o1Facade.getValue().keySet().iterator();
@@ -921,7 +915,7 @@ public class Audit_1 extends Indexed_1 {
     	MappedRecord beforeImage
     ) throws ServiceException {
         String beforeImageAsString = "";
-        Object_2Facade beforeImageFacade = ResourceHelper.getObjectFacade(beforeImage);
+        Object_2Facade beforeImageFacade = Facades.asObject(beforeImage);
         for(
             Iterator<String> i = beforeImageFacade.getValue().keySet().iterator();
             i.hasNext();

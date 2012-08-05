@@ -334,14 +334,35 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:contributionSource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Contributions Sources</_item>
+											</toolTip>
+											<label>
+												<_item>Contributions Sources</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>22</maxMember>
+											<showMaxMember>10</showMaxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- ElementDefinitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:contractType">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Contract type</_item>
+												<_item>Contract class</_item>
 											</toolTip>
 											<label>
-												<_item>Contract type</_item>
+												<_item>Contract class</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -373,10 +394,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Assigned depot</_item>
+												<_item>Depot</_item>
 											</toolTip>
 											<label>
-												<_item>Assigned depot</_item>
+												<_item>Depot</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -472,7 +493,7 @@
 												<_item>Position (unit based)</_item>
 											</toolTip>
 											<label>
-												<_item>Position (unit based</_item>
+												<_item>Position (unit based)</_item>
 											</label>
 											<iconKey>QuantityBasedSalesVolumeBudgetPosition</iconKey>
 										</_object>
@@ -638,234 +659,6 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-									<!-- CustomerAssignment -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:customer">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Customers</_item>
-											</toolTip>
-											<label>
-												<_item>Customers</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<maxMember>5</maxMember>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:CustomerAssignment">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Customer Assignment</_item>
-											</toolTip>
-											<label>
-												<_item>Customer Assignment</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<iconKey>CustomerAssignment</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!-- Grid Tabs -->
-									<!--FieldGroups in General Tab-->
-									<!--Element Definition Contact-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:CustomerAssignment:name">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Name</_item>
-											</toolTip>
-											<label>
-												<_item>Name</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:CustomerAssignment:description">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Description</_item>
-											</toolTip>
-											<label>
-												<_item>Description</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>20</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
-									<!-- BrokerAssignment -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:broker">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Brokers</_item>
-											</toolTip>
-											<label>
-												<_item>Brokers</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>20</_item>
-											</order>
-											<maxMember>5</maxMember>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BrokerAssignment">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Broker Assignment</_item>
-											</toolTip>
-											<label>
-												<_item>Broker Assignment</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<iconKey>BrokerAssignment</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!-- Grid Tabs -->
-									<!--FieldGroups in General Tab-->
-									<!--Element Definition Contact-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BrokerAssignment:name">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Name</_item>
-											</toolTip>
-											<label>
-												<_item>Name</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BrokerAssignment:description">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Description</_item>
-											</toolTip>
-											<label>
-												<_item>Description</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>20</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
-									<!-- SalesRepAssignment -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:salesRep">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Sales Reps</_item>
-											</toolTip>
-											<label>
-												<_item>Sales Reps</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>30</_item>
-											</order>
-											<maxMember>5</maxMember>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesRepAssignment">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Sales Rep Assignment</_item>
-											</toolTip>
-											<label>
-												<_item>Sales Rep Assignment</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<iconKey>SalesRepAssignment</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!-- Grid Tabs -->
-									<!--FieldGroups in General Tab-->
-									<!--Element Definition Contact-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesRepAssignment:name">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Name</_item>
-											</toolTip>
-											<label>
-												<_item>Name</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesRepAssignment:description">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Description</_item>
-											</toolTip>
-											<label>
-												<_item>Description</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>20</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudgetContributionSource:budget">
 										<_object>
 											<active>true</active>
@@ -880,6 +673,11 @@
 												<_item>0</_item>
 												<_item>18</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
 											<maxMember>7</maxMember>
 										</_object>
 										<_content/>

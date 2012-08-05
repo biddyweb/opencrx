@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PrestaShopMapper.java,v 1.16 2011/01/12 19:08:16 wfro Exp $
+ * Name:        $Id: PrestaShopMapper.java,v 1.17 2011/08/26 16:12:05 wfro Exp $
  * Description: PrestaShopMapper
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/12 19:08:16 $
+ * Date:        $Date: 2011/08/26 16:12:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -130,6 +130,7 @@ import org.opencrx.kernel.uom1.cci2.UomScheduleQuery;
 import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.uom1.jmi1.UomSchedule;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.spi2.Datatypes;
 
@@ -1420,49 +1421,64 @@ public class PrestaShopMapper {
 				CreateCustomerAsContactResult createCustomerResult = 
 					this.shopService.createCustomerAsContact(
 						createCustomerParams
-					);				
-				customerNumber = createCustomerResult.getCustomer().getCustomerNumber();				
-		        // Create customer contract
-		        CreateCustomerContractParams createCustomerContractParams = Datatypes.create(
-		            CreateCustomerContractParams.class,
-		            Datatypes.member(
-		                CreateCustomerContractParams.Member.customerContract,
-		                Datatypes.create(
-		                    CustomerContractT.class,
-		                    Datatypes.member(
-		                    	CustomerContractT.Member.customerNumber,
-		                        customerNumber
-		                    ),
-		                    Datatypes.member(
-		                        CustomerContractT.Member.acceptedLegal,
-		                        Boolean.TRUE
-		                    ),
-		                    Datatypes.member(
-		                        CustomerContractT.Member.acceptedMarketing,
-		                        Boolean.TRUE
-		                    ),
-		                    Datatypes.member(
-		                        CustomerContractT.Member.acceptedPrivateDataForwarding,
-		                        Boolean.TRUE
-		                    ),
-		                    Datatypes.member(
-		                        CustomerContractT.Member.salesTaxType,
-		                        "Sales Tax 0%"
-		                    ),
-		                    Datatypes.member(
-		                        CustomerContractT.Member.contractCurrency,
-		                        0
-		                    ),
-		                    Datatypes.member(
-		                        CustomerContractT.Member.noBilling,
-		                        Boolean.FALSE
-		                    )
-		                )
-		            )
-		        );
-	        	this.shopService.createCustomerContract(
-	        		createCustomerContractParams
-	        	);
+					);	
+				if(createCustomerResult.getStatus().getReturnCode() == BasicException.Code.NONE) {
+					customerNumber = createCustomerResult.getCustomer().getCustomerNumber();				
+			        // Create customer contract
+			        CreateCustomerContractParams createCustomerContractParams = Datatypes.create(
+			            CreateCustomerContractParams.class,
+			            Datatypes.member(
+			                CreateCustomerContractParams.Member.customerContract,
+			                Datatypes.create(
+			                    CustomerContractT.class,
+			                    Datatypes.member(
+			                    	CustomerContractT.Member.customerNumber,
+			                        customerNumber
+			                    ),
+			                    Datatypes.member(
+			                        CustomerContractT.Member.acceptedLegal,
+			                        Boolean.TRUE
+			                    ),
+			                    Datatypes.member(
+			                        CustomerContractT.Member.acceptedMarketing,
+			                        Boolean.TRUE
+			                    ),
+			                    Datatypes.member(
+			                        CustomerContractT.Member.acceptedPrivateDataForwarding,
+			                        Boolean.TRUE
+			                    ),
+			                    Datatypes.member(
+			                        CustomerContractT.Member.salesTaxType,
+			                        "Sales Tax 0%"
+			                    ),
+			                    Datatypes.member(
+			                        CustomerContractT.Member.contractCurrency,
+			                        0
+			                    ),
+			                    Datatypes.member(
+			                        CustomerContractT.Member.noBilling,
+			                        Boolean.FALSE
+			                    )
+			                )
+			            )
+			        );
+		        	this.shopService.createCustomerContract(
+		        		createCustomerContractParams
+		        	);
+				} else {
+					throw new ServiceException(
+						BasicException.Code.DEFAULT_DOMAIN,
+						BasicException.Code.ASSERTION_FAILURE,						
+						"Unable to create customer",
+						new BasicException.Parameter("status.returnCode", createCustomerResult.getStatus().getReturnCode()),
+						new BasicException.Parameter("status.returnParams", createCustomerResult.getStatus().getReturnParams()),
+						new BasicException.Parameter("customer.customerNumber", customerNumber),
+						new BasicException.Parameter("customer.firstname", firstname),
+						new BasicException.Parameter("customer.lastname", lastname),
+						new BasicException.Parameter("customer.userName", userName),
+						new BasicException.Parameter("customer.email", email)						
+					);						
+				}
 			}
 			// Set credential
 	        SetCredentialsParams setCredentialsParams = Datatypes.create(

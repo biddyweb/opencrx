@@ -124,7 +124,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:contact">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:contact">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -199,18 +199,6 @@
 											</toolTip>
 											<label>
 												<_item>Personal information</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Picture</_item>
-											</toolTip>
-											<label>
-												<_item>Picture</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -437,7 +425,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!webUrl">
 										<_object>
                       <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
-											<active>true</active>
+											<active>false</active>
 											<toolTip>
 												<_item>Web page home</_item>
 											</toolTip>
@@ -501,7 +489,7 @@
 											<active>true</active>
 											<columnBreak>true</columnBreak>
 											<spanRow>3</spanRow>
-											<multiplicity>3</multiplicity> <!-- can be increased if more lines are needed -->
+											<multiplicity>0..3</multiplicity> <!-- can be increased if more lines are needed -->
 											<toolTip>
 												<_item>Address line(s)</_item>
 											</toolTip>
@@ -521,7 +509,7 @@
 											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
 											<active>true</active>
 											<spanRow>2</spanRow>
-											<multiplicity>3</multiplicity> <!-- can be increased if more lines are needed -->
+											<multiplicity>0..3</multiplicity> <!-- can be increased if more lines are needed -->
 											<toolTip>
 												<_item>postal street / PO box</_item>
 											</toolTip>
@@ -1097,71 +1085,6 @@
 												<_item>10</_item>
 												<_item>0</_item>
 												<_item>140</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!-- picture -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent">
-										<_object>
-                      <active>true</active>
-											<columnBreak>false</columnBreak>
-											<spanRow>7</spanRow>
-											<changeable>false</changeable>
-											<inPlace>true</inPlace>
-											<toolTip>
-												<_item>Picture</_item>
-											</toolTip>
-											<label>
-												<_item>Picture</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>10</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content>
-<!--
-											<alternateElementDefinition>
-												<org.openmdx.ui1.AlternateElementDefinition id="0">
-													<_object>
-														<columnBreak>true</columnBreak>
-														<spanRow>8</spanRow>
-														<changeable>false</changeable>
-														<inPlace>true</inPlace>
-														<toolTip>
-															<_item>Picture</_item>
-														</toolTip>
-														<label>
-															<_item>Picture</_item>
-														</label>
-														<order>
-															<_item>0</_item>
-															<_item>0</_item>
-															<_item>80</_item>
-														</order>
-													</_object>
-													<_content/>
-												</org.openmdx.ui1.AlternateElementDefinition>
-											</alternateElementDefinition>
--->
-										</_content>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture">
-										<_object>
-											<columnBreak>true</columnBreak>
-											<active>true</active>
-											<toolTip>
-												<_item>Title / Source</_item>
-											</toolTip>
-											<label>
-												<_item>Title / Source</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>10</_item>
-												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>

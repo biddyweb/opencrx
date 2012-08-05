@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailRecipientDataBinding.java,v 1.3 2009/10/23 14:01:07 wfro Exp $
+ * Name:        $Id: EMailRecipientDataBinding.java,v 1.4 2011/11/25 17:36:29 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/10/23 14:01:07 $
+ * Date:        $Date: 2011/11/25 17:36:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,6 +69,7 @@ import javax.jdo.ObjectState;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 
+import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
@@ -174,7 +175,7 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 		) {
 			org.opencrx.kernel.activity1.jmi1.EMail eMailActivity = (org.opencrx.kernel.activity1.jmi1.EMail)object;
 			org.opencrx.kernel.account1.jmi1.EMailAddress eMailAddress = (org.opencrx.kernel.account1.jmi1.EMailAddress)newValue;
-			List<org.opencrx.kernel.activity1.jmi1.EMailRecipient> recipients = this.getEMailRecipients(eMailActivity);
+			List<EMailRecipient> recipients = this.getEMailRecipients(eMailActivity);
 			if(this.index < recipients.size()) {
 				org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient = recipients.get(this.index);
 				if(newValue == null) {
@@ -186,7 +187,7 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 					recipient.setParty(eMailAddress);
 				}
 			}
-			else {
+			else if(newValue != null) {
 				PersistenceManager pm = JDOHelper.getPersistenceManager(eMailActivity);
 				org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient = null;
 				for(int i = recipients.size(); i < this.index + 1; i++) {

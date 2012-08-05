@@ -227,9 +227,6 @@
             <generalization xmi:id="_ASAa4BkzEdy0ZOgWORVVxA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
-            <generalization xmi:id="_pqF9YBkzEdy0ZOgWORVVxA">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
-            </generalization>
             <generalization xmi:id="_OmJNQBmTEdy0ZOgWORVVxA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.product1.uml#_kpFuUOryEdm0QOOG5_-fRw"/>
             </generalization>

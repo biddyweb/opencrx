@@ -122,6 +122,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembershipFilterProperty">
+										<_object>
+											<toolTip>
+												<_item>Suchkriterium - Kontaktmitgliedschaft</_item>
+											</toolTip>
+											<label>
+												<_item>Suchkriterium - Kontaktmitgliedschaft</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembershipFilterProperty:account">
+										<_object>
+											<toolTip>
+												<_item>Kontakt</_item>
+											</toolTip>
+											<label>
+												<_item>Kontakt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>

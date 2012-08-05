@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: NavigationControl.java,v 1.2 2010/04/27 12:17:30 wfro Exp $
+ * Name:        $Id: NavigationControl.java,v 1.3 2011/07/07 22:40:05 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:17:30 $
+ * Date:        $Date: 2011/07/07 22:40:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,6 +65,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ViewPort;
+import org.openmdx.portal.servlet.action.SelectObjectAction;
 
 public class NavigationControl extends org.openmdx.portal.servlet.control.NavigationControl {
 
@@ -101,7 +102,7 @@ public class NavigationControl extends org.openmdx.portal.servlet.control.Naviga
 		        }
 		        if(alertsSize > 0) {
 		            Action selectAlertsAction = new Action(
-		                Action.EVENT_SELECT_OBJECT,
+		                SelectObjectAction.EVENT_ID,
 			            new Action.Parameter[]{
        		                new Action.Parameter(Action.PARAMETER_PANE, "0"),
        		                new Action.Parameter(Action.PARAMETER_REFERENCE, "0"),

@@ -547,7 +547,7 @@
     <styles xmi:type="notation:RoutingStyle" xmi:id="_ZFY4AUyeEd-WrsI8GuQqfA" routing="Rectilinear"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ZFY4AkyeEd-WrsI8GuQqfA" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Association" href="../../org.opencrx.kernel.generic.uml#_C0FwUKJGEduFZfna3MXTdw"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ZFY4A0yeEd-WrsI8GuQqfA" points="[0, 0, -556, -50]$[307, 27, -249, -23]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ZFY4A0yeEd-WrsI8GuQqfA" points="[-15, -99, 243, 277]$[-15, -346, 243, 30]"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_dZcHIEyeEd-WrsI8GuQqfA" type="4001" source="_dZE6wEyeEd-WrsI8GuQqfA" target="_ZFHyQEyeEd-WrsI8GuQqfA" routing="Tree" lineColor="2763429">
     <children xmi:type="notation:DecorationNode" xmi:id="_dZcHI0yeEd-WrsI8GuQqfA" type="6018">

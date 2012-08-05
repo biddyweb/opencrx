@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.20 2010/10/02 00:17:40 wfro Exp $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.21 2011/09/23 15:59:12 wfro Exp $
  * Description: DocumentScannerServlet
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 00:17:40 $
+ * Date:        $Date: 2011/09/23 15:59:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,7 +61,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.jdo.PersistenceManager;
@@ -72,6 +74,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.backend.Documents;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.SendAlertParams;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
@@ -87,9 +91,7 @@ import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
 
@@ -98,7 +100,7 @@ import org.w3c.format.DateTimeFormat;
  * are of the form <code>name { "#" folder name } "." extension</code>. Files with
  * the same name are mapped to the same Document. Documents are assigned to the
  * document folders specified by the # separated folder list. Successfully imported
- * files are removed so the import directory should not be as import directory only 
+ * files are removed so the import directory should be used as import directory only 
  * and not as document archive.  
  */  
 public class DocumentScannerServlet 
@@ -110,7 +112,7 @@ public class DocumentScannerServlet
     ) throws ServletException {
         super.init(config);        
         try {
-            this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
+            this.pmf = Utils.getPersistenceManagerFactory();
         }
         catch (Exception e) {
             throw new ServletException("Can not get connection to persistence manager", e);
@@ -156,7 +158,7 @@ public class DocumentScannerServlet
     	String providerName = documentSegment.refGetPath().get(2);
     	String segmentName = documentSegment.refGetPath().get(4);
     	UserHome userHomeAdmin = (UserHome)pm.getObjectById(
-    		new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName)
+    		new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName)
     	);
     	SendAlertParams sendAlertParams = Utils.getBasePackage(pm).createSendAlertParams(
     		DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename + "\n" +
@@ -251,8 +253,7 @@ public class DocumentScannerServlet
                         try {
                             pm.currentTransaction().begin();
                             documentSegment.addDocument(
-                                false,
-                                UUIDConversion.toUID(this.uuids.next()), 
+                                Base.getInstance().getUidAsString(), 
                                 document
                             );
                             pm.currentTransaction().commit();
@@ -315,8 +316,7 @@ public class DocumentScannerServlet
                         try {
                             pm.currentTransaction().begin();
                             document.addRevision(
-                                false, 
-                                UUIDConversion.toUID(this.uuids.next()), 
+                                Base.getInstance().getUidAsString(), 
                                 revision
                             );
                             document.setHeadRevision(revision);
@@ -361,8 +361,7 @@ public class DocumentScannerServlet
                             try {
                                 pm.currentTransaction().begin();
                                 documentSegment.addFolder(
-                                    false,
-                                    UUIDConversion.toUID(this.uuids.next()), 
+                                    Base.getInstance().getUidAsString(), 
                                     folder
                                 );
                                 pm.currentTransaction().commit();
@@ -422,8 +421,7 @@ public class DocumentScannerServlet
                             try {
                                 pm.currentTransaction().begin();
                                 document.addDocumentFolderAssignment(
-                                    false,
-                                    UUIDConversion.toUID(this.uuids.next()), 
+                                    Base.getInstance().getUidAsString(), 
                                     assignment
                                 );
                                 pm.currentTransaction().commit();
@@ -468,7 +466,7 @@ public class DocumentScannerServlet
     ) throws IOException {
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
         try {
-            PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+            PersistenceManager pm = this.pmf.getPersistenceManager(
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );    
@@ -519,21 +517,18 @@ public class DocumentScannerServlet
                         (scanDir.getStringValue().length() > 0)                
                     ) {
                         File dir = new File(scanDir.getStringValue());
-                        org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
-                            (org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
-                                new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName)
-                            );
+                        org.opencrx.kernel.document1.jmi1.Segment documentSegment = Documents.getInstance().getDocumentSegment(pm, providerName, segmentName); 
                         List<org.opencrx.security.realm1.jmi1.PrincipalGroup> principalGroups = 
                             new ArrayList<org.opencrx.security.realm1.jmi1.PrincipalGroup>();
                         if((groups == null) || (groups.getStringValue().length() == 0)) {
                             org.opencrx.security.realm1.jmi1.PrincipalGroup group =
                                 (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(
-                                    new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName + "/principal/" + SecurityKeys.USER_GROUP_USERS)
+                                    new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName, "principal", SecurityKeys.USER_GROUP_USERS)
                                 );                            
                             principalGroups.add(group);
                             group =
                                 (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(
-                                    new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName + "/principal/" + SecurityKeys.USER_GROUP_ADMINISTRATORS)
+                                    new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName, "principal", SecurityKeys.USER_GROUP_ADMINISTRATORS)
                                 );                            
                             principalGroups.add(group);
                         }
@@ -544,7 +539,7 @@ public class DocumentScannerServlet
                                 org.opencrx.security.realm1.jmi1.PrincipalGroup group = null;
                                 try {
                                     group = (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(
-                                        new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName + "/principal/" + groupName)
+                                        new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName, "principal", groupName)
                                     );
                                 } catch(Exception e) {}
                                 if(group != null) {
@@ -588,25 +583,35 @@ public class DocumentScannerServlet
             String segmentName = req.getParameter("segment");
             String providerName = req.getParameter("provider");
             String id = providerName + "/" + segmentName;
-            if(
-                COMMAND_EXECUTE.equals(req.getPathInfo()) &&
-                !this.runningSegments.contains(id)
-            ) {
-                try {
-                    this.runningSegments.add(id);
-                    this.scanDocuments(
-                        id,
-                        providerName,
-                        segmentName,
-                        req,
-                        res
-                    );
-                } catch(Exception e) {
-                    new ServiceException(e).log();
+            if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
+                if(!runningSegments.containsKey(id)) {
+	                try {
+	                    runningSegments.put(
+	                    	id,
+	                    	Thread.currentThread()
+	                    );
+	                    this.scanDocuments(
+	                        id,
+	                        providerName,
+	                        segmentName,
+	                        req,
+	                        res
+	                    );
+	                } 
+	                catch(Exception e) {
+	                    new ServiceException(e).log();
+	                }
+	                finally {
+	                    runningSegments.remove(id);
+	                }
                 }
-                finally {
-                    this.runningSegments.remove(id);
-                }
+	        	else if(
+	        		!runningSegments.get(id).isAlive() || 
+	        		runningSegments.get(id).isInterrupted()
+	        	) {
+	            	Thread t = runningSegments.get(id);
+	        		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+	        	}
             }
         }
     }
@@ -651,9 +656,8 @@ public class DocumentScannerServlet
     private static final String OPTION_GROUPS = "groups";
     private static final long STARTUP_DELAY = 180000L;
     
-    private final UUIDGenerator uuids = UUIDs.getGenerator();
-    private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final List<String> runningSegments = new ArrayList<String>();
+    private PersistenceManagerFactory pmf = null;
+    private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
     private long startedAt = System.currentTimeMillis();
         
 }

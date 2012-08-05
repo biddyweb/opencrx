@@ -9,7 +9,7 @@
 		<field name="segment" visibility="none">
 			<column name="P$$PARENT"/>
 		</field>		    
-		<field name="folder" visibility="cci">
+		<field name="subFolder" visibility="cci">
 			<join table="OOCKE1_JOIN_FLDCONTAINSFLD"/>
 		</field>			    
     </class>

@@ -63,7 +63,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_2lJ_MUvOEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2lJ_MkvOEd-5Nc4fT0o0ug" x="195" y="51" height="436"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2lJ_MkvOEd-5Nc4fT0o0ug" x="195" y="51" height="384"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_-q9osEvOEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-rIn0EvOEd-5Nc4fT0o0ug" source="Shortcut">
@@ -95,36 +95,6 @@
     <element xmi:type="uml:Class" href="../../org.opencrx.security.realm1.uml#_qlmIAB5CEdqET7ZHRltKzA"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-q9oskvOEd-5Nc4fT0o0ug" x="1628" y="55" width="296" height="85"/>
   </children>
-  <children xmi:type="notation:Shape" xmi:id="_B55C0EvPEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_B5-iYEvPEd-5Nc4fT0o0ug" source="Shortcut">
-      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_B5-iYUvPEd-5Nc4fT0o0ug" key="modelID" value="UMLClass"/>
-    </eAnnotations>
-    <children xmi:type="notation:DecorationNode" xmi:id="_B55C00vPEd-5Nc4fT0o0ug" type="5003">
-      <styles xmi:type="notation:FontStyle" xmi:id="_B57fEEvPEd-5Nc4fT0o0ug" bold="true" italic="true"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_B55C1EvPEd-5Nc4fT0o0ug" type="5019"/>
-    <children xmi:type="notation:BasicCompartment" xmi:id="_B55p4EvPEd-5Nc4fT0o0ug" type="7001">
-      <styles xmi:type="notation:TitleStyle" xmi:id="_B55p4UvPEd-5Nc4fT0o0ug" showTitle="true"/>
-      <styles xmi:type="notation:SortingStyle" xmi:id="_B55p4kvPEd-5Nc4fT0o0ug"/>
-      <styles xmi:type="notation:FilteringStyle" xmi:id="_B55p40vPEd-5Nc4fT0o0ug"/>
-      <styles xmi:type="notation:CanonicalStyle" xmi:id="_B55p5EvPEd-5Nc4fT0o0ug"/>
-    </children>
-    <children xmi:type="notation:BasicCompartment" xmi:id="_B55p5UvPEd-5Nc4fT0o0ug" type="7002">
-      <styles xmi:type="notation:TitleStyle" xmi:id="_B55p5kvPEd-5Nc4fT0o0ug" showTitle="true"/>
-      <styles xmi:type="notation:SortingStyle" xmi:id="_B55p50vPEd-5Nc4fT0o0ug"/>
-      <styles xmi:type="notation:FilteringStyle" xmi:id="_B55p6EvPEd-5Nc4fT0o0ug"/>
-      <styles xmi:type="notation:CanonicalStyle" xmi:id="_B55p6UvPEd-5Nc4fT0o0ug"/>
-    </children>
-    <children xmi:type="notation:BasicCompartment" xmi:id="_B55p6kvPEd-5Nc4fT0o0ug" type="7003">
-      <styles xmi:type="notation:TitleStyle" xmi:id="_B55p60vPEd-5Nc4fT0o0ug" showTitle="true"/>
-      <styles xmi:type="notation:SortingStyle" xmi:id="_B55p7EvPEd-5Nc4fT0o0ug"/>
-      <styles xmi:type="notation:FilteringStyle" xmi:id="_B55p7UvPEd-5Nc4fT0o0ug"/>
-      <styles xmi:type="notation:CanonicalStyle" xmi:id="_B55p7kvPEd-5Nc4fT0o0ug"/>
-    </children>
-    <styles xmi:type="notation:CanonicalStyle" xmi:id="_B55C0UvPEd-5Nc4fT0o0ug"/>
-    <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_B55C0kvPEd-5Nc4fT0o0ug" x="1630" y="375" width="297" height="90"/>
-  </children>
   <children xmi:type="notation:Shape" xmi:id="_Vx2PQEvQEd-5Nc4fT0o0ug" type="Note" fontName="Arial" fontHeight="11" description="owner[0]: name of object owner&#xA;owner[1]: name of primary group&#xA;&#xA;Storing the owner names in a list allows efficient queries of the form 'owner IS_IN [&lt;owner name>, &lt;group names>]'.&#xA;&#xA;accessLevel:&#xA;0 - N/A&#xA;1 - private&#xA;2 - basic (all users member of primary group)&#xA;3 - deep (all users member of primary group recursively)&#xA;4 - global&#xA;&#xA;mode:&#xA;0 - local&#xA;1 - recursive&#xA;&#xA;referenFilter:&#xA;list of reference names. If list is empty all composite referenced objects are processed.&#xA;" fillColor="16446168" transparency="0" lineColor="6737151" lineWidth="1">
     <children xmi:type="notation:BasicDecorationNode" xmi:id="_Vx3dYEvQEd-5Nc4fT0o0ug" type="DiagramName">
       <element xsi:nil="true"/>
@@ -135,7 +105,7 @@
     <styles xmi:type="notation:TextStyle" xmi:id="_Vx2PQUvQEd-5Nc4fT0o0ug"/>
     <styles xmi:type="notation:LineTypeStyle" xmi:id="_Vx2PQkvQEd-5Nc4fT0o0ug"/>
     <element xsi:nil="true"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Vx2PQ0vQEd-5Nc4fT0o0ug" x="196" y="513" width="647"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Vx2PQ0vQEd-5Nc4fT0o0ug" x="194" y="474" width="647"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_aW-AQEvQEd-5Nc4fT0o0ug" type="Note" fontName="Arial" fontHeight="11" description="Read access to an object and object creation requires sufficient access levels granted by the accessLevelBrowse and accessLevelUpdate of the parent object. Typically the access levels are retrieved from the direct composite parent. An implementation should allow to configure the parent object which grants the access (level - 1, level - 2, ...). The reference accessGrantedByParent points to the parent object used to determine &#xD;&#xA;accessLevelBrowse and accessLevelUpdate." fillColor="16446168" transparency="0" lineColor="6737151" lineWidth="1">
     <children xmi:type="notation:BasicDecorationNode" xmi:id="_aXAcgEvQEd-5Nc4fT0o0ug" type="DiagramName">
@@ -147,7 +117,7 @@
     <styles xmi:type="notation:TextStyle" xmi:id="_aW-AQUvQEd-5Nc4fT0o0ug"/>
     <styles xmi:type="notation:LineTypeStyle" xmi:id="_aW-AQkvQEd-5Nc4fT0o0ug"/>
     <element xsi:nil="true"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aW-AQ0vQEd-5Nc4fT0o0ug" x="860" y="516" width="667" height="236"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aW-AQ0vQEd-5Nc4fT0o0ug" x="858" y="477" width="667" height="236"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_jBA_QEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_jBMlcEvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -177,7 +147,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_jBA_QUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D415C99930052"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_jBA_QkvQEd-5Nc4fT0o0ug" x="196" y="1092"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_jBA_QkvQEd-5Nc4fT0o0ug" x="194" y="1053"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_mKf4sEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_mKsF8EvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -207,7 +177,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_mKf4sUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_GAc68HXPEd28KbMhkgWYqw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_mKf4skvQEd-5Nc4fT0o0ug" x="198" y="1235"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_mKf4skvQEd-5Nc4fT0o0ug" x="196" y="1196"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_oDv5UEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_oD5DQEvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -237,7 +207,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_oDv5UUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D415D112F0322"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_oDv5UkvQEd-5Nc4fT0o0ug" x="197" y="1378"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_oDv5UkvQEd-5Nc4fT0o0ug" x="195" y="1339"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_rgmasEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_rgwLsEvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -267,7 +237,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_rgmasUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D415C9CAE038B"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rgmaskvQEd-5Nc4fT0o0ug" x="196" y="1490"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rgmaskvQEd-5Nc4fT0o0ug" x="194" y="1451"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_tetGIEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_te3eMEvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -297,7 +267,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_tetGIUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D415C99980367"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tetGIkvQEd-5Nc4fT0o0ug" x="606" y="1095"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tetGIkvQEd-5Nc4fT0o0ug" x="604" y="1056"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_u9iboEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_u9rlkEvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -327,7 +297,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_u9iboUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_3C7B8A60016D415C9B020367"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_u9ibokvQEd-5Nc4fT0o0ug" x="606" y="1216" width="302"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_u9ibokvQEd-5Nc4fT0o0ug" x="604" y="1177" width="302"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_yBeGsEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_yBps4EvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -357,7 +327,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_yBeGsUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_DF9yUNupEdypesIUvQWuIA"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_yBeGskvQEd-5Nc4fT0o0ug" x="969" y="1096"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_yBeGskvQEd-5Nc4fT0o0ug" x="967" y="1057"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_ywehwEvQEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ywtyUEvQEd-5Nc4fT0o0ug" source="Shortcut">
@@ -387,7 +357,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_ywehwUvQEd-5Nc4fT0o0ug"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.base.uml#_EoTu0NupEdypesIUvQWuIA"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ywehwkvQEd-5Nc4fT0o0ug" x="969" y="1219"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ywehwkvQEd-5Nc4fT0o0ug" x="967" y="1180"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_GtObsEvfEd-5Nc4fT0o0ug" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_GtW-kEvfEd-5Nc4fT0o0ug" source="Shortcut">
@@ -486,38 +456,6 @@
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ddoEo0vPEd-5Nc4fT0o0ug" points="[15, -6, -493, 4]$[493, -6, -15, 4]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_dds9IEvPEd-5Nc4fT0o0ug" id="(0.9843096234309623,0.5064935064935064)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_dds9IUvPEd-5Nc4fT0o0ug" id="(0.05454545454545454,0.4666666666666667)"/>
-  </edges>
-  <edges xmi:type="notation:Edge" xmi:id="_ftl8IEvPEd-5Nc4fT0o0ug" type="4005" source="_2lJ_MEvOEd-5Nc4fT0o0ug" target="_B55C0EvPEd-5Nc4fT0o0ug">
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftmjMEvPEd-5Nc4fT0o0ug" type="6003">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftmjMUvPEd-5Nc4fT0o0ug" y="20"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftmjMkvPEd-5Nc4fT0o0ug" type="6004">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftmjM0vPEd-5Nc4fT0o0ug" y="-23"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftmjNEvPEd-5Nc4fT0o0ug" type="6005">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftnKQEvPEd-5Nc4fT0o0ug" x="-51" y="-25"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftnKQUvPEd-5Nc4fT0o0ug" type="6006">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftnKQkvPEd-5Nc4fT0o0ug" y="-30"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftnKQ0vPEd-5Nc4fT0o0ug" type="6007">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftnKREvPEd-5Nc4fT0o0ug" x="-1" y="52"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftnKRUvPEd-5Nc4fT0o0ug" type="6008">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftnKRkvPEd-5Nc4fT0o0ug" x="-38" y="19"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftnKR0vPEd-5Nc4fT0o0ug" type="6009">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftnKSEvPEd-5Nc4fT0o0ug" x="37" y="21"/>
-    </children>
-    <children xmi:type="notation:DecorationNode" xmi:id="_ftnKSUvPEd-5Nc4fT0o0ug" type="6019">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_ftnKSkvPEd-5Nc4fT0o0ug" y="40"/>
-    </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ftl8IUvPEd-5Nc4fT0o0ug" routing="Rectilinear"/>
-    <styles xmi:type="notation:FontStyle" xmi:id="_ftl8IkvPEd-5Nc4fT0o0ug" fontName="Arial" fontHeight="11"/>
-    <element xmi:type="uml:Association" href="../../org.opencrx.kernel.base.uml#_fthqsEvPEd-5Nc4fT0o0ug"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ftl8I0vPEd-5Nc4fT0o0ug" points="[43, -31, -537, 3]$[522, -31, -58, 3]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ftq0oEvPEd-5Nc4fT0o0ug" id="(0.9550209205020921,0.935064935064935)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ftq0oUvPEd-5Nc4fT0o0ug" id="(0.19553072625698323,0.55)"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_Vx-yIEvQEd-5Nc4fT0o0ug" type="NoteAttachment" source="_2lJ_MEvOEd-5Nc4fT0o0ug" target="_Vx2PQEvQEd-5Nc4fT0o0ug" lineColor="2763429" lineWidth="1">
     <styles xmi:type="notation:ArrowStyle" xmi:id="_Vx-yIUvQEd-5Nc4fT0o0ug"/>

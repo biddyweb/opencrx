@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ContactImpl.java,v 1.7 2010/11/01 12:39:25 wfro Exp $
+ * Name:        $Id: ContactImpl.java,v 1.9 2011/09/28 11:08:34 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/01 12:39:25 $
+ * Date:        $Date: 2011/09/28 11:08:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,12 +55,13 @@
  */
 package org.opencrx.kernel.account1.aop2;
 
+import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 public class ContactImpl
 	<S extends org.opencrx.kernel.account1.jmi1.Contact,N extends org.opencrx.kernel.account1.cci2.Contact,C extends Void>
 	extends AccountImpl<S,N,C>
-	implements StoreCallback {
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
     public ContactImpl(
@@ -77,4 +78,10 @@ public class ContactImpl
 		super.jdoPreStore();
 	}
 	
+    //-----------------------------------------------------------------------
+    @Override
+    public void jdoPreDelete(
+    ) {
+    	super.jdoPreDelete();
+    }	
 }

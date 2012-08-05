@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.28 2010/12/15 11:52:35 wfro Exp $
+ * Name:        $Id: FreeBusyServlet.java,v 1.29 2011/09/13 23:40:16 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.28 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 11:52:35 $
+ * Date:        $Date: 2011/09/13 23:40:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,6 +80,7 @@ import org.opencrx.kernel.activity1.jmi1.ExternalActivity;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.backend.ICalendar;
+import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.EMailAccountQuery;
 import org.opencrx.kernel.home1.cci2.UserHomeQuery;
@@ -89,7 +90,6 @@ import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
@@ -118,7 +118,7 @@ public class FreeBusyServlet extends HttpServlet {
             }
             return date;
         }
-                	
+
         public void parse(
             String rrule
         ) {
@@ -179,10 +179,10 @@ public class FreeBusyServlet extends HttpServlet {
         ServletConfig config            
     ) throws ServletException {
         super.init();        
-        if(this.persistenceManagerFactory == null) {                    
+        if(this.pmf == null) {                    
             try {
                 Utils.getModel();
-                this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
+                this.pmf = Utils.getPersistenceManagerFactory();
             }
             catch (NamingException e) {
                 throw new ServletException( 
@@ -202,7 +202,7 @@ public class FreeBusyServlet extends HttpServlet {
     //-----------------------------------------------------------------------
     protected PersistenceManager getRootPersistenceManager(
     ) {
-        return this.persistenceManagerFactory.getPersistenceManager(
+        return this.pmf.getPersistenceManager(
             SecurityKeys.ROOT_PRINCIPAL,
             UUIDs.getGenerator().next().toString()
         );    	
@@ -288,14 +288,14 @@ public class FreeBusyServlet extends HttpServlet {
         		return;    			
     		}
     	}    	
-    	PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+    	PersistenceManager pm = this.pmf.getPersistenceManager(
     		SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
     		null
     	);
-    	org.opencrx.kernel.home1.jmi1.Segment userHomeSegment =
-    		(org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName)
-    		);
+    	org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = null;
+    	try {
+    		userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+    	} catch(Exception e) {}
     	UserHome userHome = null;
     	if(user.indexOf("@") > 0) {
     		UserHomeQuery query = (UserHomeQuery)pm.newQuery(UserHome.class);
@@ -323,7 +323,7 @@ public class FreeBusyServlet extends HttpServlet {
     		SysLog.warning("Invalid user", Arrays.asList(id, user));
     	}
         pm.close();
-    	pm = this.persistenceManagerFactory.getPersistenceManager(
+    	pm = this.pmf.getPersistenceManager(
     		userId,
     		null
     	);
@@ -350,7 +350,7 @@ public class FreeBusyServlet extends HttpServlet {
             	//
             } else {
             	p.write("BEGIN:VFREEBUSY\n");
-                p.write("ORGANIZER:" + activitiesHelper.getCalendarName() + "\n");
+                p.write("ORGANIZER:" + (userEMails.isEmpty() ? activitiesHelper.getCalendarName() : userEMails.get(0)) + "\n");
 	            p.write("DTSTAMP:" + ActivityQueryHelper.formatDateTime(ActivityQueryHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
 	            p.write("DTSTART:" + ActivityQueryHelper.formatDateTime(dtStart) + "\n");
 	            p.write("DTEND:" + ActivityQueryHelper.formatDateTime(dtEnd) + "\n");
@@ -400,7 +400,7 @@ public class FreeBusyServlet extends HttpServlet {
 		                		p.write("UID:" + activity.refGetPath().getBase() + "-" + i + "\n");
 		                		p.write("CLASS:PUBLIC\n");
 			    	            p.write("DTSTAMP:" + ActivityQueryHelper.formatDateTime(ActivityQueryHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
-			                    p.write("ORGANIZER:" + activitiesHelper.getCalendarName() + "\n");
+			                    p.write("ORGANIZER:" + (userEMails.isEmpty() ? activitiesHelper.getCalendarName() : userEMails.get(0)) + "\n");
 			                    p.write("SUMMARY:***\n");
 			                    if(activity.isAllDayEvent()) {
 				                    p.write("DTSTART;VALUE=DATE:" + ActivityQueryHelper.formatDate(scheduledStart.getTime()) + "\n");                		
@@ -474,6 +474,6 @@ public class FreeBusyServlet extends HttpServlet {
     protected static final String PROPERTY_MAX_ACTIVITIES = "maxActivities";
     protected static final int DEFAULT_MAX_ACTIVITIES = 500;
     
-    protected PersistenceManagerFactory persistenceManagerFactory = null;
+    protected PersistenceManagerFactory pmf = null;
     
 }

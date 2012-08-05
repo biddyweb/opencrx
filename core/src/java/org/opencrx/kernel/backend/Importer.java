@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.22 2010/10/19 11:25:15 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.25 2011/12/13 10:20:53 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/19 11:25:15 $
+ * Date:        $Date: 2011/12/13 10:20:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -113,7 +113,6 @@ public class Importer extends AbstractImpl {
         // Load objects in multiple runs in order to resolve object dependencies.       
         Map<Path,RefObject> loadedObjects = new HashMap<Path,RefObject>();
         for(int runs = 0; runs < 5; runs++) {
-            int kk = 0;
             for(MappedRecord entry: data.values()) {
                 // create new entries, update existing
                 try {
@@ -133,7 +132,8 @@ public class Importer extends AbstractImpl {
                             entry,
                             existing,
                             loadedObjects, // object cache
-                            null // ignorable features
+                            null, // ignorable features
+                            true // compareWithBeforeImage
                         );
                     }
                     else {
@@ -148,7 +148,8 @@ public class Importer extends AbstractImpl {
                             entry,
                             newEntry,
                             loadedObjects, // object cache
-                            null
+                            null,
+                            true // compareWithBeforeImage
                         );
                         Path entryPath = Object_2Facade.getPath(entry);
                         Path parentIdentity = entryPath.getParent().getParent();
@@ -179,7 +180,6 @@ public class Importer extends AbstractImpl {
                     new ServiceException(e).log();
                     System.out.println("STATUS: " + e.getMessage() + " (for more info see log)");
                 }
-                kk++;
             }
         }
         return loadedObjects.isEmpty() ?
@@ -191,6 +191,7 @@ public class Importer extends AbstractImpl {
     // Members
     //-------------------------------------------------------------------------
     public static final String MIME_TYPE = "text/xml";
+    public static final String FILE_EXTENSION = ".xml";
     
 }
 

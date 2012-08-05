@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Maps.jsp,v 1.24 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: Maps.jsp,v 1.25 2011/09/23 09:46:22 wfro Exp $
  * Description: prepare calls to mapping services like GoogleMaps
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/09/23 09:46:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -228,7 +228,7 @@ org.openmdx.kernel.log.*
         // country in English, long text version
         String country = postalAddress.getPostalCountry() == 0
           ? defaultCountry
-          : (String)(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", (short)0, true, true).get(new Short((short)postalAddress.getPostalCountry())));
+          : (String)(codes.getLongText("country", (short)0, true, true).get(new Short((short)postalAddress.getPostalCountry())));
         tempStr = (country.split("\\[")[0]).trim();
         if (tempStr.length() > 0) {
           googleMapsUrl += "%20" + tempStr;

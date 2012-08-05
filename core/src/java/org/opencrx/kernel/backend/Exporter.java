@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.55 2010/11/05 15:00:07 wfro Exp $
+ * Name:        $Id: Exporter.java,v 1.60 2011/09/23 08:05:22 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.55 $
+ * Revision:    $Revision: 1.60 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/05 15:00:07 $
+ * Date:        $Date: 2011/09/23 08:05:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -85,7 +85,9 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.oasisopen.jmi1.RefContainer;
+import org.opencrx.kernel.base.jmi1.ExportProfile;
 import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.openmdx.base.accessor.cci.SystemAttributes;
@@ -94,10 +96,10 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.mof.cci.AggregationKind;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.mof.cci.ModelHelper;
 import org.openmdx.base.mof.cci.Model_1_0;
-import org.openmdx.base.mof.cci.Multiplicities;
+import org.openmdx.base.mof.cci.Multiplicity;
 import org.openmdx.base.mof.cci.PrimitiveTypes;
-import org.openmdx.base.mof.spi.ModelUtils;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
@@ -125,7 +127,7 @@ public class Exporter extends AbstractImpl {
 	}
 
 	// -------------------------------------------------------------------------
-	static class TraversedObject {
+	public static class TraversedObject {
 
 		public TraversedObject(RefObject_1_0 object, int level) {
 			this.object = object;
@@ -175,7 +177,7 @@ public class Exporter extends AbstractImpl {
 	}
 
 	// -----------------------------------------------------------------------
-	static class ExportParams {
+	public static class ExportParams {
 
 		public ExportParams() {
 			this.referenceFilter = new HashSet<String>();
@@ -351,7 +353,8 @@ public class Exporter extends AbstractImpl {
 	    List<TraversedObject> startPoints,
 	    List<TraversedObject> allExportedObjects,
 	    List<TraversedObject> allReferencedObjects,
-	    ExportParams params) throws IOException, ServiceException {
+	    ExportParams params
+	) throws IOException, ServiceException {
 		if(!startPoints.isEmpty()) {
 			List<TraversedObject> referencedObjects = new ArrayList<TraversedObject>();
 			for (TraversedObject startPoint : startPoints) {
@@ -371,7 +374,8 @@ public class Exporter extends AbstractImpl {
 					);
 					objectExporter.export(
 						startPoint, 
-						startPoint.getObject().refGetPath().getParent().getBase(), "xri://+resource/" + namespace.replace(':', '/') + "/" + modelName + "/xmi1/" + modelName + ".xsd"
+						startPoint.getObject().refGetPath().getParent().getBase(), 
+						"xri://+resource/" + namespace.replace(':', '/') + "/" + modelName + "/xmi1/" + modelName + ".xsd"
 					);
 					// Update referenced and exported objects
 					for (TraversedObject o : objectExporter.getReferencedObjects()) {
@@ -405,27 +409,47 @@ public class Exporter extends AbstractImpl {
 	}
 
 	// -----------------------------------------------------------------------
+	/**
+	 * Export object according to the given export profile and itemMimeType. The
+	 * default implementation allows to export objects in the format 
+	 * text/xml or application/x-excel. The default implementation recursively walks
+	 * the object (composites and references objects) according to the reference 
+	 * filter. 
+	 * Override this method for custom-specific export and rendering of objects. E.g.
+	 * a custom-specific implementation could work as follows:
+	 * <ul>
+	 *   <li>Derive the document type / template from the export profile.
+	 *   <li>Generate an XML according to the document type and object.
+	 *   <li>Invoke a (remote) rendering engine with the parameters:
+	 *       <ul>
+	 *         <li>document type (or exportProfile.template if the document templates are not stored in the rendering engine)
+	 *         <li>generated XML
+	 *         <li>exportProfile.itemMimeType
+	 *       </ul>
+	 *   <li>Return the rendered object.
+	 * </ul>
+	 */
 	public Object[] exportItem(
-		RefObject_1_0 startFrom, 
-		org.opencrx.kernel.base.jmi1.ExportProfile exportProfile, 
+		RefObject_1_0 object, 
+		ExportProfile exportProfile, 
 		String referenceFilter, 
 		String itemMimeType
 	) throws ServiceException {
 		try {
 			PersistenceManager pm = JDOHelper.getPersistenceManager(exportProfile);
 			if(exportProfile != null) {
-				referenceFilter = exportProfile.getReferenceFilter();
+				referenceFilter = exportProfile.getExportParams();
 				itemMimeType = exportProfile.getMimeType();
 			}
 			ExportParams exportParams = new ExportParams();
-			List<TraversedObject> startPoints = new ArrayList<TraversedObject>();
-			startPoints.add(new TraversedObject(startFrom, 1));
+			List<TraversedObject> roots = new ArrayList<TraversedObject>();
+			roots.add(new TraversedObject(object, 1));
 			if(referenceFilter != null) {
 				// Starting identities are separated by $
 				if(referenceFilter.indexOf("$") > 0) {
 					StringTokenizer tokenizer = new StringTokenizer(referenceFilter.substring(0, referenceFilter.indexOf("$")), "\t\n ;,", false);
 					while (tokenizer.hasMoreTokens()) {
-						startPoints.add(
+						roots.add(
 							new TraversedObject(
 								(RefObject_1_0)pm.getObjectById(new Path(tokenizer.nextToken())), 
 								1
@@ -487,7 +511,7 @@ public class Exporter extends AbstractImpl {
 			this.exportItem(
 				out, 
 				ps, 
-				startPoints, 
+				roots, 
 				allExportedObjects, 
 				allReferencedObjects, 
 				exportParams
@@ -512,7 +536,7 @@ public class Exporter extends AbstractImpl {
 					}
 				}
 			}
-			for (Iterator<TraversedObject> i = nonCompositeStartingPoints.iterator(); i.hasNext();) {
+			for(Iterator<TraversedObject> i = nonCompositeStartingPoints.iterator(); i.hasNext();) {
 				TraversedObject pi = i.next();
 				for (Iterator<TraversedObject> j = allExportedObjects.iterator(); j.hasNext();) {
 					TraversedObject pj = j.next();
@@ -522,7 +546,7 @@ public class Exporter extends AbstractImpl {
 					}
 				}
 			}
-			nonCompositeStartingPoints.removeAll(startPoints);
+			nonCompositeStartingPoints.removeAll(roots);
 			// Pass 2
 			QuotaByteArrayOutputStream bs = new QuotaByteArrayOutputStream(Exporter.class.getName());
 			out = isMultiFileExport ? new ZipOutputStream(bs) : bs;
@@ -532,7 +556,7 @@ public class Exporter extends AbstractImpl {
 			this.exportItem(
 				out, 
 				ps, 
-				startPoints, 
+				roots, 
 				allExportedObjects = new ArrayList<TraversedObject>(),
 				new ArrayList<TraversedObject>(), 
 				exportParams
@@ -545,11 +569,11 @@ public class Exporter extends AbstractImpl {
 				new ArrayList<TraversedObject>(), 
 				exportParams
 			);
-			// post-process user objects
-			for (Object object : exportParams.getContext().values()) {
-				if(object instanceof HSSFWorkbook) {
+			// post-process context
+			for (Object context : exportParams.getContext().values()) {
+				if(context instanceof HSSFWorkbook) {
 					try {
-						((HSSFWorkbook) object).write(ps);
+						((HSSFWorkbook) context).write(ps);
 					}
 					catch (IOException e) {
 						throw new ServiceException(e);
@@ -560,7 +584,9 @@ public class Exporter extends AbstractImpl {
 			String contentMimeType = isMultiFileExport ? Base.MIME_TYPE_ZIP : exportParams.getMimeType();
 			String contentName = "Export" + (contentMimeType.equals(Base.MIME_TYPE_ZIP) ? FILE_EXT_ZIP : contentMimeType.equals(MIME_TYPE_EXCEL) ? FILE_EXT_XLS : FILE_EXT_BIN);
 			return new Object[] {
-			    contentName, contentMimeType, bs.toByteArray()
+			    contentName, 
+			    contentMimeType, 
+			    bs.toByteArray()
 			};
 		}
 		catch (IOException e) {
@@ -585,27 +611,35 @@ public class Exporter extends AbstractImpl {
 
 	protected static final int MAX_LEVELS = 5;
 
+	// ---------------------------------------------------------------------
+	interface ContentHandler {
+
+		public boolean startReference(String name) throws ServiceException;
+
+		public void endReference(String reference) throws ServiceException;
+
+		public boolean startObject(TraversedObject object, String id, String qualifierName, String qualifiedName) throws ServiceException;
+
+		public void endObject(TraversedObject object, String qualifiedName) throws ServiceException;
+
+		public boolean featureComplete(TraversedObject object, String referenceName) throws ServiceException;
+
+		public void startTraversal(TraversedObject object) throws ServiceException;
+
+		public void endTraversal(TraversedObject object) throws ServiceException;
+
+	}
+
+	// ---------------------------------------------------------------------
+	protected Collection<?> getContent(
+		TraversedObject object,
+		String referenceName
+	) {
+		return ((RefContainer<?>) object.getObject().refGetValue(referenceName)).refGetAll(null);
+	}
+	
 	// -------------------------------------------------------------------------
-	static class ObjectExporter {
-
-		// ---------------------------------------------------------------------
-		interface ContentHandler {
-
-			public boolean startReference(String name) throws ServiceException;
-
-			public void endReference(String reference) throws ServiceException;
-
-			public boolean startObject(TraversedObject object, String id, String qualifierName, String qualifiedName) throws ServiceException;
-
-			public void endObject(TraversedObject object, String qualifiedName) throws ServiceException;
-
-			public boolean featureComplete(TraversedObject object, String referenceName) throws ServiceException;
-
-			public void startTraversal(TraversedObject object) throws ServiceException;
-
-			public void endTraversal(TraversedObject object) throws ServiceException;
-
-		}
+	class ObjectExporter {
 
 		// ---------------------------------------------------------------------
 		public ObjectExporter(
@@ -679,7 +713,7 @@ public class Exporter extends AbstractImpl {
 			);
 			contentHandler.endTraversal(object);
 		}
-
+		
 		// ---------------------------------------------------------------------
 		@SuppressWarnings("unchecked")
 		private void exportObject(
@@ -701,7 +735,7 @@ public class Exporter extends AbstractImpl {
 					object, 
 					reference
 				);
-				Map<String, ModelElement_1_0> references = (Map) model.getElement(objectType).objGetValue("reference");
+				Map<String, ModelElement_1_0> references = (Map<String,ModelElement_1_0>)model.getElement(objectType).objGetValue("reference");
 				for (ModelElement_1_0 featureDef : references.values()) {
 					ModelElement_1_0 referencedEnd = model.getElement(featureDef.objGetValue("referencedEnd"));
 					boolean referenceIsComposite = model.isReferenceType(featureDef) && AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation"));
@@ -716,12 +750,17 @@ public class Exporter extends AbstractImpl {
 						if(!matches) {
 							String qualifiedReferenceName = (String) featureDef.objGetValue("qualifiedName");
 							for (int i = object.getLevel(); i < MAX_LEVELS; i++) {
-								matches = referenceFilter.contains(referenceName + "[" + i + "]") || referenceFilter.contains(qualifiedReferenceName + "[" + i + "]");
+								matches = 
+									referenceFilter.contains(referenceName + "[" + i + "]") || 
+									referenceFilter.contains(qualifiedReferenceName + "[" + i + "]");
 								if(matches) break;
 							}
 						}
 						if(matches) {
-							List<?> content = ((RefContainer) object.getObject().refGetValue(referenceName)).refGetAll(null);
+							Collection<?> content = Exporter.this.getContent(
+								object, 
+								referenceName
+							);
 							contentHandler.startReference(referenceName);
 							for (Object contained : content) {
 								if(contained instanceof RefObject_1_0) {
@@ -792,24 +831,21 @@ public class Exporter extends AbstractImpl {
 				this.cellStyleHidden.setHidden(false);
 				this.objectCount = 0;
 				this.metainf = this.wb.getSheet("META-INF");
-				HSSFCell mCell = (this.metainf == null) || (this.metainf.getRow(1) == null) ? null : this.metainf.getRow(1).getCell(this.getCellNum(this.metainf, "META-INF", "MaxObjects"));
+				HSSFCell mCell = (this.metainf == null) || (this.metainf.getRow(1) == null) ? null : this.metainf.getRow(1).getCell(this.getColumnIndex(this.metainf, "META-INF", "MaxObjects"));
 				this.objectLimit = mCell == null ? MAX_OBJECTS : new Double(mCell.getNumericCellValue()).intValue();
 			}
 
-			@SuppressWarnings( {
-			    "unchecked", "deprecation"
-			})
-			private short getCellNum(
+			private int getColumnIndex(
 				HSSFSheet sheet, 
 				String sheetName, 
 				String attributeName
 			) {
 				HSSFRow heading = sheet.getRow(0);
-				short num = 0;
-				for (Iterator<HSSFCell> i = heading.cellIterator(); i.hasNext();) {
-					HSSFCell cell = i.next();
+				int num = 0;
+				for (Iterator<Cell> i = heading.cellIterator(); i.hasNext();) {
+					Cell cell = i.next();
 					if(attributeName.equals(cell.getStringCellValue())) {
-						return cell.getCellNum();
+						return cell.getColumnIndex();
 					}
 					num++;
 				}
@@ -893,7 +929,7 @@ public class Exporter extends AbstractImpl {
 						try {
 							HSSFName namedCell = this.wb.createName();
 							namedCell.setNameName(cellName);
-							namedCell.setReference(sheetName + "!$A$2:$CY$65536");
+							namedCell.setRefersToFormula(sheetName + "!$A$2:$CY$65536");
 						}
 						catch (Exception e) {
 						}
@@ -901,7 +937,7 @@ public class Exporter extends AbstractImpl {
 						try {
 							HSSFName namedCell = this.wb.createName();
 							namedCell.setNameName(sheetName + ".COLUMN");
-							namedCell.setReference(sheetName + "!$A$1:$CY$1");
+							namedCell.setRefersToFormula(sheetName + "!$A$1:$CY$1");
 						}
 						catch (Exception e) {
 						}
@@ -911,7 +947,7 @@ public class Exporter extends AbstractImpl {
 						if(ObjectExporter.this.params.getOptions().get(sheetName) != null) {
 							List<String> attributeNames = ObjectExporter.this.params.getOptions().get(sheetName);
 							for (String attributeName : attributeNames) {
-								this.getCellNum(this.sheet, sheetName, attributeName);
+								this.getColumnIndex(this.sheet, sheetName, attributeName);
 							}
 						}
 					}
@@ -922,15 +958,15 @@ public class Exporter extends AbstractImpl {
 					HSSFRichTextString objectClass = new HSSFRichTextString(object.getObject().refClass().refMofId());
 					for (int i = 0; i < maxIndex; i++) {
 						HSSFRow row = this.sheet.createRow(this.sheet.getLastRowNum() + 1);
-						HSSFCell cell = row.createCell(this.getCellNum(this.sheet, sheetName, "XRI"));
+						HSSFCell cell = row.createCell(this.getColumnIndex(this.sheet, sheetName, "XRI"));
 						cell.setCellValue(new HSSFRichTextString(xri + (i > 0 ? "*" + i : "")));
-						cell = row.createCell(this.getCellNum(this.sheet, sheetName, "XRI.PARENT"));
+						cell = row.createCell(this.getColumnIndex(this.sheet, sheetName, "XRI.PARENT"));
 						cell.setCellValue(parentXri);
-						cell = row.createCell(this.getCellNum(this.sheet, sheetName, "ID"));
+						cell = row.createCell(this.getColumnIndex(this.sheet, sheetName, "ID"));
 						cell.setCellValue(objectId);
-						cell = row.createCell(this.getCellNum(this.sheet, sheetName, "IDX"));
+						cell = row.createCell(this.getColumnIndex(this.sheet, sheetName, "IDX"));
 						cell.setCellValue(i);
-						cell = row.createCell(this.getCellNum(this.sheet, sheetName, SystemAttributes.OBJECT_CLASS));
+						cell = row.createCell(this.getColumnIndex(this.sheet, sheetName, SystemAttributes.OBJECT_CLASS));
 						cell.setCellValue(objectClass);
 						Map<String, ModelElement_1_0> attributes = this.getAttributes(object);
 						for (String attributeName : attributes.keySet()) {
@@ -956,7 +992,7 @@ public class Exporter extends AbstractImpl {
 							Object value = i < values.size() ? values.get(i) : null;
 							if(!NOT_EXPORTED_ATTRIBUTES.contains(attributeName)) {
 								if(value != null) {
-									cell = row.createCell(this.getCellNum(this.sheet, sheetName, attributeName));
+									cell = row.createCell(this.getColumnIndex(this.sheet, sheetName, attributeName));
 									if(value instanceof InputStream) {
 										try {
 											QuotaByteArrayOutputStream bytes = new QuotaByteArrayOutputStream(Exporter.class.getName());
@@ -1015,7 +1051,7 @@ public class Exporter extends AbstractImpl {
 							}
 						}
 					}
-					HSSFCell mCell = (this.metainf == null) || (this.metainf.getRow(1) == null) ? null : this.metainf.getRow(1).getCell(this.getCellNum(this.metainf, "META-INF", sheetName));
+					HSSFCell mCell = (this.metainf == null) || (this.metainf.getRow(1) == null) ? null : this.metainf.getRow(1).getCell(this.getColumnIndex(this.metainf, "META-INF", sheetName));
 					int rowLimit = mCell == null ? this.objectLimit : new Double(mCell.getNumericCellValue()).intValue();
 					return this.sheet.getLastRowNum() < rowLimit;
 				}
@@ -1106,14 +1142,13 @@ public class Exporter extends AbstractImpl {
 						if((attributeDef == null) || (attributeValue == null)) {
 							continue;
 						}
-						String multiplicity = ModelUtils.getMultiplicity(attributeDef);
+						Multiplicity multiplicity = ModelHelper.getMultiplicity(attributeDef);
 						boolean isMultiValued = 
-							multiplicity.equals(Multiplicities.MULTI_VALUE) || 
-							multiplicity.equals(Multiplicities.SET) || 
-							multiplicity.equals(Multiplicities.LIST) || 
-							multiplicity.equals(Multiplicities.SPARSEARRAY) ||
-						multiplicity.equals(Multiplicities.MAP);
-						boolean needsPosition = multiplicity.equals(Multiplicities.SPARSEARRAY);
+							multiplicity == Multiplicity.SET || 
+							multiplicity == Multiplicity.LIST || 
+							multiplicity == Multiplicity.SPARSEARRAY ||
+							multiplicity == Multiplicity.MAP;
+						boolean needsPosition = multiplicity == Multiplicity.SPARSEARRAY;
 						String elementTag = this.toSimpleQualifiedName((String) attributeDef.objGetValue("qualifiedName"));
 						List<Object> attributeValues = new ArrayList<Object>();
 						if(attributeValue instanceof Collection<?>) {

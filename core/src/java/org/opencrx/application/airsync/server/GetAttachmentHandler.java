@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: GetAttachmentHandler.java,v 1.7 2010/06/22 13:27:39 wfro Exp $
+ * Name:        $Id: GetAttachmentHandler.java,v 1.8 2011/11/16 12:31:53 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/22 13:27:39 $
+ * Date:        $Date: 2011/11/16 12:31:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,8 +79,7 @@ public class GetAttachmentHandler implements ServerHandler {
 	@Override
 	public void handle(
 		SyncRequest request, 
-		SyncResponse response,
-		boolean requestHasBody
+		SyncResponse response
 	) throws IOException {
 		RequestContext requestContext = this.backend.newRequestContext(
 			request.getUserId(), 

@@ -301,6 +301,28 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="600" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>Entwurf / in Bearbeitung</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[01] Aktiv / Entwurf / in Bearbeitung</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="610" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>aktiv</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[02] Aktiv</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="set">
                           <_object>
                             <shortText>
@@ -572,6 +594,17 @@
                             </shortText>
                             <longText>
                               <_item>[07] Geschlossen / Ware retourniert</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1610" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>geschlossen</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[03] Geschlossen</_item>
                             </longText>
                           </_object>
                           <_content/>

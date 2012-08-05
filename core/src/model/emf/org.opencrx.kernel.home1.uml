@@ -222,7 +222,7 @@
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4205ED760135"/>
             </generalization>
             <ownedAttribute xmi:id="_3C7B8A60016D40E9D3E00397" name="alertState">
-              <type xmi:type="uml:Class" href="models.uml#_3C7B8A60016D40747CF6015D?models/org/opencrx/code?"/>
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D40E9D3FF00FD" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
@@ -938,7 +938,7 @@
           <packagedElement xmi:type="uml:Class" xmi:id="_s7_YoG_TEd2k1trwDO0y0g" name="ContactsFeed">
             <generalization xmi:id="_ZQ6DMG_VEd2k1trwDO0y0g" general="_ejjTcG_TEd2k1trwDO0y0g"/>
             <ownedAttribute xmi:id="_k84DQB1SEd-IXu8HbW54Yw" name="accountGroup" visibility="public" association="_k8m9gB1SEd-IXu8HbW54Yw">
-              <type xmi:type="uml:Class" href="org.opencrx.kernel.account1.uml#_5-u58Bp6EdyqVY11DGOAVA"/>
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.account1.uml#_3C7B8A60016D3FD3DBDF036C"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k8-J4R1SEd-IXu8HbW54Yw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k8-J4B1SEd-IXu8HbW54Yw"/>
             </ownedAttribute>
@@ -1133,6 +1133,88 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_rJSWAPb6Ed-gLrNTltqgwQ" name="DocumentProfile">
             <generalization xmi:id="_sp9ekPb6Ed-gLrNTltqgwQ" general="_p5gUgG_SEd2k1trwDO0y0g"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_Pz8jECWWEeG5FbAdNYK62g" name="UserHomeContainsReminder" memberEnd="_Pz9xMCWWEeG5FbAdNYK62g _Pz-YQiWWEeG5FbAdNYK62g" navigableOwnedEnd="_Pz-YQiWWEeG5FbAdNYK62g">
+            <ownedEnd xmi:id="_Pz9xMCWWEeG5FbAdNYK62g" name="userHome" type="_3C7B8A60016D40E97F3403D4" association="_Pz8jECWWEeG5FbAdNYK62g">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Pz-YQSWWEeG5FbAdNYK62g" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Pz-YQCWWEeG5FbAdNYK62g" value="1"/>
+            </ownedEnd>
+            <ownedEnd xmi:id="_Pz-YQiWWEeG5FbAdNYK62g" name="reminder" type="_JnBt0CWWEeG5FbAdNYK62g" aggregation="composite" association="_Pz8jECWWEeG5FbAdNYK62g">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Pz-YRCWWEeG5FbAdNYK62g" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Pz-YQyWWEeG5FbAdNYK62g"/>
+              <qualifier xmi:id="_jBvQ0CWaEeG5FbAdNYK62g" name="id">
+                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              </qualifier>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_JnBt0CWWEeG5FbAdNYK62g" name="Reminder">
+            <generalization xmi:id="_p3DqMCWXEeG5FbAdNYK62g">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4205ED760135"/>
+            </generalization>
+            <generalization xmi:id="_-heOUCWYEeG5FbAdNYK62g">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            </generalization>
+            <generalization xmi:id="_NLS-cCWZEeG5FbAdNYK62g">
+              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            </generalization>
+            <ownedAttribute xmi:id="_VvxoUCWWEeG5FbAdNYK62g" name="name" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_a0Gd0CWWEeG5FbAdNYK62g" name="description" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dtcCcCWWEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_tu8XMCWWEeG5FbAdNYK62g" name="triggerAt" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_oTUKECWYEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_FwLioCWXEeG5FbAdNYK62g" name="triggerAction" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_z3L14CWYEeG5FbAdNYK62g" value="1"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_KND9oCWXEeG5FbAdNYK62g" name="alarmRepeat" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0kMF0CWYEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_MDxnoCWXEeG5FbAdNYK62g" name="alarmIntervalMinutes" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pFV6kCWxEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_OB46ICWXEeG5FbAdNYK62g" name="attachUrl" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1VPvUCWYEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_lYlW8CWbEeG5FbAdNYK62g" name="disabled" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_x73s0CWlEeG5FbAdNYK62g" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_x73s0SWlEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_qZw-kyWrEeG5FbAdNYK62g" name="reference" association="_qZvJYCWrEeG5FbAdNYK62g">
+              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_qZxloSWrEeG5FbAdNYK62g" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qZxloCWrEeG5FbAdNYK62g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_P58l8CWtEeG5FbAdNYK62g" name="reminderState" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_9KtRgCfOEeG6T9LQqmskFw" name="autocalcTriggerAt" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_AwAkQCfPEeG6T9LQqmskFw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_QS6I8CllEeGVEsoWSyMC4A" name="lastAlarmAt" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_TENy8CllEeGVEsoWSyMC4A"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_1gfX4Cl7EeG-5dvZ7NTkRw" name="triggerEndAt" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3vqlMCl7EeG-5dvZ7NTkRw"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_qZvJYCWrEeG5FbAdNYK62g" name="ReminderReferencesObject" memberEnd="_qZw-kCWrEeG5FbAdNYK62g _qZw-kyWrEeG5FbAdNYK62g">
+            <ownedEnd xmi:id="_qZw-kCWrEeG5FbAdNYK62g" name="reminder" type="_JnBt0CWWEeG5FbAdNYK62g" association="_qZvJYCWrEeG5FbAdNYK62g">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_qZw-kiWrEeG5FbAdNYK62g" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qZw-kSWrEeG5FbAdNYK62g"/>
+            </ownedEnd>
           </packagedElement>
         </packagedElement>
       </packagedElement>

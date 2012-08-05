@@ -365,7 +365,7 @@ org.openmdx.kernel.log.*
                     newMember.setQuality((short)5); // normal
                     accountTarget.addMember(
                       false,
-                      org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+                      org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                       newMember
                     );
 %>

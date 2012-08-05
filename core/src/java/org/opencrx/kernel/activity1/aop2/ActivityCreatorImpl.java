@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityCreatorImpl.java,v 1.8 2009/04/20 17:56:46 wfro Exp $
+ * Name:        $Id: ActivityCreatorImpl.java,v 1.9 2011/06/13 17:46:25 wfro Exp $
  * Description: ActivityCreatorImpl
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
+ * Date:        $Date: 2011/06/13 17:46:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,7 +89,8 @@ public class ActivityCreatorImpl
                 params.getDueBy(),
                 params.getPriority(),
                 params.getIcalType(),
-                params.getReportingContact()
+                params.getReportingContact(),
+                params.getCreationContext()
             );
             return Utils.getActivityPackage(this.sameManager()).createNewActivityResult(
                 activity

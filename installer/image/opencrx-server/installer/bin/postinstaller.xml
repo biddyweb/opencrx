@@ -2,37 +2,39 @@
 	name="opencrx-server-postinstaller" 
 	xmlns:antcontrib="antlib:net.sf.antcontrib"
 >
+	<property name="install.path" value="$INSTALL_PATH" />
 	<target name="expand-native">
-		<exec command="unzip @@INSTALLDIR@@/installer/files/tomee-6.0.29.314.zip -d @@INSTALLDIR@@" />
+		<exec command="unzip ${install.path}/installer/files/apache-tomee-webprofile-1.0.0.zip -d ${install.path}" />
 	</target>
 	<target name="expand-ant">
-		<unzip src="@@INSTALLDIR@@/installer/files/tomee-6.0.29.314.zip" dest="@@INSTALLDIR@@" />
+		<unzip src="${install.path}/installer/files/apache-tomee-webprofile-1.0.0.zip" dest="${install.path}" />
 	</target>
 	<target name="postinstall">
 		<antcall inheritAll="true" target="${expand.target}"/>
-		<mkdir dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/maildir" />
-		<mkdir dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/airsyncdir" />
-		<delete dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/webapps/examples"/>
-		<delete dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/webapps/ejb-examples"/>
+		<mkdir dir="${install.path}/$TOMEE_BASEDIR/maildir" />
+		<mkdir dir="${install.path}/$TOMEE_BASEDIR/airsyncdir" />
 		<!-- Update conf -->
-		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/openejb.xml" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/openejb.xml.tomee"/>
-		<copy file="@@INSTALLDIR@@/installer/files/openejb.xml" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
-		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/logging.properties" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/logging.properties.tomee"/>
-		<copy file="@@INSTALLDIR@@/installer/files/logging.properties" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
-		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/tomcat-users.xml" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/tomcat-users.xml.tomee"/>
-		<copy file="@@INSTALLDIR@@/installer/files/tomcat-users.xml" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
-		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/server.xml" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/server.xml.tomee"/>
-		<copy file="@@INSTALLDIR@@/installer/files/server.xml" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
+		<move file="${install.path}/$TOMEE_BASEDIR/conf/openejb.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/openejb.orig"/>
+		<copy file="${install.path}/installer/files/openejb.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
+		<move file="${install.path}/$TOMEE_BASEDIR/conf/tomcat-users.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/tomcat-users.orig"/>
+		<copy file="${install.path}/installer/files/tomcat-users.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
+		<move file="${install.path}/$TOMEE_BASEDIR/conf/server.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/server.orig"/>
+		<copy file="${install.path}/installer/files/server.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
 		<!-- Update lib -->
-		<copy file="@@INSTALLDIR@@/installer/files/hsqldb.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/lib"/>
-		<copy file="@@INSTALLDIR@@/installer/files/openmdx-base.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/lib"/>
-		<copy file="@@INSTALLDIR@@/installer/files/catalina-extension.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/lib"/>
+		<copy file="${install.path}/installer/files/hsqldb.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
+		<copy file="${install.path}/installer/files/openmdx-base.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
+		<copy file="${install.path}/installer/files/catalina-openmdx.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
 		<!-- Update bin -->
-		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/bin/tomcat-juli.jar" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/bin/tomcat-juli.jar.tomee"/>
-		<copy file="@@INSTALLDIR@@/installer/files/tomcat-juli.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/bin"/>
-		<!-- Update openejb/tomcat -->
-		<copy file="@@INSTALLDIR@@/installer/files/openejb-tomcat-catalina-3.1.4.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/webapps/openejb/lib"/>
+		<copy file="${install.path}/installer/files/openmdx-system.jar" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
+		<copy file="${install.path}/installer/files/setenv.bat" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
+		<copy file="${install.path}/installer/files/setenv.sh" tofile="${install.path}/installer/files/setenv.sh.bak"/>
+		<move file="${install.path}/installer/files/setenv.sh" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
+		<move file="${install.path}/installer/files/setenv.sh.bak" tofile="${install.path}/installer/files/setenv.sh"/>
+		<copy file="${install.path}/installer/files/opencrx.bat" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
+		<copy file="${install.path}/installer/files/opencrx.sh" tofile="${install.path}/installer/files/opencrx.sh.bak"/>
+		<move file="${install.path}/installer/files/opencrx.sh" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
+		<move file="${install.path}/installer/files/opencrx.sh.bak" tofile="${install.path}/installer/files/opencrx.sh"/>
 		<!-- Update apps -->
-		<copy file="@@INSTALLDIR@@/installer/files/opencrx-core-CRX.ear" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/apps"/>		
+		<copy file="${install.path}/installer/files/opencrx-core-CRX.ear" todir="${install.path}/$TOMEE_BASEDIR/apps"/>		
 	</target>
 </project>

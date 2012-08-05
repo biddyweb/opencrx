@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedFollowUpDataBinding.java,v 1.5 2010/02/04 11:25:39 wfro Exp $
+ * Name:        $Id: FormattedFollowUpDataBinding.java,v 1.8 2011/12/02 12:36:51 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/04 11:25:39 $
+ * Date:        $Date: 2011/12/02 12:36:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,9 @@ import java.util.Date;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
@@ -97,17 +99,44 @@ public class FormattedFollowUpDataBinding extends DefaultDataBinding {
         		fCreatedAt = app.getUiElementDefinition("org:openmdx:base:Creatable:createdAt");
         	} catch(Exception e) {}
         	ActivityFollowUp followUp = (ActivityFollowUp)object;
-        	ActivityProcessTransition transition = followUp.getTransition();
         	Contact reportedBy = followUp.getAssignedTo();
         	Date modifiedAt = followUp.getModifiedAt();
         	Date createdAt = followUp.getCreatedAt();
         	StringBuilder formattedText = new StringBuilder();
-        	// transition
-        	formattedText
-        		.append("")
-        		.append("<b>")
-        		.append(transition.getName())
-        		.append("</b><br />");
+        	// Transition
+        	ActivityProcessTransition transition = null;
+        	try {
+        		transition = followUp.getTransition();
+        	} catch(Exception e) {}
+        	if(transition != null) {
+	        	formattedText
+	        		.append("")
+	        		.append("<b>")
+	        		.append(transition.getName())
+	        		.append("</b><br />");
+        	}
+        	// Activity number
+        	Activity activity = null;
+        	try {
+        		activity = followUp.getActivity();
+        	} catch(Exception e) {}
+        	if(activity != null) {
+        		formattedText
+	        		.append("")
+	        		.append("activity:" + activity.getActivityNumber())
+		    		.append("<br />");
+        		// Process state
+        		ActivityProcessState processState = null;
+        		try {
+        			processState = activity.getProcessState();
+        		} catch(Exception e) {}
+        		if(processState != null) {
+	        		formattedText
+		        		.append("")
+		        		.append(activity.getProcessState().getName())
+			    		.append("<br />");
+        		}
+        	}
         	// reportedBy
         	formattedText
 	    		.append("")

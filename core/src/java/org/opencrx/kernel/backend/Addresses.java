@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.44 2011/01/07 14:11:02 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.46 2011/09/23 14:49:49 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.44 $
+ * Revision:    $Revision: 1.46 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/07 14:11:02 $
+ * Date:        $Date: 2011/09/23 14:49:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -100,7 +100,7 @@ public class Addresses extends AbstractImpl {
     		try {
 		    	Codes codes = new Codes(codeSegment);
 		    	country = (String)codes.getLongText(
-		    		"org:opencrx:kernel:address1:PostalAddressable:postalCountry", 
+		    		"country", 
 		    		(short)0, 
 		    		true, // codeAsKey 
 		    		true // includeAll
@@ -121,18 +121,28 @@ public class Addresses extends AbstractImpl {
         String country,
         org.opencrx.kernel.code1.jmi1.Segment codeSegment
     ) throws ServiceException {    	
-    	country = country.toUpperCase();
-    	for(Entry<String,Short> entry: POSTAL_COUNTRIES_BY_TEXT.entrySet()) {
-    		if(entry.getKey().toUpperCase().indexOf(country) >= 0) {
-    			return entry.getValue().shortValue();
-    		}
+    	{
+	    	country = country.toUpperCase();
+	    	String lastMatch = null;
+	    	Short countryCode = null;
+	    	for(Entry<String,Short> entry: POSTAL_COUNTRIES_BY_TEXT.entrySet()) {
+	    		if(entry.getKey().toUpperCase().indexOf(country) >= 0) {
+	    			if(lastMatch == null || entry.getKey().length() < lastMatch.length()) {
+	    				countryCode = entry.getValue();
+	    				lastMatch = entry.getKey();
+	    			}
+	    		}
+	    	}
+	    	if(countryCode != null) {
+	    		return countryCode;
+	    	}
     	}
     	if(codeSegment != null) {
     		try {
 		    	Codes codes = new Codes(codeSegment);
 		    	short countryCode = codes.findCodeFromValue(
 		    		country, 
-		    		"org:opencrx:kernel:address1:PostalAddressable:postalCountry" 
+		    		"country" 
 		    	);
 		    	POSTAL_COUNTRIES_BY_TEXT.put(
 		    		country,
@@ -146,14 +156,14 @@ public class Addresses extends AbstractImpl {
     	SysLog.warning("Unable to map country. Country not found", country);
     	return 0;
     }
-    
+
     //-------------------------------------------------------------------------
     public Integer mapToPhoneCountryPrefix(
         int countryCode
     ) throws ServiceException {
     	return PHONE_COUNTRIES.get(countryCode);
     }
-    
+
     //-----------------------------------------------------------------------
     public int mapToPhoneCountryCode(
         int prefix
@@ -165,7 +175,7 @@ public class Addresses extends AbstractImpl {
     	}
     	return 0;
     }
-    
+
     //-------------------------------------------------------------------------
     public void updatePhoneNumber(
     	org.opencrx.kernel.address1.jmi1.PhoneNumberAddressable phoneNumber

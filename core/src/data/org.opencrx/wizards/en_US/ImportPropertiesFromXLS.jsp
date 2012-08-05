@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportPropertiesFromXLS.jsp,v 1.7 2010/04/28 08:24:08 cmu Exp $
+ * Name:        $Id: ImportPropertiesFromXLS.jsp,v 1.8 2011/07/09 18:42:32 wfro Exp $
  * Description: import properties from Excel Sheet
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/28 08:24:08 $
+ * Date:        $Date: 2011/07/09 18:42:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,6 +70,7 @@ org.opencrx.kernel.portal.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
+org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
@@ -1370,7 +1371,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       if (property != null) {
                                           propertiesUpdated++;
                                           Action action = new Action(
-                                              Action.EVENT_SELECT_OBJECT,
+                                              SelectObjectAction.EVENT_ID,
                                               new Action.Parameter[]{
                                                   new Action.Parameter(Action.PARAMETER_OBJECTXRI, property.refMofId())
                                               },
@@ -1449,7 +1450,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                       // Go back to previous view
                       Action nextAction =
                         new Action(
-                          Action.EVENT_SELECT_OBJECT,
+                          SelectObjectAction.EVENT_ID,
                           new Action.Parameter[]{
                               new Action.Parameter(Action.PARAMETER_OBJECTXRI, objectXri)
                           },

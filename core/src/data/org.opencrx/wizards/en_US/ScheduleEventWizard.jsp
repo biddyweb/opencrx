@@ -2,17 +2,17 @@
 /**
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ScheduleEventWizard.jsp,v 1.60 2010/04/27 12:16:10 wfro Exp $
+ * Name:		$Id: ScheduleEventWizard.jsp,v 1.68 2011/12/21 15:46:20 cmu Exp $
  * Description: ScheduleEventWizard
- * Revision:	$Revision: 1.60 $
+ * Revision:	$Revision: 1.68 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2010/04/27 12:16:10 $
+ * Date:		$Date: 2011/12/21 15:46:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,6 +58,7 @@
 java.util.*,
 java.io.*,
 java.text.*,
+org.opencrx.kernel.backend.*,
 org.openmdx.application.cci.*,
 org.openmdx.base.text.conversion.*,
 org.openmdx.kernel.id.cci.*,
@@ -164,9 +165,13 @@ org.openmdx.kernel.log.*
 	}
 
 	public static GregorianCalendar getDateAsCalendar(
-		String dateAsString
+		String dateAsString,
+		ApplicationContext app
+
 	) {
 		GregorianCalendar date = new GregorianCalendar();
+		date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+		date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 		date.set(GregorianCalendar.YEAR, Integer.valueOf(dateAsString.substring(0, 4)));
 		date.set(GregorianCalendar.MONTH, Integer.valueOf(dateAsString.substring(4, 6)) - 1);
 		date.set(GregorianCalendar.DAY_OF_MONTH, Integer.valueOf(dateAsString.substring(6, 8)));
@@ -178,7 +183,8 @@ org.openmdx.kernel.log.*
 		String s,
 		String dateAsString,
 		SimpleDateFormat dateTimeParser24,
-		SimpleDateFormat dateTimeParserAmPm
+		SimpleDateFormat dateTimeParserAmPm,
+		ApplicationContext app
 	) {
     boolean timeMissing = false;
 		if(s == null) return null;
@@ -290,7 +296,7 @@ org.openmdx.kernel.log.*
 					dateTimeParser24.parse(n[1] + " " + dateAsString);
 			// If dateTo < dateFrom go to next day
 			if(dateTo.compareTo(dateFrom) < 0) {
-				GregorianCalendar date = getDateAsCalendar(dateAsString);
+				GregorianCalendar date = getDateAsCalendar(dateAsString, app);
 				date.add(GregorianCalendar.DAY_OF_MONTH, 1);
 				String datePlusOneDayAsString = getDateAsString(date);
 				dateTo = n[1] == null ?
@@ -626,6 +632,8 @@ org.openmdx.kernel.log.*
 				Map slots = new TreeMap();
 				Enumeration propertyNames = eventAndPollInfo.propertyNames();
 				GregorianCalendar date = new GregorianCalendar();
+				date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+				date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 				date.setTimeZone(timezone);
 				org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
 				while(propertyNames.hasMoreElements()) {
@@ -745,7 +753,8 @@ org.openmdx.kernel.log.*
 							request.getParameter(slotId),
 							dateAsString,
 							dateTimeParser24,
-							dateTimeParserAmPm
+							dateTimeParserAmPm,
+							app
 						)
 			  	);
 				}
@@ -851,7 +860,7 @@ org.openmdx.kernel.log.*
 				notifyVoterUsername   // toUsers
 			);
 			// get current user's UserHome and send alert
-			org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+			org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
 			currentUserHome.sendAlert(sendAlertParams);
 			try {
 				pm.currentTransaction().commit();
@@ -1038,6 +1047,7 @@ org.openmdx.kernel.log.*
 			Date scheduledEnd = newEvent.length() < 41 ? dateFormat.parse(newEvent.substring(0, 20)) : dateFormat.parse(newEvent.substring(21, 41));
 			String location = newEvent.length() < 41 ? newEvent.substring(20) : (newEvent.length() >= 42 ? newEvent.substring(42) : null);
 			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
+				null, // creationContext
 		 		description,
 		 		detailedDescription,
 		 		null,
@@ -1074,7 +1084,7 @@ org.openmdx.kernel.log.*
 				activityLinkTo.setActivityLinkType(new Short(CODE_ACTIVITYLINKTYPE_RELATESTO)); // relates to
 				activity.addActivityLinkTo(
 					false,
-					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+					org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 					activityLinkTo
 				);
 				try {
@@ -1138,6 +1148,7 @@ org.openmdx.kernel.log.*
 			else {
 				// Create EMail activity
 				org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
+					null, // creationContext
 			 		description,
 			 		null,
 			 		null,
@@ -1172,7 +1183,7 @@ org.openmdx.kernel.log.*
   	  } 
       if (activity != null) {
     			// Update EMail activity
-    			org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+    			org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
     			pm.currentTransaction().begin();
     			activity.setName(name);
     			activity.setDescription(description);
@@ -1235,7 +1246,7 @@ org.openmdx.kernel.log.*
     				if(recipient == null) {
     					recipient = pm.newInstance(org.opencrx.kernel.activity1.jmi1.EMailRecipient.class);
     					recipient.refInitialize(false, false);
-    					recipient.setPartyType(org.opencrx.kernel.backend.Activities.PARTY_TYPE_TO);
+    					recipient.setPartyType(Activities.PartyType.EMAIL_TO.getValue());
     					recipient.setParty(
     						formValues.get("voter." + i) != null ?
 	    						(org.opencrx.kernel.account1.jmi1.AccountAddress)pm.getObjectById(
@@ -1244,7 +1255,7 @@ org.openmdx.kernel.log.*
     					);
     					activity.addEmailRecipient(
     						false,
-    						org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+    						org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
     						recipient
     					);
     				}
@@ -1300,7 +1311,7 @@ org.openmdx.kernel.log.*
     				note.refInitialize(false, false);
     				activity.addNote(
     					false,
-    					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+    					org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
     					note
     				);
     			}
@@ -1587,13 +1598,17 @@ org.openmdx.kernel.log.*
 				</fieldset>
 <%
 				// Dates and Times
+				GregorianCalendar today = new GregorianCalendar(app.getCurrentLocale());
+				today.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
 				Integer calendarYear = formValues.get("calendar.year") != null ?
 					(Integer)formValues.get("calendar.year") :
-					new GregorianCalendar().get(GregorianCalendar.YEAR);
+					today.get(GregorianCalendar.YEAR);
 				Integer calendarMonth = formValues.get("calendar.month") != null ?
 					(Integer)formValues.get("calendar.month") :
-					new GregorianCalendar().get(GregorianCalendar.MONTH);
+					today.get(GregorianCalendar.MONTH);
 				GregorianCalendar calendar = new GregorianCalendar(app.getCurrentLocale());
+				calendar.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+				calendar.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
 				calendar.set(GregorianCalendar.YEAR, calendarYear);
 				calendar.set(GregorianCalendar.MONTH, calendarMonth);
 				calendar.set(GregorianCalendar.DAY_OF_MONTH, 1);
@@ -1754,8 +1769,8 @@ org.openmdx.kernel.log.*
 									// Retrieve all events of eventTracker where scheduleStart/scheduledEnd
 									// overlaps the period [first selected date, last selected date]
 									org.w3c.format.DateTimeFormat dateFormat = org.w3c.format.DateTimeFormat.BASIC_UTC_FORMAT;
-									Date start = new Date(getDateAsCalendar((String)selectedDates.get(0)).getTime().getTime() - 86400000L);
-									Date end = new Date(getDateAsCalendar((String)selectedDates.get(selectedDates.size() - 1)).getTime().getTime() + 86400000L);
+									Date start = new Date(getDateAsCalendar((String)selectedDates.get(0), app).getTime().getTime() - 86400000L);
+									Date end = new Date(getDateAsCalendar((String)selectedDates.get(selectedDates.size() - 1), app).getTime().getTime() + 86400000L);
 									org.opencrx.kernel.activity1.cci2.ActivityQuery eventQuery =
 										(org.opencrx.kernel.activity1.cci2.ActivityQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Activity.class);
 									eventQuery.thereExistsScheduledStart().lessThanOrEqualTo(end);
@@ -1789,7 +1804,7 @@ org.openmdx.kernel.log.*
 												int ii = 0;
 												for(Iterator i = selectedDates.iterator(); i.hasNext(); ii++) {
 													String dateAsString = (String)i.next();
-													GregorianCalendar date = getDateAsCalendar(dateAsString);
+													GregorianCalendar date = getDateAsCalendar(dateAsString, app);
 %>
 													<tr>
 														<td>
@@ -1994,7 +2009,7 @@ org.openmdx.kernel.log.*
 										String userName = getUsername(pm, homeSegment, emailAddress.getEmailAddress());
 										if (userName != null) {
 %>
-											<input id="NotifyVoter.<%= i %>.<%= userName %>.Button" name="NotifyVoter.<%= i %>.<%= userName %>" class="trigger" type="image" src="../../images/sAlert.gif" title="<%= bundle.get("AlertToVoterTitle") %>: <%= userName %>" tabindex="<%= tabIndex++ %>" onclick="<%= SUBMIT_HANDLER %>"/>
+											<button type="submit" id="NotifyVoter.<%= i %>.<%= userName %>.Button" name="NotifyVoter.<%= i %>.<%= userName %>" title="<%= bundle.get("AlertToVoterTitle") %>: <%= userName %>" class="trigger" tabindex="<%= tabIndex++ %>" value="&mdash;" onclick="<%= SUBMIT_HANDLER %>" style="border:0; background:transparent;" ><img src="../../images/sAlert.gif" /></button>
 <%
 										}
 %>
@@ -2058,7 +2073,7 @@ org.openmdx.kernel.log.*
 												colspan++;
 											}
 										}
-										GregorianCalendar date = getDateAsCalendar(dateAsString);
+										GregorianCalendar date = getDateAsCalendar(dateAsString, app);
 %>
 										<th style="background-color: lightblue" colspan="<%= colspan %>">&nbsp;<%= new SimpleDateFormat("EEE, MMMM d, yyyy", app.getCurrentLocale()).format(date.getTime()) %>&nbsp;</th>
 <%
@@ -2204,7 +2219,7 @@ org.openmdx.kernel.log.*
  				<input id="Refresh.Button" name="Refresh" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("RefreshLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
  				<input id="Apply.Button" name="Apply" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("ApplyLabel") %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
  				<input id="Save.Button" name="Save" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= texts.getSaveTitle() %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
- 				<input id="Cancel.Button" name="Cancel" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= texts.getCancelTitle() %>" onclick="<%= SUBMIT_HANDLER %>"/>
+ 				<input id="Cancel.Button" name="Cancel" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= texts.getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>"/>
  				<br />
  				<br />
 			</form>

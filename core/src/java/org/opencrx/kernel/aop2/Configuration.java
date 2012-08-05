@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Configuration.java,v 1.7 2010/11/03 16:22:02 wfro Exp $
+ * Name:        $Id: Configuration.java,v 1.8 2011/07/12 15:27:49 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/03 16:22:02 $
+ * Date:        $Date: 2011/07/12 15:27:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,6 +64,7 @@ public class Configuration {
 			org.opencrx.kernel.backend.Accounts.register();
 			org.opencrx.kernel.backend.Activities.register();
 			org.opencrx.kernel.backend.Addresses.register();
+			org.opencrx.kernel.backend.Buildings.register();
 			org.opencrx.kernel.backend.Admin.register();
 			org.opencrx.kernel.backend.Base.register();
 			org.opencrx.kernel.backend.Cloneable.register();	

@@ -11,50 +11,6 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:Pane:Op:Tab:renderRtf?template=Opportunity%20with%20Positions%20(RTF)" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Générer un RTF</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Générer un RTF</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:Pane:Op:Tab:renderRtf?template=Quote%20with%20Positions%20(RTF)" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Générer un RTF</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Générer un RTF</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:renderRtf?template=Sales%20Order%20with%20Positions%20(RTF)" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Générer un RTF</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Générer un RTF</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Invoice:Pane:Op:Tab:renderRtf?template=Invoice%20with%20Positions%20(RTF)" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Générer un RTF</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Générer un RTF</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createContact" _operation="create">
                     <_object>
                       <label>

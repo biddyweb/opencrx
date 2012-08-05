@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.32 2011/05/06 15:33:02 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.35 2011/10/30 22:34:45 wfro Exp $
  * = Description: openCRX/Core Test build.xml
- * = Revision:    $Revision: 1.32 $
- * = Date:        $Date: 2011/05/06 15:33:02 $
+ * = Revision:    $Revision: 1.35 $
+ * = Date:        $Date: 2011/10/30 22:34:45 $
  * = Copyright:   (c) 2003-2011 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.8.20"/>
+	<property name="openmdx.version" value="2.9.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<!-- classpath -->
@@ -81,10 +81,9 @@
 		<pathelement location="${basedir}/src/resource"/>
 		<pathelement location="${build.dir}/bin"/>
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
-		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-9/lib/postgresql-9.0.jdbc4.jar"/>
+		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-9/lib/postgresql-9.1.jdbc4.jar"/>
 		<pathelement location="../opt/hsqldb/${build.java.platform}/hsqldb-2/lib/hsqldb.jar"/>
 		<pathelement location="../codehaus/${build.java.platform}/janino/lib/janino.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/openjpa.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-lang.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections-extendedproperties.jar"/>

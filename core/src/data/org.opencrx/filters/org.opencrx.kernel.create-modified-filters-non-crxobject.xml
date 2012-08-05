@@ -2,13 +2,80 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="2">
+			<array class="java.lang.String" length="23">
 
 				<void index="0">
 					<string>org:opencrx:kernel:code1:Segment:valueContainer</string>
 				</void>
 				<void index="1">
 					<string>org:opencrx:kernel:code1:CodeValueContainer:entry</string>
+				</void>
+				<void index="2">
+					<string>org:openmdx:security:authorization1:Policy:privilege</string>
+				</void>
+				<void index="3">
+					<string>org:openmdx:security:authorization1:Policy:role</string>
+				</void>
+				<void index="4">
+					<string>org:openmdx:security:realm1:Role:permission</string>
+				</void>
+
+				<void index="5">
+					<string>org:opencrx:kernel:activity1:Absence:note</string>
+				</void>
+				<void index="6">
+					<string>org:opencrx:kernel:activity1:EMail:note</string>
+				</void>
+				<void index="7">
+					<string>org:opencrx:kernel:activity1:ExternalActivity:note</string>
+				</void>
+				<void index="8">
+					<string>org:opencrx:kernel:activity1:Incident:note</string>
+				</void>
+				<void index="9">
+					<string>org:opencrx:kernel:activity1:Mailing:note</string>
+				</void>
+				<void index="10">
+					<string>org:opencrx:kernel:activity1:Meeting:note</string>
+				</void>
+				<void index="11">
+					<string>org:opencrx:kernel:activity1:PhoneCall:note</string>
+				</void>
+				<void index="12">
+					<string>org:opencrx:kernel:activity1:Task:note</string>
+				</void>
+
+				<void index="13">
+					<string>org:opencrx:kernel:contract1:Lead:note</string>
+				</void>
+				<void index="14">
+					<string>org:opencrx:kernel:contract1:Opportunity:note</string>
+				</void>
+				<void index="15">
+					<string>org:opencrx:kernel:contract1:Quote:note</string>
+				</void>
+				<void index="16">
+					<string>org:opencrx:kernel:contract1:SalesOrder:note</string>
+				</void>
+				<void index="17">
+					<string>org:opencrx:kernel:contract1:Invoice:note</string>
+				</void>
+
+				<void index="18">
+					<string>org:opencrx:kernel:account1:Contact:note</string>
+				</void>
+				<void index="19">
+					<string>org:opencrx:kernel:account1:Group:note</string>
+				</void>
+				<void index="20">
+					<string>org:opencrx:kernel:account1:LegalEntity:note</string>
+				</void>
+				<void index="21">
+					<string>org:opencrx:kernel:account1:UnspecifiedAccount:note</string>
+				</void>
+
+				<void index="22">
+					<string>org:opencrx:kernel:forecast1:Segment:budget</string>
 				</void>
 
 			</array>

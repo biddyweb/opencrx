@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WordToText.java,v 1.6 2009/04/23 17:52:42 wfro Exp $
+ * Name:        $Id: WordToText.java,v 1.7 2011/08/26 12:29:36 wfro Exp $
  * Description: WordToText
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/23 17:52:42 $
+ * Date:        $Date: 2011/08/26 12:29:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -109,7 +109,6 @@ public class WordToText {
      * bits of crud, but will work in cases where the text piece -> paragraph
      * mapping is broken. Fast too.
      */
-    @SuppressWarnings("unchecked")
     public String getTextFromPieces(
         HWPFDocument doc            
     ) {
@@ -118,7 +117,7 @@ public class WordToText {
         while(textPieces.hasNext()) {
             TextPiece piece = textPieces.next();
             String encoding = "Cp1252";
-            if (piece.usesUnicode()) {
+            if (piece.isUnicode()) {
                 encoding = "UTF-16LE";
             }
             try {

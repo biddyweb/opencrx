@@ -22,6 +22,9 @@
 												<_item>org:opencrx:kernel:account1:CreateLeadParams:priority</_item>
 												<_item>org:opencrx:kernel:contract1:Lead:priority</_item>
 												<_item>org:opencrx:kernel:contract1:AbstractContract:priority</_item>
+												<_item>org:opencrx:kernel:contract1:ContractCreator:priority</_item>
+												<_item>org:opencrx:kernel:contract1:CreateContractParams:priority</_item>
+												<_item>org:opencrx:kernel:contract1:CreateSalesContractParams:priority</_item>
 												<_item>org:opencrx:kernel:home1:Alert:importance</_item>
 												<_item>org:opencrx:kernel:base:SendAlertParams:importance</_item>
 											</name>

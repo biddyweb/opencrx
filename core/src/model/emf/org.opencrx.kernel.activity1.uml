@@ -257,6 +257,11 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_A29UsEjmEd-hZsNYMNcVzA" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_A29UsUjmEd-hZsNYMNcVzA"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_2MJUwpXSEeCPRvDaLb3XNg" name="creationContext" association="_2MHfkJXSEeCPRvDaLb3XNg">
+              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2MJ70ZXSEeCPRvDaLb3XNg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2MJ70JXSEeCPRvDaLb3XNg"/>
+            </ownedAttribute>
             <ownedOperation xmi:id="_3C7B8A60016D4251ADEA0013" name="voteForActivity">
               <ownedParameter xmi:id="_H-0vCN7NEdmKapscEl8OLg" direction="return">
                 <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
@@ -717,12 +722,9 @@
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4241AE8100AC" name="ActivityVote">
-            <generalization xmi:id="_3C7B8A60016D4242C53F0058">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
             <generalization xmi:id="_3C7B8A60016D4244962802A1" general="_3C7B8A60016D424365500093"/>
-            <generalization xmi:id="_3C7B8A60016D424D8593035F">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            <generalization xmi:id="_HjnxUOmuEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4241AEED0396" name="ActivityLinkTo">
@@ -799,6 +801,10 @@
             </ownedAttribute>
             <ownedAttribute xmi:id="_z-HWcHsqEd2BAOXTmSCZhA" name="icalType">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_IZpnAJXTEeCPRvDaLb3XNg" name="creationContext" aggregation="composite">
+              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LcYYMJXTEeCPRvDaLb3XNg"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4242CE19009C" name="ActivityLinkFrom">
@@ -1026,11 +1032,8 @@
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D424D8474010E" name="ActivityGroupAssignment">
-            <generalization xmi:id="_3C7B8A60016D424D859A0002">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
-            <generalization xmi:id="_3C7B8A60016D424D85B90350">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            <generalization xmi:id="_GZdrUOmuEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_3C7B8A60016D424DE2EF03D4" name="activityGroup" type="_3C7B8A60016D425C2A46008D" isUnique="false" association="_3C7B8A60016D424DE2EF015D">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IDmhld7NEdmKapscEl8OLg" value="1"/>
@@ -1169,6 +1172,11 @@
             <ownedAttribute xmi:id="_0hJU8WK9EdySP8m4dFI0eA" name="defaultCreator" type="_APhQ4G6fEdq2_7SCieKOqA" association="_0hJU8GK9EdySP8m4dFI0eA">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0hJU9GK9EdySP8m4dFI0eA" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0hJU82K9EdySP8m4dFI0eA"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_rnQq4pU8EeCEqqJS5eCH5Q" name="creationContext" association="_rnPcwJU8EeCEqqJS5eCH5Q">
+              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_rnRR8JU8EeCEqqJS5eCH5Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_rnQq45U8EeCEqqJS5eCH5Q"/>
             </ownedAttribute>
             <ownedOperation xmi:id="_oaEzoIeXEdy5T_8kd3c3Iw" name="calcTotalQuantity">
               <ownedParameter xmi:id="_oxHQcDMfEd6rDqvK-um4sQ" name="in" type="_UFU94DMfEd6rDqvK-um4sQ"/>
@@ -1313,11 +1321,8 @@
             <generalization xmi:id="_JB-WcOr0Edm0QOOG5_-fRw">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.product1.uml#_kpFuUOryEdm0QOOG5_-fRw"/>
             </generalization>
-            <generalization xmi:id="_LQeOUOr0Edm0QOOG5_-fRw">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
-            <generalization xmi:id="_LuvesOr0Edm0QOOG5_-fRw">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            <generalization xmi:id="_Fqr5wOmuEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_xrCsQOrzEdm0QOOG5_-fRw" name="ActivityHasProductReference" memberEnd="_xrCsQerzEdm0QOOG5_-fRw _xrCsQurzEdm0QOOG5_-fRw">
@@ -1421,11 +1426,8 @@
             </ownedEnd>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_DBuw4G4-Edq2_7SCieKOqA" name="EffortEstimate">
-            <generalization xmi:id="_Gate4G4-Edq2_7SCieKOqA">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
             <generalization xmi:id="_HAuWAG4-Edq2_7SCieKOqA">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_JQFJgG4-Edq2_7SCieKOqA" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
@@ -1869,17 +1871,8 @@
             </ownedEnd>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_Pmw2wG6WEdq2_7SCieKOqA" name="ResourceAssignment">
-            <generalization xmi:id="_uf0OkG6WEdq2_7SCieKOqA">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
-            <generalization xmi:id="_u-qGsG6WEdq2_7SCieKOqA">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
-            <generalization xmi:id="_0lmCMHDUEdqn-eNyJZtHUw">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
-            <generalization xmi:id="_1LOe0HDUEdqn-eNyJZtHUw">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            <generalization xmi:id="_C3VBUOmuEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_1XhGMG6WEdq2_7SCieKOqA" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
@@ -2101,17 +2094,18 @@
             <eAnnotations xmi:id="_VEBosHFfEdqn-eNyJZtHUw" source="http://www.eclipse.org/uml2/2.0.0/UML">
               <details xmi:id="_VEBosXFfEdqn-eNyJZtHUw" key="root"/>
             </eAnnotations>
-            <generalization xmi:id="_Zpy58HFfEdqn-eNyJZtHUw">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
-            <generalization xmi:id="_mRMfUHFfEdqn-eNyJZtHUw">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            <generalization xmi:id="_xvp5QOmuEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_bhdmMHFfEdqn-eNyJZtHUw" name="partyType">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_kkugAPvgEd-0irdVLXxHyw" name="partyStatus" aggregation="composite">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_WRb3oLntEeC7jOJfhKgIeA" name="emailHint" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Y3cQkLntEeC7jOJfhKgIeA"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_3C7B8A60016D424DE2EF015D" name="ActivityIsAssignedToGroup" memberEnd="_3C7B8A60016D424DE2EF03D4 _3C7B8A60016D424DE2F00000">
@@ -2243,11 +2237,11 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_GrrjMIH_Edq-wo8hCL6c-w" name="WeekDay">
             <generalization xmi:id="_t-5D4IH_Edq-wo8hCL6c-w" general="_i1258IH_Edq-wo8hCL6c-w"/>
-            <generalization xmi:id="_iCkmYIIAEdq-wo8hCL6c-w">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
             <generalization xmi:id="_iy_9wIIAEdq-wo8hCL6c-w">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            </generalization>
+            <generalization xmi:id="_AW8SwOmvEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_PK6ZUIH_Edq-wo8hCL6c-w" name="dayOfWeek">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
@@ -2255,11 +2249,11 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_IYEzkIH_Edq-wo8hCL6c-w" name="CalendarDay">
             <generalization xmi:id="_tJH5gIH_Edq-wo8hCL6c-w" general="_i1258IH_Edq-wo8hCL6c-w"/>
-            <generalization xmi:id="_iYEVQIIAEdq-wo8hCL6c-w">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
             <generalization xmi:id="_jL7bIIIAEdq-wo8hCL6c-w">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            </generalization>
+            <generalization xmi:id="__rT70OmuEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_XfyVYIIGEdq-wo8hCL6c-w" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
@@ -2866,6 +2860,47 @@
             <ownedEnd xmi:id="_GimL4OZlEd-XquPOMEGJEw" name="filterProperty" type="_uXS68OZjEd-XquPOMEGJEw" association="_Gilk0OZlEd-XquPOMEGJEw">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_GimL4uZlEd-XquPOMEGJEw" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_GimL4eZlEd-XquPOMEGJEw"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_I2KIgJHQEeCkEff5wLtVfQ" name="SubActivity">
+            <generalization xmi:id="_dfnlMJHjEeCkEff5wLtVfQ" general="_3C7B8A60016D42540344017F"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_HmsA0JLlEeCEqqJS5eCH5Q" name="SubActivityTransition">
+            <generalization xmi:id="_iv638JLlEeCEqqJS5eCH5Q" general="_VyurYG42Edq2_7SCieKOqA"/>
+            <ownedAttribute xmi:id="_2Bs1MZLmEeCEqqJS5eCH5Q" name="activityCreator" type="_APhQ4G6fEdq2_7SCieKOqA" association="_2BrAAJLmEeCEqqJS5eCH5Q">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2BtcQJLmEeCEqqJS5eCH5Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2Bs1MpLmEeCEqqJS5eCH5Q"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_GbjykJN2EeCEqqJS5eCH5Q" name="subActivityNamePattern" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hZ-bkJRMEeCEqqJS5eCH5Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hZ-bkZRMEeCEqqJS5eCH5Q"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_Qd4OQJOFEeCEqqJS5eCH5Q" name="useCreatorAsTemplate" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T0BqsJOFEeCEqqJS5eCH5Q"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_zBlxoJVAEeCEqqJS5eCH5Q" name="templateNamePattern" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2UbbYJVAEeCEqqJS5eCH5Q"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_2BrAAJLmEeCEqqJS5eCH5Q" name="ActivitySubActivityHasActivityCreator" memberEnd="_2BsOIJLmEeCEqqJS5eCH5Q _2Bs1MZLmEeCEqqJS5eCH5Q">
+            <ownedEnd xmi:id="_2BsOIJLmEeCEqqJS5eCH5Q" name="transition" type="_HmsA0JLlEeCEqqJS5eCH5Q" association="_2BrAAJLmEeCEqqJS5eCH5Q">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2Bs1MJLmEeCEqqJS5eCH5Q" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2BsOIZLmEeCEqqJS5eCH5Q"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_rnPcwJU8EeCEqqJS5eCH5Q" name="ActivityGroupHasCreationContext" memberEnd="_rnQD0JU8EeCEqqJS5eCH5Q _rnQq4pU8EeCEqqJS5eCH5Q">
+            <ownedEnd xmi:id="_rnQD0JU8EeCEqqJS5eCH5Q" name="activityGroup" type="_3C7B8A60016D425C2A46008D" association="_rnPcwJU8EeCEqqJS5eCH5Q">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_rnQq4ZU8EeCEqqJS5eCH5Q" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_rnQq4JU8EeCEqqJS5eCH5Q"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_2MHfkJXSEeCPRvDaLb3XNg" name="ActivityHasCreationContext" memberEnd="_2MItsJXSEeCPRvDaLb3XNg _2MJUwpXSEeCPRvDaLb3XNg">
+            <ownedEnd xmi:id="_2MItsJXSEeCPRvDaLb3XNg" name="activity" type="_3C7B8A60016D3F40064D035D" association="_2MHfkJXSEeCPRvDaLb3XNg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2MJUwZXSEeCPRvDaLb3XNg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2MJUwJXSEeCPRvDaLb3XNg"/>
             </ownedEnd>
           </packagedElement>
         </packagedElement>

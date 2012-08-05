@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: StringPropertyDataBinding.java,v 1.4 2008/11/21 00:34:46 wfro Exp $
+ * Name:        $Id: StringPropertyDataBinding.java,v 1.6 2012/01/06 13:22:51 wfro Exp $
  * Description: StringPropertyDataBinding
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/21 00:34:46 $
+ * Date:        $Date: 2012/01/06 13:22:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,6 +55,8 @@
  */
 package org.opencrx.kernel.portal;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.Property;
@@ -93,19 +95,18 @@ public class StringPropertyDataBinding extends AbstractPropertyDataBinding {
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p == null) {
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = 
-                (org.opencrx.kernel.base.jmi1.BasePackage)object.refOutermostPackage().refPackage(
-                    org.opencrx.kernel.base.jmi1.BasePackage.class.getName()
-                );
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+        	p = pm.newInstance(StringProperty.class);
+        	p.refInitialize(false, false);
             this.createProperty(
                 object,
                 qualifiedFeatureName,
-                p = basePkg.getStringProperty().createStringProperty()
+                p
             );                
         }                
         if(p instanceof StringProperty) {
             ((StringProperty)p).setStringValue((String)newValue);
         }
     }
-        
+
 }

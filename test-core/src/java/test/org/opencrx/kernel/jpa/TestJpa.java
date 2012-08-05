@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestJpa.java,v 1.5 2010/01/30 19:12:22 wfro Exp $
+ * Name:        $Id: TestJpa.java,v 1.6 2011/05/18 14:09:41 wfro Exp $
  * Description: TestJpa
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/30 19:12:22 $
+ * Date:        $Date: 2011/05/18 14:09:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -471,7 +471,7 @@ public class TestJpa
 
     //-----------------------------------------------------------------------
     private void printContractPosition(
-        org.opencrx.kernel.contract1.cci2.AbstractContractPosition position
+        org.opencrx.kernel.contract1.cci2.SalesContractPosition position
     ) {
         System.out.println();
         System.out.println("  position " + position.getPositionNumber());

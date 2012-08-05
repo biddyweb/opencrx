@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.59 2010/11/30 13:56:22 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.61 2011/11/28 09:41:26 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.59 $
+ * Revision:    $Revision: 1.61 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/30 13:56:22 $
+ * Date:        $Date: 2011/11/28 09:41:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -172,7 +172,6 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        if(
 	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
 	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
-	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Permission") ||
 	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
 	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
 	        ) {
@@ -249,13 +248,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	                new BasicException.Parameter("credential", passwordCredential)
 	            );
 	        }
-	        MappedRecord changedPasswordCredential;
-            try {
-	            changedPasswordCredential = Object_2Facade.cloneObject(passwordCredential);
-            }
-            catch (ResourceException e) {
-            	throw new ServiceException(e);
-            }
+	        MappedRecord changedPasswordCredential = Object_2Facade.cloneObject(passwordCredential);
             Object_2Facade changedPasswordCredentialFacade = Object_2Facade.newInstance(changedPasswordCredential);
             changedPasswordCredentialFacade.attributeValuesAsList("password").clear();
             changedPasswordCredentialFacade.attributeValuesAsList("password").add(

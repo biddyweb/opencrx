@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DerivedReferences.java,v 1.75 2010/11/03 15:47:19 wfro Exp $
+ * Name:        $Id: DerivedReferences.java,v 1.78 2011/09/30 09:50:57 wfro Exp $
  * Description: DerivedReferences
- * Revision:    $Revision: 1.75 $
+ * Revision:    $Revision: 1.78 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/03 15:47:19 $
+ * Date:        $Date: 2011/09/30 09:50:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,13 +79,15 @@ import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction;
+import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Filter;
+import org.openmdx.base.query.IsInCondition;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.rest.spi.Object_2Facade;
@@ -215,9 +217,9 @@ public class DerivedReferences {
 	            );
 	            return true;
 	        }
-	        // ActivityGroupFilterIncludesActivity
+	        // ActivityFilterIncludesActivity
 	        else if(
-	            request.path().isLike(ACTIVITY_GROUP_FILTER_INCLUDES_ACTIVITY)
+	            request.path().isLike(ACTIVITY_FILTER_INCLUDES_ACTIVITY)
 	        ) {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
@@ -228,10 +230,36 @@ public class DerivedReferences {
 	                    )
 	                )
 	            );
-	            // Query for activity group name
+	            // Remap to ActivityGroupContainsActivity
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(7).getChild("filteredActivity"),
+	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
+	            );
+	            this.requestHelper.getDelegatingInteraction().find(
+	                findRequest.getInteractionSpec(),
+	                Query_2Facade.newInstance(findRequest.object()),
+	                reply.getResult()
+	            );
+	            return true;
+	        }
+	        // ContractFilterIncludesContract
+	        else if(
+	            request.path().isLike(CONTRACT_FILTER_INCLUDES_CONTRACT)
+	        ) {
+	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
+	            filterProperties.addAll(
+	                Arrays.asList(
+	                    DerivedReferences.getContractFilterProperties(
+	                        request.path().getPrefix(request.path().size() - 1),
+	                        this.requestHelper.getDelegatingInteraction()
+	                    )
+	                )
+	            );
+	            // Remap to ContractGroupContainsContract
+	            DataproviderRequest findRequest = this.remapFindRequest(
+	                request,
+	                request.path().getPrefix(7).getChild("filteredContract"),
 	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
@@ -1702,19 +1730,18 @@ public class DerivedReferences {
 	                // Attribute filter
 	                else {
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? ConditionType.IS_IN.code()
-	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
-	                    filterOperator = filterOperator == 0
-	                        ? ConditionType.IS_IN.code()
-	                        : filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantifier.THERE_EXISTS.code()
-	                        : ((Number)filterPropertyFacade.attributeValuesAsList("filterQuantor").get(0)).shortValue();
-	                    filterQuantor = filterQuantor == 0
-	                        ? Quantifier.THERE_EXISTS.code()
-	                        : filterQuantor;
-	                    
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() ? 
+	                    	ConditionType.IS_IN.code() : 
+	                    		((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
+	                    filterOperator = filterOperator == 0 ? 
+	                    	ConditionType.IS_IN.code() : 
+	                    		filterOperator;
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty() ? 
+	                    	Quantifier.THERE_EXISTS.code() : 
+	                    		((Number)filterPropertyFacade.attributeValuesAsList("filterQuantor").get(0)).shortValue();
+	                    filterQuantor = filterQuantor == 0 ? 
+	                    	Quantifier.THERE_EXISTS.code() : 
+	                    		filterQuantor;	                    
 	                    if("org:opencrx:kernel:account1:AddressCategoryFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1772,9 +1799,39 @@ public class DerivedReferences {
 	                            )
 	                        );
 	                    }
+	                    else if("org:opencrx:kernel:account1:AddressAccountMembershipFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                            	Quantifier.THERE_EXISTS.code(),
+	                                "account",
+	                                ConditionType.IS_IN.code(),
+                            		new Filter(
+	                            		new IsInCondition(
+	        	                    		Quantifier.THERE_EXISTS,
+	        	                    		"accountMembership",
+	        	                    		true,
+	        	                    		new Filter(
+	        	                    			new IsInCondition(
+	        	                    				Quantifier.valueOf(filterQuantor),
+	        	    	                    		"accountFrom",
+	        	    	                    		filterOperator == ConditionType.IS_IN.code(),
+	        	    	                    		filterPropertyFacade.attributeValuesAsList("account").toArray()
+	        	    	                    	),
+	        	                    			new IsInCondition(
+	        	                    				Quantifier.FOR_ALL,
+	        	    	                    		"distance",
+	        	    	                    		true,
+	        	    	                    		(short)-1
+	        	    	                    	)
+	        	                    		)
+	        	                    	)
+                            		)
+	                            )
+	                        );
+	                    }	                    
 	                }
 	            }
-	        }        
+	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
@@ -1910,19 +1967,18 @@ public class DerivedReferences {
 	                // Attribute filter
 	                else {
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? ConditionType.IS_IN.code()
-	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
-	                    filterOperator = filterOperator == 0
-	                        ? ConditionType.IS_IN.code()
-	                        : filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantifier.THERE_EXISTS.code()
-	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
-	                    filterQuantor = filterQuantor == 0
-	                        ? Quantifier.THERE_EXISTS.code()
-	                        : filterQuantor;
-	                    
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() ? 
+	                    	ConditionType.IS_IN.code() : 
+	                    		((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
+	                    filterOperator = filterOperator == 0 ? 
+	                    	ConditionType.IS_IN.code() : 
+	                    		filterOperator;
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty() ? 
+	                    	Quantifier.THERE_EXISTS.code() : 
+	                    		((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
+	                    filterQuantor = filterQuantor == 0 ? 
+	                    	Quantifier.THERE_EXISTS.code() : 
+	                    		filterQuantor;	                    
 	                    if("org:opencrx:kernel:account1:AccountTypeFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1963,9 +2019,32 @@ public class DerivedReferences {
 	                            )
 	                        );
 	                    }
+	                    else if("org:opencrx:kernel:account1:AccountMembershipFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                            	Quantifier.THERE_EXISTS.code(),
+	                                "accountMembership",
+	                                ConditionType.IS_IN.code(),
+    	                    		new Filter(
+    	                    			new IsInCondition(
+    	                    				Quantifier.valueOf(filterQuantor),
+    	    	                    		"accountFrom",
+    	    	                    		filterOperator == ConditionType.IS_IN.code(),
+    	    	                    		filterPropertyFacade.attributeValuesAsList("account").toArray()
+    	    	                    	),
+    	                    			new IsInCondition(
+    	                    				Quantifier.FOR_ALL,
+    	    	                    		"distance",
+    	    	                    		true,
+    	    	                    		(short)-1
+    	    	                    	)
+    	                    		)
+                           		)
+	                        );
+	                    }
 	                }
 	            }
-	        }        
+	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
@@ -1982,14 +2061,15 @@ public class DerivedReferences {
     private static final Path DEPOT_GROUP_CONTAINS_DEPOTS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depot");
     private static final Path DEPOT_GROUP_CONTAINS_DEPOT_GROUPS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depotGroup");
     private static final Path DEPOT_ENTITY_CONTAINS_DEPOTS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depot");
-    private static final Path FOLDER_CONTAINS_FOLDERS = new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/:*/segment/:*/folder/:*/folder");
+    private static final Path FOLDER_CONTAINS_FOLDERS = new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/:*/segment/:*/folder/:*/subFolder");
     private static final Path MODEL_NAMESPACE_CONTAINS_ELEMENTS = new Path("xri://@openmdx*org.opencrx.kernel.model1/provider/:*/segment/:*/element/:*/content");
     private static final Path GLOBAL_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/activityFilter/:*/filteredActivity");
     private static final Path GLOBAL_FILTER_INCLUDES_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/:*/segment/:*/accountFilter/:*/filteredAccount");
     private static final Path GLOBAL_FILTER_INCLUDES_ADDRESS = new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/:*/segment/:*/addressFilter/:*/filteredAddress");
     private static final Path GLOBAL_FILTER_INCLUDES_CONTRACT = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filteredContract");
     private static final Path GLOBAL_FILTER_INCLUDES_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/filteredProduct");
-    private static final Path ACTIVITY_GROUP_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
+    private static final Path ACTIVITY_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
+    private static final Path CONTRACT_FILTER_INCLUDES_CONTRACT = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/contractGroup/:*/contractFilter/:*/filteredContract");
     private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredAccount");
     private static final Path PRODUCT_PRICE_LEVEL_INCLUDES_FILTERED_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredProduct");
     private static final Path PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/priceListEntry");

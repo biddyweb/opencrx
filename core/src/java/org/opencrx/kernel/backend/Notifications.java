@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Notifications.java,v 1.21 2010/12/15 14:54:45 wfro Exp $
+ * Name:        $Id: Notifications.java,v 1.24 2011/11/30 11:25:42 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 14:54:45 $
+ * Date:        $Date: 2011/11/30 11:25:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,6 +75,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
 import org.opencrx.kernel.activity1.jmi1.Incident;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.activity1.jmi1.MeetingParty;
+import org.opencrx.kernel.backend.Activities.PartyStatus;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
@@ -82,6 +83,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.action.SelectObjectAction;
 
 public class Notifications extends AbstractImpl {
 
@@ -112,7 +114,7 @@ public class Notifications extends AbstractImpl {
         Action selectTargetAction = targetIdentity == null ?
             null :
             new Action(
-                Action.EVENT_SELECT_OBJECT, 
+                SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXri())
                 },
@@ -121,7 +123,7 @@ public class Notifications extends AbstractImpl {
             );
         return 
 	        webAccessUrl + 
-	        "?event=" + Action.EVENT_SELECT_OBJECT + 
+	        "?event=" + SelectObjectAction.EVENT_ID + 
 	        "&parameter=" + selectTargetAction.getParameter();		
 	}
 	
@@ -141,7 +143,7 @@ public class Notifications extends AbstractImpl {
         Action selectTargetAction = targetIdentity == null ?
             null :
             new Action(
-                Action.EVENT_SELECT_OBJECT, 
+                SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXri())
                 },
@@ -153,7 +155,7 @@ public class Notifications extends AbstractImpl {
         Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null ? 
         	null : 
         	new Action(
-                Action.EVENT_SELECT_OBJECT, 
+                SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, wfProcessInstanceIdentity.toXri())    
                 },
@@ -163,7 +165,7 @@ public class Notifications extends AbstractImpl {
         Action selectTriggeredBySubscriptionAction =  params.get("triggeredBySubscription") == null ? 
         	null : 
         	new Action(
-                Action.EVENT_SELECT_OBJECT,
+                SelectObjectAction.EVENT_ID,
                 new Action.Parameter[]{
                     new Action.Parameter(Action.PARAMETER_OBJECTXRI, ((Path)params.get("triggeredBySubscription")).toXri())
                 },
@@ -219,7 +221,7 @@ public class Notifications extends AbstractImpl {
             text = "";
             if(selectTargetAction != null) {
                 text += "=======================================================================\n";
-                text += "\"" + webAccessUrl + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTargetAction.getParameter() + "\"\n";
+                text += "\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\"\n";
                 text += "=======================================================================\n";
             }
             text += "Reporting Contact:          " + (reportingContact == null ? "N/A" : reportingContact.getFullName()) + "\n";
@@ -278,11 +280,11 @@ public class Notifications extends AbstractImpl {
             	partyQuery.orderByPartyStatus().ascending();
             	List<MeetingParty> meetingParties = meeting.getMeetingParty(partyQuery);            	
             	for(MeetingParty meetingParty: meetingParties) {
-            		String partyStatus =  meetingParty.getPartyStatus() == ICalendar.PARTY_STATUS_ACCEPTED ? 
+            		String partyStatus =  meetingParty.getPartyStatus() == PartyStatus.ACCEPTED.getValue() ? 
             			"+" :
-            				meetingParty.getPartyStatus() == ICalendar.PARTY_STATUS_DECLINED ?
+            				meetingParty.getPartyStatus() == PartyStatus.DECLINED.getValue() ?
             					"-" : "?";            		
-            		text += partyStatus + "  " + meetingParty.getParty().getFullName() + "\n"; 
+            		text += partyStatus + "  " + (meetingParty.getEmailHint() == null ? meetingParty.getParty().getFullName() : meetingParty.getEmailHint()) + "\n"; 
             	}
                 text += "=======================================================================\n";            		
             }
@@ -330,10 +332,10 @@ public class Notifications extends AbstractImpl {
                 text += "Event:           " + (params.get("triggeredByEventType") == null ? "N/A" : DataproviderOperations.toString(((Number)params.get("triggeredByEventType")).intValue())) + "\n";
                 text += "Subscription Id: " + subscriptionId + "\n";
                 if(selectTargetAction != null) {
-                    text += "Object Invoked:  " + ("\"" + webAccessUrl + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTargetAction.getParameter() + "\"\n");
+                    text += "Object Invoked:  " + ("\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\"\n");
                 }
-                text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectWfProcessInstanceAction.getParameter()) + "\"\n";
-                text += "Subscription:    " + (selectTriggeredBySubscriptionAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTriggeredBySubscriptionAction.getParameter()) + "\"\n";
+                text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectWfProcessInstanceAction.getParameter()) + "\"\n";
+                text += "Subscription:    " + (selectTriggeredBySubscriptionAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectTriggeredBySubscriptionAction.getParameter()) + "\"\n";
                 text += "=======================================================================\n";
         }
         return text;

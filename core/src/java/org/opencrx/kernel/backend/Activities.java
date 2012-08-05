@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.195 2011/04/29 09:33:40 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.225 2011/12/21 13:42:15 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.195 $
+ * Revision:    $Revision: 1.225 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/04/29 09:33:40 $
+ * Date:        $Date: 2011/12/21 13:42:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,10 +70,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -86,10 +88,10 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.mail.Address;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.HeaderTokenizer;
 import javax.mail.internet.InternetAddress;
@@ -100,8 +102,11 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.omg.mof.spi.Names;
+import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
@@ -113,12 +118,14 @@ import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.AddressGroupMemberQuery;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
+import org.opencrx.kernel.activity1.cci2.EMailRecipientQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
 import org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery;
+import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
 import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
+import org.opencrx.kernel.activity1.jmi1.AbstractPhoneCallRecipient;
 import org.opencrx.kernel.activity1.jmi1.Activity;
-import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreationAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
@@ -128,6 +135,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
 import org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom;
 import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
+import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
@@ -143,14 +151,25 @@ import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup;
 import org.opencrx.kernel.activity1.jmi1.EffortEstimate;
+import org.opencrx.kernel.activity1.jmi1.Incident;
+import org.opencrx.kernel.activity1.jmi1.IncidentParty;
 import org.opencrx.kernel.activity1.jmi1.LinkedActivityFollowUpAction;
+import org.opencrx.kernel.activity1.jmi1.Mailing;
+import org.opencrx.kernel.activity1.jmi1.MailingRecipient;
+import org.opencrx.kernel.activity1.jmi1.Meeting;
+import org.opencrx.kernel.activity1.jmi1.MeetingParty;
 import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
+import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
 import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
 import org.opencrx.kernel.activity1.jmi1.SetAssignedToAction;
+import org.opencrx.kernel.activity1.jmi1.SubActivity;
+import org.opencrx.kernel.activity1.jmi1.SubActivityTransition;
+import org.opencrx.kernel.activity1.jmi1.Task;
+import org.opencrx.kernel.activity1.jmi1.TaskParty;
 import org.opencrx.kernel.activity1.jmi1.WeekDay;
 import org.opencrx.kernel.activity1.jmi1.WfAction;
 import org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord;
@@ -161,9 +180,10 @@ import org.opencrx.kernel.depot1.jmi1.DepotPosition;
 import org.opencrx.kernel.depot1.jmi1.DepotReference;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.generic.jmi1.Media;
+import org.opencrx.kernel.generic.SecurityKeys.Action;
 import org.opencrx.kernel.generic.jmi1.Note;
 import org.opencrx.kernel.generic.jmi1.PropertySet;
+import org.opencrx.kernel.home1.jmi1.Reminder;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.uom1.jmi1.Uom;
@@ -173,15 +193,15 @@ import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.text.conversion.Base64;
-import org.openmdx.base.text.conversion.UUIDConversion;
+import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
+import org.openmdx.kernel.naming.ComponentEnvironment;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
 
@@ -269,15 +289,15 @@ public class Activities extends AbstractImpl {
     }
         
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.activity1.jmi1.ActivityCreator findActivityCreator(
+    public ActivityCreator findActivityCreator(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorQuery = 
-        	(org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCreator.class);
+        	(org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery)pm.newQuery(ActivityCreator.class);
         activityCreatorQuery.name().equalTo(name);
-        List<org.opencrx.kernel.activity1.jmi1.ActivityCreator> activityCreators = segment.getActivityCreator(activityCreatorQuery);
+        List<ActivityCreator> activityCreators = segment.getActivityCreator(activityCreatorQuery);
         return activityCreators.isEmpty() ? 
         	null : 
         	activityCreators.iterator().next();
@@ -285,9 +305,9 @@ public class Activities extends AbstractImpl {
 
     //-------------------------------------------------------------------------
     /**
-     * @deprecated
+     * @deprecated use {@link #findActivityTracker(String, org.opencrx.kernel.activity1.jmi1.Segment)} instead.
      */
-    public org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
+    public ActivityTracker findActivityTracker(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
@@ -296,25 +316,64 @@ public class Activities extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
+    public ActivityTracker findActivityTracker(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment
+    ) {
+    	return this.findActivityTracker(name, segment, (ContextCapable)null);
+    }
+    
+    //-------------------------------------------------------------------------
+    public ActivityTracker findActivityTracker(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        ContextCapable creationContext
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery activityTrackerQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(ActivityTracker.class);
         activityTrackerQuery.name().equalTo(name);
-        List<org.opencrx.kernel.activity1.jmi1.ActivityTracker> activityTrackers = segment.getActivityTracker(activityTrackerQuery);
+        if(creationContext != null) {
+        	activityTrackerQuery.thereExistsCreationContext().equalTo(creationContext);
+        }
+        List<ActivityTracker> activityTrackers = segment.getActivityTracker(activityTrackerQuery);
         return activityTrackers.isEmpty() ? 
         	null : 
         	activityTrackers.iterator().next();
     }
 
     //-------------------------------------------------------------------------
+    public ActivityMilestone findActivityMilestone(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment
+    ) {
+    	return this.findActivityMilestone(name, segment, (ContextCapable)null);
+    }
+    
+    //-------------------------------------------------------------------------
+    public ActivityMilestone findActivityMilestone(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        ContextCapable creationContext
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
+        org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery activityTrackerQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery)pm.newQuery(ActivityMilestone.class);
+        activityTrackerQuery.name().equalTo(name);
+        if(creationContext != null) {
+        	activityTrackerQuery.thereExistsCreationContext().equalTo(creationContext);
+        }
+        List<ActivityMilestone> activityMilestones = segment.getActivityMilestone(activityTrackerQuery);
+        return activityMilestones.isEmpty() ? 
+        	null : 
+        	activityMilestones.iterator().next();
+    }
+
+    //-------------------------------------------------------------------------
     /**
-     * @deprecated 
+     * @deprecated use {@link #findActivityCategory(String, org.opencrx.kernel.activity1.jmi1.Segment)} instead
      */
-    public org.opencrx.kernel.activity1.jmi1.ActivityCategory findActivityCategory(
+    public ActivityCategory findActivityCategory(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
@@ -323,15 +382,27 @@ public class Activities extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.activity1.jmi1.ActivityCategory findActivityCategory(
+    public ActivityCategory findActivityCategory(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment
+    ) {
+    	return this.findActivityCategory(name, segment, (ContextCapable)null);
+    }
+    
+    //-------------------------------------------------------------------------
+    public ActivityCategory findActivityCategory(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        ContextCapable creationContext
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);    	
         org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery activityCategoryQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(ActivityCategory.class);
         activityCategoryQuery.name().equalTo(name);
-        List<org.opencrx.kernel.activity1.jmi1.ActivityCategory> activityCategories = segment.getActivityCategory(activityCategoryQuery);
+        if(creationContext != null) {
+        	activityCategoryQuery.thereExistsCreationContext().equalTo(creationContext);
+        }
+        List<ActivityCategory> activityCategories = segment.getActivityCategory(activityCategoryQuery);
         return activityCategories.isEmpty() ? 
         	null : 
         	activityCategories.iterator().next();
@@ -339,7 +410,7 @@ public class Activities extends AbstractImpl {
 
     //-------------------------------------------------------------------------
     /**
-     * @deprecated
+     * @deprecated use {@link #findCalendar(String, org.opencrx.kernel.activity1.jmi1.Segment)} instead.
      */
     public org.opencrx.kernel.activity1.jmi1.Calendar findCalendar(
         String name,
@@ -365,30 +436,57 @@ public class Activities extends AbstractImpl {
     }
     
     //-----------------------------------------------------------------------
+    /**
+     * @deprecated use {@link #initCalendar(String, PersistenceManager, String, String, List, short)} instead.
+     */
     public Calendar initCalendar(
         String calendarName,
         PersistenceManager pm,
         String providerName,
         String segmentName
     ) {
+    	return this.initCalendar(
+    		calendarName, 
+    		pm, 
+    		providerName, 
+    		segmentName, 
+    		null, // owningGroups 
+    		SecurityKeys.ACCESS_LEVEL_NA
+    	);
+    }
+    
+    //-----------------------------------------------------------------------
+    public Calendar initCalendar(
+        String calendarName,
+        PersistenceManager pm,
+        String providerName,
+        String segmentName,
+        List<PrincipalGroup> owningGroups,
+        short accessLevelUpdateDelete
+    ) {
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
+        if(owningGroups == null) {
+        	owningGroups = activitySegment.getOwningGroup();
+        }
         Calendar calendar = null;
         if((calendar = this.findCalendar(calendarName, activitySegment)) != null) {
             return calendar;            
-        }                        
-        pm.currentTransaction().begin();                    
+        }                 
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
         calendar = pm.newInstance(Calendar.class);
         calendar.refInitialize(false, false);
         calendar.setName(calendarName);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        calendar.getOwningGroup().addAll(owningGroups);
+        calendar.setAccessLevelUpdate(accessLevelUpdateDelete);
+        calendar.setAccessLevelDelete(accessLevelUpdateDelete);
         activitySegment.addCalendar(
-            false,
             this.getUidAsString(),
             calendar
         );
@@ -397,11 +495,10 @@ public class Activities extends AbstractImpl {
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)1);
         weekDay.setWorkingDay(false);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
@@ -412,11 +509,10 @@ public class Activities extends AbstractImpl {
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
         weekDay.setWorkDurationMinutes((short)30);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
@@ -427,11 +523,10 @@ public class Activities extends AbstractImpl {
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
         weekDay.setWorkDurationMinutes((short)30);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
@@ -442,11 +537,10 @@ public class Activities extends AbstractImpl {
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
         weekDay.setWorkDurationMinutes((short)30);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
@@ -457,11 +551,10 @@ public class Activities extends AbstractImpl {
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
         weekDay.setWorkDurationMinutes((short)30);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
@@ -472,11 +565,10 @@ public class Activities extends AbstractImpl {
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
         weekDay.setWorkDurationMinutes((short)30);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
@@ -485,15 +577,16 @@ public class Activities extends AbstractImpl {
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)7);
         weekDay.setWorkingDay(false);
-        calendar.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        weekDay.getOwningGroup().addAll(owningGroups);
+        weekDay.setAccessLevelUpdate(accessLevelUpdateDelete);
+        weekDay.setAccessLevelDelete(accessLevelUpdateDelete);
         calendar.addWeekDay(
-            false,
             this.getUidAsString(),
             weekDay
         );
-        pm.currentTransaction().commit();
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
         return calendar;
     }
       
@@ -501,27 +594,34 @@ public class Activities extends AbstractImpl {
     public ActivityProcess initEmailProcess(
         PersistenceManager pm,
         String providerName,
-        String segmentName
+        String segmentName,
+        List<PrincipalGroup> owningGroups,
+        short accessLevelUpdateDelete
     ) {
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
+        if(owningGroups == null) {
+        	owningGroups = activitySegment.getOwningGroup();
+        }
         ActivityProcess process = null;
         if((process = this.findActivityProcess(ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm)) != null) {
             return process;            
         }                
         // Create email process
-        pm.currentTransaction().begin();                    
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
         process = pm.newInstance(ActivityProcess.class);
         process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_EMAILS);
-        process.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        process.getOwningGroup().addAll(owningGroups);
+        process.setAccessLevelUpdate(accessLevelUpdateDelete);
+        process.setAccessLevelDelete(accessLevelUpdateDelete);        
         activitySegment.addActivityProcess(
-            false,
             this.getUidAsString(),
             process
         );
@@ -529,11 +629,10 @@ public class Activities extends AbstractImpl {
         ActivityProcessState newState = pm.newInstance(ActivityProcessState.class);
         newState.refInitialize(false, false);
         newState.setName("New");
-        newState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        newState.getOwningGroup().addAll(owningGroups);
+        newState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        newState.setAccessLevelDelete(accessLevelUpdateDelete);        
         process.addState(
-            false,
             this.getUidAsString(),
             newState
         );
@@ -541,11 +640,10 @@ public class Activities extends AbstractImpl {
         ActivityProcessState openState = pm.newInstance(ActivityProcessState.class);
         openState.refInitialize(false, false);
         openState.setName("Open");
-        openState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        openState.getOwningGroup().addAll(owningGroups);
+        openState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        openState.setAccessLevelDelete(accessLevelUpdateDelete);        
         process.addState(
-            false,
             this.getUidAsString(),
             openState
         );
@@ -553,17 +651,20 @@ public class Activities extends AbstractImpl {
         ActivityProcessState closedState = pm.newInstance(ActivityProcessState.class);
         closedState.refInitialize(false, false);
         closedState.setName("Closed");
-        closedState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        closedState.getOwningGroup().addAll(owningGroups);
+        closedState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        closedState.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addState(
-            false,
             this.getUidAsString(),
             closedState
         );
-        pm.currentTransaction().commit();                    
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
         // Initial State
-        pm.currentTransaction().begin();
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
         process.setStartState(newState);                    
         // Transition Assign: New->Open
         ActivityProcessTransition processTransition = pm.newInstance(ActivityProcessTransition.class);
@@ -573,11 +674,10 @@ public class Activities extends AbstractImpl {
         processTransition.setNextState(openState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)20));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             this.getUidAsString(),
             processTransition
         );
@@ -586,11 +686,10 @@ public class Activities extends AbstractImpl {
         setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
-        setAssignedToAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setAssignedToAction.getOwningGroup().addAll(owningGroups);
+        setAssignedToAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setAssignedToAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
             this.getUidAsString(),
             setAssignedToAction
         );
@@ -599,11 +698,10 @@ public class Activities extends AbstractImpl {
         setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
-        setActualStartAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setActualStartAction.getOwningGroup().addAll(owningGroups);
+        setActualStartAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setActualStartAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
             this.getUidAsString(),
             setActualStartAction
         );
@@ -615,11 +713,10 @@ public class Activities extends AbstractImpl {
         processTransition.setNextState(openState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)50));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             this.getUidAsString(),
             processTransition
         );
@@ -631,11 +728,10 @@ public class Activities extends AbstractImpl {
         processTransition.setNextState(openState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)50));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             this.getUidAsString(),
             processTransition
         );
@@ -646,14 +742,13 @@ public class Activities extends AbstractImpl {
         wfAction.setName("Export Mail as attachment to current user");
         wfAction.setWfProcess(
             (WfProcess)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName + "/wfProcess/" + Workflows.WORKFLOW_EXPORT_MAIL)
+                new Path("xri://@openmdx*org.opencrx.kernel.workflow1").getDescendant("provider", providerName, "segment", segmentName, "wfProcess", Workflows.WORKFLOW_EXPORT_MAIL)
             )
         );
-        wfAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        wfAction.getOwningGroup().addAll(owningGroups);
+        wfAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        wfAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
             this.getUidAsString(),
             wfAction
         );
@@ -665,11 +760,10 @@ public class Activities extends AbstractImpl {
         processTransition.setNextState(openState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)50));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             this.getUidAsString(),
             processTransition
         );
@@ -680,14 +774,13 @@ public class Activities extends AbstractImpl {
         wfAction.setName("Send as mail");
         wfAction.setWfProcess(
             (WfProcess)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName + "/wfProcess/" + Workflows.WORKFLOW_SEND_MAIL)
+                new Path("xri://@openmdx*org.opencrx.kernel.workflow1").getDescendant("provider", providerName, "segment", segmentName, "wfProcess", Workflows.WORKFLOW_SEND_MAIL)
             )
         );
-        wfAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        wfAction.getOwningGroup().addAll(owningGroups);
+        wfAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        wfAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
             this.getUidAsString(),
             wfAction
         );
@@ -699,11 +792,10 @@ public class Activities extends AbstractImpl {
         processTransition.setNextState(closedState);
         processTransition.setNewActivityState((short)20);
         processTransition.setNewPercentComplete(new Short((short)100));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             this.getUidAsString(),
             processTransition
         );
@@ -712,335 +804,353 @@ public class Activities extends AbstractImpl {
         setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
-        setActualEndAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setActualEndAction.getOwningGroup().addAll(owningGroups);
+        setActualEndAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setActualEndAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
             this.getUidAsString(),
             setActualEndAction
         );
-        // Commit
-        pm.currentTransaction().commit();
-        
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }        
         return process;
     }
-            
+
+    //-----------------------------------------------------------------------
+    /**
+     * @deprecated use {@link #initBugAndFeatureTrackingProcess(PersistenceManager, String, String, List, short)} instead.
+     */
+    public ActivityProcess initBugAndFeatureTrackingProcess(
+    	PersistenceManager pm,
+    	String providerName,
+    	String segmentName
+    ) {
+    	return this.initBugAndFeatureTrackingProcess(
+    		pm, 
+    		providerName, 
+    		segmentName,
+    		null, // owningGroups
+    		SecurityKeys.ACCESS_LEVEL_NA
+    	);
+    }
+    
     //-----------------------------------------------------------------------
     public ActivityProcess initBugAndFeatureTrackingProcess(
         PersistenceManager pm,
         String providerName,
-        String segmentName
+        String segmentName,
+    	List<PrincipalGroup> owningGroups,
+    	short accessLevelUpdateDelete
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
+        if(owningGroups == null) {
+        	owningGroups = activitySegment.getOwningGroup();
+        }
         ActivityProcess process = null;
         if((process = this.findActivityProcess(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, activitySegment, pm)) != null) {
             return process;            
         }                
         // Create process
-        pm.currentTransaction().begin();                    
-        process = activityPkg.getActivityProcess().createActivityProcess();
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
+        process = pm.newInstance(ActivityProcess.class);
         process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING);
-        process.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        process.getOwningGroup().addAll(owningGroups);
+        process.setAccessLevelUpdate(accessLevelUpdateDelete);
+        process.setAccessLevelDelete(accessLevelUpdateDelete);
         activitySegment.addActivityProcess(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             process
         );
         // State New
-        ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState newState = pm.newInstance(ActivityProcessState.class);
         newState.refInitialize(false, false);
         newState.setName("New");
-        newState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        newState.getOwningGroup().addAll(owningGroups);
+        newState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        newState.setAccessLevelDelete(accessLevelUpdateDelete);        
         process.addState(
-            false,
             "StateNew",
             newState
         );
         // State In Progress
-        ActivityProcessState inProgressState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState inProgressState = pm.newInstance(ActivityProcessState.class);
         inProgressState.refInitialize(false, false);
         inProgressState.setName("In Progress");
-        inProgressState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        inProgressState.getOwningGroup().addAll(owningGroups);
+        inProgressState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        inProgressState.setAccessLevelDelete(accessLevelUpdateDelete);
         process.addState(
-            false,
             "InProgress",
             inProgressState
         );
         // State Complete
-        ActivityProcessState completeState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState completeState = pm.newInstance(ActivityProcessState.class);
         completeState.refInitialize(false, false);
         completeState.setName("Complete");
-        completeState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        completeState.getOwningGroup().addAll(owningGroups);
+        completeState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        completeState.setAccessLevelDelete(accessLevelUpdateDelete);
         process.addState(
-            false,
             "StateComplete",
             completeState
         );
         // State Closed
-        ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState closedState = pm.newInstance(ActivityProcessState.class);
         closedState.refInitialize(false, false);
         closedState.setName("Closed");
-        closedState.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        closedState.getOwningGroup().addAll(owningGroups);
+        closedState.setAccessLevelUpdate(accessLevelUpdateDelete);
+        closedState.setAccessLevelDelete(accessLevelUpdateDelete);
         process.addState(
-            false,
             "StateClosed",
             closedState
         );
-        pm.currentTransaction().commit();                    
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
         // Initial State
-        pm.currentTransaction().begin();
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
         process.setStartState(newState);                    
         // Transition Add Note: Open->Open
-        ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        ActivityProcessTransition processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Add Note");
         processTransition.setPrevState(inProgressState);
         processTransition.setNextState(inProgressState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)50));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);        
         process.addTransition(
-            false,
             "TransitionAddNote",
             processTransition
         );
         // Transition Assign: New->In Progress
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Assign");
         processTransition.setPrevState(newState);
         processTransition.setNextState(inProgressState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)20));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             "TransitionAssign",
             processTransition
         );
         // Create SetAssignedToAction
-        SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        SetAssignedToAction setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
         setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
-        setAssignedToAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setAssignedToAction.getOwningGroup().addAll(owningGroups);
+        setAssignedToAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setAssignedToAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setAssignedToAction
         );
         // Create SetActualStartAction
-        SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
+        SetActualStartAction setActualStartAction = pm.newInstance(SetActualStartAction.class);
         setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
-        setActualStartAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setActualStartAction.getOwningGroup().addAll(owningGroups);
+        setActualStartAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setActualStartAction.setAccessLevelDelete(accessLevelUpdateDelete);                
         processTransition.addAction(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setActualStartAction
         );
         // Transition Close: Complete->Closed
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Close");
         processTransition.setPrevState(completeState);
         processTransition.setNextState(closedState);
         processTransition.setNewActivityState((short)20);
         processTransition.setNewPercentComplete(new Short((short)100));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
             "TransitionClose",
             processTransition
         );
         // Transition Complete: In Progress->Complete
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Complete");
         processTransition.setPrevState(inProgressState);
         processTransition.setNextState(completeState);
         processTransition.setNewActivityState((short)20);
         processTransition.setNewPercentComplete(new Short((short)100));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                
         process.addTransition(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );
         // Create SetActualEndAction
-        SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        SetActualEndAction setActualEndAction = pm.newInstance(SetActualEndAction.class);
         setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
-        setActualEndAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setActualEndAction.getOwningGroup().addAll(owningGroups);
+        setActualEndAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setActualEndAction.setAccessLevelDelete(accessLevelUpdateDelete);                        
         processTransition.addAction(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setActualEndAction
         );
         // Create SetAssignedToAction
-        setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
         setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to reporting contact");
-        setAssignedToAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setAssignedToAction.getOwningGroup().addAll(owningGroups);
+        setAssignedToAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setAssignedToAction.setAccessLevelDelete(accessLevelUpdateDelete);                        
         processTransition.addAction(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setAssignedToAction
         );
         // Transition Create: New->New
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Create");
         processTransition.setPrevState(newState);
         processTransition.setNextState(newState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)0));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                        
         process.addTransition(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );        
         // Transition Reopen: Complete->In Progress
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Reopen");
         processTransition.setPrevState(completeState);
         processTransition.setNextState(inProgressState);
         processTransition.setNewActivityState((short)10);
         processTransition.setNewPercentComplete(new Short((short)50));
-        processTransition.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        processTransition.getOwningGroup().addAll(owningGroups);
+        processTransition.setAccessLevelUpdate(accessLevelUpdateDelete);
+        processTransition.setAccessLevelDelete(accessLevelUpdateDelete);                        
         process.addTransition(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );        
         // Create SetAssignedToAction
-        setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
         setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
-        setAssignedToAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setAssignedToAction.getOwningGroup().addAll(owningGroups);
+        setAssignedToAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setAssignedToAction.setAccessLevelDelete(accessLevelUpdateDelete);                        
         processTransition.addAction(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setAssignedToAction
         );        
         // Create SetActualEndAction
-        setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        setActualEndAction = pm.newInstance(SetActualEndAction.class);
         setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Reset actualEnd");
         setActualEndAction.setDescription("Reset actualEnd");
         setActualEndAction.setResetToNull(true);
-        setActualEndAction.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        setActualEndAction.getOwningGroup().addAll(owningGroups);
+        setActualEndAction.setAccessLevelUpdate(accessLevelUpdateDelete);
+        setActualEndAction.setAccessLevelDelete(accessLevelUpdateDelete);                        
         processTransition.addAction(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setActualEndAction
-        );        
-        // Commit
-        pm.currentTransaction().commit();
-        
+        );
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }        
         return process;
     }
             
     //-----------------------------------------------------------------------
     public ActivityType initActivityType(
+        ActivityProcess activityProcess,
         String activityTypeName,
         short activityClass,
-        ActivityProcess activityProcess,
-        PersistenceManager pm,
-        String providerName,
-        String segmentName
+        List<PrincipalGroup> owningGroups,
+        short accessLevelUpdateDelete
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityProcess);
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
+    	String providerName = activityProcess.refGetPath().get(2);
+    	String segmentName = activityProcess.refGetPath().get(4);
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
+        if(owningGroups == null) {
+        	owningGroups = activitySegment.getOwningGroup();
+        }
         ActivityType activityType = null;
         if((activityType = this.findActivityType(activityTypeName, activitySegment, pm)) != null) {
             return activityType;            
-        }                
-        pm.currentTransaction().begin();
+        }
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
         activityType = pm.newInstance(ActivityType.class);
         activityType.refInitialize(false, false);
         activityType.setName(activityTypeName);
         activityType.setActivityClass(activityClass);
         activityType.setControlledBy(activityProcess);
-        activityType.getOwningGroup().addAll(
-            activitySegment.getOwningGroup()
-        );
+        activityType.getOwningGroup().addAll(owningGroups);
+        activityType.setAccessLevelUpdate(accessLevelUpdateDelete);
+        activityType.setAccessLevelDelete(accessLevelUpdateDelete);
         activitySegment.addActivityType(
-            false,
             this.getUidAsString(),
             activityType
-        );    
-        pm.currentTransaction().commit();    
+        );
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
         return activityType;
     }
-            
+
     //-----------------------------------------------------------------------
     public ActivityTracker initActivityTracker(
         String trackerName,
-        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,        
+        List<PrincipalGroup> owningGroups,        
         PersistenceManager pm,
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityTracker activityTracker = null;
-        if((activityTracker = this.findActivityTracker(trackerName, activitySegment, pm)) != null) {
+        if((activityTracker = this.findActivityTracker(trackerName, activitySegment)) != null) {
             return activityTracker;            
         }        
         pm.currentTransaction().begin();
@@ -1053,8 +1163,7 @@ public class Activities extends AbstractImpl {
                 : owningGroups
         );
         activitySegment.addActivityTracker(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             activityTracker
         );                        
         pm.currentTransaction().commit();
@@ -1069,14 +1178,13 @@ public class Activities extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         ActivityCategory activityCategory = null;
-        if((activityCategory = this.findActivityCategory(categoryName, activitySegment, pm)) != null) {
+        if((activityCategory = this.findActivityCategory(categoryName, activitySegment)) != null) {
             return activityCategory;            
         }        
         pm.currentTransaction().begin();
@@ -1089,61 +1197,84 @@ public class Activities extends AbstractImpl {
                 : owningGroups
         );
         activitySegment.addActivityCategory(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             activityCategory
         );                        
         pm.currentTransaction().commit();
         return activityCategory;
     }
-            
+
     //-----------------------------------------------------------------------
     public ActivityCreator initActivityCreator(
         String creatorName,
-        org.opencrx.kernel.activity1.jmi1.ActivityType activityType,
-        List<org.opencrx.kernel.activity1.jmi1.ActivityGroup> activityGroups,
-        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,
-        PersistenceManager pm,
-        String providerName,
-        String segmentName
+        ActivityType activityType,
+        List<ActivityGroup> activityGroups,
+        List<PrincipalGroup> owningGroups
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
+    	return this.initActivityCreator(
+    		creatorName, 
+    		activityType, 
+    		ICalendar.ICAL_TYPE_VEVENT, 
+    		activityGroups, 
+    		owningGroups
+    	);
+    }
+    
+    //-----------------------------------------------------------------------
+    public ActivityCreator initActivityCreator(
+        String creatorName,
+        ActivityType activityType,
+        short icalType,
+        List<ActivityGroup> activityGroups,
+        List<PrincipalGroup> owningGroups
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityType);
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
+    	String providerName = activityType.refGetPath().get(2);
+    	String segmentName = activityType.refGetPath().get(4);
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
+    	if(owningGroups == null) {
+    		owningGroups = activitySegment.getOwningGroup();
+    	}
         ActivityCreator activityCreator = null;
         if((activityCreator = this.findActivityCreator(creatorName, activitySegment)) == null) {
-            pm.currentTransaction().begin();
+        	if(isTxLocal) {
+        		pm.currentTransaction().begin();
+        	}
             activityCreator = pm.newInstance(ActivityCreator.class);
             activityCreator.refInitialize(false, false);
             activityCreator.setName(creatorName);
             activityCreator.setPriority((short)0);
-            activityCreator.getOwningGroup().addAll(
-                owningGroups == null ? 
-                    activitySegment.getOwningGroup() : 
-                    owningGroups
-            );
+            activityCreator.getOwningGroup().addAll(owningGroups);
             activityCreator.getActivityGroup().addAll(
                 activityGroups
             );
-            activityCreator.setActivityType(activityType);                        
+            activityCreator.setActivityType(activityType);
+            activityCreator.setIcalType(icalType);
             activitySegment.addActivityCreator(
-                false,
-                UUIDConversion.toUID(uuids.next()),
+                this.getUidAsString(),
                 activityCreator
             );
-            pm.currentTransaction().commit();
+            if(isTxLocal) {
+            	pm.currentTransaction().commit();
+            }
         }
         // Set default creator for activity groups
-        pm.currentTransaction().begin();
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
         for(org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup: activityGroups) {
             if(activityGroup.getDefaultCreator() == null) {
                 activityGroup.setDefaultCreator(activityCreator);
             }
         }
-        pm.currentTransaction().commit();
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
         return activityCreator;
     }
             
@@ -1200,39 +1331,25 @@ public class Activities extends AbstractImpl {
     //-------------------------------------------------------------------------
     public static class ActivityReplicationDescr {
 
-    	private final ActivityCreator activityCreator;
-		private final short replicationType;
-		private final String linkName;
-		private final String linkDescription;
+    	private final Activity activity;
+		private final ActivityLinkTo linkTo;
     	
 		public ActivityReplicationDescr(
-    		ActivityCreator activityCreator,
-    		short replicationType,
-    		String linkName,
-    		String linkDescription
+    		Activity activity,
+    		ActivityLinkTo linkTo
     	) {
-    		this.activityCreator = activityCreator;
-    		this.replicationType = replicationType;
-    		this.linkName = linkName;
-    		this.linkDescription = linkDescription;
+			this.activity = activity;
+			this.linkTo = linkTo;
     	}
 
-    	public ActivityCreator getActivityCreator(
+    	public Activity getActivity(
     	) {
-        	return activityCreator;
+        	return this.activity;
         }
 
-    	public short getReplicationType(
+    	public ActivityLinkTo getLinkTo(
     	) {
-        	return replicationType;
-        }
-
-    	public String getLinkName() {
-        	return linkName;
-        }
-
-		public String getLinkDescription() {
-        	return linkDescription;
+        	return this.linkTo;
         }
 		
     }
@@ -1240,22 +1357,48 @@ public class Activities extends AbstractImpl {
     //-------------------------------------------------------------------------
     /**
      * {@link #newActivity()} allows to create replica of the newly created 
-     * activity. The replica are created based on the returned replication descriptor.
-     * The replica is created using the creator specified in the replication descriptor.
-     * The replica is then linked to the original with an activity. The returned
-     * link type must be ACTIVITY_LINK_TYPE_IS_REPLICA_OF or 
-     * ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED, otherwise the replication descriptor
-     * is ignored.
-     * 
-     * By the default the method returns an empty list. It is supposed to be
-     * overridden by a custom-specific extension.
+     * activity.
+     * @param activity activity to be replicated.
+     * @param activityCreator creator used to create activity.
      */
-    public List<ActivityReplicationDescr> getActivityReplicationDescriptors(
-    	ActivityCreator source
-    ) {
+    public List<ActivityReplicationDescr> replicateActivity(
+    	Activity activity,
+    	ActivityCreator activityCreator
+    ) throws ServiceException {
     	return Collections.emptyList();
     }
     
+    //-------------------------------------------------------------------------
+    public Activity newActivity(
+        ActivityCreator activityCreator,
+        String name,
+        String description,
+        String detailedDescription,
+        Date suppliedScheduledStart,
+        Date suppliedScheduledEnd,
+        Date suppliedDueBy,
+        Number suppliedPriority,
+        Number suppliedIcalType,
+        Contact reportingContact,
+        ContextCapable creationContext
+    ) throws ServiceException {
+    	List<ActivityGroup> activityGroups = activityCreator.getActivityGroup();
+    	return this.newActivity(
+    		activityCreator, 
+    		name, 
+    		description, 
+    		detailedDescription, 
+    		suppliedScheduledStart, 
+    		suppliedScheduledEnd, 
+    		suppliedDueBy, 
+    		suppliedPriority, 
+    		suppliedIcalType, 
+    		reportingContact, 
+    		creationContext, 
+    		activityGroups
+    	);
+    }
+
     //-------------------------------------------------------------------------
     /**
      * Creates a new activity and links the tracker with this new activity.
@@ -1270,14 +1413,22 @@ public class Activities extends AbstractImpl {
         Date suppliedDueBy,
         Number suppliedPriority,
         Number suppliedIcalType,
-        Contact reportingContact
+        Contact reportingContact,
+        ContextCapable creationContext,
+        List<ActivityGroup> activityGroups
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityCreator);    	
-    	// Create activity
-    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
-    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-    			activityCreator.refGetPath().getParent().getParent()
-    		);
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityCreator);
+    	String providerName = activityCreator.refGetPath().get(2);
+    	String segmentName = activityCreator.refGetPath().get(4);
+    	boolean useRunAsPrincipal = Utils.hasObjectRunAsPermission(
+    		activityCreator.refGetPath(), 
+    		Utils.getPermissions(
+    			Utils.getRequestingPrincipal(pm, providerName, segmentName), 
+    			Action.RUN_AS.getName()
+    		)
+    	);
+    	// Create activity    	
+    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
         if(activityCreator.getActivityType() != null) {
             ActivityType activityType = activityCreator.getActivityType();
             ActivityProcess activityProcess = activityType.getControlledBy();
@@ -1358,84 +1509,47 @@ public class Activities extends AbstractImpl {
             newActivity.setPercentComplete(new Short((short)0));
             newActivity.setActivityType(activityType);
             newActivity.setProcessState(activityProcess.getStartState());
+            newActivity.setCreationContext(creationContext);
             // Set code values to 0 (non-optional attributes)
-            if(newActivity instanceof org.opencrx.kernel.activity1.jmi1.Incident) {
-            	org.opencrx.kernel.activity1.jmi1.Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)newActivity;
+            if(newActivity instanceof Incident) {
+            	Incident incident = (Incident)newActivity;
             	incident.setCaseOrigin(new Short((short)0));
             	incident.setCaseType(new Short((short)0));
             	incident.setCustomerSatisfaction(new Short((short)0));
             	incident.setSeverity(new Short((short)0));
             	incident.setReproducibility(new Short((short)0));
             }
-            try {                
+            try {
                 // Create activity
             	activitySegment.addActivity(
-            		true,
             		this.getUidAsString(),
             		newActivity
             	);
                 this.reapplyActivityCreator(
                     newActivity,
-                    activityCreator
+                    activityCreator,
+                    activityGroups
                 );
                 Base.getInstance().assignToMe(
                 	newActivity, 
                 	false, 
-                	null 
-                );                	
+                	useRunAsPrincipal 
+                );
                 this.updateIcal(
                     newActivity
                 );
             	// Create replicas
-            	List<ActivityReplicationDescr> replicationDescrs = this.getActivityReplicationDescriptors(activityCreator);
+            	List<ActivityReplicationDescr> replicationDescrs = this.replicateActivity(
+            		newActivity,
+            		activityCreator            		
+            	);
             	for(ActivityReplicationDescr replicationDescr: replicationDescrs) {
-            		short replicationType = replicationDescr.getReplicationType();
-            		if(
-            			replicationType == ACTIVITY_LINK_TYPE_IS_REPLICA_OF ||
-            			replicationType == ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED
-            		) {
-        	    		Activity replica = replicationType == ACTIVITY_LINK_TYPE_IS_REPLICA_OF ?
-    		    			this.newActivity(
-    		    				replicationDescr.getActivityCreator(), 
-    		    				name, 
-    		    				description, 
-    		    				detailedDescription, 
-    		    				suppliedScheduledStart, 
-    		    				suppliedScheduledEnd, 
-    		    				suppliedDueBy, 
-    		    				suppliedPriority, 
-    		    				suppliedIcalType, 
-    		    				reportingContact
-    		    			) :
-    			    			this.newActivity(
-    			    				replicationDescr.getActivityCreator(), 
-    			    				replicationDescr.getLinkName(), 
-    			    				replicationDescr.getLinkDescription(), 
-    			    				null, // detailedDescription, 
-    			    				suppliedScheduledStart, 
-    			    				suppliedScheduledEnd, 
-    			    				suppliedDueBy, 
-    			    				suppliedPriority, 
-    			    				suppliedIcalType, 
-    			    				reportingContact
-    			    			);			    		
-	                	ActivityLinkTo linkTo = pm.newInstance(ActivityLinkTo.class);
-	                	linkTo.refInitialize(false, false);
-	                	linkTo.setName(replicationDescr.getLinkName());
-	                	linkTo.setDescription(replicationDescr.getLinkDescription());
-	                	linkTo.setActivityLinkType(replicationDescr.getReplicationType());
-	                	linkTo.setLinkTo(newActivity);
-	                	replica.addActivityLinkTo(
-	                		this.getUidAsString(),
-	                		linkTo
-	                	);
-	                	this.replicateActivity(
-	                		newActivity, 
-	                		replica, 
-	                		linkTo
-	                	);
-                	}
-                }
+                	this.updateReplicatedActivity(
+                		newActivity, 
+                		replicationDescr.getActivity(), 
+                		replicationDescr.getLinkTo()
+                	);            		
+            	}
                 return newActivity;
             }
             catch(ServiceException e) {
@@ -1445,7 +1559,7 @@ public class Activities extends AbstractImpl {
         }
         return null;
     }
-    
+
     //-------------------------------------------------------------------------
     public ActivityVote voteForActivity(
         Activity activity,
@@ -1468,8 +1582,8 @@ public class Activities extends AbstractImpl {
         );
         Base.getInstance().assignToMe(
             vote,
-            true,
-            null
+            true, // overwrite
+            false // useRunAsPrincipal
         );
         return vote;
     }
@@ -1551,13 +1665,113 @@ public class Activities extends AbstractImpl {
     	ActivityLinkTo activityLink = pm.newInstance(ActivityLinkTo.class);
     	activityLink.refInitialize(false, false);
     	activityLink.setName("#" + linkTo.getActivityNumber() + ": " + activity.getName());
-    	activityLink.setActivityLinkType(ACTIVITY_LINK_TYPE_RELATES_TO);
+    	activityLink.setActivityLinkType(ActivityLinkType.RELATES_TO.getValue());
     	activityLink.setLinkTo(linkTo);
     	activity.addActivityLinkTo(
     		this.getUidAsString(),
     		activityLink
     	);
     	return followUp;
+    }
+    
+    //-------------------------------------------------------------------------
+    protected String stripLeadingNonLetters(
+    	String s
+    ) {
+    	if(s == null) return null;
+    	int i = 0;
+    	while(i < s.length() && !Character.isLetter(s.charAt(i))) {
+    		i++;
+    	}
+    	return i < s.length() ? s.substring(i) : s;
+    }
+    
+    //-------------------------------------------------------------------------
+    protected String stripTrailingNonLetters(
+    	String s
+    ) {
+    	if(s == null) return null;
+    	int i = s.length();
+    	while(i > 0 && !Character.isLetter(s.charAt(i-1))) {
+    		i--;
+    	}
+    	return i >= 0 ? s.substring(0, i) : s;
+    }
+    
+    //-------------------------------------------------------------------------
+    protected String getFollowUpSubActivityName(
+    	SubActivityTransition transition,
+    	Activity activity,
+    	String followUpTitle
+    ) {
+    	String namePattern = transition.getSubActivityNamePattern() == null ?
+    		"${A} - ${N} - ${F}" : 
+    			transition.getSubActivityNamePattern();
+    	String name = namePattern;
+    	{
+	    	String value = activity.getName() == null ? "" : activity.getName();
+	    	String[] values = value.split("~");
+	   		name = name.replace("${A}.Prefix", values[0]);
+	   		name = name.replace("${A}.Suffix", values[values.length-1]);	    	
+	   		name = name.replace("${A}", value);
+    	}
+    	{
+    		String value = transition.getName() == null ? "" : this.stripLeadingNonLetters(transition.getName());
+    		String[] values = value.split("~");
+    		name = name.replace("${N}.Prefix", values[0]);
+    		name = name.replace("${N}.Suffix", values[values.length-1]);
+    		name = name.replace("${N}", value);    		
+    	}
+    	{
+    		String value =  followUpTitle == null ? "" : followUpTitle;
+    		String[] values = value.split("~");
+    		name = name.replace("${F}.Prefix", values[0]);
+    		name = name.replace("${F}.Suffix", values[values.length-1]);
+    		name = name.replace("${F}", value);
+    	}
+    	return this.stripTrailingNonLetters(name);
+    }
+    
+    //-------------------------------------------------------------------------
+    protected String getFollowUpSubActivityGroupName(
+    	SubActivityTransition transition,
+    	Activity activity,
+    	ActivityGroup activityGroup,
+    	String followUpTitle
+    ) {
+    	String namePattern = transition.getTemplateNamePattern() == null ?
+    		"${G} - ${A}" : 
+    			transition.getTemplateNamePattern();
+    	String name = namePattern;
+    	{
+	    	String value = activity.getName() == null ? "" : activity.getName();
+	    	String[] values = value.split("~");
+	   		name = name.replace("${A}.Prefix", values[0]);
+	   		name = name.replace("${A}.Suffix", values[values.length-1]);	    	
+	   		name = name.replace("${A}", value);
+    	}
+    	{
+    		String value = transition.getName() == null ? "" : this.stripLeadingNonLetters(transition.getName());
+    		String[] values = value.split("~");
+    		name = name.replace("${N}.Prefix", values[0]);
+    		name = name.replace("${N}.Suffix", values[values.length-1]);
+    		name = name.replace("${N}", value);    		
+    	}
+    	{
+    		String value = activityGroup.getName() == null ? "" : activityGroup.getName();
+    		String[] values = value.split("~");
+    		name = name.replace("${G}.Prefix", values[0]);
+    		name = name.replace("${G}.Suffix", values[values.length-1]);
+    		name = name.replace("${G}", value);
+    	}
+    	{
+    		String value =  followUpTitle == null ? "" : followUpTitle;
+    		String[] values = value.split("~");
+    		name = name.replace("${F}.Prefix", values[0]);
+    		name = name.replace("${F}.Suffix", values[values.length-1]);
+    		name = name.replace("${F}", value);
+    	}
+    	return this.stripTrailingNonLetters(name);
     }
     
     //-------------------------------------------------------------------------
@@ -1569,12 +1783,11 @@ public class Activities extends AbstractImpl {
         Contact assignTo
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
+    	String providerName = activity.refGetPath().get(2);
+    	String segmentName = activity.refGetPath().get(4);
+    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
         ActivityProcessState processState = activity.getProcessState();
         if(processTransition != null) {
-        	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-        		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-        			activity.refGetPath().getParent().getParent()
-        		);
             if(processTransition.getNextState() == null) {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
@@ -1720,15 +1933,14 @@ public class Activities extends AbstractImpl {
                                 null, // suppliedDueBy
                                 null, // suppliedPriority
                                 ICalendar.ICAL_TYPE_NA, // icalType
-                                activity.getReportingContact()
+                                activity.getReportingContact(),
+                                activity // creationContext
                             );
                             // Link new activity with original
                             ActivityLinkTo activityLinkTo = pm.newInstance(ActivityLinkTo.class);
                             activityLinkTo.refInitialize(false, false);
                             activityLinkTo.setName(activity.getName());
-                            activityLinkTo.setActivityLinkType(
-                                new Short(ACTIVITY_LINK_TYPE_IS_DERIVED_FROM)
-                            );
+                            activityLinkTo.setActivityLinkType(ActivityLinkType.IS_DERIVED_FROM.getValue());
                             activityLinkTo.setLinkTo(activity);
                             newActivity.addActivityLinkTo(
                             	false,
@@ -1779,28 +1991,107 @@ public class Activities extends AbstractImpl {
                 	nextState
             );
         }        
-        // Create transition
-        ActivityFollowUp transition = pm.newInstance(ActivityFollowUp.class);
-        transition.refInitialize(false, false);
-        transition.setTransition(processTransition);
-        transition.setTitle(followUpTitle);
-        transition.setText(followUpText);
+        // Create follow up
+        ActivityFollowUp followUp = null;
+        if(processTransition instanceof SubActivityTransition) {
+        	followUp = pm.newInstance(SubActivity.class);        	
+            followUp.refInitialize(false, false);
+            SubActivityTransition transition = (SubActivityTransition)processTransition;
+            Activity subActivity = null;
+            if(transition.getActivityCreator() != null) {
+            	String subActivityName = this.getFollowUpSubActivityName(
+            		transition,
+            		activity,
+            		followUpTitle
+            	);
+            	List<ActivityGroup> activityGroups = new ArrayList<ActivityGroup>();
+            	if(Boolean.TRUE.equals(transition.isUseCreatorAsTemplate())) {
+            		// If isUseCreatorAsTemplate is true the creator serves as template
+            		// for activity creation. All activity groups of the creator are
+            		// cloned and used for activity creation in addition to the template groups.
+            		List<ActivityGroup> templateActivityGroups = transition.getActivityCreator().getActivityGroup();
+            		activityGroups.addAll(templateActivityGroups);
+            		for(ActivityGroup activityGroup: templateActivityGroups) {
+            			String clonedGroupName = this.getFollowUpSubActivityGroupName(
+            				transition,
+            				activity,
+            				activityGroup,
+            				followUpTitle
+            			);
+            			ActivityGroup clonedGroup = null;
+            			clonedGroup = this.findActivityTracker(clonedGroupName, activitySegment, activity);
+            			if(clonedGroup == null) {
+            				clonedGroup = this.findActivityCategory(clonedGroupName, activitySegment, activity);
+            			}
+            			if(clonedGroup == null) {
+            				clonedGroup = this.findActivityMilestone(clonedGroupName, activitySegment, activity);
+            			}
+            			if(clonedGroup == null) {
+            				clonedGroup = (ActivityGroup)Cloneable.getInstance().cloneObject(
+            					activityGroup, 
+            					activitySegment, 
+            					activityGroup.refGetPath().getParent().getBase(), 
+            					null, // objectMarshallers 
+            					"", // referenceFilterAsString 
+            					activityGroup.getOwningUser(), 
+            					activityGroup.getOwningGroup()
+            				);
+            				clonedGroup.setName(clonedGroupName);
+            				clonedGroup.setCreationContext(activity);
+            			}
+        				activityGroups.add(clonedGroup);
+            		}
+            	} else {
+            		activityGroups = transition.getActivityCreator().getActivityGroup();
+            	}
+            	subActivity = this.newActivity(
+                	transition.getActivityCreator(),
+                    subActivityName,
+                    followUpText,
+                    null, // detailedDescription
+                    null, // suppliedScheduledStart
+                    null, // suppliedScheduledEnd
+                    null, // suppliedDueBy
+                    null, // suppliedPriority
+                    ICalendar.ICAL_TYPE_NA, // icalType
+                    activity.getReportingContact(),
+                    followUp, // creationContext
+                    activityGroups
+                );            		
+                // Link sub activity with original
+                ActivityLinkTo activityLinkTo = pm.newInstance(ActivityLinkTo.class);
+                activityLinkTo.refInitialize(false, false);
+                activityLinkTo.setName(activity.getName());
+                activityLinkTo.setActivityLinkType(ActivityLinkType.IS_CHILD_OF.getValue());
+                activityLinkTo.setLinkTo(activity);
+                subActivity.addActivityLinkTo(
+                	this.getUidAsString(),
+                	activityLinkTo
+                );
+            }
+            followUp.setActivity(subActivity);
+        } else {
+        	followUp = pm.newInstance(ActivityFollowUp.class);
+            followUp.refInitialize(false, false);
+        }
+        followUp.setTransition(processTransition);
+        followUp.setTitle(followUpTitle);
+        followUp.setText(followUpText);
         activity.addFollowUp(
-        	false,
         	this.getUidAsString(),
-        	transition
+        	followUp
         );
         if(assignTo == null) {
             Base.getInstance().assignToMe(
-                transition,
-                true,
-                null
+                followUp,
+                true, // overwrite
+                false // useRunAsPrincipal
             );
         }
         else {
-            transition.setAssignedTo(assignTo);
+            followUp.setAssignedTo(assignTo);
         }
-        return transition;
+        return followUp;
     }
         
     //-------------------------------------------------------------------------
@@ -2034,18 +2325,15 @@ public class Activities extends AbstractImpl {
         // Get default rate from resource in case of work records
         if(
         	(rate == null) && 
-        	(recordType == Activities.WORKRECORD_TYPE_WORK_OVERTIME || recordType == Activities.WORKRECORD_TYPE_WORK_STANDARD)
+        	(recordType == WorkRecordType.OVERTIME.getValue() || recordType ==  WorkRecordType.STANDARD.getValue())
         ) {
             workRecord.setBillingCurrency(
                 resource.getRateCurrency()
             );
-        	switch(recordType) {
-        		case Activities.WORKRECORD_TYPE_WORK_STANDARD:
-        			workRecord.setRate(resource.getStandardRate());
-        			break;
-        		case Activities.WORKRECORD_TYPE_WORK_OVERTIME:
-        			workRecord.setRate(resource.getOvertimeRate());
-        			break;
+        	if(recordType == WorkRecordType.STANDARD.getValue()) {
+        		workRecord.setRate(resource.getStandardRate());
+        	} else if(recordType == WorkRecordType.OVERTIME.getValue()) {
+        		workRecord.setRate(resource.getOvertimeRate());
         	}
         }
         else {
@@ -2128,15 +2416,15 @@ public class Activities extends AbstractImpl {
     	}    	
     	return uid;
     }
-        
+
     //-------------------------------------------------------------------------
-    public void replicateActivity(
+    public void updateReplicatedActivity(
     	Activity activity,
     	Activity replica,
     	ActivityLinkTo linkTo
     ) {
     	// Original
-    	if(linkTo.getActivityLinkType() == ACTIVITY_LINK_TYPE_IS_REPLICA_OF) {
+    	if(linkTo.getActivityLinkType() == ActivityLinkType.IS_REPLICA_OF.getValue()) {
     		replica.setName(activity.getName());
     		replica.setDescription(activity.getDescription());
     		replica.setDetailedDescription(activity.getDetailedDescription());
@@ -2146,7 +2434,7 @@ public class Activities extends AbstractImpl {
     		replica.setLocation(activity.getLocation());
     	}
     	// Obfuscate
-    	else if(linkTo.getActivityLinkType() == ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED) {
+    	else if(linkTo.getActivityLinkType() == ActivityLinkType.IS_REPLICA_OF_OBFUSCATED.getValue()) {
     		replica.setName(linkTo.getName());
     		replica.setDescription(linkTo.getDescription());        		
     	}
@@ -2155,9 +2443,10 @@ public class Activities extends AbstractImpl {
 		replica.setActualStart(activity.getActualStart());
 		replica.setActualEnd(activity.getActualEnd());
 		replica.setDueBy(activity.getDueBy());
-		replica.setPriority(activity.getPriority());    	
+		replica.setPriority(activity.getPriority());
+		replica.setDisabled(activity.isDisabled());
     }
-    
+
     //-------------------------------------------------------------------------
     public void updateActivity(
         Activity activity
@@ -2219,19 +2508,57 @@ public class Activities extends AbstractImpl {
         ActivityLinkFromQuery activityLinkFromQuery = (ActivityLinkFromQuery)pm.newQuery(ActivityLinkFrom.class);
         activityLinkFromQuery.activityLinkType().elementOf(
         	Arrays.asList(
-        		ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF, 
-        		ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF_OBFUSCATED
+        		ActivityLinkType.IS_ORIGINAL_OF.getValue(), 
+        		ActivityLinkType.IS_ORIGINAL_OF_OBFUSCATED.getValue()
         	)
         );
         Collection<ActivityLinkFrom> linksFrom = activity.getActivityLinkFrom(activityLinkFromQuery);
         for(ActivityLinkFrom linkFrom: linksFrom) {
         	Activity replica = linkFrom.getLinkFrom();
-        	this.replicateActivity(
+        	this.updateReplicatedActivity(
         		activity, 
         		replica, 
         		linkFrom.getLinkTo()
         	);
         }
+        // Update reminders
+    	if(JDOHelper.isPersistent(activity) && !JDOHelper.isNew(activity)) {    	
+	    	try {
+	        	TransactionManager transactionManager = ComponentEnvironment.lookup(TransactionManager.class);
+	        	Transaction suspendedTransaction = transactionManager.suspend();
+	    		PersistenceManager pmAdmin = null;
+	        	try {
+		        	try {
+		        		// Segment admin has permissions to update reminders for all users 
+		    	       	String segmentName = activity.refGetPath().get(4);
+			        	pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
+			        		SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+			        		null
+			        	);
+		        		pmAdmin.currentTransaction().begin();
+			            Collection<Reminder> reminders = ((Activity)pmAdmin.getObjectById(activity.refGetPath())).getAssignedReminder();
+			            for(Reminder reminder: reminders) {
+			            	reminder.setTriggerEndAt(activity.getScheduledStart());
+			            	reminder.setReminderState(activity.getActivityState());
+			            	reminder.setDisabled(activity.isDisabled());
+			            }
+			            pmAdmin.currentTransaction().commit();
+		        	} catch(Exception e) {
+		        		// Log in case reminder can not be updated and continue
+		        		new ServiceException(e).log();
+		        		try {
+		        			pmAdmin.currentTransaction().rollback();
+		        		} catch(Exception e0) {}
+		        	} finally {
+		        		pmAdmin.close();
+		        	}
+	        	} finally {
+	        		if(suspendedTransaction != null) transactionManager.resume(suspendedTransaction);
+	        	}
+	    	} catch(Exception e) {
+	    		throw new ServiceException(e);
+	    	}
+    	}        
     }
 
     //-------------------------------------------------------------------------
@@ -2287,14 +2614,14 @@ public class Activities extends AbstractImpl {
     //-------------------------------------------------------------------------
     public void reapplyActivityCreator(
         Activity activity,
-        ActivityCreator activityCreator
+        ActivityCreator activityCreator,
+        List<ActivityGroup> activityGroups
     ) throws ServiceException {
         if(activityCreator != null) {
         	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);        	
-        	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-        		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-        			activityCreator.refGetPath().getParent().getParent()
-        		);
+        	String providerName = activityCreator.refGetPath().get(2);
+        	String segmentName = activityCreator.refGetPath().get(4);
+        	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
             ActivityType activityType = activityCreator.getActivityType();
             if(activityType != null) {
                 // Type of activity must match defined activity class
@@ -2310,16 +2637,17 @@ public class Activities extends AbstractImpl {
                 	// only add principal groups matching the activity groups' name. 
                 	// This way - by default - only the creator of the activity and the
                 	// owner of the activity group have access to the activity.
-                    List<ActivityGroup> activityGroups = activityCreator.getActivityGroup();
                     Set<PrincipalGroup> owningGroups = new HashSet<PrincipalGroup>();
                     for(ActivityGroup activityGroup: activityGroups) {
                         List<PrincipalGroup> groups = activityGroup.getOwningGroup();
                         for(PrincipalGroup group: groups) {
                             if(activityGroup.getName().endsWith(PRIVATE_GROUP_SUFFIX)) {
                             	String activityGroupName = activityGroup.getName().substring(0, activityGroup.getName().indexOf("~"));
-                            	String principalGroupName = group.getName().substring(0, group.getName().indexOf("."));
-                            	if(activityGroupName.equals(principalGroupName)) {
-                            		owningGroups.add(group);
+                            	if(group.getName().indexOf(".") >= 0) {
+	                            	String principalGroupName = group.getName().substring(0, group.getName().indexOf("."));
+	                            	if(activityGroupName.equals(principalGroupName)) {
+	                            		owningGroups.add(group);
+	                            	}
                             	}
                             }
                             else {                         	
@@ -2415,7 +2743,7 @@ public class Activities extends AbstractImpl {
                                 depotReference,
                                 activity,
                                 "depotReference",
-                                null,
+                                null, // marshallers
                                 "",
                                 activity.getOwningUser(),
                                 activity.getOwningGroup()
@@ -2781,7 +3109,7 @@ public class Activities extends AbstractImpl {
         PersistenceManager pm,
         EMail emailActivity,
         EMailAddress address,
-        Message.RecipientType type
+        PartyType type
     ) {
         boolean isTxLocal = !pm.currentTransaction().isActive();
         if(isTxLocal) {
@@ -2790,20 +3118,11 @@ public class Activities extends AbstractImpl {
         EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
         recipient.refInitialize(false, false);
         emailActivity.addEmailRecipient(
-            false,
-            UUIDs.getGenerator().next().toString(),
+            this.getUidAsString(),
             recipient
         );
         recipient.setParty(address);
-        if(Message.RecipientType.TO.toString().equalsIgnoreCase(type.toString())) {
-            recipient.setPartyType(PARTY_TYPE_TO);
-        }
-        else if(Message.RecipientType.CC.toString().equalsIgnoreCase(type.toString())) {
-            recipient.setPartyType(PARTY_TYPE_CC);
-        }
-        else if(Message.RecipientType.BCC.toString().equalsIgnoreCase(type.toString())) {
-            recipient.setPartyType(PARTY_TYPE_BCC);
-        }
+        recipient.setPartyType(type.getValue());
         // 'copy' the email's owning groups
         recipient.getOwningGroup().addAll(
             emailActivity.getOwningGroup()
@@ -2815,75 +3134,21 @@ public class Activities extends AbstractImpl {
     
     //-----------------------------------------------------------------------
     /**
-     * Adds a Media object to the currently processed email activity with the
-     * given content. This is how attachments of email messages can be imported.
-     * 
-     * @param rootPkg          The root package to be used for this request
-     * @param emailActivity    The openCRX EMailActivity currently in process
-     * @param content          The content of the media object, e.g. an
-     *                          attachment
-     */
-    public void createOrUpdateMedia(
-        EMail emailActivity,
-        String contentType,
-        String contentName,
-        InputStream content
-    ) throws IOException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
-        Collection<Media> medias = emailActivity.getMedia();
-        Media media = null;
-        for(Media attachment: medias) {
-            if((contentName != null) && contentName.equals(attachment.getContentName())) {
-                media = attachment;
-                break;
-            }
-        }
-        if(media == null) {    	    	
-	        media = Utils.getGenericPackage(pm).getMedia().createMedia();
-	        media.refInitialize(false, false);
-	        emailActivity.addMedia(
-	            false,
-	            UUIDs.getGenerator().next().toString(),
-	            media
-	        );
-	        media.setContentName(
-	            contentName == null ?
-	                Utils.toFilename(contentType) :
-	                contentName
-	        );
-        }
-        media.setContentMimeType(contentType);    
-        media.setContent(
-            BinaryLargeObjects.valueOf(content)
-        );
-        // 'copy' the email's owning groups
-        media.getOwningGroup().addAll(
-            emailActivity.getOwningGroup()
-        );
-    }
-    
-    //-----------------------------------------------------------------------
-    /**
      * Adds an email recipient to the currently processed email activity if
      * the email message contains an email address which is contained in an
      * openCRX account. Email addresses for which no account can be found, are
      * recorded via a note attached to the email activity.
-     * 
-     * @param rootPkg                   The root package to be used for this request
-     * @param emailActivity             The EMailActivity currently in process
-     * @param addresses                 A list of addresses
-     * @param type                      The address type (TO, CC, BCC)
      */
     public void mapAddressesToEMailRecipients(
         EMail emailActivity,
         String[] addresses,
-        Message.RecipientType type
+        PartyType type
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
     	String providerName = emailActivity.refGetPath().get(2);
     	String segmentName = emailActivity.refGetPath().get(4);
         if (addresses == null || addresses.length == 0) {
-        	SysLog.trace("Message does not contain any recipient of type '" + type.toString() + "'");
+        	SysLog.trace("Message does not contain any recipient of type '" + type + "'");
         }
         Set<String> newAddresses = new HashSet<String>(Arrays.asList(addresses));
         newAddresses.remove("NO_ADDRESS_SPECIFIED");
@@ -2897,20 +3162,45 @@ public class Activities extends AbstractImpl {
             }
         }
         for(String address: newAddresses) {
-            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+            List<EMailAddress> emailAddresses = 
                 Accounts.getInstance().lookupEmailAddress(
                     pm,
                     providerName,
                     segmentName,
                     address
                 );
+            // If e-mail address does not exist, create it and assign it to segment admin
             if(emailAddresses.isEmpty()) {
-                emailAddresses = Accounts.getInstance().lookupEmailAddress(
-                    pm,
-                    providerName,
-                    segmentName,
-                    Addresses.UNASSIGNED_ADDRESS
-                );
+        		PersistenceManager pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
+        			SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+        			null
+        		);
+            	Account segmentAdmin = (Account)pmAdmin.getObjectById(
+            		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", (SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName))
+            	);
+            	if(segmentAdmin != null) {
+            		pmAdmin.currentTransaction().begin();
+            		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
+            		emailAddress.refInitialize(false, false);
+            		emailAddress.setEmailAddress(address);
+            		emailAddress.setEmailType((short)1);
+            		segmentAdmin.addAddress(
+            			this.getUidAsString(),
+            			emailAddress
+            		);
+            		pmAdmin.currentTransaction().commit();
+            		emailAddresses = Collections.singletonList(
+            			(EMailAddress)pm.getObjectById(emailAddress.refGetPath())
+            		);
+            	} else {
+	                emailAddresses = Accounts.getInstance().lookupEmailAddress(
+	                    pm,
+	                    providerName,
+	                    segmentName,
+	                    Addresses.UNASSIGNED_ADDRESS
+	                );
+            	}
+            	pmAdmin.close();
             }
             if(!emailAddresses.isEmpty()) {
                 this.addEmailRecipient(
@@ -2922,19 +3212,13 @@ public class Activities extends AbstractImpl {
             }
         }
     }
-    
+
     //-----------------------------------------------------------------------
     /**
      * Search email activity with the given external link, i.e. the given
      * message id.
-     * 
-     * @param rootPkg          The root package to be used for this request
-     * @param providerName     The name of the current provider
-     * @param segmentName      The name of the current segment
-     * @param externalLink     The message id
-     * @return                 A List of activities containing the message id
      */
-    public List<org.opencrx.kernel.activity1.jmi1.Activity> lookupEmailActivity(
+    public List<Activity> lookupEmailActivity(
         PersistenceManager pm,
         String providerName,
         String segmentName,
@@ -2967,8 +3251,8 @@ public class Activities extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        return (org.opencrx.kernel.activity1.jmi1.Segment) pm.getObjectById(
-            new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+        return (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
         );
     }
 
@@ -2984,7 +3268,7 @@ public class Activities extends AbstractImpl {
 		org.opencrx.kernel.activity1.jmi1.Resource resource = null;
 		try {
 			resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(
-				new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/resource/" + userHome.refGetPath().getBase())
+				new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName, "resource", userHome.refGetPath().getBase())
 			);
 		}
 		catch(Exception e) {}
@@ -3018,12 +3302,6 @@ public class Activities extends AbstractImpl {
      * (i.e., TO, CC, BCC) to be attached to the email activity by a note
      * indicating whether an account containing the email address could be
      * found.
-     * 
-     * @param rootPkg          The root package to be used for this request
-     * @param providerName     The name of the current provider
-     * @param segmentName      The name of the current segment
-     * @param mimeMsg          The email to be imported as openCRX EMailActivity
-     * @return                 The formatted content for the 'Recipients' note
      */
     public String getRecipientsAsNoteText(
         PersistenceManager pm,
@@ -3040,7 +3318,7 @@ public class Activities extends AbstractImpl {
         String addresses[] = from;
         for (int i = 0; i < addresses.length; i++) {
         	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
-	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	            List<EMailAddress> emailAddresses = 
 	                Accounts.getInstance().lookupEmailAddress(
 	                    pm,
 	                    providerName,
@@ -3060,7 +3338,7 @@ public class Activities extends AbstractImpl {
         addresses = to;
         for (int i = 0; i < addresses.length; i++) {
         	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
-	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	            List<EMailAddress> emailAddresses = 
 	                Accounts.getInstance().lookupEmailAddress(
 	                    pm,
 	                    providerName,
@@ -3080,7 +3358,7 @@ public class Activities extends AbstractImpl {
         addresses = cc;
         for (int i = 0; i < addresses.length; i++) {
         	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
-	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	            List<EMailAddress> emailAddresses = 
 	                Accounts.getInstance().lookupEmailAddress(
 	                    pm,
 	                    providerName,
@@ -3100,7 +3378,7 @@ public class Activities extends AbstractImpl {
         addresses = bcc;
         for (int i = 0; i < addresses.length; i++) {
         	if(!"NO_ADDRESS_SPECIFIED".equalsIgnoreCase(addresses[i])) {
-	            List<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = 
+	            List<EMailAddress> emailAddresses = 
 	                Accounts.getInstance().lookupEmailAddress(
 	                    pm,
 	                    providerName,
@@ -3121,11 +3399,6 @@ public class Activities extends AbstractImpl {
     //-----------------------------------------------------------------------
     /**
      * Adds a note to the currently processed email activity.
-     * 
-     * @param rootPkg          The root package to be used for this request
-     * @param emailActivity    The openCRX EMailActivity currently in process
-     * @param title            The note's title
-     * @param content          The note's content
      */
     public void addNote(
         PersistenceManager pm,
@@ -3140,8 +3413,7 @@ public class Activities extends AbstractImpl {
         Note note = pm.newInstance(Note.class);
         note.refInitialize(false, false);
         emailActivity.addNote(
-            false,
-            UUIDs.getGenerator().next().toString(),
+            this.getUidAsString(),
             note
         );
         note.setTitle(title);
@@ -3177,7 +3449,7 @@ public class Activities extends AbstractImpl {
         Message message
     ) throws MessagingException {
         String priority = "normal";
-        short priorityAsShort = PRIORITY_NORMAL;
+        short priorityAsShort = Priority.NORMAL.getValue();
         String[] values = message.getHeader("Importance");
         if (values != null && values.length > 0) {
             priority = values[0];
@@ -3191,17 +3463,17 @@ public class Activities extends AbstractImpl {
             priority = values[0];
         }
         if (priority.equalsIgnoreCase("normal") || priority.equalsIgnoreCase("3")) {
-            priorityAsShort = PRIORITY_NORMAL;
+            priorityAsShort = Priority.NORMAL.getValue();
         } 
         else if (priority.equalsIgnoreCase("high")
                 || priority.equalsIgnoreCase("1")
                 || priority.equalsIgnoreCase("Urgent")) {
-            priorityAsShort = PRIORITY_HIGH;
+            priorityAsShort = Priority.HIGH.getValue();
         } 
         else if (priority.equalsIgnoreCase("low")
                 || priority.equalsIgnoreCase("5")
                 || priority.equalsIgnoreCase("Non-Urgent")) {
-            priorityAsShort = PRIORITY_LOW;
+            priorityAsShort = Priority.LOW.getValue();
         }
         return priorityAsShort;
     }
@@ -3272,16 +3544,13 @@ public class Activities extends AbstractImpl {
     public boolean isAllAscii(
         String s
     ) {
-        int ascii = 0, nonAscii = 0;
+        int nonAscii = 0;
         int l = s.length();
         for(int i = 0; i < l; i++) {
             char c = s.charAt(i);
             boolean isNonAscii = (c >= 0177) || (c < 040 && c != '\r' && c != '\n' && c != '\t');
             if(isNonAscii) {
                 nonAscii++;
-            }
-            else {
-                ascii++;
             }
         }        
         return nonAscii == 0;
@@ -3450,13 +3719,19 @@ public class Activities extends AbstractImpl {
         Collection<AbstractEMailRecipient> emailRecipients = email.getEmailRecipient();
         for(AbstractEMailRecipient recipient: emailRecipients) {
             RecipientType recipientType = null;
-            if(recipient.getPartyType() == PARTY_TYPE_TO) {
+            if(
+            	recipient.getPartyType() == PartyType.REQUIRED.getValue() ||
+            	recipient.getPartyType() == PartyType.EMAIL_TO.getValue()
+            ) {
                 recipientType = RecipientType.TO;
             }
-            else if(recipient.getPartyType() == PARTY_TYPE_CC) {
+            else if(
+            	recipient.getPartyType() == PartyType.OPTIONAL.getValue() ||
+            	recipient.getPartyType() == PartyType.EMAIL_CC.getValue()
+            ) {
                 recipientType = RecipientType.CC;
             }
-            else if(recipient.getPartyType() == PARTY_TYPE_BCC) {
+            else if(recipient.getPartyType() == PartyType.EMAIL_BCC.getValue()) {
                 recipientType = RecipientType.BCC;
             }
             if(recipientType != null) {
@@ -3673,7 +3948,7 @@ public class Activities extends AbstractImpl {
             	if(isTxLocal) {
             		pm.currentTransaction().begin();
             	}
-                Activities.getInstance().createOrUpdateMedia(
+                Base.getInstance().createOrUpdateMedia(
                     email,
                     contentType[0],
                     contentType[1],
@@ -3737,7 +4012,7 @@ public class Activities extends AbstractImpl {
             );
             mimeMessage.writeTo(mimeMessageZipped);
             mimeMessageZipped.close();
-            this.createOrUpdateMedia(
+            Base.getInstance().createOrUpdateMedia(
                 email, 
                 "application/zip", 
                 mimeMessageName, 
@@ -3745,6 +4020,10 @@ public class Activities extends AbstractImpl {
             );
             // Update activity step 3
             String body = this.getMessageBody(mimeMessage);
+            if(body != null && body.indexOf("\0") > 0) {
+            	body = body.replace("\0", " ");
+            	SysLog.warning("Message contains body with invalid characters", email.getActivityNumber());
+            }
             email.setMessageBody(
                 body == null ? "" : body
             );
@@ -3835,29 +4114,67 @@ public class Activities extends AbstractImpl {
                 segmentName,
                 this.getInternetAddresses(addressesFrom)[0]
             );
+        // If e-mail address does not exist, create it and assign it to segment admin
         if(addresses.isEmpty()) {
-            addresses = Accounts.getInstance().lookupEmailAddress(
-                pm,
-                providerName,
-                segmentName,
-                Addresses.UNASSIGNED_ADDRESS
-            );                            
+    		PersistenceManager pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
+    			SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+    			null
+    		);
+        	Account segmentAdmin = (Account)pmAdmin.getObjectById(
+        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", (SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName))
+        	);
+        	if(segmentAdmin != null) {
+        		pmAdmin.currentTransaction().begin();
+        		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
+        		emailAddress.refInitialize(false, false);
+        		emailAddress.setEmailAddress(this.getInternetAddresses(addressesFrom)[0]);
+        		emailAddress.setEmailType((short)1);
+        		segmentAdmin.addAddress(
+        			this.getUidAsString(),
+        			emailAddress
+        		);
+        		pmAdmin.currentTransaction().commit();
+        		addresses = Collections.singletonList(
+        			(EMailAddress)pm.getObjectById(emailAddress.refGetPath())
+        		);
+        	} else {
+	            addresses = Accounts.getInstance().lookupEmailAddress(
+	                pm,
+	                providerName,
+	                segmentName,
+	                Addresses.UNASSIGNED_ADDRESS
+	            );
+        	}
         }
         EMailAddress from = null;
         if(!addresses.isEmpty()) {
             from = addresses.iterator().next();
             email.setSender(from);
-        } 
-        Activities.getInstance().mapAddressesToEMailRecipients(
+            EMailRecipientQuery recipientQuery = (EMailRecipientQuery)pm.newQuery(EMailRecipient.class);
+            recipientQuery.partyType().equalTo(PartyType.EMAIL_FROM.getValue());
+            List<EMailRecipient> recipients = email.getEmailRecipient(recipientQuery);
+            if(recipients.isEmpty()) {
+                this.mapAddressesToEMailRecipients(
+                    email,
+                    this.getInternetAddresses(addressesFrom),
+                    PartyType.EMAIL_FROM
+                );            	
+            }
+            else {
+            	EMailRecipient recipient = recipients.iterator().next();
+            	recipient.setParty(from);
+            }
+        }
+        this.mapAddressesToEMailRecipients(
             email,
             this.getInternetAddresses(addressesTo),
-            Message.RecipientType.TO
+            PartyType.EMAIL_TO
         );
-        Activities.getInstance().mapAddressesToEMailRecipients(
+        this.mapAddressesToEMailRecipients(
             email,
             this.getInternetAddresses(addressesCc),
-            Message.RecipientType.CC
-        );    	
+            PartyType.EMAIL_CC
+        );
     }
     
     //-------------------------------------------------------------------------
@@ -3869,13 +4186,15 @@ public class Activities extends AbstractImpl {
     	ActivityCreator emailCreator
     ) throws ServiceException, MessagingException, IOException, ParseException {
     	if(emailCreator != null) {
+    		// Make sure that emailCreator is retrieved from pm
     		emailCreator = (ActivityCreator)pm.getObjectById(emailCreator.refGetPath());
     	}
+		org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
     	List<MimeMessage> messages = new ArrayList<MimeMessage>();
     	// mimeMessage is a wrapper message which contains messages to be 
     	// imported. The wrapper message is mapped to an activity. Create or lookup. 
     	String activityNumber = null;
-    	if(mimeMessage.getSubject().startsWith("> ")) {
+    	if(mimeMessage.getSubject() != null && mimeMessage.getSubject().startsWith("> ")) {
     		String subject = mimeMessage.getSubject().substring(2);
     		String specifier = subject;
     		if(subject.indexOf("  ") > 0) {
@@ -3885,7 +4204,6 @@ public class Activities extends AbstractImpl {
     		} else {
     			subject = null;
     		}
-    		org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
     		// Subject line is of the form
     		// > @<email creator name> [#<activity creator name or activity#>]  <subject>
     		// The activity creator name / activity# is optional. If specified an activity is created
@@ -3907,7 +4225,7 @@ public class Activities extends AbstractImpl {
     		}
     		// Default Email creator
     		if(emailCreator == null) {
-    			SysLog.warning("E-Mail creator not found. Using default creator", Activities.ACTIVITY_CREATOR_NAME_EMAILS);
+    			SysLog.detail("E-Mail creator not found. Using default creator", Activities.ACTIVITY_CREATOR_NAME_EMAILS);
     			emailCreator = this.findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment);
     		}
     		Activity activity = null;
@@ -3941,15 +4259,15 @@ public class Activities extends AbstractImpl {
     					} 
     					else {
 				            pm.currentTransaction().begin();                            
-				            Activity1Package activityPkg = Utils.getActivityPackage(pm);
-				            NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
+				            NewActivityParams newActivityParams = Utils.getActivityPackage(pm).createNewActivityParams(
+				            	null, // creationContext
 				                null, // description
 				                this.getMessageBody(mimeMessage), // detailedDescription
 				                null, // dueBy
 				                ICalendar.ICAL_TYPE_NA, // icalType
 				                subject,
 				                this.getMessagePriority(mimeMessage),
-				                null, // reportingContract
+				                null, // reportingContact
 				                null, // scheduledEnd
 				                null  // scheduledStart
 				            );
@@ -3981,8 +4299,13 @@ public class Activities extends AbstractImpl {
                 }
             }    	
     	}
-    	else {
+    	else {    		
     		messages.add(mimeMessage);
+    		// Default Email creator
+    		if(emailCreator == null) {
+    			SysLog.detail("E-Mail creator not specified. Using default creator", Activities.ACTIVITY_CREATOR_NAME_EMAILS);
+    			emailCreator = this.findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment);
+    		}
     	}
     	List<EMail> emails = new ArrayList<EMail>();
     	for(MimeMessage message: messages) {
@@ -4001,16 +4324,16 @@ public class Activities extends AbstractImpl {
 	    				message.getSubject() + activityRefTag
 	    			);
 	    		}
-	            pm.currentTransaction().begin();                            
-	            Activity1Package activityPkg = Utils.getActivityPackage(pm);
-	            NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
+	            pm.currentTransaction().begin();
+	            NewActivityParams newActivityParams = Utils.getActivityPackage(pm).createNewActivityParams(
+	            	null, // creationContext
 	                null, // description
 	                null, // detailedDescription
 	                null, // dueBy
 	                ICalendar.ICAL_TYPE_NA, // icalType
 	                message.getSubject(),
 	                this.getMessagePriority(message),
-	                null, // reportingContract
+	                null, // reportingContact
 	                null, // scheduledEnd
 	                null  // scheduledStart
 	            );
@@ -4088,7 +4411,7 @@ public class Activities extends AbstractImpl {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
 				recipient.refInitialize(false, false);
 				recipient.setParty(emailAddresses.iterator().next());
-				recipient.setPartyType(Activities.PARTY_TYPE_TO);
+				recipient.setPartyType(PartyType.EMAIL_TO.getValue());
 				email.addEmailRecipient(
 					this.getUidAsString(),
 					recipient
@@ -4103,17 +4426,17 @@ public class Activities extends AbstractImpl {
 					providerName,
 					segmentName,
 					recipientAddress 
-				);        	
+				);
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
 				recipient.refInitialize(false, false);
 				recipient.setParty(emailAddresses.iterator().next());
-				recipient.setPartyType(Activities.PARTY_TYPE_CC);
+				recipient.setPartyType(PartyType.EMAIL_CC.getValue());
 				email.addEmailRecipient(
 					this.getUidAsString(),
 					recipient
 				);
-			}        					
+			}
 		}
 		// Recipients BCC
 		for(String recipientAddress: recipientBcc) {
@@ -4128,13 +4451,13 @@ public class Activities extends AbstractImpl {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
 				recipient.refInitialize(false, false);
 				recipient.setParty(emailAddresses.iterator().next());
-				recipient.setPartyType(Activities.PARTY_TYPE_BCC);
+				recipient.setPartyType(PartyType.EMAIL_BCC.getValue());
 				email.addEmailRecipient(
 					this.getUidAsString(),
 					recipient
 				);
-			}         					
-		}    	
+			}
+		}
     }
 
     //-------------------------------------------------------------------------
@@ -4191,6 +4514,232 @@ public class Activities extends AbstractImpl {
 		email.doFollowUp(doFollowUpParams);
 		pm.currentTransaction().commit();    	
     }
+
+    //-------------------------------------------------------------------------
+    public String exportActivityProcessToScXml(
+    	ActivityProcess activityProcess
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activityProcess);
+    	String scxml = "<?xml version=\"1.0\"?>";
+    	scxml += "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:a1=\"http://www.opencrx.org/2011/07/scxml\" version=\"1.0\" id=\"" + XMLEncoder.encode(activityProcess.refGetPath().getBase()) + "\" name=\"" + XMLEncoder.encode(activityProcess.getName()) + "\" initialstate=\"" + XMLEncoder.encode((activityProcess.getStartState() == null ? "" : activityProcess.getStartState().refGetPath().getBase())) + "\">";
+    	org.opencrx.kernel.activity1.cci2.ActivityProcessStateQuery processStateQuery = (org.opencrx.kernel.activity1.cci2.ActivityProcessStateQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityProcessState.class);
+    	processStateQuery.orderByName().ascending();
+    	List<org.opencrx.kernel.activity1.jmi1.ActivityProcessState> processStates = activityProcess.getState(processStateQuery);
+    	for(org.opencrx.kernel.activity1.jmi1.ActivityProcessState processState: processStates) {
+    		scxml += "<state id=\"" + XMLEncoder.encode(processState.refGetPath().getBase()) + "\" name=\"" + XMLEncoder.encode(processState.getName()) + "\">";
+    		org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery processTransitionQuery = (org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition.class);
+    		processTransitionQuery.thereExistsPrevState().equalTo(processState);
+    		processTransitionQuery.orderByNewPercentComplete().ascending();
+    		List<org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition> processTransitions = activityProcess.getTransition(processTransitionQuery);
+    		for(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition processTransition: processTransitions) {
+    			if(processTransition instanceof org.opencrx.kernel.activity1.jmi1.SubActivityTransition) {
+    				org.opencrx.kernel.activity1.jmi1.SubActivityTransition subActivityTransition = (org.opencrx.kernel.activity1.jmi1.SubActivityTransition)processTransition;
+    				scxml += "<transition id=\"" + XMLEncoder.encode(subActivityTransition.refGetPath().getBase()) + "\" event=\"doFollowUp\" name=\"" + XMLEncoder.encode(subActivityTransition.getName()) + "\" a1:newActivityState=\"" + subActivityTransition.getNewActivityState() + "\" a1:newPercentComplete=\"" + subActivityTransition.getNewPercentComplete() + "\" a1:subActivityNamePattern=\"" + XMLEncoder.encode(subActivityTransition.getSubActivityNamePattern()) + "\" a1:templateNamePattern=\"" + XMLEncoder.encode(subActivityTransition.getTemplateNamePattern()) + "\" a1:useCreatorAsTemplate=\"" + subActivityTransition.isUseCreatorAsTemplate() + "\" a1:activityCreator=\"" + XMLEncoder.encode(subActivityTransition.getActivityCreator().getName()) + "\">";
+    			} else {
+    				scxml += "<transition id=\"" + XMLEncoder.encode(processTransition.refGetPath().getBase()) + "\" event=\"doFollowUp\" name=\"" + XMLEncoder.encode(processTransition.getName()) + "\" a1:newActivityState=\"" + processTransition.getNewActivityState() + "\" a1:newPercentComplete=\"" + processTransition.getNewPercentComplete() + "\">";				
+    			}
+    			scxml += "<target next=\"" + XMLEncoder.encode(processTransition.getNextState().refGetPath().getBase()) + "\" />";
+    			scxml += "</transition>";
+    		}
+    		scxml += "</state>";
+    	}
+    	scxml += "</scxml>";
+    	return scxml;
+    }
+    
+    //-------------------------------------------------------------------------
+    public ActivityProcess importActivityProcessFromScXml(
+    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
+    	InputStream scxml,
+    	List<String> report
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activitySegment);
+		org.w3c.dom.Document doc = null;
+		try {
+			doc = org.opencrx.kernel.utils.XmlUtils.convertToDoc(scxml);
+		} catch(Exception e) {
+			report.add(e.getMessage());
+		}
+		org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = null;
+		if(doc != null) {
+			String activityProcessId = doc.getDocumentElement().getAttributeNS("", "id");
+			String activityProcessName = doc.getDocumentElement().getAttributeNS("", "name");
+			try {
+				if(activityProcessName != null && !activityProcessName.isEmpty()) {
+					// Lookup by id
+					if(activityProcessId != null) {
+						try {
+							activityProcess = activitySegment.getActivityProcess(activityProcessId);
+						} catch(Exception e) {}
+					}
+					// Search by name
+					if(activityProcess == null) {
+						org.opencrx.kernel.activity1.cci2.ActivityProcessQuery activityProcessQuery = (org.opencrx.kernel.activity1.cci2.ActivityProcessQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityProcess.class);
+						activityProcessQuery.name().equalTo(activityProcessName);
+						List<org.opencrx.kernel.activity1.jmi1.ActivityProcess> activityProcesses = activitySegment.getActivityProcess(activityProcessQuery);
+						if(activityProcesses.isEmpty()) {
+							activityProcess = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcess.class);
+							activityProcess.refInitialize(false, false);
+							activityProcess.setName(activityProcessName);
+							activitySegment.addActivityProcess(
+								activityProcessId == null ? 
+									Activities.getInstance().getUidAsString() :
+										activityProcessId,
+								activityProcess
+							);
+						} else {
+							activityProcess = activityProcesses.iterator().next();
+						}
+					}
+					Map<String,org.opencrx.kernel.activity1.jmi1.ActivityProcessState> processStates = new HashMap<String,org.opencrx.kernel.activity1.jmi1.ActivityProcessState>();
+	    			org.w3c.dom.NodeList lStates = doc.getDocumentElement().getElementsByTagName("state");
+	    			if(lStates != null) {
+	    				// Phase 1: create states
+	    				for(int i = 0; i < lStates.getLength(); i++) {
+	    					org.w3c.dom.Element eState = (org.w3c.dom.Element)lStates.item(i);
+	    					String stateId = eState.getAttributeNS("", "id");
+	    					String stateName = eState.getAttributeNS("", "name");
+	    					if(stateId == null || stateId.isEmpty() || stateName == null || stateName.isEmpty()) {
+	    						report.add("Missing or empty attribute id and/or name for state " + i + "(state.id=" + stateId + ", state.name=" + stateName + ")");				    						
+	    					} else {
+		    					org.opencrx.kernel.activity1.jmi1.ActivityProcessState processState = activityProcess.getState(stateId);
+		    					if(processState == null) {
+		    						processState = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessState.class);
+		    						processState.refInitialize(false, false);
+		    						processState.setName(stateName);
+		    						activityProcess.addState(
+		    							stateId,
+		    							processState
+		    						);
+		    					}
+	    						processState.setName(stateName);
+		    					processStates.put(
+		    						stateId,
+		    						processState
+		    					);
+	    					}
+	    				}
+	    				// Phase 2: create transitions
+	    				for(int i = 0; i < lStates.getLength(); i++) {
+	    					org.w3c.dom.Element eState = (org.w3c.dom.Element)lStates.item(i);
+	    					String stateId = eState.getAttributeNS("", "id");
+	    					if(stateId != null) {
+	    						org.opencrx.kernel.activity1.jmi1.ActivityProcessState prevState = processStates.get(stateId);
+	    						org.w3c.dom.NodeList lTransitions = eState.getElementsByTagName("transition");
+	    						if(lTransitions != null) {
+	    							for(int j = 0; j < lTransitions.getLength(); j++) {
+	    								org.w3c.dom.Element eTransition = (org.w3c.dom.Element)lTransitions.item(j);
+	    								String transitionId = eTransition.getAttribute("id");
+	    								String transitionName = eTransition.getAttribute("name");
+	    								String newActivityState = eTransition.getAttribute("a1:newActivityState");
+	    								String newPercentComplete = eTransition.getAttribute("a1:newPercentComplete");				    								
+	    								String subActivityNamePattern = eTransition.getAttribute("a1:subActivityNamePattern");
+	    								String templateNamePattern = eTransition.getAttribute("a1:templateNamePattern");				    								
+	    								String useCreatorAsTemplate = eTransition.getAttribute("a1:useCreatorAsTemplate");				    								
+	    								String activityCreator = eTransition.getAttribute("a1:activityCreator");
+	    								if(transitionId == null || transitionId.isEmpty() || transitionName == null || transitionId.isEmpty()) {
+	    									report.add("Missing or empty attribute id and/or name for transition " + j + "(state.id=" + stateId + ", transition.id=" + transitionId + ", transition.name=" + transitionName + ")");
+	    								} else {
+					    					org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition processTransition = activityProcess.getTransition(transitionId);
+					    					if(processTransition == null) {
+					    						if(
+					    							(subActivityNamePattern != null && !subActivityNamePattern.isEmpty()) || 
+					    							(templateNamePattern != null && !templateNamePattern.isEmpty()) || 
+					    							(useCreatorAsTemplate != null && !useCreatorAsTemplate.isEmpty()) || 
+					    							(activityCreator != null && !activityCreator.isEmpty())
+					    						) {								    							
+						    						processTransition = pm.newInstance(org.opencrx.kernel.activity1.jmi1.SubActivityTransition.class);
+					    						} else {
+					    							processTransition = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition.class);
+					    						}
+					    						processTransition.refInitialize(false, false);
+					    						processTransition.setName(transitionName);
+					    						activityProcess.addTransition(
+					    							transitionId,
+					    							processTransition
+					    						);
+					    					}
+					    					processTransition.setName(transitionName);
+					    					if(newActivityState != null && !newActivityState.isEmpty()) {
+					    						processTransition.setNewActivityState(Short.valueOf(newActivityState));
+					    					}
+					    					if(newPercentComplete != null && !newPercentComplete.isEmpty()) {
+					    						processTransition.setNewPercentComplete(Short.valueOf(newPercentComplete));								    						
+					    					}
+					    					if(processTransition instanceof org.opencrx.kernel.activity1.jmi1.SubActivityTransition) {
+					    						org.opencrx.kernel.activity1.jmi1.SubActivityTransition subActivityTransition = (org.opencrx.kernel.activity1.jmi1.SubActivityTransition)processTransition;
+					    						subActivityTransition.setSubActivityNamePattern(subActivityNamePattern);
+					    						subActivityTransition.setTemplateNamePattern(templateNamePattern);
+					    						subActivityTransition.setUseCreatorAsTemplate(Boolean.valueOf(useCreatorAsTemplate));
+					    						if(activityCreator != null && !activityCreator.isEmpty()) {
+						    						org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorQuery = (org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCreator.class);
+						    						activityCreatorQuery.name().equalTo(activityCreator);
+						    						List<org.opencrx.kernel.activity1.jmi1.ActivityCreator> activityCreators = activitySegment.getActivityCreator(activityCreatorQuery);									    						
+						    						if(!activityCreators.isEmpty()) {
+						    							subActivityTransition.setActivityCreator(activityCreators.iterator().next());
+						    						} else {
+						    							report.add("Activity creator not found " + activityCreator);
+						    						}
+					    						}
+					    					}
+					    					processTransition.setPrevState(prevState);
+					    					org.w3c.dom.NodeList lTargets = eTransition.getElementsByTagName("target");
+					    					if(lTargets != null && lTargets.getLength() > 0) {
+			    								org.w3c.dom.Element eTarget = (org.w3c.dom.Element)lTargets.item(0);
+			    								org.opencrx.kernel.activity1.jmi1.ActivityProcessState nextState = processStates.get(eTarget.getAttributeNS("", "next"));
+												processTransition.setNextState(nextState);
+					    					}
+	    								}
+	    							}
+	    						}
+	    					}
+	    				}
+	    			}
+	    			activityProcess.setStartState(
+	    				processStates.get(doc.getDocumentElement().getAttributeNS("", "initialstate"))
+	    			);
+				} else {
+					report.add("Attribute name for scxml is either not set or empty");
+				}
+			}
+			catch(Exception e) {
+				report.add("Exception occured while importing " + e.getMessage());
+			}
+		}
+		return activityProcess;
+    }
+    
+    //-------------------------------------------------------------------------
+    public List<AbstractActivityParty> getActivityParties(
+    	Activity activity
+    ) {
+        List<AbstractActivityParty> parties = new ArrayList<AbstractActivityParty>();
+        if(activity instanceof EMail) {
+        	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient();
+        	parties.addAll(c);
+        }
+        else if(activity instanceof Incident) {
+        	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty();
+        	parties.addAll(c);
+        }
+        else if(activity instanceof Mailing) {
+        	Collection<MailingRecipient> c = ((Mailing)activity).getMailingRecipient();
+        	parties.addAll(c);
+        }
+        else if(activity instanceof Meeting) {
+        	Collection<MeetingParty> c = ((Meeting)activity).getMeetingParty();
+        	parties.addAll(c);
+        }
+        else if(activity instanceof PhoneCall) {
+        	Collection<AbstractPhoneCallRecipient> c = ((PhoneCall)activity).getPhoneCallRecipient();
+        	parties.addAll(c);
+        }
+        else if(activity instanceof Task) {
+        	Collection<TaskParty> c = ((Task)activity).getTaskParty();
+        	parties.addAll(c);
+        }
+        return parties;
+    }
     
     //-------------------------------------------------------------------------
     public enum ActivityState {
@@ -4234,37 +4783,126 @@ public class Activities extends AbstractImpl {
             "org:opencrx:kernel:activity1:SalesVisit"  
         };
     
-    public static final short ACTIVITY_CLASS_EMAIL = 0;
-    public static final short ACTIVITY_CLASS_INCIDENT = 2;
-    public static final short ACTIVITY_CLASS_MAILING = 3;
-    public static final short ACTIVITY_CLASS_MEETING = 4;
-    public static final short ACTIVITY_CLASS_PHONE_CALL = 6;
-    public static final short ACTIVITY_CLASS_TASK = 8;
-    public static final short ACTIVITY_CLASS_ABSENCE = 9;
-    public static final short ACTIVITY_CLASS_SALES_VISIT = 11;
+    public enum ActivityClass {
+    	EMAIL((short)0),
+    	INCIDENT((short)2),
+    	MAILING((short)3),
+    	MEETING((short)4),
+    	PHONE_CALL((short)6),
+    	TASK((short)8),
+    	ABSENCE((short)9),
+    	SALES_VISIT((short)11);
+    	
+    	private short value;
+		
+		private ActivityClass(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+    	
+    }
     
-    // PARTY_TYPE
-    public final static short PARTY_TYPE_FROM = 210;
-    public final static short PARTY_TYPE_TO = 220;
-    public final static short PARTY_TYPE_CC = 230;
-    public final static short PARTY_TYPE_BCC = 240;
+    public enum PartyType {
+    	
+        NA((short)0),
+        REQUIRED((short)410),
+        OPTIONAL((short)420),
+        ORGANIZER((short)460),
+    	EMAIL_FROM((short)210),
+    	EMAIL_TO((short)220),
+    	EMAIL_CC((short)230),
+    	EMAIL_BCC((short)240);
+
+    	private short value;
+		
+		private PartyType(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+    	
+    }
     
-    // LINK_TYPE
-    public static final short ACTIVITY_LINK_TYPE_RELATES_TO = 6;
-    public static final short ACTIVITY_LINK_TYPE_IS_DERIVED_FROM = 97;
+    public enum WorkRecordType {
+    	
+    	NA((short)0),
+    	STANDARD((short)1),
+    	OVERTIME((short)2);
+    	
+		private short value;
+		
+		private WorkRecordType(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+		
+    }
     
-    // WORKRECORD_TYPE
-    public static final short WORKRECORD_TYPE_NA = 0;
-    public static final short WORKRECORD_TYPE_WORK_STANDARD = 1;
-    public static final short WORKRECORD_TYPE_WORK_OVERTIME = 2;
+    public enum Priority {
+    	
+    	LOW((short)1),
+    	NORMAL((short)2),
+    	HIGH((short)3),
+    	URGENT((short)4),
+    	IMMEDIATE((short)5);
+    	
+		private short value;
+		
+		private Priority(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+    	
+    }
     
-    // PRIORITY
-    public static final short PRIORITY_LOW = 1;
-    public static final short PRIORITY_NORMAL = 2;
-    public static final short PRIORITY_HIGH = 3;
-    public static final short PRIORITY_URGENT = 4;
-    public static final short PRIORITY_IMMEDIATE = 5;
+    public enum PartyStatus {
+    	
+        NA((short)0),
+        NEEDS_ACTION((short)1),
+        ACCEPTED((short)2),
+        DECLINED((short)3),
+        TENTATIVE((short)4),
+        DELEGATED((short)5),
+        COMPLETED((short)6);
+
+        private short value;
         
+        private PartyStatus(
+        	short value
+        ) {
+        	this.value = value;
+        }
+        
+        public short getValue(
+        ) {
+        	return this.value;
+        }
+        
+    }
+    
     // Booking texts
     protected static final String BOOKING_TEXT_NAME_WORK_EFFORT = "work efforts";
     
@@ -4315,10 +4953,51 @@ public class Activities extends AbstractImpl {
 
 	public static final String PRIVATE_GROUP_SUFFIX = "~Private";
 
-	public static final short ACTIVITY_LINK_TYPE_IS_REPLICA_OF = 7;
-	public static final short ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED = 8;
-	public static final short ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF = 93;
-	public static final short ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF_OBFUSCATED = 92;
+	public enum ActivityLinkType {
+		
+    	RELATES_TO((short)6),
+		IS_REPLICA_OF((short)7),
+		IS_REPLICA_OF_OBFUSCATED((short)8),
+		IS_ORIGINAL_OF((short)93),
+		IS_ORIGINAL_OF_OBFUSCATED((short)92),
+    	IS_DERIVED_FROM((short)97),
+    	IS_CHILD_OF((short)99);
+		
+		private short value;
+		
+		private ActivityLinkType(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+		
+	}    
+	
+	public enum ActivityGroupType {
+		
+		TRACKER((short)10),
+		MILESTONE((short)20),
+		CATEGORY((short)30);
+		
+		private short value;
+		
+		private ActivityGroupType(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+		
+	}
 	
 	public static final String ORIGINAL_MESSAGE_MEDIA_NAME = "ORIGINAL";
 	

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.63 2011/04/13 13:14:40 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.69 2011/12/16 09:35:26 cmu Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.63 $
+ * Revision:    $Revision: 1.69 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/04/13 13:14:40 $
+ * Date:        $Date: 2011/12/16 09:35:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -160,6 +160,7 @@ org.openmdx.base.exception.*
     }
     input.button{
     	-moz-border-radius: 4px;
+    	-webkit-border-radius: 4px;
     	width: 120px;
     	border: 1px solid silver;
     }
@@ -168,7 +169,7 @@ org.openmdx.base.exception.*
 		.col1,
 		.col2{float: left; width: 49.5%;}
 
-		.buttons{clear: both; text-align: right;}
+		.buttons{clear: both; text-align: left;}
 		table{border-collapse: collapse; width: 100%; clear: both;}
 		tr{}
 
@@ -191,6 +192,7 @@ org.openmdx.base.exception.*
 			padding: 0em 0.3em;
 			border: 1px solid gray;
 			-moz-border-radius: 6px;
+			-webkit-border-radius: 6px;
 			margin: 0 2px;
 		}
 		div.letterBar a:hover,
@@ -210,6 +212,7 @@ org.openmdx.base.exception.*
   <meta name="order" content="org:opencrx:kernel:home1:UserHome:userSettings">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 <body>
 <div id="container">
@@ -360,41 +363,51 @@ org.openmdx.base.exception.*
 				<fieldset>
 					<legend>User Home</legend>
 					<table>
-						<tr><td><label for="timezone">Timezone:</label></td>
+						<tr><td><label for="timezone_sorttz">Timezone:</label> <img border='0' alt='' title='sorted by timezone' height='16px' src='../../images/filter_down_cal.gif' /></td>
 						<td>
-							<select id="timezone" name="timezone">
+							<select id="timezone_sorttz" name="timezone_sorttz" onchange="javascript:
+									document.getElementById('timezone').value=this.value;
+									document.getElementById('timezone_sortAlpha').value=this.value;" 
+							>
 <%
-								Map timezoneIDs = codes.getShortText("org:opencrx:kernel:address1:PostalAddressable:postalUtcOffset", locale, true, true);
-								try {
-    								for(Iterator i = timezoneIDs.values().iterator(); i.hasNext(); ) {
-    									String timezoneID = (String)i.next();
-    									timezoneID = timezoneID.trim();
-    									timezoneID = timezoneID.replace(":", "");
-    									timezoneID = timezoneID.replace(" Greenwich Mean Time", "-0000");
-    									if(!"NA".equals(timezoneID)) {
-    										String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))
-    											? "selected"
-    											: "";
-    %>
-    										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
-    <%
-    									}
-    								}
-    							} catch (Exception e) {
-    							    new ServiceException(e).log();
-    							}
-                                String[] timezones = java.util.TimeZone.getAvailableIDs();
-                                for(int i = 0; i < timezones.length; i++) {
-                                  String timezoneID = timezones[i].trim();
-                                  String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))
-                                    ? "selected"
-                                    : "";
+    						String initiallySelectedTZ = userSettings.getProperty(UserSettings.TIMEZONE_NAME); //TimeZone.getTimeZone(app.getCurrentTimeZone()).getDisplayName();
+								String[] timezones = java.util.TimeZone.getAvailableIDs();
+                  for(int i = 0; i < timezones.length; i++) {
+                    String timezoneID = timezones[i].trim();
+                    String selectedModifier = "";
+                    if (timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))) {
+                    		selectedModifier = "selected";
+                    		initiallySelectedTZ = timezoneID;
+                    }
 %>
-                										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
+  										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
 <%
-                                }
+                  }
 %>
 							</select>
+						</td></tr>
+						<tr><td><label for="timezone_sortAlpha">Timezone:</label> <img border='0' alt='' title='sorted alphabetically' height='16px' src='../../images/filter_down_star.gif' /></td>
+						<td>
+							<select id="timezone_sortAlpha" name="timezone_sortAlpha" onchange="javascript:
+									document.getElementById('timezone').value=this.value;
+									document.getElementById('timezone_sorttz').value=this.value;" 
+							>
+<%
+    						String[] timezonesAlpha = java.util.TimeZone.getAvailableIDs();
+								java.util.Arrays.sort(timezonesAlpha, java.text.Collator.getInstance());
+
+                  for(int i = 0; i < timezonesAlpha.length; i++) {
+                    String timezoneID = timezonesAlpha[i].trim();
+                    String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))
+                      ? "selected"
+                      : "";
+%>
+  										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
+<%
+                  }
+%>
+							</select>
+							<input type="text" id="timezone" name="timezone"  value="<%= initiallySelectedTZ %>" style="width:0;visibility:hidden;" />
 						</td></tr>
 						<tr><td><label for="storeSettingsOnLogoff">Store settings on logoff:</label></td>
 						<td><input type="checkbox" <%= userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "checked" : "" %> id="storeSettingsOnLogoff" name="storeSettingsOnLogoff"/></td></tr>
@@ -497,8 +510,8 @@ org.openmdx.base.exception.*
 					app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
 				boolean allowApply = currentUserIsAdmin || currentUserOwnsHome;
 %>
-				<input <%= allowApply ? "" : "disabled" %> type="submit" value="Apply"  class="button" />
-				<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" class="button" />
+				<input <%= allowApply ? "" : "disabled" %> type="submit" value="<%= app.getTexts().getSaveTitle() %>"  />
+				<input type="button" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" />
 				<%= allowApply ? "" : "<h2>Apply not allowed! Non-ownership of user home and first time usage of wizard requires admin permissions.</h2>" %>
 			</div>
 		</form>

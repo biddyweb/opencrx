@@ -423,6 +423,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 							/*		0: select active users only
 										1: select all users
 										2: select disabled users
+										5: select users that are propertly initialized (private tracker <user>~Private missing)
 							*/
 						if (request.getParameter("userSelectorType") != null) {
 								try {
@@ -490,13 +491,68 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 												org.opencrx.security.realm1.cci2.PrincipalQuery principalFilter = realmPkg.createPrincipalQuery();
 												if (userSelectorType == 0) {
 														// active users only
-														principalFilter.disabled().equalTo(false);
+														principalFilter.forAllDisabled().isFalse();
 														//principalFilter.thereExistsIsMemberOf().equalTo(projectPrincipalGroup);
 												} else if (userSelectorType == 1) {
 														// all users
 												} else if (userSelectorType == 2) {
 														// disabled users
-														principalFilter.disabled().equalTo(true);
+														principalFilter.thereExistsDisabled().isTrue();
+												} else if (userSelectorType == 5) {
+													// active users that are not properly initialized (private tracker <user>~Private does not exist)
+													principalFilter.forAllDisabled().isFalse();
+													org.openmdx.base.query.Extension queryFilterNoPrivateTracker = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(principalFilter);
+													Connection conncrx = null;
+													try {
+														Context initialContext = new InitialContext();
+														javax.sql.DataSource dscrx = (javax.sql.DataSource)initialContext.lookup("java:comp/env/jdbc_opencrx_" + providerName);
+														conncrx = dscrx.getConnection();
+														String databaseProductName = conncrx.getMetaData().getDatabaseProductName();				
+														if("PostgreSQL".equals(databaseProductName)) {
+																queryFilterNoPrivateTracker.setClause(
+																		"(NOT EXISTS (select * from oocke1_activitycreator where name=(v.name || '~Private'))) and " +
+																		"(NOT EXISTS (select * from oocke1_activitygroup   where name=(v.name || '~Private')))"
+																);
+														}
+														else if("Oracle".equals(databaseProductName)) {			
+																queryFilterNoPrivateTracker.setClause(
+																		"(NOT EXISTS (select * from oocke1_activitycreator where name=CONCAT(v.name, '~Private'))) and " +
+																		"(NOT EXISTS (select * from oocke1_activitygroup   where name=CONCAT(v.name, '~Private')))"
+																);
+														}
+														else if(databaseProductName.startsWith("DB2")) {			
+																queryFilterNoPrivateTracker.setClause(
+																		"(NOT EXISTS (select * from oocke1_activitycreator where name=CONCAT(v.name, '~Private'))) and " +
+																		"(NOT EXISTS (select * from oocke1_activitygroup   where name=CONCAT(v.name, '~Private')))"
+																);
+														}
+														else if("MySQL".equals(databaseProductName)) {			
+																queryFilterNoPrivateTracker.setClause(
+																		"(NOT EXISTS (select * from oocke1_activitycreator where name=CONCAT(v.name, '~Private'))) and " +
+																		"(NOT EXISTS (select * from oocke1_activitygroup   where name=CONCAT(v.name, '~Private')))"
+																);
+														}
+														else if("Microsoft SQL Server".equals(databaseProductName)) {			
+																queryFilterNoPrivateTracker.setClause(
+																		"(NOT EXISTS (select * from oocke1_activitycreator where name=(v.name + '~Private'))) and " +
+																		"(NOT EXISTS (select * from oocke1_activitygroup   where name=(v.name + '~Private')))"
+																);
+														}
+														else if("HSQL Database Engine".equals(databaseProductName)) {			
+																queryFilterNoPrivateTracker.setClause(
+																		"(NOT EXISTS (select * from oocke1_activitycreator where name=CONCAT(v.name, '~Private'))) and " +
+																		"(NOT EXISTS (select * from oocke1_activitygroup   where name=CONCAT(v.name, '~Private')))"
+																);
+														}
+														conncrx.close();
+													} catch (Exception ep) {
+														new ServiceException(ep).log();
+														if (conncrx != null) {
+															try {
+																conncrx.close();
+															} catch (Exception connex) {};
+														}
+													}
 												}
 												principalFilter.orderByName().ascending();
 
@@ -579,7 +635,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 
 
 						} else if (request.getParameter("ACTION.disable") != null) {
-								// System.out.println("DISABLE: " + request.getParameter("ACTION.disable"));
+								System.out.println("DISABLE: " + request.getParameter("ACTION.disable"));
 								// disable principal
 								try {
 										pm.currentTransaction().begin();
@@ -835,13 +891,14 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 							<tr>
 								<td id="submitButtons" style="font-weight:bold;background-color:#E4E4E4;padding-bottom:3px;">
 									<div style="padding:8px 3px;">
-										<%= app.getTexts().getSelectAllText() %> <select style="width:150px;" id="userSelectorType" name="userSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+										<%= app.getTexts().getSelectAllText() %> <select style="width:180px;" id="userSelectorType" name="userSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
 <%
 										if (mode.compareTo("0") == 0) {
 %>
 											<option <%= userSelectorType == 0 ? "selected" : "" %> value="0"><%= app.getLabel(USER_CLASS)	%> (active)&nbsp;</option>
 											<option <%= userSelectorType == 1 ? "selected" : "" %> value="1"><%= app.getLabel(USER_CLASS)	%> (all)&nbsp;</option>
 											<option <%= userSelectorType == 2 ? "selected" : "" %> value="2"><%= app.getLabel(USER_CLASS)	%> (disabled)&nbsp;</option>
+											<option <%= userSelectorType == 5 ? "selected" : "" %> value="5"><%= app.getLabel(USER_CLASS)	%> (active - not initialized)&nbsp;</option>
 <%
 										} else {
 %>
@@ -891,7 +948,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 									&nbsp;&nbsp;
 									<INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
 									<!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
-									<INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+									<INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
 									<INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
 
 <%
@@ -903,7 +960,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 <%
 									}
 %>
-									<INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
+									<INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
 									<br>
 								</td>
 								<td id="waitMsg" style="display:none;">
@@ -1078,7 +1135,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 %>
 									<tr class="gridTableRowFull" style="<%= isDisabled ? "background-color:" + (isDisabled ? colorMemberDisabled + ";font-style:italic" : colorMember + ";font-weight:bold") : "" %>;"><!-- 8 columns -->
 										<td align="right"><%= formatter.format(counter) %></td>
-										<td align="left" <%= "onclick='javascript:window.open(\"" + principalHref + "\");'" %> title="<%= label %>"><img src="../../images/<%= image %>" border="0" align="top" alt="o" />&nbsp;<%= (new ObjectReference(principal, app)).getTitle() %></a></td>
+										<td align="left" <%= "ondblclick='javascript:window.open(\"" + principalHref + "\");'" %> title="<%= label %>"><img src="../../images/<%= image %>" border="0" align="top" alt="o" />&nbsp;<%= (new ObjectReference(principal, app)).getTitle() %></a></td>
 										<td align="left"><a href="<%= userHomeHref %>" target="_blank"><%= userHome != null ? (new ObjectReference(userHome, app)).getTitle() : "--" %></a></td>
 										<td align="center">
 												<INPUT type="submit" name="applyUserSettings" id="applyUserSettings" title="apply user settings - create / update user-specific objects" tabindex="<%= tabIndex++ %>" value="create/update"	onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
@@ -1088,18 +1145,18 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 										if (!isDisabled) {
 												// is enabled principal
 %>
-												<INPUT type="image" src="../../images/notchecked.gif" name="disable" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
+												<button type="submit" name="disable" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/notchecked.gif" /></button>
 											</td>
 <%
 										} else {
 											// disabled
 %>
-												<INPUT type="image" src="../../images/checked.gif" name="enable" tabindex="<%= tabIndex++ %>" value="+" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
+												<button type="submit" name="enable" tabindex="<%= tabIndex++ %>" value="+" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/checked.gif" /></button>
 <%
 										}
 %>
 										</td>
-										<td align="left" <%= "onclick='javascript:window.open(\"" + userHomeHref + "\");'" %>><%= fEmailAccount %></td>
+										<td align="left" <%= "ondblclick='javascript:window.open(\"" + userHomeHref + "\");'" %>><%= fEmailAccount %></td>
 										<td align="left">&nbsp;&nbsp;
 <%
 											if (selectedPrincipalGroup == null) {
@@ -1109,19 +1166,19 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 											} else {
 													if (!isMemberOfSelectedPrincipalGroup) {
 %>
-															<INPUT type="image" src="../../images/notchecked.gif" name="addMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
+															<button type="submit" name="addMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/notchecked.gif" /></button>
 <%
 													} else {
 %>
-															<INPUT type="image" src="../../images/checked.gif" name="removeMembership" tabindex="<%= tabIndex++ %>" value="+" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.style.display='none';this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="font-size:10px;font-weight:bold;" />
+															<button type="submit" name="removeMembership" tabindex="<%= tabIndex++ %>" value="+" onmouseup="javascript:setTimeout('disableSubmit()', 10);this.name='ACTION.'+this.name;this.value='<%= principal.refMofId() %>';" style="border:0; background:transparent;font-size:10px;font-weight:bold;" ><img src="../../images/checked.gif" /></button>
 <%
 													}
 											}
 %>
 										</td>
-										<td align="left" <%= "onclick='javascript:window.open(\"" + principalHref + "\");'" %>><%= isMemberOfPrimaryGroup ? CHECKED_R : NOTCHECKED_R %> <%= primaryGroup != null && primaryGroup.getName() != null ? primaryGroup.getName() : "--" %></td>
-										<td align="left" <%= "onclick='javascript:window.open(\"" + userHomeHref + "\");'" %>><%= isMemberOfPrincipalGroups %></td>
-										<td align="left" <%= "onclick='javascript:window.open(\"" + principalHref + "\");'" %>><%= principal.getLastLoginAt() != null ? timeFormat.format(principal.getLastLoginAt()) : "--" %></td>
+										<td align="left" <%= "ondblclick='javascript:window.open(\"" + principalHref + "\");'" %>><%= isMemberOfPrimaryGroup ? CHECKED_R : NOTCHECKED_R %> <%= primaryGroup != null && primaryGroup.getName() != null ? primaryGroup.getName() : "--" %></td>
+										<td align="left" <%= "ondblclick='javascript:window.open(\"" + userHomeHref + "\");'" %>><%= isMemberOfPrincipalGroups %></td>
+										<td align="left" <%= "ondblclick='javascript:window.open(\"" + principalHref + "\");'" %>><%= principal.getLastLoginAt() != null ? timeFormat.format(principal.getLastLoginAt()) : "--" %></td>
 									</tr>
 <%
 							}
@@ -1185,8 +1242,8 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 				}
 			</script>
 			<br />
-			<INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-			<INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
+			<INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+			<INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
 			<br />&nbsp;
 <%
 			if (downloadAction != null) {

@@ -863,6 +863,14 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="381" _operation="set">
+                          <_object>
+                            <longText>
+                              <_item>Kosovo [KV]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="388" _operation="set">
                           <_object>
                             <longText>

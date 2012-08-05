@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountImpl.java,v 1.8 2009/06/18 12:22:43 wfro Exp $
+ * Name:        $Id: AccountImpl.java,v 1.10 2011/09/28 11:08:34 wfro Exp $
  * Description: AccountImpl
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/18 12:22:43 $
+ * Date:        $Date: 2011/09/28 11:08:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,15 +56,10 @@
 package org.opencrx.kernel.account1.aop2;
 
 import javax.jdo.JDOUserException;
+import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Accounts;
-import org.opencrx.kernel.contract1.jmi1.Invoice;
-import org.opencrx.kernel.contract1.jmi1.Lead;
-import org.opencrx.kernel.contract1.jmi1.Opportunity;
-import org.opencrx.kernel.contract1.jmi1.Quote;
-import org.opencrx.kernel.contract1.jmi1.SalesOrder;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
@@ -72,7 +67,7 @@ import org.openmdx.base.exception.ServiceException;
 public class AccountImpl
 	<S extends org.opencrx.kernel.account1.jmi1.Account,N extends org.opencrx.kernel.account1.cci2.Account,C extends Void>
 	extends AbstractObject<S,N,C>
-	implements StoreCallback {
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
     public AccountImpl(
@@ -82,118 +77,6 @@ public class AccountImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.account1.jmi1.CreateLeadResult createLead(
-        org.opencrx.kernel.account1.jmi1.CreateLeadParams params
-    ) {
-    	try {
-	        Lead lead = Accounts.getInstance().createLead(
-	            this.sameObject(),
-	            params.getName(),
-	            params.getDescription(),
-	            params.getNextStep(),
-	            params.getBasedOn() == null ?
-	            	null :
-	            	(Lead)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
-	        );
-	        return Utils.getAccountPackage(this.sameManager()).createCreateLeadResult(
-	            lead                    
-	        );                                        
-    	}
-    	catch(ServiceException e) {
-    		throw new JmiServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.account1.jmi1.CreateOpportunityResult createOpportunity(
-        org.opencrx.kernel.account1.jmi1.CreateOpportunityParams params
-    ) {
-    	try {
-	        Opportunity opportunity = Accounts.getInstance().createOpportunity(
-	            this.sameObject(),
-	            params.getName(),
-	            params.getDescription(),
-	            null,
-	            params.getBasedOn() == null ?
-	            	null :
-	            	(Opportunity)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
-	        );
-	        return Utils.getAccountPackage(this.sameManager()).createCreateOpportunityResult(
-	            opportunity                    
-	        );
-    	}
-    	catch(ServiceException e) {
-    		throw new JmiServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.account1.jmi1.CreateQuoteResult createQuote(
-        org.opencrx.kernel.account1.jmi1.CreateQuoteParams params
-    ) {
-    	try {
-	        Quote quote = Accounts.getInstance().createQuote(
-	            this.sameObject(),
-	            params.getName(),
-	            params.getDescription(),
-	            params.getBasedOn() == null ?
-	            	null : 
-	            	(Quote)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
-	        );
-	        return Utils.getAccountPackage(this.sameManager()).createCreateQuoteResult(
-	            quote                    
-	        );                                        
-    	}
-    	catch(ServiceException e) {
-    		throw new JmiServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.account1.jmi1.CreateSalesOrderResult createSalesOrder(
-        org.opencrx.kernel.account1.jmi1.CreateSalesOrderParams params
-    ) {
-    	try {
-	        SalesOrder salesOrder = Accounts.getInstance().createSalesOrder(
-	            this.sameObject(),
-	            params.getName(),
-	            params.getDescription(),
-	            params.getBasedOn() == null ?
-	            	null :
-	            	(SalesOrder)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
-	        );
-	        return Utils.getAccountPackage(this.sameManager()).createCreateSalesOrderResult(
-	            salesOrder                    
-	        );                                        
-    	}
-    	catch(ServiceException e) {
-    		throw new JmiServiceException(e);
-    	}
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.account1.jmi1.CreateInvoiceResult createInvoice(
-        org.opencrx.kernel.account1.jmi1.CreateInvoiceParams params
-    ) {
-    	try {
-	        Invoice invoice = Accounts.getInstance().createInvoice(
-	            this.sameObject(),
-	            params.getName(),
-	            params.getDescription(),
-	            params.getBasedOn() == null ?
-	            	null :
-	            	(Invoice)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
-	        );
-	        return Utils.getAccountPackage(this.sameManager()).createCreateInvoiceResult(
-	            invoice
-	        );                                        
-    	}
-    	catch(ServiceException e) {
-    		throw new JmiServiceException(e);
-    	}
-    }
-    
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void updateVcard(
     ) {
@@ -221,6 +104,26 @@ public class AccountImpl
     	catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
+    			e,
+    			this.sameObject()
+    		);
+    	}
+    }
+    
+    //-----------------------------------------------------------------------
+    @Override
+    public void jdoPreDelete(
+    ) {
+    	try {
+    		Accounts.getInstance().removeAccount(
+    			this.sameObject(), 
+    			true
+    		);
+    		super.jdoPreDelete();
+    	}
+    	catch(ServiceException e) {
+    		throw new JDOUserException(
+    			"jdoPreDelete failed",
     			e,
     			this.sameObject()
     		);

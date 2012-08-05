@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMappers.java,v 1.22 2011/03/05 00:09:34 wfro Exp $
+ * Name:        $Id: DatatypeMappers.java,v 1.23 2011/05/11 17:58:37 wfro Exp $
  * Description: DatatypeMappers
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/05 00:09:34 $
+ * Date:        $Date: 2011/05/11 17:58:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -122,7 +122,8 @@ import org.opencrx.kernel.base.jmi1.PropertySet;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.code1.jmi1.CodeValueContainer;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
-import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
+import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractInvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.AccountAssignmentContract;
@@ -1121,7 +1122,7 @@ public class DatatypeMappers {
     
     //-----------------------------------------------------------------------
     public ContractPositionT mapContractPosition(            
-        AbstractContractPosition position,
+        SalesContractPosition position,
         String contractNumber,
         Date paymentDate,
         Product product
@@ -1227,7 +1228,7 @@ public class DatatypeMappers {
     
     //-----------------------------------------------------------------------
     public ContractT mapContract(
-        AbstractContract contract,
+        SalesContract contract,
         List<String> externalLink,
         List<ContractPositionT> positions
     ) {
@@ -1372,7 +1373,7 @@ public class DatatypeMappers {
     //-----------------------------------------------------------------------
     public void mapSalesOrder(
         SalesOrder salesOrder,
-        AbstractContract origin,
+        SalesContract origin,
         Account customer,
         String invoiceNumber,
         SalesOrderState salesOrderState,
@@ -1411,7 +1412,7 @@ public class DatatypeMappers {
     //-----------------------------------------------------------------------
     public void mapInvoice(
         Invoice invoice,
-        AbstractContract origin,
+        SalesContract origin,
         Account customer,
         String invoiceNumber,
         Boolean isVoucher,

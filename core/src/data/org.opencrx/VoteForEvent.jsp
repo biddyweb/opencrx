@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.17 2010/12/06 19:31:24 wfro Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.19 2011/11/28 14:18:32 wfro Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.17 $
+ * Revision:	$Revision: 1.19 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2010/12/06 19:31:24 $
+ * Date:		$Date: 2011/11/28 14:18:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -306,7 +306,7 @@ java.text.*"
 	javax.jdo.PersistenceManager pm = pmf.getPersistenceManager(
 		app == null ?
 			org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName :
-			app.getLoginPrincipalId(),
+			app.getLoginPrincipal(),
 		null
 	);
 	// Get user home if user is authenticated
@@ -314,7 +314,7 @@ java.text.*"
 	try {
 		if(app != null) {
 			userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-				app.getUserHomeIdentity()
+				app.getUserHomeIdentityAsPath()
 			);
 		}
 	} catch(Exception e) {}
@@ -639,7 +639,7 @@ java.text.*"
 				}
 				if(app != null) {
 %>
-					  <p><%= bundle.get("YouAreLoggedInAsLabel") %> <b><%= app.getLoginPrincipalId() %></b></p>
+					  <p><%= bundle.get("YouAreLoggedInAsLabel") %> <b><%= app.getLoginPrincipal() %></b></p>
 <%
 				}
 				int tabIndex = 0;
@@ -781,7 +781,7 @@ java.text.*"
  								<!-- Spacer -->
  								<tr>
  									<td />
- 									<td align="left" nowrap title="<%= (app != null) ? " [" + app.getLoginPrincipalId() + "]" : "" %>"><b><%= bundle.get("VoterLabel") %>:&nbsp;</b></td>
+ 									<td align="left" nowrap title="<%= (app != null) ? " [" + app.getLoginPrincipal() + "]" : "" %>"><b><%= bundle.get("VoterLabel") %>:&nbsp;</b></td>
  									<td colspan="<%= nSlots %>">
 										<input type="text" size="40" <%= hasVoted ? "readonly" : "" %> maxlength="<%= MAXLEN_EMAILADDRESS %>" name="voter" id="voter" value="<%= request.getParameter("voter") == null ? (retrievedVoter == null ? ((userEMailAddress != null) && (userEMailAddress.getEmailAddress() != null) ? userEMailAddress.getEmailAddress() : "") : retrievedVoter) : request.getParameter("voter") %>" />
 										<input id="Vote.Button" name="Vote" type="submit" <%= hasVoted ? "disabled" : "class=\"abutton\"" %> tabindex="<%= tabIndex++ %>" value="<%= bundle.get("VoteLabel") %>" />

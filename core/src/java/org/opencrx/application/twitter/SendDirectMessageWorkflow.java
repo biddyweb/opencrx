@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendDirectMessageWorkflow.java,v 1.13 2010/11/11 15:58:55 wfro Exp $
+ * Name:        $Id: SendDirectMessageWorkflow.java,v 1.16 2011/10/05 16:34:43 wfro Exp $
  * Description: SendDirectMessageWorkflow
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/11 15:58:55 $
+ * Date:        $Date: 2011/10/05 16:34:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,7 +79,7 @@ import org.openmdx.kernel.log.SysLog;
 import twitter4j.DirectMessage;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
-import twitter4j.http.AccessToken;
+import twitter4j.auth.AccessToken;
 
 public class SendDirectMessageWorkflow 
     implements SynchWorkflow_2_0 {
@@ -109,7 +109,7 @@ public class SendDirectMessageWorkflow
             TwitterAccountQuery twitterAccountQuery = (TwitterAccountQuery)pm.newQuery(TwitterAccount.class);
             twitterAccountQuery.thereExistsIsDefault().isTrue();
             twitterAccountQuery.thereExistsIsActive().isTrue();
-            List<TwitterAccount> twitterAccounts = userHome.getEMailAccount(twitterAccountQuery);            
+            List<TwitterAccount> twitterAccounts = userHome.getEMailAccount(twitterAccountQuery);     
             TwitterAccount twitterAccount = twitterAccounts.isEmpty() ?
             	null :
             		twitterAccounts.iterator().next();            
@@ -150,16 +150,19 @@ public class SendDirectMessageWorkflow
                     	subject = subject.substring(0, TwitterUtils.MESSAGE_SIZE - 3) + "...";
                     }
                 }
-            	TwitterFactory twitterFactory = new TwitterFactory();
+            	TwitterFactory twitterFactory = new TwitterFactory(
+            		
+            	);
             	AccessToken accessToken = new AccessToken(
             		twitterAccount.getAccessToken(),
             		twitterAccount.getAccessTokenSecret()
             	);
-            	Twitter twitter = twitterFactory.getOAuthAuthorizedInstance(
-            		TwitterUtils.getConsumerKey(twitterAccount, configuration),
-            		TwitterUtils.getConsumerSecret(twitterAccount, configuration),
-            		accessToken
+            	Twitter twitter = twitterFactory.getInstance();
+            	twitter.setOAuthConsumer(
+            		TwitterUtils.getConsumerKey(twitterAccount, configuration), 
+            		TwitterUtils.getConsumerSecret(twitterAccount, configuration)
             	);
+            	twitter.setOAuthAccessToken(accessToken);
                 SysLog.detail("Send direct message message");
             	DirectMessage message = twitter.sendDirectMessage(
             		twitterAccount.getName(),

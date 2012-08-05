@@ -1,11 +1,11 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.21 2010/09/17 13:06:04 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.23 2011/09/03 13:31:10 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.21 $
+   * Revision:    $Revision: 1.23 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2010/09/17 13:06:04 $
+   * Date:        $Date: 2011/09/03 13:31:10 $
    * ====================================================================
    *
    * This software is published under the BSD license
@@ -77,6 +77,8 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.ActivityClass;
+import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.SendAlertParams;
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -201,7 +203,7 @@ public class MailImporterServlet
                 pm,
                 providerName,
                 segmentName,
-                Activities.PRIORITY_NORMAL,
+                Priority.NORMAL.getValue(),
                 "Exception occurred when importing message (" + e.getMessage() + ")",
                 new ServiceException(e).toString(),
                 new String[]{messageId}
@@ -237,17 +239,18 @@ public class MailImporterServlet
                 segmentName
             );
             ActivityProcess emailActivityProcess = Activities.getInstance().initEmailProcess(
-                pm,
-                providerName,
-                segmentName
+            	pm, 
+            	providerName, 
+            	segmentName,
+            	null, // owningGroups
+            	SecurityKeys.ACCESS_LEVEL_NA
             );
             ActivityType emailActivityType = Activities.getInstance().initActivityType(
-                org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
-                org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_EMAIL,
                 emailActivityProcess,
-                pm,
-                providerName,
-                segmentName
+                org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
+                ActivityClass.EMAIL.getValue(),
+                null, // owningGroups
+                SecurityKeys.ACCESS_LEVEL_NA
             );
             ActivityGroup emailActivityTracker = Activities.getInstance().initActivityTracker(
                 org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS, 
@@ -260,10 +263,7 @@ public class MailImporterServlet
                 org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, 
                 emailActivityType,
                 Arrays.asList(emailActivityTracker),
-                null,
-                pm, 
-                providerName, 
-                segmentName
+                null
             );
             MailImporterConfig mailImporterConfig = new MailImporterConfig(
                 pm,
@@ -297,7 +297,7 @@ public class MailImporterServlet
                             pm,
                             providerName,
                             segmentName,
-                            Activities.PRIORITY_HIGH,
+                            Priority.HIGH.getValue(),
                             "Import of message " + messageId + " failed (" + e.getMessage() + ")",
                             new ServiceException(e).toString(),
                             new String[]{messageId}
@@ -314,7 +314,7 @@ public class MailImporterServlet
                     pm,
                     providerName,
                     segmentName,
-                    Activities.PRIORITY_HIGH,
+                    Priority.HIGH.getValue(),
                     "Import of messages failed (" + e.getMessage() + ")",
                     new ServiceException(e).toString(),
                     new String[]{}

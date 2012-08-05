@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceImpl.java,v 1.57 2011/02/06 22:50:58 wfro Exp $
+ * Name:        $Id: ShopServiceImpl.java,v 1.61 2011/06/13 17:46:24 wfro Exp $
  * Description: ShopServiceImpl
- * Revision:    $Revision: 1.57 $
+ * Revision:    $Revision: 1.61 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/06 22:50:58 $
+ * Date:        $Date: 2011/06/13 17:46:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -104,6 +104,7 @@ import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.Products;
+import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.base.jmi1.SecureObject;
 import org.opencrx.kernel.base.jmi1.StringProperty;
@@ -118,7 +119,6 @@ import org.opencrx.kernel.contract1.cci2.InvoiceQuery;
 import org.opencrx.kernel.contract1.cci2.LeadQuery;
 import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
-import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractInvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.AccountAssignmentContract;
@@ -127,6 +127,8 @@ import org.opencrx.kernel.contract1.jmi1.DeliveryInformation;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.InvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.Lead;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
+import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
@@ -711,8 +713,8 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected AbstractContractPosition createContractPosition(
-        AbstractContract contract,
+    protected SalesContractPosition createContractPosition(
+        SalesContract contract,
         String productNumber,
         BigDecimal quantity,
         Boolean ignoreProductConfiguration,
@@ -742,7 +744,7 @@ public class ShopServiceImpl
         org.opencrx.kernel.contract1.jmi1.CreatePositionResult createPositionResult = 
             contract.createPosition(createPositionParams);
         this.pm.currentTransaction().commit();
-        AbstractContractPosition contractPosition = (AbstractContractPosition)this.pm.getObjectById(createPositionResult.getPosition().refGetPath());
+        SalesContractPosition contractPosition = (SalesContractPosition)this.pm.getObjectById(createPositionResult.getPosition().refGetPath());
         this.pm.currentTransaction().begin();
         contractPosition.setSalesTaxType(salesTaxType);
         contractPosition.setDiscountIsPercentage(
@@ -910,7 +912,7 @@ public class ShopServiceImpl
     
     //-----------------------------------------------------------------------    
     protected void addContractPositions(
-        AbstractContract contract,
+        SalesContract contract,
         List<ContractPositionT> contractPositions,
         String defaultSalesTaxType,
         Boolean discountIsPercentage,
@@ -1532,7 +1534,7 @@ public class ShopServiceImpl
         			contract = this.findInvoice(contractNumber);
         		}
         		if(contract != null) {
-	        		AbstractContractPosition position = null;
+	        		SalesContractPosition position = null;
 	        		if(contract instanceof SalesOrder) {
 	        			Collection<AbstractSalesOrderPosition> positions = ((SalesOrder)contract).getPosition();
 	        			for(AbstractSalesOrderPosition p: positions) {
@@ -1906,6 +1908,7 @@ public class ShopServiceImpl
         				reportingCustomer = this.findAccount(params.getReportingCustomerNumber());
         			}
         			NewActivityParams newActivityParams = this.getActivityPackage().createNewActivityParams(
+        				null, // creationContext
         				params.getDescription(), 
         				params.getDetailedDescription(), 
         				params.getDueBy(), 
@@ -2355,17 +2358,13 @@ public class ShopServiceImpl
                 	);
                 	if(validationResult == null) {
 	                    String invoiceNumber = this.getNextInvoiceNumber(customer);
-	                    org.opencrx.kernel.account1.jmi1.CreateInvoiceParams createInvoiceParams = 
-	                        this.getAccountPackage().createCreateInvoiceParams(
-	                            null, // basedOn
-	                            null, // description
-	                            invoiceNumber + " /" + customerNumber // name                                 
-	                        );
 	                    this.pm.currentTransaction().begin();
-	                    org.opencrx.kernel.account1.jmi1.CreateInvoiceResult createInvoiceResult = customer.createInvoice(createInvoiceParams);
-	                    this.pm.currentTransaction().commit();
-	                    Invoice invoice = (Invoice)this.pm.getObjectById(createInvoiceResult.getInvoice().refGetPath());
-	                    this.pm.currentTransaction().begin();
+	                    Invoice invoice = Accounts.getInstance().createInvoice(
+	                    	customer, 
+	                    	invoiceNumber + " /" + customerNumber, // name
+	                    	null, // description 
+	                    	null // basedOn
+	                    );
 	                    this.datatypeMappers.mapInvoice(                        
 	                        invoice,
 	                        customerContract,
@@ -2485,17 +2484,13 @@ public class ShopServiceImpl
                 Account customer = originalInvoice.getCustomer();                        	
             	String customerNumber = this.datatypeMappers.getAccountFieldMapper().getAccountNumber(customer);
                 String newInvoiceNumber = this.getNextInvoiceNumber(originalInvoice.getCustomer());
-                org.opencrx.kernel.account1.jmi1.CreateInvoiceParams createInvoiceParams = 
-                    this.getAccountPackage().createCreateInvoiceParams(
-                        originalInvoice, // basedOn
-                        null, // description
-                        newInvoiceNumber + " /" + customerNumber // name                                 
-                    );
                 this.pm.currentTransaction().begin();
-                org.opencrx.kernel.account1.jmi1.CreateInvoiceResult createInvoiceResult = customer.createInvoice(createInvoiceParams);
-                this.pm.currentTransaction().commit();
-                Invoice newInvoice = (Invoice)this.pm.getObjectById(createInvoiceResult.getInvoice().refGetPath());
-                this.pm.currentTransaction().begin();
+                Invoice newInvoice = Accounts.getInstance().createInvoice(
+                	customer, 
+                	newInvoiceNumber + " /" + customerNumber, // name 
+                	null, // description 
+                	originalInvoice // basedOn
+                );
                 this.datatypeMappers.mapInvoice(
                     newInvoice, 
                     originalInvoice, 
@@ -4586,12 +4581,13 @@ public class ShopServiceImpl
         				reportingCustomer = this.findAccount(params.getOnBehalfOfCustomerNumber());
         			}
         			NewActivityParams newActivityParams = this.getActivityPackage().createNewActivityParams(
+        				null, // creationContext
         				params.getSubject(), 
         				null, // detailed description, 
         				null, // dueBy 
         				ICalendar.ICAL_TYPE_NA, 
         				params.getSubject(), 
-        				Activities.PRIORITY_NORMAL, 
+        				Priority.NORMAL.getValue(), 
         				reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null,
         				null, // scheduledEnd 
         				null // scheduledStart

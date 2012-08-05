@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: InvoicePositionImpl.java,v 1.2 2009/08/26 12:11:47 wfro Exp $
+ * Name:        $Id: InvoicePositionImpl.java,v 1.3 2011/05/11 18:02:22 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/26 12:11:47 $
+ * Date:        $Date: 2011/05/11 18:02:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,8 +59,8 @@ import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 public class InvoicePositionImpl
-	<S extends org.opencrx.kernel.contract1.jmi1.InvoicePosition,N extends org.opencrx.kernel.contract1.cci2.InvoicePosition,C extends AbstractContractPositionImpl.DerivedAttributes>
-	extends AbstractContractPositionImpl<S,N,C>
+	<S extends org.opencrx.kernel.contract1.jmi1.InvoicePosition,N extends org.opencrx.kernel.contract1.cci2.InvoicePosition,C extends SalesContractPositionImpl.DerivedAttributes>
+	extends SalesContractPositionImpl<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------

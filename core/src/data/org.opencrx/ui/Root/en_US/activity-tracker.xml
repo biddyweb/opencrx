@@ -363,6 +363,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:creationContext">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Context</_item>
+											</toolTip>
+											<label>
+												<_item>Context</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- ActivityMilestone -->
 									<!--Inspector Definitions-->

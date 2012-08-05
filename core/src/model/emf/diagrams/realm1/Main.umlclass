@@ -125,7 +125,7 @@
     <element xmi:type="uml:Class" href="../../org.opencrx.security.realm1.uml#_qlmIAB5CEdqET7ZHRltKzA"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_j5Bi0k0kEd-LLraCh8Tbyw" x="425" y="196"/>
   </children>
-  <children xmi:type="notation:Shape" xmi:id="_nSxF0E0kEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
+  <children xmi:type="notation:Shape" xmi:id="_nSxF0E0kEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_nS_IQE0kEd-LLraCh8Tbyw" source="Shortcut">
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_nS_IQU0kEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
     </eAnnotations>
@@ -155,7 +155,7 @@
     <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(EMF)/org.openmdx.security.realm1.uml#_3C7B8A60016D3FC606E402DA"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_nSxF0k0kEd-LLraCh8Tbyw" x="194" y="58" width="379"/>
   </children>
-  <children xmi:type="notation:Shape" xmi:id="_smzyUE0kEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
+  <children xmi:type="notation:Shape" xmi:id="_smzyUE0kEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_snDC4E0kEd-LLraCh8Tbyw" source="Shortcut">
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_snDC4U0kEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
     </eAnnotations>
@@ -185,7 +185,7 @@
     <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(EMF)/org.openmdx.security.realm1.uml#_3C7B8A60016D3FC602E60397"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_smzyUk0kEd-LLraCh8Tbyw" x="208" y="469" width="242"/>
   </children>
-  <children xmi:type="notation:Shape" xmi:id="_COxZQE0lEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
+  <children xmi:type="notation:Shape" xmi:id="_COxZQE0lEd-LLraCh8Tbyw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_CO_bsE0lEd-LLraCh8Tbyw" source="Shortcut">
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_CO_bsU0lEd-LLraCh8Tbyw" key="modelID" value="UMLClass"/>
     </eAnnotations>
@@ -213,7 +213,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_COxZQU0lEd-LLraCh8Tbyw"/>
     <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(EMF)/org.openmdx.security.realm1.uml#_3C7B8A60016D3FC602CD0106"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_COxZQk0lEd-LLraCh8Tbyw" x="1226" y="205"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_COxZQk0lEd-LLraCh8Tbyw" x="1226" y="205" width="126" height="465"/>
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_dlJJ8U0kEd-LLraCh8Tbyw"/>
   <styles xmi:type="uml2tools.notation:U2TDiagramCanonicalStyle" xmi:id="_dlJJ8k0kEd-LLraCh8Tbyw"/>
@@ -310,5 +310,37 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_KzLqUk0lEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Association" href="../../org.opencrx.security.realm1.uml#_3C7B8A60016D41826973019E"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_KzLqU00lEd-LLraCh8Tbyw" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_3TiJwMNoEeCwM9ZbEbYdjg" type="4005" source="_jV7c0E0kEd-LLraCh8Tbyw" target="_COxZQE0lEd-LLraCh8Tbyw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_3TiJxMNoEeCwM9ZbEbYdjg" type="6003">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3TiJxcNoEeCwM9ZbEbYdjg" x="-59" y="24"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw0MNoEeCwM9ZbEbYdjg" type="6004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw0cNoEeCwM9ZbEbYdjg" x="-28" y="-23"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw0sNoEeCwM9ZbEbYdjg" type="6005">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw08NoEeCwM9ZbEbYdjg" x="29" y="-28"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw1MNoEeCwM9ZbEbYdjg" type="6006">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw1cNoEeCwM9ZbEbYdjg" y="-30"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw1sNoEeCwM9ZbEbYdjg" type="6007">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw18NoEeCwM9ZbEbYdjg" y="-30"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw2MNoEeCwM9ZbEbYdjg" type="6008">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw2cNoEeCwM9ZbEbYdjg" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw2sNoEeCwM9ZbEbYdjg" type="6009">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw28NoEeCwM9ZbEbYdjg" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_3Tiw3MNoEeCwM9ZbEbYdjg" type="6019">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_3Tiw3cNoEeCwM9ZbEbYdjg" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_3TiJwcNoEeCwM9ZbEbYdjg"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_3TiJwsNoEeCwM9ZbEbYdjg" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Association" href="../../org.opencrx.security.realm1.uml#_3TVVcMNoEeCwM9ZbEbYdjg"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_3TiJw8NoEeCwM9ZbEbYdjg" points="[29, 2, -551, 1]$[581, 37, 1, 36]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_3TnpUMNoEeCwM9ZbEbYdjg" id="(0.8733333333333333,0.5204081632653061)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_3TnpUcNoEeCwM9ZbEbYdjg" id="(0.16,0.896774193548387)"/>
   </edges>
 </notation:Diagram>

@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.15 2010/06/01 10:39:31 wfro Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.18 2011/11/23 13:44:30 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/01 10:39:31 $
+ * Date:        $Date: 2011/11/23 13:44:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
+org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -253,23 +254,19 @@ org.openmdx.base.query.*
 			    <td>&nbsp;<%= modifiedAtAttr  == null ? "Modified at" : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":modifiedAt" ).getLabel() %> <img src='../../images/arrow_down.gif' alt='' /></td>
 			  </tr>
 <%
-        org.opencrx.kernel.building1.cci2.AccountAssignmentInventoryItemQuery
-          accountAssignmentInventoryItemQuery =
-          buildingPkg.createAccountAssignmentInventoryItemQuery();
-        if (
+        org.opencrx.kernel.building1.cci2.AccountAssignmentInventoryItemQuery accountAssignmentInventoryItemQuery =
+        	(org.opencrx.kernel.building1.cci2.AccountAssignmentInventoryItemQuery)org.openmdx.base.persistence.cci.PersistenceHelper.newQuery(
+        		pm.getExtent(org.opencrx.kernel.building1.jmi1.AccountAssignmentInventoryItem.class),
+        		buildingSegment.refGetPath().getDescendant("inventoryItem", ":*", "assignedAccount", ":*")
+        	);
+        if(
              (obj instanceof org.opencrx.kernel.account1.jmi1.Contact) ||
              (obj instanceof org.opencrx.kernel.account1.jmi1.Group) ||
              (obj instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) ||
              (obj instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount)
         ) {
-          accountAssignmentInventoryItemQuery.thereExistsAccount().equalTo(
-            (org.opencrx.kernel.account1.jmi1.Account)obj
-          );
+          accountAssignmentInventoryItemQuery.thereExistsAccount().equalTo(obj);
         }
-        // else all accounts
-        accountAssignmentInventoryItemQuery.identity().like(
-          buildingSegment.refGetPath().getDescendant(new String[]{"inventoryItem", ":*", "assignedAccount", ":*"}).toResourcePattern()
-        );
         accountAssignmentInventoryItemQuery.orderByModifiedAt().descending();
 
         List accountAssignments = null;
@@ -308,7 +305,7 @@ org.openmdx.base.query.*
                   (org.opencrx.kernel.building1.jmi1.InventoryItem)pm.getObjectById(new Path(inventoryItemXri));
                 String inventoryItemHref = "";
                 Action action = new Action(
-                   Action.EVENT_SELECT_OBJECT,
+                   SelectObjectAction.EVENT_ID,
                    new Action.Parameter[]{
                        new Action.Parameter(Action.PARAMETER_OBJECTXRI, inventoryItem.refMofId())
                    },
@@ -338,7 +335,7 @@ org.openmdx.base.query.*
                 }
 %>
               </td>
-              <td><%= (String)(codes.getLongText("org:opencrx:kernel:building1:AccountAssignmentInventoryItem:accountRole", currentLocale, true, true).get(new Short((short)accountAssignmentInventoryItem.getAccountRole()))) %></td>
+              <td><%= (String)(codes.getLongText("accountRoleInventoryItem", currentLocale, true, true).get(new Short((short)accountAssignmentInventoryItem.getAccountRole()))) %></td>
       		    <td><%= accountAssignmentInventoryItem.getValidFrom() != null ? dateFormat.format(accountAssignmentInventoryItem.getValidFrom()) : "" %></td>
       		    <td><%= accountAssignmentInventoryItem.getValidTo()   != null ? dateFormat.format(accountAssignmentInventoryItem.getValidTo())   : "" %></td>
       		    <td><img src='../../images/<%= (accountAssignmentInventoryItem.isDisabled() != null) && (accountAssignmentInventoryItem.isDisabled().booleanValue()) ? "" : "not" %>checked_r.gif' alt='' /></td>

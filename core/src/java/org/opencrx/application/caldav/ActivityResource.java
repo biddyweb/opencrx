@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityResource.java,v 1.8 2010/12/15 16:43:04 wfro Exp $
+ * Name:        $Id: ActivityResource.java,v 1.10 2011/12/16 16:30:22 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 16:43:04 $
+ * Date:        $Date: 2011/12/16 16:30:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,7 +72,10 @@ import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
+import org.opencrx.kernel.backend.ICalendar.AlarmAction;
+import org.opencrx.kernel.home1.jmi1.Reminder;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
@@ -136,7 +139,41 @@ class ActivityResource extends CalDavResource {
     	}    	
     	return uid;
     }
-    		
+
+	//-----------------------------------------------------------------------
+	protected void printAlarms(
+		PrintWriter p,
+		Activity event
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
+        Collection<Reminder> reminders = event.getAssignedReminder();
+        List<String> principalChain = UserObjects.getPrincipalChain(pm);
+        for(Reminder reminder: reminders) {
+        	if(reminder.refGetPath().get(6).equals(principalChain.get(0))) {
+        		p.println("BEGIN:VALARM");
+        		AlarmAction action = AlarmAction.valueOf(reminder.getTriggerAction());
+        		p.println("ACTION:" + action.toString());
+        		long triggerMinutes = (reminder.getTriggerAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
+        		p.println("TRIGGER:" + (triggerMinutes < 0 ? "-" : "+") + "PT" + Math.abs(triggerMinutes) + "M");
+        		p.println("REPEAT:" + (reminder.getAlarmRepeat() == null ? 1 :reminder.getAlarmRepeat()));
+        		p.println("DURATION:PT" + (reminder.getAlarmIntervalMinutes() == null ? 15 :reminder.getAlarmIntervalMinutes()) + "M");
+        		p.println("SUMMARY:" + reminder.getName());
+        		if(reminder.getDescription() != null) {
+        			p.println("DESCRIPTION:" + reminder.getDescription());
+        		}
+        		if(reminder.getAttachUrl() != null) {
+        			if(action == AlarmAction.AUDIO) {
+        				p.println("ATTACH;FMTTYPE=audio/basic:" + reminder.getAttachUrl());
+        			} else {        			
+        				p.println("ATTACH:" + reminder.getAttachUrl());
+        			}
+        		}
+        		p.println("END:VALARM");
+        	}
+        }
+	}
+
+	//-----------------------------------------------------------------------
 	@Override
     public BinaryLargeObject getContent(
     ) {
@@ -260,7 +297,7 @@ class ActivityResource extends CalDavResource {
 	        		BasicException.Code.DEFAULT_DOMAIN,
 	        		BasicException.Code.ASSERTION_FAILURE,
 	        		"Mismatch of activity's external link and ical's UID. Use updateIcal() to fix event.",
-	        		new BasicException.Parameter("activity", activity.refGetPath()),
+	        		new BasicException.Parameter("activity", activity.refGetPath().toXRI()),
 	        		new BasicException.Parameter("externalLink", activity.getExternalLink()),
 	        		new BasicException.Parameter("uid", uid),
 	        		new BasicException.Parameter("ical", ical)
@@ -314,6 +351,7 @@ class ActivityResource extends CalDavResource {
 	            		p.println("URL:" + url);
 	            	}
 	            }
+	            this.printAlarms(p, event);
 	            p.println("END:VEVENT");
 	        }
 	        else if(ical.indexOf("BEGIN:VTODO") >= 0) {
@@ -346,6 +384,7 @@ class ActivityResource extends CalDavResource {
 	            		p.println("URL:" + url);
 	            	}
 	            }
+	            this.printAlarms(p, event);	            
 	            p.println("END:VTODO");                        
 	        }
     	}

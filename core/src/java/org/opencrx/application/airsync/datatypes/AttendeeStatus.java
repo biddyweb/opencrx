@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AttendeeStatus.java,v 1.2 2010/03/02 12:29:09 wfro Exp $
+ * Name:        $Id: AttendeeStatus.java,v 1.3 2011/11/30 11:21:14 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/02 12:29:09 $
+ * Date:        $Date: 2011/11/30 11:21:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,7 +91,7 @@ public enum AttendeeStatus {
 			case 5:
 				return AttendeeStatus.NOT_RESPONDED;
 			default:
-				return AttendeeStatus.RESPONSE_UNKNOWN;
+				return null;
 		}		
 	}
 }

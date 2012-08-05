@@ -542,10 +542,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateLeadParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome Aggancio</_item>
+                        <_item>Nome Lead</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome Aggancio</_item>
+                        <_item>Nome Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -597,10 +597,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateLeadResult:lead" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aggancio</_item>
+                        <_item>Lead</_item>
                       </label>
                       <toolTip>
-                        <_item>Aggancio</_item>
+                        <_item>Lead</_item>
                       </toolTip>
                     </_object>
                     <_content/>

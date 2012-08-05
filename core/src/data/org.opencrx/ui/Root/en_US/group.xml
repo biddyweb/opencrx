@@ -305,7 +305,7 @@
 											<active>true</active>
 											<sortable>false</sortable>
 											<spanRow>2</spanRow>
-											<multiplicity>5</multiplicity> <!-- at most 5 values can be stored -->
+											<multiplicity>0..5</multiplicity> <!-- at most 5 values can be stored -->
 											<toolTip>
 												<_item>Roles</_item>
 											</toolTip>

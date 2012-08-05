@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="lib" path="lib/db2jcc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/db2jcc_javax.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/db2jcc_license_cu.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

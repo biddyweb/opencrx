@@ -214,13 +214,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:contributionSource">
+										<_object>
+											<toolTip>
+												<_item>Beitragsquellen</_item>
+											</toolTip>
+											<label>
+												<_item>Beitragsquellen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:SalesVolumeBudget:contractType">
 										<_object>
 											<toolTip>
-												<_item>Vertragstyp</_item>
+												<_item>Vertragsart</_item>
 											</toolTip>
 											<label>
-												<_item>Vertragstyp</_item>
+												<_item>Vertragsart</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -316,7 +327,7 @@
 												<_item>Position (Masseinheit)</_item>
 											</toolTip>
 											<label>
-												<_item>Position (Masseinheit</_item>
+												<_item>Position (Masseinheit)</_item>
 											</label>
 											<iconKey>QuantityBasedSalesVolumeBudgetPosition</iconKey>
 										</_object>

@@ -236,11 +236,6 @@
                 <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
               </qualifier>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_ftiRwkvPEd-5Nc4fT0o0ug" name="accessGrantedByParent" isReadOnly="true" isDerived="true" association="_fthqsEvPEd-5Nc4fT0o0ug">
-              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_25R_oEvPEd-5Nc4fT0o0ug" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_25R_oUvPEd-5Nc4fT0o0ug"/>
-            </ownedAttribute>
             <ownedOperation xmi:id="_3C7B8A60016D415C9CFD01E0" name="setOwningUser">
               <ownedParameter xmi:id="_IJVV597NEdmKapscEl8OLg" type="_3C7B8A60016D415C99980367" direction="return"/>
               <ownedParameter xmi:id="_3C7B8A60016D415C9D1E00F7" name="in" type="_3C7B8A60016D415C9CAE038B" direction="inout"/>
@@ -735,19 +730,19 @@
             <ownedAttribute xmi:id="_RbRrANupEdypesIUvQWuIA" name="hasDeletePermission">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_aTL1INvQEdypesIUvQWuIA" name="membershipForRead">
+            <ownedAttribute xmi:id="_aTL1INvQEdypesIUvQWuIA" name="grantedPermissionsRead">
               <eAnnotations xmi:id="_dSEoINvQEdypesIUvQWuIA" source="http://www.eclipse.org/uml2/2.0.0/UML">
                 <details xmi:id="_q_fLoNvWEdypesIUvQWuIA" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_e_AEANvQEdypesIUvQWuIA" name="membershipForUpdate">
+            <ownedAttribute xmi:id="_e_AEANvQEdypesIUvQWuIA" name="grantedPermissionsUpdate">
               <eAnnotations xmi:id="_mrVdkNvQEdypesIUvQWuIA" source="http://www.eclipse.org/uml2/2.0.0/UML">
                 <details xmi:id="_roBLQNvWEdypesIUvQWuIA" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_gkBhENvQEdypesIUvQWuIA" name="membershipForDelete">
+            <ownedAttribute xmi:id="_gkBhENvQEdypesIUvQWuIA" name="grantedPermissionsDelete">
               <eAnnotations xmi:id="_nRVGkNvQEdypesIUvQWuIA" source="http://www.eclipse.org/uml2/2.0.0/UML">
                 <details xmi:id="_sRciwNvWEdypesIUvQWuIA" key="list"/>
               </eAnnotations>
@@ -787,15 +782,18 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_BuncETQVEd2GI7EtD8fC5A" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_BuncEDQVEd2GI7EtD8fC5A"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_2ktIYDQUEd2GI7EtD8fC5A" name="referenceFilter">
+            <ownedAttribute xmi:id="_2ktIYDQUEd2GI7EtD8fC5A" name="exportParams">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_CKCMwTQVEd2GI7EtD8fC5A" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_CKCMwDQVEd2GI7EtD8fC5A"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_owtEkOW5EeC7ne6t-wEjrw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_owuSsOW5EeC7ne6t-wEjrw"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_Di2B00vIEd-aE-iNjWF8xw" name="template" association="_Di0MoEvIEd-aE-iNjWF8xw">
               <type xmi:type="uml:Class" href="org.opencrx.kernel.document1.uml#_3C7B8A60016D3F3EBD2F006A"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Fc_aUEvIEd-aE-iNjWF8xw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Fc_aUUvIEd-aE-iNjWF8xw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_p5HeIOW5EeC7ne6t-wEjrw" name="locale" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_hzq28DYYEd2-4dZ7aHAoTw" name="ExportItemAdvancedParams">
@@ -855,12 +853,6 @@
             <ownedEnd xmi:id="_ddkaQEvPEd-5Nc4fT0o0ug" name="secureObject" type="_3C7B8A60016D4155CD91035D" association="_ddjzMEvPEd-5Nc4fT0o0ug">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wW20cEvPEd-5Nc4fT0o0ug" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wW20cUvPEd-5Nc4fT0o0ug"/>
-            </ownedEnd>
-          </packagedElement>
-          <packagedElement xmi:type="uml:Association" xmi:id="_fthqsEvPEd-5Nc4fT0o0ug" name="SecureObjectHasGrantingParent" memberEnd="_fthqsUvPEd-5Nc4fT0o0ug _ftiRwkvPEd-5Nc4fT0o0ug" isDerived="true">
-            <ownedEnd xmi:id="_fthqsUvPEd-5Nc4fT0o0ug" name="secureObject" type="_3C7B8A60016D4155CD91035D" association="_fthqsEvPEd-5Nc4fT0o0ug">
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0_41EEvPEd-5Nc4fT0o0ug" value="*"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0_41EUvPEd-5Nc4fT0o0ug"/>
             </ownedEnd>
           </packagedElement>
         </packagedElement>

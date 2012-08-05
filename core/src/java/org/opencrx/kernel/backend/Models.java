@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Models.java,v 1.18 2009/04/21 11:22:00 wfro Exp $
+ * Name:        $Id: Models.java,v 1.19 2011/12/18 22:16:17 wfro Exp $
  * Description: Models
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 11:22:00 $
+ * Date:        $Date: 2011/12/18 22:16:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +63,7 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.model1.cci2.ParameterQuery;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 
 public class Models extends AbstractImpl {
 
@@ -83,6 +84,20 @@ public class Models extends AbstractImpl {
 	) {
 		
 	}
+	
+    //-----------------------------------------------------------------------
+    /**
+     * @return Returns the Models segment.
+     */
+    public org.opencrx.kernel.model1.jmi1.Segment getModelSegment(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        return (org.opencrx.kernel.model1.jmi1.Segment) pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.model1").getDescendant("provider", providerName, "segment", segmentName)
+        );
+    }
 	
     //-------------------------------------------------------------------------
     public String getOperationSignature(

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateProductWizard.jsp,v 1.14 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: CreateProductWizard.jsp,v 1.16 2011/11/02 16:30:55 cmu Exp $
  * Description: CreateProduct wizard
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2011/11/02 16:30:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -300,7 +300,7 @@ org.openmdx.base.naming.*
 	        pm.currentTransaction().begin();
 	        productSegment.addProduct(
 	            false,
-	            org.opencrx.kernel.backend.Products.getInstance().getUidAsString(),
+	            org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 	            product
 	        );
 	        pm.currentTransaction().commit();
@@ -325,7 +325,7 @@ org.openmdx.base.naming.*
 				    basePrice.setDiscount((java.math.BigDecimal)formValues.get("productBasePrice.discount." + i));
 				    product.addBasePrice(
 				        false,
-				        org.opencrx.kernel.backend.Products.getInstance().getUidAsString(),
+				        org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 				        basePrice
 				    );
 			    }
@@ -411,13 +411,13 @@ org.openmdx.base.naming.*
 											for(Iterator j = ((List)formValues.get("productBasePrice.usage." + i)).iterator(); j.hasNext(); ) {
 												Short usage = (Short)j.next();
 %>
-												<%= app.getCodes().getShortText("org:opencrx:kernel:product1:AbstractProductPrice:usage", app.getCurrentLocaleAsIndex(), true, true).get(usage) %>
+												<%= app.getCodes().getShortText("usageproductbaseprice", app.getCurrentLocaleAsIndex(), true, true).get(usage) %>
 <%
 											}
 %>
 											<input type="hidden" name="productBasePrice.usage.<%= i %>" value="<%= formValues.get("productBasePrice.usage." + i) %>"/>
 										</td>
-										<td><%= app.getCodes().getShortText("org:opencrx:kernel:product1:AbstractProductPrice:priceCurrency", app.getCurrentLocaleAsIndex(), true, true).get(formValues.get("productBasePrice.priceCurrency." + i)) %><input type="hidden" name="productBasePrice.priceCurrency.<%= i %>" value="<%= formValues.get("productBasePrice.priceCurrency." + i) %>"/></td>
+										<td><%= app.getCodes().getShortText("currency", app.getCurrentLocaleAsIndex(), true, true).get(formValues.get("productBasePrice.priceCurrency." + i)) %><input type="hidden" name="productBasePrice.priceCurrency.<%= i %>" value="<%= formValues.get("productBasePrice.priceCurrency." + i) %>"/></td>
 										<td><input class="valueR" type="text" name="productBasePrice.quantityFrom.<%= i %>" value="<%= quantityFrom == null ? "" : quantityFrom %>"/></td>
 										<td><input class="valueR" type="text" name="productBasePrice.quantityTo.<%= i %>" value="<%= quantityTo == null ? "" : quantityTo %>"/></td>
 										<td><input class="valueR" type="text" name="productBasePrice.price.<%= i %>" value="<%= price == null ? "" : price %>"/></td>

@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateCampaignWizard.jsp,v 1.21 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: CreateCampaignWizard.jsp,v 1.24 2011/10/06 21:13:24 wfro Exp $
  * Description: CreateCampaignWizard
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/10/06 21:13:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,8 @@
 java.util.*,
 java.io.*,
 java.text.*,
-org.opencrx.kernel.backend.Activities,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.base.text.conversion.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
@@ -89,8 +90,8 @@ org.openmdx.base.naming.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	String formName = "CreateActivityTrackerForm";
-	String wizardName = "CreateCampaignWizard.jsp";
+	String FORM_NAME = "CreateCampaignForm";
+	String WIZARD_NAME = "CreateCampaignWizard.jsp";
 
 	// Get Parameters
 	String command = request.getParameter("Command");
@@ -99,7 +100,7 @@ org.openmdx.base.naming.*
 	boolean actionCancel = "Cancel".equals(command);
 
 	if(actionCancel) {
-	  session.setAttribute(wizardName, null);
+	  session.setAttribute(WIZARD_NAME, null);
 		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
 		response.sendRedirect(
 			request.getContextPath() + "/" + nextAction.getEncodedHRef()
@@ -117,11 +118,8 @@ org.openmdx.base.naming.*
 <%
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
-	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-	    (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-	        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-		);
-	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
+	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
+	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(FORM_NAME);
 	org.openmdx.portal.servlet.control.FormControl form = new org.openmdx.portal.servlet.control.FormControl(
 		formDefinition.refGetPath().getBase(),
 		app.getCurrentLocaleAsString(),
@@ -139,9 +137,14 @@ org.openmdx.base.naming.*
 	if(actionCreate) {
 	    String name = (String)formValues.get("org:opencrx:kernel:activity1:ActivityGroup:name");
 	    String description = (String)formValues.get("org:opencrx:kernel:activity1:ActivityGroup:description");
+	    org.opencrx.kernel.activity1.jmi1.ActivityType activityType = formValues.get("org:opencrx:kernel:activity1:ActivityCreator:activityType") != null ?
+   	    	(org.opencrx.kernel.activity1.jmi1.ActivityType)pm.getObjectById(
+     	    	formValues.get("org:opencrx:kernel:activity1:ActivityCreator:activityType")
+     	    ) : null;
 	    if(
 	        (name != null) &&
-	        (name.length() > 0)
+	        (name.length() > 0) &&
+	        activityType != null
 	    ) {
 			org.opencrx.security.realm1.jmi1.PrincipalGroup usersPrincipalGroup =
 				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
@@ -171,115 +174,19 @@ org.openmdx.base.naming.*
 	            providerName,
 	            segmentName
 	        );
-	    	// ActivityCreator Mailing
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_MAILINGS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_MAILINGS,
-		    	    Activities.ACTIVITY_CLASS_MAILING,
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
-		    	),
+	    	// ActivityCreator for specified activityType
+	    	org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = Activities.getInstance().initActivityCreator(
+	    	    name + " - " + activityType.getName(),
+	    	    activityType,
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
-	    	);
-	    	// ActivityCreator Phone
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS,
-		    	    Activities.ACTIVITY_CLASS_PHONE_CALL,
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
-	    	);
-	    	// ActivityCreator E-Mail
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_EMAILS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_EMAILS,
-		    	    Activities.ACTIVITY_CLASS_EMAIL,
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_EMAILS,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
-	    	);
-	    	// ActivityCreator Meeting
-	    	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_MEETINGS,
-		    	    Activities.ACTIVITY_CLASS_MEETING,
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
-	    	);
-	    	// ActivityCreator SalesVisit
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_SALES_VISITS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.ACTIVITY_TYPE_NAME_SALES_VISITS,
-		    	    Activities.ACTIVITY_CLASS_SALES_VISIT,
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    pm,
-		    	    providerName,
-		    	    segmentName
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers,
-	    	    pm,
-	    	    providerName,
-	    	    segmentName
+	    	    allUsers
 	    	);
 	    	// Update tracker
 	        pm.currentTransaction().begin();
 	    	activityTracker.setDescription(description);
-	    	activityTracker.setDefaultCreator(defaultCreator);
+	    	if(activityTracker.getDefaultCreator() == null) {
+	    		activityTracker.setDefaultCreator(activityCreator);
+	    	}
 	    	pm.currentTransaction().commit();
 	    	// Forward to tracker
 		    Action nextAction = new ObjectReference(
@@ -305,14 +212,14 @@ org.openmdx.base.naming.*
 	);
 %>
 <br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 	<input type="Hidden" id="Command" name="Command" value="" />
 	<table cellspacing="8" class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= formName %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
 <%
 					form.paint(
 						p,
@@ -329,8 +236,8 @@ org.openmdx.base.naming.*
 	</table>
 </form>
 <script language="javascript" type="text/javascript">
-	Event.observe('<%= formName %>', 'submit', function(event) {
-		$('<%= formName %>').request({
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
 			onFailure: function() { },
 			onSuccess: function(t) {
 				$('UserDialog').update(t.responseText);
@@ -340,8 +247,8 @@ org.openmdx.base.naming.*
 	});
 </script>
 <%
-p.close(false);
-if(pm != null) {
-	pm.close();
-}
+	p.close(false);
+	if(pm != null) {
+		pm.close();
+	}	
 %>

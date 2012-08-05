@@ -387,6 +387,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:emailHint" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Hinweis E-Mail</_item>
+											</toolTip>
+											<label>
+												<_item>Hinweis E-Mail</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:party" _operation="create">
                     <_object>
                       <label>

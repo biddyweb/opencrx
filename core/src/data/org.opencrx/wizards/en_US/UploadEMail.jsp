@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadEMail.jsp,v 1.1 2010/09/17 13:05:01 wfro Exp $
+ * Name:        $Id: UploadEMail.jsp,v 1.2 2011/11/24 13:38:07 cmu Exp $
  * Description: UploadEMail
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/17 13:05:01 $
+ * Date:        $Date: 2011/11/24 13:38:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -251,6 +251,12 @@ org.opencrx.kernel.backend.*
 									);
 								}
 								catch(Exception e) {
+									ServiceException ex = new ServiceException(e);
+									ex.log();
+									out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
+									PrintWriter pw = new PrintWriter(out);
+									ex.printStackTrace(pw);
+									out.println("</pre></p>");
 									try {
 										pm.currentTransaction().rollback();
 									} catch(Exception e0) {}

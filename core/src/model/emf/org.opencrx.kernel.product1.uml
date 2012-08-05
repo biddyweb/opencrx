@@ -350,17 +350,8 @@
             <generalization xmi:id="_TcNWIOrzEdm0QOOG5_-fRw">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D42040D6700C9"/>
             </generalization>
-            <generalization xmi:id="_vLP48OsHEdmYYfk6fpDPWg">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
             <generalization xmi:id="_wGXdYOsHEdmYYfk6fpDPWg">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
-            <generalization xmi:id="_bQ4DMDmYEd2iOrWJxBQRzQ">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D414D676C01DB"/>
-            </generalization>
-            <generalization xmi:id="_cvf9UDmYEd2iOrWJxBQRzQ">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D40E326B0024B"/>
             </generalization>
             <ownedAttribute xmi:id="_z-s7gOr0Edm0QOOG5_-fRw" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
@@ -596,17 +587,11 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_2_OuUCJMEdqrXMXKMYINcw" name="ProductConfigurationTypeSet">
             <eAnnotations xmi:id="_VJlNECJNEdqrXMXKMYINcw" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-            <generalization xmi:id="_0k9AECJTEdqrXMXKMYINcw">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
             <generalization xmi:id="_0-KxUCJTEdqrXMXKMYINcw">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
             </generalization>
-            <generalization xmi:id="_mLkEkDmXEd2iOrWJxBQRzQ">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D414D676C01DB"/>
-            </generalization>
-            <generalization xmi:id="_rZ8N8DmXEd2iOrWJxBQRzQ">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D40E326B0024B"/>
+            <generalization xmi:id="_2WN_QOmvEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_-A9rsSJMEdqrXMXKMYINcw" name="configurationType" type="_69eFgCJMEdqrXMXKMYINcw" aggregation="composite" association="_-A9rsCJMEdqrXMXKMYINcw">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-BDyUiJMEdqrXMXKMYINcw" value="1"/>
@@ -626,6 +611,9 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_69eFgCJMEdqrXMXKMYINcw" name="ProductConfigurationType">
             <generalization xmi:id="_2Vaf0CJNEdqrXMXKMYINcw" general="_psrSEOr0Edm0QOOG5_-fRw"/>
+            <generalization xmi:id="_zMf1QOmvEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
+            </generalization>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_-A9rsCJMEdqrXMXKMYINcw" name="ProductConfigurationTypeSetContainsConfigurationType" memberEnd="_-A9rsSJMEdqrXMXKMYINcw _-BDyUCJMEdqrXMXKMYINcw">
             <ownedEnd xmi:id="_-BDyUCJMEdqrXMXKMYINcw" name="configurationTypeSet" type="_2_OuUCJMEdqrXMXKMYINcw" association="_-A9rsCJMEdqrXMXKMYINcw"/>
@@ -638,6 +626,9 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_eubncCJNEdqrXMXKMYINcw" name="ProductConfiguration">
             <generalization xmi:id="_wd-yYCJNEdqrXMXKMYINcw" general="_psrSEOr0Edm0QOOG5_-fRw"/>
+            <generalization xmi:id="_viXF0OmvEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
+            </generalization>
             <ownedAttribute xmi:id="_I_ag0SJOEdqrXMXKMYINcw" name="configType" type="_69eFgCJMEdqrXMXKMYINcw" association="_I_ag0CJOEdqrXMXKMYINcw">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_I_ag1CJOEdqrXMXKMYINcw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_I_ag0yJOEdqrXMXKMYINcw"/>
@@ -820,6 +811,9 @@
             </generalization>
             <generalization xmi:id="_V_yZQIm8EdqT-YHfpV38vQ">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            </generalization>
+            <generalization xmi:id="_aF0PQOmwEeCj0c0O31mWrQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_DXaI4Im8EdqT-YHfpV38vQ" name="quantityFrom">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B631E003C"/>
