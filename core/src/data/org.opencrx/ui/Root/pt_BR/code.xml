@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:AbstractEntry:identity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Valor do caminho</_item>
+                        <_item>Valor do percurso</_item>
                       </label>
                       <toolTip>
-                        <_item>Valor do caminho</_item>
+                        <_item>Valor do percurso</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -143,6 +143,24 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Profiles</_item>
+											</toolTip>
+											<label>
+												<_item>»Export Profiles</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>550</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome">
 										<_object>
@@ -1091,7 +1109,7 @@
 											<label>
 												<_item>Last Accessed</_item>
 											</label>
-											<iconKey>org:opencrx:kernel:home1:AccessHistory</iconKey>
+											<iconKey>AccessHistory</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1458,6 +1476,25 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<!-- ExportProfile -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Profile</_item>
+											</toolTip>
+											<label>
+												<_item>Export Profile</_item>
+											</label>
+											<iconKey>ExportProfile</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in Details Tab-->
+									<!--Element Definitions-->
+									<!-- customized in common.xml -->
 
 									<!-- Operations -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem">

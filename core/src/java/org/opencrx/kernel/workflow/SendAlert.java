@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SendAlert.java,v 1.19 2008/02/14 15:15:38 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: SendAlert.java,v 1.20 2008/04/01 12:33:02 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/14 15:15:38 $
+ * Date:        $Date: 2008/04/01 12:33:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

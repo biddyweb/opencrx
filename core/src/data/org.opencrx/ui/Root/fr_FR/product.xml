@@ -22,17 +22,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:allProduct" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>»Vue d&apos;ensemble produits</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Vue d&apos;ensemble produits</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="create">
                     <_object>
                       <label>
@@ -43,6 +32,42 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Produits</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Produits</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Produits (désactivé)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Produits (désactivé)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:configurationTypeSet" _operation="create">
                     <_object>
@@ -256,6 +281,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:productPhase" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Phases produit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Phases produit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:relatedProduct" _operation="create">
                     <_object>
                       <label>
@@ -329,6 +365,72 @@
                       </label>
                       <toolTip>
                         <_item>Poids net en kilogrammes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Phase produit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Phase produit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nom</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Phase clé produit</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Phase clé produit</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Valide depuis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Valide depuis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Valide jusqu&apos;à</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Valide jusqu&apos;à</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Description</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Description</_item>
                       </toolTip>
                     </_object>
                     <_content/>

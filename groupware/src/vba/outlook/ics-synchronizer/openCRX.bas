@@ -1,11 +1,11 @@
 Attribute VB_Name = "openCRX"
 '* ====================================================================
 '* Project:     opencrx, http://www.opencrx.org/
-'* Name:        $Id: openCRX.bas,v 1.4 2008/02/22 09:43:37 cmu Exp $
+'* Name:        $Id: openCRX.bas,v 1.5 2008/03/06 13:29:46 cmu Exp $
 '* Description: Outlook ICS Importer/Exporter
-'* Revision:    $Revision: 1.4 $
+'* Revision:    $Revision: 1.5 $
 '* Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-'* Date:        $Date: 2008/02/22 09:43:37 $
+'* Date:        $Date: 2008/03/06 13:29:46 $
 '* ====================================================================
 '*
 '* This software is published under the BSD license
@@ -127,6 +127,7 @@ Const MAX_PATH = 255
 Const CRX_DIR = "openCRX"
 Const CAL_EXT = "ICS"
 Const EOL = vbCr
+Const EOLalt = vbLf
 
 Private Type SYSTEMTIME
    wYear As Integer
@@ -478,6 +479,7 @@ Sub addEvent(ByVal sEvent As String, calendarFolder As Outlook.MAPIFolder)
     Dim oRecipient As recipient
     
     sEvent = Replace(sEvent, vbCrLf, EOL)       'CRLF to EOL
+    sEvent = Replace(sEvent, vbLf, EOL)         'LF to EOL
     sEvent = Replace(sEvent, "\n", EOL)         'escaped chars as per section 4.3.11 RFC 2445
     sEvent = Replace(sEvent, EOL & Chr(32), "") 'ignored when unfolding as per section 4.1 RFC 2445
     
@@ -581,6 +583,7 @@ Sub importICS(ByVal filename As String, calendarFolder As Outlook.MAPIFolder)
         If sEvent <> "" Then
             Call addEvent(sEvent, calendarFolder)
         Else: done = True
+        sEvent = ""
         End If
     Loop Until done
 

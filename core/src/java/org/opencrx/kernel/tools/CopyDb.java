@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.27 2008/02/11 10:48:55 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.28 2008/05/07 21:59:15 wfro Exp $
  * Description: Convert database RID columns from numeric to string format
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/11 10:48:55 $
+ * Date:        $Date: 2008/05/07 21:59:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,7 +83,6 @@ import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Databa
 import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.LayerConfigurationEntries;
 import org.openmdx.compatibility.base.exception.StackedException;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.text.StringBuilders;
 import org.openmdx.model1.accessor.basic.spi.Model_1;
 
 public class CopyDb {
@@ -93,10 +92,10 @@ public class CopyDb {
         java.sql.Clob clob
     ) throws IOException, SQLException {
         Reader reader = clob.getCharacterStream();
-        CharSequence s = StringBuilders.newStringBuilder();
+        StringBuilder s = new StringBuilder();
         int c;
         while((c = reader.read()) != -1) {
-            StringBuilders.asStringBuilder(s).append((char)c);
+            s.append((char)c);
         }
         return s.toString();        
     }
@@ -117,53 +116,23 @@ public class CopyDb {
     
     //---------------------------------------------------------------------------
     private static String mapColumnName(
+        Connection conn,
         String dbObject,
         String columnName
-    ) {
-        return columnName.toUpperCase();
-    }
-    
-    //---------------------------------------------------------------------------
-    private static boolean isTimestampStoredAsString(
-        String columnName,
-        Object columnValue
-    ) {
-        if(!(columnValue instanceof String)) {
-            return false;
-        }
-        String t = columnValue.toString();
-        if(
-            "date_of_day".equalsIgnoreCase(columnName) ||
-            "user_date0".equalsIgnoreCase(columnName) ||
-            "user_date1".equalsIgnoreCase(columnName) ||
-            "user_date2".equalsIgnoreCase(columnName) ||
-            "user_date3".equalsIgnoreCase(columnName) ||
-            "user_date4".equalsIgnoreCase(columnName) ||
-            "date_value".equalsIgnoreCase(columnName)
-        ) {
-            return t.length() == 8;
+    ) throws SQLException {
+        String databaseProductName = conn.getMetaData().getDatabaseProductName();
+        if("HSQL Database Engine".equals(databaseProductName)) {
+            String mappedColumnName = columnName.toUpperCase();
+            if("POSITION".equals(mappedColumnName)) {
+                return "\"" + mappedColumnName + "\"";
+            }
+            else {
+                return mappedColumnName;
+            }
         }
         else {
-            return
-                (t.length() == 20) &&
-                (t.charAt(8) == 'T') &&
-                (t.charAt(15) == '.') &&
-                (t.charAt(19) == 'Z');
-        }        
-    }
-    
-    //---------------------------------------------------------------------------
-    private static boolean isBooleanStoredAsString(
-        String columnName,
-        Object columnValue
-    ) {
-        if(!(columnValue instanceof String)) {
-            return false;
+            return columnName.toUpperCase();
         }
-        String t = columnValue.toString();
-        return 
-            "##true##".equals(t) ||
-            "##false##".equals(t);        
     }
     
     //---------------------------------------------------------------------------
@@ -186,6 +155,9 @@ public class CopyDb {
             }
             else if(databaseProductName.startsWith("DB2/")) {
                 return Boolean.valueOf("Y".equals(columnValue));
+            }
+            else if("HSQL Database Engine".equals(databaseProductName)) {
+                return columnValue;                
             }
             else if("Oracle".equals(databaseProductName)) {      
                 return Boolean.valueOf(((Number)columnValue).intValue() == 1);
@@ -254,8 +226,8 @@ public class CopyDb {
             while(frs.next()) {
                 // Read row from source and prepare INSERT statement
                 String statement = "INSERT INTO " + namespaceTarget[0] + "_" + dbObject + (useSuffix ? namespaceTarget[1] : "") + " ";
-                List statementParameters = new ArrayList();
-                List processTargetColumnNames = new ArrayList();
+                List<Object> statementParameters = new ArrayList<Object>();
+                List<String> processTargetColumnNames = new ArrayList<String>();
                 for(
                     int j =  0;
                     j < rsm.getColumnCount();
@@ -264,6 +236,7 @@ public class CopyDb {
                     String columnName = rsm.getColumnName(j+1);                    
                     if(frs.getObject(columnName) != null) {
                         String mappedColumnName = mapColumnName(
+                            connTarget,
                             dbObject, 
                             columnName 
                         );
@@ -392,7 +365,7 @@ public class CopyDb {
             System.out.println("Processing tables");
             System.out.println(dbObjects);
             
-            Set processedDbObjects = new HashSet();
+            Set<String> processedDbObjects = new HashSet<String>();
             for(                  
                 int i = 0;
                 (i < dbObjects.size()) && (i <= endWithDbObject);
@@ -664,7 +637,7 @@ public class CopyDb {
         "SUBJECT"        
     };
         
-    static final Set BOOLEAN_COLUMNS = new HashSet(
+    static final Set<String> BOOLEAN_COLUMNS = new HashSet<String>(
         Arrays.asList(
             new String[]{
                 "DISABLED",

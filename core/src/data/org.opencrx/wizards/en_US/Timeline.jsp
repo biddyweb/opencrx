@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Timeline.jsp,v 1.5 2007/12/14 15:23:08 wfro Exp $
+ * Name:        $Id: Timeline.jsp,v 1.11 2008/06/26 00:34:34 wfro Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/14 15:23:08 $
+ * Date:        $Date: 2008/06/26 00:34:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,10 +76,19 @@ org.openmdx.compatibility.base.naming.*,
 org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*
 " %><%
-  request.setCharacterEncoding("UTF-8");
-  ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-  ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  Texts_1_0 texts = app.getTexts();
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+    String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	if(objectXri == null || app == null) {
+		response.sendRedirect(
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+		);
+		return;
+	}
+	Texts_1_0 texts = app.getTexts();
+	javax.jdo.PersistenceManager pm = app.getPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
@@ -102,14 +111,8 @@ org.openmdx.application.log.*
 <body>
 <%
 	try {
-  	RefPackage_1_0 dataPkg = app.getDataPackage();
-    String objectXri = request.getParameter("xri");
-    if (objectXri == null) {
-      objectXri = view.getObjectReference().refMofId();
-    }
-    RefObject_1_0 obj = (RefObject_1_0)dataPkg.refObject(objectXri);
-    //Path objectPath = new Path(view.getObjectReference().refMofId());
-    Path objectPath = new Path(obj.refMofId());
+    RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+    Path objectPath = obj.refGetPath();
     String providerName = objectPath.get(2);
     String segmentName = objectPath.get(4);
 
@@ -125,7 +128,7 @@ org.openmdx.application.log.*
         filterComponent = "/filter/" + URLEncoder.encode(activityFilterGroup.getName(), "UTF-8");
       }
       // set obj to parent object
-      obj = (RefObject_1_0)dataPkg.refObject(new Path(activityFilterGroup.refMofId()).getParent().getParent().toXri());
+      obj = (RefObject_1_0)pm.getObjectById(new Path(activityFilterGroup.refMofId()).getParent().getParent());
     }
     else if (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal) {
       org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal activityFilterGlobal =
@@ -167,8 +170,8 @@ org.openmdx.application.log.*
       groupComponent = "/userhome/" + URLEncoder.encode(obj.refGetPath().getBase(), "UTF-8");
     }
     if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
-		String target = 
-			"/opencrx-ical-" + providerName + "/ical?id=" + 
+		String target =
+			"/opencrx-ical-" + providerName + "/ical?id=" +
 			providerName + "/" + segmentName +
 			groupComponent + filterComponent +
 			"&resource=activities.html&user.locale=" + URLEncoder.encode(app.getCurrentLocaleAsString()) + "&user.tz=" + URLEncoder.encode(app.getCurrentTimeZone());
@@ -195,7 +198,7 @@ org.openmdx.application.log.*
     pw.println(e0.getCause());
     out.println("</pre>");
     AppLog.warning("Error launching timeline", "Wizard Timeline.jsp");
-    AppLog.warning(e0.getMessage(), e0.getCause(), 1);
+    AppLog.warning(e0.getMessage(), e0.getCause());
   }
 
 %>

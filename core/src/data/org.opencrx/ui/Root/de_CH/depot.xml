@@ -1455,6 +1455,14 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;&amp;nbsp;&amp;nbsp;Einfache Buchungen</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
@@ -1463,6 +1471,14 @@
                       <toolTip>
                         <_item>Periodenende</_item>
                       </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:25" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;&amp;nbsp;&amp;nbsp;Einfache Buchungen</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -1532,6 +1548,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimpleBop" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Anfangssaldo</_item>
+											</toolTip>
+											<label>
+												<_item>Anfangssaldo</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceDebit" _operation="create">
                     <_object>
                       <label>
@@ -1565,6 +1592,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimple" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Schlusssaldo</_item>
+											</toolTip>
+											<label>
+												<_item>Schlusssaldo</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemDebit" _operation="create">
                     <_object>
                       <label>

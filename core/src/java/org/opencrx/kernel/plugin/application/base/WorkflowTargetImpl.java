@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowTargetImpl.java,v 1.2 2007/12/25 17:15:54 wfro Exp $
+ * Name:        $Id: WorkflowTargetImpl.java,v 1.3 2008/04/03 12:24:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:54 $
+ * Date:        $Date: 2008/04/03 12:24:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,8 +58,8 @@ package org.opencrx.kernel.plugin.application.base;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class WorkflowTargetImpl {
@@ -82,7 +82,7 @@ public class WorkflowTargetImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult executeWorkflow(
         org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             WfProcessInstance wfInstance = this.getBackend().getWorkflows().executeWorkflow(
                  this.current.refGetPath(),
@@ -98,7 +98,7 @@ public class WorkflowTargetImpl {
             ); 
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }
     }
     

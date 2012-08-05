@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Search.jsp,v 1.4 2007/12/16 02:23:54 wfro Exp $
+ * Name:        $Id: Search.jsp,v 1.10 2008/06/26 08:43:46 wfro Exp $
  * Description: Search.jsp
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/16 02:23:54 $
+ * Date:        $Date: 2008/06/26 08:43:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,10 +75,18 @@ org.openmdx.compatibility.base.naming.*,
 org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*
 " %><%
-  request.setCharacterEncoding("UTF-8");
-  ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-  ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  Texts_1_0 texts = app.getTexts();
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	if(app == null) {
+		response.sendRedirect(
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+		);
+		return;
+	}
+	javax.jdo.PersistenceManager pm = app.getPmData();
+	Texts_1_0 texts = app.getTexts();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
@@ -98,30 +106,48 @@ org.openmdx.application.log.*
 <%  
 	  try {
 		String searchExpression = request.getParameter("searchExpression");
-		Action nextAction = view.getObjectReference().getSelectObjectAction();
-		RefPackage_1_1 dataPkg = app.getDataPackage();
-		javax.jdo.PersistenceManager pm = dataPkg.refPersistenceManager();
-		org.opencrx.kernel.home1.jmi1.UserHome userHome = 
-			(org.opencrx.kernel.home1.jmi1.UserHome)dataPkg.refObject(app.getUserHomeIdentity().toXri());
-		org.opencrx.kernel.home1.jmi1.SearchResult searchResult = null;
-		try {
-			pm.currentTransaction().begin();
-			searchResult = userHome.searchBasic(searchExpression);
-			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
-			System.out.println(e.getCause());
+		// Lookup object by its XRI
+		if(searchExpression.startsWith("xri:")) {
 			try {
-				pm.currentTransaction().rollback();
-			} catch(Exception e0) {}
+				RefObject_1_0 object = (RefObject_1_0)pm.getObjectById(new Path(searchExpression));
+				Action nextAction = new ObjectReference(object, app).getSelectObjectAction();
+				response.sendRedirect(
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
+				);
+				return;
+			} catch(Exception e) {}
 		}
-		if((searchResult != null) && (searchResult.getObjectFinder() != null)) {
-			org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = 
-				(org.opencrx.kernel.home1.jmi1.ObjectFinder)dataPkg.refObject(searchResult.getObjectFinder().refMofId());
-			nextAction = new ObjectReference(objectFinder, app).getSelectObjectAction();
+		// Search by expression
+		else {
+			// Get home1 package
+			org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
+			org.opencrx.kernel.home1.jmi1.UserHome userHome = 
+				(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+			org.opencrx.kernel.home1.jmi1.SearchResult searchResult = null;
+			try {
+				pm.currentTransaction().begin();
+				org.opencrx.kernel.home1.jmi1.SearchBasicParams params = homePkg.createSearchBasicParams(searchExpression);
+				searchResult = userHome.searchBasic(params);
+				pm.currentTransaction().commit();
+			}
+			catch(Exception e) {
+				System.out.println(e.getCause());
+				try {
+					pm.currentTransaction().rollback();
+				} catch(Exception e0) {}
+			}
+			if((searchResult != null) && (searchResult.getObjectFinder() != null)) {
+				org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = 
+					(org.opencrx.kernel.home1.jmi1.ObjectFinder)pm.getObjectById(new Path(searchResult.getObjectFinder().refMofId()));
+				Action nextAction = new ObjectReference(objectFinder, app).getSelectObjectAction();
+				response.sendRedirect(
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
+				);
+				return;
+			}
 		}
 		response.sendRedirect(
-			request.getContextPath() + "/" + view.getEncodedHRef(nextAction)
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
 	  }
 	  catch (Exception e) {
@@ -132,7 +158,7 @@ org.openmdx.application.log.*
 		pw.println(e0.getCause());
 		out.println("</pre>");
 		AppLog.warning("Error calling wizard", "Search.jsp");
-		AppLog.warning(e0.getMessage(), e0.getCause(), 1);
+		AppLog.warning(e0.getMessage(), e0.getCause());
 	  }
 %>
   </td></tr></table>

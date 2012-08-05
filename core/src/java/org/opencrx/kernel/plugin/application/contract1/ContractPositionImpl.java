@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ContractPositionImpl.java,v 1.2 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: ContractPositionImpl.java,v 1.4 2008/04/05 22:53:39 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/04/05 22:53:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,8 +56,8 @@
 package org.opencrx.kernel.plugin.application.contract1;
 
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -80,8 +80,7 @@ public class ContractPositionImpl {
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void reprice(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             this.getBackend().getContracts().repriceContractPosition(
                 this.current.refGetPath()
@@ -89,7 +88,7 @@ public class ContractPositionImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     

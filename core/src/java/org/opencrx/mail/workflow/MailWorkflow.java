@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.17 2008/02/12 19:49:06 wfro Exp $
+ * Name:        $Id: MailWorkflow.java,v 1.24 2008/07/02 09:04:02 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:49:06 $
+ * Date:        $Date: 2008/07/02 09:04:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2006, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -62,7 +62,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 import javax.mail.Address;
@@ -87,10 +86,10 @@ import org.opencrx.kernel.home1.jmi1.EmailAccount;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.dataprovider.cci.DataproviderOperations;
 import org.openmdx.compatibility.base.naming.Path;
@@ -114,7 +113,7 @@ public abstract class MailWorkflow
     //-----------------------------------------------------------------------
     protected String getText(
         Message message,
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         RefObject targetObject,
         Path wfProcessInstanceIdentity,
@@ -170,7 +169,7 @@ public abstract class MailWorkflow
                     text += "\nAdditional information:\n";
                     text += this.getText(
                         message, 
-                        rootPkg, 
+                        pm, 
                         referencedObject.refGetPath(),
                         referencedObject, 
                         null, 
@@ -191,13 +190,10 @@ public abstract class MailWorkflow
                 (targetObject instanceof org.opencrx.kernel.activity1.jmi1.Activity) ||
                 (targetObject instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)
             ) {
-                org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-                    (org.opencrx.kernel.activity1.jmi1.Activity1Package)rootPkg.refPackage(
-                        org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
-                    );
+                org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
                 org.opencrx.kernel.activity1.jmi1.Activity activity = targetObject instanceof org.opencrx.kernel.activity1.jmi1.Activity
                     ? (org.opencrx.kernel.activity1.jmi1.Activity)targetObject
-                    : (org.opencrx.kernel.activity1.jmi1.Activity)rootPkg.refObject(new Path(targetObject.refMofId()).getParent().getParent().toXri());
+                    : (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(targetObject.refMofId()).getParent().getParent());
                 org.opencrx.kernel.account1.jmi1.Contact reportingContact = activity.getReportingContact();
                 org.opencrx.kernel.account1.jmi1.Account reportingAccount = activity.getReportingAccount();
                 org.opencrx.kernel.account1.jmi1.Contact assignedTo = activity.getAssignedTo();                
@@ -209,12 +205,12 @@ public abstract class MailWorkflow
                 text += "=======================================================================\n";
                 text += "Reporting Contact:          " + (reportingContact == null ? "N/A" : reportingContact.getFullName()) + "\n";
                 text += "Reporting Account:          " + (reportingAccount == null ? "N/A" : reportingAccount.getFullName()) + "\n";
-                text += "Handler:                    " + (reportingAccount == null ? "N/A" : assignedTo.getFullName()) + "\n";
+                text += "Handler:                    " + (assignedTo == null ? "N/A" : assignedTo.getFullName()) + "\n";
                 text += "=======================================================================\n";
                 int ii = 0;
-                for(Iterator i = activity.getAssignedGroup().iterator(); i.hasNext(); ii++) {
-                    org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignment = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)i.next();
-                    org.opencrx.kernel.activity1.jmi1.ActivityGroup group = assignment.getActivityGroup();
+                Collection<org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment> assignedGroups = activity.getAssignedGroup();
+                for(org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignedGroup: assignedGroups) {
+                    org.opencrx.kernel.activity1.jmi1.ActivityGroup group = assignedGroup.getActivityGroup();
                     if(group != null) {
                         if(ii == 0) {
                             text += "Activity Group:             " + group.getName() + "\n";
@@ -247,18 +243,25 @@ public abstract class MailWorkflow
                 String activityName = activity.getName();
                 String activityDescription = activity.getDescription();
                 String activityDetailedDescription = activity.getDetailedDescription();
+                String messageBody = activity instanceof org.opencrx.kernel.activity1.jmi1.Email
+                    ? ((org.opencrx.kernel.activity1.jmi1.Email)activity).getMessageBody()
+                    : null;
                 text += "Summary:\n";
                 text += (activityName == null ? "N/A" : activityName) + "\n\n";
                 text += "Description:\n";
                 text += (activityDescription == null ? "N/A" : activityDescription) + "\n\n"; 
                 text += "Details:\n";
-                text += (activityDetailedDescription == null ? "N/A" : activityDetailedDescription) + "\n\n"; 
+                text += (activityDetailedDescription == null ? "N/A" : activityDetailedDescription) + "\n\n";
+                if(messageBody != null) {
+                    text += "Message Body:\n";
+                    text += messageBody + "\n\n";                     
+                }
                 text += "=======================================================================\n";
                 text += "\n";
                 org.opencrx.kernel.activity1.cci2.ActivityFollowUpQuery filter = activityPkg.createActivityFollowUpQuery();
                 filter.orderByCreatedAt().ascending();
-                for(Iterator i = activity.getFollowUp(filter).iterator(); i.hasNext(); ) {
-                    org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp = (org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)i.next();
+                Collection<org.opencrx.kernel.activity1.jmi1.ActivityFollowUp> followUps = activity.getFollowUp(filter);
+                for(org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp: followUps) {
                     org.opencrx.kernel.account1.jmi1.Contact followUpAssignedTo = followUp.getAssignedTo();
                     org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition followUpTransition = followUp.getTransition();                
                     text += "-----------------------------------------------------------------------\n";
@@ -293,7 +296,7 @@ public abstract class MailWorkflow
     
     //-----------------------------------------------------------------------
     protected String getSubject(
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         UserHome userHome,  
         Map params
@@ -307,7 +310,7 @@ public abstract class MailWorkflow
         String webAccessUrl = this.getWebAccessUrl(userHome);
         if((params.get("confidential") == null) || !((Boolean)params.get("confidential")).booleanValue()) {
             try {
-                RefObject targetObject = rootPkg.refObject(targetIdentity.toXri());
+                RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
                 if(subject == null) {
                     try {
                         if(targetObject.refGetValue("name") != null) {
@@ -346,7 +349,7 @@ public abstract class MailWorkflow
     protected String setContent(
         Message message,
         Session session,
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
@@ -354,13 +357,13 @@ public abstract class MailWorkflow
     ) throws ServiceException {
         RefObject targetObject = null;
         try {
-            targetObject = rootPkg.refObject(targetIdentity.toXri());
+            targetObject = (RefObject)pm.getObjectById(targetIdentity);
         } catch(Exception e) {}
         String text = null;
         try {
             text = this.getText(
                 message,
-                rootPkg,
+                pm,
                 targetIdentity,
                 targetObject,
                 wfProcessInstanceIdentity,
@@ -378,7 +381,7 @@ public abstract class MailWorkflow
     //-----------------------------------------------------------------------
     protected Address[] setRecipients(
         Message message,
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         EmailAccount eMailAccount
     ) throws ServiceException {
@@ -416,12 +419,11 @@ public abstract class MailWorkflow
     private void createLogEntry(        
         WfProcessInstance wfProcessInstance,
         String name,
-        String description
+        String description,
+        PersistenceManager pm
     ) throws ServiceException  {
         if(wfProcessInstance == null) return;
-        PersistenceManager pm = JDOHelper.getPersistenceManager(wfProcessInstance);     
-        if(pm == null) return;
-        org.opencrx.kernel.home1.jmi1.Home1Package home1Pkg = (org.opencrx.kernel.home1.jmi1.Home1Package)wfProcessInstance.refImmediatePackage();
+        org.opencrx.kernel.home1.jmi1.Home1Package home1Pkg = Utils.getHomePackage(pm);
         WfActionLogEntry logEntry = home1Pkg.getWfActionLogEntry().createWfActionLogEntry();
         try {
             pm.currentTransaction().begin();
@@ -444,13 +446,13 @@ public abstract class MailWorkflow
     
     //-----------------------------------------------------------------------
     public void execute(
-        WfProcessInstance wfProcessInstance
+        WfProcessInstance wfProcessInstance,
+        PersistenceManager pm
     ) throws ServiceException {
         
         Address[] recipients = null;
         Transport transport = null;
         try {             
-            RefPackage_1_0 rootPkg = (RefPackage_1_0)wfProcessInstance.refOutermostPackage();            
             Path wfProcessInstanceIdentity = new Path(wfProcessInstance.refMofId());
             
             // Parameters
@@ -487,7 +489,7 @@ public abstract class MailWorkflow
             }
             
             // User homes
-            UserHome userHome = (UserHome)rootPkg.refObject(new Path(wfProcessInstance.refMofId()).getParent().getParent().toXri());
+            UserHome userHome = (UserHome)pm.getObjectById(new Path(wfProcessInstance.refMofId()).getParent().getParent());
             
             // Target object
             Path targetIdentity = new Path(wfProcessInstance.getTargetObject());            
@@ -511,7 +513,7 @@ public abstract class MailWorkflow
             // can not send
             if(eMailAccountUser == null) {
                 subject = "ERROR: " + this.getSubject(
-                    rootPkg,
+                    pm,
                     targetIdentity,
                     userHome,
                     params
@@ -568,7 +570,7 @@ public abstract class MailWorkflow
                     );
                     recipients = this.setRecipients(
                         message,
-                        rootPkg,
+                        pm,
                         targetIdentity,
                         eMailAccountUser
                     );
@@ -576,7 +578,7 @@ public abstract class MailWorkflow
                         // subject
                         message.setSubject(
                             subject = this.getSubject(
-                                rootPkg,
+                                pm,
                                 targetIdentity,
                                 userHome,
                                 params
@@ -586,7 +588,7 @@ public abstract class MailWorkflow
                         text = this.setContent(
                             message,
                             session,
-                            rootPkg,
+                            pm,
                             targetIdentity,
                             wfProcessInstanceIdentity,
                             userHome,
@@ -614,65 +616,58 @@ public abstract class MailWorkflow
                         this.createLogEntry(
                             wfProcessInstance,
                             "Can not send mail: No recipients",
-                            "#recipients must be > 0"
+                            "#recipients must be > 0",
+                            pm
                         );
                     }
                 } 
                 catch(NamingException e) {
                     AppLog.detail("Can not get mail session", mailServiceName);
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.detail(e0.getMessage(), e0.getCause(), 1);
+                    AppLog.detail(e0.getMessage(), e0.getCause());
                     text = "ERROR: email not sent. Can not get mail session " + mailServiceName + ":\n" + e0.getMessage();
                 }                
             }
             this.createLogEntry(
                 wfProcessInstance,
                 subject,
-                text
+                text,
+                pm
             );
         }        
         catch(AuthenticationFailedException e) {
             AppLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(
-                e0.getMessage(), 
-                e0.getCause(), 
-                1
-            );
+            AppLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: AuthenticationFailedException",
-                e.getMessage()
+                e.getMessage(),
+                pm
             );
             throw e0;
         }
         catch(AddressException e) {
             AppLog.warning("Can not send message to recipients (reason=AddressException)", Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(
-                e0.getMessage(), 
-                e0.getCause(), 
-                1
-            );
+            AppLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: AddressException",
-                e.getMessage()
+                e.getMessage(),
+                pm
             );
             throw e0;
         }
         catch(MessagingException e) {
             AppLog.warning("Can not send message to recipients (reason=MessagingException)", Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(
-                e0.getMessage(), 
-                e0.getCause(), 
-                1
-            );
+            AppLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: MessagingException",
-                e.getMessage()
+                e.getMessage(),
+                pm
             );
             throw e0;
         }

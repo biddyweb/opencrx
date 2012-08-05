@@ -7,8 +7,8 @@ import java.util.List;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.depot1.jmi1.Depot;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -32,7 +32,7 @@ public class DepotHolderImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.OpenDepotResult openDepot(
         org.opencrx.kernel.depot1.jmi1.OpenDepotParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             Depot depot = this.getBackend().getDepots().openDepot(
@@ -61,14 +61,14 @@ public class DepotHolderImpl {
             }
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }
     }
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void assertReports(
         org.opencrx.kernel.depot1.jmi1.AssertReportsParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Collection<Depot> depots = this.current.getDepot();
             for(Depot depot: depots) {
@@ -80,7 +80,7 @@ public class DepotHolderImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();  
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                            
     }
     

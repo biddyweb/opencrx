@@ -33,6 +33,42 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Immobili</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Immobili</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Immobili (disabilitati)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Immobili (disabilitati)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
                     <_object>
                       <label>
@@ -43,6 +79,42 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Complessi Immobiliari</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Complessi Immobiliari</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Complessi Immobiliari (disabilitati)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Complessi Immobiliari (disabilitati)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
@@ -55,16 +127,41 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Voci Magazzino</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Voci Magazzino</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Unita&apos; Immobiliari</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Unita&apos; Immobiliari</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Unita&apos; Immobiliari (disabilitate)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Unita&apos; Immobiliari (disabilitate)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="create">
                     <_object>
@@ -76,6 +173,89 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Infrastrutture</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Infrastrutture</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Infrastrutture (disabilitate)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Infrastrutture (disabilitate)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Voci di Magazzino</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Voci di Magazzino</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Voci Magazzino</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Voci Magazzino</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Voci Magazzino (disabilitate)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Voci Magazzno (disabilitate)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:facility" _operation="create">
                     <_object>
@@ -579,6 +759,17 @@
                       </label>
                       <toolTip>
                         <_item>Connessa da</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Connessa a</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Connessa a</_item>
                       </toolTip>
                     </_object>
                     <_content/>

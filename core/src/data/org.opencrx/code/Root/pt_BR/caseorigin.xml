@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -117,10 +117,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Brainstorming Session</_item>
+                              <_item>Sessão de Brainstorming</_item>
                             </shortText>
                             <longText>
-                              <_item>Brainstorming Session</_item>
+                              <_item>Sessão de Brainstorming</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -139,10 +139,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Fórum</_item>
+                              <_item>Forum</_item>
                             </shortText>
                             <longText>
-                              <_item>Fórum</_item>
+                              <_item>Forum</_item>
                             </longText>
                           </_object>
                           <_content/>

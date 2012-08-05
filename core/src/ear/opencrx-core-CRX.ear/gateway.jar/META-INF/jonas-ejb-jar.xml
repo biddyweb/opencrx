@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jonas-ejb-jar xmlns="http://www.objectweb.org/jonas/ns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.objectweb.org/jonas/ns http://www.objectweb.org/jonas/ns/jonas-ejb-jar_4_0.xsd">
 	<jonas-session>
-		<ejb-name>opencrx_core_CRX_gateway_mandatory</ejb-name>
-		<jndi-name>org.opencrx.core.CRX.mandatory.gateway</jndi-name>
-		<jndi-local-name>org.opencrx.core.CRX.local.mandatory.gateway</jndi-local-name>
+		<ejb-name>opencrx_core_CRX_EntityManagerFactory</ejb-name>
+		<jndi-local-name>org.opencrx.core.CRX.EntityManagerFactory</jndi-local-name>
 	</jonas-session>
 	<jonas-session>
-		<ejb-name>opencrx_core_CRX_gateway_noOrNew</ejb-name>
-		<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
-		<jndi-local-name>org.opencrx.core.CRX.local.noOrNew.gateway</jndi-local-name>
+		<ejb-name>opencrx_core_CRX_Gateway</ejb-name>
+		<jndi-name>org.opencrx.core.CRX.Gateway</jndi-name>
 	</jonas-session>
 </jonas-ejb-jar>

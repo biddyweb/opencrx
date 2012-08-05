@@ -33,13 +33,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:accessGrantedByParent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Доступ разрешен предком</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Доступ разрешен предком</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:accessLevelBrowse" _operation="create">
                     <_object>
                       <label>
-                        <_item>Степень доступа к просмотру</_item>
+                        <_item>Просмотр степени доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Степень доступа к просмотру</_item>
+                        <_item>Просмотр степени доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:accessLevelUpdate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Степень доступа к обновлению</_item>
+                        <_item>Обновить степень доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Степень доступа к обновлению</_item>
+                        <_item>Обновить степень доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:accessLevelDelete" _operation="create">
                     <_object>
                       <label>
-                        <_item>Степень доступа к удалению</_item>
+                        <_item>Удалить степень доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Степень доступа к удалению</_item>
+                        <_item>Удалить степень доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -72,7 +83,7 @@
                         <_item>^</_item>
                       </label>
                       <toolTip>
-                        <_item>Влад. группы (Защита)</_item>
+                        <_item>Влад. группы (Безопасность)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:setOwningUser" _operation="create">
                     <_object>
                       <label>
-                        <_item>Установить польз-ля</_item>
+                        <_item>Установить  польз-ля - владельца</_item>
                       </label>
                       <toolTip>
-                        <_item>Установить польз-ля</_item>
+                        <_item>Установить  пользьзователя - владельца</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +116,7 @@
                         <_item>Польз-ль</_item>
                       </label>
                       <toolTip>
-                        <_item>Польз-ль</_item>
+                        <_item>Пользователь</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:addOwningGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Добавить влад. группу</_item>
+                        <_item>Добавить  группу владельцев</_item>
                       </label>
                       <toolTip>
-                        <_item>Добавить влад. группу</_item>
+                        <_item>Добавить  группу владельцев</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:removeOwningGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Удалить влад. группу</_item>
+                        <_item>Удалить группу владельцев</_item>
                       </label>
                       <toolTip>
-                        <_item>Удалить влад. группу</_item>
+                        <_item>Удалить группу владельцев</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:removeAllOwningGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Удалить все влад. группы</_item>
+                        <_item>Удалить все группы владельцев</_item>
                       </label>
                       <toolTip>
-                        <_item>Удалить все влад. группы</_item>
+                        <_item>Удалить все группы владельцев</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -237,7 +248,7 @@
                         <_item>Устан. ур-нь доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Устан. ур-нь доступа</_item>
+                        <_item>Установить уровень доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SetAccessLevelParams:accessLevelBrowse" _operation="create">
                     <_object>
                       <label>
-                        <_item>Степень доступа к просмотру</_item>
+                        <_item>Просмотреть уровень доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Степень доступа к просмотру</_item>
+                        <_item>Просмотреть уровень доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SetAccessLevelParams:accessLevelUpdate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Степень доступа к обновлению</_item>
+                        <_item>Обновить уровень доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Степень доступа к обновлению</_item>
+                        <_item>Обновить уровень доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SetAccessLevelParams:accessLevelDelete" _operation="create">
                     <_object>
                       <label>
-                        <_item>Степень доступа к удалению</_item>
+                        <_item>Удалить уровень доступа</_item>
                       </label>
                       <toolTip>
-                        <_item>Степень доступа к удалению</_item>
+                        <_item>Удалить уровень доступа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +311,120 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ModifySecureObjectResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Статусное сообщ-е</_item>
+                        <_item>Сообщение о состоянии</_item>
                       </label>
                       <toolTip>
-                        <_item>Статусное сообщ-е</_item>
+                        <_item>Сообщение о состоянии</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:checkPermissions" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Проверить разрешения</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Проверить разрешения</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:checkPermissions:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsParams:principalName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имя руководителя</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имя руководителя</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SecureObject:Pane:Op:Tab:checkPermissions:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsResult:hasReadPermission" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имеет разрешение на чтение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имеет разрешение на чтение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsResult:hasUpdatePermission" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имеет разрешение на обновление</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имеет разрешение на обновление</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsResult:hasDeletePermission" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Имеет разрешение на удаление</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Имеет разрешение на удаление</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsResult:membershipForRead" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Членство на чтение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Членство на чтение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsResult:membershipForUpdate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Членство на обновление</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Членство на обновление</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CheckPermissionsResult:membershipForDelete" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Членство на удаление</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Членство на удаление</_item>
                       </toolTip>
                     </_object>
                     <_content/>

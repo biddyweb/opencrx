@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.14 2008/02/25 10:14:26 cmu Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.25 2008/06/26 00:34:34 wfro Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/25 10:14:26 $
+ * Date:        $Date: 2008/06/26 00:34:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2006, OMEX AG, Switzerland
+ * Copyright (c) 2004-2008, CRIXP AG, Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -76,23 +76,22 @@ org.openmdx.kernel.exception.BasicException,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*
 " %><%
-  request.setCharacterEncoding("UTF-8");
-  ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-  ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  Texts_1_0 texts = app.getTexts();
-  UUIDGenerator uuids = UUIDs.getGenerator();
-
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	Texts_1_0 texts = app.getTexts();
 %>
 <!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
-  <title><%= app.getApplicationName() + " - " + view.getObjectReference().getTitle() + (view.getObjectReference().getTitle().length() == 0 ? "" : " - ") + view.getObjectReference().getLabel() %></title>
+  <title>openCRX - Upload Media</title>
   <meta name="UNUSEDlabel" content="Upload Media">
   <meta name="UNUSEDtoolTip" content="Upload Media">
   <meta name="targetType" content="_self">
   <meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
+  <meta name="forClass" content="org:opencrx:kernel:document1:Document">
   <meta name="order" content="org:opencrx:kernel:generic:CrxObject:uploadMedia">
+  <meta name="order" content="org:opencrx:kernel:document1:Document:uploadMedia">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
   <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
@@ -118,6 +117,8 @@ org.openmdx.kernel.id.*
   </div>
 
 <%
+		final String MEDIA_CLASS = "org:opencrx:kernel:document1:Media";
+		final String MEDIACONTENT_CLASS = "org:opencrx:kernel:document1:MediaContent";
 		final String UPLOAD_FILE_FIELD_NAME = "uploadFile";
 		try {
 
@@ -181,27 +182,41 @@ org.openmdx.kernel.id.*
 				}
 			}
 
+			ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+			String[] requestIds = (String[])parameterMap.get(Action.PARAMETER_REQUEST_ID);
+			String requestId = (requestIds == null) || (requestIds.length == 0) ? "" : requestIds[0];
+			javax.jdo.PersistenceManager pm = app.getPmData();
+			UUIDGenerator uuids = UUIDs.getGenerator();
+
 			boolean actionOk = parameterMap.get("OK.Button") != null;
 			boolean actionCancel = parameterMap.get("Cancel.Button") != null;
 
 			String[] descriptions = (String[])parameterMap.get("description");
 			String description = (descriptions == null) || (descriptions.length == 0) ? "" : descriptions[0];
 
+			boolean replaceExisting = parameterMap.get("ReplaceExisting.CheckBox") != null;
+			System.out.println("replaceExisting=" + replaceExisting);
+
 			String[] objectXris = (String[])parameterMap.get("xri");
 			String objectXri = (objectXris == null) || (objectXris.length == 0) ? "" : objectXris[0];
-			System.out.println("XRI=" + objectXri);
 			String location = app.getTempFileName(UPLOAD_FILE_FIELD_NAME, "");
 
-			if(actionCancel || (objectXri == null)) {
-				Action nextAction = view.getObjectReference().getSelectObjectAction();
+			if(objectXri == null || viewsCache.getViews().isEmpty()) {
 				response.sendRedirect(
-					request.getContextPath() + "/" + view.getEncodedHRef(nextAction)
+					request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+				);
+				return;
+			}
+			if(actionCancel) {
+				Action nextAction = new ObjectReference(
+					(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+					app
+				).getSelectObjectAction();
+				response.sendRedirect(
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
 				);
 			}
 			else if(actionOk) {
-				// Get data package. This is the JMI root package to handle
-				// openCRX object requests
-				RefPackage_1_0 dataPkg = app.getDataPackage();
 
 				if(
 					new File(location + ".INFO").exists() &&
@@ -224,48 +239,102 @@ org.openmdx.kernel.id.*
 						(contentMimeType.length() > 0)
 					) {
 						try {
-							dataPkg.refBegin();
-							org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg =
-								(org.opencrx.kernel.generic.jmi1.GenericPackage)dataPkg.refPackage(
-									org.opencrx.kernel.generic.jmi1.GenericPackage.class.getName()
+							pm.currentTransaction().begin();
+
+							RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+
+							if (obj instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
+								org.opencrx.kernel.generic.jmi1.CrxObject crxObject =
+									(org.opencrx.kernel.generic.jmi1.CrxObject)obj;
+								org.opencrx.kernel.generic.jmi1.Media media = null;
+								if(replaceExisting) {
+									for(Iterator i = crxObject.getMedia().iterator(); i.hasNext(); ) {
+										org.opencrx.kernel.generic.jmi1.Media m = (org.opencrx.kernel.generic.jmi1.Media)i.next();
+										if(m.getContentName().equals(contentName)) {
+											media = m;
+											break;
+										}
+									}
+								}
+								boolean isNew = false;
+								if(media == null) {
+									org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = org.opencrx.kernel.utils.Utils.getGenericPackage(pm);
+									media = genericPkg.getMedia().createMedia();
+									media.refInitialize(false, false);
+									isNew = true;
+								}
+								if(isNew) {
+									media.setDescription(description.length() > 0 ? description : contentName);
+								}
+								media.setContentName(contentName);
+								media.setContentMimeType(contentMimeType);
+								media.setContent(
+									org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
 								);
-							org.opencrx.kernel.generic.jmi1.CrxObject crxObject =
-								(org.opencrx.kernel.generic.jmi1.CrxObject)dataPkg.refObject(objectXri);
+								if(isNew) {
+									crxObject.addMedia(
+										false,
+										uuids.next().toString(),
+										media
+									);
+								}
+							}
+							else {
+								if (obj instanceof org.opencrx.kernel.document1.jmi1.Document) {
+									org.opencrx.kernel.document1.jmi1.Document document =
+										(org.opencrx.kernel.document1.jmi1.Document)obj;
+									org.opencrx.kernel.document1.jmi1.DocumentAttachment documentAttachment = null;
+									if(replaceExisting) {
+										for(Iterator i = document.getAttachment().iterator(); i.hasNext(); ) {
+											org.opencrx.kernel.document1.jmi1.DocumentAttachment a = (org.opencrx.kernel.document1.jmi1.DocumentAttachment)i.next();
+											if(a.getContentName().equals(contentName)) {
+												documentAttachment = a;
+												break;
+											}
+										}
+									}
+									// Add media to document object
+									boolean isNew = false;
+									if(documentAttachment == null) {
+										org.opencrx.kernel.document1.jmi1.Document1Package documentPkg = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm);
+										documentAttachment = documentPkg.getDocumentAttachment().createDocumentAttachment();
+										documentAttachment.refInitialize(false, false);
+										isNew = true;
+									}
+									documentAttachment.setName(description.length() > 0 ? description : contentName);
+									if(isNew) {
+										documentAttachment.setDescription(description.length() > 0 ? description : contentName);
+									}
+									documentAttachment.setContentName(contentName);
+									documentAttachment.setContentMimeType(contentMimeType);
+									documentAttachment.setContent(
+										org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
+									);
+									if(isNew) {
+										document.addAttachment(
+											false,
+											uuids.next().toString(),
+											documentAttachment
+										);
+									}
+								}
+							}
 
-							// Add media to crx object
-							org.opencrx.kernel.generic.jmi1.Media media = genericPkg.getMedia().createMedia();
-							media.setDescription(description.length() > 0 ? description : contentName);
-							media.setContentName(contentName);
-							media.setContentMimeType(contentMimeType);
-							media.setContent(
-								org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
-							);
-							crxObject.addMedia(
-								false,
-								uuids.next().toString(),
-								media
-							);
-							dataPkg.refCommit();
-
+							pm.currentTransaction().commit();
 							new File(location).delete();
 
 							// Go to created document
-							Action nextAction =
-							new Action(
-								Action.EVENT_SELECT_OBJECT,
-								new Action.Parameter[]{
-									new Action.Parameter(Action.PARAMETER_OBJECTXRI, crxObject.refMofId())
-								},
-								"",
-								true
-							);
+							Action nextAction = new ObjectReference(
+								obj,
+								app
+							).getSelectObjectAction();
 							response.sendRedirect(
-								request.getContextPath() + "/" + view.getEncodedHRef(nextAction)
+								request.getContextPath() + "/" + nextAction.getEncodedHRef()
 							);
 						}
 						catch(Exception e) {
 							try {
-								dataPkg.refRollback();
+								pm.currentTransaction().rollback();
 							} catch(Exception e0) {}
 						}
 					}
@@ -275,9 +344,15 @@ org.openmdx.kernel.id.*
 				File uploadFile = new File(location);
 				System.out.println("UploadMedia: file " + location + " either does not exist or has size 0: exists=" + uploadFile.exists() + "; length=" + uploadFile.length());
 			}
+			UserDefinedView userView = new UserDefinedView(
+				(RefObject_1_0)pm.getObjectById(new Path(objectXri)), 
+				app, 
+				(View)viewsCache.getViews().values().iterator().next()
+			);
 %>
 <form name="UploadMedia" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="UploadMedia.jsp">
-<input type="hidden" class="valueL" name="xri" value="<%= objectXri %>" />
+	<input type="hidden" class="valueL" name="xri" value="<%= objectXri %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 <table cellspacing="8" class="tableLayout">
   <tr>
     <td class="cellObject">
@@ -290,7 +365,7 @@ org.openmdx.kernel.id.*
         <tr>
           <td>
             <div style="padding-left:5px; padding-bottom: 3px;">
-              Upload a media file
+              <%= app.getLabel(MEDIACONTENT_CLASS) %>
             </div>
           </td>
         </tr>
@@ -301,32 +376,32 @@ org.openmdx.kernel.id.*
        <div class="fieldGroupName">&nbsp;</div>
 	      <table class="fieldGroup">
 	        <tr>
-	          <td class="label"><span class="nw">Description <font color="red">*</font></span></td>
+	          <td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
 	          <td>
 	            <input type="text" class="valueL" name="description" maxlength="50" tabindex="100" value="<%= description %>" />
 	          </td>
 	          <td class="addon"></td>
-	          <td class="label"></td>
-	          <td></td>
-	          <td class="addon"></td>
 	        </tr>
-    			<tr>
-    				<td class="label"><span class="nw">File:</span></td>
-    				<td >
-    					<input type="file" class="valueL" name="<%= UPLOAD_FILE_FIELD_NAME %>" tabindex="500" />
-    				</td>
-    				<td class="addon" >
-    			</tr>
-    			<tr>
-	          <td class="label">
-	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="Upload" />
-      			<INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="Cancel" />
+     			<tr>
+     				<td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
+     				<td >
+     					<input type="file" name="<%= UPLOAD_FILE_FIELD_NAME %>" tabindex="200" />&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ReplaceExisting.CheckBox" value="false" tabindex="300" />
+<%
+              switch (app.getCurrentLocaleAsIndex()) {
+                case 0:  %><%= "Replace existing file with same name" %><% break;
+                case 1:  %><%= "Datei mit gleichem Namen ersetzen"    %><% break;
+                default: %><%= "Replace existing with same name"      %><% break;
+              }
+%>
+     				</td>
+     				<td class="addon" >
+	        </tr>
+     			<tr>
+	          <td class="label" colspan="3">
+	          	<br>
+	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
+      			  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
 	          </td>
-	          <td>&nbsp;</td>
-	          <td class="addon"></td>
-	          <td></td>
-	          <td></td>
-	          <td></td>
 	        </tr>
 	      </table>
       </div>
@@ -337,24 +412,12 @@ org.openmdx.kernel.id.*
 <%
     }
     catch (Exception ex) {
-   		Action nextAction = view.getObjectReference().getSelectObjectAction();
-%>
-      <br />
-      <br />
-      <span style="color:red;"><b><u>Warning:</u> cannot create media attachment (no permission?)</b></span>
-      <br />
-      <br />
-      <INPUT type="Submit" name="Continue.Button" tabindex="1" value="Continue" onClick="javascript:location='<%= request.getContextPath() + "/" + view.getEncodedHRef(nextAction) %>';" />
-      <br />
-      <br />
-      <hr>
-<%
 	    ServiceException e0 = new ServiceException(ex);
 	    out.println("<p><b>The following exception occurred:</b><br><br><pre>");
-      PrintWriter pw = new PrintWriter(out);
-      pw.println(e0.getMessage());
-      pw.println(e0.getCause());
-      out.println("</pre></p>");
+		PrintWriter pw = new PrintWriter(out);
+		pw.println(e0.getMessage());
+		pw.println(e0.getCause());
+		out.println("</pre></p>");
     }
 %>
   <%@ include file="../../show-footer.html" %>

@@ -44,6 +44,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:positionModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Positionsmodifikation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Positionsmodifikation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:removedPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Borttagna Positioner</_item>
+                      </label>
+                      <toolTip>
+                        <_item>»Borttagna Positioner</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:inventoryCb" _operation="create">
                     <_object>
                       <label>
@@ -51,6 +73,25 @@
                       </label>
                       <toolTip>
                         <_item>Lagerbokning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Attr:Tab:0:Group:40" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prisinformation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prisinformation</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -121,11 +162,25 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:broker" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mäklare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mäklare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractNumber" _operation="create">
                     <_object>
                       <label>
                         <_item>Avtalsnummer</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Avtal</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Avtalsnummer</_item>
                       </toolTip>
@@ -194,6 +249,61 @@
                       </label>
                       <toolTip>
                         <_item>Avslutad den</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:supplier" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Leverantör</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Leverantör</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:pricingRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prisregel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prisregel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:calcRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kalkyleringsregel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kalkyleringsregel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:pricingState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prisstatus</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prisstatus</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:pricingDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prisdatum</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prisdatum</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -352,6 +462,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:pricingDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prisdatum</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prisdatum</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:pricingRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prisregel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prisregel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:priceUom" _operation="create">
                     <_object>
                       <label>
@@ -375,72 +507,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionResult:position" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Position</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Position</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Skapa position utifrån produkterbjudande</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Skapa position utifrån produkterbjudande</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Indata</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Indata</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:quantity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Kvantitet</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Kvantitet</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:offering" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Produkterbjudande</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Produkterbjudande</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionResult:offeringPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>Position</_item>
@@ -528,6 +594,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Gör om prissättning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Gör om prissättning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice:Group:in" _operation="create">
                     <_object>
                       <label>
@@ -550,6 +627,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:calculationRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kalkylregler</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kalkylregler</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kalkylregel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kalkylregel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:name" _operation="create">
                     <_object>
                       <label>
@@ -561,6 +660,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:isDefault" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Är standard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Är standard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:description" _operation="create">
                     <_object>
                       <label>
@@ -568,6 +678,45 @@
                       </label>
                       <toolTip>
                         <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:getPositionAmountsScript" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Positionsbeloppsskript</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Positionsskript</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Positionsbeloppsskript</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:getContractAmountsScript" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontraktsbeloppsskript</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Kontraktskript</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Kontraktsbeloppsskript</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getPositionAmounts" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hämta positionsbelopp</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hämta positionsbelopp</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -667,6 +816,17 @@
                       </label>
                       <toolTip>
                         <_item>Statusmeddelande</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CalculationRule:Pane:Op:Tab:getContractAmounts" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hämta avtalsbelopp</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hämta avtalsbelopp</_item>
                       </toolTip>
                     </_object>
                     <_content/>

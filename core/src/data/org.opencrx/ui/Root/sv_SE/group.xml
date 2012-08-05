@@ -22,6 +22,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:member" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Medlemmar (deaktiverade)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Medlemmar (deaktiverade)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group" _operation="create">
                     <_object>
                       <label>
@@ -44,6 +62,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Importera vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Importera vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member" _operation="create">
                     <_object>
                       <label>
@@ -51,6 +80,17 @@
                       </label>
                       <toolTip>
                         <_item>Medlem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:forUseBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>För användning av</_item>
+                      </label>
+                      <toolTip>
+                        <_item>För användning av</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -66,13 +106,27 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:quality" _operation="create">
                     <_object>
                       <label>
-                        <_item>Roll</_item>
+                        <_item>Relationskvalitet</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Kvalitet</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Relationskvalitet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
                       </label>
                       <toolTip>
-                        <_item>Roll</_item>
+                        <_item>Namn</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -84,6 +138,182 @@
                       </label>
                       <toolTip>
                         <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Roll</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Roll</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Medlemskap</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Medlemskap</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:forUseBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>För användning av</_item>
+                      </label>
+                      <toolTip>
+                        <_item>För användning av</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Konto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Konto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountFromId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ID för konto från</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ID för konto från</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Konto till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Konto till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountToId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ID för konto till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ID för konto till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:quality" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kvalitet</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kvalitet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giltig från</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giltig från</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giltig till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giltig till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:memberRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Roller</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Roller</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:distance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Distans</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Distans</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:member" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Medlem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Medlem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktiverat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objektet är deaktiverat</_item>
                       </toolTip>
                     </_object>
                     <_content/>

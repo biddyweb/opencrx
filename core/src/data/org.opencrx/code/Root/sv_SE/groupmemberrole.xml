@@ -15,46 +15,13 @@
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>ÖV</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
-                              <_item>Övrigt</_item>
-                            </longText>
-                          </_object>
-                          <_content/>
-                        </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
-                          <_object>
-                            <shortText>
-                              <_item>KU</_item>
-                            </shortText>
-                            <longText>
-                              <_item>Kund</_item>
-                            </longText>
-                          </_object>
-                          <_content/>
-                        </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
-                          <_object>
-                            <shortText>
-                              <_item>KA</_item>
-                            </shortText>
-                            <longText>
-                              <_item>Kundansvarig</_item>
-                            </longText>
-                          </_object>
-                          <_content/>
-                        </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="201" _operation="create">
-                          <_object>
-                            <shortText>
-                              <_item>SÄ</_item>
-                            </shortText>
-                            <longText>
-                              <_item>Säljare</_item>
+                              <_item>N/A</_item>
                             </longText>
                           </_object>
                           <_content/>

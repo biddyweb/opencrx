@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -54,7 +54,7 @@
                               <_item>ПР</_item>
                             </shortText>
                             <longText>
-                              <_item>2-дн. перелет</_item>
+                              <_item>2-дн. авиацией</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -65,7 +65,7 @@
                               <_item>ДП</_item>
                             </shortText>
                             <longText>
-                              <_item>1-дн. перелет</_item>
+                              <_item>1-дн. авиацией</_item>
                             </longText>
                           </_object>
                           <_content/>

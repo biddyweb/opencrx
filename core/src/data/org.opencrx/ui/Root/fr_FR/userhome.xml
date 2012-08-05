@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Exporter profils</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exporter profils</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
                     <_object>
                       <label>
@@ -840,6 +851,17 @@
                       </label>
                       <toolTip>
                         <_item>Sans les mots</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exporter profil</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exporter profil</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -10,6 +10,11 @@
 				<res-ref-name>jdbc/datasource[0]</res-ref-name>
 				<jndi-name>jdbc/jdbc_opencrx_CRX</jndi-name>
 			</resource-ref>
+			<pool>
+				<initial-capacity>10</initial-capacity>
+				<maximum-capacity>100</maximum-capacity>
+				<maximum-wait>100</maximum-wait>
+			</pool>			
 		</session>
 	</enterprise-beans>
 </openmdx-ejb-jar>

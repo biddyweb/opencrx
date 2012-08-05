@@ -52,7 +52,7 @@
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Offen [Priorität / Fällig bis]</string>
+							<string>Open [Priority / Due]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_down_priority.gif</string>
@@ -123,7 +123,7 @@
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Offen [Geplanter Start / Fällig bis]</string>
+							<string>Open [Scheduled Start / Due]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
@@ -194,7 +194,7 @@
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Offen [Fällig bis / Priorität]</string>
+							<string>Open [Due / Priority]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_caldue.gif</string>
@@ -265,7 +265,7 @@
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Offen [Modifiziert am / umgekehrt chronologisch]</string>
+							<string>Open [Modified At / reverse chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_down_time_excl.gif</string>
@@ -316,7 +316,7 @@
 				<void index="4">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Offen [Modifiziert am / chronologisch]</string>
+							<string>Open [Modified At / chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time_excl.gif</string>
@@ -367,7 +367,7 @@
 				<void index="5">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Erstellt am [umgekehrt chronologisch]</string>
+							<string>Created At [reverse chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_down_star.gif</string>
@@ -394,7 +394,7 @@
 				<void index="6">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Erstellt am [chronologisch]</string>
+							<string>Created At [chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_star.gif</string>
@@ -421,7 +421,7 @@
 				<void index="7">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Modifiziert am [umgekehrt chronologisch]</string>
+							<string>Modified At [reverse chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_down_time.gif</string>
@@ -448,7 +448,7 @@
 				<void index="8">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>Modifiziert am [chronologisch]</string>
+							<string>Modified At [chronological order]</string>
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>

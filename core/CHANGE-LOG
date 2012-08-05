@@ -7,6 +7,141 @@
 
 
 ==============================================================================
+Version 2.1.0                                                       2008-07-10
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10007866
+      Keep track of the last applied ActivityCreator of an activity. Add 
+      reference Activity.lastAppliedCreator. ActivityCreator.newActivity()
+      and Activity.reapplyActivityCreator() updates the reference.
+      
+      CR10007849
+      Product filters. Add global product filters.
+      
+      CR10007845
+      Contract filters. Add global contract filters.
+      
+      CR10007754
+      SegmentSetup wizard. The wizard allows the segment administrator to create
+      all required objects for:
+      * Activity management
+      * Topics and Workflows
+      * Groupware clients
+      * User management
+      * Product management
+      * Contract management
+      
+      CR0003145
+      Reporting - Incident. Each object offers the operation exportItem(). The
+      parameters are:
+      * itemMimeType: this parameter specifies the export format. Supported
+        formats are text/xml and application/x-excel.
+      * referenceFilter: allows to specify which references are traversed 
+        starting from the object to be exported. This is a comma-seperated
+        list of either qualified or unqualified reference names.
+        
+      Examples:
+      * Export of an Account with its addresses, assigned activities and
+        assigned contracts:
+        'address, assignedContract, position, assignedActivity, followUp'
+      * Export of an invoice with details:
+        'position, customer, address, uom, salesTaxType, org:opencrx:kernel:product1:ProductDescriptor:product'
+      * Export of filtered accounts specified by an AccountFilter:
+        'filteredAccount, address'
+        
+      The Excel-Export creates a sheet for each exported object type. Object
+      attributes can be accessed as shown in the following examples:
+
+      // IDX=0
+      = VLOOKUP(cell containing sales tax xri; SalesTaxType.DATA; MATCH("rate"; SalesTaxType.COLUMN;0); 0)
+
+      // IDX=1
+      = VLOOKUP(cell containing sales tax xri & "*1"; SalesTaxType.DATA; MATCH("rate"; SalesTaxType.COLUMN;0); 0)
+
+      // IDX=0
+      = VLOOKUP(cell containing account xri; Account.DATA; MATCH("fullName"; Account.COLUMN;0); 0)
+      
+      CR10007780
+      AccountMemberships are a recursive list of account assignments for a 
+      given account. The set of account memberships is calculated by a
+      database view. AccountMemberships fulfill the following conditions
+      for a given account A:
+      * distance == 1, accountFrom=A, accountTo=B
+        --> there exists a relationship from A to B
+      * distance == 2, accountFrom=B, accountTo=C
+        --> there exists a relationship from A to B and B to C
+      * etc.
+      * distance == -1, accountFrom=B, accountTo=A
+        --> there exists a relationship from B to A
+      * distance == -2, accountFrom=C, accountTo=B
+        --> there exists a relationship from C to B and B to A
+      * etc.
+      
+      CR10007777
+      XFN Graphing. The following wizards are added to the Accounts menu:
+      * AccountMembershipGraph.jsp: graph showing the relationships of accounts using the
+        JIT library (for more info see http://www.thejit.org).
+      * Relationships.jsp. Calculates the shortest path between two accounts.
+      
+      CR10007739
+      Add support for HSQLDB 1.8. Scripts and connectors added to src/connector
+      and src/sql (see openCRX SDK).
+      
+      CR10007604
+      Add multi-valued attributes Account::extCode20-29.
+      
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10007720
+      DepotReportItemPosition. Add balanceSimple and balanceSimpleBop. balance = 
+      balanceCredit - balanceDebit and balanceBop = balanceCreditBop - balanceDebitBop.
+      
+      CR10007615
+      Extend AccountMembership. The following Account assocations are deprecated:
+			* ContactHasDeputy
+			* ContactHasAssistant
+			* ContactReportsToContact
+			Use account members instead.
+			
+      CR10007628
+      PortalExtension: exclude disabled objects in autocomplete lookups. Disabled 
+      objects should not be included in the result set of autocompletion lookups. 
+      Extend PortalExtension.getFindObjectsBaseFilter() correspondingly.
+      
+      CR10007613
+      VCard: unnecessary updates on addresses. When importing VCards all 
+      existing addresses are retrieved for modification and marked as dirty even 
+      if the VCard does not contain matching addresses. 
+      
+      CR10006424
+      Default position name in openDepotPosition() should be based on 
+      Product::productNumber instead of Product::name.
+      
+      
+2.1.  FIXED BUGS
+      
+      CR10007712
+      reprice. The operation AbstractContract.reprice() resets manually set
+      ContractPosition.discountIsPercentage and discount. 
+      
+      CR10007603
+      PriceLevel: calculatePrices for base price levels. A price level is a 
+      base price level if basedOn.isEmpty(). The current implementation with 
+      !basedOn.isEmpty() results in a wrong retrieval of prices assigned to a 
+      base price level. As a result the base price level is added to all prices 
+      of the filtered products.
+
+
+2.2   REMOVED FEATURES
+      None
+
+
+==============================================================================
 Version 2.0.0                                                       2008-02-20
 ==============================================================================
 

@@ -269,6 +269,17 @@ CREATE TABLE  `oocke1_account` (
   `EXT_CODE16` smallint(6) default NULL,
   `EXT_CODE19` smallint(6) default NULL,
   `EXT_CODE18` smallint(6) default NULL,
+  `EXT_CODE26_` int(11) NOT NULL default '-1',
+  `EXT_CODE27_` int(11) NOT NULL default '-1',
+  `EXT_CODE24_` int(11) NOT NULL default '-1',
+  `EXT_CODE25_` int(11) NOT NULL default '-1',
+  `EXT_CODE22_` int(11) NOT NULL default '-1',
+  `EXT_CODE23_` int(11) NOT NULL default '-1',
+  `EXT_CODE28_` int(11) NOT NULL default '-1',
+  `EXT_CODE20_` int(11) NOT NULL default '-1',
+  `EXT_CODE29_` int(11) NOT NULL default '-1',
+  `EXT_CODE21_` int(11) NOT NULL default '-1',
+  `VCARD` mediumtext,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -297,6 +308,16 @@ CREATE TABLE  `oocke1_account_` (
   `OU_MEMBERSHIP` varchar(256) character set latin1 collate latin1_bin default NULL,
   `RELIGION` smallint(6) default NULL,
   `CITIZENSHIP` smallint(6) default NULL,
+  `EXT_CODE21` smallint(6) default NULL,
+  `EXT_CODE22` smallint(6) default NULL,
+  `EXT_CODE20` smallint(6) default NULL,
+  `EXT_CODE25` smallint(6) default NULL,
+  `EXT_CODE26` smallint(6) default NULL,
+  `EXT_CODE23` smallint(6) default NULL,
+  `EXT_CODE24` smallint(6) default NULL,
+  `EXT_CODE29` smallint(6) default NULL,
+  `EXT_CODE28` smallint(6) default NULL,
+  `EXT_CODE27` smallint(6) default NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -356,6 +377,8 @@ CREATE TABLE  `oocke1_accountassignment` (
   `DISCOUNT_IS_PERCENTAGE` bit(1) default NULL,
   `DISCOUNT` decimal(17,9) default NULL,
   `MEMBER_ROLE_` int(11) NOT NULL default '-1',
+  `QUALITY` smallint(6) default NULL,
+  `FOR_USE_BY_` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -376,6 +399,7 @@ CREATE TABLE  `oocke1_accountassignment_` (
   `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `MEMBER_ROLE` smallint(6) default NULL,
+  `FOR_USE_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -472,6 +496,7 @@ CREATE TABLE  `oocke1_activity` (
   `SENDER_MMS` varchar(256) character set latin1 collate latin1_bin default NULL,
   `SENDER_SMS` varchar(256) character set latin1 collate latin1_bin default NULL,
   `ICAL` mediumtext,
+  `LAST_APPLIED_CREATOR` varchar(256) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -3801,6 +3826,8 @@ CREATE TABLE  `oocke1_depotreportitem` (
   `CB` varchar(256) character set latin1 collate latin1_bin default NULL,
   `BOOKING_DATE` datetime default NULL,
   `QUANTITY_DEBIT` decimal(17,9) default NULL,
+  `BALANCE_SIMPLE_BOP` decimal(17,9) default NULL,
+  `BALANCE_SIMPLE` decimal(17,9) default NULL,
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -4347,6 +4374,40 @@ CREATE TABLE  `oocke1_eventslot_` (
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `oocke1_exportprofile`;
+CREATE TABLE  `oocke1_exportprofile` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
+  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
+  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
+  `CREATED_AT` datetime default NULL,
+  `CREATED_BY_` int(11) NOT NULL default '-1',
+  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MIME_TYPE` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY_` int(11) NOT NULL default '-1',
+  `NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER_` int(11) NOT NULL default '-1',
+  `REFERENCE_FILTER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_AT` datetime NOT NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `TEMPLATE` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `FOR_CLASS_` int(11) NOT NULL default '-1',
+  PRIMARY KEY  (`OBJECT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_exportprofile_`;
+CREATE TABLE  `oocke1_exportprofile_` (
+  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `IDX` int(11) NOT NULL,
+  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `FOR_CLASS` varchar(256) character set latin1 collate latin1_bin default NULL,
+  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `oocke1_facility`;
 CREATE TABLE  `oocke1_facility` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
@@ -4534,6 +4595,13 @@ CREATE TABLE  `oocke1_filterproperty` (
   `ACCOUNT_TYPE_` int(11) NOT NULL default '-1',
   `CONTACT_` int(11) NOT NULL default '-1',
   `OFFSET_IN_HOURS` int(11) default NULL,
+  `CONTRACT_TYPE_` int(11) NOT NULL default '-1',
+  `TOTAL_AMOUNT_` int(11) NOT NULL default '-1',
+  `PRIORITY_` int(11) NOT NULL default '-1',
+  `SUPPLIER_` int(11) NOT NULL default '-1',
+  `SALES_REP_` int(11) NOT NULL default '-1',
+  `CONTRACT_STATE_` int(11) NOT NULL default '-1',
+  `CUSTOMER_` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`OBJECT_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -4566,6 +4634,13 @@ CREATE TABLE  `oocke1_filterproperty_` (
   `SALES_TAX_TYPE` varchar(256) character set latin1 collate latin1_bin default NULL,
   `CLASSIFICATION` varchar(256) character set latin1 collate latin1_bin default NULL,
   `CONTACT` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `CUSTOMER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `PRIORITY` smallint(6) default NULL,
+  `SUPPLIER` varchar(256) character set latin1 collate latin1_bin default NULL,
+  `CONTRACT_STATE` smallint(6) default NULL,
+  `CONTRACT_TYPE` varchar(256) default NULL,
+  `TOTAL_AMOUNT` decimal(17,9) default NULL,
+  `SALES_REP` varchar(256) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -4900,6 +4975,13 @@ CREATE TABLE  `oocke1_join_filterincludesaddr` (
   `ADDRESS_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `FILTERED_ADDRESS` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   PRIMARY KEY  (`ADDRESS_FILTER`,`FILTERED_ADDRESS`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `oocke1_join_filterincludescontr`;
+CREATE TABLE  `oocke1_join_filterincludescontr` (
+  `CONTRACT_FILTER` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  `FILTERED_CONTRACT` varchar(256) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`CONTRACT_FILTER`,`FILTERED_CONTRACT`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `oocke1_join_filterincludesprod`;

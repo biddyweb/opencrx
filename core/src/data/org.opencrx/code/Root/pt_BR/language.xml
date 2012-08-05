@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -109,7 +109,7 @@
                               <_item>heb</_item>
                             </shortText>
                             <longText>
-                              <_item>Hebraico [heb/</_item>
+                              <_item>Hebráico [heb/</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -208,7 +208,7 @@
                               <_item>tur</_item>
                             </shortText>
                             <longText>
-                              <_item>Turkish [tr/tur]</_item>
+                              <_item>Turco [tr/tur]</_item>
                             </longText>
                           </_object>
                           <_content/>

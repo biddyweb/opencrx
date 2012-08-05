@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эл. почта</_item>
+                        <_item>E-mail</_item>
                       </label>
                       <toolTip>
-                        <_item>Эл. почта</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:readReceiptRequested" _operation="create">
                     <_object>
                       <label>
-                        <_item>Прочитать полученное</_item>
+                        <_item>Уведомление о прочтении</_item>
                       </label>
                       <toolTip>
-                        <_item>Прочитать полученное</_item>
+                        <_item>Уведомление о прочтении</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sendDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отправлено</_item>
+                        <_item>Отослано</_item>
                       </label>
                       <toolTip>
-                        <_item>Отправлено</_item>
+                        <_item>Отослано</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,11 +69,19 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:deliveryReceiptRequested" _operation="create">
                     <_object>
                       <label>
-                        <_item>Получение почты</_item>
+                        <_item>Уведомление о получении</_item>
                       </label>
                       <toolTip>
-                        <_item>Получение почты</_item>
+                        <_item>Уведомление о получении</_item>
                       </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Attr:Tab:0:Group:50" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -113,10 +121,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMailRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +143,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMailRecipientGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа адресов эл. почты</_item>
+                        <_item>Группа адресов электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа адресов эл. почты</_item>
+                        <_item>Группа адресов электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +154,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMailRecipientGroup:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа адресов эл. почты</_item>
+                        <_item>Группа адресов электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа адресов эл. почты</_item>
+                        <_item>Группа адресов электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +176,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractEMailRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Адрес(а) эл. почты</_item>
+                        <_item>Адрес(а) электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес(а) эл. почты</_item>
+                        <_item>Адрес(а) электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>

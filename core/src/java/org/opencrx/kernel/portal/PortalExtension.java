@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.14 2008/02/04 15:49:21 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.26 2008/06/17 15:05:16 wfro Exp $
  * Description: Evaluator
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/04 15:49:21 $
+ * Date:        $Date: 2008/06/17 15:05:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefStruct;
 
 import org.opencrx.kernel.address1.jmi1.Addressable;
@@ -87,12 +88,17 @@ import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
 import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.product1.jmi1.ContractPositionConstrained;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
+import org.openmdx.base.accessor.jmi.spi.RefMetaObject_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
 import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.compatibility.base.query.FilterOperators;
+import org.openmdx.compatibility.base.query.FilterProperty;
+import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.text.StringBuilders;
 import org.openmdx.model1.accessor.basic.cci.ModelElement_1_0;
 import org.openmdx.model1.accessor.basic.cci.Model_1_0;
@@ -129,6 +135,43 @@ public class PortalExtension
         return dateFormat;
     }
     
+    //-------------------------------------------------------------------------
+    @Override
+    public List getFindObjectsBaseFilter(
+        ApplicationContext application,
+        RefObject_1_0 context, 
+        String referenceName
+    ) {
+        List<FilterProperty> baseFilter = super.getFindObjectsBaseFilter(
+            application, 
+            context, 
+            referenceName
+        );
+        // Add disabled filter for types with attribute 'disabled'
+        boolean excludeDisabled = false;
+        try {
+            Model_1_0 model = application.getModel();
+            ModelElement_1_0 parentDef = ((RefMetaObject_1)context.refMetaObject()).getElementDef();                
+            ModelElement_1_0 referenceDef = 
+                (ModelElement_1_0)((Map)parentDef.values("reference").get(0)).get(referenceName);
+            if(referenceDef != null) {
+                ModelElement_1_0 referencedType = model.getElement(referenceDef.values("type").get(0));                
+                excludeDisabled = model.getAttributeDefs(referencedType, true, false).containsKey("disabled");
+            }
+        } catch(Exception e) {}
+        if(excludeDisabled) {
+            baseFilter.add(
+                new FilterProperty(
+                    Quantors.FOR_ALL,
+                    "disabled",
+                    FilterOperators.IS_IN,
+                    new Boolean[]{Boolean.FALSE}
+                )                    
+            );
+        }
+        return baseFilter;
+    }
+
     //-------------------------------------------------------------------------
     private DateFormat getTimeFormat(
         String language
@@ -417,7 +460,7 @@ public class PortalExtension
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.info(e0.getMessage(), e0.getCause(), 1);
+            AppLog.info(e0.getMessage(), e0.getCause());
             AppLog.info("can not evaluate. object", refObj.refMofId());
             return "#ERR (" + e.getMessage() + ")";
         }
@@ -447,7 +490,7 @@ public class PortalExtension
             }
             catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
-                AppLog.warning(e0.getMessage(), e0.getCause(), 1);                
+                AppLog.warning(e0.getMessage(), e0.getCause());                
             }
         }
         return super.isEnabled(
@@ -467,6 +510,9 @@ public class PortalExtension
         else if("org:opencrx:kernel:contract1:AbstractContract:customer".equals(qualifiedReferenceName)) {
             return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND UPPER(a.full_name) LIKE ?s0)";             
         }
+        else if("org:opencrx:kernel:contract1:AbstractContract:supplier".equals(qualifiedReferenceName)) {
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND UPPER(a.full_name) LIKE ?s0)";             
+        }
         else if("org:opencrx:kernel:activity1:Activity:assignedTo".equals(qualifiedReferenceName)) {
             return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                         
         }        
@@ -481,6 +527,15 @@ public class PortalExtension
         }
         else if("org:opencrx:kernel:contract1:ContractRole:account".equals(qualifiedReferenceName)) {            
             return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+        }
+        else if("org:opencrx:kernel:account1:AccountMembership:accountFrom".equals(qualifiedReferenceName)) {            
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_from = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+        }
+        else if("org:opencrx:kernel:account1:AccountMembership:accountTo".equals(qualifiedReferenceName)) {            
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_to = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+        }
+        else if("org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedReferenceName)) {            
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
         }
         else {
             return super.getIdentityQueryFilterClause(qualifiedReferenceName);
@@ -539,6 +594,7 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
+    @Override
     public int getGridPageSize(
         String referencedTypeName
     ) {
@@ -563,6 +619,7 @@ public class PortalExtension
     }
     
     //-------------------------------------------------------------------------
+    @Override
     public boolean isLookupType(
         ModelElement_1_0 classDef
     ) {
@@ -573,6 +630,7 @@ public class PortalExtension
     }
         
     //-------------------------------------------------------------------------
+    @Override
     public Autocompleter_1_0 getAutocompleter(
         ApplicationContext application,
         RefObject_1_0 context,
@@ -724,6 +782,78 @@ public class PortalExtension
                 ? null
                 : new ValueListAutocompleter(selectableValues);
         }
+        // org:opencrx:kernel:base:ExportItemParams:itemMimeType
+        else if(
+            "org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType".equals(qualifiedFeatureName)
+        ) {
+            List<String> selectableValues = new ArrayList<String>();
+            selectableValues.add("application/x-excel");
+            selectableValues.add("text/xml");
+            return selectableValues == null
+                ? null
+                : new ValueListAutocompleter(selectableValues);
+        }
+        // org:opencrx:kernel:base:ExportItemParams:exportProfile
+        if("org:opencrx:kernel:base:ExportItemParams:exportProfile".equals(qualifiedFeatureName)) {
+            List<ObjectReference> selectableValues = null;
+            if(context instanceof org.opencrx.kernel.base.jmi1.Exporter) {
+                PersistenceManager pm = application.getPmData();
+                String providerName = context.refGetPath().get(2);
+                String segmentName = context.refGetPath().get(4);
+                String currentPrincipal = application.getUserHomeIdentity().getBase();
+                String adminPrincipal = SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName;
+                // Collect export profiles from current user
+                try {
+                    org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)application.getPmData().getObjectById(
+                        new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + currentPrincipal)
+                    );
+                    org.opencrx.kernel.home1.cci2.ExportProfileQuery exportProfileQuery = Utils.getHomePackage(pm).createExportProfileQuery();
+                    exportProfileQuery.orderByName().ascending();
+                    Collection<org.opencrx.kernel.home1.jmi1.ExportProfile> exportProfiles = userHome.getExportProfile();
+                    for(org.opencrx.kernel.home1.jmi1.ExportProfile exportProfile: exportProfiles) {
+                        for(String forClass: exportProfile.getForClass()) {
+                            if(application.getModel().isSubtypeOf(context.refClass().refMofId(), forClass)) {
+                                if(selectableValues == null) {
+                                    selectableValues = new ArrayList<ObjectReference>();
+                                }
+                                selectableValues.add(
+                                    new ObjectReference(exportProfile, application)
+                                );
+                                break;
+                            }
+                        }
+                    }
+                } catch(Exception e) {}
+                // Collect shared export profiles from segment admin
+                try {
+                    if(!currentPrincipal.equals(adminPrincipal)) {
+                        org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)application.getPmData().getObjectById(
+                            new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + adminPrincipal)
+                        );
+                        org.opencrx.kernel.home1.cci2.ExportProfileQuery exportProfileQuery = Utils.getHomePackage(pm).createExportProfileQuery();
+                        exportProfileQuery.orderByName().ascending();
+                        Collection<org.opencrx.kernel.home1.jmi1.ExportProfile> exportProfiles = userHome.getExportProfile();
+                        for(org.opencrx.kernel.home1.jmi1.ExportProfile exportProfile: exportProfiles) {
+                            for(String forClass: exportProfile.getForClass()) {
+                                if(application.getModel().isSubtypeOf(context.refClass().refMofId(), forClass)) {
+                                    if(selectableValues == null) {
+                                        selectableValues = new ArrayList<ObjectReference>();
+                                    }
+                                    selectableValues.add(
+                                        new ObjectReference(exportProfile, application)
+                                    );
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch(Exception e) {}
+            }
+            return selectableValues == null
+                ? null
+                : new ValueListAutocompleter(selectableValues);
+        }        
         else {
             return super.getAutocompleter(
                 application,
@@ -735,6 +865,7 @@ public class PortalExtension
 
     
     //-------------------------------------------------------------------------
+    @Override
     public ObjectView getLookupView(
         String id, 
         ModelElement_1_0 lookupType, 
@@ -791,6 +922,7 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
+    @Override
     public boolean hasUserDefineableQualifier(
         org.openmdx.ui1.jmi1.Inspector inspector,
         ApplicationContext application        
@@ -807,6 +939,7 @@ public class PortalExtension
      *   <li>activity:&lt;activity number&gt;
      * </ul>
      */
+    @Override
     public void renderTextValue(
         HtmlPage p,
         String value
@@ -825,10 +958,10 @@ public class PortalExtension
                 (org.opencrx.kernel.activity1.jmi1.Activity1Package)rootPkg.refPackage(
                     org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
                 );
+            Path activitySegmentIdentity = 
+                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
-                (org.opencrx.kernel.activity1.jmi1.Segment)application.getDataPackage().refObject(
-                    "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
-                );
+                (org.opencrx.kernel.activity1.jmi1.Segment)application.getPmData().getObjectById(activitySegmentIdentity);
             int currentPos = 0;
             int newPos;
             while((newPos = value.indexOf("activity:", currentPos)) >= 0) {

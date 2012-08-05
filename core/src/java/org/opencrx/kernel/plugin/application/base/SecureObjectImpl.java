@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObjectImpl.java,v 1.3 2007/12/27 14:56:53 wfro Exp $
+ * Name:        $Id: SecureObjectImpl.java,v 1.4 2008/04/03 12:24:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/27 14:56:53 $
+ * Date:        $Date: 2008/04/03 12:24:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,8 +61,8 @@ import java.util.List;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.base.jmi1.BasePackage;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class SecureObjectImpl {
@@ -85,7 +85,7 @@ public class SecureObjectImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult setOwningUser(
         org.opencrx.kernel.base.jmi1.SetOwningUserParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Backend backend = this.getBackend();
             List<String> report = new ArrayList<String>();
@@ -106,14 +106,14 @@ public class SecureObjectImpl {
             );    
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
 
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult addOwningGroup(
         org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Backend backend = this.getBackend();
             List<String> report = new ArrayList<String>();
@@ -134,14 +134,14 @@ public class SecureObjectImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
 
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult removeOwningGroup(
         org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Backend backend = this.getBackend();
             List<String> report = new ArrayList<String>();
@@ -162,14 +162,14 @@ public class SecureObjectImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
 
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult removeAllOwningGroup(
         org.opencrx.kernel.base.jmi1.RemoveAllOwningGroupParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Backend backend = this.getBackend();
             List<String> report = new ArrayList<String>();
@@ -190,14 +190,14 @@ public class SecureObjectImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }   
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult setAccessLevel(
         org.opencrx.kernel.base.jmi1.SetAccessLevelParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Backend backend = this.getBackend();
             List<String> report = new ArrayList<String>();
@@ -218,7 +218,7 @@ public class SecureObjectImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }   
     

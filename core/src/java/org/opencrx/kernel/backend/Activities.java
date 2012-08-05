@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.21 2008/02/12 19:49:06 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.34 2008/07/09 14:45:31 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:49:06 $
+ * Date:        $Date: 2008/07/09 14:45:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -102,17 +102,30 @@ import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
+import org.opencrx.kernel.activity1.jmi1.Calendar;
 import org.opencrx.kernel.activity1.jmi1.Email;
 import org.opencrx.kernel.activity1.jmi1.EmailRecipient;
 import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
+import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
+import org.opencrx.kernel.activity1.jmi1.SetAssignedToAction;
+import org.opencrx.kernel.activity1.jmi1.WeekDay;
+import org.opencrx.kernel.activity1.jmi1.WfAction;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.generic.jmi1.Note;
-import org.opencrx.kernel.workflow.servlet.Utils;
+import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
 import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
@@ -126,7 +139,9 @@ import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
+import org.w3c.cci2.Datatypes;
 
 public class Activities {
 
@@ -135,7 +150,7 @@ public class Activities {
         Backend backend
     ) {
         this.backend = backend;
-        this.icalendar = new ICalendar(
+        this.icals = new ICalendar(
             this.backend
         );        
     }
@@ -152,6 +167,774 @@ public class Activities {
         );
     }
     
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.activity1.jmi1.ActivityType findActivityType(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.cci2.ActivityTypeQuery activityTypeQuery = activityPkg.createActivityTypeQuery();
+        activityTypeQuery.name().equalTo(name);
+        List<org.opencrx.kernel.activity1.jmi1.ActivityType> activityTypes = segment.getActivityType(activityTypeQuery);
+        return activityTypes.isEmpty()
+            ? null
+            : activityTypes.iterator().next();
+    }
+
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.activity1.jmi1.ActivityProcess findActivityProcess(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.cci2.ActivityProcessQuery activityProcessQuery = activityPkg.createActivityProcessQuery();
+        activityProcessQuery.name().equalTo(name);
+        List<org.opencrx.kernel.activity1.jmi1.ActivityProcess> activityProcesses = segment.getActivityProcess(activityProcessQuery);
+        return activityProcesses.isEmpty()
+            ? null
+            : activityProcesses.iterator().next();
+    }
+
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.activity1.jmi1.ActivityCreator findActivityCreator(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorQuery = activityPkg.createActivityCreatorQuery();
+        activityCreatorQuery.name().equalTo(name);
+        List<org.opencrx.kernel.activity1.jmi1.ActivityCreator> activityCreators = segment.getActivityCreator(activityCreatorQuery);
+        return activityCreators.isEmpty()
+            ? null
+            : activityCreators.iterator().next();
+    }
+
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery activityTrackerQuery = activityPkg.createActivityTrackerQuery();
+        activityTrackerQuery.name().equalTo(name);
+        List<org.opencrx.kernel.activity1.jmi1.ActivityTracker> activityTrackers = segment.getActivityTracker(activityTrackerQuery);
+        return activityTrackers.isEmpty()
+            ? null
+            : activityTrackers.iterator().next();
+    }
+
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.activity1.jmi1.Calendar findCalendar(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.cci2.CalendarQuery calendarQuery = activityPkg.createCalendarQuery();
+        calendarQuery.name().equalTo(name);
+        List<org.opencrx.kernel.activity1.jmi1.Calendar> calendars = segment.getCalendar(calendarQuery);
+        return calendars.isEmpty()
+            ? null
+            : calendars.iterator().next();
+    }
+    
+    //-----------------------------------------------------------------------
+    public static Calendar initCalendar(
+        String calendarName,
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        Calendar calendar = null;
+        if((calendar = findCalendar(calendarName, activitySegment, pm)) != null) {
+            return calendar;            
+        }                        
+        pm.currentTransaction().begin();                    
+        calendar = activityPkg.getCalendar().createCalendar();
+        calendar.setName(calendarName);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        activitySegment.addCalendar(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            calendar
+        );
+        // Sunday
+        WeekDay weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)1);
+        weekDay.setWorkingDay(false);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        // Monday
+        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)2);
+        weekDay.setWorkingDay(true);
+        weekDay.setWorkDurationHours((short)8);
+        weekDay.setWorkDurationMinutes((short)30);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        // Tuesday
+        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)3);
+        weekDay.setWorkingDay(true);
+        weekDay.setWorkDurationHours((short)8);
+        weekDay.setWorkDurationMinutes((short)30);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        // Wednesday
+        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)4);
+        weekDay.setWorkingDay(true);
+        weekDay.setWorkDurationHours((short)8);
+        weekDay.setWorkDurationMinutes((short)30);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        // Thursday
+        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)5);
+        weekDay.setWorkingDay(true);
+        weekDay.setWorkDurationHours((short)8);
+        weekDay.setWorkDurationMinutes((short)30);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        // Friday
+        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)6);
+        weekDay.setWorkingDay(true);
+        weekDay.setWorkDurationHours((short)8);
+        weekDay.setWorkDurationMinutes((short)30);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        // Saturday
+        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay.setDayOfWeek((short)7);
+        weekDay.setWorkingDay(false);
+        calendar.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        calendar.addWeekDay(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            weekDay
+        );
+        pm.currentTransaction().commit();
+        return calendar;
+    }
+      
+    //-----------------------------------------------------------------------
+    public static ActivityProcess initEmailProcess(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        ActivityProcess process = null;
+        if((process = findActivityProcess(ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm)) != null) {
+            return process;            
+        }                
+        // Create email process
+        pm.currentTransaction().begin();                    
+        process = activityPkg.getActivityProcess().createActivityProcess();
+        process.setName(ACTIVITY_PROCESS_NAME_EMAILS);
+        process.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        activitySegment.addActivityProcess(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            process
+        );
+        // State New
+        ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
+        newState.setName("New");
+        newState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            newState
+        );
+        // State Open
+        ActivityProcessState openState = activityPkg.getActivityProcessState().createActivityProcessState();
+        openState.setName("Open");
+        openState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            openState
+        );
+        // State Closed
+        ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
+        closedState.setName("Closed");
+        closedState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            closedState
+        );
+        pm.currentTransaction().commit();                    
+        // Initial State
+        pm.currentTransaction().begin();
+        process.setStartState(newState);                    
+        // Transition Assign: New->Open
+        ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Assign");
+        processTransition.setPrevState(newState);
+        processTransition.setNextState(openState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)20));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );
+        // Create SetAssignedToAction
+        SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.setName("Set assignedTo");
+        setAssignedToAction.setDescription("Set assignedTo to current user");
+        setAssignedToAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setAssignedToAction
+        );
+        // Create SetActualStartAction
+        SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
+        setActualStartAction.setName("Set actual start");
+        setActualStartAction.setDescription("Set actual start on activity assignment");
+        setActualStartAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setActualStartAction
+        );
+        // Transition Add Note: Open->Open
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Add Note");
+        processTransition.setPrevState(openState);
+        processTransition.setNextState(openState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)50));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );
+        // Transition Export: Open->Open
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Export as mail attachment");
+        processTransition.setPrevState(openState);
+        processTransition.setNextState(openState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)50));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );
+        // Create WorkflowAction for ExportMail
+        WfAction wfAction = activityPkg.getWfAction().createWfAction();
+        wfAction.setName("Export Mail");
+        wfAction.setName("Export Mail as attachment to current user");
+        wfAction.setWfProcess(
+            (WfProcess)pm.getObjectById(
+                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName + "/wfProcess/" + Workflows.WORKFLOW_EXPORT_MAIL)
+            )
+        );
+        wfAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            wfAction
+        );
+        // Transition Send: Open->Open
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Send as mail");
+        processTransition.setPrevState(openState);
+        processTransition.setNextState(openState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)50));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );
+        // Create WorkflowAction for SendMail
+        wfAction = activityPkg.getWfAction().createWfAction();
+        wfAction.setName("Send Mail");
+        wfAction.setName("Send as mail");
+        wfAction.setWfProcess(
+            (WfProcess)pm.getObjectById(
+                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName + "/wfProcess/" + Workflows.WORKFLOW_SEND_MAIL)
+            )
+        );
+        wfAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            wfAction
+        );
+        // Transition Close: Open->Closed
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Close");
+        processTransition.setPrevState(openState);
+        processTransition.setNextState(closedState);
+        processTransition.setNewActivityState((short)20);
+        processTransition.setNewPercentComplete(new Short((short)100));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );
+        // Create SetActualEndAction
+        SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        setActualEndAction.setName("Set actual end");
+        setActualEndAction.setName("Set actual end to current dateTime");
+        setActualEndAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setActualEndAction
+        );
+        // Commit
+        pm.currentTransaction().commit();
+        
+        return process;
+    }
+            
+    //-----------------------------------------------------------------------
+    public static ActivityProcess initBugAndFeatureTrackingProcess(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        ActivityProcess process = null;
+        if((process = findActivityProcess(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, activitySegment, pm)) != null) {
+            return process;            
+        }                
+        // Create process
+        pm.currentTransaction().begin();                    
+        process = activityPkg.getActivityProcess().createActivityProcess();
+        process.setName(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING);
+        process.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        activitySegment.addActivityProcess(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            process
+        );
+        // State New
+        ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
+        newState.setName("New");
+        newState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            "StateNew",
+            newState
+        );
+        // State In Progress
+        ActivityProcessState inProgressState = activityPkg.getActivityProcessState().createActivityProcessState();
+        inProgressState.setName("In Progress");
+        inProgressState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            "InProgress",
+            inProgressState
+        );
+        // State Complete
+        ActivityProcessState completeState = activityPkg.getActivityProcessState().createActivityProcessState();
+        completeState.setName("Complete");
+        completeState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            "StateComplete",
+            completeState
+        );
+        // State Closed
+        ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
+        closedState.setName("Closed");
+        closedState.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addState(
+            false,
+            "StateClosed",
+            closedState
+        );
+        pm.currentTransaction().commit();                    
+        // Initial State
+        pm.currentTransaction().begin();
+        process.setStartState(newState);                    
+        // Transition Add Note: Open->Open
+        ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Add Note");
+        processTransition.setPrevState(inProgressState);
+        processTransition.setNextState(inProgressState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)50));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            "TransitionAddNote",
+            processTransition
+        );
+        // Transition Assign: New->In Progress
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Assign");
+        processTransition.setPrevState(newState);
+        processTransition.setNextState(inProgressState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)20));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            "TransitionAssign",
+            processTransition
+        );
+        // Create SetAssignedToAction
+        SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.setName("Set assignedTo");
+        setAssignedToAction.setDescription("Set assignedTo to current user");
+        setAssignedToAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setAssignedToAction
+        );
+        // Create SetActualStartAction
+        SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
+        setActualStartAction.setName("Set actual start");
+        setActualStartAction.setDescription("Set actual start on activity assignment");
+        setActualStartAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setActualStartAction
+        );
+        // Transition Close: Complete->Closed
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Close");
+        processTransition.setPrevState(completeState);
+        processTransition.setNextState(closedState);
+        processTransition.setNewActivityState((short)20);
+        processTransition.setNewPercentComplete(new Short((short)100));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            "TransitionClose",
+            processTransition
+        );
+        // Transition Complete: In Progress->Complete
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Complete");
+        processTransition.setPrevState(inProgressState);
+        processTransition.setNextState(completeState);
+        processTransition.setNewActivityState((short)20);
+        processTransition.setNewPercentComplete(new Short((short)100));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );
+        // Create SetActualEndAction
+        SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        setActualEndAction.setName("Set actual end");
+        setActualEndAction.setName("Set actual end to current dateTime");
+        setActualEndAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setActualEndAction
+        );
+        // Create SetAssignedToAction
+        setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.setName("Set assignedTo");
+        setAssignedToAction.setDescription("Set assignedTo to reporting contact");
+        setAssignedToAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setAssignedToAction
+        );
+        // Transition Create: New->New
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Create");
+        processTransition.setPrevState(newState);
+        processTransition.setNextState(newState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)0));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );        
+        // Transition Reopen: Complete->In Progress
+        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition.setName("Reopen");
+        processTransition.setPrevState(completeState);
+        processTransition.setNextState(inProgressState);
+        processTransition.setNewActivityState((short)10);
+        processTransition.setNewPercentComplete(new Short((short)50));
+        processTransition.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        process.addTransition(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            processTransition
+        );        
+        // Create SetAssignedToAction
+        setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        setAssignedToAction.setName("Set assignedTo");
+        setAssignedToAction.setDescription("Set assignedTo to current user");
+        setAssignedToAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setAssignedToAction
+        );        
+        // Commit
+        pm.currentTransaction().commit();
+        
+        return process;
+    }
+            
+    //-----------------------------------------------------------------------
+    public static ActivityType initActivityType(
+        String activityTypeName,
+        short activityClass,
+        ActivityProcess activityProcess,
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        ActivityType activityType = null;
+        if((activityType = findActivityType(activityTypeName, activitySegment, pm)) != null) {
+            return activityType;            
+        }                
+        pm.currentTransaction().begin();
+        activityType = activityPkg.getActivityType().createActivityType();
+        activityType.setName(activityTypeName);
+        activityType.setActivityClass(activityClass);
+        activityType.setControlledBy(activityProcess);
+        activityType.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        activitySegment.addActivityType(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            activityType
+        );    
+        pm.currentTransaction().commit();    
+        return activityType;
+    }
+            
+    //-----------------------------------------------------------------------
+    public static ActivityTracker initActivityTracker(
+        String trackerName,
+        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,        
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        ActivityTracker activityTracker = null;
+        if((activityTracker = findActivityTracker(trackerName, activitySegment, pm)) != null) {
+            return activityTracker;            
+        }        
+        pm.currentTransaction().begin();
+        activityTracker = activityPkg.getActivityTracker().createActivityTracker();
+        activityTracker.setName(trackerName);
+        activityTracker.getOwningGroup().addAll(
+            owningGroups == null
+                ? activitySegment.getOwningGroup()
+                : owningGroups
+        );
+        activitySegment.addActivityTracker(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            activityTracker
+        );                        
+        pm.currentTransaction().commit();
+        return activityTracker;
+    }
+            
+    //-----------------------------------------------------------------------
+    public static ActivityCreator initActivityCreator(
+        String creatorName,
+        org.opencrx.kernel.activity1.jmi1.ActivityType activityType,
+        List<org.opencrx.kernel.activity1.jmi1.ActivityGroup> activityGroups,
+        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        ActivityCreator activityCreator = null;
+        if((activityCreator = findActivityCreator(creatorName, activitySegment, pm)) != null) {
+            return activityCreator;            
+        }
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        pm.currentTransaction().begin();
+        activityCreator = activityPkg.getActivityCreator().createActivityCreator();
+        activityCreator.setName(creatorName);
+        activityCreator.setPriority((short)0);
+        activityCreator.getOwningGroup().addAll(
+            owningGroups == null 
+                ? activitySegment.getOwningGroup()
+                : owningGroups
+        );
+        activityCreator.getActivityGroup().addAll(
+            activityGroups
+        );
+        activityCreator.setActivityType(activityType);                        
+        activitySegment.addActivityCreator(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            activityCreator
+        );
+        pm.currentTransaction().commit();
+        return activityCreator;
+    }
+            
     //-------------------------------------------------------------------------
     private int calculateOpenActivityTimeDistribution(
       Path reference,
@@ -309,7 +1092,7 @@ public class Activities {
       );
       charts[0].values("chartMimeType").add("application/vnd.openmdx-chart");
       charts[0].values("chartName").add(
-        this.backend.toFilename(chartTitle + ".txt")
+        Utils.toFilename(chartTitle + ".txt")
       );
 
       /**
@@ -373,7 +1156,7 @@ public class Activities {
       );
       charts[1].values("chartMimeType").add("application/vnd.openmdx-chart");
       charts[1].values("chartName").add(
-        this.backend.toFilename(chartTitle + ".txt")
+        Utils.toFilename(chartTitle + ".txt")
       );
 
       return charts;
@@ -494,11 +1277,11 @@ public class Activities {
                 : (activityCreator.getBaseDate() != null) && (activityCreator.getDueBy() != null)
                     ? new Date(System.currentTimeMillis() + activityCreator.getDueBy().getTime() - activityCreator.getBaseDate().getTime())
                     : null;
-            short priority = suppliedPriority != null
-                ? suppliedPriority.shortValue()
-                : activityCreator.getPriority() != 0
-                    ? activityCreator.getPriority()
-                    : (short)2; // NORMAL
+            short priority = (suppliedPriority == null) || (suppliedPriority.shortValue() == 0) ?
+                activityCreator.getPriority() != 0 ? 
+                    activityCreator.getPriority() : 
+                    (short)2 :    
+                suppliedPriority.shortValue();
             Path newActivityIdentity = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider");
             newActivityIdentity = 
                 newActivityIdentity.getDescendant(
@@ -591,7 +1374,7 @@ public class Activities {
             }
             catch(ServiceException e) {
                 AppLog.warning("Creation of new activity failed", e.getMessage());
-                AppLog.warning(e.getMessage(), e.getCause(), 1);
+                AppLog.warning(e.getMessage(), e.getCause());
             }
         }
         return null;
@@ -1504,7 +2287,7 @@ public class Activities {
                 }
             }
             List<String> statusMessage = new ArrayList<String>();
-            String ical = icalendar.mergeIcal(
+            String ical = this.icals.mergeIcal(
                 object,
                 (String)object.values("ical").get(0),
                 statusMessage
@@ -1586,8 +2369,16 @@ public class Activities {
                     updatedActivity.clearValues("owningGroup").addAll(
                         owningGroupIdentities
                     );
+                    // Update lastAppliedCreator
+                    updatedActivity.clearValues("lastAppliedCreator");
+                    updatedActivity.values("lastAppliedCreator").add(
+                        activityCreator.refGetPath()
+                    );
                     this.backend.flushObjectModifications(
                         this.backend.getServiceHeader()
+                    );
+                    updatedActivity = this.backend.retrieveObjectForModification(
+                        activityIdentity
                     );
                     
                     // Create GroupAssignments
@@ -1726,7 +2517,8 @@ public class Activities {
                                 activityIdentity.getChild("depotReference"),
                                 null,
                                 "",
-                                true
+                                true,
+                                AttributeSelectors.ALL_ATTRIBUTES                                
                             );
                         }
                     }                            
@@ -1765,7 +2557,8 @@ public class Activities {
                                 activityIdentity.getChild("propertySet"),
                                 null,
                                 "property",
-                                true
+                                true,
+                                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES                                
                             );
                         }
                     }                            
@@ -1853,7 +2646,7 @@ public class Activities {
         Path activityFilterIdentity,
         boolean forCounting
     ) throws ServiceException {
-        List filterProperties = this.backend.getDelegatingRequests().addFindRequest(
+        List<DataproviderObject_1_0> filterProperties = this.backend.getDelegatingRequests().addFindRequest(
             activityFilterIdentity.getChild("filterProperty"),
             null,
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -1862,13 +2655,13 @@ public class Activities {
             Integer.MAX_VALUE,
             Directions.ASCENDING
         );
-        List filter = new ArrayList();
+        List<FilterProperty> filter = new ArrayList<FilterProperty>();
         boolean hasQueryFilterClause = false;
         for(
-            Iterator i = filterProperties.iterator();
+            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
             i.hasNext();
         ) {
-            DataproviderObject_1_0 filterProperty = (DataproviderObject_1_0)i.next();
+            DataproviderObject_1_0 filterProperty = i.next();
             String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
 
             Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);
@@ -1898,7 +2691,7 @@ public class Activities {
                         )
                     );
                     // stringParam
-                    List values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+                    List<Object> values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -1938,7 +2731,15 @@ public class Activities {
                         )
                     );
                     // dateParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM);
+                    values = new ArrayList<Object>();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(XMLGregorianCalendar.class, j.next())
+                        );
+                    }
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -1948,7 +2749,15 @@ public class Activities {
                         )
                     );
                     // dateTimeParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM);
+                    values = new ArrayList<Object>();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(Date.class, j.next())
+                        );
+                    }
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -2122,7 +2931,7 @@ public class Activities {
                 )
             );            
         }
-        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
+        return filter.toArray(new FilterProperty[filter.size()]);
     }
     
     //-------------------------------------------------------------------------
@@ -2218,7 +3027,7 @@ public class Activities {
         List messages = new ArrayList();
         List errors = new ArrayList();
         List report = new ArrayList();
-        String ical = this.icalendar.mergeIcal(
+        String ical = this.icals.mergeIcal(
             this.backend.retrieveObject(activityIdentity),
             null, 
             messages
@@ -2229,7 +3038,7 @@ public class Activities {
         } catch(Exception e) {
             item = ical.getBytes();    
         }
-        this.icalendar.importItem(
+        this.icals.importItem(
             item, 
             activityIdentity, 
             (short)0, 
@@ -2894,7 +3703,7 @@ public class Activities {
                     }
                     catch(Exception e) {
                         AppLog.warning("Unable to get media content (see detail for more info)", e.getMessage());
-                        AppLog.info(e.getMessage(), e.getCause(), 1);
+                        AppLog.info(e.getMessage(), e.getCause());
                     }
                     bos.close();
                     InternetHeaders headers = new InternetHeaders();
@@ -3017,6 +3826,10 @@ public class Activities {
         };
     
     public static final short ACTIVITY_CLASS_EMAIL = 0;
+    public static final short ACTIVITY_CLASS_INCIDENT = 2;
+    public static final short ACTIVITY_CLASS_MEETING = 4;
+    public static final short ACTIVITY_CLASS_PHONE_CALL = 6;
+    public static final short ACTIVITY_CLASS_TASK = 8;
     
     // PARTY_TYPE
     public final static short PARTY_TYPE_FROM = 210;
@@ -3044,8 +3857,39 @@ public class Activities {
     // Booking texts
     protected static final String BOOKING_TEXT_NAME_WORK_EFFORT = "work efforts";
     
+    public static final String DEFAULT_EMAIL_CREATOR_ID = "EMailCreator";
+    
+    public static final String ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING = "Bug + feature tracking process";
+    public static final String ACTIVITY_PROCESS_NAME_EMAILS = "E-Mail Process";
+
+    public static final String CALENDAR_NAME_DEFAULT_BUSINESS = "Default Business Calendar";
+
+    public static final String ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES = "Bugs + Features";
+    public static final String ACTIVITY_TYPE_NAME_EMAILS = "E-Mails";
+    public static final String ACTIVITY_TYPE_NAME_MEETINGS = "Meetings";
+    public static final String ACTIVITY_TYPE_NAME_PHONE_CALLS = "Phone Calls";
+    public static final String ACTIVITY_TYPE_NAME_TASKS = "Tasks";
+
+    public static final String ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES = "Bugs + Features";
+    public static final String ACTIVITY_CREATOR_NAME_EMAILS = "E-Mails";
+    public static final String ACTIVITY_CREATOR_NAME_MEETINGS = "Meetings";
+    public static final String ACTIVITY_CREATOR_NAME_PHONE_CALLS = "Phone Calls";
+    public static final String ACTIVITY_CREATOR_NAME_TASKS = "Tasks";
+    public static final String ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS = "Public E-Mails";
+    public static final String ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS = "Public Meetings";
+    public static final String ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS = "Public Phone Calls";
+    public static final String ACTIVITY_CREATOR_NAME_PUBLIC_TASKS = "Public Tasks";
+
+    public static final String ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES = "Bugs + Features";
+    public static final String ACTIVITY_TRACKER_NAME_EMAILS = "E-Mails";
+    public static final String ACTIVITY_TRACKER_NAME_MEETINGS = "Meetings";
+    public static final String ACTIVITY_TRACKER_NAME_PHONE_CALLS = "Phone Calls";
+    public static final String ACTIVITY_TRACKER_NAME_TASKS = "Tasks";
+    public static final String ACTIVITY_TRACKER_NAME_PUBLIC = "Public";
+    public static final String ACTIVITY_TRACKER_NAME_TRASH = "Trash";
+    
     protected final Backend backend;
-    protected final ICalendar icalendar;
+    protected final ICalendar icals;
         
 }
 

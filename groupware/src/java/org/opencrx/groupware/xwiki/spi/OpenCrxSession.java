@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSession.java,v 1.17 2007/12/16 14:07:44 wfro Exp $
+ * Name:        $Id: OpenCrxSession.java,v 1.19 2008/05/02 16:09:35 wfro Exp $
  * Description: XWiki OpenCrxSession
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/16 14:07:44 $
+ * Date:        $Date: 2008/05/02 16:09:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -119,6 +119,9 @@ public class OpenCrxSession {
         String segmentName = "xwiki".equals(context.getDatabase()) || (context.getDatabase() == null)
             ? DEFAULT_SEGMENT_NAME
             : context.getDatabase();
+        if(segmentName.indexOf("-") > 0) {
+            segmentName = segmentName.substring(0, segmentName.indexOf("-"));
+        }
         segmentName = segmentName.length() <= 5
              ? segmentName.toUpperCase()
              : Character.toUpperCase(segmentName.charAt(0)) + segmentName.substring(1);

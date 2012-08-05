@@ -16,6 +16,11 @@
 				<env-entry-value>OOCKE1</env-entry-value>
 			</env-entry>
 			<env-entry>
+				<env-entry-name>KERNEL/persistenceManagerBinding</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>jmi1</env-entry-value>
+			</env-entry>
+			<env-entry>
 				<env-entry-name>KERNEL/exposedPath[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>xri:@openmdx:org.opencrx.kernel.uom1/provider/CRX</env-entry-value>
@@ -358,7 +363,7 @@
 				<env-entry-name>TYPE/verifyReply</env-entry-name>
 				<env-entry-type>java.lang.Boolean</env-entry-type>
 				<env-entry-value>false</env-entry-value>
-			</env-entry>			
+			</env-entry>
 			<!-- APPLICATION -->
 			<env-entry>
 				<env-entry-name>APPLICATION/batchSize</env-entry-name>
@@ -582,17 +587,17 @@
 				<env-entry-name>PERSISTENCE/booleanType</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>STANDARD</env-entry-value>
-			</env-entry>			
+			</env-entry>
 			<env-entry>
 				<env-entry-name>PERSISTENCE/dateType</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>STANDARD</env-entry-value>
-			</env-entry>			
+			</env-entry>
 			<env-entry>
 				<env-entry-name>PERSISTENCE/dateTimeType</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>STANDARD</env-entry-value>
-			</env-entry>			
+			</env-entry>
 			<env-entry>
 				<env-entry-name>PERSISTENCE/singleValueAttribute[0]</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
@@ -686,9 +691,16 @@
 		<container-transaction>
 			<method>
 				<ejb-name>opencrx_core_CRX_kernel_mandatory</ejb-name>
-				<method-name>*</method-name>
+				<method-name>process</method-name>
 			</method>
 			<trans-attribute>Required</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<ejb-name>opencrx_core_CRX_kernel_mandatory</ejb-name>
+				<method-name>createEntityProvider</method-name>
+			</method>
+			<trans-attribute>Never</trans-attribute>
 		</container-transaction>
 	</assembly-descriptor>
 </ejb-jar>

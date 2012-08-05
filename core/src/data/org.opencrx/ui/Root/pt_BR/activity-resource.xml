@@ -17,7 +17,7 @@
                         <_item>Recursos</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os recursos</_item>
+                        <_item>Todos os recursos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Calendários</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os calendários</_item>
+                        <_item>Todos os calendários</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -215,7 +215,7 @@
                         <_item>calendário base</_item>
                       </label>
                       <toolTip>
-                        <_item>calendário base</_item>
+                        <_item>Calendário base</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkingDay:isWorkingDay" _operation="create">
                     <_object>
                       <label>
-                        <_item>é dia útil</_item>
+                        <_item>Dia útil</_item>
                       </label>
                       <toolTip>
-                        <_item>é dia útil</_item>
+                        <_item>Dia útil</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -344,10 +344,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:isMain" _operation="create">
                     <_object>
                       <label>
-                        <_item>É principal</_item>
+                        <_item>Principal</_item>
                       </label>
                       <toolTip>
-                        <_item>É principal</_item>
+                        <_item>Principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -413,7 +413,7 @@
                         <_item>Registros de Trabalho</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os registros de trabalho</_item>
+                        <_item>Todos os registros de trabalho</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -663,10 +663,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:isBillable" _operation="create">
                     <_object>
                       <label>
-                        <_item>É pra faturar</_item>
+                        <_item>Faturar</_item>
                       </label>
                       <toolTip>
-                        <_item>É pra faturar</_item>
+                        <_item>Faturar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selecionador de depósito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selecionador de depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -674,8 +685,11 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:workCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Registro do esforço de Trabalho</_item>
+                        <_item>Reserva do esforço de Trabalho</_item>
                       </label>
+                      <toolTip>
+                        <_item>Reserva do esforço de Trabalho</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -1005,6 +1019,17 @@
                       </label>
                       <toolTip>
                         <_item>Tipo do valor</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selecionador de depósito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selecionador de depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>

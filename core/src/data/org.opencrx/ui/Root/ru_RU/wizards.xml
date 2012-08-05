@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportToOutlook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Экспортировать контакты в  MS Outlook (требует IE)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Экспортировать контакты в  MS Outlook (требует IE)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Новый контакт или юридическое лицо</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Новый контакт или юридическое лицо</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Править контакт</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Править контакт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Править юридическое лицо</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Править юридическое лицо</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Править группу</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Править группу</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Править неопределенную учетную запись</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Править неопределенную учетную запись</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Править контакт (быстр.)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Править контакт (быстр.)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Править юридическое лицо (быстр.)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Править юридическое лицо (быстр.)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Настройки пользователя</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Настройки пользователя</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Адресная книга</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Адресная книга</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Слияние почты --&gt; RTF документ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Загрузить медиаданные</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Загрузить медиаданные</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Загрузить медиаданные</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Загрузить медиаданные</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

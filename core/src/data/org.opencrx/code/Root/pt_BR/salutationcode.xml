@@ -117,10 +117,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="009" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Familia</_item>
+                              <_item>Família</_item>
                             </shortText>
                             <longText>
-                              <_item>Familia</_item>
+                              <_item>Família</_item>
                             </longText>
                           </_object>
                           <_content/>

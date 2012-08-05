@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Открыт/вступление</_item>
+                              <_item>Открыт/предварительный</_item>
                             </shortText>
                             <longText>
-                              <_item>[02] Открыт/вступление</_item>
+                              <_item>[02] Открыт/предварительный</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Открыт/связан</_item>
+                              <_item>Открыт/в контакте</_item>
                             </shortText>
                             <longText>
-                              <_item>[03] Открыт/связан</_item>
+                              <_item>[03] Открыт/в контакте</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -95,10 +95,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/отклонен</_item>
+                              <_item>Закрыт/потерян</_item>
                             </shortText>
                             <longText>
-                              <_item>[07] Закрыт/отклонен</_item>
+                              <_item>[07] Закрыт/потерян</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -117,10 +117,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/отсутствие интереса</_item>
+                              <_item>Закрыт/Интерес потерян</_item>
                             </shortText>
                             <longText>
-                              <_item>[09] Закрыт/отсутствие интереса</_item>
+                              <_item>[09] Закрыт/Интерес потерян</_item>
                             </longText>
                           </_object>
                           <_content/>

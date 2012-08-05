@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>agracacao</_item>
+                              <_item>agregação</_item>
                             </shortText>
                             <longText>
-                              <_item>agracacao</_item>
+                              <_item>agregação</_item>
                             </longText>
                           </_object>
                           <_content/>

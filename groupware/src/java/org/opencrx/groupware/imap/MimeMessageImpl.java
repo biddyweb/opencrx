@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Part;

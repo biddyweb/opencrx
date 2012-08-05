@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Auditee:audit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Аудит. записи</_item>
+                        <_item>»Аудит записей</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. записи</_item>
+                        <_item>Аудит. записей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectModificationAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи (модификация)</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи (модификация)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectModificationAuditEntry:beforeImage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вид перед изменением</_item>
+                        <_item>Образ перед изменением</_item>
                       </label>
                       <toolTip>
-                        <_item>Вид перед изменением</_item>
+                        <_item>Образ перед изменением</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectRemovalAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудит. запись (Удаление)</_item>
+                        <_item>Аудит записи (Удаление)</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. запись (Удаление)</_item>
+                        <_item>Аудит записи (Удаление)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectRemovalAuditEntry:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectRemovalAuditEntry:beforeImage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вид перед изменением</_item>
+                        <_item>Образ перед изменением</_item>
                       </label>
                       <toolTip>
-                        <_item>Вид перед изменением</_item>
+                        <_item>Образ перед изменением</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectCreationAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудит. запись (Создание)</_item>
+                        <_item>Аудит записи (Создание)</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. запись (Создание)</_item>
+                        <_item>Аудит записи (Создание)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectCreationAuditEntry:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудит. запись</_item>
+                        <_item>Аудит записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry:Pane:Op:Tab:testAndSetVisitedBy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тест и установка посещены</_item>
+                        <_item>Тест и установка посещеным </_item>
                       </label>
                       <toolTip>
-                        <_item>Тест и установка посещены</_item>
+                        <_item>Тест и установка посещеным</_item>
                       </toolTip>
                     </_object>
                     <_content/>

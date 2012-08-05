@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Clona nivel de preco (incluindo dependentes) / Clona precos</_item>
+                              <_item>Clonar nível de preço (incluindo dependentes) / Clonar preços</_item>
                             </shortText>
                             <longText>
-                              <_item>Clona nivel de preco (incluindo dependentes) / Clona precos</_item>
+                              <_item>Clonar nível de preço (incluindo dependentes) / Clonar preços</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Clona nivel de preco (incluindo dependentes)</_item>
+                              <_item>Clonar nível de preço (incluindo dependentes)</_item>
                             </shortText>
                             <longText>
-                              <_item>Clona nivel de preco (incluindo dependentes)</_item>
+                              <_item>Clonar nível de preço (incluindo dependentes)</_item>
                             </longText>
                           </_object>
                           <_content/>

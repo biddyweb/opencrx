@@ -15,6 +15,17 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item>N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="001" _operation="create">
                           <_object>
                             <shortText>
@@ -99,6 +110,17 @@
                             </shortText>
                             <longText>
                               <_item>Dr.</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="009" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Familj</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Familj</_item>
                             </longText>
                           </_object>
                           <_content/>

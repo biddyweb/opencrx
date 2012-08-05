@@ -17,7 +17,7 @@
                         <_item>Contas</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as Contas</_item>
+                        <_item>Todas as Contas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +28,7 @@
                         <_item>Contas</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as Contas</_item>
+                        <_item>Todas as Contas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -37,10 +37,46 @@
                     <_object/>
                     <_content>
                       <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Contas</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Contas</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:account" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Contas (inativas)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>»Contas (inativas)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:account" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
                         <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>Grupos de Contas</_item>
+                              <_item>Grupos</_item>
                             </label>
                             <toolTip>
                               <_item>Grupos de Contas</_item>
@@ -50,6 +86,17 @@
                         </org.openmdx.ui1.AdditionalElementDefinition>
                       </additionalElementDefinition>
                     </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Conta</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Conta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
                     <_object>
@@ -61,6 +108,42 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Participantes</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Participantes</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Membros do grupo (inativos)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Membros do grupo (inativos)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
@@ -117,13 +200,21 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25:Group:30" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:fullName" _operation="create">
                     <_object>
                       <label>
                         <_item>Nome Completo</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome Compl. da Conta (prim., últ.)</_item>
+                        <_item>Nome Completo da Conta (sobrenome, nome)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -164,10 +255,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountState" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>estado da Conta</_item>
+                        <_item>Status da Conta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -208,10 +299,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:master" _operation="create">
                     <_object>
                       <label>
-                        <_item>Principal</_item>
+                        <_item>Mestre</_item>
                       </label>
                       <toolTip>
-                        <_item>Principal</_item>
+                        <_item>Mestre</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:vcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,17 +358,6 @@
                       </label>
                       <toolTip>
                         <_item>Válido até</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importa vCard</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importa vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -516,10 +607,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createSalesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar Ordem de Vendas</_item>
+                        <_item>Criar Ordens de Venda</_item>
                       </label>
                       <toolTip>
-                        <_item>Criar Ordem de Vendas</_item>
+                        <_item>Criar Ordens de Venda</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -538,10 +629,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateSalesOrderParams:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome da ordem de vendas</_item>
+                        <_item>Nome das ordens de venda</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome da ordem de vendas</_item>
+                        <_item>Nome das ordens de venda</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -582,10 +673,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreateSalesOrderResult:salesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ordem de Vendas</_item>
+                        <_item>Ordens de Vendas</_item>
                       </label>
                       <toolTip>
-                        <_item>Ondem de Vendas</_item>
+                        <_item>Ondens de Vendas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -663,6 +754,36 @@
                       </label>
                       <toolTip>
                         <_item>Fatura</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Atualizar vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Atualizar vCard</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard:Group:in" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

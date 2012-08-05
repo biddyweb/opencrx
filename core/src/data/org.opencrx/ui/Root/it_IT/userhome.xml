@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Esportazione Profili</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Esportazione Profili</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
                     <_object>
                       <label>
@@ -844,6 +855,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Esporta Profilo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Esporta Profilo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -1012,10 +1034,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:primaryUserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gruppo Utente Primario</_item>
+                        <_item>Gruppo Utente Principale</_item>
                       </label>
                       <toolTip>
-                        <_item>Gruppo Utente Primario</_item>
+                        <_item>Gruppo Utente Principale</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1078,10 +1100,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers" _operation="create">
                     <_object>
                       <label>
-                        <_item>Importa Utenti</_item>
+                        <_item>Importazione Utenti</_item>
                       </label>
                       <toolTip>
-                        <_item>Importa Utenti</_item>
+                        <_item>Importazione Utenti</_item>
                       </toolTip>
                     </_object>
                     <_content/>

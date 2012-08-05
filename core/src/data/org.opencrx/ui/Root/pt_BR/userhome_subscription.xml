@@ -71,6 +71,9 @@
                       <label>
                         <_item>Ativo</_item>
                       </label>
+                      <toolTip>
+                        <_item>Ativo</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

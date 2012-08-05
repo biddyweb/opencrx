@@ -15,6 +15,50 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item> N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>нет</_item>
+                            </shortText>
+                            <longText>
+                              <_item>нет</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>распределенный</_item>
+                            </shortText>
+                            <longText>
+                              <_item>распределенный</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Группировка</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Группировка</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

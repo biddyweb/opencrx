@@ -50,7 +50,7 @@
                         <_item>Отправлено</_item>
                       </label>
                       <toolTip>
-                        <_item>Отправлено</_item>
+                        <_item>Отослано</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SmsRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Телефонный номер</_item>
+                        <_item>Номер телефона</_item>
                       </label>
                       <toolTip>
-                        <_item>Телефонный номер</_item>
+                        <_item>Номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SmsRecipientGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SmsRecipientGroup:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractSmsRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Телефонный номер(а)</_item>
+                        <_item>Номер(а) телефона</_item>
                       </label>
                       <toolTip>
-                        <_item>Телефонный номер(а)</_item>
+                        <_item>Номер(а) телефона)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

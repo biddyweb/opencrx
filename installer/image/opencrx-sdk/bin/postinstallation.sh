@@ -9,6 +9,8 @@ cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"
 tar xf "@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-core.jre-1.5.tar"
 tar xf "@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-portal.jre-1.5.tar"
 tar xf "@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-security.jre-1.5.tar"
+tar xf "@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-log.jre-1.5.tar"
+tar xf "@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-tomcat.tomcat-6.tar"
 tar xf "@@INSTALLDIR@@/repository/distribution/openmdx-@@OPENMDX_VERSION@@-websphere.websphere-6.tar"
 export ANT_HOME=@@ANT_HOME@@
 export JAVA_HOME=@@JAVA_HOME@@
@@ -22,3 +24,5 @@ ant assemble
 cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/store"
 ant install-src
 ant assemble
+cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"
+rm -Rf CVS

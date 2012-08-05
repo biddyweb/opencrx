@@ -1601,6 +1601,61 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nom</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Description</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Description</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Classes</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Classes</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtre de référence</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtre de référence</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modèle</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Modèle</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Importer:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -1711,18 +1766,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Exporter en XML</_item>
+                        <_item>Exporter</_item>
                       </label>
                       <toolTip>
-                        <_item>Exporter en XML</_item>
+                        <_item>Exporter</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Informations</_item>
@@ -1733,29 +1788,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:referenceFilter" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtre (référence)</_item>
+                        <_item>Profil</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtre (référence)</_item>
+                        <_item>Profil</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:attributeFilter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filtre (Attribut)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Filtre (Attribut)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Résultat</_item>
@@ -1766,7 +1810,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:item" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item" _operation="create">
                     <_object>
                       <label>
                         <_item>Elément exporté</_item>
@@ -1777,7 +1821,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemMimeType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType" _operation="create">
                     <_object>
                       <label>
                         <_item>Type MIME</_item>
@@ -1788,7 +1832,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemName" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName" _operation="create">
                     <_object>
                       <label>
                         <_item>Nom de l&apos;élément</_item>
@@ -1799,7 +1843,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:status" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status" _operation="create">
                     <_object>
                       <label>
                         <_item>Statut</_item>
@@ -1810,13 +1854,57 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:statusMessage" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage" _operation="create">
                     <_object>
                       <label>
                         <_item>Message</_item>
                       </label>
                       <toolTip>
                         <_item>Message de statut</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Export (avancé)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Export (avancé)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrée</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrée</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtre de référence</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtre de référence</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Résultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Résultat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2151,6 +2239,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:resendDelayInSeconds" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Délai de renvoi [en s.]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Délai de renvoi [en s.]</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:description" _operation="create">
                     <_object>
                       <label>
@@ -2158,138 +2257,6 @@
                       </label>
                       <toolTip>
                         <_item>Description</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ajouter un abonnement</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ajouter un abonnement</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Informations</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Informations</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Résultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Résultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Supprimer un abonnement</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Supprimer un abonnement</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Informations</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Informations</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Résultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Résultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Aajouter un abonnement au niveau supérieur</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Aajouter un abonnement au niveau supérieur</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Informations</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Informations</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Résultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Résultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Supprimer un abonnement au niveau supérieur</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Supprimer un abonnement au niveau supérieur</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Informations</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Informations</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Résultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Résultat</_item>
                       </toolTip>
                     </_object>
                     <_content/>

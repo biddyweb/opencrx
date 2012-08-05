@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: org.opencrx.kernel.activity1.ActivityTracker-ExportMsProject.jsp,v 1.4 2007/12/14 15:23:01 wfro Exp $
+ * Name:        $Id: org.opencrx.kernel.activity1.ActivityTracker-ExportMsProject.jsp,v 1.6 2008/04/13 13:43:11 wfro Exp $
  * Description: openCRX MS Project Export
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/14 15:23:01 $
+ * Date:        $Date: 2008/04/13 13:43:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,6 +89,7 @@ org.apache.poi.hssf.util.*
 <%
   ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
   ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
+  javax.jdo.PersistenceManager pm = view.getPersistenceManager();
   Texts_1_0 texts = app.getTexts();
   Codes codes = app.getCodes();
 
@@ -105,10 +106,7 @@ org.apache.poi.hssf.util.*
    FileOutputStream os = new FileOutputStream(f);
    
 	// Generate MS Project export
-	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-		(org.opencrx.kernel.activity1.jmi1.Activity1Package)app.getDataPackage().refPackage(
-			org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
-		);
+	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 	org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup = 
 		(org.opencrx.kernel.activity1.jmi1.ActivityGroup)view.getObjectReference().getObject();
 
@@ -116,7 +114,7 @@ org.apache.poi.hssf.util.*
 		new org.opencrx.application.msproject.ProjectExporter(
 			os,
 			activityGroup,
-			app.getDataPackage()
+			pm
 		);
 	exporter.setExportActivities(Boolean.TRUE);
 	exporter.setExportResources(Boolean.TRUE);

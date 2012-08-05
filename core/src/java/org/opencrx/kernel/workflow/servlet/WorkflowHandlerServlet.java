@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     openCRX, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.17 2008/01/24 17:46:18 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.24 2008/05/29 23:12:38 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/01/24 17:46:18 $
+ * Date:        $Date: 2008/05/29 23:12:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -64,21 +64,23 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jmi.reflect.RefException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams;
 import org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.model1.accessor.basic.cci.Model_1_3;
@@ -122,9 +124,9 @@ public class WorkflowHandlerServlet
                 (isSynchronous != null) &&
                 isSynchronous.booleanValue()
             ) {
-                org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getOpenCrxBasePackage(pm);
+                org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm);
                 UserHome userHome = (UserHome)pm.getObjectById(
-                    wfInstance.refGetPath().getParent().getParent().toXri()
+                    wfInstance.refGetPath().getParent().getParent()
                 );
                 ExecuteWorkflowParams params = basePackage.createExecuteWorkflowParams(
                     null,
@@ -147,7 +149,7 @@ public class WorkflowHandlerServlet
                 }
                 catch(Exception e) {
                     AppLog.warning("Can not execute workflow", wfInstance.getProcess().getName() + "; home=" + userHome.refMofId());
-                    AppLog.warning(e.getMessage(), e.getCause(), 1);
+                    AppLog.warning(e.getMessage(), e.getCause());
                     try {
                         pm.currentTransaction().rollback();
                     } catch(Exception e0) {}
@@ -196,7 +198,8 @@ public class WorkflowHandlerServlet
                     return false;         
                 }  
                 workflow.execute(
-                    wfInstance
+                    wfInstance,
+                    pm
                 );
                 AppLog.info("SUCCESS");
                 return true;
@@ -218,13 +221,13 @@ public class WorkflowHandlerServlet
     ) throws IOException {
             
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
-        
+        AppLog.detail(WORKFLOW_NAME + " " + providerName + "/" + segmentName);        
         try {
             PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );
-            WorkflowControllerServlet.initWorkflows(
+            Workflows.initWorkflows(
                 pm,
                 providerName,
                 segmentName                
@@ -234,7 +237,7 @@ public class WorkflowHandlerServlet
             Home1Package userHomePackage = Utils.getHomePackage(pm);
             org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = 
                 (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-                    "xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName
+                    new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
                 );
     
             WfProcessInstanceQuery query = userHomePackage.createWfProcessInstanceQuery();
@@ -277,7 +280,7 @@ public class WorkflowHandlerServlet
                             pm.currentTransaction().commit();
                         }
                         catch(Exception e) {
-                            AppLog.info(e.getMessage(), e.getCause(), 1);
+                            AppLog.info(e.getMessage(), e.getCause());
                             try {
                                 pm.currentTransaction().rollback();
                             } catch(Exception e0) {}
@@ -293,7 +296,7 @@ public class WorkflowHandlerServlet
                             pm.currentTransaction().rollback();
                         }
                         catch(Exception e) {
-                            AppLog.info(e.getMessage(), e.getCause(), 1);
+                            AppLog.info(e.getMessage(), e.getCause());
                             try {
                                 pm.currentTransaction().rollback();
                             } catch(Exception e0) {}
@@ -309,7 +312,7 @@ public class WorkflowHandlerServlet
                         pm.currentTransaction().commit();
                     }
                     catch(Exception e) {
-                        AppLog.info(e.getMessage(), e.getCause(), 1);
+                        AppLog.info(e.getMessage(), e.getCause());
                         try {
                             pm.currentTransaction().rollback();
                         } catch(Exception e0) {}                        
@@ -323,7 +326,8 @@ public class WorkflowHandlerServlet
         }
         catch(Exception e) {
             System.out.println("Exception occured " + e.getMessage() + ". Continuing");
-            AppLog.info(e.getMessage(), e.getCause(), 1);
+            AppLog.warning("Exception occured " + e.getMessage() + ". Continuing");
+            AppLog.warning(e.getMessage(), e.getCause());
         }
     }    
 
@@ -351,11 +355,14 @@ public class WorkflowHandlerServlet
                     );
                 } 
                 catch(Exception e) {
-                    AppLog.info(e.getMessage(), e.getCause(), 1);
+                    AppLog.warning(e.getMessage(), e.getCause());
                 }
                 finally {
                     this.runningSegments.remove(id);
                 }            
+            }
+            else {
+                AppLog.warning(WORKFLOW_NAME + " " + providerName + "/" + segmentName + ". Ignoring command. Running segments are", this.runningSegments);                
             }
         }
     }

@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelReferencePrivilege:filter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettore</_item>
+                        <_item>Filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettore</_item>
+                        <_item>Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -403,6 +403,17 @@
                       </label>
                       <toolTip>
                         <_item>Utente dei Gruppi del Principale</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:authCredential" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Autorizzazione Credenziali</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Autorizzazione Credenziali</_item>
                       </toolTip>
                     </_object>
                     <_content/>

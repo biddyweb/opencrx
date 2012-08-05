@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VersioningStoreImpl.java,v 1.13 2007/12/11 21:39:14 wfro Exp $
+ * Name:        $Id: VersioningStoreImpl.java,v 1.14 2008/06/21 23:04:37 wfro Exp $
  * Description: XWiki StoreImpl
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/11 21:39:14 $
+ * Date:        $Date: 2008/06/21 23:04:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -324,8 +324,11 @@ public class VersioningStoreImpl
             List<XWikiRCSNodeInfo> nodes = new ArrayList<XWikiRCSNodeInfo>();
             if(!documents.isEmpty()) {
                 Document document = documents.get(0);
-                Collection<DocumentRevision> revisions = document.getRevision();
-                for(DocumentRevision revision: revisions) {
+                // Only get head revision. Ignore older revisions. Versioning does
+                // not seem to work with this version of XWiki
+                DocumentRevision revision = document.getHeadRevision();
+//                Collection<DocumentRevision> revisions = document.getRevision();
+//                for(DocumentRevision revision: revisions) {
                     XWikiRCSNodeInfo node = new XWikiRCSNodeInfo();
                     node.setId(
                         new XWikiRCSNodeId(
@@ -337,7 +340,7 @@ public class VersioningStoreImpl
                     node.setComment(revision.getName());
                     node.setDate(revision.getCreatedAt());
                     nodes.add(node);
-                }
+//                }
             }
             return nodes;
         }

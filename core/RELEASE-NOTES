@@ -1,5 +1,5 @@
-Release Name: openCRX/Core 2.0.0
-Release Date: 2008-02-20
+Release Name: openCRX/Core 2.1.0
+Release Date: 2008-07-10
 
 ---------------------------------------------------------------------
 Notes:
@@ -51,308 +51,138 @@ openMDX (http://www.openmdx.org/)
 ---------------------------------------------------------------------
 
 0.    SUMMARY
-      * Deployment: Support for deployment on Tomcat/LWC
-      * Wizards: AddressBook, UserSettings
-      * Free text search: Search Wizard / ObjectFinder / IndexerServlet
-      * Java 5: Migrate to jmi1/cci2 bindings
-      * Application plugin: Object-oriented for operations. All business logic
-        will be migrated to jmi1/cci2 bindings step-by-step in the next minor
-        versions.
-      
+      * Reporting: Product filters, contract filters and export profiles added.
+      * Administration: Segment setup wizard
+      * Fixed bugs
+            
       For more information see below and http://www.opencrx.org/opencrx/2.0/new.htm
 
 
 1.    NEW FEATURES
 
-      CR10006537
-      openCRX on Tomcat. Allow to deploy openCRX on Tomcat only using LWC. See
-      Tomcat installation guide for more information.
+      CR10007866
+      Keep track of the last applied ActivityCreator of an activity. Add 
+      reference Activity.lastAppliedCreator. ActivityCreator.newActivity()
+      and Activity.reapplyActivityCreator() updates the reference.
       
-      CR10006597
-      depot1: SimpleBooking. A SimpleBooking allows lightweight recording of 
-      any kind of quantities on depot positions. 
+      CR10007849
+      Product filters. Add global product filters.
       
-      CR10006574
-      Extend Price Levels. Allow to have different types of price levels. 
-      Currently suppported are:
-      * Price level with absolute start and end date
-      * Price level with start date relative to product phases
+      CR10007845
+      Contract filters. Add global contract filters.
       
-      CR10006428
-      Activities provide generic reference to CrxObjects. InvolvedObject allows 
-      to attach any CrxObject to activities. The role of the relationship can
-      be specified.
+      CR10007754
+      SegmentSetup wizard. The wizard allows the segment administrator to create
+      all required objects for:
+      * Activity management
+      * Topics and Workflows
+      * Groupware clients
+      * User management
+      * Product management
+      * Contract management
       
-      CR10006522
-      UserSettings wizard. Add wizard which allows management of user settings.
-      
-      CR10006494
-      Add Address book wizard. The wizard provides simple management of contacts
-      and addresses.
-      
-      CR10006521
-      FilteredActivitiesDataBinding. Add a data binding which allows to access 
-      collections of filtered activities.
+      CR0003145
+      Reporting - Incident. Each object offers the operation exportItem(). The
+      parameters are:
+      * itemMimeType: this parameter specifies the export format. Supported
+        formats are text/xml and application/x-excel.
+      * referenceFilter: allows to specify which references are traversed 
+        starting from the object to be exported. This is a comma-seperated
+        list of either qualified or unqualified reference names.
+        
+      Examples:
+      * Export of an Account with its addresses, assigned activities and
+        assigned contracts:
+        'address, assignedContract, position, assignedActivity, followUp'
+      * Export of an invoice with details:
+        'position, customer, address, uom, salesTaxType, org:opencrx:kernel:product1:ProductDescriptor:product'
+      * Export of filtered accounts specified by an AccountFilter:
+        'filteredAccount, address'
+        
+      The Excel-Export creates a sheet for each exported object type. Object
+      attributes can be accessed as shown in the following examples:
 
-      An example UI definition looks as follows: Definition of structural feature 
-      which is a reference of type org:opencrx:kernel:Activity:
+      // IDX=0
+      = VLOOKUP(cell containing sales tax xri; SalesTaxType.DATA; MATCH("rate"; SalesTaxType.COLUMN;0); 0)
 
-			<featureDefinition>
-				<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
-					<type>org:opencrx:kernel:activity1:Activity</type>
-					<multiplicity>0..n</multiplicity>
-					<changeable>false</changeable>
-					<isReference>true</isReference>
-				</org.openmdx.ui1.StructuralFeatureDefinition>
-			</featureDefinition>
+      // IDX=1
+      = VLOOKUP(cell containing sales tax xri & "*1"; SalesTaxType.DATA; MATCH("rate"; SalesTaxType.COLUMN;0); 0)
 
-			The feature name is of the form className:id of filtered activities 
-			container!filteredActivity. The id of the filtered activites container is of 
-			the form (tracker|milestone|category)!name[!filter!name] or globalfilter!name. 
-			The macro ${USER} is replaced by the current user name. The structural feature 
-			definition can be used in element definitions as follows:
-
-			<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:tracker!${USER}~Private!filteredActivity">
-				<_object>
-					<active>true</active>
-					<changeable>false</changeable>
-					<toolTip>
-						<_item>Private Activities</_item>
-					</toolTip>
-					<label>
-						<_item>Private Activities</_item>
-					</label>
-					<order>
-						<_item>0</_item>
-						<_item>0</_item>
-						<_item>3</_item>
-					</order>
-					<maxMember>5</maxMember>
-					<dataBindingName>org.opencrx.kernel.portal.FilteredActivitiesDataBinding</dataBindingName>
-				</_object>
-				<_content/>
-			</org.openmdx.ui1.ElementDefinition>
-
-
-      CR0003427
-      Search Wizard / ObjectFinder / IndexerServlet. The new (groovy based)
-      root menu control provides a search input field which allows to perform
-      keyword / index based search on objects stored in openCRX. The root menu
-      is customized in ./core/src/data/org.opencrx/control/userwest. The control
-      invokes the search wizard ./core/src/data/org.opencrx/wizards/en_US/Search.jsp
-      which in turn takes the query string and creates a corresponding ObjectFinder
-      on the user home and navigates to it. The object finder lists all index
-      entries which match the query. Index entries are updates by the Indexer 
-      servlet which is implemented as workflow and is controlled by the 
-      WorkflowControllerServlet. The IndexerServlet indexes all objects which do 
-      not have an IndexEntry which is newer than the modification date of the 
-      object. The IndexerServlet creates an index by invoking the operation
-      updateIndex() on the object to be indexed.
+      // IDX=0
+      = VLOOKUP(cell containing account xri; Account.DATA; MATCH("fullName"; Account.COLUMN;0); 0)
       
-      CR10006498
-      Model: The class ActivityFilterProperty is extendded as follows:
-      * add AssignedToFilterProperty
-      * In case no values for scheduled start and scheduled end are specified
-        for ScheduledStartFilterProperty and ScheduledEndFilterProperty,
-        respectively, the current date is used as filter value. offsetInHours 
-        allows to shift the date. 
+      CR10007780
+      AccountMemberships are a recursive list of account assignments for a 
+      given account. The set of account memberships is calculated by a
+      database view. AccountMemberships fulfill the following conditions
+      for a given account A:
+      * distance == 1, accountFrom=A, accountTo=B
+        --> there exists a relationship from A to B
+      * distance == 2, accountFrom=B, accountTo=C
+        --> there exists a relationship from A to B and B to C
+      * etc.
+      * distance == -1, accountFrom=B, accountTo=A
+        --> there exists a relationship from B to A
+      * distance == -2, accountFrom=C, accountTo=B
+        --> there exists a relationship from C to B and B to A
+      * etc.
       
-      CR10006511
-      Portal: queries in XML filters. Queries can be defined in XML filters
-      with the PiggyBackCondition. Here is an example:
+      CR10007777
+      XFN Graphing. The following wizards are added to the Accounts menu:
+      * AccountMembershipGraph.jsp: graph showing the relationships of accounts using the
+        JIT library (for more info see http://www.thejit.org).
+      * Relationships.jsp. Calculates the shortest path between two accounts.
       
-			<object class="org.openmdx.base.query.PiggyBackCondition">
-				<void property="quantor">
-					<short>1</short>
-				</void>
-				<void property="feature">
-					<string>context:BP96MI-GEdu0Lr3K4tC9bQ:object_class</string>
-				</void>
-				<void property="fulfil">
-					<boolean>true</boolean>
-				</void>
-				<void property="value">
-					<array class="java.lang.String" length="1">
-						<void index="0">
-							<string>org:openmdx:compatibility:datastore1:QueryFilter</string>
-						</void>
-					</array>
-				</void>
-			</object>
-			<object class="org.openmdx.base.query.PiggyBackCondition">
-				<void property="quantor">
-					<short>1</short>
-				</void>
-				<void property="feature">
-					<string>context:BP96MI-GEdu0Lr3K4tC9bQ:clause</string>
-				</void>
-				<void property="fulfil">
-					<boolean>true</boolean>
-				</void>
-				<void property="value">
-					<array class="java.lang.String" length="1">
-						<void index="0">
-							<string>EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND UPPER(a.full_name) LIKE '%MEIER%'</string>
-						</void>
-					</array>
-				</void>
-			</object>
+      CR10007739
+      Add support for HSQLDB 1.8. Scripts and connectors added to src/connector
+      and src/sql (see openCRX SDK).
       
-      * The feature name 'context:$uuid:object_class' corresponds to the feature name
-        'object_class' with the context prefix context:$uuid. The value of the feature
-        must be 'org:openmdx:compatibility:datastore1:QueryFilter'. The value is
-        used by the database plugin and is used to trigger query filters.
-      * The feature 'context:$uuid:clause' allows to specify the filter clause as
-        SQL clause. The clause should be in ANSI SQL. This way the filter is database
-        independent. E.g. use the ANSI SQL function CURRENT_TIMESTAMP to get the current
-        date and not any DB-specific function.
-      * $uuid must be replaced by any UUID, e.g. BP96MI-GEdu0Lr3K4tC9bQ.
+      CR10007604
+      Add multi-valued attributes Account::extCode20-29.
 
       
 2.    CHANGES  
      
 2.0.  CHANGED FEATURES
       
-      CR10006610
-      account1: codes for address usage.
+      CR10007720
+      DepotReportItemPosition. Add balanceSimple and balanceSimpleBop. balance = 
+      balanceCredit - balanceDebit and balanceBop = balanceCreditBop - balanceDebitBop.
       
-      CR10006605
-      Move ContractRole to segment-level. ContractRole is at segment-level and 
-      not composite to ContractReferenceHolder anymore. This allows to perform 
-      global searches on contract roles, e.g. return all contract roles of 
-      account A.
-      
-      CR10006609
-      account1: move UnspecifiedAccount.ext... to Account. Move all ext... 
-      attributes of class UnspecifiedAccount to class Account.
-      
-      CR10006600
-      depot1: assertReports() takes bookingStatusThreshold as parameter. 
-      assertReports() takes bookingStatus as parameter. This allows to include 
-      bookings in the depot reports matching the specified booking status. The 
-      previous implementation allowed to include bookings with status processed 
-      only.
-      
-      CR10006599
-      account1: generalize GroupMembership. Generalize GroupMembership so that 
-      any account can have members and the memberships are listed at account 
-      level. At the same time deprecate the relationships Account.partner,
-      Account.contact and the class ContactRelationships.
-      
-      CR10006598
-      depot1: createBooking() operations take the booking origin as parameter.      
-      
-      CR10007446
-      product1: Reorg product offerings. The classes below are removed from
-      the model. A future version of openCRX will provide a simpler model
-      and implementation for structured products and contract positions.
-
-			product1
-			========
-			ProductOffering
-			ComplexProductBundleType
-			ProductBundleType
-			BundledProductType
-			ProductBundleContainer
-			AbstractProductBundle
-			AbstractBundledProduct
-			BundledProduct
-			ProductBundle
-			ComplexProductBundle
-			ChangeOrderParams
-			AssignProductParams
-			ProductPosition
-			ProductOfferingPosition
-			ProductBundlePosition
-			ComplexProductBundlePosition
-			BundledProductPosition
-			EditableProductOfferingPosition
-			SelectableItem
-			SelectableItemWithQuantity
-			SelectableBundledProduct
-			SelectableProductBundle
-			SelectableComplexProductBundle
-			SelectableProductConfiguration
-			PriceOverrideEnabled
+      CR10007615
+      Extend AccountMembership. The following Account assocations are deprecated:
+			* ContactHasDeputy
+			* ContactHasAssistant
+			* ContactReportsToContact
+			Use account members instead.
 			
-			contract1
-			=========
-			InvoiceBundledProductPosition
-			InvoiceComplexProductBundlePosition
-			InvoiceProductBundlePosition
-			InvoiceProductOfferingPosition
-			OpportunityBundledProductPosition
-			OpportunityComplexProductBundlePosition
-			OpportunityProductBundlePosition
-			OpportunityProductOfferingPosition
-			QuoteBundledProductPosition
-			QuoteComplexProductBundlePosition
-			QuoteProductBundlePosition
-			QuoteProductOfferingPosition
-			SalesOrderBundledProductPosition
-			SalesOrderComplexProductBundlePosition
-			SalesOrderProductBundlePosition
-			SalesOrderProductOfferingPosition
-			CreateProductOfferingPositionParams
-			CreateProductOfferingPositionResult
-			
-			depot1
-			======
-			BundledProductDepotPosition
-			ProductBundleDepotPosition
-			ComplexProductBundleDepotPosition
-			ProductOfferingDepotPosition
+      CR10007628
+      PortalExtension: exclude disabled objects in autocomplete lookups. Disabled 
+      objects should not be included in the result set of autocompletion lookups. 
+      Extend PortalExtension.getFindObjectsBaseFilter() correspondingly.
       
+      CR10007613
+      VCard: unnecessary updates on addresses. When importing VCards all 
+      existing addresses are retrieved for modification and marked as dirty even 
+      if the VCard does not contain matching addresses. 
       
-      CR10006548
-      Migrate application plugin to OperationAwarePlugin_1. As a consequence
-      the plugin is split as follows:
-      * the classes in package org.opencrx.kernel.backend contain the 
-        business logic of openCRX
-      * The classes in the packages org.opencrx.kernel.application.* contain
-        the classes which dispatch operation requests to the backend classes
-      * The compatibility plugin OpenCrxKernel_1 is still responsible for
-        create, replace, get and find requests. However it does not handle 
-        operation requests anymore. 
-      To be done
-      * Migrate the backend to jmi1/cci2. Get rid of DataproviderObjects.
-      * Migrate OpenCrxKernel_1 to be fully OO. Instead of an
-        OperationAwarePlugin_1 it should be a Plugin_1.
-      
-      CR10006543
-      Migrate to cci2/jmi1 bindings. Migrate the openCRX APIs from the Java 1.4
-      compliant cci binding to the Java 5 compliant jmi1/cci2 binding. Migration
-      of client code (wizards, remote clients, reports, user-specific GUIs, ...)
-      is straight forward. The wizards delivered in openCRX/Core and the
-      openCRX/Store application show how to migrate to the new APIs.
-      
-      CR10006529
-      Merge Web.ear and App.ear. Merge Web.ear and App.ear to one single EAR. 
-      The merge a) improves performance (use of local refs) and b) simplifies 
-      deployement.
-      
-      CR10006523
-      JVM local ui repository. Migrate deployment to JVM local ui repository. 
-      The ui provider is local to the ObjectInspectorServlet which has the 
-      following advantages a) performance improvement, b) no conflicts in case 
-      of multiple instances of ObjectInspectorServlet with different ui configurations.
-      
-      CR10006474
-      activity1: calculation of actual effort. For performance reasons, the calculation 
-      of ActivityGroup.actualEffort should be calculated by an operation instead by derived 
-      attributes.
-      
-      CR10006414
-      AccessControl: missing owner filter for extent queries. AccessControl 
-      does now add owner filter property in case of extent queries.
-      
-      CR10006493
-      Change package name org.opencrx.kernel.gui.generic.servlet to 
-      org.opencrx.kernel.portal.
+      CR10006424
+      Default position name in openDepotPosition() should be based on 
+      Product::productNumber instead of Product::name.
 
 
 2.1.  FIXED BUGS
-      Many
+
+      CR10007712
+      reprice. The operation AbstractContract.reprice() resets manually set
+      ContractPosition.discountIsPercentage and discount. 
+      
+      CR10007603
+      PriceLevel: calculatePrices for base price levels. A price level is a 
+      base price level if basedOn.isEmpty(). The current implementation with 
+      !basedOn.isEmpty() results in a wrong retrieval of prices assigned to a 
+      base price level. As a result the base price level is added to all prices 
+      of the filtered products.
       
       
 2.2   REMOVED FEATURES

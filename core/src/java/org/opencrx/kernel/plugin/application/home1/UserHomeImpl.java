@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserHomeImpl.java,v 1.3 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: UserHomeImpl.java,v 1.5 2008/04/05 22:53:39 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/04/05 22:53:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,8 +58,8 @@ package org.opencrx.kernel.plugin.application.home1;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
 import org.opencrx.kernel.home1.jmi1.ObjectFinder;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -82,8 +82,8 @@ public class UserHomeImpl {
         
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void refreshItems(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+
+    ) {
         try {
             this.getBackend().getUserHomes().refreshItems(
                 this.current
@@ -91,14 +91,14 @@ public class UserHomeImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.home1.jmi1.ChangePasswordResult changePassword(
         org.opencrx.kernel.home1.jmi1.ChangePasswordParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         String requestingPrincipalName = this.getBackend().getServiceHeader().getPrincipalChain().size() > 0
             ? (String)this.getBackend().getServiceHeader().getPrincipalChain().get(0)
             : "guest";
@@ -123,7 +123,7 @@ public class UserHomeImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.home1.jmi1.SearchResult searchBasic(
         org.opencrx.kernel.home1.jmi1.SearchBasicParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             ObjectFinder objectFinder = this.getBackend().getUserHomes().searchBasic(
                 this.current.refGetPath(),
@@ -134,14 +134,14 @@ public class UserHomeImpl {
             );   
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }              
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.home1.jmi1.SearchResult searchAdvanced(
         org.opencrx.kernel.home1.jmi1.SearchAdvancedParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             ObjectFinder objectFinder = this.getBackend().getUserHomes().searchAdvanced(
                 this.current.refGetPath(),
@@ -154,7 +154,7 @@ public class UserHomeImpl {
             );   
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }              
     }
     

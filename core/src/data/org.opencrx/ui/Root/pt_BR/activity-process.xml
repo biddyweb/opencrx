@@ -17,7 +17,7 @@
                         <_item>Processos de Atividades</_item>
                       </label>
                       <toolTip>
-                        <_item>processos de todas as atividades</_item>
+                        <_item>Processos de todas as atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Título</_item>
                       </label>
                       <toolTip>
-                        <_item>título da nota</_item>
+                        <_item>Título da nota</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:assignedTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Designado para</_item>
+                        <_item>Reportado por</_item>
                       </label>
                       <toolTip>
-                        <_item>Designado para</_item>
+                        <_item>Reportado por</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -83,7 +83,7 @@
                         <_item>Texto</_item>
                       </label>
                       <toolTip>
-                        <_item>texto</_item>
+                        <_item>Texto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -116,7 +116,7 @@
                         <_item>Estados</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os estados</_item>
+                        <_item>Todos os estados</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -127,7 +127,7 @@
                         <_item>Transições</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as transições</_item>
+                        <_item>Todas as transições</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcess:startState" _operation="create">
                     <_object>
                       <label>
-                        <_item>início do estado</_item>
+                        <_item>Estado Inicial</_item>
                       </label>
                       <toolTip>
-                        <_item>início do estado</_item>
+                        <_item>Estado Inicial</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -215,7 +215,7 @@
                         <_item>Ações</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as ações</_item>
+                        <_item>Todas as ações</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:prevState" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado Anterior</_item>
+                        <_item>Estado Anterior</_item>
                       </label>
                       <toolTip>
-                        <_item>estado Anterior</_item>
+                        <_item>Estado Anterior</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:newActivityState" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado de Nova Atividade</_item>
+                        <_item>Estado de Nova Atividade</_item>
                       </label>
                       <toolTip>
-                        <_item>estado de Nova Atividade</_item>
+                        <_item>Estado de Nova Atividade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -333,10 +333,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetAssignedToAction:contactFeatureName" _operation="create">
                     <_object>
                       <label>
-                        <_item>nome da característica do contato</_item>
+                        <_item>Nome da característica do contato</_item>
                       </label>
                       <toolTip>
-                        <_item>nome da característica do contato</_item>
+                        <_item>Nome da característica do contato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -509,10 +509,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkedActivityFollowUpAction:transitionTitle" _operation="create">
                     <_object>
                       <label>
-                        <_item>título da Transição</_item>
+                        <_item>Título da Transição</_item>
                       </label>
                       <toolTip>
-                        <_item>título da Transição</_item>
+                        <_item>Título da Transição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -520,10 +520,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkedActivityFollowUpAction:transitionText" _operation="create">
                     <_object>
                       <label>
-                        <_item>texto de Transição</_item>
+                        <_item>Texto de Transição</_item>
                       </label>
                       <toolTip>
-                        <_item>texto de Transição</_item>
+                        <_item>Texto de Transição</_item>
                       </toolTip>
                     </_object>
                     <_content/>

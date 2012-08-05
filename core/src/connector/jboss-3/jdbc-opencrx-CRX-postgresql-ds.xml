@@ -2,7 +2,7 @@
 <datasources>
 	<local-tx-datasource>
 		<jndi-name>jdbc_opencrx_CRX</jndi-name>
-		<connection-url>jdbc:postgresql://localhost/crx-CRX</connection-url>
+		<connection-url>jdbc:postgresql://127.0.0.1/CRX_2_1</connection-url>
 		<driver-class>org.postgresql.Driver</driver-class>
 		<user-name>system</user-name>
 		<password>manager</password>

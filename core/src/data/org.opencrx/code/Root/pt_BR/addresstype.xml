@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Endereco Postal</_item>
+                              <_item>Endereço Postal</_item>
                             </shortText>
                             <longText>
-                              <_item>Endereco Postal</_item>
+                              <_item>Endereço Postal</_item>
                             </longText>
                           </_object>
                           <_content/>

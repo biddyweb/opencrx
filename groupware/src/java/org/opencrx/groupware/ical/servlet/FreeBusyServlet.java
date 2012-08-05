@@ -1,11 +1,11 @@
 /*
  * ====================================================================
- * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.9 2008/01/07 22:22:49 wfro Exp $
+ * Project:     openCRX/Groupware, http://www.opencrx.org/
+ * Name:        $Id: FreeBusyServlet.java,v 1.12 2008/05/23 14:54:01 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/01/07 22:22:49 $
+ * Date:        $Date: 2008/05/23 14:54:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,6 +74,7 @@ import org.opencrx.groupware.generic.Util;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.ICalendar;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -181,13 +182,17 @@ public class FreeBusyServlet extends HttpServlet {
     //-----------------------------------------------------------------------
     protected ActivitiesHelper getActivitiesHelper(
         PersistenceManager pm,
-        String requestedActivityGroup
+        String filterId,
+        String isDisabledFilter
     ) {
         ActivitiesHelper activitiesHelper = new ActivitiesHelper(pm);
-        if(requestedActivityGroup != null) {
+        if(filterId != null) {
             try {
                 activitiesHelper.parseFilteredActivitiesUri(                        
-                    (requestedActivityGroup.startsWith("/") ? "" : "/") + requestedActivityGroup
+                    (filterId.startsWith("/") ? "" : "/") + filterId
+                );
+                activitiesHelper.parseDisabledFilter(
+                   isDisabledFilter
                 );
             }
             catch(Exception  e) {}
@@ -202,8 +207,13 @@ public class FreeBusyServlet extends HttpServlet {
         HttpServletResponse resp
     ) throws ServletException, IOException {
         PersistenceManager pm = this.getPersistenceManager(req);
-        String requestedActivityGroup = req.getParameter("id");
-        ActivitiesHelper activitiesHelper = this.getActivitiesHelper(pm, requestedActivityGroup);
+        String filterId = req.getParameter("id");
+        String isDisabledFilter = req.getParameter("disabled");
+        ActivitiesHelper activitiesHelper = this.getActivitiesHelper(
+            pm, 
+            filterId,
+            isDisabledFilter
+        );
         // Return all activities in FreeBusy format
         if(RESOURCE_NAME_FREEBUSY.equals(req.getParameter("resource"))) {            
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -215,10 +225,15 @@ public class FreeBusyServlet extends HttpServlet {
             p.write("METHOD:PUBLISH\n");
             p.write("BEGIN:VFREEBUSY\n");
             p.write("DTSTAMP:" + ActivitiesHelper.formatDate(ActivitiesHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
-            ActivityQuery activityQuery = activitiesHelper.getActivityPackage().createActivityQuery();
+            ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
             Date dtStart = new Date(System.currentTimeMillis() - 7*86400000L);
             Date dtEnd = new Date(System.currentTimeMillis() + 60*86400000L);
-            activityQuery.forAllDisabled().isFalse();
+            if(activitiesHelper.isDisabledFilter()) {
+                activityQuery.thereExistsDisabled().isTrue();                    
+            }
+            else {
+                activityQuery.forAllDisabled().isFalse();                    
+            }
             activityQuery.ical().isNonNull();
             activityQuery.orderByScheduledStart();
             p.write("DTSTART:" + ActivitiesHelper.formatDate(dtStart) + "\n");

@@ -11,6 +11,50 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтры продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все Фильтры продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтр продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Фильтр продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:filteredProduct" _operation="create">
                     <_object>
                       <label>
@@ -33,13 +77,68 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Подсчет отфильтрованных продуктов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Подсчет отфильтрованных продуктов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойства фильтра классификаций продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойства фильтра классификаций продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationFilterProperty:classification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Классификации</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Классификации</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: категория</_item>
+                        <_item>Свойство фильтра категорий</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: категория</_item>
+                        <_item>Свойство фильтра категорий</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceUomFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: UOM (цена)</_item>
+                        <_item>Свойство фильтра ед. изм. цены</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: UOM (цена)</_item>
+                        <_item>Свойство фильтра ед. изм. цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceUomFilterProperty:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOMs (цена)</_item>
+                        <_item>Ед. изм. цены</_item>
                       </label>
                       <toolTip>
-                        <_item>UOMs (цена)</_item>
+                        <_item>Ед. изм. цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: тип налога с оборота (по умолчанию)</_item>
+                        <_item>Свойство фильтра типов налога с продаж по умолчанию</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: тип налога с оборота (по умолчанию)</_item>
+                        <_item>Свойство фильтра типов налога с продаж по умолчанию</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +190,43 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Типы налога с оборота</_item>
+                        <_item>Типы налога с продаж</_item>
                       </label>
                       <toolTip>
-                        <_item>Типы налога с оборота</_item>
+                        <_item>Типы налога с продаж</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойства фильтра заблокированных</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойства фильтра заблокированных</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заблокированный</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Заблокированный</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойства фильтра запросов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойства фильтра запросов</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExportMailWorkflow.java,v 1.11 2007/12/20 19:20:33 wfro Exp $
+ * Name:        $Id: ExportMailWorkflow.java,v 1.15 2008/04/15 18:28:22 wfro Exp $
  * Description: ExportMailWorkflow
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/20 19:20:33 $
+ * Date:        $Date: 2008/04/15 18:28:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,13 +55,13 @@
  */
 package org.opencrx.mail.workflow;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -79,7 +79,6 @@ import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.layer.application.ByteArrayDataSource;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
 
@@ -87,10 +86,11 @@ public class ExportMailWorkflow
     extends MailWorkflow {
 
     //-----------------------------------------------------------------------
+    @Override
     protected String setContent(
         Message message,
         Session session,
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
@@ -100,11 +100,11 @@ public class ExportMailWorkflow
         try {
             RefObject targetObject = null;
             try {
-                targetObject = rootPkg.refObject(targetIdentity.toXri());
+                targetObject = (RefObject)pm.getObjectById(targetIdentity);
             } catch(Exception e) {}
             text = this.getText(
                 message,
-                rootPkg,
+                pm,
                 targetIdentity,
                 targetObject,
                 wfProcessInstanceIdentity,

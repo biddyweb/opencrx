@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+  <_object/>
+  <_content>
+    <provider>
+      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+        <_object/>
+        <_content>
+          <segment>
+            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+              <_object/>
+              <_content>
+                <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:contractFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vertragsfilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>alle Vertragsfilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vertragsfilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vertragsfilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Name</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Name</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beschreibung</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beschreibung</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:filterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtereigenschaften</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtereigenschaften</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:filteredContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filterselektierte Verträge</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filterselektierte Verträge</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:Pane:Op:Tab:countFilteredContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filterselektierte Verträge Zählen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filterselektierte Verträge Zählen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:Pane:Op:Tab:countFilteredContract:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Eingabe</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Eingabe</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:Pane:Op:Tab:countFilteredContract:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPriorityFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Priorität</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Priorität</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPriorityFilterProperty:priority" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Priorität</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Priorität</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractStateFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Vertragsstatus</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Vertragsstatus</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractStateFilterProperty:contractState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Status</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Status</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractTypeFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Vertragstyp</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Vertragstyp</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractTypeFilterProperty:contractType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:TotalAmountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Totalbeträge</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Totalbeträge</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:TotalAmountFilterProperty:totalAmount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Totalbeträge (exlk. Steuern)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Totalbeträge (exlk. Steuern)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CustomerFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Kunden</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Kunden</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CustomerFilterProperty:customer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kunden</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kunden</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesRepFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Verkäufer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Verkäufer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesRepFilterProperty:salesRep" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Verkäufer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Verkäufer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SupplierFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Lieferanten</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Lieferanten</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SupplierFilterProperty:supplier" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Lieferanten</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lieferanten</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Deaktiviert</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Deaktiviert</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktiviert</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Deaktiviert</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Abfrage</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Abfrage</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                </elementDefinition>
+              </_content>
+            </org.openmdx.ui1.Segment>
+          </segment>
+        </_content>
+      </org.openmdx.base.Provider>
+    </provider>
+  </_content>
+</org.openmdx.base.Authority>

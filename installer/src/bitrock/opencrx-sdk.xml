@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxSdk</shortName>
     <fullName>openCRX SDK</fullName>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-sdk/README</readmeFile>
     <licenseFile>../../image/opencrx-sdk/LICENSE</licenseFile>
@@ -46,7 +46,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.0.0</value>
+                                    <value>2.1.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -72,7 +72,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.0.0</value>
+                                    <value>2.1.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -131,6 +131,23 @@
                         </distributionDirectory>
                         <distributionDirectory>
                             <origin>../../../../openmdx/distribution</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>opt</description>
+                    <destination>${installdir}/opencrx-${product_version}/opt</destination>
+                    <name>opt</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>../../../opt/hsqldb</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>../../../opt/mysql</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>../../../opt/postgresql</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>

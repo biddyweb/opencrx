@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ExternalActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Внешняя деятельность</_item>
+                        <_item>Внешняя Деятельность</_item>
                       </label>
                       <toolTip>
-                        <_item>Внешняя деятельность</_item>
+                        <_item>Внешняя Деятельность</_item>
                       </toolTip>
                     </_object>
                     <_content/>

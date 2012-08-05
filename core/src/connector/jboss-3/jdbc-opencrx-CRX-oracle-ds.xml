@@ -3,7 +3,7 @@
 	<local-tx-datasource>
 		<!-- for more auto-reconnect options see http://www.jboss.org/index.html?module=bb&op=viewtopic&t=53626&view=next -->
 		<jndi-name>jdbc_opencrx_CRX</jndi-name>
-		<connection-url>jdbc:oracle:thin:@localhost:1521:crx-CRX</connection-url>
+		<connection-url>jdbc:oracle:thin:@127.0.0.1:1521:CRX_2_1</connection-url>
 		<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
 		<user-name>system</user-name>
 		<password>manager</password>

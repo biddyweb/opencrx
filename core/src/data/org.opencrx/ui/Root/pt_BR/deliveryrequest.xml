@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequestContainer:deliveryRequest" _operation="create">
                     <_object>
                       <label>
-                        <_item>Requisições de Entrega</_item>
+                        <_item>Pedidos de Entrega</_item>
                       </label>
                       <toolTip>
-                        <_item>Requisições de Entrega</_item>
+                        <_item>Pedidos de Entrega</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequest" _operation="create">
                     <_object>
                       <label>
-                        <_item>Requisição de Entrega</_item>
+                        <_item>Pedido de Entrega</_item>
                       </label>
                       <toolTip>
-                        <_item>Requisição de Entrega</_item>
+                        <_item>Pedido de Entrega</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequest:earliestDeliveryAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Entregar até (urgente)</_item>
+                        <_item>Entregar até (Urgente)</_item>
                       </label>
                       <toolTip>
-                        <_item>Entregar até (urgente)</_item>
+                        <_item>Entregar até (Urgente)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequest:state" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>estado</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

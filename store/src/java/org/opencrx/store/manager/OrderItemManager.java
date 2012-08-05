@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderItemManager.java,v 1.16 2007/12/12 13:00:13 wfro Exp $
+ * Name:        $Id: OrderItemManager.java,v 1.17 2008/04/03 14:33:24 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/12 13:00:13 $
+ * Date:        $Date: 2008/04/03 14:33:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.jdo.Transaction;
-import javax.jmi.reflect.RefException;
 
 import org.opencrx.kernel.contract1.cci2.SalesOrderPositionQuery;
 import org.opencrx.kernel.contract1.jmi1.ContractPosition;
@@ -70,7 +69,6 @@ import org.opencrx.store.common.PrimaryKey;
 import org.opencrx.store.common.util.OpenCrxContext;
 import org.opencrx.store.objects.OrderItem;
 import org.openmdx.base.exception.ServiceException;
-import org.openxri.XRI;
 
 /**
  * @author OAZM (initial implementation)
@@ -220,7 +218,7 @@ public final class OrderItemManager
                     new PrimaryKey(position.getPositionNumber(), false)
                 );
             }
-            catch(RefException e) {
+            catch(Exception e) {
                 new ServiceException(e).log();
                 return null;
             }            

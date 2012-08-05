@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sökadress</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sökadress</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
                     <_object>
                       <label>
@@ -29,6 +40,17 @@
                       </label>
                       <toolTip>
                         <_item>Sökkriterie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry:accountAddressIndex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Index</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Index</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -363,6 +363,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:religion" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>宗教</_item>
+                      </label>
+                      <toolTip>
+                        <_item>宗教</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education" _operation="create">
                     <_object>
                       <label>
@@ -429,6 +440,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:citizenship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>公民关系</_item>
+                      </label>
+                      <toolTip>
+                        <_item>公民关系</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
                     <_object>
                       <label>
@@ -438,6 +460,10 @@
                         <_item>图片</_item>
                       </toolTip>
                     </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="null">
+                    <_object/>
                     <_content>
                       <alternateElementDefinition>
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
@@ -465,46 +491,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>导出vCard格式通讯簿</_item>
+                        <_item>导入vCard</_item>
                       </label>
                       <toolTip>
-                        <_item>导出vCard格式通讯簿</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>输入</_item>
-                      </label>
-                      <toolTip>
-                        <_item>输入</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>语言</_item>
-                      </label>
-                      <toolTip>
-                        <_item>语言</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>结果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>结果</_item>
+                        <_item>导入vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

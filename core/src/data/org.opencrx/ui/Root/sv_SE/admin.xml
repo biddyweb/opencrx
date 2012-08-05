@@ -22,6 +22,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:Segment:configuration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Konfigurationer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Konfigurationer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:ComponentConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Komponentkonfiguration</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Komponentkonfiguration</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:ComponentConfiguration:name" _operation="create">
                     <_object>
                       <label>

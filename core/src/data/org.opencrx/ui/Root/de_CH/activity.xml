@@ -559,6 +559,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastAppliedCreator" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Zuletzt angewandter Erzeuger</_item>
+											</toolTip>
+											<label>
+												<_item>Zuletzt angewandter Erzeuger</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical" _operation="create">
                     <_object>
                       <label>

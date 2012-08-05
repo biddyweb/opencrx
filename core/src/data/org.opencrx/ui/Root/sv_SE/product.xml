@@ -33,6 +33,42 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Produkter</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Produkter</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Produkter (deaktiverade)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Produkter (deaktiverade)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:configurationTypeSet" _operation="create">
                     <_object>
                       <label>
@@ -40,6 +76,17 @@
                       </label>
                       <toolTip>
                         <_item>Produktkonfigurationstyper</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productClassification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktklassifikation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktklassifikation</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -52,6 +99,47 @@
                       <toolTip>
                         <_item>Grundpris</_item>
                       </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:priceUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pris måttenhet</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pris måttenhet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:classification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktklassifikation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktklassifikation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:assignedAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontotilldelningar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontotilldelningar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:Pane:Attr:Tab:0:Group:60" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -93,6 +181,9 @@
                       <label>
                         <_item>Produktnummer</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Produkt#</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Produktnummer</_item>
                       </toolTip>
@@ -154,6 +245,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:alternateProductNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Alternativt produkt#</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Alternativt produkt#</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:productUsage" _operation="create">
                     <_object>
                       <label>
@@ -183,6 +285,17 @@
                       </label>
                       <toolTip>
                         <_item>Produkt</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:productPhase" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktfaser</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktfaser</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -264,6 +377,94 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktfas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktfas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktens fasnyckel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktens fasnyckel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giltig från</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giltig från</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giltig till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giltig till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktklassifikation</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktklassifikation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassification:relationship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relationer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relationer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassification:name" _operation="create">
                     <_object>
                       <label>
@@ -286,6 +487,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktklassifikationsrelationer</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktklassifikationsrelationer</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship:name" _operation="create">
                     <_object>
                       <label>
@@ -304,6 +516,17 @@
                       </label>
                       <toolTip>
                         <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship:relationshipTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Relationer till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Relationer till</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -374,6 +597,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignmentProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontotilldelning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontotilldelning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignmentProduct:accountRole" _operation="create">
                     <_object>
                       <label>
@@ -409,6 +643,9 @@
                       <label>
                         <_item>Konfigurationskategori</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Konfigurationstyp</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Konfigurationskategori</_item>
                       </toolTip>
@@ -492,6 +729,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductConfiguration:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Giltig till</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Giltig till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductConfiguration:description" _operation="create">
                     <_object>
                       <label>
@@ -538,6 +786,9 @@
                       <label>
                         <_item>Konfigurationstyp</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Konfigurationstyp</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Konfigurationstyp</_item>
                       </toolTip>
@@ -579,6 +830,9 @@
                       <label>
                         <_item>Nuvarande konfiguration</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Nuvarande konfiguration</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Nuvarande konfiguration</_item>
                       </toolTip>

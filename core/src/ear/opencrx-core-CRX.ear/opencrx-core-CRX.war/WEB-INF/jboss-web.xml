@@ -2,23 +2,9 @@
 <!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 2.3//EN" "http://www.jboss.org/j2ee/dtds/jboss-web_3_2.dtd">
 <jboss-web>
 	<ejb-local-ref>
-		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
-		<local-jndi-name>org.opencrx.core.CRX.local.noOrNew.gateway</local-jndi-name>
+		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
+		<local-jndi-name>org.opencrx.core.CRX.EntityManagerFactory</local-jndi-name>
 	</ejb-local-ref>
-	
--<!-- For remote gateway in same JVM
-	<ejb-ref>
-		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
-	</ejb-ref>
--->
--<!--  For remote gateway in remote JVM
-	<ejb-ref>
-		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>jnp://host-name/org.opencrx.core.CRX.noOrNew.gateway</jndi-name>		
-	</ejb-ref>
--->
 <!-- Configure a resource-ref for each mail resoure configured in web.xml
 	<resource-ref>
 		<res-ref-name>mail/provider/CRX</res-ref-name>

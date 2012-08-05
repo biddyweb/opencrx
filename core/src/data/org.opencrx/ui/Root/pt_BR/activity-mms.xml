@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipientGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número do telefone de Grupo</_item>
+                        <_item>Grupo de Número de Telefone</_item>
                       </label>
                       <toolTip>
-                        <_item>Número do telefone de Grupo</_item>
+                        <_item>Grupo de Número de Telefone</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsRecipientGroup:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número do telefone de Grupo</_item>
+                        <_item>Grupo de Número de Telefone</_item>
                       </label>
                       <toolTip>
-                        <_item>Número do telefone de Grupo</_item>
+                        <_item>Grupo de Número de Telefone</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractMmsRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Número do Telefone</_item>
+                        <_item>Número(s) do(s) Telefone(s)</_item>
                       </label>
                       <toolTip>
-                        <_item>Número do Telefone</_item>
+                        <_item>Número(s) do(s) Telefone(s)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsSlide" _operation="create">
                     <_object>
                       <label>
-                        <_item>MMS Slide</_item>
+                        <_item>Slide MMS</_item>
                       </label>
                       <toolTip>
-                        <_item>MMS Slide</_item>
+                        <_item>Slide MMS</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MmsSlide:mediaObject" _operation="create">
                     <_object>
                       <label>
-                        <_item>objeto de Mídia</_item>
+                        <_item>Objeto de Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>objeto de Mídia</_item>
+                        <_item>Objeto de Mídia</_item>
                       </toolTip>
                     </_object>
                     <_content/>

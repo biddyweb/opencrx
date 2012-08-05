@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ChartValue.java,v 1.1 2007/11/17 15:51:42 wfro Exp $
+ * Name:        $Id: ChartValue.java,v 1.2 2008/03/26 10:55:24 wfro Exp $
  * Description: ChartValue class
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/11/17 15:51:42 $
+ * Date:        $Date: 2008/03/26 10:55:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -124,7 +124,7 @@ public class ChartValue
                     this.getBinaryValue(os);
                 }
                 catch(ServiceException e) {
-                    AppLog.warning(e.getMessage(), e.getCause(), 1);
+                    AppLog.warning(e.getMessage(), e.getCause());
                 }
 		        BufferedReader reader = new BufferedReader(
                     new InputStreamReader(new ByteArrayInputStream(os.toByteArray()))

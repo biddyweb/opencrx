@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Processo (inclui niveis de preco dependentes)</_item>
+                              <_item>Processo (inclui níveis de preços dependentes)</_item>
                             </shortText>
                             <longText>
-                              <_item>Processo (inclui niveis de preco dependentes)</_item>
+                              <_item>Processo (inclui níveis de preços dependentes)</_item>
                             </longText>
                           </_object>
                           <_content/>

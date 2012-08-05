@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Элемент не исправен</_item>
+                              <_item>Элемент неверен</_item>
                             </shortText>
                             <longText>
-                              <_item>Элемент не исправен</_item>
+                              <_item>Элемент неверен</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Отсутствие/недост. данных</_item>
+                              <_item>Потеря/недост. данных</_item>
                             </shortText>
                             <longText>
-                              <_item>Отсутствие/недост. данных</_item>
+                              <_item>Потеря/недост. данных</_item>
                             </longText>
                           </_object>
                           <_content/>

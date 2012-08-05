@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sequenze</_item>
+                        <_item>Ciclo Attivo</_item>
                       </label>
                       <toolTip>
-                        <_item>Tutti gli Oggetti di Sequenza</_item>
+                        <_item>Tutti gli Oggetti del ciclo attivo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -154,10 +154,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:salesRep" _operation="create">
                     <_object>
                       <label>
-                        <_item>Rep. Vendite</_item>
+                        <_item>Resp. Vendite</_item>
                       </label>
                       <toolTip>
-                        <_item>Rep. Vendite</_item>
+                        <_item>Responsabile Vendite</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,7 +179,7 @@
                         <_item>N. Contratto</_item>
                       </label>
                       <shortLabel>
-                        <_item>N.</_item>
+                        <_item>Contratto-N.</_item>
                       </shortLabel>
                       <toolTip>
                         <_item>Numero Contratto</_item>
@@ -507,72 +507,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionResult:position" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Riga</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Riga</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Crea Riga basata su Promozione </_item>
-                      </label>
-                      <toolTip>
-                        <_item>Crea una Riga basata su una Promozione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Invio</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Invio</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:quantity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Quantita&apos;</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Quantita&apos;</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:offering" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Offerta Prodotto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Offerta Prodotto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Esito</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Esito</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionResult:offeringPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>Riga</_item>

@@ -344,10 +344,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:isMain" _operation="create">
                     <_object>
                       <label>
-                        <_item>Главный</_item>
+                        <_item>Основной</_item>
                       </label>
                       <toolTip>
-                        <_item>Главный</_item>
+                        <_item>Основной</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -388,10 +388,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EffortEstimate:selector" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отборщики</_item>
+                        <_item>Селекторы</_item>
                       </label>
                       <toolTip>
-                        <_item>Отборщики</_item>
+                        <_item>Селекторы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -410,7 +410,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAssignment:workRecord" _operation="create">
                     <_object>
                       <label>
-                        <_item>Запись работы</_item>
+                        <_item>Записи работы</_item>
                       </label>
                       <toolTip>
                         <_item>все записи работы</_item>
@@ -663,10 +663,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:isBillable" _operation="create">
                     <_object>
                       <label>
-                        <_item>Платежеспособность</_item>
+                        <_item>Ставка назначается</_item>
                       </label>
                       <toolTip>
-                        <_item>Платежеспособность</_item>
+                        <_item>Ставка назначается</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Выбор склада</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Выбор склада</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -685,10 +696,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вход рабочего отчета</_item>
+                        <_item>Элемент рабочего отчета</_item>
                       </label>
                       <toolTip>
-                        <_item>Вход рабочего отчета</_item>
+                        <_item>Элемент рабочего отчета</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -718,10 +729,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:activity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Активность</_item>
+                        <_item>Деятельность</_item>
                       </label>
                       <toolTip>
-                        <_item>Активность</_item>
+                        <_item>Деятельность</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -784,10 +795,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:endedAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Конец</_item>
+                        <_item>Окончание</_item>
                       </label>
                       <toolTip>
-                        <_item>Конец</_item>
+                        <_item>Окончание</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -795,10 +806,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:billableAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сумма платежеспособности</_item>
+                        <_item>Сумма начисления счета</_item>
                       </label>
                       <toolTip>
-                        <_item>Сумма платежеспособности</_item>
+                        <_item>Сумма начисления счета</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -831,7 +842,7 @@
                         <_item>hh (продолжительность паузы)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (продолжительность паузы)</_item>
+                        <_item>чч (продолжительность паузы)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -839,10 +850,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WorkReportEntry:pauseDurationMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (продолжительность паузы)</_item>
+                        <_item>мм (продолжительность паузы)</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (продолжительность паузы)</_item>
+                        <_item>мм (продолжительность паузы)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -960,10 +971,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:endAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Конец</_item>
+                        <_item>Окончание</_item>
                       </label>
                       <toolTip>
-                        <_item>Конец</_item>
+                        <_item>Окончание</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -993,10 +1004,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Активность</_item>
+                        <_item>Деятельность</_item>
                       </label>
                       <toolTip>
-                        <_item>Активность</_item>
+                        <_item>Деятельность</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1008,6 +1019,17 @@
                       </label>
                       <toolTip>
                         <_item>Тип ставки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Выбор склада</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Выбор склада</_item>
                       </toolTip>
                     </_object>
                     <_content/>

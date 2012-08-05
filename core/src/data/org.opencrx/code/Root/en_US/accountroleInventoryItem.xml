@@ -74,6 +74,17 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="create">
+													<_object>
+														<shortText>
+															<_item>User</_item>
+														</shortText>
+														<longText>
+															<_item>User</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
 												<org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
 													<_object>
 														<shortText>
@@ -180,6 +191,17 @@
 														</shortText>
 														<longText>
 															<_item>Seller</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+													<_object>
+														<shortText>
+															<_item>Inspection Authority</_item>
+														</shortText>
+														<longText>
+															<_item>Inspection Authority</_item>
 														</longText>
 													</_object>
 													<_content/>

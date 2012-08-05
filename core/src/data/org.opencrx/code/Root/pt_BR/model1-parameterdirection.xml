@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>saida</_item>
+                              <_item>saída</_item>
                             </shortText>
                             <longText>
-                              <_item>saida</_item>
+                              <_item>saída</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>entrada/saida</_item>
+                              <_item>entrada/saída</_item>
                             </shortText>
                             <longText>
-                              <_item>entrada/saida</_item>
+                              <_item>entrada/saída</_item>
                             </longText>
                           </_object>
                           <_content/>

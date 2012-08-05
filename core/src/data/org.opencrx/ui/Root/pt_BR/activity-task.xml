@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:activityState" _operation="create">
                     <_object>
                       <label>
-                        <_item>estado</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>estado</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

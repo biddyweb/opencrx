@@ -14,10 +14,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:searchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Поиск</_item>
+                        <_item>»Поиск учетных записей /адресов</_item>
                       </label>
                       <toolTip>
-                        <_item>Поиск</_item>
+                        <_item>Поиск учетных записей /адресов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Поиск адресов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Поиск адресов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Поиск по индексу</_item>
+                        <_item>Элемент индекса учетной запси / адреса</_item>
                       </label>
                       <toolTip>
-                        <_item>Поиск по индексу</_item>
+                        <_item>Элемент индекса учетной запси / адреса</_item>
                       </toolTip>
                     </_object>
                     <_content/>

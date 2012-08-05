@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendMailWorkflow.java,v 1.7 2007/12/20 19:20:33 wfro Exp $
+ * Name:        $Id: SendMailWorkflow.java,v 1.9 2008/04/15 18:28:22 wfro Exp $
  * Description: SendMailWorkflow
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/20 19:20:33 $
+ * Date:        $Date: 2008/04/15 18:28:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2006, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefObject;
 import javax.mail.Address;
 import javax.mail.Message;
@@ -67,7 +68,6 @@ import javax.mail.Session;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.home1.jmi1.EmailAccount;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
 
@@ -75,15 +75,16 @@ public class SendMailWorkflow
     extends MailWorkflow {
 
     //-----------------------------------------------------------------------
+    @Override
     protected String getSubject(
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         UserHome userHome,  
         Map params
     ) throws ServiceException {
         String subject = null;
         try {
-            RefObject targetObject = rootPkg.refObject(targetIdentity.toXri());
+            RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
             if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
                 org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
                     (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
@@ -99,15 +100,16 @@ public class SendMailWorkflow
     }
     
     //-----------------------------------------------------------------------
+    @Override
     protected Address[] setRecipients(
         Message message,
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         EmailAccount eMailAccount
     ) throws ServiceException {
         List<Address> recipients = new ArrayList<Address>();
         try {
-            RefObject targetObject = rootPkg.refObject(targetIdentity.toXri());
+            RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
             if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
                 org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
                     (org.opencrx.kernel.activity1.jmi1.Email)targetObject;
@@ -124,10 +126,11 @@ public class SendMailWorkflow
     }
     
     //-----------------------------------------------------------------------
+    @Override
     protected String setContent(
         Message message,
         Session session,
-        RefPackage_1_0 rootPkg,
+        PersistenceManager pm,
         Path targetIdentity,
         Path wfProcessInstanceIdentity,
         UserHome userHome,
@@ -135,7 +138,7 @@ public class SendMailWorkflow
     ) throws ServiceException {
         String text = null;
         try {
-            RefObject targetObject = rootPkg.refObject(targetIdentity.toXri());
+            RefObject targetObject = (RefObject)pm.getObjectById(targetIdentity);
             if(targetObject instanceof org.opencrx.kernel.activity1.jmi1.Email) {
                 org.opencrx.kernel.activity1.jmi1.Email emailActivity = 
                     (org.opencrx.kernel.activity1.jmi1.Email)targetObject;

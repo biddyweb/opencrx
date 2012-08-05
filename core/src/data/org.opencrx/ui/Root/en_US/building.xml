@@ -36,98 +36,283 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Buildings</_item>
+												<_item>All Buildings</_item>
 											</toolTip>
 											<label>
-												<_item>Buildings</_item>
+												<_item>»All Buildings</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>110</_item>
 											</order>
-											<iconKey>Building</iconKey>
+											<maxMember>6</maxMember>
 										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Buildings</_item>
+														</toolTip>
+														<label>
+															<_item>Buildings</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>10</_item>
+														</order>
+														<maxMember>6</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Buildings (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Buildings (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>210</_item>
+														</order>
+														<maxMember>6</maxMember>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Building Complexes</_item>
+												<_item>All Building Complexes</_item>
 											</toolTip>
 											<label>
-												<_item>Building Complexes</_item>
+												<_item>»All Building Complexes</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>120</_item>
 											</order>
-											<iconKey>BuildingComplex</iconKey>
 											<maxMember>5</maxMember>
 										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Building Complexes</_item>
+														</toolTip>
+														<label>
+															<_item>Building Complexes</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>20</_item>
+														</order>
+														<maxMember>5</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Building Complexes (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Building Complexes (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>220</_item>
+														</order>
+														<maxMember>5</maxMember>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit">
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>Building Units</_item>
+												<_item>All Building Units</_item>
 											</toolTip>
 											<label>
-												<_item>Building Units</_item>
+												<_item>»All Building Units</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>30</_item>
+												<_item>130</_item>
 											</order>
-											<iconKey>BuildingUnit</iconKey>
+  										<maxMember>6</maxMember>
 										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Building Units</_item>
+														</toolTip>
+														<label>
+															<_item>Building Units</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>30</_item>
+														</order>
+														<maxMember>6</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Building Units (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Building Units (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>230</_item>
+														</order>
+														<maxMember>6</maxMember>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Inventory Items</_item>
-											</toolTip>
-											<label>
-												<_item>Inventory Items</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<maxMember>5</maxMember>
-											<iconKey>InventoryItems</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility">
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>Facilities</_item>
+												<_item>All Facilities</_item>
 											</toolTip>
 											<label>
-												<_item>Facilities</_item>
+												<_item>»All Facilities</_item>
 											</label>
 											<order>
-												<_item>10</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>0</_item>
+												<_item>140</_item>
 											</order>
 											<maxMember>3</maxMember>
-											<iconKey>Facility</iconKey>
 										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Facilities</_item>
+														</toolTip>
+														<label>
+															<_item>Facilities</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>40</_item>
+														</order>
+														<maxMember>3</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Facilities (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Facilities (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>240</_item>
+														</order>
+														<maxMember>3</maxMember>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>All Inventory Items</_item>
+											</toolTip>
+											<label>
+												<_item>»All Inventory Items</_item>
+											</label>
+											<order>
+												<_item>20</_item>
+												<_item>0</_item>
+												<_item>11</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Inventory Items</_item>
+														</toolTip>
+														<label>
+															<_item>Inventory Items</_item>
+														</label>
+														<order>
+															<_item>20</_item>
+															<_item>0</_item>
+															<_item>10</_item>
+														</order>
+														<maxMember>5</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Inventory Items (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Inventory Items (disabled)</_item>
+														</label>
+														<order>
+															<_item>20</_item>
+															<_item>0</_item>
+															<_item>12</_item>
+														</order>
+														<maxMember>5</maxMember>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
 
 									<!--AbstractBuildingUnit-->
 									<!--Inspector Definitions-->
@@ -821,6 +1006,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItem:itemLinkFrom">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Inbound Links</_item>
 											</toolTip>
@@ -969,6 +1155,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Linkable Item Link From</_item>
 											</toolTip>
@@ -994,6 +1181,23 @@
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Link to</_item>
+											</toolTip>
+											<label>
+												<_item>Link to</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>

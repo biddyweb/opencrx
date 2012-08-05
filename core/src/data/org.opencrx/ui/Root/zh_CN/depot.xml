@@ -77,6 +77,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:simpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>简单预订</_item>
+                      </label>
+                      <toolTip>
+                        <_item>简单预订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity" _operation="create">
                     <_object>
                       <label>
@@ -341,17 +352,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:cb" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂预订</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂预订</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:position" _operation="create">
                     <_object>
                       <label>
@@ -359,17 +359,6 @@
                       </label>
                       <toolTip>
                         <_item>详细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:origin" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>来源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>来源</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -447,6 +436,94 @@
                       </label>
                       <toolTip>
                         <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:cb" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>复杂预订</_item>
+                      </label>
+                      <toolTip>
+                        <_item>复杂预订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>简单预订</_item>
+                      </label>
+                      <toolTip>
+                        <_item>简单预订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContext" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>数量</_item>
+                      </label>
+                      <toolTip>
+                        <_item>数量</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantityUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>单位(数量)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>单位(数量)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源ID</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源ID</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContextParams" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源环境参数</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源环境参数</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -858,6 +935,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:simpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>简单预订</_item>
+                      </label>
+                      <toolTip>
+                        <_item>简单预订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:name" _operation="create">
                     <_object>
                       <label>
@@ -920,50 +1008,6 @@
                       </label>
                       <toolTip>
                         <_item>描述</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ProductOfferingDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品供应仓库详细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品供应仓库详细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ComplexProductBundleDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂产品包仓库详细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂产品包仓库详细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ProductBundleDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品包仓库详细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品包仓库详细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BundledProductDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>打包产品仓库详细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>打包产品仓库详细项目</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1265,28 +1309,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:itemBooking" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>预订项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>预订项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:itemBooking" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>预订项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>预订项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:name" _operation="create">
                     <_object>
                       <label>
@@ -1342,6 +1364,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:singleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>预订</_item>
+                      </label>
+                      <toolTip>
+                        <_item>预订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:simpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>简单预订</_item>
+                      </label>
+                      <toolTip>
+                        <_item>简单预订</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:10" _operation="create">
                     <_object>
                       <label>
@@ -1353,6 +1397,14 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>简单预订</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
@@ -1361,6 +1413,14 @@
                       <toolTip>
                         <_item>周期结束时间</_item>
                       </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:25" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>简单预订</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -1430,6 +1490,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimpleBop" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>初始数量</_item>
+                      </label>
+                      <toolTip>
+                        <_item>初始数量</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceDebit" _operation="create">
                     <_object>
                       <label>
@@ -1463,112 +1534,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemDebit" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimple" _operation="create">
                     <_object>
                       <label>
-                        <_item>报表项目(借记)</_item>
+                        <_item>结束值</_item>
                       </label>
                       <toolTip>
-                        <_item>报表项目(借记)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemCredit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>报表项目(贷记)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>报表项目(贷记)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:cb" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂预订</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂预订</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:booking" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>预订</_item>
-                      </label>
-                      <toolTip>
-                        <_item>预订</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:bookingDate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>预订日期</_item>
-                      </label>
-                      <toolTip>
-                        <_item>预订日期</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemDebit:quantityDebit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>数量(借记)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>数量(借记)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemCredit:quantityCredit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>数量(贷记)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>数量(贷记)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:balanceDebit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>总借记</_item>
-                      </label>
-                      <toolTip>
-                        <_item>总借记</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:balanceCredit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>总贷记</_item>
-                      </label>
-                      <toolTip>
-                        <_item>总贷记</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:balance" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>结算</_item>
-                      </label>
-                      <toolTip>
-                        <_item>结算</_item>
+                        <_item>结束值</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1947,6 +1919,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:reversalOf" _operation="create">
                     <_object>
                       <label>
@@ -2134,6 +2117,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:reversalOf" _operation="create">
                     <_object>
                       <label>
@@ -2288,6 +2282,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>来源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>来源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:reversalOf" _operation="create">
                     <_object>
                       <label>
@@ -2354,13 +2359,46 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>确认周期</_item>
+                      </label>
+                      <toolTip>
+                        <_item>确认周期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:assertReports" _operation="create">
                     <_object>
                       <label>
-                        <_item>报表</_item>
+                        <_item>生成报表</_item>
                       </label>
                       <toolTip>
-                        <_item>报表</_item>
+                        <_item>生成报表</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2372,6 +2410,17 @@
                       </label>
                       <toolTip>
                         <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:AssertReportsParams:bookingStatusThreshold" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>预订状态起点</_item>
+                      </label>
+                      <toolTip>
+                        <_item>预订状态起点</_item>
                       </toolTip>
                     </_object>
                     <_content/>

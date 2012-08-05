@@ -1,7 +1,7 @@
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
-/* Copyright (c) 2004-2007, CRIXP Corp., Switzerland                         */
+/* Copyright (c) 2004-2008, CRIXP Corp., Switzerland                         */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* Redistribution and use in source and binary forms, with or without        */
@@ -269,7 +269,18 @@ CREATE TABLE oocke1_account (
     ext_code12 smallint,
     ext_code13 smallint,
     citizenship_ integer DEFAULT -1 NOT NULL,
-    religion_ integer DEFAULT -1 NOT NULL
+    religion_ integer DEFAULT -1 NOT NULL,
+    ext_code23_ integer DEFAULT -1 NOT NULL,
+    ext_code24_ integer DEFAULT -1 NOT NULL,
+    ext_code25_ integer DEFAULT -1 NOT NULL,
+    ext_code26_ integer DEFAULT -1 NOT NULL,
+    ext_code27_ integer DEFAULT -1 NOT NULL,
+    ext_code28_ integer DEFAULT -1 NOT NULL,
+    ext_code20_ integer DEFAULT -1 NOT NULL,
+    ext_code29_ integer DEFAULT -1 NOT NULL,
+    ext_code21_ integer DEFAULT -1 NOT NULL,
+    ext_code22_ integer DEFAULT -1 NOT NULL,
+    vcard text
 );
 
 
@@ -300,7 +311,17 @@ CREATE TABLE oocke1_account_ (
     children_names character varying(256),
     ou_membership character varying(256),
     citizenship smallint,
-    religion smallint
+    religion smallint,
+    ext_code28 smallint,
+    ext_code27 smallint,
+    ext_code29 smallint,
+    ext_code23 smallint,
+    ext_code24 smallint,
+    ext_code25 smallint,
+    ext_code26 smallint,
+    ext_code20 smallint,
+    ext_code21 smallint,
+    ext_code22 smallint
 );
 
 
@@ -362,7 +383,9 @@ CREATE TABLE oocke1_accountassignment (
     dtype character varying(256) NOT NULL,
     discount numeric,
     discount_is_percentage boolean,
-    member_role_ integer DEFAULT -1 NOT NULL
+    member_role_ integer DEFAULT -1 NOT NULL,
+    for_use_by_ integer DEFAULT -1 NOT NULL,
+    quality smallint
 );
 
 
@@ -385,7 +408,8 @@ CREATE TABLE oocke1_accountassignment_ (
     user_number4 numeric,
     user_string4 character varying(256),
     dtype character varying(256) NOT NULL,
-    member_role smallint
+    member_role smallint,
+    for_use_by character varying(256)
 );
 
 
@@ -484,7 +508,8 @@ CREATE TABLE oocke1_activity (
     reference character varying(256),
     sender_mms character varying(256),
     sender_sms character varying(256),
-    ical text
+    ical text,
+    last_applied_creator character varying(256)
 );
 
 
@@ -4111,7 +4136,9 @@ CREATE TABLE oocke1_depotreportitem (
     value_date timestamp with time zone,
     modified_at timestamp with time zone NOT NULL,
     dtype character varying(256) NOT NULL,
-    booking character varying(256)
+    booking character varying(256),
+    balance_simple_bop numeric,
+    balance_simple numeric
 );
 
 
@@ -4269,7 +4296,7 @@ CREATE TABLE oocke1_document (
     document_type smallint,
     folder_ integer DEFAULT -1 NOT NULL,
     head_revision character varying(256),
-    keywords character varying(256),
+    keywords character varying(4000),
     literature_type smallint,
     "location" character varying(256),
     modified_by_ integer DEFAULT -1 NOT NULL,
@@ -4285,7 +4312,7 @@ CREATE TABLE oocke1_document (
     name character varying(256),
     parent character varying(256),
     cms_template character varying(256),
-    cms_class character varying(256),
+    cms_class text,
     cms_meta character varying(256),
     cms_default_language character varying(256),
     cms_language character varying(256)
@@ -4728,6 +4755,46 @@ CREATE TABLE oocke1_eventslot_ (
 
 
 --
+-- Name: oocke1_exportprofile; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE oocke1_exportprofile (
+    object_id character varying(256) NOT NULL,
+    access_level_browse smallint,
+    access_level_delete smallint,
+    access_level_update smallint,
+    created_at timestamp with time zone,
+    created_by_ integer DEFAULT -1 NOT NULL,
+    description character varying(256),
+    mime_type character varying(256),
+    modified_by_ integer DEFAULT -1 NOT NULL,
+    name character varying(256),
+    owner_ integer DEFAULT -1 NOT NULL,
+    reference_filter character varying(1024),
+    "p$$parent" character varying(256),
+    modified_at timestamp with time zone NOT NULL,
+    dtype character varying(256) NOT NULL,
+    "template" character varying(256),
+    for_class_ integer DEFAULT -1 NOT NULL
+);
+
+
+--
+-- Name: oocke1_exportprofile_; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE oocke1_exportprofile_ (
+    object_id character varying(256) NOT NULL,
+    idx integer NOT NULL,
+    created_by character varying(256),
+    modified_by character varying(256),
+    "owner" character varying(256),
+    dtype character varying(256) NOT NULL,
+    for_class character varying(256)
+);
+
+
+--
 -- Name: oocke1_facility; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -4928,7 +4995,14 @@ CREATE TABLE oocke1_filterproperty (
     account_type_ integer DEFAULT -1 NOT NULL,
     account_category_ integer DEFAULT -1 NOT NULL,
     offset_in_hours integer,
-    contact_ integer DEFAULT -1 NOT NULL
+    contact_ integer DEFAULT -1 NOT NULL,
+    total_amount_ integer DEFAULT -1 NOT NULL,
+    contract_type_ integer DEFAULT -1 NOT NULL,
+    sales_rep_ integer DEFAULT -1 NOT NULL,
+    supplier_ integer DEFAULT -1 NOT NULL,
+    contract_state_ integer DEFAULT -1 NOT NULL,
+    priority_ integer DEFAULT -1 NOT NULL,
+    customer_ integer DEFAULT -1 NOT NULL
 );
 
 
@@ -4963,7 +5037,14 @@ CREATE TABLE oocke1_filterproperty_ (
     price_uom character varying(256),
     sales_tax_type character varying(256),
     classification character varying(256),
-    contact character varying(256)
+    contact character varying(256),
+    total_amount numeric,
+    contract_state smallint,
+    customer character varying(256),
+    sales_rep character varying(256),
+    priority smallint,
+    supplier character varying(256),
+    contract_type character varying(256)
 );
 
 
@@ -5275,22 +5356,6 @@ CREATE TABLE oocke1_involvedobject_ (
 
 
 --
--- Name: oocke1_join_accthasassact; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_accthasassact AS
-    (((SELECT act.object_id AS assigned_activity, acc.object_id AS account FROM (oocke1_activity act JOIN oocke1_account acc ON (((act.assigned_to)::text = (acc.object_id)::text))) UNION SELECT act.object_id AS assigned_activity, adr."p$$parent" AS account FROM (oocke1_activity act JOIN oocke1_address adr ON (((adr.object_id)::text = (act.sender)::text)))) UNION SELECT p0."p$$parent" AS assigned_activity, acc.object_id AS account FROM (oocke1_activityparty p0 JOIN oocke1_account acc ON (((acc.object_id)::text = (p0.party)::text)))) UNION SELECT p0."p$$parent" AS assigned_activity, adr."p$$parent" AS account FROM (oocke1_activityparty p0 JOIN oocke1_address adr ON (((adr.object_id)::text = (p0.party)::text)))) UNION SELECT act.object_id AS assigned_activity, c0.customer AS account FROM (oocke1_activity_ act JOIN oocke1_contract c0 ON (((act.contract)::text = (c0.object_id)::text)));
-
-
---
--- Name: oocke1_join_accthasasscontr; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_accthasasscontr AS
-    SELECT c.object_id AS assigned_contract, a.object_id AS account FROM (oocke1_contract c JOIN oocke1_account a ON (((c.customer)::text = (a.object_id)::text))) UNION ALL SELECT c.object_id AS assigned_contract, a.object_id AS account FROM (oocke1_contract c JOIN oocke1_account a ON (((c.sales_rep)::text = (a.object_id)::text)));
-
-
---
 -- Name: oocke1_product; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -5385,14 +5450,6 @@ CREATE TABLE oocke1_product (
 
 
 --
--- Name: oocke1_join_accthasprod; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_accthasprod AS
-    SELECT DISTINCT p.object_id AS product, a.object_id AS account FROM oocke1_product p, oocke1_account a, oocke1_contract c, oocke1_contractposition cp WHERE ((((cp.product)::text = (p.object_id)::text) AND ((cp."p$$parent")::text = (c.object_id)::text)) AND ((c.customer)::text = (a.object_id)::text)) ORDER BY p.object_id, a.object_id;
-
-
---
 -- Name: oocke1_join_actcontainswre; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -5400,22 +5457,6 @@ CREATE TABLE oocke1_join_actcontainswre (
     activity character varying(256) NOT NULL,
     work_report_entry character varying(256) NOT NULL
 );
-
-
---
--- Name: oocke1_join_actgcontainsact; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_actgcontainsact AS
-    SELECT ga."p$$parent" AS filtered_activity, ga.activity_group FROM oocke1_activitygroupass ga;
-
-
---
--- Name: oocke1_join_actgcontainsflup; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_actgcontainsflup AS
-    SELECT f.object_id AS follow_up, g.object_id AS activity_group FROM ((oocke1_activityfollowup f JOIN oocke1_activitygroupass ga ON (((f."p$$parent")::text = (ga."p$$parent")::text))) JOIN oocke1_activitygroup g ON (((ga.activity_group)::text = (g.object_id)::text)));
 
 
 --
@@ -5440,14 +5481,6 @@ CREATE TABLE oocke1_note (
 
 
 --
--- Name: oocke1_join_actgcontainsnote; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_actgcontainsnote AS
-    SELECT n.object_id AS activity_note, g.object_id AS activity_group FROM ((oocke1_note n JOIN oocke1_activitygroupass ga ON (((n."p$$parent")::text = (ga."p$$parent")::text))) JOIN oocke1_activitygroup g ON (((ga.activity_group)::text = (g.object_id)::text)));
-
-
---
 -- Name: oocke1_join_actgcontainswre; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -5455,30 +5488,6 @@ CREATE TABLE oocke1_join_actgcontainswre (
     activity_group character varying(256) NOT NULL,
     work_report_entry character varying(256) NOT NULL
 );
-
-
---
--- Name: oocke1_join_actgiscreatedby; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_actgiscreatedby AS
-    SELECT ac.activity_group, ac.object_id AS activity_creator FROM oocke1_activitycreator_ ac;
-
-
---
--- Name: oocke1_join_buhasadr; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_buhasadr AS
-    SELECT adr.object_id AS assigned_address, bu.object_id AS building_unit FROM (oocke1_address adr JOIN oocke1_buildingunit bu ON (((adr.building)::text = (bu.object_id)::text)));
-
-
---
--- Name: oocke1_join_cbhasbk; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_cbhasbk AS
-    SELECT b.object_id AS booking, cb.object_id AS cb FROM (oocke1_booking b JOIN oocke1_compoundbooking cb ON (((b.cb)::text = (cb.object_id)::text)));
 
 
 --
@@ -5570,46 +5579,6 @@ CREATE TABLE oocke1_modelelement (
 
 
 --
--- Name: oocke1_join_clfclassifiestelt; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_clfclassifiestelt AS
-    SELECT c.object_id AS classifier, e.object_id AS typed_element FROM (oocke1_modelelement c JOIN oocke1_modelelement e ON (((c.object_id)::text = (e."type")::text)));
-
-
---
--- Name: oocke1_join_cposhasposmod; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_cposhasposmod AS
-    SELECT p.object_id AS "position", pm.object_id AS position_modification FROM (oocke1_contractposition p JOIN oocke1_contractposmod pm ON (((p.object_id)::text = (pm.involved)::text)));
-
-
---
--- Name: oocke1_join_depgcontainsdep; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_depgcontainsdep AS
-    SELECT d.object_id AS depot, dg.object_id AS depot_group FROM (oocke1_depot d JOIN oocke1_depotgroup dg ON (((d.depot_group)::text = (dg.object_id)::text)));
-
-
---
--- Name: oocke1_join_depgcontainsdepg; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_depgcontainsdepg AS
-    SELECT dg.object_id AS depot_group, dgp.object_id AS parent FROM (oocke1_depotgroup dg JOIN oocke1_depotgroup dgp ON (((dg."p$$parent")::text = (dgp.object_id)::text)));
-
-
---
--- Name: oocke1_join_depposhasbk; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_depposhasbk AS
-    SELECT b.object_id AS booking, b."position" AS depot_position FROM oocke1_booking b;
-
-
---
 -- Name: oocke1_simplebooking; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -5638,38 +5607,6 @@ CREATE TABLE oocke1_simplebooking (
     modified_at timestamp with time zone NOT NULL,
     dtype character varying(256) NOT NULL
 );
-
-
---
--- Name: oocke1_join_depposhassbk; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_depposhassbk AS
-    SELECT b.object_id AS simple_booking, b."position" AS depot_position FROM oocke1_simplebooking b;
-
-
---
--- Name: oocke1_join_deprepitmhasbk; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_deprepitmhasbk AS
-    SELECT ip.object_id AS item_position, b.object_id AS single_booking FROM (((oocke1_depotreportitem ip JOIN oocke1_depotreport r ON (((ip."p$$parent")::text = (r.object_id)::text))) JOIN oocke1_bookingperiod bp ON (((r.booking_period)::text = (bp.object_id)::text))) JOIN oocke1_booking b ON ((((((b."position")::text = (ip."position")::text) AND (b.value_date >= bp.period_starts_at)) AND ((b.value_date < bp.period_ends_at_exclusive) OR (bp.period_ends_at_exclusive IS NULL))) AND (((b.booking_status >= r.booking_status_threshold) OR (r.booking_status_threshold = 0)) OR (r.booking_status_threshold IS NULL)))));
-
-
---
--- Name: oocke1_join_deprepitmhassbk; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_deprepitmhassbk AS
-    SELECT ip.object_id AS item_position, b.object_id AS simple_booking FROM (((oocke1_depotreportitem ip JOIN oocke1_depotreport r ON (((ip."p$$parent")::text = (r.object_id)::text))) JOIN oocke1_bookingperiod bp ON (((r.booking_period)::text = (bp.object_id)::text))) JOIN oocke1_simplebooking b ON ((((((b."position")::text = (ip."position")::text) AND (b.value_date >= bp.period_starts_at)) AND ((b.value_date < bp.period_ends_at_exclusive) OR (bp.period_ends_at_exclusive IS NULL))) AND (((b.booking_status >= r.booking_status_threshold) OR (r.booking_status_threshold = 0)) OR (r.booking_status_threshold IS NULL)))));
-
-
---
--- Name: oocke1_join_entitycontainsdep; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_entitycontainsdep AS
-    SELECT dh."p$$parent" AS entity, d.object_id AS depot FROM (oocke1_depot d JOIN oocke1_depotholder dh ON (((d."p$$parent")::text = (dh.object_id)::text)));
 
 
 --
@@ -5813,22 +5750,6 @@ CREATE TABLE oocke1_join_finderhasidxprod (
 
 
 --
--- Name: oocke1_join_fldcontainsdoc; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_fldcontainsdoc AS
-    SELECT d_.object_id AS document, f.object_id AS folder FROM (oocke1_document_ d_ JOIN oocke1_documentfolder f ON (((d_.folder)::text = (f.object_id)::text)));
-
-
---
--- Name: oocke1_join_fldcontainsfld; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_fldcontainsfld AS
-    SELECT f.object_id AS folder, fp.object_id AS parent FROM (oocke1_documentfolder f JOIN oocke1_documentfolder fp ON (((f.parent)::text = (fp.object_id)::text)));
-
-
---
 -- Name: oocke1_userhome; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -5855,38 +5776,6 @@ CREATE TABLE oocke1_userhome (
     modified_at timestamp with time zone NOT NULL,
     dtype character varying(256) NOT NULL
 );
-
-
---
--- Name: oocke1_join_homehasassact; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_homehasassact AS
-    ((SELECT a.object_id AS assigned_activity, h0.object_id AS user_home FROM (oocke1_activity a JOIN oocke1_userhome h0 ON (((a.assigned_to)::text = (h0.contact)::text))) UNION SELECT a.object_id AS assigned_activity, h0.object_id AS user_home FROM ((oocke1_activity a JOIN oocke1_address adr ON (((adr.object_id)::text = (a.sender)::text))) JOIN oocke1_userhome h0 ON (((adr."p$$parent")::text = (h0.contact)::text)))) UNION SELECT a.object_id AS assigned_activity, h0.object_id AS user_home FROM ((oocke1_activityparty p0 JOIN oocke1_userhome h0 ON (((p0.party)::text = (h0.contact)::text))) JOIN oocke1_activity a ON (((p0."p$$parent")::text = (a.object_id)::text)))) UNION SELECT a.object_id AS assigned_activity, h0.object_id AS user_home FROM (((oocke1_activityparty p0 JOIN oocke1_activity a ON (((p0."p$$parent")::text = (a.object_id)::text))) JOIN oocke1_address adr ON (((adr.object_id)::text = (p0.party)::text))) JOIN oocke1_userhome h0 ON (((adr."p$$parent")::text = (h0.contact)::text)));
-
-
---
--- Name: oocke1_join_homehasasscontr; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_homehasasscontr AS
-    SELECT c.object_id AS assigned_contract, h.object_id AS user_home FROM (oocke1_contract c JOIN oocke1_userhome h ON (((c.sales_rep)::text = (h.contact)::text))) UNION ALL SELECT c.object_id AS assigned_contract, h.object_id AS user_home FROM (oocke1_contract c JOIN oocke1_userhome h ON (((c.customer)::text = (h.contact)::text)));
-
-
---
--- Name: oocke1_join_iitemhasbooking; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_iitemhasbooking AS
-    SELECT b.object_id AS booking, i.object_id AS inventory_item FROM (oocke1_inventoryitem i JOIN oocke1_booking b ON (((b.origin)::text = (i.object_id)::text)));
-
-
---
--- Name: oocke1_join_nscontainselt; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_nscontainselt AS
-    SELECT n.object_id AS namespace, e.object_id AS content FROM (oocke1_modelelement n JOIN oocke1_modelelement e ON (((e.container)::text = (n.object_id)::text)));
 
 
 --
@@ -5996,22 +5885,6 @@ CREATE TABLE oocke1_resourceassignment (
 
 
 --
--- Name: oocke1_join_reshasassignedact; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_reshasassignedact AS
-    SELECT a.object_id AS assigned_activity, r.object_id AS resource FROM ((oocke1_activity a JOIN oocke1_resourceassignment ra ON (((ra."p$$parent")::text = (a.object_id)::text))) JOIN oocke1_resource r ON (((ra.resrc)::text = (r.object_id)::text)));
-
-
---
--- Name: oocke1_join_segcontainsadr; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_segcontainsadr AS
-    SELECT adr.object_id AS address, act."p$$parent" AS segment FROM (oocke1_address adr JOIN oocke1_account act ON (((adr."p$$parent")::text = (act.object_id)::text)));
-
-
---
 -- Name: oocke1_segment; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -6025,22 +5898,6 @@ CREATE TABLE oocke1_segment (
     access_level_update smallint,
     owner_ integer DEFAULT -1 NOT NULL
 );
-
-
---
--- Name: oocke1_join_segcontainsbu; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_segcontainsbu AS
-    SELECT b.object_id AS building_unit, s.object_id AS segment FROM (oocke1_buildingunit b JOIN oocke1_segment s ON (((b."p$$parent")::text = (s.object_id)::text))) UNION ALL SELECT b.object_id AS building_unit, bp."p$$parent" AS segment FROM (oocke1_buildingunit b JOIN oocke1_buildingunit bp ON (((b."p$$parent")::text = (bp.object_id)::text)));
-
-
---
--- Name: oocke1_join_segcontainsfac; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_join_segcontainsfac AS
-    SELECT f.object_id AS facility, b."p$$parent" AS segment FROM (oocke1_facility f JOIN oocke1_buildingunit b ON (((f."p$$parent")::text = (b.object_id)::text))) UNION ALL SELECT f.object_id AS facility, bu1."p$$parent" AS segment FROM ((oocke1_facility f JOIN oocke1_buildingunit bu2 ON (((f."p$$parent")::text = (bu2.object_id)::text))) JOIN oocke1_buildingunit bu1 ON (((bu2."p$$parent")::text = (bu1.object_id)::text)));
 
 
 --
@@ -7321,27 +7178,27 @@ CREATE TABLE oocke1_productreference_ (
 --
 
 CREATE TABLE oocke1_property (
-    object_id character varying(256) NOT NULL,
+    object_id character varying(200) NOT NULL,
     access_level_browse smallint,
     access_level_delete smallint,
     access_level_update smallint,
     created_at timestamp with time zone,
     created_by_ integer DEFAULT -1 NOT NULL,
-    description character varying(256),
-    "domain" character varying(256),
+    description character varying(150),
+    "domain" character varying(150),
     modified_by_ integer DEFAULT -1 NOT NULL,
-    name character varying(256),
+    name character varying(150),
     owner_ integer DEFAULT -1 NOT NULL,
-    "p$$parent" character varying(256),
+    "p$$parent" character varying(150),
     modified_at timestamp with time zone NOT NULL,
-    dtype character varying(256) NOT NULL,
+    dtype character varying(150) NOT NULL,
     string_value character varying(256),
     decimal_value numeric,
     date_value date,
     boolean_value boolean,
     date_time_value timestamp with time zone,
-    uri_value character varying(256),
-    reference_value character varying(256),
+    uri_value character varying(150),
+    reference_value character varying(150),
     integer_value integer
 );
 
@@ -8385,118 +8242,6 @@ CREATE TABLE oocke1_subscription_ (
 
 
 --
--- Name: oocke1_tobj_acctmembership; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_acctmembership AS
-    SELECT (("replace"((a.object_id)::text, 'account/'::text, 'accountMembership/'::text) || '/'::text) || "replace"((ass.object_id)::text, '/'::text, ':'::text)) AS object_id, ass.account AS "p$$parent", ass.created_at, ass.created_by_, ass.modified_at, ass.modified_by_, 'org:opencrx:kernel:account1:AccountMembership' AS dtype, ass.access_level_browse, ass.access_level_update, ass.access_level_delete, ass.owner_, ass.name, ass.description, ass.valid_from, ass.valid_to, ass.object_id AS member, ass."p$$parent" AS member_of_account, ass.member_role_ FROM (oocke1_accountassignment ass JOIN oocke1_account a ON ((((ass.account)::text = (a.object_id)::text) AND ((ass.dtype)::text = 'org:opencrx:kernel:account1:Member'::text))));
-
-
---
--- Name: oocke1_tobj_acctmembership_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_acctmembership_ AS
-    SELECT oocke1_accountassignment_.object_id, oocke1_accountassignment_.idx, oocke1_accountassignment_.created_by, oocke1_accountassignment_.member_role, oocke1_accountassignment_.modified_by, oocke1_accountassignment_."owner", oocke1_accountassignment_.dtype FROM oocke1_accountassignment_;
-
-
---
--- Name: oocke1_tobj_activitylinkfrom; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_activitylinkfrom AS
-    SELECT (("replace"((a.object_id)::text, 'activity/'::text, 'activityLinkFrom/'::text) || '/'::text) || "replace"((l.object_id)::text, '/'::text, ':'::text)) AS object_id, a.object_id AS "p$$parent", 'org:opencrx:kernel:activity1:ActivityLinkFrom' AS dtype, l.modified_at, l.created_at, l.created_by_, l.modified_by_, l.access_level_browse, l.access_level_update, l.access_level_delete, l.owner_, (100 - l.activity_link_type) AS activity_link_type, l.name, l.description, l."p$$parent" AS link_from, l.object_id AS link_to FROM oocke1_activity a, oocke1_activitylink l WHERE (((l.link_to)::text = (a.object_id)::text) AND ((l.object_id)::text = (l.object_id)::text));
-
-
---
--- Name: oocke1_tobj_activitylinkfrom_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_activitylinkfrom_ AS
-    SELECT oocke1_activitylink_.object_id, oocke1_activitylink_.idx, oocke1_activitylink_.created_by, oocke1_activitylink_.modified_by, oocke1_activitylink_."owner", oocke1_activitylink_.dtype FROM oocke1_activitylink_;
-
-
---
--- Name: oocke1_tobj_contractrole; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_contractrole AS
-    (SELECT (((("replace"((c."p$$parent")::text, 'contracts/'::text, 'contractRole/'::text) || '/'::text) || "replace"((dhn.object_id)::text, '/'::text, ':'::text)) || ':'::text) || "replace"((c.object_id)::text, '/'::text, ':'::text)) AS object_id, c."p$$parent", 'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype, c.modified_at, c.modified_by_, c.created_at, c.created_by_, c.access_level_browse, c.access_level_update, c.access_level_delete, c.owner_, c.customer AS account, dhn.object_id AS contract_reference_holder, dhn.contract FROM ((oocke1_depotholder_ dhn JOIN oocke1_contract c ON (((c.object_id)::text = (dhn.contract)::text))) JOIN oocke1_account a ON (((c.customer)::text = (a.object_id)::text))) UNION ALL SELECT (((("replace"((c."p$$parent")::text, 'contracts/'::text, 'contractRole/'::text) || '/'::text) || "replace"((dgn.object_id)::text, '/'::text, ':'::text)) || ':'::text) || "replace"((c.object_id)::text, '/'::text, ':'::text)) AS object_id, c."p$$parent", 'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype, c.modified_at, c.modified_by_, c.created_at, c.created_by_, c.access_level_browse, c.access_level_update, c.access_level_delete, c.owner_, c.customer AS account, dgn.object_id AS contract_reference_holder, dgn.contract FROM ((oocke1_depotgroup_ dgn JOIN oocke1_contract c ON (((c.object_id)::text = (dgn.contract)::text))) JOIN oocke1_account a ON (((c.customer)::text = (a.object_id)::text)))) UNION ALL SELECT (((("replace"((c."p$$parent")::text, 'contracts/'::text, 'contractRole/'::text) || '/'::text) || "replace"((dn.object_id)::text, '/'::text, ':'::text)) || ':'::text) || "replace"((c.object_id)::text, '/'::text, ':'::text)) AS object_id, c."p$$parent", 'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype, c.modified_at, c.modified_by_, c.created_at, c.created_by_, c.access_level_browse, c.access_level_update, c.access_level_delete, c.owner_, c.customer AS account, dn.object_id AS contract_reference_holder, dn.contract FROM ((oocke1_depot_ dn JOIN oocke1_contract c ON (((c.object_id)::text = (dn.contract)::text))) JOIN oocke1_account a ON (((c.customer)::text = (a.object_id)::text)));
-
-
---
--- Name: oocke1_tobj_contractrole_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_contractrole_ AS
-    SELECT oocke1_contract_.object_id, oocke1_contract_.idx, oocke1_contract_.created_by, oocke1_contract_.modified_by, oocke1_contract_."owner", 'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype FROM oocke1_contract_;
-
-
---
--- Name: oocke1_tobj_lnkitemlnkfrom; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_lnkitemlnkfrom AS
-    ((SELECT (("replace"((l.link_to)::text, 'facility/'::text, 'itemLinkFrom/'::text) || '/'::text) || "replace"((l.object_id)::text, '/'::text, ':'::text)) AS object_id, l.link_to AS "p$$parent", l.created_at, l.created_by_, l.modified_at, l.modified_by_, 'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype, l.access_level_browse, l.access_level_update, l.access_level_delete, l.owner_, l.disabled, l.disabled_reason, l.name, l.description, (100 - l.link_type) AS link_type, l.valid_from, l.valid_to, l.object_id AS link_to, l."p$$parent" AS link_from FROM oocke1_linkableitemlink l WHERE ((l.link_to)::text ~~ 'facility/%'::text) UNION ALL SELECT (("replace"((l.link_to)::text, 'facility1/'::text, 'itemLinkFrom1/'::text) || '/'::text) || "replace"((l.object_id)::text, '/'::text, ':'::text)) AS object_id, l.link_to AS "p$$parent", l.created_at, l.created_by_, l.modified_at, l.modified_by_, 'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype, l.access_level_browse, l.access_level_update, l.access_level_delete, l.owner_, l.disabled, l.disabled_reason, l.name, l.description, (100 - l.link_type) AS link_type, l.valid_from, l.valid_to, l.object_id AS link_to, l."p$$parent" AS link_from FROM oocke1_linkableitemlink l WHERE ((l.link_to)::text ~~ 'facility1/%'::text)) UNION ALL SELECT (("replace"((l.link_to)::text, 'facility2/'::text, 'itemLinkFrom2/'::text) || '/'::text) || "replace"((l.object_id)::text, '/'::text, ':'::text)) AS object_id, l.link_to AS "p$$parent", l.created_at, l.created_by_, l.modified_at, l.modified_by_, 'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype, l.access_level_browse, l.access_level_update, l.access_level_delete, l.owner_, l.disabled, l.disabled_reason, l.name, l.description, (100 - l.link_type) AS link_type, l.valid_from, l.valid_to, l.object_id AS link_to, l."p$$parent" AS link_from FROM oocke1_linkableitemlink l WHERE ((l.link_to)::text ~~ 'facility2/%'::text)) UNION ALL SELECT (("replace"((l.link_to)::text, 'inventoryItem/'::text, 'itemLinkFrom3/'::text) || '/'::text) || "replace"((l.object_id)::text, '/'::text, ':'::text)) AS object_id, l.link_to AS "p$$parent", l.created_at, l.created_by_, l.modified_at, l.modified_by_, 'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype, l.access_level_browse, l.access_level_update, l.access_level_delete, l.owner_, l.disabled, l.disabled_reason, l.name, l.description, (100 - l.link_type) AS link_type, l.valid_from, l.valid_to, l.object_id AS link_to, l."p$$parent" AS link_from FROM oocke1_linkableitemlink l WHERE ((l.link_to)::text ~~ 'inventoryItem/%'::text);
-
-
---
--- Name: oocke1_tobj_lnkitemlnkfrom_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_lnkitemlnkfrom_ AS
-    SELECT oocke1_linkableitemlink_.object_id, oocke1_linkableitemlink_.idx, oocke1_linkableitemlink_.created_by, oocke1_linkableitemlink_.modified_by, oocke1_linkableitemlink_."owner", oocke1_linkableitemlink_.dtype FROM oocke1_linkableitemlink_;
-
-
---
--- Name: oocke1_tobj_pricelistentry; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_pricelistentry AS
-    SELECT (("replace"((p."p$$parent")::text, 'products/'::text, 'priceListEntry/'::text) || '/'::text) || "replace"((bp.object_id)::text, '/'::text, ':'::text)) AS object_id, p."p$$parent", 'org:opencrx:kernel:product1:PriceListEntry' AS dtype, bp.modified_at, bp.modified_by_, bp.created_at, bp.created_by_, bp.access_level_browse, bp.access_level_update, bp.access_level_delete, bp.owner_, bp.objusage_, bp.price, bp.price_currency, bp.price_level_, bp.description, bp.quantity_from, bp.quantity_to, bp.discount, bp.discount_is_percentage, bp.uom, p.name AS product_name, p.description AS product_description, p.object_id AS product, p.sales_tax_type, bp.object_id AS base_price FROM (oocke1_productbaseprice bp JOIN oocke1_product p ON (((bp."p$$parent")::text = (p.object_id)::text))) UNION ALL SELECT (("replace"((pp."p$$parent")::text, 'products/'::text, 'priceListEntry/'::text) || '/'::text) || "replace"((bp.object_id)::text, '/'::text, ':'::text)) AS object_id, pp."p$$parent", 'org:opencrx:kernel:product1:PriceListEntry' AS dtype, bp.modified_at, bp.modified_by_, bp.created_at, bp.created_by_, bp.access_level_browse, bp.access_level_update, bp.access_level_delete, bp.owner_, bp.objusage_, bp.price, bp.price_currency, bp.price_level_, bp.description, bp.quantity_from, bp.quantity_to, bp.discount, bp.discount_is_percentage, bp.uom, p.name AS product_name, p.description AS product_description, p.object_id AS product, p.sales_tax_type, bp.object_id AS base_price FROM ((oocke1_productbaseprice bp JOIN oocke1_product p ON (((bp."p$$parent")::text = (p.object_id)::text))) JOIN oocke1_product pp ON (((p."p$$parent")::text = (pp.object_id)::text)));
-
-
---
--- Name: oocke1_tobj_pricelistentry_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_pricelistentry_ AS
-    SELECT oocke1_productbaseprice_.object_id, oocke1_productbaseprice_.idx, oocke1_productbaseprice_.created_by, oocke1_productbaseprice_.modified_by, oocke1_productbaseprice_."owner", oocke1_productbaseprice_.price_level, oocke1_productbaseprice_.objusage, oocke1_productbaseprice_.dtype FROM oocke1_productbaseprice_;
-
-
---
--- Name: oocke1_tobj_propertysetentry; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_propertysetentry AS
-    SELECT "replace"((p.object_id)::text, 'p2/'::text, 'propertySetEntry1/'::text) AS object_id, ps."p$$parent", p.created_at, p.created_by_, p.modified_at, p.modified_by_, "replace"("replace"((p.dtype)::text, 'org:opencrx:kernel:base:'::text, 'org:opencrx:kernel:generic:'::text), 'Property'::text, 'PropertySetEntry'::text) AS dtype, p.access_level_browse, p.access_level_update, p.access_level_delete, p.owner_, p.name AS property_name, p.description AS property_description, ps.name AS property_set_name, ps.description AS property_set_description, p.string_value, p.integer_value, p.boolean_value, p.uri_value, p.decimal_value, p.reference_value, p.date_value, p.date_time_value, p.object_id AS property FROM (oocke1_property p JOIN oocke1_propertyset ps ON (((p."p$$parent")::text = (ps.object_id)::text))) UNION ALL SELECT "replace"((p.object_id)::text, 'p3/'::text, 'propertySetEntry2/'::text) AS object_id, ps."p$$parent", p.created_at, p.created_by_, p.modified_at, p.modified_by_, "replace"("replace"((p.dtype)::text, 'org:opencrx:kernel:base:'::text, 'org:opencrx:kernel:generic:'::text), 'Property'::text, 'PropertySetEntry'::text) AS dtype, p.access_level_browse, p.access_level_update, p.access_level_delete, p.owner_, p.name AS property_name, p.description AS property_description, ps.name AS property_set_name, ps.description AS property_set_description, p.string_value, p.integer_value, p.boolean_value, p.uri_value, p.decimal_value, p.reference_value, p.date_value, p.date_time_value, p.object_id AS property FROM (oocke1_property p JOIN oocke1_propertyset ps ON (((p."p$$parent")::text = (ps.object_id)::text)));
-
-
---
--- Name: oocke1_tobj_propertysetentry_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_propertysetentry_ AS
-    SELECT oocke1_property_.object_id, oocke1_property_.idx, oocke1_property_.created_by, oocke1_property_.modified_by, oocke1_property_."owner", oocke1_property_.dtype FROM oocke1_property_;
-
-
---
--- Name: oocke1_tobj_searchindexentry; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_searchindexentry AS
-    SELECT (("replace"((act."p$$parent")::text, 'accounts/'::text, 'searchIndexEntry/'::text) || '/'::text) || "replace"((act.object_id)::text, '/'::text, ':'::text)) AS object_id, act."p$$parent", 'org:opencrx:kernel:account1:SearchIndexEntry' AS dtype, act.modified_at, act.modified_by_, act.created_at, act.created_by_, act.access_level_browse, act.access_level_update, act.access_level_delete, act.owner_, (((CASE WHEN (act.last_name IS NULL) THEN '-'::character varying ELSE act.last_name END)::text || ', '::text) || (CASE WHEN (act.first_name IS NULL) THEN '-'::character varying ELSE act.first_name END)::text) AS account_address_index, act.object_id AS account FROM oocke1_account act UNION ALL SELECT (("replace"((act."p$$parent")::text, 'accounts/'::text, 'searchIndexEntry/'::text) || '/'::text) || "replace"((adr.object_id)::text, '/'::text, ':'::text)) AS object_id, act."p$$parent", 'org:opencrx:kernel:account1:SearchIndexEntry' AS dtype, act.modified_at, act.modified_by_, act.created_at, act.created_by_, act.access_level_browse, act.access_level_update, act.access_level_delete, act.owner_, (((((((((((((CASE WHEN (act.last_name IS NULL) THEN '-'::character varying ELSE act.last_name END)::text || ', '::text) || (CASE WHEN (act.first_name IS NULL) THEN '-'::character varying ELSE act.first_name END)::text) || ', '::text) || (CASE WHEN (adr.email_address IS NULL) THEN '-'::character varying ELSE adr.email_address END)::text) || ', '::text) || (CASE WHEN (adr.phone_number_full IS NULL) THEN '-'::character varying ELSE adr.phone_number_full END)::text) || ', '::text) || (CASE WHEN (adr.room_number IS NULL) THEN '-'::character varying ELSE adr.room_number END)::text) || ', '::text) || (CASE WHEN (adr.postal_street_0 IS NULL) THEN '-'::character varying ELSE adr.postal_street_0 END)::text) || ', '::text) || (CASE WHEN (adr.postal_city IS NULL) THEN '-'::character varying ELSE adr.postal_city END)::text) AS account_address_index, act.object_id AS account FROM (oocke1_account act JOIN oocke1_address adr ON (((adr."p$$parent")::text = (act.object_id)::text)));
-
-
---
--- Name: oocke1_tobj_searchindexentry_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_searchindexentry_ AS
-    SELECT oocke1_account_.object_id, oocke1_account_.idx, oocke1_account_.created_by, oocke1_account_.modified_by, oocke1_account_."owner", oocke1_account_.dtype FROM oocke1_account_;
-
-
---
 -- Name: oocke1_workrecord; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -8532,14 +8277,6 @@ CREATE TABLE oocke1_workrecord (
 
 
 --
--- Name: oocke1_tobj_workreportentry; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_workreportentry AS
-    ((SELECT (("replace"((a."p$$parent")::text, 'activities/'::text, 'workReportEntry1/'::text) || '/'::text) || "replace"((w.object_id)::text, '/'::text, ':'::text)) AS object_id, a."p$$parent", 'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, w.modified_at, w.modified_by_, w.created_at, w.created_by_, w.access_level_browse, w.access_level_update, w.access_level_delete, w.owner_, w.name, w.description, w.started_at, w.ended_at, w.duration_hours, w.duration_minutes, ((w.duration_hours)::numeric + ((w.duration_minutes)::numeric / 60.0)) AS duration_decimal, (((((w.duration_hours)::character(1))::text || ':'::text) || ((w.duration_minutes)::character(1))::text) || chr(39)) AS duration_hh_mm, w.pause_duration_hours, w.pause_duration_minutes, ((w.pause_duration_hours)::numeric + ((w.pause_duration_minutes)::numeric / 60.0)) AS pause_duration_decimal, (((((w.pause_duration_hours)::character(1))::text || ':'::text) || ((w.pause_duration_minutes)::character(1))::text) || chr(39)) AS pause_duration_hh_mm, w.billable_amount, w.billing_currency, a.activity_number, a.object_id AS activity, ra.object_id AS "assignment", w.object_id AS work_record, ra.resrc FROM ((oocke1_workrecord w JOIN oocke1_resourceassignment ra ON (((w."p$$parent")::text = (ra.object_id)::text))) JOIN oocke1_activity a ON (((a.object_id)::text = (ra."p$$parent")::text))) UNION ALL SELECT (("replace"("replace"("replace"((ga.activity_group)::text, 'activityTracker/'::text, 'workReportEntry2/'::text), 'activityCategory/'::text, 'workReportEntry2/'::text), 'activityMilestone/'::text, 'workReportEntry2/'::text) || '/'::text) || "replace"((w.object_id)::text, '/'::text, ':'::text)) AS object_id, ga.activity_group AS "p$$parent", 'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, w.modified_at, w.modified_by_, w.created_at, w.created_by_, w.access_level_browse, w.access_level_update, w.access_level_delete, w.owner_, w.name, w.description, w.started_at, w.ended_at, w.duration_hours, w.duration_minutes, ((w.duration_hours)::numeric + ((w.duration_minutes)::numeric / 60.0)) AS duration_decimal, (((((w.duration_hours)::character(1))::text || ':'::text) || ((w.duration_minutes)::character(1))::text) || chr(39)) AS duration_hh_mm, w.pause_duration_hours, w.pause_duration_minutes, ((w.pause_duration_hours)::numeric + ((w.pause_duration_minutes)::numeric / 60.0)) AS pause_duration_decimal, (((((w.pause_duration_hours)::character(1))::text || ':'::text) || ((w.pause_duration_minutes)::character(1))::text) || chr(39)) AS pause_duration_hh_mm, w.billable_amount, w.billing_currency, a.activity_number, a.object_id AS activity, ra.object_id AS "assignment", w.object_id AS work_record, ra.resrc FROM (((oocke1_workrecord w JOIN oocke1_resourceassignment ra ON (((w."p$$parent")::text = (ra.object_id)::text))) JOIN oocke1_activity a ON (((a.object_id)::text = (ra."p$$parent")::text))) JOIN oocke1_activitygroupass ga ON ((((a.object_id)::text = (ga."p$$parent")::text) AND (ga.activity_group IS NOT NULL))))) UNION ALL SELECT (("replace"("replace"("replace"((ga.activity_group)::text, 'activityTracker/'::text, 'workReportEntry3/'::text), 'activityCategory/'::text, 'workReportEntry3/'::text), 'activityMilestone/'::text, 'workReportEntry3/'::text) || '/'::text) || "replace"((w.object_id)::text, '/'::text, ':'::text)) AS object_id, ga.activity_group AS "p$$parent", 'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, w.modified_at, w.modified_by_, w.created_at, w.created_by_, w.access_level_browse, w.access_level_update, w.access_level_delete, w.owner_, w.name, w.description, w.started_at, w.ended_at, w.duration_hours, w.duration_minutes, ((w.duration_hours)::numeric + ((w.duration_minutes)::numeric / 60.0)) AS duration_decimal, (((((w.duration_hours)::character(1))::text || ':'::text) || ((w.duration_minutes)::character(1))::text) || chr(39)) AS duration_hh_mm, w.pause_duration_hours, w.pause_duration_minutes, ((w.pause_duration_hours)::numeric + ((w.pause_duration_minutes)::numeric / 60.0)) AS pause_duration_decimal, (((((w.pause_duration_hours)::character(1))::text || ':'::text) || ((w.pause_duration_minutes)::character(1))::text) || chr(39)) AS pause_duration_hh_mm, w.billable_amount, w.billing_currency, a.activity_number, a.object_id AS activity, ra.object_id AS "assignment", w.object_id AS work_record, ra.resrc FROM (((oocke1_workrecord w JOIN oocke1_resourceassignment ra ON (((w."p$$parent")::text = (ra.object_id)::text))) JOIN oocke1_activity a ON (((a.object_id)::text = (ra."p$$parent")::text))) JOIN oocke1_activitygroupass ga ON ((((a.object_id)::text = (ga."p$$parent")::text) AND (ga.activity_group IS NOT NULL))))) UNION ALL SELECT (("replace"("replace"("replace"((ga.activity_group)::text, 'activityTracker/'::text, 'workReportEntry4/'::text), 'activityCategory/'::text, 'workReportEntry4/'::text), 'activityMilestone/'::text, 'workReportEntry4/'::text) || '/'::text) || "replace"((w.object_id)::text, '/'::text, ':'::text)) AS object_id, ga.activity_group AS "p$$parent", 'org:opencrx:kernel:activity1:WorkReportEntry' AS dtype, w.modified_at, w.modified_by_, w.created_at, w.created_by_, w.access_level_browse, w.access_level_update, w.access_level_delete, w.owner_, w.name, w.description, w.started_at, w.ended_at, w.duration_hours, w.duration_minutes, ((w.duration_hours)::numeric + ((w.duration_minutes)::numeric / 60.0)) AS duration_decimal, (((((w.duration_hours)::character(1))::text || ':'::text) || ((w.duration_minutes)::character(1))::text) || chr(39)) AS duration_hh_mm, w.pause_duration_hours, w.pause_duration_minutes, ((w.pause_duration_hours)::numeric + ((w.pause_duration_minutes)::numeric / 60.0)) AS pause_duration_decimal, (((((w.pause_duration_hours)::character(1))::text || ':'::text) || ((w.pause_duration_minutes)::character(1))::text) || chr(39)) AS pause_duration_hh_mm, w.billable_amount, w.billing_currency, a.activity_number, a.object_id AS activity, ra.object_id AS "assignment", w.object_id AS work_record, ra.resrc FROM (((oocke1_workrecord w JOIN oocke1_resourceassignment ra ON (((w."p$$parent")::text = (ra.object_id)::text))) JOIN oocke1_activity a ON (((a.object_id)::text = (ra."p$$parent")::text))) JOIN oocke1_activitygroupass ga ON ((((a.object_id)::text = (ga."p$$parent")::text) AND (ga.activity_group IS NOT NULL))));
-
-
---
 -- Name: oocke1_workrecord_; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -8551,14 +8288,6 @@ CREATE TABLE oocke1_workrecord_ (
     "owner" character varying(256),
     dtype character varying(256) NOT NULL
 );
-
-
---
--- Name: oocke1_tobj_workreportentry_; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocke1_tobj_workreportentry_ AS
-    SELECT oocke1_workrecord_.object_id, oocke1_workrecord_.idx, oocke1_workrecord_.created_by, oocke1_workrecord_.modified_by, oocke1_workrecord_."owner", oocke1_workrecord_.dtype FROM oocke1_workrecord_;
 
 
 --
@@ -9240,22 +8969,6 @@ CREATE TABLE oocse1_subject_ (
 
 
 --
--- Name: oocse1_tobj_roles; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocse1_tobj_roles AS
-    SELECT p.name AS principal_name, r.name AS role_name FROM oocse1_principal_ pg, oocse1_principal p, oocse1_principal_ pn, oocse1_role r WHERE (((((p.object_id)::text = (pn.object_id)::text) AND ((pn.is_member_of)::text = (pg.object_id)::text)) AND ((pg.granted_role)::text = (r.object_id)::text)) AND ((p.object_id)::text ~~ 'principal/%/Root/Default/%'::text));
-
-
---
--- Name: oocse1_tobj_users; Type: VIEW; Schema: public; Owner: postgres
---
-
-CREATE VIEW oocse1_tobj_users AS
-    SELECT p.name AS principal_name, c.passwd FROM (oocse1_principal p JOIN oocse1_credential c ON (((p.credential)::text = (c.object_id)::text)));
-
-
---
 -- Name: oom0base_authority; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -9275,8 +8988,6 @@ CREATE TABLE oom0base_provider (
     dtype character varying(256) NOT NULL
 );
 
-
-SET default_with_oids = false;
 
 --
 -- Name: oocke1_accesshistory__pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
@@ -10332,6 +10043,22 @@ ALTER TABLE ONLY oocke1_eventslot_
 
 ALTER TABLE ONLY oocke1_eventslot
     ADD CONSTRAINT oocke1_eventslot_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: oocke1_exportprofile__pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY oocke1_exportprofile_
+    ADD CONSTRAINT oocke1_exportprofile__pkey PRIMARY KEY (object_id, idx);
+
+
+--
+-- Name: oocke1_exportprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY oocke1_exportprofile
+    ADD CONSTRAINT oocke1_exportprofile_pkey PRIMARY KEY (object_id);
 
 
 --

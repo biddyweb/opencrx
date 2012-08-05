@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ResourceImpl.java,v 1.2 2007/12/25 17:15:54 wfro Exp $
+ * Name:        $Id: ResourceImpl.java,v 1.3 2008/04/03 12:24:10 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:54 $
+ * Date:        $Date: 2008/04/03 12:24:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,8 +58,8 @@ package org.opencrx.kernel.plugin.application.activity1;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class ResourceImpl {
@@ -82,7 +82,7 @@ public class ResourceImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.AddWorkRecordResult addWorkRecordByDuration(
         org.opencrx.kernel.activity1.jmi1.ResourceAddWorkRecordByDurationParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             ActivityWorkRecord workRecord = this.getBackend().getActivities().resourceAddWorkRecordByDuration(
                 this.current.refGetPath(), 
@@ -101,7 +101,7 @@ public class ResourceImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                    
     }
     

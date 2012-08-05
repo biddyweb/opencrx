@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ExportToOutlook.jsp,v 1.10 2008/02/25 10:14:26 cmu Exp $
+ * Name:        $Id: ExportToOutlook.jsp,v 1.18 2008/06/27 12:58:57 cmu Exp $
  * Description: openCRX outlook exporter - contact
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/25 10:14:26 $
+ * Date:        $Date: 2008/06/27 12:58:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -71,10 +71,18 @@ org.openmdx.compatibility.base.naming.*,
 org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*
 " %><%
-  request.setCharacterEncoding("UTF-8");
-  ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-  ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  Texts_1_0 texts = app.getTexts();
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+  String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	if(objectXri == null || app == null) {
+		response.sendRedirect(
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+		);
+		return;
+	}
+	Texts_1_0 texts = app.getTexts();
+	javax.jdo.PersistenceManager pm = app.getPmData();
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -106,19 +114,11 @@ org.openmdx.application.log.*
 <%
         try {
           Codes codes = app.getCodes();
-          RefPackage_1_0 dataPkg = app.getDataPackage();
-          org.opencrx.kernel.account1.jmi1.Account1Package accountPkg =
-            (org.opencrx.kernel.account1.jmi1.Account1Package)dataPkg.refPackage(
-          	  org.opencrx.kernel.account1.jmi1.Account1Package.class.getName()
-            );
-          String objectXri = request.getParameter("xri");
-          if (objectXri == null) {
-            objectXri = view.getObjectReference().refMofId();
-          }
+			org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 
        	  try {
               org.opencrx.kernel.account1.jmi1.Contact contact =
-            	  (org.opencrx.kernel.account1.jmi1.Contact)dataPkg.refObject(objectXri);
+            	  (org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(new Path(objectXri));
               int salutationCode = 0;
               try {
                 salutationCode = contact.getSalutationCode();
@@ -352,7 +352,7 @@ org.openmdx.application.log.*
           }
           catch(Exception e) {
   		    	try {
-          		//dataPkg.refRollback();
+          		//pm.currentTransaction.rollback();
               } catch(Exception e0) {}
   		        throw e;
 	        }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.15 2008/02/04 01:26:29 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.17 2008/06/11 12:04:34 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/04 01:26:29 $
+ * Date:        $Date: 2008/06/11 12:04:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -965,9 +965,10 @@ public class Depots {
                 BigDecimal balanceBop = null;
                 BigDecimal balanceDebitBop = null;
                 BigDecimal balanceCreditBop = null;
-                BigDecimal balance = null;
                 BigDecimal balanceCredit = null;
                 BigDecimal balanceDebit = null;
+                BigDecimal balanceSimple = null;
+                BigDecimal balanceSimpleBop = null;
                 if(reportPreviousPeriod != null) {
                     List<DataproviderObject_1_0> items = this.backend.getDelegatingRequests().addFindRequest(
                         reportPreviousPeriod.path().getChild("itemPosition"),
@@ -989,17 +990,19 @@ public class Depots {
                         balanceBop = (BigDecimal)itemPosition.values("balance").get(0);                        
                         balanceCreditBop = (BigDecimal)itemPosition.values("balanceCredit").get(0);
                         balanceDebitBop = (BigDecimal)itemPosition.values("balanceDebit").get(0);
-                        balance = (BigDecimal)itemPosition.values("balance").get(0);
                         balanceCredit = (BigDecimal)itemPosition.values("balanceCredit").get(0);
                         balanceDebit = (BigDecimal)itemPosition.values("balanceDebit").get(0);
+                        balanceSimpleBop = (BigDecimal)itemPosition.values("balanceSimple").get(0);                                                
+                        balanceSimple = (BigDecimal)itemPosition.values("balanceSimple").get(0);
                     }
                 }
                 balanceBop = balanceBop == null ? new BigDecimal(0) : balanceBop;
                 balanceDebitBop = balanceDebitBop == null ? new BigDecimal(0) : balanceDebitBop;
                 balanceCreditBop = balanceCreditBop == null ? new BigDecimal(0) : balanceCreditBop;
-                balance = balance == null ? new BigDecimal(0) : balance;
                 balanceCredit = balanceCredit == null ? new BigDecimal(0) : balanceCredit;
                 balanceDebit = balanceDebit == null ? new BigDecimal(0) : balanceDebit;                
+                balanceSimpleBop = balanceSimpleBop == null ? new BigDecimal(0) : balanceSimpleBop;
+                balanceSimple = balanceSimple == null ? new BigDecimal(0) : balanceSimple;
                 // Create depot report item for position
                 DataproviderObject itemPosition = new DataproviderObject(
                     report.path().getDescendant(new String[]{"itemPosition", this.backend.getUidAsString()})
@@ -1015,6 +1018,7 @@ public class Depots {
                 itemPosition.values("balanceBop").add(balanceBop);
                 itemPosition.values("balanceCreditBop").add(balanceCreditBop);
                 itemPosition.values("balanceDebitBop").add(balanceDebitBop);
+                itemPosition.values("balanceSimpleBop").add(balanceSimpleBop);
                 // Create it
                 this.backend.getDelegatingRequests().addCreateRequest(itemPosition);
 
@@ -1054,15 +1058,16 @@ public class Depots {
                 // Sum up simple bookings
                 for(DataproviderObject_1_0 simpleBooking: simpleBookings) {
                     BigDecimal quantity = (BigDecimal)simpleBooking.values("quantity").get(0);
-                    balance = balance.add(quantity);
+                    balanceSimple = balanceSimple.add(quantity);
                 }
                 // Update balances
                 itemPosition = this.backend.retrieveObjectForModification(
                     itemPosition.path()
                 );
-                itemPosition.values("balance").add(balance);
+                itemPosition.values("balance").add(balanceCredit.subtract(balanceDebit));
                 itemPosition.values("balanceCredit").add(balanceCredit);
                 itemPosition.values("balanceDebit").add(balanceDebit);
+                itemPosition.values("balanceSimple").add(balanceSimple);
             }            
         }
     }
@@ -1892,14 +1897,14 @@ public class Depots {
             );
         }
         
-        // In case a depot position qualifier is specified, set name to name + " #" + depotPositionQualifier.
+        // In case a depot position qualifier is specified, set name to productNumber + " #" + depotPositionQualifier.
         String name = 
             positionName != null
                 ? positionName
                 : product != null
-                    ? (String)product.values("name").get(0)
+                    ? (String)product.values("productNumber").get(0)
                     : basedOnProduct != null
-                        ? (String)basedOnProduct.values("name").get(0)
+                        ? (String)basedOnProduct.values("productNumber").get(0)
                         : "";
         if(depotPositionQualifier != null) {
             depotPosition.values("qualifier").add(depotPositionQualifier);

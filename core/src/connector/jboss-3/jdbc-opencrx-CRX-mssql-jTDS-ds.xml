@@ -2,7 +2,7 @@
 <datasources>
 	<local-tx-datasource>
 		<jndi-name>jdbc_vemag</jndi-name>
-		<connection-url>jdbc:jtds:sqlserver://localhost:1433/CRX-CRX;tds=8.0;useCursors=true</connection-url>
+		<connection-url>jdbc:jtds:sqlserver://127.0.0.1:1433/CRX_2_1;tds=8.0;useCursors=true</connection-url>
 		<!--
 		   see http://jtds.sourceforge.net/ for details on this open source driver
 		-->

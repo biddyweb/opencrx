@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     openCRX, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.43 2008/02/12 19:49:06 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.49 2008/05/29 23:12:38 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:49:06 $
+ * Date:        $Date: 2008/05/29 23:12:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2005, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -80,6 +80,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
 import org.openmdx.application.log.AppLog;
@@ -193,11 +194,11 @@ public class WorkflowControllerServlet
                 catch(Exception e) {
                     System.out.println(new Date().toString() + ": WorkflowController: catched exception (for more information see log) " + e.getMessage());
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.error(e0.getMessage(), e0.getCause(), 1);
+                    AppLog.error(e0.getMessage(), e0.getCause());
                 }
                 catch(Error e) {
                     System.out.println(new Date().toString() + ": WorkflowController: catched error (for more information see log) " + e.getMessage());
-                    AppLog.error(e.getMessage(), e.getCause(), 1);                    
+                    AppLog.error(e.getMessage(), e.getCause());                    
                 }
             }            
         }
@@ -279,10 +280,10 @@ public class WorkflowControllerServlet
         // Get component configuration
         try {
             Admin1Package adminPackage = Utils.getAdminPackage(pm);            
-            org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getOpenCrxBasePackage(pm); 
+            org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm); 
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root").toXri()
+                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
                 );
             try {
                 this.componentConfiguration = adminSegment.getConfiguration(
@@ -354,7 +355,7 @@ public class WorkflowControllerServlet
                 // WorkflowHandler.<provider>.Standard.autostart
                 sp = basePackage.getStringProperty().createStringProperty();
                 sp.setName(MONITORED_WORKFLOW_WORKFLOWHANDLER + "." + providerName + ".Standard." + OPTION_AUTOSTART);
-                sp.setDescription(MONITORED_WORKFLOW_INDEXER + " autostart");
+                sp.setDescription(MONITORED_WORKFLOW_WORKFLOWHANDLER + " autostart");
                 sp.setStringValue("false");
                 componentConfiguration.addProperty(
                     false, 
@@ -394,7 +395,7 @@ public class WorkflowControllerServlet
             }
             org.openmdx.security.realm1.jmi1.Segment realmSegment = 
                 (org.openmdx.security.realm1.jmi1.Segment)pm.getObjectById(
-                    this.getInitParameter("realmSegment")
+                    new Path(this.getInitParameter("realmSegment"))
                 );
             for(Iterator i = realmSegment.getRealm().iterator(); i.hasNext(); ) {
                 org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)i.next();
@@ -449,323 +450,6 @@ public class WorkflowControllerServlet
         }
     }
 
-    //-----------------------------------------------------------------------
-    /**
-     * @return Returns the activitySegment.
-     */
-    protected static org.opencrx.kernel.workflow1.jmi1.Segment getWorkflowSegment(
-        PersistenceManager pm,
-        String providerName,
-        String segmentName
-    ) {
-        return (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-            "xri:@openmdx:org.opencrx.kernel.workflow1/provider/"
-            + providerName + "/segment/" + segmentName
-        );
-    }
-
-    //-----------------------------------------------------------------------
-    protected static org.opencrx.kernel.workflow1.jmi1.Topic initTopic(
-        PersistenceManager pm,
-        Workflow1Package workflowPackage,
-        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
-        String id,
-        String name,
-        String description,
-        String topicPathPattern,
-        WfProcess[] actions
-    ) {
-        org.opencrx.kernel.workflow1.jmi1.Topic topic = null;
-        try {
-            topic = workflowSegment.getTopic(id);
-        } catch(Exception e) {}
-        if(topic == null) {
-            pm.currentTransaction().begin();
-            topic = workflowPackage.getTopic().createTopic();
-            topic.setName(name);
-            topic.setDescription(description);
-            topic.setTopicPathPattern(topicPathPattern);
-            topic.getPerformAction().addAll(
-                Arrays.asList(actions)
-            );
-            topic.getOwningGroup().addAll(
-                workflowSegment.getOwningGroup()
-            );
-            workflowSegment.addTopic(
-                false,                     
-                id,
-                topic
-            );
-            pm.currentTransaction().commit();
-        }         
-        return topic;
-    }
-    
-    //-----------------------------------------------------------------------
-    protected static org.opencrx.kernel.workflow1.jmi1.WfProcess initWorkflow(
-        PersistenceManager pm,
-        Workflow1Package workflowPackage,
-        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
-        String id,
-        String name,
-        String description,
-        Boolean isSynchronous,
-        org.opencrx.kernel.base.jmi1.Property[] properties 
-    ) {
-        org.opencrx.kernel.workflow1.jmi1.WfProcess wfProcess = null;
-        try {
-            wfProcess = (org.opencrx.kernel.workflow1.jmi1.WfProcess)workflowSegment.getWfProcess(id);
-        }
-        catch(Exception e) {}
-        if(wfProcess == null) {
-            // Add process
-            pm.currentTransaction().begin();
-            wfProcess = workflowPackage.getWfProcess().createWfProcess();
-            wfProcess.setName(name);
-            wfProcess.setDescription(description);
-            wfProcess.setSynchronous(isSynchronous);
-            wfProcess.setPriority((short)0);
-            wfProcess.getOwningGroup().addAll(
-                workflowSegment.getOwningGroup()
-            );
-            workflowSegment.addWfProcess(
-                false,                     
-                id,
-                wfProcess
-            );
-            pm.currentTransaction().commit();
-            // Add properties
-            if(properties != null) {
-                pm.currentTransaction().begin();
-                UUIDGenerator uuids = UUIDs.getGenerator();
-                for(int i = 0; i < properties.length; i++) {
-                    wfProcess.addProperty(
-                        false,                             
-                        uuids.next().toString(),
-                        properties[i]
-                    );
-                }
-                pm.currentTransaction().commit();
-            }
-        }         
-        return wfProcess;
-    }
-    
-    //-----------------------------------------------------------------------
-    public static void initWorkflows(
-        PersistenceManager pm,
-        String providerName,
-        String segmentName
-    ) throws ServiceException {
-        Workflow1Package workflowPackage = Utils.getWorkflowPackage(pm);
-        org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = getWorkflowSegment(
-            pm, 
-            providerName, 
-            segmentName
-        );
-        // ExportMailWorkflow 
-        initWorkflow(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            WORKFLOW_EXPORT_MAIL,
-            org.opencrx.mail.workflow.ExportMailWorkflow.class.getName(),
-            "Export mails",
-            Boolean.FALSE,
-            null
-        );        
-        // SendMailWorkflow
-        initWorkflow(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            WORKFLOW_SEND_MAIL,
-            org.opencrx.mail.workflow.SendMailWorkflow.class.getName(),
-            "Send mails",
-            Boolean.FALSE,
-            null
-        );        
-        // SendMailNotificationWorkflow
-        WfProcess sendMailNotificationWorkflow = initWorkflow(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            WORKFLOW_SEND_MAIL_NOTIFICATION,
-            org.opencrx.mail.workflow.SendMailNotificationWorkflow.class.getName(),
-            "Send mail notifications",
-            Boolean.FALSE,
-            null
-        );        
-        // SendAlert
-        WfProcess sendAlertWorkflow = initWorkflow(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            WORKFLOW_SEND_ALERT,
-            org.opencrx.kernel.workflow.SendAlert.class.getName(),
-            "Send alert",
-            Boolean.TRUE,
-            null
-        );        
-        // PrintConsole
-        initWorkflow(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            WORKFLOW_PRINT_CONSOLE,
-            org.opencrx.kernel.workflow.PrintConsole.class.getName(),
-            "Print to console",
-            Boolean.TRUE,
-            null
-        );
-        WfProcess[] sendAlertActions = new WfProcess[]{
-            sendAlertWorkflow
-        };
-        WfProcess[] sendMailNotificationsActions = new WfProcess[]{
-            sendMailNotificationWorkflow
-        };
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "AccountModifications",            
-            "Account modification alert",
-            "Send alert for modified accounts",
-            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "ActivityFollowUpModifications",            
-            "Activity follow-up modification alert",
-            "Send alert for modified activity follow ups",
-            "xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/followUp/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "ActivityModifications",            
-            "Activity modification alert",
-            "Send alert for modified activities",
-            "xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "BookingModifications",            
-            "Booking modification alert",
-            "Send alert for modified bookings",
-            "xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/booking/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "Competitor Modifications",            
-            "Competitor modification alert",
-            "Send alert for modified competitors",
-            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/competitor/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "CompoundBookingModifications",            
-            "Compound booking modification alert",
-            "Send alert for modified compound bookings",
-            "xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/cb/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "InvoiceModifications",            
-            "Invoice modification alert",
-            "Send alert for modified invoices",
-            "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "LeadModifications",            
-            "Lead modification alert",
-            "Send alert for modified leads",
-            "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/lead/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "OpportunityModifications",            
-            "Opportunity modification alert",
-            "Send alert for modified opportunities",
-            "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/opportunity/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "OrganizationModifications",            
-            "Organization modification alert",
-            "Send alert for modified organizations",
-            "xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/organization/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "ProductModifications",            
-            "Product modification alert",
-            "Send alert for modified products",
-            "xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/product/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "QuoteModifications",            
-            "Quote modification alert",
-            "Send alert for modified quotes",
-            "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/quote/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "SalesOrderModifications",            
-            "Sales order modification alert",
-            "Send alert for modified sales orders",
-            "xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/salesOrder/:*",
-            sendAlertActions
-        );
-        initTopic(
-            pm,
-            workflowPackage,
-            workflowSegment,
-            "AlertModifications",            
-            "Mail notification for new alerts",
-            "Send mail for new alerts",
-            "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/alert/:*",
-            sendMailNotificationsActions
-        );
-    }
-    
     //-----------------------------------------------------------------------
     private String getComponentConfigProperty(
         String name
@@ -892,12 +576,6 @@ public class WorkflowControllerServlet
     private static final String MONITORED_WORKFLOW_INDEXER = "IndexerServlet";
     private static final String MONITORED_WORKFLOW_WORKFLOWHANDLER = "WorkflowHandler";
     private static final String MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER = "SubscriptionHandler";
-    
-    public static final String WORKFLOW_EXPORT_MAIL = "ExportMail";
-    public static final String WORKFLOW_SEND_MAIL = "SendMail";
-    public static final String WORKFLOW_SEND_MAIL_NOTIFICATION = "SendMailNotification";
-    public static final String WORKFLOW_SEND_ALERT = "SendAlert";
-    public static final String WORKFLOW_PRINT_CONSOLE = "PrintConsole";
     
     public static final String OPTION_SERVER_URL = "serverURL";
     public static final String OPTION_AUTOSTART = "autostart";

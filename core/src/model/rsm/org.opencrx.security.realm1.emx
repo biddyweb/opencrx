@@ -66,7 +66,7 @@
           <children xmi:id="_JfGO-N7NEdmKapscEl8OLg" type="DiagramName"/>
           <children xmi:id="_JfGO-d7NEdmKapscEl8OLg" type="Description"/>
           <styles xmi:type="notation:ShapeStyle" xmi:id="_JfGO9t7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" description="This software is published under the BSD license as listed below. &#xA;see class diagram _LICENSE.&#xA;" fillColor="16775658" lineColor="3342489"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGO997NEdmKapscEl8OLg" x="676" y="9906" width="7676" height="2295"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGO997NEdmKapscEl8OLg" x="702" y="9085" width="7676" height="2295"/>
         </children>
         <children xmi:id="_JfGO-t7NEdmKapscEl8OLg" targetEdges="_JfMVtN7NEdmKapscEl8OLg">
           <children xmi:id="_JfGO_d7NEdmKapscEl8OLg" type="ImageCompartment">
@@ -101,95 +101,95 @@
         </children>
         <children xmi:id="_JfGPCd7NEdmKapscEl8OLg" targetEdges="_JfMVq97NEdmKapscEl8OLg">
           <children xmi:id="_JfGPDN7NEdmKapscEl8OLg" type="ImageCompartment">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
             <layoutConstraint xmi:type="notation:Size" xmi:id="_JfGPDd7NEdmKapscEl8OLg" width="1320" height="1320"/>
           </children>
           <children xmi:id="_JfGPDt7NEdmKapscEl8OLg" type="Stereotype">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           </children>
           <children xmi:id="_JfGPD97NEdmKapscEl8OLg" type="Name">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           </children>
           <children xmi:id="_JfGPEN7NEdmKapscEl8OLg" visible="false" type="AttributeCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfGPEd7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           </children>
           <children xmi:id="_JfGPEt7NEdmKapscEl8OLg" visible="false" type="OperationCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfGPE97NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           </children>
           <children xmi:id="_JfGPFN7NEdmKapscEl8OLg" visible="false" type="SignalCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfGPFd7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           </children>
           <children xmi:id="_JfGPFt7NEdmKapscEl8OLg" visible="false" type="StructureCompartment">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JfGPF97NEdmKapscEl8OLg" canonical="false"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfGPCt7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
-          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGPC97NEdmKapscEl8OLg" x="650" y="1097" width="3249" height="1271"/>
         </children>
-        <children xmi:id="_JfGPGN7NEdmKapscEl8OLg" targetEdges="_JfMV9t7NEdmKapscEl8OLg _uEsFEB5CEdqET7ZHRltKzA">
+        <children xmi:id="_JfGPGN7NEdmKapscEl8OLg" targetEdges="_JfMV9t7NEdmKapscEl8OLg">
           <children xmi:id="_JfGPG97NEdmKapscEl8OLg" type="ImageCompartment">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
             <layoutConstraint xmi:type="notation:Size" xmi:id="_JfGPHN7NEdmKapscEl8OLg" width="1320" height="1320"/>
           </children>
           <children xmi:id="_JfGPHd7NEdmKapscEl8OLg" type="Stereotype">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
           </children>
           <children xmi:id="_JfGPHt7NEdmKapscEl8OLg" type="Name">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
           </children>
           <children xmi:id="_JfGPH97NEdmKapscEl8OLg" visible="false" type="AttributeCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfGPIN7NEdmKapscEl8OLg" collapsed="true"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
           </children>
           <children xmi:id="_JfGPId7NEdmKapscEl8OLg" visible="false" type="OperationCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfGPIt7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
           </children>
           <children xmi:id="_JfGPI97NEdmKapscEl8OLg" visible="false" type="SignalCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfGPJN7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
           </children>
           <children xmi:id="_JfGPJd7NEdmKapscEl8OLg" visible="false" type="StructureCompartment">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JfGPJt7NEdmKapscEl8OLg" canonical="false"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfGPGd7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
-          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGPGt7NEdmKapscEl8OLg" x="700" y="5267" width="7294" height="1266"/>
+          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGPGt7NEdmKapscEl8OLg" x="700" y="5267" width="4859" height="1266"/>
         </children>
         <children xmi:id="_JfGPJ97NEdmKapscEl8OLg" targetEdges="_JfMVvd7NEdmKapscEl8OLg">
           <children xmi:id="_JfMVkN7NEdmKapscEl8OLg" type="ImageCompartment">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
             <layoutConstraint xmi:type="notation:Size" xmi:id="_JfMVkd7NEdmKapscEl8OLg" width="1320" height="1320"/>
           </children>
           <children xmi:id="_JfMVkt7NEdmKapscEl8OLg" type="Stereotype">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           </children>
           <children xmi:id="_JfMVk97NEdmKapscEl8OLg" type="Name">
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           </children>
           <children xmi:id="_JfMVlN7NEdmKapscEl8OLg" visible="false" type="AttributeCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfMVld7NEdmKapscEl8OLg" collapsed="true"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           </children>
           <children xmi:id="_JfMVlt7NEdmKapscEl8OLg" visible="false" type="OperationCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfMVl97NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           </children>
           <children xmi:id="_JfMVmN7NEdmKapscEl8OLg" visible="false" type="SignalCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JfMVmd7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           </children>
           <children xmi:id="_JfMVmt7NEdmKapscEl8OLg" visible="false" type="StructureCompartment">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JfMVm97NEdmKapscEl8OLg" canonical="false"/>
-            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JfGPKN7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
-          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JfGPKd7NEdmKapscEl8OLg" x="15262" y="2704" width="3124" height="1481"/>
         </children>
         <children xmi:id="_JfMVnN7NEdmKapscEl8OLg" sourceEdges="_JfMVq97NEdmKapscEl8OLg _JfMVtN7NEdmKapscEl8OLg _JfMVvd7NEdmKapscEl8OLg" element="_3C7B8A60016D415745E0031F">
@@ -253,7 +253,38 @@
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_qmdDqx5CEdqET7ZHRltKzA"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_qmW9AR5CEdqET7ZHRltKzA" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="13434879" lineColor="3342489" showStereotype="Text"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_qmW9Ah5CEdqET7ZHRltKzA" x="5728" y="6960" width="2276" height="1246"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_qmW9Ah5CEdqET7ZHRltKzA" x="5938" y="6959" width="3228" height="1246"/>
+        </children>
+        <children xmi:id="_wTC50AjiEd2Kid2QNgKMng" targetEdges="_uEsFEB5CEdqET7ZHRltKzA">
+          <children xmi:id="_wTC50QjiEd2Kid2QNgKMng" type="ImageCompartment">
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+            <layoutConstraint xmi:type="notation:Size" xmi:id="_wTC50gjiEd2Kid2QNgKMng" width="1320" height="1320"/>
+          </children>
+          <children xmi:id="_wTC50wjiEd2Kid2QNgKMng" type="Stereotype">
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          </children>
+          <children xmi:id="_wTC51AjiEd2Kid2QNgKMng" type="Name">
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          </children>
+          <children xmi:id="_wTC51QjiEd2Kid2QNgKMng" visible="false" type="AttributeCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_wTC51gjiEd2Kid2QNgKMng"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          </children>
+          <children xmi:id="_wTC51wjiEd2Kid2QNgKMng" visible="false" type="OperationCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_wTC52AjiEd2Kid2QNgKMng"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          </children>
+          <children xmi:id="_wTC52QjiEd2Kid2QNgKMng" visible="false" type="SignalCompartment">
+            <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_wTC52gjiEd2Kid2QNgKMng"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          </children>
+          <children xmi:id="_wTC52wjiEd2Kid2QNgKMng" visible="false" type="StructureCompartment">
+            <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_wTC53AjiEd2Kid2QNgKMng" canonical="false"/>
+            <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          </children>
+          <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_wTC53QjiEd2Kid2QNgKMng" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
+          <element xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wTC53gjiEd2Kid2QNgKMng" x="5968" y="5251" width="3249" height="1271"/>
         </children>
         <styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_ITQuDd7NEdmKapscEl8OLg"/>
         <edges xmi:id="_JfMVq97NEdmKapscEl8OLg" element="_3C7B8A60016D415745F10143" source="_JfMVnN7NEdmKapscEl8OLg" target="_JfGPCd7NEdmKapscEl8OLg">
@@ -322,44 +353,43 @@
             <layoutConstraint xmi:type="notation:Location" xmi:id="_JfMV-t7NEdmKapscEl8OLg" y="-185"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_JfMV997NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="None"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_JfMV-N7NEdmKapscEl8OLg" points="[-27, -635, -2408, 1508]$[-27, -1508, -2408, 635]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_JfMV-N7NEdmKapscEl8OLg" points="[80, -767, 53, 1058]$[80, -1190, 53, 635]"/>
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_JfMV_d7NEdmKapscEl8OLg" id="anchor50"/>
           <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_JfMV_t7NEdmKapscEl8OLg" id="anchor50"/>
         </edges>
-        <edges xmi:id="_uEsFEB5CEdqET7ZHRltKzA" element="_uCfssB5CEdqET7ZHRltKzA" source="_qmW9AB5CEdqET7ZHRltKzA" target="_JfGPGN7NEdmKapscEl8OLg">
+        <edges xmi:id="_uEsFEB5CEdqET7ZHRltKzA" element="_uCfssB5CEdqET7ZHRltKzA" source="_qmW9AB5CEdqET7ZHRltKzA" target="_wTC50AjiEd2Kid2QNgKMng">
           <children xmi:id="_uEsFEx5CEdqET7ZHRltKzA" type="NameLabel" element="_uCfssB5CEdqET7ZHRltKzA">
             <children xmi:id="_uEsFFR5CEdqET7ZHRltKzA" type="Stereotype" element="_uCfssB5CEdqET7ZHRltKzA"/>
             <children xmi:id="_uEsFFh5CEdqET7ZHRltKzA" type="Name" element="_uCfssB5CEdqET7ZHRltKzA"/>
             <layoutConstraint xmi:type="notation:Location" xmi:id="_uEsFFB5CEdqET7ZHRltKzA" y="-185"/>
           </children>
           <styles xmi:type="umlnotation:UMLConnectorStyle" xmi:id="_uEsFER5CEdqET7ZHRltKzA" fontName="Arial" fontHeight="11" routing="Rectilinear" lineColor="3342489" showStereotype="Text"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_uEsFEh5CEdqET7ZHRltKzA" points="[-53, -582, 2460, 1111]$[-53, -1058, 2460, 635]"/>
-          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_uFRT4B5CEdqET7ZHRltKzA" id="anchor50"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_uEsFEh5CEdqET7ZHRltKzA" points="[53, -582, 53, 1217]$[53, -1164, 53, 635]"/>
         </edges>
       </contents>
     </eAnnotations>
     <ownedMember xmi:type="uml:Class" xmi:id="_3C7B8A60016D415745E0031F" name="PrincipalGroup">
       <generalization xmi:id="_3C7B8A60016D415745F10143">
-        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA"/>
+        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
       </generalization>
       <generalization xmi:id="_3C7B8A60016D415746080363">
         <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D4157457903CB?base/base/PrincipalGroup"/>
       </generalization>
       <ownedAttribute xmi:id="_3C7B8A60016D418269730357" name="grantedRole" isUnique="false" association="_3C7B8A60016D41826973019E">
-        <type xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106"/>
+        <type xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602CD0106?realm1/realm1/Role"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ITQt-97NEdmKapscEl8OLg" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ITQt-t7NEdmKapscEl8OLg"/>
         <qualifier xmi:id="_3C7B8A60016D418269BD005A" name="index" visibility="private">
-          <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3CC6A34B0011"/>
+          <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3CC6A34B0011?w3c/w3c/integer"/>
         </qualifier>
       </ownedAttribute>
     </ownedMember>
     <ownedMember xmi:type="uml:Class" xmi:id="_3C7B8A60016D415A99CD0095" name="Principal">
       <generalization xmi:id="_3C7B8A60016D415AA92E02A9">
-        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397?realm1/realm1/Principal"/>
       </generalization>
       <ownedAttribute xmi:id="_s4RV8JTKEdqX-OMBVTxzmw" name="lastLoginAt">
-        <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B630802BB"/>
+        <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B630802BB?w3c/w3c/dateTime"/>
       </ownedAttribute>
     </ownedMember>
     <ownedMember xmi:type="uml:Association" xmi:id="_3C7B8A60016D41826973019E" name="PrincipalGroupHasGrantedRole" memberEnd="_3C7B8A60016D418269730357 _3C7B8A60016D418269730361">
@@ -370,7 +400,7 @@
     </ownedMember>
     <ownedMember xmi:type="uml:Class" xmi:id="_qlmIAB5CEdqET7ZHRltKzA" name="User">
       <generalization xmi:id="_uCfssB5CEdqET7ZHRltKzA">
-        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC602E60397"/>
+        <general xmi:type="uml:Class" href="platform:/resource/openMDX%202%20~%20Security%20(RSM)/org.openmdx.security.realm1.emx#_3C7B8A60016D3FC606E402DA?realm1/realm1/Group"/>
       </generalization>
     </ownedMember>
   </ownedMember>

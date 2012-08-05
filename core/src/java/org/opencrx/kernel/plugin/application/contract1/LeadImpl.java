@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LeadImpl.java,v 1.4 2007/12/27 14:56:52 wfro Exp $
+ * Name:        $Id: LeadImpl.java,v 1.6 2008/04/05 22:53:39 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/27 14:56:52 $
+ * Date:        $Date: 2008/04/05 22:53:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,13 +55,11 @@
  */
 package org.opencrx.kernel.plugin.application.contract1;
 
-import java.util.Date;
-
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -85,7 +83,7 @@ public class LeadImpl {
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void markAsClosed(
         org.opencrx.kernel.contract1.jmi1.LeadMarkAsClosedParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         try {        
             this.getBackend().getContracts().markAsClosed(
                 this.current.refGetPath(),
@@ -94,14 +92,13 @@ public class LeadImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                    
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.LeadCreateOpportunityResult createOpportunity(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             Opportunity opportunity = this.getBackend().getContracts().createOpportunity(
                 this.current.refGetPath()
@@ -111,7 +108,7 @@ public class LeadImpl {
             );        
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
     

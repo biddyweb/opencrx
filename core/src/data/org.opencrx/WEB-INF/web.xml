@@ -1,42 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-   version="2.5"> 
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<description>openCRX WebGUI</description>
 	<!-- Compression and caching filter -->
-  <filter>
-    <filter-name>CompressingFilter</filter-name>
-    <filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>CacheControlFilter</filter-name>
-    <filter-class>org.openmdx.portal.servlet.filter.ReplyHeaderFilter</filter-class>
-    <init-param>
-      <param-name>Cache-Control</param-name>
-      <param-value>max-age=3600</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>CompressingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>CacheControlFilter</filter-name>
-    <url-pattern>/_style/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>CacheControlFilter</filter-name>
-    <url-pattern>/images/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>CacheControlFilter</filter-name>
-    <url-pattern>/javascript/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>CacheControlFilter</filter-name>
-    <url-pattern>/blank.html</url-pattern>
-  </filter-mapping>
+	<filter>
+		<filter-name>CompressingFilter</filter-name>
+		<filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>org.openmdx.portal.servlet.filter.ReplyHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>max-age=3600</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+		<init-param>
+			<param-name>logLevel</param-name>
+			<param-value>WARN</param-value>
+		</init-param>
+	</filter>				
+	<filter-mapping>
+		<filter-name>CompressingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>/_style/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>/images/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>/javascript/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>/blank.html</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>			
 	<!-- LogConsoleServlet -->
 	<servlet id="LogConsoleServlet">
 		<servlet-name>LogConsoleServlet</servlet-name>
@@ -71,7 +80,7 @@
 			<param-name>path[2]</param-name>
 			<param-value>/IndexerServlet</param-value>
 		</init-param>
-<!-- activate if WorkflowController should be initialized at startup
+		<!-- activate if WorkflowController should be initialized at startup
 		<load-on-startup>10</load-on-startup>
 -->
 	</servlet>
@@ -485,12 +494,16 @@
 			<param-name>modelPackage[35]</param-name>
 			<param-value>org:opencrx:security</param-value>
 		</init-param>
+		<init-param>
+			<param-name>modelPackage[36]</param-name>
+			<param-value>org:openmdx:ui1</param-value>
+		</init-param>
 		<!-- no listing -->
 		<init-param>
 			<param-name>listings</param-name>
 			<param-value>false</param-value>
 		</init-param>
-<!-- activate if ObjectInspectorServlet should be initialized at startup
+		<!-- activate if ObjectInspectorServlet should be initialized at startup
 		<load-on-startup>1</load-on-startup>
 -->
 	</servlet>
@@ -542,7 +555,7 @@
 		<error-code>408</error-code>
 		<location>/Error.jsp</location>
 	</error-page>
-<!-- Wizards, Workflows (e.g. MailWorkflow), etc. can use mail resources. Configure a mail resource for each used mail resource.
+	<!-- Wizards, Workflows (e.g. MailWorkflow), etc. can use mail resources. Configure a mail resource for each used mail resource.
 	<resource-ref id="mail_opencrx_CRX">
 		<res-ref-name>mail/provider/CRX</res-ref-name>
 		<res-type>javax.mail.Session</res-type>
@@ -601,19 +614,11 @@
 		<role-name>OpenCrxRoot</role-name>
 	</security-role>
 	<!-- ejb-ref -->
-	<ejb-local-ref id="ejb_data">
-		<ejb-ref-name>ejb/data</ejb-ref-name>
+	<ejb-local-ref id="ejb_EntityManagerFactory">
+		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
 		<ejb-ref-type>Session</ejb-ref-type>
-		<local-home>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1LocalHome</local-home>
-		<local>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Local</local>
-		<ejb-link>gateway.jar#opencrx_core_CRX_gateway_noOrNew</ejb-link>
+		<local-home>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2LocalHome</local-home>
+		<local>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.EntityManagerFactory_2_0Local</local>
+		<ejb-link>gateway.jar#opencrx_core_CRX_EntityManagerFactory</ejb-link>
 	</ejb-local-ref>
-<!--
-	<ejb-ref id="ejb_data">
-		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<ejb-ref-type>Session</ejb-ref-type>
-		<home>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1Home</home>
-		<remote>org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1_0Remote</remote>
-	</ejb-ref>
--->
 </web-app>

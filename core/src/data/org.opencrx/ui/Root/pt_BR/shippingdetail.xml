@@ -66,10 +66,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ShippingDetail:isGift" _operation="create">
                     <_object>
                       <label>
-                        <_item>Presente</_item>
+                        <_item>Cortesia</_item>
                       </label>
                       <toolTip>
-                        <_item>Presente</_item>
+                        <_item>Cortesia</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,10 +77,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ShippingDetail:giftMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Mensagem do presente</_item>
+                        <_item>Mensagem de cortesia</_item>
                       </label>
                       <toolTip>
-                        <_item>Mensagem do presente</_item>
+                        <_item>Mensagem de cortesia</_item>
                       </toolTip>
                     </_object>
                     <_content/>

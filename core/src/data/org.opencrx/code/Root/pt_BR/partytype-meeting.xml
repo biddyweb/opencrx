@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Responsável por minutos</_item>
+                              <_item>Responsável pela Ata</_item>
                             </shortText>
                             <longText>
-                              <_item>Responsável por minutos</_item>
+                              <_item>Responsável pela Ata</_item>
                             </longText>
                           </_object>
                           <_content/>

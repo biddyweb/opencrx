@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>строгое принуждение [min..max]</_item>
+                              <_item>строгая привязка [min..max]</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] строгое принуждение [min..max]</_item>
+                              <_item>[2] строгая привязка [min..max]</_item>
                             </longText>
                           </_object>
                           <_content/>

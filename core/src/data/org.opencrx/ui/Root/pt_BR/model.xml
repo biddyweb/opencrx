@@ -28,7 +28,7 @@
                         <_item>Elementos</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os Elementos</_item>
+                        <_item>Todos os Elementos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -572,10 +572,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Import:isClustered" _operation="create">
                     <_object>
                       <label>
-                        <_item>Está agrupado</_item>
+                        <_item>Agrupado</_item>
                       </label>
                       <toolTip>
-                        <_item>Está agrupado</_item>
+                        <_item>Agrupado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -660,10 +660,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:GeneralizableElement:isAbstract" _operation="create">
                     <_object>
                       <label>
-                        <_item>É Abstrata</_item>
+                        <_item>Abstrata</_item>
                       </label>
                       <toolTip>
-                        <_item>É Abstrata</_item>
+                        <_item>Abstrata</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -682,10 +682,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Association:isDerived" _operation="create">
                     <_object>
                       <label>
-                        <_item>É Derivada</_item>
+                        <_item>Derivada</_item>
                       </label>
                       <toolTip>
-                        <_item>É Derivada</_item>
+                        <_item>Derivada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -693,10 +693,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Class:isSingleton" _operation="create">
                     <_object>
                       <label>
-                        <_item>É singleton</_item>
+                        <_item>Singleton</_item>
                       </label>
                       <toolTip>
-                        <_item>É singleton</_item>
+                        <_item>Singleton</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -704,10 +704,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EnumerationType:label" _operation="create">
                     <_object>
                       <label>
-                        <_item>Etiqueta</_item>
+                        <_item>Label</_item>
                       </label>
                       <toolTip>
-                        <_item>Etiqueta</_item>
+                        <_item>Label</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -759,10 +759,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:StructuralFeature:isChangeable" _operation="create">
                     <_object>
                       <label>
-                        <_item>É modificável</_item>
+                        <_item>Modificável</_item>
                       </label>
                       <toolTip>
-                        <_item>É modificável</_item>
+                        <_item>Modificável</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -825,10 +825,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:AssociationEnd:isChangeable" _operation="create">
                     <_object>
                       <label>
-                        <_item>É modificável</_item>
+                        <_item>Modificável</_item>
                       </label>
                       <toolTip>
-                        <_item>É modificável</_item>
+                        <_item>Modificável</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -836,10 +836,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:AssociationEnd:isNavigable" _operation="create">
                     <_object>
                       <label>
-                        <_item>É Navegável</_item>
+                        <_item>Navegável</_item>
                       </label>
                       <toolTip>
-                        <_item>É Navegável</_item>
+                        <_item>Navegável</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -935,10 +935,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Attribute:isDerived" _operation="create">
                     <_object>
                       <label>
-                        <_item>É Derivada</_item>
+                        <_item>Derivada</_item>
                       </label>
                       <toolTip>
-                        <_item>É Derivada</_item>
+                        <_item>Derivada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -990,10 +990,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Operation:isQuery" _operation="create">
                     <_object>
                       <label>
-                        <_item>É query</_item>
+                        <_item>Query</_item>
                       </label>
                       <toolTip>
-                        <_item>É query</_item>
+                        <_item>Query</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1012,10 +1012,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Package:Pane:Op:Tab:externalizePackage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Externar Pacote</_item>
+                        <_item>Externalizar Pacote</_item>
                       </label>
                       <toolTip>
-                        <_item>Externar Pacote</_item>
+                        <_item>Externalizar Pacote</_item>
                       </toolTip>
                     </_object>
                     <_content/>

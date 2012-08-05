@@ -143,68 +143,79 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:10" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Innehåll</_item>
+                        <_item>»Egenskaper</_item>
                       </label>
                       <toolTip>
-                        <_item>Innehåll</_item>
+                        <_item>»Egenskaper</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:20" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tilläggsinformation</_item>
+                        <_item>»Länkar</_item>
                       </label>
                       <toolTip>
-                        <_item>Tilläggsinformation</_item>
+                        <_item>Länkar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:30" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Lås</_item>
+                      </label>
+                      <toolTip>
+                        <_item>»Lås</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:attachment" _operation="create">
                     <_object>
                       <label>
                         <_item>Media</_item>
                       </label>
                       <toolTip>
-                        <_item>Media</_item>
+                        <_item>Bifogat media</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titel</_item>
+                        <_item>Namn</_item>
                       </label>
                       <toolTip>
-                        <_item>Dokumentets titel</_item>
+                        <_item>Namn</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Författare</_item>
+                        <_item>Beskrivning</_item>
                       </label>
                       <toolTip>
-                        <_item>Dokumentets författare</_item>
+                        <_item>Beskrivning</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:parent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sammanfattning</_item>
+                        <_item>Överordnad</_item>
                       </label>
                       <toolTip>
-                        <_item>Sammanfattning av dokumentet</_item>
+                        <_item>Överordnad</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -319,13 +330,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:qualifiedName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nyckelord</_item>
+                        <_item>Kvalificerat namn</_item>
                       </label>
                       <toolTip>
-                        <_item>Nyckelord</_item>
+                        <_item>Kvalificerat namn</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -363,13 +374,145 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:media" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
                     <_object>
                       <label>
-                        <_item>Media</_item>
+                        <_item>Författare</_item>
                       </label>
                       <toolTip>
-                        <_item>Media</_item>
+                        <_item>Dokumentets författare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dokumentets titel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sammanfattning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sammanfattning av dokumentet</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nyckelord</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nyckelord</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CMS-språk</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CMS-språk</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsDefaultLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CMS-standardspråk</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CMS-standardspråk</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsTranslation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CMS-översättning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CMS-översättning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CMS-klass</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CMS-klass</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsTemplate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CMS-mall</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CMS-mall</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsMeta" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>CMS-meta</_item>
+                      </label>
+                      <toolTip>
+                        <_item>CMS-meta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Författare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Författare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Version</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Version</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -480,6 +623,182 @@
                       </label>
                       <toolTip>
                         <_item>URI</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskaper</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskaper</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dokumentlänk</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dokumentlänk</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink:linkUri" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Länk-URI</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Länk-URI</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dokumentlås</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dokumentlås</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:lockedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Låst den</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:lockedBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Låst av</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Låst av</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Media</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Media</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Media</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Författare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Författare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Version</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Version</_item>
                       </toolTip>
                     </_object>
                     <_content/>

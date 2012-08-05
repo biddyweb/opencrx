@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selezioni Soggetti</_item>
+                        <_item>»Filtri Soggetti</_item>
                       </label>
                       <toolTip>
-                        <_item>Selezioni dei Soggetti</_item>
+                        <_item>Filtrazione dei Soggetti</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametri Selezione</_item>
+                        <_item>Parametri filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>Tutti i parametri di selezione</_item>
+                        <_item>Tutti i parametri di filtrazione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Soggetti Selezionati</_item>
+                        <_item>Soggetti Filtrati</_item>
                       </label>
                       <toolTip>
-                        <_item>Tutti i Soggetti Selezionati</_item>
+                        <_item>Tutti i Soggetti Filtrati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Conteggio Selezionati</_item>
+                        <_item>Conteggio Filtrati</_item>
                       </label>
                       <toolTip>
-                        <_item>Conteggio Soggetti Selezionati</_item>
+                        <_item>Conteggio Soggetti Filtrati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selezione per Tipo</_item>
+                        <_item>Filtro per Tipo</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametri selezione per Tipo</_item>
+                        <_item>Filtro per Tipo di Soggetto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,7 +91,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty:accountType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipi di Soggetto</_item>
+                        <_item>Tipi Soggetto</_item>
                       </label>
                       <toolTip>
                         <_item>Tipi di Soggetto</_item>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selezione per categoria</_item>
+                        <_item>Filtro per categoria</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametri Selezione per Categoria</_item>
+                        <_item>Filtro per Categoria Soggetto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selezione per Categoria</_item>
+                        <_item>Filtro per Categoria</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selezione per Categoria</_item>
+                        <_item>Filtro per Categoria</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Disabilita Parametro Selezione</_item>
+                        <_item>Parametro Filtro Disabilitato</_item>
                       </label>
                       <toolTip>
-                        <_item>Disabilita Parametro di Selezione</_item>
+                        <_item>Parametro Filtro Disabilitato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty:disabled" _operation="create">
                     <_object>
                       <label>
-                        <_item>Disabilita</_item>
+                        <_item>Disabilitato</_item>
                       </label>
                       <toolTip>
-                        <_item>Disabilita</_item>
+                        <_item>Disabilitato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selezione Soggetto</_item>
+                        <_item>Filtro Soggetto</_item>
                       </label>
                       <toolTip>
-                        <_item>Selezione Soggetto</_item>
+                        <_item>Filtro Soggetto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -204,7 +204,7 @@
                         <_item>Parametro Interrogazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Interrogazione Selezione</_item>
+                        <_item>Parametro Interrogazione Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>

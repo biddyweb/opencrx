@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -84,10 +84,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1520" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/аннулирован</_item>
+                              <_item>Закрыт/Списан</_item>
                             </shortText>
                             <longText>
-                              <_item>[06] Закрыт/аннулирован</_item>
+                              <_item>[06] Закрыт/Списан</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -95,10 +95,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1530" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/возврат товара</_item>
+                              <_item>Закрыт/Возврат товара</_item>
                             </shortText>
                             <longText>
-                              <_item>[07] Закрыт/возврат товара</_item>
+                              <_item>[07] Закрыт/Возврат товара</_item>
                             </longText>
                           </_object>
                           <_content/>

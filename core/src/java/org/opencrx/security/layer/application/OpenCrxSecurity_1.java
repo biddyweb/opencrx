@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.20 2007/07/15 21:13:58 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.21 2008/07/07 14:03:00 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/07/15 21:13:58 $
+ * Date:        $Date: 2008/07/07 14:03:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -279,7 +279,7 @@ public class OpenCrxSecurity_1
                 },
                 "old password verification mismatch"
             );
-        }        
+        }
         DataproviderObject changedPasswordCredential = new DataproviderObject(
             passwordCredential
         );

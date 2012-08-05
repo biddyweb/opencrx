@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Competitor:strengths" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fortalezas</_item>
+                        <_item>Ponto Forte</_item>
                       </label>
                       <toolTip>
-                        <_item>Fortalezas</_item>
+                        <_item>Ponto Forte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Competitor:weaknesses" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fraquezas</_item>
+                        <_item>Ponto Fraco</_item>
                       </label>
                       <toolTip>
-                        <_item>Fraquezas</_item>
+                        <_item>Ponto Fraco</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Competitor:threats" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ameaça</_item>
+                        <_item>Ameaças</_item>
                       </label>
                       <toolTip>
-                        <_item>Ameaça</_item>
+                        <_item>Ameaças</_item>
                       </toolTip>
                     </_object>
                     <_content/>

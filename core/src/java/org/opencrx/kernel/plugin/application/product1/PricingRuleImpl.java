@@ -2,8 +2,8 @@ package org.opencrx.kernel.plugin.application.product1;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.product1.jmi1.GetPriceLevelResult;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class PricingRuleImpl {
@@ -26,7 +26,7 @@ public class PricingRuleImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.product1.jmi1.GetPriceLevelResult getPriceLevel(
         org.opencrx.kernel.product1.jmi1.GetPriceLevelParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         try {        
             GetPriceLevelResult result = this.getBackend().getProducts().getPriceLevel(
                 this.current,
@@ -39,7 +39,7 @@ public class PricingRuleImpl {
             return result;
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }             
     }
     

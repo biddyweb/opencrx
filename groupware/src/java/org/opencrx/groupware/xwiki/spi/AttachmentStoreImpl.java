@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: AttachmentStoreImpl.java,v 1.22 2008/02/12 19:54:22 wfro Exp $
+ * Name:        $Id: AttachmentStoreImpl.java,v 1.24 2008/07/03 23:42:31 wfro Exp $
  * Description: XWiki AttachmentStoreImpl
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:54:22 $
+ * Date:        $Date: 2008/07/03 23:42:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,6 @@
  */
 package org.opencrx.groupware.xwiki.spi;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Collection;
@@ -122,6 +121,7 @@ public class AttachmentStoreImpl
                 DocumentAttachment attachment = null;
                 if(attachments.isEmpty()) {
                     attachment = session.getDocumentPackage().getDocumentAttachment().createDocumentAttachment();
+                    attachment.refInitialize(false, false);
                     document.addAttachment(
                         false,
                         this.uuidAsString(),

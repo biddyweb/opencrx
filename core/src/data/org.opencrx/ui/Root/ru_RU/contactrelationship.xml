@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:contactRelationship" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Контактные отношения</_item>
+                        <_item>»Лтношения с контактом</_item>
                       </label>
                       <toolTip>
-                        <_item>Контактные отношения</_item>
+                        <_item>Отношения  с контактом</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ContactRelationship" _operation="create">
                     <_object>
                       <label>
-                        <_item>Контактные отношения</_item>
+                        <_item>Отношения  с контактом</_item>
                       </label>
                       <toolTip>
-                        <_item>Контактные отношения</_item>
+                        <_item>Отношения  с контактом</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>К контакту</_item>
                       </label>
                       <toolTip>
-                        <_item>К контакту</_item>
+                        <_item>Отношение контакта к контакту</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ContactRelationship:complimentaryClose" _operation="create">
                     <_object>
                       <label>
-                        <_item>Любезное окончание</_item>
+                        <_item>Выражение вежливости по окончании письма</_item>
                       </label>
                       <toolTip>
-                        <_item>Любезное окончание</_item>
+                        <_item>Выражение вежливости по окончании письма</_item>
                       </toolTip>
                     </_object>
                     <_content/>

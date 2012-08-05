@@ -22,6 +22,35 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Адреса (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Адреса (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:assignedAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Адреса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Адреса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:address" _operation="create">
                     <_object>
                       <label>
@@ -34,6 +63,17 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AddressContainer:address" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Адреса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Адреса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AddressContainer:address" _operation="create">
                     <_object>
                       <label>
                         <_item>Адреса</_item>
@@ -99,13 +139,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Адрес</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Адрес</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эл. почта</_item>
+                        <_item>Адрес электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -116,7 +167,7 @@
                         <_item>Телефон</_item>
                       </label>
                       <toolTip>
-                        <_item>Тел. номера</_item>
+                        <_item>Номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +175,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Room" _operation="create">
                     <_object>
                       <label>
-                        <_item>Комната</_item>
+                        <_item>Офис</_item>
                       </label>
                       <toolTip>
-                        <_item>Комната</_item>
+                        <_item>Офис</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +186,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Почт. адрес</_item>
+                        <_item>Почтовый адрес</_item>
                       </label>
                       <toolTip>
-                        <_item>Почт. адреса</_item>
+                        <_item>Почтовый адрес</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +197,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сайт</_item>
+                        <_item>Web адрес</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес сайта</_item>
+                        <_item>Web адрес сайта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +208,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эл. почта</_item>
+                        <_item>Электронная почта</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -171,7 +222,7 @@
                         <_item>Телефон</_item>
                       </label>
                       <toolTip>
-                        <_item>Тел. номера</_item>
+                        <_item>Номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +230,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Room" _operation="create">
                     <_object>
                       <label>
-                        <_item>Комната</_item>
+                        <_item>Офис</_item>
                       </label>
                       <toolTip>
-                        <_item>Комната</_item>
+                        <_item>Офис</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +241,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Почт. адрес</_item>
+                        <_item>Почтовый адрес</_item>
                       </label>
                       <toolTip>
-                        <_item>Почт. адреса</_item>
+                        <_item>Почтовый адрес</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +252,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сайт</_item>
+                        <_item>Web адрес</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес сайта</_item>
+                        <_item>Web адрес сайта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +274,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эл. почта</_item>
+                        <_item>Электронная почта</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -237,7 +288,7 @@
                         <_item>Телефон</_item>
                       </label>
                       <toolTip>
-                        <_item>Тел. номера</_item>
+                        <_item>Номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +296,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Почт. адрес</_item>
+                        <_item>Почтовый адрес</_item>
                       </label>
                       <toolTip>
-                        <_item>Почт. адреса</_item>
+                        <_item>Почтовый адрес</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,7 +307,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:WebAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сайт</_item>
+                        <_item>Web адрес</_item>
                       </label>
                       <toolTip>
                         <_item>Адрес сайта</_item>
@@ -267,10 +318,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:EMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Эл. почта</_item>
+                        <_item>Электронная почта</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -281,7 +332,7 @@
                         <_item>Телефон</_item>
                       </label>
                       <toolTip>
-                        <_item>Тел. номера</_item>
+                        <_item>Номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +340,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Room" _operation="create">
                     <_object>
                       <label>
-                        <_item>Комната</_item>
+                        <_item>Офис</_item>
                       </label>
                       <toolTip>
-                        <_item>Комната</_item>
+                        <_item>Офис</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +351,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PostalAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Почт. адрес</_item>
+                        <_item>Почтовый адрес</_item>
                       </label>
                       <toolTip>
-                        <_item>Почт. адреса</_item>
+                        <_item>Почтовый адрес</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -330,10 +381,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:EMailAddressable:emailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Адрес эл. почты</_item>
+                        <_item>Адрес электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -344,7 +395,7 @@
                         <_item>Формат</_item>
                       </label>
                       <toolTip>
-                        <_item>Формат эл. почты</_item>
+                        <_item>Формат адреса электронной почты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -355,7 +406,7 @@
                         <_item>Тип</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип эл. письма</_item>
+                        <_item>Тип электронного письма</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -385,10 +436,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PhoneNumberAddressable:phoneCityArea" _operation="create">
                     <_object>
                       <label>
-                        <_item>Код города/зоны</_item>
+                        <_item>Код города/области</_item>
                       </label>
                       <toolTip>
-                        <_item>Код города/зоны</_item>
+                        <_item>Код города/области</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -407,10 +458,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PhoneNumberAddressable:phoneExtension" _operation="create">
                     <_object>
                       <label>
-                        <_item>Добавочный</_item>
+                        <_item>Добавочный номер</_item>
                       </label>
                       <toolTip>
-                        <_item>Добавочный</_item>
+                        <_item>Добавочный номер</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -429,10 +480,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:RoomAddressable:roomNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Номер комнаты</_item>
+                        <_item>Номер офиса</_item>
                       </label>
                       <toolTip>
-                        <_item>Номер комнаты</_item>
+                        <_item>Номер офиса</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -451,10 +502,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalStreet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Улица/почт. ящ.</_item>
+                        <_item>Улица/абон. ящик</_item>
                       </label>
                       <toolTip>
-                        <_item>Улица/почт. ящ.</_item>
+                        <_item>Улица/абон. ящик</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Почтовый индекс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Почтовый индекс</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -466,17 +528,6 @@
                       </label>
                       <toolTip>
                         <_item>Город</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCode" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Почт. индекс</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Почт. индекс</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -506,10 +557,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCounty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Страна/Провинция</_item>
+                        <_item>Страна/Область</_item>
                       </label>
                       <toolTip>
-                        <_item>Страна/Провинция</_item>
+                        <_item>Страна/Область</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalStreetNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Номер улицы (опционально)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Номер улицы (опционально)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -531,7 +593,7 @@
                         <_item>Геогр. долгота</_item>
                       </label>
                       <toolTip>
-                        <_item>Геогр. долгота</_item>
+                        <_item>Географическая долгота</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -542,7 +604,7 @@
                         <_item>Геогр. широта</_item>
                       </label>
                       <toolTip>
-                        <_item>Геогр. широта</_item>
+                        <_item>Геограпфическая широта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -550,10 +612,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalUtcOffset" _operation="create">
                     <_object>
                       <label>
-                        <_item>Врем. зона</_item>
+                        <_item>Временная зона относительно UTC</_item>
                       </label>
                       <toolTip>
-                        <_item>Врем. зона</_item>
+                        <_item>Временная зона относительно UTC</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -780,7 +842,7 @@
                         <_item>Использование</_item>
                       </label>
                       <toolTip>
-                        <_item>Использ. адреса</_item>
+                        <_item>Использование адреса</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -799,10 +861,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:isMain" _operation="create">
                     <_object>
                       <label>
-                        <_item>Осн. адрес</_item>
+                        <_item>Основной адрес</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Основной</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>проверьте, является ли адрес осн. адресом данного типа</_item>
+                        <_item>Проверьте, является ли адрес основным адресом данного типа адресов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -810,10 +875,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductAddress:validFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Правильный от</_item>
+                        <_item>Используется от</_item>
                       </label>
                       <toolTip>
-                        <_item>Правильный от</_item>
+                        <_item>Используется от</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -821,10 +886,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductAddress:validTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Правильный к</_item>
+                        <_item>Используется до</_item>
                       </label>
                       <toolTip>
-                        <_item>Правильный к</_item>
+                        <_item>Используется до</_item>
                       </toolTip>
                     </_object>
                     <_content/>

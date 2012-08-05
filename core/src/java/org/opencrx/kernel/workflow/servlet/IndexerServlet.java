@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.18 2008/02/24 11:33:35 wfro Exp $
+ * Name:        $Id: IndexerServlet.java,v 1.22 2008/05/29 23:12:38 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/24 11:33:35 $
+ * Date:        $Date: 2008/05/29 23:12:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -68,7 +68,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.UpdateIndexResult;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
@@ -112,41 +114,41 @@ public class IndexerServlet
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );        
-            WorkflowControllerServlet.initWorkflows(
+            Workflows.initWorkflows(
                 pm, 
                 providerName, 
                 segmentName
             );
             List<org.opencrx.kernel.base.jmi1.Indexed> indexedSegments = new ArrayList<org.opencrx.kernel.base.jmi1.Indexed>();
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName))
             );
             indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
             );
             for(org.opencrx.kernel.base.jmi1.Indexed indexedSegment: indexedSegments) {
                 long startedAt = System.currentTimeMillis();                

@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Padrao</_item>
+                              <_item>Padrão</_item>
                             </shortText>
                             <longText>
-                              <_item> Padrao</_item>
+                              <_item> Padrão</_item>
                             </longText>
                           </_object>
                           <_content/>

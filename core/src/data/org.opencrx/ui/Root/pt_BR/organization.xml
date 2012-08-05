@@ -17,7 +17,7 @@
                         <_item>Organizações</_item>
                       </label>
                       <toolTip>
-                        <_item>Todas as organizações</_item>
+                        <_item>Todas as Organizações</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:contactMembership" _operation="create">
                     <_object>
                       <label>
-                        <_item>Societários</_item>
+                        <_item>Sócios</_item>
                       </label>
                       <toolTip>
-                        <_item>Societários</_item>
+                        <_item>Sócios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:creditLimit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limites de crédito</_item>
+                        <_item>Limites de Crédito</_item>
                       </label>
                       <toolTip>
-                        <_item>Limites de crédito</_item>
+                        <_item>Limites de Crédito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -171,7 +171,7 @@
                         <_item>Nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome da unidade organizacional</_item>
+                        <_item>Nome da unidade Organizacional</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -259,7 +259,7 @@
                         <_item>Da Unidade Org</_item>
                       </label>
                       <toolTip>
-                        <_item>Da Unidade Organizacinal</_item>
+                        <_item>Da Unidade Org</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:OrganizationalUnitRelationship:toUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Para Unidade organizacional</_item>
+                        <_item>Para Unidade Org</_item>
                       </label>
                       <toolTip>
-                        <_item>Para Unidade Organizacional</_item>
+                        <_item>Para Unidade Org</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:OrganizationalUnitRelationship:weightIsPercentage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Peso em percentagem</_item>
+                        <_item>Peso em %</_item>
                       </label>
                       <toolTip>
-                        <_item>Peso em percentagem</_item>
+                        <_item>Peso em %</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:ouMembership" _operation="create">
                     <_object>
                       <label>
-                        <_item>Societários</_item>
+                        <_item>Sócios</_item>
                       </label>
                       <toolTip>
-                        <_item>Societários</_item>
+                        <_item>Sócios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +399,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreditLimit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Limite de crédito</_item>
+                        <_item>Limite de Crédito</_item>
                       </label>
                       <toolTip>
-                        <_item>Limite de crédito</_item>
+                        <_item>Limite de Crédito</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task" _operation="create">
                     <_object>
                       <label>
-                        <_item>Задание</_item>
+                        <_item>Задача</_item>
                       </label>
                       <toolTip>
-                        <_item>Задание</_item>
+                        <_item>Задача</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,7 +25,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:taskParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Включенные учетные записи</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </label>
                       <toolTip>
                         <_item>Включенные учетные записи</_item>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Доп. информация</_item>
+                        <_item>Дополнительная информация</_item>
                       </label>
                       <toolTip>
-                        <_item>Доп. информация</_item>
+                        <_item>Дополнительная информация</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:activityState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Статус</_item>
+                        <_item>Состояние</_item>
                       </label>
                       <toolTip>
-                        <_item>Статус</_item>
+                        <_item>Состояние</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:TaskParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Включенные учетные записи</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Включенные учетные записи</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>

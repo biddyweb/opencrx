@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ссылки</_item>
+                        <_item>Котировки</_item>
                       </label>
                       <toolTip>
-                        <_item>Ссылки</_item>
+                        <_item>Котировки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +28,7 @@
                         <_item>Позиции</_item>
                       </label>
                       <toolTip>
-                        <_item>Позиции ссылок</_item>
+                        <_item>Позиции котировок</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ссылка</_item>
+                        <_item>Котировка</_item>
                       </label>
                       <toolTip>
-                        <_item>Ссылка</_item>
+                        <_item>Котировка</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Наим. ссылки</_item>
+                        <_item>Наим. котировки</_item>
                       </label>
                       <toolTip>
-                        <_item>Наим. ссылки</_item>
+                        <_item>Наим. котировки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:contractLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Язык ссылки</_item>
+                        <_item>Язык котировки</_item>
                       </label>
                       <toolTip>
-                        <_item>Язык ссылки</_item>
+                        <_item>Язык котировки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:contractNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Номер ссылки</_item>
+                        <_item>Номер котировки</_item>
                       </label>
                       <toolTip>
-                        <_item>Номер ссылки</_item>
+                        <_item>Номер котировки</_item>
                       </toolTip>
                     </_object>
                     <_content/>

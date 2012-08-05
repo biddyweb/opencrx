@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ContactImpl.java,v 1.3 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: ContactImpl.java,v 1.7 2008/05/22 15:38:33 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/05/22 15:38:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,8 +59,8 @@ import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.VCard;
 import org.opencrx.kernel.base.jmi1.BasePackage;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class ContactImpl {
@@ -80,32 +80,6 @@ public class ContactImpl {
         return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
     }
             
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.base.jmi1.ExportResult exportVcard(
-        org.opencrx.kernel.account1.jmi1.ExportVcardParams params
-    ) throws javax.jmi.reflect.RefException {
-        try {
-            byte[] item = new VCard(
-                this.getBackend()
-            ).exportItem(
-                this.current.refGetPath(),
-                params.getLocale()
-            );
-            return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createExportResult(
-                item,
-                VCard.MIME_TYPE,
-                this.current.getFullName() == null
-                    ? this.getBackend().toFilename(this.current.refGetPath().getBase()) + ".vcf"
-                    : this.getBackend().toFilename(this.current.getFullName()) + ".vcf",
-                Base.IMPORT_EXPORT_OK,
-                null
-            );                                                        
-        }
-        catch(ServiceException e) {
-            throw new RefException_1(e);
-        }                        
-    }
-    
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

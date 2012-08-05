@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:UpdateIndexResult:numberOfIndexedObjects" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>N. oggetti indicizzati</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Numero oggetti indicizzati</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                 </elementDefinition>
               </_content>
             </org.openmdx.ui1.Segment>

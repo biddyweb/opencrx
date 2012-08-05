@@ -88,17 +88,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Отфильтрованные деятельности</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все отфильтрованные деятельности</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
@@ -110,24 +99,46 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: группа деятельности</_item>
+                        <_item>Отфильтрованные деятельности</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: группа деятельности</_item>
+                        <_item>все отфильтрованные деятельности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty:activityGroup" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группы деятельности</_item>
+                        <_item>Подсчет отфильтрованных деятельностей</_item>
                       </label>
                       <toolTip>
-                        <_item>Группы деятельности</_item>
+                        <_item>Подсчет отфильтрованных деятельностей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -198,6 +209,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойства фильтра заблокированных</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойства фильтра заблокированных</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заблокировано</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Заблокировано</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
@@ -220,68 +253,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: ресурс</_item>
+                        <_item>Назначено свойствам фильтра</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: ресурс</_item>
+                        <_item>Назначено свойствам фильтра</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty:resource" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ресурсы</_item>
+                        <_item>Назначено</_item>
                       </label>
                       <toolTip>
-                        <_item>Ресурсы</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Свойство фильтра: название ресурса</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Свойство фильтра: название ресурса</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty:resourceName" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Названия ресурсов</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Названия ресурсов</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Свойство фильтра: роль ресурса</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Свойство фильтра: роль ресурса</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Роли ресурса</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Роли ресурса</_item>
+                        <_item>Назначено</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: плановый конец</_item>
+                        <_item>Свойство фильтра: плановое окончание</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: плановый конец</_item>
+                        <_item>Свойство фильтра: плановое окончание</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +289,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty:scheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Планированные концы</_item>
+                        <_item>Планированные окончания</_item>
                       </label>
                       <toolTip>
-                        <_item>Планированные концы</_item>
+                        <_item>Планированные окончания</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty:offsetInHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Смещение в часах</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Смещение в часах</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Свойство фильтра: планорованный старт</_item>
+                        <_item>Свойство фильтра: запланированный старт</_item>
                       </label>
                       <toolTip>
-                        <_item>Свойство фильтра: планорованный старт</_item>
+                        <_item>Свойство фильтра: запланированный старт</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -322,10 +322,32 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty:scheduledStart" _operation="create">
                     <_object>
                       <label>
-                        <_item>Планированные старты</_item>
+                        <_item>Запланированные старты</_item>
                       </label>
                       <toolTip>
-                        <_item>Планированные старты</_item>
+                        <_item>Запланированные старты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty:offsetInHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Смещение в часах</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Смещение в часах</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Свойства фильтра запросов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Свойства фильтра запросов</_item>
                       </toolTip>
                     </_object>
                     <_content/>

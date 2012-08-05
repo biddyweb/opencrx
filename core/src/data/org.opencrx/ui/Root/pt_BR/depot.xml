@@ -39,7 +39,7 @@
                         <_item>Relações</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as Relações</_item>
+                        <_item>todas os Relacionamentos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:booking" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anotações</_item>
+                        <_item>Reservas</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as Reservas</_item>
+                        <_item>Reservas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:simpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reservas Simples</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reservas Simples</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +190,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship" _operation="create">
                     <_object>
                       <label>
-                        <_item>Relação da Entidade do Depósito</_item>
+                        <_item>Relacionamento da Entidade do Depósito</_item>
                       </label>
                       <toolTip>
-                        <_item>Relação da Entidade do Depósito</_item>
+                        <_item>Relacionamento da Entidade do Depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship:relationshipType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipo de Relação</_item>
+                        <_item>Tipo de Relacionamento</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipo de Relação</_item>
+                        <_item>Tipo de Relacionamento</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipo de Depósito</_item>
+                        <_item>Tipo do Depósito</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipo de Depósito</_item>
+                        <_item>Tipo do Depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -341,17 +352,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:cb" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Reserva composta</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Reserva composta</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:position" _operation="create">
                     <_object>
                       <label>
@@ -363,24 +363,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:origin" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Origem</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Origem</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:bookingStatus" _operation="create">
                     <_object>
                       <label>
                         <_item>Status</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +410,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:bookingDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Data de Registro</_item>
+                        <_item>Data de Reserva</_item>
                       </label>
                       <toolTip>
-                        <_item>Data de Registro</_item>
+                        <_item>Data de Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -451,6 +440,94 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:cb" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reserva composta</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reserva composta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Origem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Origem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reservas Simples</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reserva Simple</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContext" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Origens</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Origens</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Qtde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Qtde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantityUom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>UOM (qtde)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>UOM (qtde)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Id de Origem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Id de Origem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContextParams" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Parâmetros dos contextos de origem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Parâmetros dos contextos de origem</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking" _operation="create">
                     <_object>
                       <label>
@@ -465,10 +542,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:booking" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anotações</_item>
+                        <_item>Reservas</_item>
                       </label>
                       <toolTip>
-                        <_item>Anotações</_item>
+                        <_item>Reservas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -487,10 +564,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:bookingStatus" _operation="create">
                     <_object>
                       <label>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -498,10 +575,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:lockingReason" _operation="create">
                     <_object>
                       <label>
-                        <_item>Razão de Fechamento</_item>
+                        <_item>Motivo do bloqueio</_item>
                       </label>
                       <toolTip>
-                        <_item>Razão de Fechamento</_item>
+                        <_item>Motivo do Bloqueio</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -509,10 +586,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:bookingDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Data de Registro</_item>
+                        <_item>Data da Reserva</_item>
                       </label>
                       <toolTip>
-                        <_item>Data de Registro</_item>
+                        <_item>Data da Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -531,10 +608,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:isLocked" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fechado</_item>
+                        <_item>Bloqueado</_item>
                       </label>
                       <toolTip>
-                        <_item>Fechado</_item>
+                        <_item>Bloqueado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -542,10 +619,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:lockModifiedAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fechamento Modificado em</_item>
+                        <_item>Bloqueio Modificado em</_item>
                       </label>
                       <toolTip>
-                        <_item>Fechamento Modificado em</_item>
+                        <_item>Bloqueio Modificado em</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -586,10 +663,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:acceptedBy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aceita por</_item>
+                        <_item>Aceito por</_item>
                       </label>
                       <toolTip>
-                        <_item>Aceita por</_item>
+                        <_item>Aceito por</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -597,10 +674,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder" _operation="create">
                     <_object>
                       <label>
-                        <_item>Proprietário do Depósito</_item>
+                        <_item>Dono do Depósito</_item>
                       </label>
                       <toolTip>
-                        <_item>Proprietário do Depósito</_item>
+                        <_item>Dono do Depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -630,10 +707,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:depotHolderNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>nr. do prorietário do depósito</_item>
+                        <_item>nr. do dono do depósito</_item>
                       </label>
                       <toolTip>
-                        <_item>nr. do prorietário do depósito</_item>
+                        <_item>nr. do dono do depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -721,7 +798,7 @@
                         <_item>Relatórios</_item>
                       </label>
                       <toolTip>
-                        <_item>Relatórios</_item>
+                        <_item>Reportar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -828,10 +905,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:latestReport" _operation="create">
                     <_object>
                       <label>
-                        <_item>Último Relatório</_item>
+                        <_item>Último Reporte</_item>
                       </label>
                       <toolTip>
-                        <_item>Último Relatório</_item>
+                        <_item>Último Reporte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -850,10 +927,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:booking" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anotações</_item>
+                        <_item>Reservas</_item>
                       </label>
                       <toolTip>
-                        <_item>Anotações</_item>
+                        <_item>Reservas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:simpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reservas Simples</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reservas Simples</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -920,50 +1008,6 @@
                       </label>
                       <toolTip>
                         <_item>Descrição</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ProductOfferingDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do depósito da oferta de produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do depósito da oferta de produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ComplexProductBundleDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de estoque de produto complexo empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de estoque de produto complexo empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ProductBundleDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Depósito de Pacotes de Produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Depósito de Pacotes de Produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BundledProductDepotPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Depósito de Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Depósito de Produto Empacotado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1048,10 +1092,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:closingBookingTypeThreshold" _operation="create">
                     <_object>
                       <label>
-                        <_item>tipo Limite para Fechamento da Reserva</_item>
+                        <_item>Limite final para fechamento da Reserva</_item>
                       </label>
                       <toolTip>
-                        <_item>tipo Limite para Fechamento da Reserva</_item>
+                        <_item>Limite final para Fechamento da Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1257,32 +1301,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:itemPosition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Posicionar Artigos</_item>
+                        <_item>Posicionar itens</_item>
                       </label>
                       <toolTip>
-                        <_item>Posicionar Artigos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:itemBooking" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Registro de itens</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Registro de itens</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:itemBooking" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Registro de itens</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Registro de itens</_item>
+                        <_item>Posicionar itens</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1320,6 +1342,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:bookingStatusThreshold" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Limite final da reserva</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Limite final da reserva</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:description" _operation="create">
                     <_object>
                       <label>
@@ -1334,10 +1367,32 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Reportar Artigo (posição)</_item>
+                        <_item>Reportar Item (posição)</_item>
                       </label>
                       <toolTip>
-                        <_item>Reportar Artigo (posição)</_item>
+                        <_item>Reportar Item (posição)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:singleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reservas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reservas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:simpleBooking" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>reservas Simples</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reservas Simples</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1422,10 +1477,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceBop" _operation="create">
                     <_object>
                       <label>
-                        <_item>Balanço (inicio do período)</_item>
+                        <_item>Saldo (inicio do período)</_item>
                       </label>
                       <toolTip>
-                        <_item>Balanço (inicio do período)</_item>
+                        <_item>Saldo (inicio do período)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1455,120 +1510,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balance" _operation="create">
                     <_object>
                       <label>
-                        <_item>Balanço (fim do periodo)</_item>
+                        <_item>Saldo (fim do periodo)</_item>
                       </label>
                       <toolTip>
-                        <_item>Balanço (fim do periodo)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemDebit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Item reportado (Débito)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Item reportado (Débito)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemCredit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Item reportado (Crédito)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Item reportado (Crédito)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:cb" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Reserva composta</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Reserva composta</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:booking" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Reserva</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Reserva</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:bookingDate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Data de Registro</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Data de Registro</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemDebit:quantityDebit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Quantidade (débito)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Quantidade (débito)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemCredit:quantityCredit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Quantidade (crédito)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Quantidade (crédito)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:balanceDebit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Débito Total</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Débito Total</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:balanceCredit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Crédito Total</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Crédito Total</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemBooking:balance" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Balanço</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Balanço</_item>
+                        <_item>Saldo (fim do periodo)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1675,10 +1620,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:acceptCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aceitar registro composto</_item>
+                        <_item>Aceitar reserva composta</_item>
                       </label>
                       <toolTip>
-                        <_item>Aceitar registro composto</_item>
+                        <_item>Aceitar reserva composta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1697,10 +1642,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:finalizeCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Finalizar Registro Composto</_item>
+                        <_item>Finalizar Reserva Composta</_item>
                       </label>
                       <toolTip>
-                        <_item>Finalizar Registro Composto</_item>
+                        <_item>Finalizar Reserva Composta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1719,10 +1664,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:cancelCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar registro de cancelamento</_item>
+                        <_item>Criar cancelamento de reserva</_item>
                       </label>
                       <toolTip>
-                        <_item>Criar registro de cancelamento</_item>
+                        <_item>Criar cancelamento de reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1766,7 +1711,7 @@
                         <_item>Status</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1785,10 +1730,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:lockCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anotações do livro de fechamento</_item>
+                        <_item>Bloqueio de reserva composta</_item>
                       </label>
                       <toolTip>
-                        <_item>Anotações do livro de fechamento</_item>
+                        <_item>Bloqueio de reserva composta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1807,10 +1752,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:LockCompoundBookingParams:lockingReason" _operation="create">
                     <_object>
                       <label>
-                        <_item>Razão do Fechamento</_item>
+                        <_item>Motivo do Bloqueio</_item>
                       </label>
                       <toolTip>
-                        <_item>Razão do Fechamento</_item>
+                        <_item>Motivo do Bloqueio</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1829,10 +1774,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:unlockCb" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anotações do livro de abertura</_item>
+                        <_item>Desbloqueio de reserva composta</_item>
                       </label>
                       <toolTip>
-                        <_item>Anotações do livro de abertura</_item>
+                        <_item>Desbloqueio de reserva composta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1851,10 +1796,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPosition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar Registro por Posição</_item>
+                        <_item>Criar Reserva por Posição</_item>
                       </label>
                       <toolTip>
-                        <_item>Criar Registro por Posição</_item>
+                        <_item>Criar Reserva por Posição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1917,10 +1862,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:bookingTextName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome textual do Registro</_item>
+                        <_item>Nome textual da Reserva</_item>
                       </label>
                       <toolTip>
-                        <_item>nome do texto de Anotações</_item>
+                        <_item>nome do texto da Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1931,7 +1876,7 @@
                         <_item>texto das anotações</_item>
                       </label>
                       <toolTip>
-                        <_item>texto das anotações</_item>
+                        <_item>texto da Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1943,6 +1888,17 @@
                       </label>
                       <toolTip>
                         <_item>Tipo de Reserva</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Origem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Origem</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1983,10 +1939,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingResult:status" _operation="create">
                     <_object>
                       <label>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2005,7 +1961,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPositionName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar registro pelo Nome da Posição</_item>
+                        <_item>Criar reserva pelo Nome da Posição</_item>
                       </label>
                       <toolTip>
                         <_item>Criar registro pelo Nome da Posição</_item>
@@ -2104,10 +2060,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:bookingTextName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome textual do Registro</_item>
+                        <_item>Nome textual da Reserva</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome textual do Registro</_item>
+                        <_item>Nome textual da Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2130,6 +2086,17 @@
                       </label>
                       <toolTip>
                         <_item>Tipo de Reserva</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:origin" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Origem</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Origem</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2159,10 +2126,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar Registro por Produto</_item>
+                        <_item>Criar Reserva por Produto</_item>
                       </label>
                       <toolTip>
-                        <_item>Criar Registro por Produto</_item>
+                        <_item>Criar Reserva por Produto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2250,7 +2217,7 @@
                         <_item>Data do Valor</_item>
                       </label>
                       <toolTip>
-                        <_item>Data</_item>
+                        <_item>Data do valor</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2261,7 +2228,7 @@
                         <_item>Nome textual do Registro</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome textual do Registro</_item>
+                        <_item>Nome textual da Reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2284,6 +2251,14 @@
                       </label>
                       <toolTip>
                         <_item>Tipo de Reserva</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:origin" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Origem</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2354,13 +2329,46 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Período de finalização</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Período de finalização</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Entrada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:assertReports" _operation="create">
                     <_object>
                       <label>
-                        <_item>Declarar Relatórios</_item>
+                        <_item>Relatórios de verificação</_item>
                       </label>
                       <toolTip>
-                        <_item>Declarar Relatórios</_item>
+                        <_item>Relatórios de verificação</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2372,6 +2380,17 @@
                       </label>
                       <toolTip>
                         <_item>Entrada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:AssertReportsParams:bookingStatusThreshold" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Limite final do estaus da reserva</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Limite final do estaus da reserva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2500,10 +2519,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotResult:status" _operation="create">
                     <_object>
                       <label>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2522,10 +2541,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:assertReports" _operation="create">
                     <_object>
                       <label>
-                        <_item>Declarar Relatórios</_item>
+                        <_item>Verificar Relatórios</_item>
                       </label>
                       <toolTip>
-                        <_item>Declarar Relatórios</_item>
+                        <_item>Verificar Relatórios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2665,10 +2684,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionResult:status" _operation="create">
                     <_object>
                       <label>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2731,10 +2750,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotResult:status" _operation="create">
                     <_object>
                       <label>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2797,10 +2816,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotPositionResult:status" _operation="create">
                     <_object>
                       <label>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </label>
                       <toolTip>
-                        <_item>Status</_item>
+                        <_item>Estado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

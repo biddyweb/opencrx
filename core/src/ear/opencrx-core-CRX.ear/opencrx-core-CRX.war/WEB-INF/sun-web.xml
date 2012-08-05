@@ -13,7 +13,7 @@
 		<group-name>OpenCrxRoot</group-name>
 	</security-role-mapping>
 	<ejb-ref>
-		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>org/opencrx/core/CRX/noOrNew/gateway</jndi-name>
+		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
+		<jndi-name>org/opencrx/core/CRX/EntityManagerFactory</jndi-name>
 	</ejb-ref>
 </sun-web-app>

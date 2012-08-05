@@ -1,0 +1,17 @@
+#include "sql-definitions.tsql"
+
+ALTER TABLE OOCKE1_PRODUCT
+    DROP_COLUMN_BEGIN
+        product_serial_number_
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+REORG_TABLE(OOCKE1_PRODUCT) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_PRODUCT_
+    DROP_COLUMN_BEGIN
+        product_serial_number
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+REORG_TABLE(OOCKE1_PRODUCT_) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

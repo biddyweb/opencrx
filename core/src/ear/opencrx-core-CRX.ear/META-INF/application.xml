@@ -3,32 +3,20 @@
 <application id="Application_ID">
 	<display-name>openCRX EAR</display-name>
 	<module>
-		<ejb>gateway.jar</ejb>
-	</module>
-	<module>
 		<ejb>kernel.jar</ejb>
 	</module>
 	<module>
 		<ejb>security.jar</ejb>
 	</module>
+	<module>
+		<ejb>gateway.jar</ejb>
+	</module>
 	<module id="WebModule_1">
 		<web>
 			<web-uri>opencrx-core-CRX-Web.war</web-uri>
-			<context-root>opencrx-core-CRX</context-root>
+			<context-root>opencrx-core-CRX-Web</context-root>
 		</web>
 	</module>
-	<module id="WebModule_2">
-		<web>
-			<web-uri>client-gateway.war</web-uri>
-			<context-root>opencrx-gateway-CRX/client-gateway</context-root>
-		</web>
-	</module>
-	<module id="WebModule_3">
-		<web>
-			<web-uri>server-gateway.war</web-uri>
-			<context-root>opencrx-gateway-CRX/server-gateway</context-root>
-		</web>
-	</module>	
 	<security-role id="SecurityRole_OpenCrxUser">
 		<description>openCRX Standard Users</description>
 		<role-name>OpenCrxUser</role-name>

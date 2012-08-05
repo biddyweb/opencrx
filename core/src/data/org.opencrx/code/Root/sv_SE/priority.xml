@@ -15,10 +15,18 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                          <_object>
+                            <longText>
+                              <_item> N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <longText>
-                              <_item>[01] Låg</_item>
+                              <_item>[1] Låg</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -26,7 +34,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <longText>
-                              <_item>[02] Normal</_item>
+                              <_item>[2] Normal</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -34,7 +42,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <longText>
-                              <_item>[03] Hög</_item>
+                              <_item>[3] Hög</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -42,7 +50,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <longText>
-                              <_item>[04] Brådskande</_item>
+                              <_item>[4] Brådskande</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -50,7 +58,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
                             <longText>
-                              <_item>[05] Omedelbar</_item>
+                              <_item>[5] Omedelbar</_item>
                             </longText>
                           </_object>
                           <_content/>

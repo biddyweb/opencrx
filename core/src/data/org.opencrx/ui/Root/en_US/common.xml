@@ -1222,7 +1222,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry">
 										<_object>
-											<active>true</active>
+											<active>false</active> <!-- this view suffers from horrible performance due to calculated object IDs -->
 											<toolTip>
 												<_item>Property Set Entries</_item>
 											</toolTip>
@@ -2464,6 +2464,116 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+<!-- import/export -->
+									<!-- ExportProfile -->
+									<!-- Inspector -->
+									<!-- Grid -->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:description">
+										<_object>
+											<spanRow>5</spanRow>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Classes</_item>
+											</toolTip>
+											<label>
+												<_item>Classes</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter">
+										<_object>
+											<active>true</active>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Reference filter</_item>
+											</toolTip>
+											<label>
+												<_item>Reference filter</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:mimeType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>MIME type</_item>
+											</toolTip>
+											<label>
+												<_item>MIME type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Template</_item>
+											</toolTip>
+											<label>
+												<_item>Template</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>60</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<!-- Operations -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Importer:Pane:Op:Tab:importItem">
 										<_object>
@@ -2626,14 +2736,14 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Export XML</_item>
+												<_item>Export</_item>
 											</toolTip>
 											<label>
-												<_item>Export XML</_item>
+												<_item>Export</_item>
 											</label>
 											<iconKey>org:opencrx:kernel:Export</iconKey>
 											<order>
@@ -2644,7 +2754,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:in">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -2656,14 +2766,14 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:referenceFilter">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:exportProfile">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Reference filter</_item>
+												<_item>Profile</_item>
 											</toolTip>
 											<label>
-												<_item>Reference filter</_item>
+												<_item>Profile</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -2673,24 +2783,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:attributeFilter">
-										<_object>
-											<active>false</active>
-											<toolTip>
-												<_item>Attribute filter</_item>
-											</toolTip>
-											<label>
-												<_item>Attribute filter</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>20</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:result">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -2702,7 +2795,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:item">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -2719,7 +2812,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemMimeType">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType">
 										<_object>
 											<active>false</active>
 											<toolTip>
@@ -2736,7 +2829,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemName">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName">
 										<_object>
 											<active>false</active>
 											<toolTip>
@@ -2753,7 +2846,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:status">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -2770,7 +2863,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:statusMessage">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -2787,6 +2880,83 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Advanced</_item>
+											</toolTip>
+											<label>
+												<_item>Export Advanced</_item>
+											</label>
+											<iconKey>Export</iconKey>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>201</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:referenceFilter">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reference filter</_item>
+											</toolTip>
+											<label>
+												<_item>Reference filter</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>MIME type</_item>
+											</toolTip>
+											<label>
+												<_item>MIME type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- ExportItemResult is customized above (near operation exportItem) -->
 									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:Pane:Op:Tab:edit">
 										<_object>
 											<active>true</active>
@@ -2805,6 +2975,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:Pane:Op:Tab:delete">
 										<_object>
 											<active>true</active>

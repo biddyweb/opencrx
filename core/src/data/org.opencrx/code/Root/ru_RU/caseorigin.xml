@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Намек</_item>
+                              <_item>Примечание</_item>
                             </shortText>
                             <longText>
-                              <_item>Намек</_item>
+                              <_item>Примечание</_item>
                             </longText>
                           </_object>
                           <_content/>

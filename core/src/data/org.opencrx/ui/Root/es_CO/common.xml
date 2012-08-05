@@ -1579,18 +1579,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Exportar XML</_item>
+                        <_item>Exportar</_item>
                       </label>
                       <toolTip>
-                        <_item>Exportar XML</_item>
+                        <_item>Exportar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Entrada</_item>
@@ -1601,7 +1601,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:referenceFilter" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:referenceFilter" _operation="create">
                     <_object>
                       <label>
                         <_item>Filtro de referencia</_item>
@@ -1612,40 +1612,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:attributeFilter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filtro de attributos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Filtro de attributos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:item" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ítem exportado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ítem exportado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemMimeType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:itemMimeType" _operation="create">
                     <_object>
                       <label>
                         <_item>Tipo MIME</_item>
@@ -1656,7 +1623,40 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemName" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ítem exportado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ítem exportado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tipo MIME</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tipo MIME</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName" _operation="create">
                     <_object>
                       <label>
                         <_item>Nombre del ítem</_item>
@@ -1667,7 +1667,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:status" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status" _operation="create">
                     <_object>
                       <label>
                         <_item>Estado</_item>
@@ -1678,7 +1678,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:statusMessage" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage" _operation="create">
                     <_object>
                       <label>
                         <_item>Mensaje de estado</_item>

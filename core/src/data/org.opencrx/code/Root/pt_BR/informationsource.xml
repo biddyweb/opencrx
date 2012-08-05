@@ -117,10 +117,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Diretório</_item>
+                              <_item>Endereço do intermediador</_item>
                             </shortText>
                             <longText>
-                              <_item>Address Broker</_item>
+                              <_item>Endereço do intermediador</_item>
                             </longText>
                           </_object>
                           <_content/>

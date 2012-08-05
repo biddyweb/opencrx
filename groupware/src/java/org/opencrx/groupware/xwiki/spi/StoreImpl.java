@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: StoreImpl.java,v 1.41 2008/02/12 19:54:22 wfro Exp $
+ * Name:        $Id: StoreImpl.java,v 1.48 2008/07/07 17:35:16 wfro Exp $
  * Description: XWiki StoreImpl
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:54:22 $
+ * Date:        $Date: 2008/07/07 17:35:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -84,6 +84,7 @@ import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
+import org.openmdx.kernel.exception.BasicException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.cci2.BinaryLargeObjects;
@@ -135,6 +136,7 @@ public class StoreImpl
             if(folder == null) {
                 session.beginTransaction();
                 folder = session.getDocumentPackage().getDocumentFolder().createDocumentFolder();
+                folder.refInitialize(false, false);
                 folder.setName(ROOT_FOLDER_NAME);
                 session.commitTransaction();
             }
@@ -349,6 +351,7 @@ public class StoreImpl
             boolean isInternal = "internal".equals(xWikiObject.getClassName());
             if(ps == null) {
                 ps = session.getDocumentPackage().getPropertySet().createPropertySet();
+                ps.refInitialize(false, false);
                 ps.setName(name);
                 document.addPropertySet(
                     false,
@@ -534,6 +537,7 @@ public class StoreImpl
             org.opencrx.kernel.document1.jmi1.DocumentAttachment attachment = null;
             if(attachments.isEmpty()) {
                 attachment = session.getDocumentPackage().getDocumentAttachment().createDocumentAttachment();
+                attachment.refInitialize(false, false);
                 document.addAttachment(
                     false,
                     this.uuidAsString(),
@@ -679,7 +683,7 @@ public class StoreImpl
         }
         catch (Exception e) {
             AppLog.warning("Exception while searching documents", e.getMessage());
-            AppLog.warning(e.getMessage(), e.getCause(), 1);
+            AppLog.warning(e.getMessage(), e.getCause());
             Object[] args = { queryString };
             throw new XWikiException( 
                 XWikiException.MODULE_XWIKI_STORE, 
@@ -824,6 +828,22 @@ public class StoreImpl
             }
             return query;
         }
+        // Articles
+        else if(queryString.matches(QUERY_PATTERN_ARTICLES)) {
+            org.openmdx.compatibility.datastore1.jmi1.QueryFilter articleClassMembership =
+                session.getDatastorePackage().getQueryFilter().createQueryFilter();
+            articleClassMembership.setClause(
+                "object_id IN (SELECT p$$parent FROM OOCKE1_PROPERTYSET ps WHERE ps.name LIKE 'XWiki.ArticleClass#%')"
+            );
+            String currentDocumentName = context.getDoc().getFullName();
+            if(currentDocumentName.indexOf(".") > 0) {
+                query.thereExistsQualifiedName().like(currentDocumentName.substring(0, currentDocumentName.lastIndexOf(".")).replace(".", "\\.") + "\\..*");
+            }
+            query.thereExistsContext().equalTo(articleClassMembership);            
+            query.thereExistsQualifiedName().notEqualTo("XWiki.ArticleClassTemplate");
+            query.orderByCreatedAt().descending();
+            return query;
+        }                   
         // All documents
         else if(queryString.startsWith(QUERY_PATTERN_DISTINCT_DOCUMENT_NAMES)) {
             return query;
@@ -1083,6 +1103,7 @@ public class StoreImpl
             Document document = null;
             if(documents.isEmpty()) {
                 document = session.getDocumentPackage().getDocument().createDocument();
+                document.refInitialize(false, false);
                 session.getDocumentSegment().addDocument(
                     false,
                     this.uuidAsString(),
@@ -1122,6 +1143,7 @@ public class StoreImpl
             DocumentFolder folder = null;
             if(folders.isEmpty()) {
                 folder = session.getDocumentPackage().getDocumentFolder().createDocumentFolder();
+                folder.refInitialize(false, false);
                 folder.setName(xWikiDocument.getSpace());
                 folder.setParent(this.getRootFolder(session));
                 session.getDocumentSegment().addFolder(
@@ -1137,6 +1159,8 @@ public class StoreImpl
             document.getFolder().add(folder);
             // Create document revision and store content to revision
             MediaContent revision = session.getDocumentPackage().getMediaContent().createMediaContent();
+            revision.refInitialize(false, false);
+            revision.setName(xWikiDocument.getName());
             revision.setContentName(xWikiDocument.getName());
             revision.setContent(                
                 BinaryLargeObjects.valueOf(
@@ -1222,13 +1246,11 @@ public class StoreImpl
             try {
                 if (session != null) session.rollbackTransaction();
             } catch (Exception e0) {}            
-            Object[] args = { xWikiDocument.getFullName() };
+            new ServiceException(e).log();
             throw new XWikiException( 
                 XWikiException.MODULE_XWIKI_STORE, 
                 XWikiException.ERROR_XWIKI_STORE_HIBERNATE_SAVING_DOC,
-                "Exception while saving document {0}", 
-                e, 
-                args
+                "Exception while saving document " + xWikiDocument.getFullName() + ". See log for more details"
             );
         } 
         finally {
@@ -1273,7 +1295,11 @@ public class StoreImpl
             xWikiDocument.setName(document.getName());       
             xWikiDocument.setFullName(document.getQualifiedName());
             xWikiDocument.setTitle(document.getTitle());
-            xWikiDocument.setFormat(document.getContentType());
+            xWikiDocument.setFormat(
+                document.getContentType() == null ? 
+                    "" : 
+                    document.getContentType()
+            );
             xWikiDocument.setAuthor(document.getAuthor());
             if(document.getParent() != null) {
                 xWikiDocument.setParent(document.getParent().getQualifiedName());
@@ -1388,14 +1414,21 @@ public class StoreImpl
             xWikiDocument.setOriginalDocument((XWikiDocument) xWikiDocument.clone());
         } 
         catch (Exception e) {
-            Object[] args = { xWikiDocument.getFullName() };
-            throw new XWikiException(
-                XWikiException.MODULE_XWIKI_STORE, 
-                XWikiException.ERROR_XWIKI_STORE_HIBERNATE_READING_DOC,
-                "Exception while reading document {0}", 
-                e, 
-                args
-            );
+            ServiceException e0 = new ServiceException(e);
+            if(e0.getExceptionCode() == BasicException.Code.NOT_FOUND) {
+                xWikiDocument.setNew(false);
+                return xWikiDocument;                
+            }
+            else {
+                Object[] args = { xWikiDocument.getFullName() };
+                throw new XWikiException(
+                    XWikiException.MODULE_XWIKI_STORE, 
+                    XWikiException.ERROR_XWIKI_STORE_HIBERNATE_READING_DOC,
+                    "Exception while reading document {0}", 
+                    e, 
+                    args
+                );
+            }
         } 
         finally {
             if (monitor!=null) monitor.endTimer(MONITOR_ID);
@@ -1555,6 +1588,7 @@ public class StoreImpl
                 org.opencrx.kernel.document1.jmi1.DocumentLock lock = null;
                 if(locks.isEmpty()) {
                     lock = session.getDocumentPackage().getDocumentLock().createDocumentLock();
+                    lock.refInitialize(false, false);
                     document.addLock(
                         false,
                         this.uuidAsString(),
@@ -1742,6 +1776,7 @@ public class StoreImpl
                 if (linkUris != null) {
                     for(String linkUri: linkUris) {
                         org.opencrx.kernel.document1.jmi1.DocumentLink link = session.getDocumentPackage().getDocumentLink().createDocumentLink();
+                        link.refInitialize(false, false);
                         link.setName(xWikiDocument.getFullName());
                         link.setLinkUri(linkUri);
                         document.addLink(
@@ -1977,7 +2012,7 @@ public class StoreImpl
             queryString, 
             nb, 
             start, 
-            null, 
+            (Object[][])null, 
             context
         );
     }
@@ -2298,6 +2333,8 @@ public class StoreImpl
         ".*where doc\\.id=ni\\.id\\.docId and ni\\.id\\.version2=(.*) group by doc.web, doc.name order by max\\(ni\\.date\\) desc";
     protected static final String QUERY_PATTERN_TAGS = 
         "select distinct elements\\(prop\\.list\\) from BaseObject as obj, DBStringListProperty as prop where obj\\.className='XWiki\\.TagClass' and obj\\.id=prop\\.id\\.id and prop\\.id\\.name='tags'";
+    protected static final String QUERY_PATTERN_ARTICLES = 
+        ".*where obj\\.name=doc\\.fullName and obj\\.className='XWiki.ArticleClass' and obj\\.name<>'XWiki\\.ArticleClassTemplate' order by doc\\.creationDate desc";
     protected static final String QUERY_PATTERN_ALL_SPACES =
         "select distinct doc.web";
     protected static final String QUERY_PATTERN_DISTINCT_DOCUMENT_NAMES =

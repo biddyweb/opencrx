@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivitiesHelper.java,v 1.13 2007/12/13 00:47:31 wfro Exp $
+ * Name:        $Id: ActivitiesHelper.java,v 1.17 2008/06/04 00:13:51 wfro Exp $
  * Description: ActivitiesHelper
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/13 00:47:31 $
+ * Date:        $Date: 2008/06/04 00:13:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,7 +81,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.openmdx.base.jmi1.Authority;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.text.format.DateFormat;
 
 public class ActivitiesHelper {
@@ -123,11 +123,7 @@ public class ActivitiesHelper {
             else if("null".equals(this.calendarName)) {
                 return l.size();
             }
-            this.activityPackage = 
-                (org.opencrx.kernel.activity1.jmi1.Activity1Package)((Authority)pm.getObjectById(
-                    Authority.class,
-                    org.opencrx.kernel.activity1.jmi1.Activity1Package.AUTHORITY_XRI
-                )).refImmediatePackage();
+            this.activityPackage = Utils.getActivityPackage(this.pm); 
             this.activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
                     "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
@@ -179,7 +175,7 @@ public class ActivitiesHelper {
                 this.activityFilter = globalFilters.iterator().next();
             }
             else if("userhome".equals(calendarType)) {
-                this.userHome = (org.opencrx.kernel.home1.jmi1.UserHome)this.getPersistenceManager().getObjectById(
+                this.userHome = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
                     "xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + this.calendarName
                 );
             }
@@ -193,6 +189,21 @@ public class ActivitiesHelper {
         return l.size();
     }
         
+    //-----------------------------------------------------------------------
+    public void parseDisabledFilter(
+        String isDisabledFilter
+    ) {
+        this.isDisabledFilter = isDisabledFilter == null
+            ? false
+            : Boolean.valueOf(isDisabledFilter); 
+    }
+    
+    //-----------------------------------------------------------------------
+    public boolean isDisabledFilter(
+    ) {
+        return this.isDisabledFilter;
+    }
+    
     //-----------------------------------------------------------------------
     public ActivityGroup getActivityGroup(
     ) {
@@ -224,12 +235,6 @@ public class ActivitiesHelper {
     }
     
     //-----------------------------------------------------------------------
-    public Activity1Package getActivityPackage(
-    ) {
-        return this.activityPackage;
-    }
-    
-    //-----------------------------------------------------------------------
     public String getCalendarName(
     ) {
         return this.calendarName;
@@ -258,8 +263,28 @@ public class ActivitiesHelper {
             return this.resource.getAssignedActivity(activityQuery);
         }
         else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
+    }
+    
+    //-----------------------------------------------------------------------
+    public String getFilteredActivitiesParentId(
+    ) {
+        if(this.activityFilter != null) {
+            return this.activityFilter.refGetPath().getBase();
+        }
+        else if(this.activityGroup != null) {
+            return this.activityGroup.refGetPath().getBase();
+        }
+        else if(this.userHome != null) {
+            return this.userHome.refGetPath().getBase();
+        }
+        else if(this.resource != null) {
+            return this.resource.refGetPath().getBase();
+        }
+        else {
+            return "-";
+        }        
     }
     
     //-----------------------------------------------------------------------
@@ -354,5 +379,6 @@ public class ActivitiesHelper {
     protected org.opencrx.kernel.activity1.jmi1.Segment activitySegment = null;
     protected String calendarName = null;
     protected String filterName = null;
+    protected boolean isDisabledFilter;
     
 }

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ObjectIdBuilder.java,v 1.20 2008/02/03 17:04:00 wfro Exp $
+ * Name:        $Id: ObjectIdBuilder.java,v 1.21 2008/05/16 10:18:29 wfro Exp $
  * Description: ObjectIdBuilder
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/03 17:04:00 $
+ * Date:        $Date: 2008/05/16 10:18:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,49 @@ import org.openmdx.kernel.exception.BasicException;
 public class ObjectIdBuilder
     extends AbstractObjectIdBuilder {
 
+    public static class ObjectIdParser extends AbstractObjectIdBuilder.AbstractObjectIdParser {
+                
+        protected ObjectIdParser(
+            final Path path
+        ) {
+            super(path);
+        }
+
+        public List<String> getParentClass(
+            String parentObjectId
+        ) {
+            List<String> components = new ArrayList<String>();
+            StringTokenizer t = new StringTokenizer(parentObjectId, "/");
+            while(t.hasMoreTokens()) {
+                components.add(t.nextToken());          
+            }
+            if(components.isEmpty()) {
+                throw new RuntimeServiceException(
+                    StackedException.DEFAULT_DOMAIN,
+                    StackedException.ASSERTION_FAILURE, 
+                    new BasicException.Parameter[]{
+                        new BasicException.Parameter("objectId", parentObjectId)
+                    },
+                    "No components found for object id" 
+                );          
+            }
+            for(int i = 0; i < TYPE_NAMES.length; i++) {
+                if(TYPE_NAMES[i].equals(components.get(0))) {
+                    return CLASS_NAMES[i];
+                }
+            }
+            throw new RuntimeServiceException(
+                StackedException.DEFAULT_DOMAIN,
+                StackedException.ASSERTION_FAILURE, 
+                new BasicException.Parameter[]{
+                    new BasicException.Parameter("objectId", parentObjectId)
+                },
+                "No class found for object id" 
+            );          
+        }
+                
+    }
+    
     //-----------------------------------------------------------------------
     @Override
     protected String fromPath(
@@ -109,45 +152,10 @@ public class ObjectIdBuilder
 
     //-----------------------------------------------------------------------
     @Override
-    protected List<String> getTargetClass(
-        String objectId
-    ) {
-        List components = new ArrayList();
-        StringTokenizer t = new StringTokenizer(objectId, "/");
-        while(t.hasMoreTokens()) {
-            components.add(t.nextToken());          
-        }
-        if(components.isEmpty()) {
-            throw new RuntimeServiceException(
-                StackedException.DEFAULT_DOMAIN,
-                StackedException.ASSERTION_FAILURE, 
-                new BasicException.Parameter[]{
-                    new BasicException.Parameter("objectId", objectId)
-                },
-                "No components found for object id" 
-            );          
-        }
-        for(int i = 0; i < TYPE_NAMES.length; i++) {
-            if(TYPE_NAMES[i].equals(components.get(0))) {
-                return CLASS_NAMES[i];
-            }
-        }
-        throw new RuntimeServiceException(
-            StackedException.DEFAULT_DOMAIN,
-            StackedException.ASSERTION_FAILURE, 
-            new BasicException.Parameter[]{
-                new BasicException.Parameter("objectId", objectId)
-            },
-            "No class found for object id" 
-        );          
-    }
-
-    //-----------------------------------------------------------------------
-    @Override
     protected Path toPath(
         String objectId
     ) {
-      List components = new ArrayList();
+      List<String> components = new ArrayList<String>();
       StringTokenizer t = new StringTokenizer(objectId, "/");
       while(t.hasMoreTokens()) {
           components.add(t.nextToken());          
@@ -194,7 +202,7 @@ public class ObjectIdBuilder
                       "object id not valid for type" 
                   );                            
               }
-              objectIdComponents[i] = (String)components.get(pos);
+              objectIdComponents[i] = components.get(pos);
               pos++;
           }
           else {
@@ -214,7 +222,17 @@ public class ObjectIdBuilder
       }
       return path;
     }
-
+    
+    //-----------------------------------------------------------------------
+    public ObjectIdParser parseObjectId(
+        String objectId, 
+        List<String> baseClass
+    ) {
+        return new ObjectIdParser(
+            this.toPath(objectId)
+        );
+    }
+        
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
@@ -502,7 +520,7 @@ public class ObjectIdBuilder
         org.opencrx.kernel.uom1.jdo2.Uom.CLASS,
         org.openmdx.security.realm1.jdo2.Principal.CLASS,
         org.openmdx.security.authorization1.jdo2.Policy.CLASS,
-        null,
+        (List<String>)null,
         org.opencrx.kernel.contract1.jdo2.Lead.CLASS,
         org.openmdx.security.realm1.jdo2.Role.CLASS,
         org.openmdx.security.realm1.jdo2.Permission.CLASS,
@@ -558,7 +576,7 @@ public class ObjectIdBuilder
         org.opencrx.kernel.code1.jdo2.Segment.CLASS,
         org.opencrx.kernel.product1.jdo2.Segment.CLASS,
         org.opencrx.kernel.admin1.jdo2.Segment.CLASS,
-        null,
+        (List<String>)null,
         org.opencrx.kernel.account1.jdo2.SearchIndexEntry.CLASS,
         org.opencrx.kernel.product1.jdo2.PriceListEntry.CLASS,
         org.opencrx.kernel.home1.jdo2.WfActionLogEntry.CLASS,
@@ -566,7 +584,7 @@ public class ObjectIdBuilder
         org.opencrx.kernel.building1.jdo2.BuildingComplex.CLASS,
         org.opencrx.kernel.forecast1.jdo2.BudgetMilestone.CLASS,
         org.opencrx.kernel.activity1.jdo2.ActivityCategory.CLASS,
-        null,
+        (List<String>)null,
         org.opencrx.kernel.activity1.jdo2.MmsSlide.CLASS,
         org.opencrx.kernel.account1.jdo2.Account.CLASS,
         org.opencrx.kernel.home1.jdo2.WfProcessInstance.CLASS,
@@ -591,13 +609,13 @@ public class ObjectIdBuilder
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
         Collections.unmodifiableList(Arrays.asList("org", "opencrx", "kernel", "address1", "Addressable")),
-        null,
+        (List<String>)null,
         org.opencrx.kernel.workflow1.jdo2.Segment.CLASS,
         org.opencrx.kernel.uom1.jdo2.Segment.CLASS,
         org.opencrx.kernel.activity1.jdo2.Segment.CLASS,
         org.opencrx.kernel.home1.jdo2.Segment.CLASS,
         org.opencrx.kernel.contract1.jdo2.Segment.CLASS,
-        null,
+        (List<String>)null,
         org.openmdx.security.realm1.jdo2.Segment.CLASS,
         org.opencrx.security.identity1.jdo2.Segment.CLASS,
         org.openmdx.security.authorization1.jdo2.Segment.CLASS,
@@ -1045,5 +1063,5 @@ public class ObjectIdBuilder
         "objectFinder",
         "involvedObject"
     };
-    
+
 }

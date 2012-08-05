@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.12 2007/12/28 18:47:38 wfro Exp $
+ * Name:        $Id: Cloneable.java,v 1.15 2008/07/06 23:56:58 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/28 18:47:38 $
+ * Date:        $Date: 2008/07/06 23:56:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -90,6 +90,24 @@ public class Cloneable {
     }
     
     //-------------------------------------------------------------------------
+    protected Set<String> getReferenceFilter(
+        String referenceFilterAsString
+    ) {
+        Set<String> referenceFilter = referenceFilterAsString == null ? null : new HashSet<String>();
+        if(referenceFilter != null) {
+            if(referenceFilterAsString != null) {
+                StringTokenizer tokenizer = new StringTokenizer(referenceFilterAsString, " ;,", false);
+                while(tokenizer.hasMoreTokens()) {
+                    referenceFilter.add(
+                        tokenizer.nextToken()
+                    );
+                }
+            }
+        }
+        return referenceFilter;
+    }
+    
+    //-------------------------------------------------------------------------
     public BasicObject cloneAndUpdateReferences(
         Path originalIdentity,
         String referenceFilterAsString,
@@ -104,7 +122,8 @@ public class Cloneable {
             referenceFilterAsString == null  
                 ? DEFAULT_REFERENCE_FILTER
                 : referenceFilterAsString, 
-            replaceExisting
+            replaceExisting,
+            AttributeSelectors.ALL_ATTRIBUTES            
         );
         return clonedObject == null
             ? null
@@ -124,18 +143,11 @@ public class Cloneable {
         Path toContainer,
         Map objectMarshallers,
         String referenceFilterAsString,
-        boolean replaceExisting
+        boolean replaceExisting,
+        short attributeSelector
     ) throws ServiceException {
         // Clone object
-        List referenceFilter = referenceFilterAsString == null ? null : new ArrayList();
-        if(referenceFilterAsString != null) {
-            StringTokenizer tokenizer = new StringTokenizer(referenceFilterAsString, " ;,", false);
-            while(tokenizer.hasMoreTokens()) {
-                referenceFilter.add(
-                    new Path(original.path().toXri() + "/" + tokenizer.nextToken())
-                );
-            }
-        }        
+        Set<String> referenceFilter = this.getReferenceFilter(referenceFilterAsString);
         List replacements = new ArrayList();
         DataproviderObject cloned = this.cloneObject(
             original,
@@ -144,18 +156,10 @@ public class Cloneable {
             objectMarshallers,
             referenceFilter,
             replacements,
-            replaceExisting
+            replaceExisting,
+            attributeSelector
         );
         // Update references
-        referenceFilter = referenceFilterAsString == null ? null : new ArrayList();
-        if(referenceFilterAsString != null) {
-            StringTokenizer tokenizer = new StringTokenizer(referenceFilterAsString, " ;,", false);
-            while(tokenizer.hasMoreTokens()) {
-                referenceFilter.add(
-                    new Path(cloned.path().toXri() + "/" + tokenizer.nextToken())
-                );
-            }
-        }        
         this.applyReplacements(
             cloned.path(),
             true,
@@ -173,53 +177,33 @@ public class Cloneable {
      */
     public void collectReferencedObjects(
         DataproviderObject_1_0 object,
-        List referenceFilter,
-        Set referencedObjectPaths
-    ) {
+        Set<String> referenceFilter,
+        Set<Path> referencedObjectPaths
+    ) throws ServiceException {
+        Map<String,ModelElement_1_0> references = (Map)this.backend.getModel().getElement(
+            object.values(SystemAttributes.OBJECT_CLASS).get(0)
+        ).values("reference").get(0);        
         for(
-            Iterator i = object.attributeNames().iterator(); 
+            Iterator<String> i = object.attributeNames().iterator(); 
             i.hasNext(); 
         ) {
-            String attributeName = (String)i.next();
-            List values = object.values(attributeName);
-            for(Iterator j = values.iterator(); j.hasNext(); ) {
+            String featureName = i.next();
+            List<Object> values = object.values(featureName);
+            for(Iterator<Object> j = values.iterator(); j.hasNext(); ) {
                 Object value = j.next();
                 if(value instanceof Path) {
-                    Path referencedObjectPath = (Path)value;
-                    Path reference = object.path().getChild(attributeName);
-                    // Only add objects which match the reference filter
                     boolean matches = referenceFilter == null;
-                    Path matchingReferencePattern = null;
                     if(!matches) {
-                        for(Iterator k = referenceFilter.iterator(); k.hasNext(); ) {
-                            Path f = (Path)k.next();
-                            if(reference.isLike(f) && !f.endsWith(new String[]{":*"})) { 
-                                matchingReferencePattern = f;
-                                matches = true;
-                                break;
-                            }
+                        ModelElement_1_0 featureDef = references.get(featureName);
+                        if(featureDef != null) {
+                            String qualifiedFeatureName = (String)featureDef.values("qualifiedName").get(0);
+                            matches = 
+                                referenceFilter.contains(featureName) ||
+                                referenceFilter.contains(qualifiedFeatureName);
                         }
                     }
                     if(matches) {
-                        referencedObjectPaths.add(referencedObjectPath);
-                        List newReferenceFilter = new ArrayList();
-                        if(referenceFilter != null) {
-                            // Update the referenceFilter
-                            for(Iterator k = referenceFilter.iterator(); k.hasNext(); ) {
-                                Path f = (Path)k.next();
-                                if(
-                                    (f.size() > matchingReferencePattern.size()) &&
-                                    f.startsWith(matchingReferencePattern)
-                                ) {
-                                    newReferenceFilter.add(
-                                        referencedObjectPath.getDescendant(
-                                            f.getSuffix(matchingReferencePattern.size()+1)
-                                        )
-                                    );
-                                }
-                            }
-                            referenceFilter.addAll(newReferenceFilter);
-                        }
+                        referencedObjectPaths.add((Path)value);
                     }
                 }
             }
@@ -239,9 +223,10 @@ public class Cloneable {
         Path toContainer,
         Set excludeAttributes,
         Map objectMarshallers,
-        List referenceFilter,
-        List replacements,
-        boolean replaceExisting
+        Set<String> referenceFilter,
+        List<DataproviderObject_1_0> replacements,
+        boolean replaceExisting,
+        short attributeSelector
     ) throws ServiceException {
         
         // Clone original
@@ -334,14 +319,14 @@ public class Cloneable {
             );
         }
         // Clone content (shared and composite)
-        Map references = (Map)this.backend.getModel().getElement(
+        Map<String,ModelElement_1_0> references = (Map)this.backend.getModel().getElement(
             original.values(SystemAttributes.OBJECT_CLASS).get(0)
         ).values("reference").get(0);
         for(
-            Iterator i = references.values().iterator();
+            Iterator<ModelElement_1_0> i = references.values().iterator();
             i.hasNext();
         ) {
-            ModelElement_1_0 featureDef = (ModelElement_1_0)i.next();
+            ModelElement_1_0 featureDef = i.next();
             ModelElement_1_0 referencedEnd = this.backend.getModel().getElement(
                 featureDef.values("referencedEnd").get(0)
             );
@@ -349,43 +334,36 @@ public class Cloneable {
                 this.backend.getModel().isReferenceType(featureDef) &&
                 AggregationKind.COMPOSITE.equals(referencedEnd.values("aggregation").get(0)) &&
                 ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue();
-            boolean referenceIsShared = 
+            boolean referenceIsSharedAndChangeable = 
                 this.backend.getModel().isReferenceType(featureDef) &&
-                AggregationKind.SHARED.equals(referencedEnd.values("aggregation").get(0));
+                AggregationKind.SHARED.equals(referencedEnd.values("aggregation").get(0)) &&
+                ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue();
             
             // Only navigate changeable references which are either 'composite' or 'shared'
             // Do not navigate references with aggregation 'none'.
-            if(referenceIsCompositeAndChangeable || referenceIsShared) {
-                String reference = (String)featureDef.values("name").get(0);
-                Path referencePath = original.path().getChild(reference);
+            if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
+                String referenceName = (String)featureDef.values("name").get(0);
                 boolean matches = referenceFilter == null;
                 if(!matches) {
-                    for(
-                        Iterator k = referenceFilter.iterator(); 
-                        k.hasNext(); 
-                    ) {
-                        Path f = (Path)k.next();
-                        // Wildcard does only apply for composite references
-                        if(referencePath.isLike(f) && (!f.endsWith(new String[]{":*"}) || referenceIsCompositeAndChangeable)) {
-                            matches = true;
-                            break;
-                        }
-                    }
+                    String qualifiedReferenceName = (String)featureDef.values("qualifiedReferenceName").get(0);
+                    matches =
+                        referenceFilter.contains(referenceName) ||
+                        referenceFilter.contains(qualifiedReferenceName);
                 }
                 if(matches) {                                    
                     List content = this.backend.getDelegatingRequests().addFindRequest(
-                        original.path().getChild(reference),
+                        original.path().getChild(referenceName),
                         null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
+                        attributeSelector,
                         0,
                         Integer.MAX_VALUE,
                         Directions.ASCENDING
                     );
                     for(
-                        Iterator j = content.iterator();
+                        Iterator<DataproviderObject> j = content.iterator();
                         j.hasNext();
                     ) {
-                        DataproviderObject contained = (DataproviderObject)j.next();
+                        DataproviderObject contained = j.next();
                         Path containedIdentity = new Path((String)contained.values(SystemAttributes.OBJECT_IDENTITY).get(0));
                         this.cloneObject(
                             contained,
@@ -393,190 +371,22 @@ public class Cloneable {
                             // In this case case add the clone of contained as child of clone. Otherwise
                             // add the clone of contained to its composite parent
                             contained.path().equals(containedIdentity)
-                                ? clone.path().getChild(reference)
+                                ? clone.path().getChild(referenceName)
                                 : containedIdentity.getParent(),
                             excludeAttributes,
                             objectMarshallers,
                             referenceFilter,
                             replacements,
-                            replaceExisting
+                            replaceExisting,
+                            attributeSelector
                         );
                     }
                 }
-            }
-        }
-        // Clone referenced objects
-        Set referencedObjectIdentities = new HashSet();
-        this.collectReferencedObjects(
-            original,
-            referenceFilter,
-            referencedObjectIdentities  
-        );
-        for(
-            Iterator i = referencedObjectIdentities.iterator(); 
-            i.hasNext(); 
-        ) {
-            Path referencedObjectPath = (Path)i.next();
-            DataproviderObject_1_0 referencedObject = null;
-            try {
-                referencedObject = this.backend.retrieveObject(referencedObjectPath);
-            } catch(Exception e) {}
-            if(referencedObject != null) {
-                Path newReference = 
-                    this.cloneObject(
-                        this.backend.retrieveObject(referencedObjectPath),
-                        referencedObjectPath.getParent(),
-                        excludeAttributes,
-                        objectMarshallers,
-                        referenceFilter,
-                        replacements,
-                        replaceExisting
-                    ).path();
-                // Create ReferenceReplacement. To references to cloned objects must be updated
-                replacement = new DataproviderObject(new Path("xri:@openmdx:*"));
-                replacement.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:base:ReferenceReplacement");
-                replacement.values("oldReference").add(referencedObjectPath);
-                replacement.values("newReference").add(newReference);
-                replacements.add(replacement);
             }
         }
         return clone;
     }
 
-    //-------------------------------------------------------------------------
-    public void deleteCompositeAndReferencedObjects(
-        DataproviderObject_1_0 object,
-        String referenceFilterAsString
-    ) throws ServiceException {
-        List referenceFilter = new ArrayList();
-        if(referenceFilterAsString != null) {
-            StringTokenizer tokenizer = new StringTokenizer(referenceFilterAsString, " ;,", false);
-            while(tokenizer.hasMoreTokens()) {
-                referenceFilter.add(
-                    new Path(object.path().toXri() + "/" + tokenizer.nextToken())
-                );
-            }
-        }
-        this.deleteReferencedObjects(
-            object,
-            referenceFilter
-        );        
-        // Remove object and all composite objects (even composite not
-        // member of referenceFilter)
-        this.backend.removeObject(
-            object.path()
-        );
-    }
-    
-    //-------------------------------------------------------------------------
-    private void deleteReferencedObjects(
-        DataproviderObject_1_0 object,
-        List referenceFilter
-    ) throws ServiceException {
-
-        Path objectIdentity = object.path();
-        
-        // Remove composite (and their referenced) objects
-        Map references = (Map)this.backend.getModel().getElement(
-            object.values(SystemAttributes.OBJECT_CLASS).get(0)
-        ).values("reference").get(0);
-        for(
-            Iterator i = references.values().iterator();
-            i.hasNext();
-        ) {
-            ModelElement_1_0 featureDef = (ModelElement_1_0)i.next();
-            ModelElement_1_0 referencedEnd = this.backend.getModel().getElement(
-                featureDef.values("referencedEnd").get(0)
-            );
-            if(
-                this.backend.getModel().isReferenceType(featureDef) &&
-                AggregationKind.COMPOSITE.equals(referencedEnd.values("aggregation").get(0))
-            ) {
-                String reference = (String)featureDef.values("name").get(0);
-                if(!CLONE_EXCLUDE_COMPOSITE_REFERENCES.contains(reference)) {
-                    Path referencePath = objectIdentity.getChild(reference);
-                    boolean matches = referenceFilter == null;
-                    if(!matches) {
-                        for(
-                            Iterator k = referenceFilter.iterator(); 
-                            k.hasNext(); 
-                        ) {
-                            if(referencePath.isLike((Path)k.next())) {
-                                matches = true;
-                                break;
-                            }
-                        }
-                    }
-                    if(matches) {                
-                        List content = this.backend.getDelegatingRequests().addFindRequest(
-                            objectIdentity.getChild(reference),
-                            null,
-                            AttributeSelectors.ALL_ATTRIBUTES,
-                            0,
-                            Integer.MAX_VALUE,
-                            Directions.ASCENDING
-                        );
-                        for(
-                            Iterator j = content.iterator();
-                            j.hasNext();
-                        ) {
-                            DataproviderObject_1_0 composite = (DataproviderObject_1_0)j.next();
-                            this.deleteReferencedObjects(
-                                composite,
-                                referenceFilter
-                            );
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Remove referenced objects
-        Set referencedObjectPaths = new HashSet();        
-        this.collectReferencedObjects(
-            object,
-            referenceFilter,
-            referencedObjectPaths  
-        );
-        for(
-            Iterator i = referencedObjectPaths.iterator(); 
-            i.hasNext(); 
-        ) {
-            Path referencedObject = (Path)i.next();
-            try {
-                this.backend.removeObject(
-                    referencedObject
-                );                
-            } 
-            // Don't care if removal of referenced objects fails
-            catch(ServiceException e) {}
-        }
-    }
-    
-    //-------------------------------------------------------------------------
-    public int applyReplacements(
-        Path objectIdentity,
-        boolean isChangeable,
-        List replacements,
-        String referenceFilterAsString
-    ) throws ServiceException {
-        List referenceFilter = new ArrayList();
-        if(referenceFilterAsString != null) {
-            StringTokenizer tokenizer = new StringTokenizer(referenceFilterAsString, " ;,", false);
-            while(tokenizer.hasMoreTokens()) {
-                referenceFilter.add(
-                    new Path(objectIdentity.toXri() + "/" + tokenizer.nextToken())
-                );
-            }
-        }
-        return this.applyReplacements(
-            objectIdentity,
-            isChangeable,
-            replacements,
-            referenceFilter
-        );
-    }
-    
     //-------------------------------------------------------------------------
     /**
      * Applies the replacements to object and its content including the referenced
@@ -592,7 +402,7 @@ public class Cloneable {
         Path objectIdentity,
         boolean isChangeable,
         List replacements,
-        List referenceFilter
+        Set<String> referenceFilter
     ) throws ServiceException {
 
         int numberOfReplacements = 0;
@@ -735,23 +545,17 @@ public class Cloneable {
             // Only navigate changeable references which are either 'composite' or 'shared'
             // Do not navigate references with aggregation 'none'.
             if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
-                String reference = (String)featureDef.values("name").get(0);
-                Path referencePath = objectIdentity.getChild(reference);
+                String featureName = (String)featureDef.values("name").get(0);
                 boolean matches = referenceFilter == null;
                 if(!matches) {
-                    for(
-                        Iterator k = referenceFilter.iterator(); 
-                        k.hasNext(); 
-                    ) {
-                        if(referencePath.isLike((Path)k.next())) {
-                            matches = true;
-                            break;
-                        }
-                    }
+                    String qualifiedFeatureName = (String)featureDef.values("qualifiedName").get(0);
+                    matches =
+                        referenceFilter.contains(featureName) ||
+                        referenceFilter.contains(qualifiedFeatureName);
                 }
                 if(matches) {                
                     List content = this.backend.getDelegatingRequests().addFindRequest(
-                        objectIdentity.getChild(reference),
+                        objectIdentity.getChild(featureName),
                         null,
                         AttributeSelectors.ALL_ATTRIBUTES,
                         0,
@@ -759,10 +563,10 @@ public class Cloneable {
                         Directions.ASCENDING
                     );
                     for(
-                        Iterator j = content.iterator();
+                        Iterator<DataproviderObject_1_0> j = content.iterator();
                         j.hasNext();
                     ) {
-                        DataproviderObject_1_0 composite = (DataproviderObject_1_0)j.next();
+                        DataproviderObject_1_0 composite = j.next();
                         numberOfReplacements += this.applyReplacements(
                             composite.path(),
                             ((Boolean)referencedEnd.values("isChangeable").get(0)).booleanValue(),
@@ -773,71 +577,29 @@ public class Cloneable {
                 }
             }
         }        
-        
-        // In addition apply replacement to referenced objects
-        Set referencedObjectPaths = new HashSet();
-        this.collectReferencedObjects(
-            object,
-            referenceFilter,
-            referencedObjectPaths  
-        );
-        for(
-            Iterator i = referencedObjectPaths.iterator(); 
-            i.hasNext(); 
-        ) {
-            numberOfReplacements += this.applyReplacements(
-                (Path)i.next(),
-                true,
-                replacements,
-                referenceFilter
-            );
-        }
         return numberOfReplacements;
     }
     
     //-------------------------------------------------------------------------
-    public Path createObjectFromTemplate(
-        DataproviderObject_1_0 source,
-        String name,
-        String referenceFilterAsString
-    ) throws ServiceException {
-        Path clonedIdentity = this.cloneAndUpdateReferences(
-            source,
-            source.path().getParent(),
-            null,
-            referenceFilterAsString,
-            false
-        ).path();
-        DataproviderObject cloned = this.backend.retrieveObjectForModification(
-            clonedIdentity
-        );
-        cloned.clearValues("isTemplate").add(Boolean.FALSE);
-        if(name != null) {
-            cloned.clearValues("name").add(name);
-        }
-        return clonedIdentity;
-    }
-
-    //-------------------------------------------------------------------------
     // Variables
     //-------------------------------------------------------------------------    
-    public static final Set CLONE_EXCLUDE_ATTRIBUTES =
-        new HashSet(Arrays.asList(new String[]{"activityNumber"}));
+    public static final Set<String> CLONE_EXCLUDE_ATTRIBUTES =
+        new HashSet<String>(Arrays.asList("activityNumber"));
     
-    public static final Set CLONE_EXCLUDE_COMPOSITE_REFERENCES =
-        new HashSet(Arrays.asList(new String[]{"view"}));
+    public static final Set<String> CLONE_EXCLUDE_COMPOSITE_REFERENCES =
+        new HashSet<String>(Arrays.asList("view"));
     
     public static final String DEFAULT_REFERENCE_FILTER = ":*, :*/:*/:*, :*/:*/:*/:*/:*";
     
-    public static final Set CLONEABLE_READONLY_FEATURES =
-        new HashSet(Arrays.asList(new String[]{
+    public static final Set<String> CLONEABLE_READONLY_FEATURES =
+        new HashSet<String>(Arrays.asList(
             "org:opencrx:kernel:contract1:ContractPosition:lineItemNumber",
             "org:opencrx:kernel:product1:ProductDescriptor:product",
             "org:opencrx:kernel:account1:AbstractAccount:fullName",
             "org:opencrx:kernel:product1:ProductConfigurationSet:configType",
             "org:opencrx:kernel:product1:ProductConfiguration:configType",
             "org:opencrx:kernel:activity1:Activity:ical"
-        }));
+        ));
     
     public static final int MANUAL_QUALIFIER_THRESHOLD = 10;
     

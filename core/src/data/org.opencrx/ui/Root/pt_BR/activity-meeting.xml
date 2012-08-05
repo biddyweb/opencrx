@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Meeting:meetingParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contatos Envolvidos</_item>
+                        <_item>Contas Envolvidas</_item>
                       </label>
                       <toolTip>
-                        <_item>Contatos Envolvidos</_item>
+                        <_item>Contas Envolvidas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -50,7 +50,7 @@
                         <_item>Competidores</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os Competidores</_item>
+                        <_item>Todos os Competidores</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contato Envolvido</_item>
+                        <_item>Conta Envolvida</_item>
                       </label>
                       <toolTip>
-                        <_item>Contato envolvido</_item>
+                        <_item>Conta Envolvida</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contatos</_item>
+                        <_item>Conta</_item>
                       </label>
                       <toolTip>
-                        <_item>Contato</_item>
+                        <_item>Conta</_item>
                       </toolTip>
                     </_object>
                     <_content/>

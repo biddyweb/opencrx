@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityProcess" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fasi di attivita&apos;</_item>
+                        <_item>Elaborazioni Attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>tutte le fasi di attivita&apos;</_item>
+                        <_item>tutte le elaborazioni di attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prosecuzione Attvita&apos;</_item>
+                        <_item>Prosecuzione di Attvita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Prosecuzione Attivita&apos;</_item>
+                        <_item>Prosecuzione di Attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcess" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fase Attivita&apos;</_item>
+                        <_item>Elaborazione Attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Fase Attivita&apos;</_item>
+                        <_item>Elaborazione Attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -116,7 +116,7 @@
                         <_item>Stati</_item>
                       </label>
                       <toolTip>
-                        <_item>Stati</_item>
+                        <_item>tutti gli stati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -127,7 +127,7 @@
                         <_item>Transizioni</_item>
                       </label>
                       <toolTip>
-                        <_item>Transizioni</_item>
+                        <_item>tutte le transizioni</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato Fase Attivita&apos;</_item>
+                        <_item>Stato elaborazione Attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato Fase Attivita&apos;</_item>
+                        <_item>Stato elaborazione Attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Transizione Fase Attivita&apos;</_item>
+                        <_item>Transizione Elaborazione Attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Transizione Fase Attivita&apos;</_item>
+                        <_item>Transizione Elaborazione Attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:errState" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stato Errore</_item>
+                        <_item>Stato di Errore</_item>
                       </label>
                       <toolTip>
-                        <_item>Stato Errore</_item>
+                        <_item>Stato di Errore</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:WfAction:wfProcess" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fase Procedura</_item>
+                        <_item>Elaborazione Procedura</_item>
                       </label>
                       <toolTip>
-                        <_item>Fase Procedura</_item>
+                        <_item>Elaborazione Procedura</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -443,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreationAction:activityCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Creatore Attivita&apos;</_item>
+                        <_item>Creatore di Attivita&apos;</_item>
                       </label>
                       <toolTip>
-                        <_item>Creatore Attivita&apos;</_item>
+                        <_item>Creatore di Attivita&apos;</_item>
                       </toolTip>
                     </_object>
                     <_content/>

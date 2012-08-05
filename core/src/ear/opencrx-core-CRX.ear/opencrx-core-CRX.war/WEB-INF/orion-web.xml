@@ -10,5 +10,5 @@
 	</security-role-mapping>
 	<security-role-mapping name="OpenCrxRoot">
 	</security-role-mapping>
-	<ejb-ref-mapping location="org/opencrx/core/CRX/local/noOrNew/gateway" name="ejb/data"/>
+	<ejb-ref-mapping location="org/opencrx/core/CRX/EntityManagerFactory" name="ejb/EntityManagerFactory"/>
 </orion-web-app>

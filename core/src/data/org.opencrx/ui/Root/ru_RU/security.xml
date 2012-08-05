@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Предметы безопасности</_item>
+                        <_item> Объекты безопасности</_item>
                       </label>
                       <toolTip>
-                        <_item>Предметы безопасности</_item>
+                        <_item>Объекты безопасности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:Segment:subject" _operation="create">
                     <_object>
                       <label>
-                        <_item>Пользователи / Группы</_item>
+                        <_item>Объекты</_item>
                       </label>
                       <toolTip>
-                        <_item>Пользователи / Группы</_item>
+                        <_item>Объекты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm" _operation="create">
                     <_object>
                       <label>
-                        <_item>Область</_item>
+                        <_item>Область безопасности</_item>
                       </label>
                       <toolTip>
-                        <_item>Область</_item>
+                        <_item>Область безопасности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -333,10 +333,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal" _operation="create">
                     <_object>
                       <label>
-                        <_item>Адм-р доступа</_item>
+                        <_item>Адм-р доступа (openMDX)</_item>
                       </label>
                       <toolTip>
-                        <_item>Адм-р доступа</_item>
+                        <_item>Адм-р доступа (openMDX)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -366,10 +366,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:subject" _operation="create">
                     <_object>
                       <label>
-                        <_item>Субъект</_item>
+                        <_item>Объект</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект</_item>
+                        <_item>Объект</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -407,13 +407,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:authCredential" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Документы авторизации</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Документы авторизации</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:credential" _operation="create">
                     <_object>
                       <label>
-                        <_item>Учетная запись аудентификации</_item>
+                        <_item>Документы авторизации</_item>
                       </label>
                       <toolTip>
-                        <_item>Учетная запись аудентификации</_item>
+                        <_item>Документы авторизации</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -443,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Админ. группа</_item>
+                        <_item>Группа администраторов</_item>
                       </label>
                       <toolTip>
-                        <_item>Админ. группа</_item>
+                        <_item>Группа администраторов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -465,10 +476,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:grantedRole" _operation="create">
                     <_object>
                       <label>
-                        <_item>Присв. роли</_item>
+                        <_item>Разрешенные роли</_item>
                       </label>
                       <toolTip>
-                        <_item>Присв. роли</_item>
+                        <_item>Разрешенные роли</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -608,10 +619,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Permission:action" _operation="create">
                     <_object>
                       <label>
-                        <_item>Операция</_item>
+                        <_item>Действие</_item>
                       </label>
                       <toolTip>
-                        <_item>Операция</_item>
+                        <_item>Действие</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -630,10 +641,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Subject" _operation="create">
                     <_object>
                       <label>
-                        <_item>Субъект</_item>
+                        <_item>Объект</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект</_item>
+                        <_item>Объект</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -641,10 +652,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Subject:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Субъект</_item>
+                        <_item>Объект</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект</_item>
+                        <_item>Объект</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -685,10 +696,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Group" _operation="create">
                     <_object>
                       <label>
-                        <_item>Основная</_item>
+                        <_item>Группа</_item>
                       </label>
                       <toolTip>
-                        <_item>Основная</_item>
+                        <_item>Группа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -707,7 +718,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Group:grantedRole" _operation="create">
                     <_object>
                       <label>
-                        <_item>Присв. роли</_item>
+                        <_item>Разрешенные роли</_item>
                       </label>
                       <toolTip>
                         <_item>Присв. роли</_item>
@@ -718,10 +729,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Group:credential" _operation="create">
                     <_object>
                       <label>
-                        <_item>Аудентификационные учетные записи</_item>
+                        <_item>Аудентификационные документы</_item>
                       </label>
                       <toolTip>
-                        <_item>Аудентификационные учетные записи</_item>
+                        <_item>Аудентификационные документы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -729,10 +740,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:UserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Пользовательские Группы</_item>
+                        <_item>Группа пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Пользовательские Группы</_item>
+                        <_item>Группа пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -740,10 +751,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:UserGroup:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Пользовательские Группы</_item>
+                        <_item>Группа пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Пользовательские Группы</_item>
+                        <_item>Группа пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -762,10 +773,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:UserGroup:isMemberOf" _operation="create">
                     <_object>
                       <label>
-                        <_item>Участник Пользовательской Группы</_item>
+                        <_item>Член группы пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Участник Пользовательской Группы</_item>
+                        <_item>Член группы пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -773,10 +784,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:LocalUserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Локальная Пользовательская Группа</_item>
+                        <_item>Локальная группа пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Локальная Пользовательская Группа</_item>
+                        <_item>Локальная группа пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -784,10 +795,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:LocalUserGroup:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Локальная Пользовательская Группа</_item>
+                        <_item>Локальная группа пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Локальная Пользовательская Группа</_item>
+                        <_item>Локальная группа пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -795,10 +806,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:LocalUserGroup:exportedTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Экспортировать в</_item>
+                        <_item>Экспортировано в</_item>
                       </label>
                       <toolTip>
-                        <_item>Экспортировать в</_item>
+                        <_item>Экспортировано в</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -806,10 +817,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:LocalUserGroup:isMemberOf" _operation="create">
                     <_object>
                       <label>
-                        <_item>Участник Пользовательских Групп</_item>
+                        <_item>Член групп пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Участник Пользовательских Групп</_item>
+                        <_item>Член групп пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -817,10 +828,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:ImportedUserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Импортированная Пользовательская Группа</_item>
+                        <_item>Импортированная группа пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Импортированная Пользовательская Группа</_item>
+                        <_item>Импортированная группа пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -883,10 +894,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:User:isMemberOf" _operation="create">
                     <_object>
                       <label>
-                        <_item>Участник Пользовательский Групп</_item>
+                        <_item>Член групп пользователей</_item>
                       </label>
                       <toolTip>
-                        <_item>Участник Пользовательский Групп</_item>
+                        <_item>Член групп пользователей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -960,10 +971,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:ChallengeResponse" _operation="create">
                     <_object>
                       <label>
-                        <_item>ОпознОтвет</_item>
+                        <_item>Ответ на запрос</_item>
                       </label>
                       <toolTip>
-                        <_item>ОпознОтвет</_item>
+                        <_item>Ответ на запрос</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -993,10 +1004,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:Pane:Op:Tab:set" _operation="create">
                     <_object>
                       <label>
-                        <_item>Уст. пароль</_item>
+                        <_item>Установить пароль</_item>
                       </label>
                       <toolTip>
-                        <_item>Уст. пароль</_item>
+                        <_item>Установить пароль</_item>
                       </toolTip>
                     </_object>
                     <_content/>

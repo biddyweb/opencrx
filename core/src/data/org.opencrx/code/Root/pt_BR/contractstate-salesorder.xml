@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -40,7 +40,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Aberto/ Em andamento</_item>
+                              <_item>Aberto/Em andamento</_item>
                             </shortText>
                             <longText>
                               <_item>[02] Aberto/ Em andamento</_item>
@@ -131,7 +131,7 @@
                               <_item>Fechado/revisado</_item>
                             </shortText>
                             <longText>
-                              <_item>Fecahdo / revisado</_item>
+                              <_item>Fechado/revisado</_item>
                             </longText>
                           </_object>
                           <_content/>

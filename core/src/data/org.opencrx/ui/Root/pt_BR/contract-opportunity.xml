@@ -28,7 +28,7 @@
                         <_item>Oportunidades</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as oportunidades</_item>
+                        <_item>Todas as oportunidades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Posições</_item>
                       </label>
                       <toolTip>
-                        <_item>Posições de Oportunidade</_item>
+                        <_item>Posições de Oportunidades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cotações Relacionadas</_item>
+                        <_item>Ofertas Relacionadas</_item>
                       </label>
                       <toolTip>
-                        <_item>Cotações Relacionadas</_item>
+                        <_item>Ofertas Relacionadas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:contractLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Linguagem de Oportunidade</_item>
+                        <_item>Idioma da Oportunidade</_item>
                       </label>
                       <toolTip>
-                        <_item>Linguagem de Oportunidade</_item>
+                        <_item>Idioma da Oportunidade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:opportunitySource" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fonte de Oportunidade</_item>
+                        <_item>Fonte da Oportunidade</_item>
                       </label>
                       <toolTip>
-                        <_item>Fonte de Oportunidade</_item>
+                        <_item>Fonte da Oportunidade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:closeProbability" _operation="create">
                     <_object>
                       <label>
-                        <_item>Probabilidade de Errar</_item>
+                        <_item>Probabilidade de Fechar</_item>
                       </label>
                       <toolTip>
-                        <_item>Probabilidade de Errar</_item>
+                        <_item>Probabilidade de Fechar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:Pane:Op:Tab:createQuote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criar Quota</_item>
+                        <_item>Criar Cotação</_item>
                       </label>
                       <toolTip>
-                        <_item>Criar Quota</_item>
+                        <_item>Criar Cotação</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +190,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityCreateQuoteResult:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cotizar</_item>
+                        <_item>Cotação</_item>
                       </label>
                       <toolTip>
-                        <_item>Cotizar</_item>
+                        <_item>Cotação</_item>
                       </toolTip>
                     </_object>
                     <_content/>

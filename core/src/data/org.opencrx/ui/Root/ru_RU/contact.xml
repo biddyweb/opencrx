@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета</_item>
+                        <_item>Учетная запись</_item>
                       </label>
                       <toolTip>
-                        <_item>Счета</_item>
+                        <_item>Учетные записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счета</_item>
+                        <_item>Учетные записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Счета</_item>
+                        <_item>Учетные записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Контакт</_item>
                       </label>
                       <toolTip>
-                        <_item>Контакт. лицо</_item>
+                        <_item>Контактное лицо</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Конт. информация</_item>
+                        <_item>Контактная информация</_item>
                       </label>
                       <toolTip>
-                        <_item>Конт. информация</_item>
+                        <_item>Контактная информация</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>Перс. информация</_item>
+                        <_item>Персональные данные</_item>
                       </label>
                       <toolTip>
-                        <_item>Перс. информация</_item>
+                        <_item>Персоналдьные данные</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -94,7 +94,7 @@
                         <_item>Код приветствия</_item>
                       </label>
                       <toolTip>
-                        <_item>Код приветствия</_item>
+                        <_item>Код приветствия лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -105,7 +105,7 @@
                         <_item>Приветствие</_item>
                       </label>
                       <toolTip>
-                        <_item>Приветствие</_item>
+                        <_item>Приветствие лица</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -149,7 +149,7 @@
                         <_item>Суффикс</_item>
                       </label>
                       <toolTip>
-                        <_item>Суффикс</_item>
+                        <_item>Суффикс субъекта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
                     <_object>
                       <label>
-                        <_item>Предпочт. метод</_item>
+                        <_item>Предпочтительный метод</_item>
                       </label>
                       <toolTip>
-                        <_item>Предпочт. метод контакта</_item>
+                        <_item>Предпочитаемый способ связи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Разг. язык</_item>
+                        <_item>Язык, на котором разговаривает субъект</_item>
                       </label>
                       <toolTip>
-                        <_item>Предпочт. разг. язык</_item>
+                        <_item>Предпочитаемый субъектом язык для переговоров</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +190,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Письм. язык</_item>
+                        <_item>Письменный язык</_item>
                       </label>
                       <toolTip>
-                        <_item>Предпочт. письм. язык</_item>
+                        <_item>Предпочитаемый субъектом язык для переписки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail" _operation="create">
                     <_object>
                       <label>
-                        <_item>Нет эл. почты</_item>
+                        <_item>Нет электронной почты</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект не указ. адрес эл. почты</_item>
+                        <_item>Индикатор &quot;не посылать субъекту электронную почту&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPostalMail" _operation="create">
                     <_object>
                       <label>
-                        <_item>Нет почт. адреса</_item>
+                        <_item>Не посылать почту</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект не указ. почт. адрес</_item>
+                        <_item>Индикатор &quot;Не посылать почту субъекту&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotBulkPostalMail" _operation="create">
                     <_object>
                       <label>
-                        <_item>Нет больш. почты</_item>
+                        <_item>Не посылать больших отправлений</_item>
                       </label>
                       <toolTip>
-                        <_item>Субъект не послал больш. почт. индикаторов</_item>
+                        <_item>Индикатор &quot;не посылать больших почтовых отправлений&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -234,10 +234,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPhone" _operation="create">
                     <_object>
                       <label>
-                        <_item>Не телефон</_item>
+                        <_item>Не звонить</_item>
                       </label>
                       <toolTip>
-                        <_item>Нет телефонного индикатора</_item>
+                        <_item>Индикатор &quot;Субъекту не звонить&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotFax" _operation="create">
                     <_object>
                       <label>
-                        <_item>Не факс</_item>
+                        <_item>Не отправлять факс</_item>
                       </label>
                       <toolTip>
-                        <_item>Нет индикатора факса</_item>
+                        <_item>Индикатор &quot;Факсов сбъекту не отправлять&quot;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:department" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отдел</_item>
+                        <_item>Подразделение</_item>
                       </label>
                       <toolTip>
-                        <_item>Отдел</_item>
+                        <_item>Подразделение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:900100:Group:99" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>УСТАРЕЛО</_item>
+                      </label>
+                      <toolTip>
+                        <_item>УСТАРЕЛО</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Кому передать инф-ю</_item>
+                        <_item>Передать информацию</_item>
                       </label>
                       <toolTip>
-                        <_item>Кому передать инф-ю</_item>
+                        <_item>Кому передать информацию</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ассистент субъекта</_item>
+                        <_item>Помощник субъекта</_item>
                       </label>
                       <toolTip>
-                        <_item>Ассистент субъекта</_item>
+                        <_item>Помощник субъекта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -358,7 +369,7 @@
                         <_item>Дети</_item>
                       </label>
                       <toolTip>
-                        <_item>Кол-во детей</_item>
+                        <_item>Кол-во детей субъекта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -370,6 +381,17 @@
                       </label>
                       <toolTip>
                         <_item>Имена детей</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:religion" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Религия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Верование субъекта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
                     <_object>
                       <label>
-                        <_item>Юбилейная дата</_item>
+                        <_item>Дата годовщины</_item>
                       </label>
                       <toolTip>
-                        <_item>Юбилейная дата субъекта</_item>
+                        <_item>Дата годовщины субъекта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -440,6 +462,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:citizenship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Гражданство</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Гражданство</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
                     <_object>
                       <label>
@@ -449,6 +482,10 @@
                         <_item>Изображение</_item>
                       </toolTip>
                     </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="null">
+                    <_object/>
                     <_content>
                       <alternateElementDefinition>
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
@@ -476,46 +513,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Экспорт как vCard</_item>
+                        <_item>Импорт vCard</_item>
                       </label>
                       <toolTip>
-                        <_item>Экспорт как vCard</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ввод</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ввод</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Язык</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Язык</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Результат</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Результат</_item>
+                        <_item>Импорт vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

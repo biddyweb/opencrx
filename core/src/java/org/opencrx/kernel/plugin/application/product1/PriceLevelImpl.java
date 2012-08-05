@@ -1,7 +1,7 @@
 package org.opencrx.kernel.plugin.application.product1;
 
 import org.opencrx.kernel.product1.jmi1.Product1Package;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
 
 public class PriceLevelImpl extends AbstractPriceLevelImpl {
@@ -22,7 +22,7 @@ public class PriceLevelImpl extends AbstractPriceLevelImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.product1.jmi1.ProcessPricesResult clonePriceLevel(
         org.opencrx.kernel.product1.jmi1.ClonePriceLevelParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         try {        
             Integer numberProcessed = this.getBackend().getProducts().clonePriceLevel(
                 this.current.refGetPath(),
@@ -37,7 +37,7 @@ public class PriceLevelImpl extends AbstractPriceLevelImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }             
     }
     

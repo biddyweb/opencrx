@@ -1,4 +1,4 @@
-/* This software is published under the BSD license                          */
+﻿/* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
 /* Copyright (c) 2004-2008, CRIXP Corp., Switzerland                         */
@@ -77,7 +77,7 @@ INSERT INTO OOCKE1_position_number_SEQ (nextval) VALUES (1000000)
 GO
 
 
-/****** Object:  Table [dbo].[JPOX_TABLES]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[JPOX_TABLES]    Script Date: 07/08/2008 12:06:22 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -96,7 +96,7 @@ CREATE TABLE [dbo].[JPOX_TABLES](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACCESSHISTORY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACCESSHISTORY]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -122,7 +122,7 @@ CREATE TABLE [dbo].[OOCKE1_ACCESSHISTORY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACCESSHISTORY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACCESSHISTORY_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -142,7 +142,7 @@ CREATE TABLE [dbo].[OOCKE1_ACCESSHISTORY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACCOUNT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACCOUNT]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -317,14 +317,25 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNT](
 	[EXT_CODE16] [smallint] NULL,
 	[EXT_CODE19] [smallint] NULL,
 	[EXT_CODE18] [smallint] NULL,
+	[EXT_CODE26_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE27_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE24_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE25_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE22_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE23_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE28_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE20_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE29_] [int] NOT NULL DEFAULT ((-1)),
+	[EXT_CODE21_] [int] NOT NULL DEFAULT ((-1)),
+	[VCARD] [text] COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
  CONSTRAINT [OOCKE1_ACCOUNT_PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC
 )WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACCOUNT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACCOUNT_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -353,6 +364,16 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNT_](
 	[OU_MEMBERSHIP] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[RELIGION] [smallint] NULL,
 	[CITIZENSHIP] [smallint] NULL,
+	[EXT_CODE21] [smallint] NULL,
+	[EXT_CODE22] [smallint] NULL,
+	[EXT_CODE20] [smallint] NULL,
+	[EXT_CODE25] [smallint] NULL,
+	[EXT_CODE26] [smallint] NULL,
+	[EXT_CODE23] [smallint] NULL,
+	[EXT_CODE24] [smallint] NULL,
+	[EXT_CODE29] [smallint] NULL,
+	[EXT_CODE28] [smallint] NULL,
+	[EXT_CODE27] [smallint] NULL,
  CONSTRAINT [OOCKE1_ACCOUNT__PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC,
@@ -361,7 +382,7 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACCOUNTASSIGNMENT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACCOUNTASSIGNMENT]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -421,6 +442,8 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNTASSIGNMENT](
 	[USER_DATE2] [datetime] NULL,
 	[USER_DATE3] [datetime] NULL,
 	[ACCOUNT_ROLE] [smallint] NULL,
+	[QUALITY] [smallint] NULL,
+	[FOR_USE_BY_] [int] NOT NULL DEFAULT ((-1)),
  CONSTRAINT [OOCKE1_ACCOUNTASSIGNMENT_PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC
@@ -428,7 +451,7 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNTASSIGNMENT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACCOUNTASSIGNMENT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACCOUNTASSIGNMENT_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -449,6 +472,7 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNTASSIGNMENT_](
 	[USER_NUMBER4] [decimal](19, 9) NULL,
 	[USER_STRING4] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[DTYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
+	[FOR_USE_BY] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
  CONSTRAINT [OOCKE1_ACCOUNTASSIGNMENT__PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC,
@@ -457,7 +481,7 @@ CREATE TABLE [dbo].[OOCKE1_ACCOUNTASSIGNMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITY]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -554,6 +578,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITY](
 	[IS_ALL_DAY_EVENT] [bit] NULL,
 	[LOCATION] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[ICAL] [ntext] COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[LAST_APPLIED_CREATOR] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
  CONSTRAINT [OOCKE1_ACTIVITY_PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC
@@ -561,7 +586,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITY](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITY_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -591,7 +616,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYCREATOR]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYCREATOR]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -659,7 +684,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYCREATOR](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYCREATOR_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYCREATOR_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -689,7 +714,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYCREATOR_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYEFFORTESTI]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYEFFORTESTI]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -720,7 +745,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYEFFORTESTI](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYEFFORTESTI_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYEFFORTESTI_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -741,7 +766,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYEFFORTESTI_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYFOLLOWUP]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYFOLLOWUP]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -804,7 +829,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYFOLLOWUP](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYFOLLOWUP_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYFOLLOWUP_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -832,7 +857,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYFOLLOWUP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUP]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUP]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -900,7 +925,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYGROUP](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUP_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUP_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -928,7 +953,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYGROUP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUPASS]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUPASS]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -953,7 +978,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYGROUPASS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUPASS_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYGROUPASS_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -973,7 +998,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYGROUPASS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYLINK]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYLINK]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1001,7 +1026,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYLINK](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYLINK_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYLINK_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1021,7 +1046,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYLINK_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPARTY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPARTY]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1047,7 +1072,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPARTY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPARTY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPARTY_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1067,7 +1092,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPARTY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCACTION]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCACTION]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1139,7 +1164,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCACTION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCACTION_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCACTION_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1167,7 +1192,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCACTION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCESS]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCESS]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1228,7 +1253,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCESS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCESS_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCESS_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1256,7 +1281,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCESS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCSTATE]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCSTATE]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1316,7 +1341,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCSTATE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCSTATE_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCSTATE_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1344,7 +1369,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCSTATE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCTRANS]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCTRANS]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1409,7 +1434,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCTRANS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCTRANS_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYPROCTRANS_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1437,7 +1462,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYPROCTRANS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYTYPE]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYTYPE]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1501,7 +1526,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYTYPE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ACTIVITYTYPE_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ACTIVITYTYPE_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1529,7 +1554,7 @@ CREATE TABLE [dbo].[OOCKE1_ACTIVITYTYPE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDITIONALEXTLINK]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDITIONALEXTLINK]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1554,7 +1579,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDITIONALEXTLINK](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDITIONALEXTLINK_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDITIONALEXTLINK_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1574,7 +1599,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDITIONALEXTLINK_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDRESS]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDRESS]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1670,7 +1695,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDRESS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDRESS_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDRESS_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1699,7 +1724,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDRESS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUP]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUP]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1759,7 +1784,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDRESSGROUP](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUP_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUP_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1787,7 +1812,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDRESSGROUP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUPMEMBER]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUPMEMBER]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1846,7 +1871,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDRESSGROUPMEMBER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUPMEMBER_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ADDRESSGROUPMEMBER_]    Script Date: 07/08/2008 12:06:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1874,7 +1899,7 @@ CREATE TABLE [dbo].[OOCKE1_ADDRESSGROUPMEMBER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ALERT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ALERT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1903,7 +1928,7 @@ CREATE TABLE [dbo].[OOCKE1_ALERT](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ALERT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_ALERT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1923,7 +1948,7 @@ CREATE TABLE [dbo].[OOCKE1_ALERT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_AUDITENTRY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_AUDITENTRY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1952,7 +1977,7 @@ CREATE TABLE [dbo].[OOCKE1_AUDITENTRY](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_AUDITENTRY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_AUDITENTRY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1973,7 +1998,7 @@ CREATE TABLE [dbo].[OOCKE1_AUDITENTRY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BOOKING]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BOOKING]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2043,7 +2068,7 @@ CREATE TABLE [dbo].[OOCKE1_BOOKING](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BOOKING_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BOOKING_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2071,7 +2096,7 @@ CREATE TABLE [dbo].[OOCKE1_BOOKING_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BOOKINGPERIOD]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BOOKINGPERIOD]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2136,7 +2161,7 @@ CREATE TABLE [dbo].[OOCKE1_BOOKINGPERIOD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BOOKINGPERIOD_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BOOKINGPERIOD_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2164,7 +2189,7 @@ CREATE TABLE [dbo].[OOCKE1_BOOKINGPERIOD_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BOOKINGTEXT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BOOKINGTEXT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2229,7 +2254,7 @@ CREATE TABLE [dbo].[OOCKE1_BOOKINGTEXT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BOOKINGTEXT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BOOKINGTEXT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2257,7 +2282,7 @@ CREATE TABLE [dbo].[OOCKE1_BOOKINGTEXT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BUDGET]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BUDGET]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2323,7 +2348,7 @@ CREATE TABLE [dbo].[OOCKE1_BUDGET](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BUDGET_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BUDGET_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2351,7 +2376,7 @@ CREATE TABLE [dbo].[OOCKE1_BUDGET_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BUDGETMILESTONE]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BUDGETMILESTONE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2411,7 +2436,7 @@ CREATE TABLE [dbo].[OOCKE1_BUDGETMILESTONE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BUDGETMILESTONE_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BUDGETMILESTONE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2439,7 +2464,7 @@ CREATE TABLE [dbo].[OOCKE1_BUDGETMILESTONE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BUILDINGUNIT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BUILDINGUNIT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2506,7 +2531,7 @@ CREATE TABLE [dbo].[OOCKE1_BUILDINGUNIT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_BUILDINGUNIT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_BUILDINGUNIT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2534,7 +2559,7 @@ CREATE TABLE [dbo].[OOCKE1_BUILDINGUNIT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CALCULATIONRULE]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CALCULATIONRULE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2597,7 +2622,7 @@ CREATE TABLE [dbo].[OOCKE1_CALCULATIONRULE](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CALCULATIONRULE_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CALCULATIONRULE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2625,7 +2650,7 @@ CREATE TABLE [dbo].[OOCKE1_CALCULATIONRULE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CALENDAR]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CALENDAR]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2686,7 +2711,7 @@ CREATE TABLE [dbo].[OOCKE1_CALENDAR](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CALENDAR_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CALENDAR_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2714,7 +2739,7 @@ CREATE TABLE [dbo].[OOCKE1_CALENDAR_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CALENDARDAY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CALENDARDAY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2744,7 +2769,7 @@ CREATE TABLE [dbo].[OOCKE1_CALENDARDAY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CALENDARDAY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CALENDARDAY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2764,7 +2789,7 @@ CREATE TABLE [dbo].[OOCKE1_CALENDARDAY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CHART]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CHART]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2792,7 +2817,7 @@ CREATE TABLE [dbo].[OOCKE1_CHART](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CHART_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CHART_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2812,7 +2837,7 @@ CREATE TABLE [dbo].[OOCKE1_CHART_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CODEVALUECONTAINER]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CODEVALUECONTAINER]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2837,7 +2862,7 @@ CREATE TABLE [dbo].[OOCKE1_CODEVALUECONTAINER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CODEVALUECONTAINER_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CODEVALUECONTAINER_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2858,7 +2883,7 @@ CREATE TABLE [dbo].[OOCKE1_CODEVALUECONTAINER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CODEVALUEENTRY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CODEVALUEENTRY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2891,7 +2916,7 @@ CREATE TABLE [dbo].[OOCKE1_CODEVALUEENTRY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CODEVALUEENTRY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CODEVALUEENTRY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2913,7 +2938,7 @@ CREATE TABLE [dbo].[OOCKE1_CODEVALUEENTRY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_COMPETITOR]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_COMPETITOR]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2982,7 +3007,7 @@ CREATE TABLE [dbo].[OOCKE1_COMPETITOR](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_COMPETITOR_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_COMPETITOR_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3012,7 +3037,7 @@ CREATE TABLE [dbo].[OOCKE1_COMPETITOR_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_COMPONENTCONFIG]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_COMPONENTCONFIG]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3038,7 +3063,7 @@ CREATE TABLE [dbo].[OOCKE1_COMPONENTCONFIG](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_COMPONENTCONFIG_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_COMPONENTCONFIG_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3058,7 +3083,7 @@ CREATE TABLE [dbo].[OOCKE1_COMPONENTCONFIG_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_COMPOUNDBOOKING]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_COMPOUNDBOOKING]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3127,7 +3152,7 @@ CREATE TABLE [dbo].[OOCKE1_COMPOUNDBOOKING](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_COMPOUNDBOOKING_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_COMPOUNDBOOKING_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3156,7 +3181,7 @@ CREATE TABLE [dbo].[OOCKE1_COMPOUNDBOOKING_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTACTMEMBERSHIP]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTACTMEMBERSHIP]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3218,7 +3243,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTACTMEMBERSHIP](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTACTMEMBERSHIP_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTACTMEMBERSHIP_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3246,7 +3271,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTACTMEMBERSHIP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTACTREL]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTACTREL]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3307,7 +3332,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTACTREL](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTACTREL_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTACTREL_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3335,7 +3360,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTACTREL_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTACTROLE]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTACTROLE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3395,7 +3420,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTACTROLE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTACTROLE_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTACTROLE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3423,7 +3448,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTACTROLE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTRACT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTRACT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3535,7 +3560,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTRACT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTRACT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTRACT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3571,7 +3596,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTRACT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSITION]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSITION]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3669,7 +3694,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTRACTPOSITION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSITION_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSITION_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3699,7 +3724,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTRACTPOSITION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSMOD]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSMOD]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3727,7 +3752,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTRACTPOSMOD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSMOD_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CONTRACTPOSMOD_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3747,7 +3772,7 @@ CREATE TABLE [dbo].[OOCKE1_CONTRACTPOSMOD_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CREDITLIMIT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CREDITLIMIT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3812,7 +3837,7 @@ CREATE TABLE [dbo].[OOCKE1_CREDITLIMIT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_CREDITLIMIT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_CREDITLIMIT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3840,7 +3865,7 @@ CREATE TABLE [dbo].[OOCKE1_CREDITLIMIT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DELIVERYINFO]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DELIVERYINFO]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3900,7 +3925,7 @@ CREATE TABLE [dbo].[OOCKE1_DELIVERYINFO](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DELIVERYINFO_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DELIVERYINFO_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3928,7 +3953,7 @@ CREATE TABLE [dbo].[OOCKE1_DELIVERYINFO_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DELIVERYREQUEST]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DELIVERYREQUEST]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3990,7 +4015,7 @@ CREATE TABLE [dbo].[OOCKE1_DELIVERYREQUEST](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DELIVERYREQUEST_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DELIVERYREQUEST_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4018,7 +4043,7 @@ CREATE TABLE [dbo].[OOCKE1_DELIVERYREQUEST_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOT]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4088,7 +4113,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOT_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4118,7 +4143,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITY]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4179,7 +4204,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTENTITY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITY_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4207,7 +4232,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTENTITY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITYREL]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITYREL]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4270,7 +4295,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTENTITYREL](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITYREL_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTENTITYREL_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4298,7 +4323,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTENTITYREL_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTGROUP]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTGROUP]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4360,7 +4385,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTGROUP](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTGROUP_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTGROUP_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4389,7 +4414,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTGROUP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTHOLDER]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTHOLDER]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4451,7 +4476,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTHOLDER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTHOLDER_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTHOLDER_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4480,7 +4505,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTHOLDER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTPOSITION]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTPOSITION]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4547,7 +4572,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTPOSITION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTPOSITION_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTPOSITION_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4575,7 +4600,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTPOSITION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTREFERENCE]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTREFERENCE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4604,7 +4629,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREFERENCE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTREFERENCE_]    Script Date: 02/18/2008 18:48:36 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTREFERENCE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4624,7 +4649,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREFERENCE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4687,7 +4712,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREPORT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4715,7 +4740,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREPORT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORTITEM]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORTITEM]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4742,6 +4767,8 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREPORTITEM](
 	[BALANCE_DEBIT_BOP] [decimal](19, 9) NULL,
 	[BALANCE_CREDIT_BOP] [decimal](19, 9) NULL,
 	[BALANCE_BOP] [decimal](19, 9) NULL,
+	[BALANCE_SIMPLE_BOP] [decimal](19, 9) NULL,
+	[BALANCE_SIMPLE] [decimal](19, 9) NULL,
  CONSTRAINT [OOCKE1_DEPOTREPORTITEM_PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC
@@ -4749,7 +4776,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREPORTITEM](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORTITEM_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTREPORTITEM_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4769,7 +4796,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTREPORTITEM_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTTYPE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTTYPE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4832,7 +4859,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTTYPE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DEPOTTYPE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DEPOTTYPE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4861,7 +4888,7 @@ CREATE TABLE [dbo].[OOCKE1_DEPOTTYPE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DESCRIPTION]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DESCRIPTION]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4888,7 +4915,7 @@ CREATE TABLE [dbo].[OOCKE1_DESCRIPTION](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DESCRIPTION_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DESCRIPTION_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4908,7 +4935,7 @@ CREATE TABLE [dbo].[OOCKE1_DESCRIPTION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4959,7 +4986,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENT](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4980,7 +5007,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTATTACHMENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTATTACHMENT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5006,7 +5033,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTATTACHMENT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTATTACHMENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTATTACHMENT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5026,7 +5053,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTATTACHMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTFOLDER]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTFOLDER]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5053,7 +5080,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTFOLDER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTFOLDER_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTFOLDER_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5073,7 +5100,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTFOLDER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLINK]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLINK]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5100,7 +5127,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTLINK](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLINK_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLINK_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5120,7 +5147,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTLINK_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLOCK]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLOCK]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5148,7 +5175,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTLOCK](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLOCK_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_DOCUMENTLOCK_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5169,7 +5196,7 @@ CREATE TABLE [dbo].[OOCKE1_DOCUMENTLOCK_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EMAILACCOUNT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EMAILACCOUNT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5198,7 +5225,7 @@ CREATE TABLE [dbo].[OOCKE1_EMAILACCOUNT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EMAILACCOUNT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EMAILACCOUNT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5218,7 +5245,7 @@ CREATE TABLE [dbo].[OOCKE1_EMAILACCOUNT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EVENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EVENT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5280,7 +5307,7 @@ CREATE TABLE [dbo].[OOCKE1_EVENT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EVENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EVENT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5308,7 +5335,7 @@ CREATE TABLE [dbo].[OOCKE1_EVENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EVENTPART]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EVENTPART]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5369,7 +5396,7 @@ CREATE TABLE [dbo].[OOCKE1_EVENTPART](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EVENTPART_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EVENTPART_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5397,7 +5424,7 @@ CREATE TABLE [dbo].[OOCKE1_EVENTPART_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EVENTSLOT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EVENTSLOT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5460,7 +5487,7 @@ CREATE TABLE [dbo].[OOCKE1_EVENTSLOT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_EVENTSLOT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EVENTSLOT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5488,7 +5515,58 @@ CREATE TABLE [dbo].[OOCKE1_EVENTSLOT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FACILITY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_EXPORTPROFILE]    Script Date: 07/08/2008 12:06:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OOCKE1_EXPORTPROFILE](
+	[OBJECT_ID] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[ACCESS_LEVEL_BROWSE] [smallint] NULL,
+	[ACCESS_LEVEL_DELETE] [smallint] NULL,
+	[ACCESS_LEVEL_UPDATE] [smallint] NULL,
+	[CREATED_AT] [datetime] NULL,
+	[CREATED_BY_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_EX__CREAT__351881F5]  DEFAULT ((-1)),
+	[DESCRIPTION] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[MIME_TYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[MODIFIED_BY_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_EX__MODIF__360CA62E]  DEFAULT ((-1)),
+	[NAME] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[OWNER_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_EX__OWNER__3700CA67]  DEFAULT ((-1)),
+	[REFERENCE_FILTER] [nvarchar](1024) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[P$$PARENT] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[MODIFIED_AT] [datetime] NOT NULL,
+	[DTYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[TEMPLATE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[FOR_CLASS_] [int] NOT NULL CONSTRAINT [DF_OOCKE1_EXPORTPROFILE_FOR_CLASS_]  DEFAULT ((-1)),
+ CONSTRAINT [OOCKE1_EXPORTPROFILE_PK] PRIMARY KEY CLUSTERED 
+(
+	[OBJECT_ID] ASC
+)WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[OOCKE1_EXPORTPROFILE_]    Script Date: 07/08/2008 12:06:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OOCKE1_EXPORTPROFILE_](
+	[OBJECT_ID] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[IDX] [int] NOT NULL,
+	[CREATED_BY] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[MODIFIED_BY] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[OWNER] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[DTYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[FOR_CLASS] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
+ CONSTRAINT [OOCKE1_EXPORTPROFILE__PK] PRIMARY KEY CLUSTERED 
+(
+	[OBJECT_ID] ASC,
+	[IDX] ASC
+)WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[OOCKE1_FACILITY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5550,7 +5628,7 @@ CREATE TABLE [dbo].[OOCKE1_FACILITY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FACILITY_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FACILITY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5578,7 +5656,7 @@ CREATE TABLE [dbo].[OOCKE1_FACILITY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FILTER]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FILTER]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5638,7 +5716,7 @@ CREATE TABLE [dbo].[OOCKE1_FILTER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FILTER_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FILTER_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5666,7 +5744,7 @@ CREATE TABLE [dbo].[OOCKE1_FILTER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FILTERPROPERTY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FILTERPROPERTY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5713,6 +5791,13 @@ CREATE TABLE [dbo].[OOCKE1_FILTERPROPERTY](
 	[OBJUSAGE_] [int] NOT NULL CONSTRAINT [DF_OOCKE1_FILTERPROPERTY_OBJUSAGE_]  DEFAULT ((-1)),
 	[CONTACT_] [int] NOT NULL DEFAULT ((-1)),
 	[OFFSET_IN_HOURS] [int] NULL,
+	[CONTRACT_TYPE_] [int] NOT NULL DEFAULT ((-1)),
+	[TOTAL_AMOUNT_] [int] NOT NULL DEFAULT ((-1)),
+	[PRIORITY_] [int] NOT NULL DEFAULT ((-1)),
+	[CONTRACT_STATE_] [int] NOT NULL DEFAULT ((-1)),
+	[SUPPLIER_] [int] NOT NULL DEFAULT ((-1)),
+	[SALES_REP_] [int] NOT NULL DEFAULT ((-1)),
+	[CUSTOMER_] [int] NOT NULL DEFAULT ((-1)),
  CONSTRAINT [OOCKE1_FILTERPROPERTY_PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC
@@ -5720,7 +5805,7 @@ CREATE TABLE [dbo].[OOCKE1_FILTERPROPERTY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FILTERPROPERTY_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FILTERPROPERTY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5753,6 +5838,13 @@ CREATE TABLE [dbo].[OOCKE1_FILTERPROPERTY_](
 	[OBJUSAGE] [smallint] NULL,
 	[ADDRESS_TYPE] [smallint] NULL,
 	[CONTACT] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[PRIORITY] [smallint] NULL,
+	[CONTRACT_STATE] [smallint] NULL,
+	[CONTRACT_TYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[TOTAL_AMOUNT] [decimal](19, 9) NULL,
+	[CUSTOMER] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[SUPPLIER] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[SALES_REP] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
  CONSTRAINT [OOCKE1_FILTERPROPERTY__PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC,
@@ -5761,7 +5853,7 @@ CREATE TABLE [dbo].[OOCKE1_FILTERPROPERTY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FORECAST]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FORECAST]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5820,7 +5912,7 @@ CREATE TABLE [dbo].[OOCKE1_FORECAST](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FORECAST_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FORECAST_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5848,7 +5940,7 @@ CREATE TABLE [dbo].[OOCKE1_FORECAST_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FORECASTPERIOD]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FORECASTPERIOD]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5907,7 +5999,7 @@ CREATE TABLE [dbo].[OOCKE1_FORECASTPERIOD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_FORECASTPERIOD_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_FORECASTPERIOD_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5935,7 +6027,7 @@ CREATE TABLE [dbo].[OOCKE1_FORECASTPERIOD_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_INDEXENTRY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_INDEXENTRY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5961,7 +6053,7 @@ CREATE TABLE [dbo].[OOCKE1_INDEXENTRY](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_INDEXENTRY_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_INDEXENTRY_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5981,7 +6073,7 @@ CREATE TABLE [dbo].[OOCKE1_INDEXENTRY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_INVENTORYITEM]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_INVENTORYITEM]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6046,7 +6138,7 @@ CREATE TABLE [dbo].[OOCKE1_INVENTORYITEM](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_INVENTORYITEM_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_INVENTORYITEM_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6075,7 +6167,7 @@ CREATE TABLE [dbo].[OOCKE1_INVENTORYITEM_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_INVOLVEDOBJECT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_INVOLVEDOBJECT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6103,7 +6195,7 @@ CREATE TABLE [dbo].[OOCKE1_INVOLVEDOBJECT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_INVOLVEDOBJECT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_INVOLVEDOBJECT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6123,7 +6215,7 @@ CREATE TABLE [dbo].[OOCKE1_INVOLVEDOBJECT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_ACTCONTAINSWRE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_ACTCONTAINSWRE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6139,7 +6231,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_ACTCONTAINSWRE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_ACTGCONTAINSWRE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_ACTGCONTAINSWRE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6155,7 +6247,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_ACTGCONTAINSWRE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FCPERIODHASLEAD]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FCPERIODHASLEAD]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6171,7 +6263,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FCPERIODHASLEAD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FCPERIODHASOPTY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FCPERIODHASOPTY]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6187,7 +6279,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FCPERIODHASOPTY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FCPERIODHASQUOTE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FCPERIODHASQUOTE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6203,7 +6295,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FCPERIODHASQUOTE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESACCT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESACCT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6219,7 +6311,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FILTERINCLUDESACCT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESACT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESACT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6235,7 +6327,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FILTERINCLUDESACT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESADDR]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESADDR]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6251,7 +6343,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FILTERINCLUDESADDR](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESPROD]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FILTERINCLUDESPROD]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6267,7 +6359,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FILTERINCLUDESPROD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXACCT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXACCT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6283,7 +6375,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXACCT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXACT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXACT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6299,7 +6391,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXACT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXBLDG]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXBLDG]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6315,7 +6407,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXBLDG](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXCONTR]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXCONTR]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6331,7 +6423,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXCONTR](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXDEP]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXDEP]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6347,7 +6439,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXDEP](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXDOC]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXDOC]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6363,7 +6455,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXDOC](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXPROD]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASIDXPROD]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6379,7 +6471,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASIDXPROD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASSEARCHRES]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_FINDERHASSEARCHRES]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6395,7 +6487,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_FINDERHASSEARCHRES](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_PLHASASSPLE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_PLHASASSPLE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6411,7 +6503,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_PLHASASSPLE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_JOIN_RESCONTAINSWRE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_JOIN_RESCONTAINSWRE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6427,7 +6519,7 @@ CREATE TABLE [dbo].[OOCKE1_JOIN_RESCONTAINSWRE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_LINKABLEITEMLINK]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_LINKABLEITEMLINK]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6491,7 +6583,7 @@ CREATE TABLE [dbo].[OOCKE1_LINKABLEITEMLINK](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_LINKABLEITEMLINK_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_LINKABLEITEMLINK_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6519,7 +6611,7 @@ CREATE TABLE [dbo].[OOCKE1_LINKABLEITEMLINK_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_MEDIA]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_MEDIA]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6552,7 +6644,7 @@ CREATE TABLE [dbo].[OOCKE1_MEDIA](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_MEDIA_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_MEDIA_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6572,7 +6664,7 @@ CREATE TABLE [dbo].[OOCKE1_MEDIA_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_MMSSLIDE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_MMSSLIDE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6633,7 +6725,7 @@ CREATE TABLE [dbo].[OOCKE1_MMSSLIDE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_MMSSLIDE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_MMSSLIDE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6661,7 +6753,7 @@ CREATE TABLE [dbo].[OOCKE1_MMSSLIDE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_MODELELEMENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_MODELELEMENT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6754,7 +6846,7 @@ CREATE TABLE [dbo].[OOCKE1_MODELELEMENT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_MODELELEMENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_MODELELEMENT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6788,7 +6880,7 @@ CREATE TABLE [dbo].[OOCKE1_MODELELEMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_NOTE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_NOTE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6814,7 +6906,7 @@ CREATE TABLE [dbo].[OOCKE1_NOTE](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_NOTE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_NOTE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6834,7 +6926,7 @@ CREATE TABLE [dbo].[OOCKE1_NOTE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_OBJECTFINDER]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_OBJECTFINDER]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6864,7 +6956,7 @@ CREATE TABLE [dbo].[OOCKE1_OBJECTFINDER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_OBJECTFINDER_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_OBJECTFINDER_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6884,7 +6976,7 @@ CREATE TABLE [dbo].[OOCKE1_OBJECTFINDER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ORGANIZATION]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_ORGANIZATION]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6945,7 +7037,7 @@ CREATE TABLE [dbo].[OOCKE1_ORGANIZATION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ORGANIZATION_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_ORGANIZATION_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6973,7 +7065,7 @@ CREATE TABLE [dbo].[OOCKE1_ORGANIZATION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ORGANIZATIONALUNIT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_ORGANIZATIONALUNIT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7035,7 +7127,7 @@ CREATE TABLE [dbo].[OOCKE1_ORGANIZATIONALUNIT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ORGANIZATIONALUNIT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_ORGANIZATIONALUNIT_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7063,7 +7155,7 @@ CREATE TABLE [dbo].[OOCKE1_ORGANIZATIONALUNIT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ORGUNITRELSHIP]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_ORGUNITRELSHIP]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7129,7 +7221,7 @@ CREATE TABLE [dbo].[OOCKE1_ORGUNITRELSHIP](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_ORGUNITRELSHIP_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_ORGUNITRELSHIP_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7157,7 +7249,7 @@ CREATE TABLE [dbo].[OOCKE1_ORGUNITRELSHIP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRICELEVEL]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRICELEVEL]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7228,7 +7320,7 @@ CREATE TABLE [dbo].[OOCKE1_PRICELEVEL](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRICELEVEL_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRICELEVEL_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7259,7 +7351,7 @@ CREATE TABLE [dbo].[OOCKE1_PRICELEVEL_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRICEMODIFIER]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRICEMODIFIER]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7291,7 +7383,7 @@ CREATE TABLE [dbo].[OOCKE1_PRICEMODIFIER](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRICEMODIFIER_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRICEMODIFIER_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7311,7 +7403,7 @@ CREATE TABLE [dbo].[OOCKE1_PRICEMODIFIER_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRICINGRULE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRICINGRULE]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7373,7 +7465,7 @@ CREATE TABLE [dbo].[OOCKE1_PRICINGRULE](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRICINGRULE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRICINGRULE_]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7401,7 +7493,7 @@ CREATE TABLE [dbo].[OOCKE1_PRICINGRULE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCT]    Script Date: 07/08/2008 12:06:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7480,7 +7572,6 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCT](
 	[USER_STRING3] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[USER_STRING4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___19ED2868]  DEFAULT ((-1)),
 	[DTYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
-	[PRODUCT_SERIAL_NUMBER_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__PRODU__5A7CAEC9]  DEFAULT ((-1)),
 	[PRODUCT] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[CURRENT_CONFIG] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[CONFIG_TYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
@@ -7500,7 +7591,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7523,7 +7614,6 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCT_](
 	[USER_NUMBER4] [decimal](19, 9) NULL,
 	[USER_STRING4] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
 	[DTYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
-	[PRODUCT_SERIAL_NUMBER] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NULL,
  CONSTRAINT [OOCKE1_PRODUCT__PK] PRIMARY KEY CLUSTERED 
 (
 	[OBJECT_ID] ASC,
@@ -7532,7 +7622,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTAPPLICATION]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTAPPLICATION]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7593,7 +7683,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTAPPLICATION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTAPPLICATION_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTAPPLICATION_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7621,7 +7711,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTAPPLICATION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTBASEPRICE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTBASEPRICE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7689,7 +7779,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTBASEPRICE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTBASEPRICE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTBASEPRICE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7719,7 +7809,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTBASEPRICE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASS]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASS]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7779,7 +7869,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCLASS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASS_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASS_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7807,7 +7897,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCLASS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASSREL]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASSREL]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7869,7 +7959,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCLASSREL](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASSREL_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCLASSREL_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7897,7 +7987,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCLASSREL_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFIG]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFIG]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7927,7 +8017,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCONFIG](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFIG_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFIG_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7947,7 +8037,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCONFIG_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFTYPESET]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFTYPESET]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7973,7 +8063,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCONFTYPESET](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFTYPESET_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTCONFTYPESET_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7993,7 +8083,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTCONFTYPESET_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTPHASE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTPHASE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8003,50 +8093,50 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTPHASE](
 	[ACCESS_LEVEL_BROWSE] [smallint] NULL,
 	[ACCESS_LEVEL_DELETE] [smallint] NULL,
 	[ACCESS_LEVEL_UPDATE] [smallint] NULL,
-	[CATEGORY_] [int] NOT NULL DEFAULT ((-1)),
+	[CATEGORY_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__CATEG__5DCFB36E]  DEFAULT ((-1)),
 	[CREATED_AT] [datetime] NULL,
-	[CREATED_BY_] [int] NOT NULL DEFAULT ((-1)),
+	[CREATED_BY_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__CREAT__5EC3D7A7]  DEFAULT ((-1)),
 	[DESCRIPTION] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[DISABLED] [bit] NULL,
 	[DISABLED_REASON] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[EXTERNAL_LINK_] [int] NOT NULL DEFAULT ((-1)),
-	[MODIFIED_BY_] [int] NOT NULL DEFAULT ((-1)),
+	[EXTERNAL_LINK_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__EXTER__5FB7FBE0]  DEFAULT ((-1)),
+	[MODIFIED_BY_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__MODIF__60AC2019]  DEFAULT ((-1)),
 	[NAME] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[OWNER_] [int] NOT NULL DEFAULT ((-1)),
+	[OWNER_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__OWNER__61A04452]  DEFAULT ((-1)),
 	[P$$PARENT] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[PRODUCT_PHASE_KEY] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[USER_BOOLEAN0] [bit] NULL,
 	[USER_BOOLEAN1] [bit] NULL,
 	[USER_BOOLEAN2] [bit] NULL,
 	[USER_BOOLEAN3] [bit] NULL,
-	[USER_BOOLEAN4_] [int] NOT NULL DEFAULT ((-1)),
+	[USER_BOOLEAN4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___6294688B]  DEFAULT ((-1)),
 	[USER_CODE0] [smallint] NULL,
 	[USER_CODE1] [smallint] NULL,
 	[USER_CODE2] [smallint] NULL,
 	[USER_CODE3] [smallint] NULL,
-	[USER_CODE4_] [int] NOT NULL DEFAULT ((-1)),
+	[USER_CODE4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___63888CC4]  DEFAULT ((-1)),
 	[USER_DATE0] [datetime] NULL,
 	[USER_DATE1] [datetime] NULL,
 	[USER_DATE2] [datetime] NULL,
 	[USER_DATE3] [datetime] NULL,
-	[USER_DATE4_] [int] NOT NULL DEFAULT ((-1)),
+	[USER_DATE4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___647CB0FD]  DEFAULT ((-1)),
 	[USER_DATE_TIME0] [datetime] NULL,
 	[USER_DATE_TIME1] [datetime] NULL,
 	[USER_DATE_TIME2] [datetime] NULL,
 	[USER_DATE_TIME3] [datetime] NULL,
-	[USER_DATE_TIME4_] [int] NOT NULL DEFAULT ((-1)),
+	[USER_DATE_TIME4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___6570D536]  DEFAULT ((-1)),
 	[USER_NUMBER0] [decimal](19, 9) NULL,
 	[USER_NUMBER1] [decimal](19, 9) NULL,
 	[USER_NUMBER2] [decimal](19, 9) NULL,
 	[USER_NUMBER3] [decimal](19, 9) NULL,
-	[USER_NUMBER4_] [int] NOT NULL DEFAULT ((-1)),
+	[USER_NUMBER4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___6664F96F]  DEFAULT ((-1)),
 	[USER_STRING0] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[USER_STRING1] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[USER_STRING2] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[USER_STRING3] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[USER_STRING4_] [int] NOT NULL DEFAULT ((-1)),
-	[VALID_FROM] [int] NULL,
-	[VALID_TO] [int] NULL,
+	[USER_STRING4_] [int] NOT NULL CONSTRAINT [DF__OOCKE1_PR__USER___67591DA8]  DEFAULT ((-1)),
+	[VALID_FROM] [datetime] NULL,
+	[VALID_TO] [datetime] NULL,
 	[MODIFIED_AT] [datetime] NOT NULL,
 	[DTYPE] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
  CONSTRAINT [OOCKE1_PRODUCTPHASE_PK] PRIMARY KEY CLUSTERED 
@@ -8056,7 +8146,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTPHASE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTPHASE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTPHASE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8084,7 +8174,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTPHASE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTREFERENCE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTREFERENCE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8112,7 +8202,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTREFERENCE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PRODUCTREFERENCE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PRODUCTREFERENCE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8133,7 +8223,7 @@ CREATE TABLE [dbo].[OOCKE1_PRODUCTREFERENCE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PROPERTY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PROPERTY]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8168,7 +8258,7 @@ CREATE TABLE [dbo].[OOCKE1_PROPERTY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PROPERTY_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PROPERTY_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8188,7 +8278,7 @@ CREATE TABLE [dbo].[OOCKE1_PROPERTY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PROPERTYSET]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PROPERTYSET]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8214,7 +8304,7 @@ CREATE TABLE [dbo].[OOCKE1_PROPERTYSET](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_PROPERTYSET_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_PROPERTYSET_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8234,7 +8324,7 @@ CREATE TABLE [dbo].[OOCKE1_PROPERTYSET_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_QUICKACCESS]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_QUICKACCESS]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8265,7 +8355,7 @@ CREATE TABLE [dbo].[OOCKE1_QUICKACCESS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_QUICKACCESS_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_QUICKACCESS_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8286,7 +8376,7 @@ CREATE TABLE [dbo].[OOCKE1_QUICKACCESS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTCONTEXT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTCONTEXT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8346,7 +8436,7 @@ CREATE TABLE [dbo].[OOCKE1_RASARTIFACTCONTEXT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTCONTEXT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTCONTEXT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8374,7 +8464,7 @@ CREATE TABLE [dbo].[OOCKE1_RASARTIFACTCONTEXT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTDEP]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTDEP]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8434,7 +8524,7 @@ CREATE TABLE [dbo].[OOCKE1_RASARTIFACTDEP](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTDEP_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASARTIFACTDEP_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8462,7 +8552,7 @@ CREATE TABLE [dbo].[OOCKE1_RASARTIFACTDEP_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASCLASSIFICATIELT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASCLASSIFICATIELT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8523,7 +8613,7 @@ CREATE TABLE [dbo].[OOCKE1_RASCLASSIFICATIELT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASCLASSIFICATIELT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASCLASSIFICATIELT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8552,7 +8642,7 @@ CREATE TABLE [dbo].[OOCKE1_RASCLASSIFICATIELT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASDESCRIPTOR]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASDESCRIPTOR]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8613,7 +8703,7 @@ CREATE TABLE [dbo].[OOCKE1_RASDESCRIPTOR](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASDESCRIPTOR_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASDESCRIPTOR_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8641,7 +8731,7 @@ CREATE TABLE [dbo].[OOCKE1_RASDESCRIPTOR_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASPROFILE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASPROFILE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8705,7 +8795,7 @@ CREATE TABLE [dbo].[OOCKE1_RASPROFILE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASPROFILE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASPROFILE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8733,7 +8823,7 @@ CREATE TABLE [dbo].[OOCKE1_RASPROFILE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASSOLUTIONPART]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASSOLUTIONPART]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8800,7 +8890,7 @@ CREATE TABLE [dbo].[OOCKE1_RASSOLUTIONPART](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASSOLUTIONPART_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASSOLUTIONPART_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8829,7 +8919,7 @@ CREATE TABLE [dbo].[OOCKE1_RASSOLUTIONPART_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASVARPOINT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASVARPOINT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8890,7 +8980,7 @@ CREATE TABLE [dbo].[OOCKE1_RASVARPOINT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RASVARPOINT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RASVARPOINT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8918,7 +9008,7 @@ CREATE TABLE [dbo].[OOCKE1_RASVARPOINT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RATING]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RATING]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8946,7 +9036,7 @@ CREATE TABLE [dbo].[OOCKE1_RATING](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RATING_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RATING_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8966,7 +9056,7 @@ CREATE TABLE [dbo].[OOCKE1_RATING_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RELATEDPRODUCT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RELATEDPRODUCT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9028,7 +9118,7 @@ CREATE TABLE [dbo].[OOCKE1_RELATEDPRODUCT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RELATEDPRODUCT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RELATEDPRODUCT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9056,7 +9146,7 @@ CREATE TABLE [dbo].[OOCKE1_RELATEDPRODUCT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RESOURCE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RESOURCE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9121,7 +9211,7 @@ CREATE TABLE [dbo].[OOCKE1_RESOURCE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RESOURCE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RESOURCE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9149,7 +9239,7 @@ CREATE TABLE [dbo].[OOCKE1_RESOURCE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RESOURCEASSIGNMENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RESOURCEASSIGNMENT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9180,7 +9270,7 @@ CREATE TABLE [dbo].[OOCKE1_RESOURCEASSIGNMENT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_RESOURCEASSIGNMENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_RESOURCEASSIGNMENT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9200,7 +9290,7 @@ CREATE TABLE [dbo].[OOCKE1_RESOURCEASSIGNMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_REVENUEREPORT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_REVENUEREPORT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9263,7 +9353,7 @@ CREATE TABLE [dbo].[OOCKE1_REVENUEREPORT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_REVENUEREPORT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_REVENUEREPORT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9291,7 +9381,7 @@ CREATE TABLE [dbo].[OOCKE1_REVENUEREPORT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SALESTAXTYPE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SALESTAXTYPE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9353,7 +9443,7 @@ CREATE TABLE [dbo].[OOCKE1_SALESTAXTYPE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SALESTAXTYPE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SALESTAXTYPE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9381,7 +9471,7 @@ CREATE TABLE [dbo].[OOCKE1_SALESTAXTYPE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SEGMENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SEGMENT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9399,10 +9489,10 @@ CREATE TABLE [dbo].[OOCKE1_SEGMENT](
 (
 	[OBJECT_ID] ASC
 )WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SEGMENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SEGMENT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9420,13 +9510,13 @@ CREATE TABLE [dbo].[OOCKE1_SEGMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SIMPLEBOOKING]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SIMPLEBOOKING]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[OOCKE1_SIMPLEBOOKING](
-	[OBJECT_ID] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[OBJECT_ID] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
 	[ACCESS_LEVEL_BROWSE] [smallint] NULL,
 	[ACCESS_LEVEL_DELETE] [smallint] NULL,
 	[ACCESS_LEVEL_UPDATE] [smallint] NULL,
@@ -9456,13 +9546,13 @@ CREATE TABLE [dbo].[OOCKE1_SIMPLEBOOKING](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SIMPLEBOOKING_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SIMPLEBOOKING_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[OOCKE1_SIMPLEBOOKING_](
-	[OBJECT_ID] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[OBJECT_ID] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
 	[IDX] [int] NOT NULL,
 	[CREATED_BY] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[MODIFIED_BY] [nvarchar](256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -9478,7 +9568,7 @@ CREATE TABLE [dbo].[OOCKE1_SIMPLEBOOKING_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SUBSCRIPTION]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SUBSCRIPTION]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9517,7 +9607,7 @@ CREATE TABLE [dbo].[OOCKE1_SUBSCRIPTION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_SUBSCRIPTION_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_SUBSCRIPTION_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9543,7 +9633,7 @@ CREATE TABLE [dbo].[OOCKE1_SUBSCRIPTION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_TOPIC]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_TOPIC]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9605,7 +9695,7 @@ CREATE TABLE [dbo].[OOCKE1_TOPIC](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_TOPIC_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_TOPIC_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9634,7 +9724,7 @@ CREATE TABLE [dbo].[OOCKE1_TOPIC_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_UOM]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_UOM]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9665,7 +9755,7 @@ CREATE TABLE [dbo].[OOCKE1_UOM](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_UOM_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_UOM_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9685,7 +9775,7 @@ CREATE TABLE [dbo].[OOCKE1_UOM_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_UOMSCHEDULE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_UOMSCHEDULE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9712,7 +9802,7 @@ CREATE TABLE [dbo].[OOCKE1_UOMSCHEDULE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_UOMSCHEDULE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_UOMSCHEDULE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9732,7 +9822,7 @@ CREATE TABLE [dbo].[OOCKE1_UOMSCHEDULE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_USERHOME]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_USERHOME]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9766,7 +9856,7 @@ CREATE TABLE [dbo].[OOCKE1_USERHOME](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_USERHOME_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_USERHOME_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9786,7 +9876,7 @@ CREATE TABLE [dbo].[OOCKE1_USERHOME_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_VOTE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_VOTE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9813,7 +9903,7 @@ CREATE TABLE [dbo].[OOCKE1_VOTE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_VOTE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_VOTE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9833,7 +9923,7 @@ CREATE TABLE [dbo].[OOCKE1_VOTE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WFACTIONLOGENTRY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WFACTIONLOGENTRY]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9860,7 +9950,7 @@ CREATE TABLE [dbo].[OOCKE1_WFACTIONLOGENTRY](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WFACTIONLOGENTRY_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WFACTIONLOGENTRY_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9880,7 +9970,7 @@ CREATE TABLE [dbo].[OOCKE1_WFACTIONLOGENTRY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WFPROCESS]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WFPROCESS]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9943,7 +10033,7 @@ CREATE TABLE [dbo].[OOCKE1_WFPROCESS](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WFPROCESS_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WFPROCESS_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9971,7 +10061,7 @@ CREATE TABLE [dbo].[OOCKE1_WFPROCESS_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WFPROCESSINSTANCE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WFPROCESSINSTANCE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10002,7 +10092,7 @@ CREATE TABLE [dbo].[OOCKE1_WFPROCESSINSTANCE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WFPROCESSINSTANCE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WFPROCESSINSTANCE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10022,7 +10112,7 @@ CREATE TABLE [dbo].[OOCKE1_WFPROCESSINSTANCE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WORKRECORD]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WORKRECORD]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10062,7 +10152,7 @@ CREATE TABLE [dbo].[OOCKE1_WORKRECORD](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCKE1_WORKRECORD_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCKE1_WORKRECORD_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10082,7 +10172,7 @@ CREATE TABLE [dbo].[OOCKE1_WORKRECORD_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_AUTHENTICATIONCONTEXT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_AUTHENTICATIONCONTEXT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10105,7 +10195,7 @@ CREATE TABLE [dbo].[OOCSE1_AUTHENTICATIONCONTEXT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_AUTHENTICATIONCONTEXT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_AUTHENTICATIONCONTEXT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10124,7 +10214,7 @@ CREATE TABLE [dbo].[OOCSE1_AUTHENTICATIONCONTEXT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_CREDENTIAL]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_CREDENTIAL]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10151,7 +10241,7 @@ CREATE TABLE [dbo].[OOCSE1_CREDENTIAL](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_CREDENTIAL_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_CREDENTIAL_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10171,7 +10261,7 @@ CREATE TABLE [dbo].[OOCSE1_CREDENTIAL_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_PERMISSION]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_PERMISSION]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10195,7 +10285,7 @@ CREATE TABLE [dbo].[OOCSE1_PERMISSION](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_PERMISSION_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_PERMISSION_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10215,7 +10305,7 @@ CREATE TABLE [dbo].[OOCSE1_PERMISSION_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_POLICY]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_POLICY]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10238,7 +10328,7 @@ CREATE TABLE [dbo].[OOCSE1_POLICY](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_POLICY_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_POLICY_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10257,7 +10347,7 @@ CREATE TABLE [dbo].[OOCSE1_POLICY_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_PRINCIPAL]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_PRINCIPAL]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10286,7 +10376,7 @@ CREATE TABLE [dbo].[OOCSE1_PRINCIPAL](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_PRINCIPAL_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_PRINCIPAL_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10308,7 +10398,7 @@ CREATE TABLE [dbo].[OOCSE1_PRINCIPAL_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_PRIVILEGE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_PRIVILEGE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10331,7 +10421,7 @@ CREATE TABLE [dbo].[OOCSE1_PRIVILEGE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_PRIVILEGE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_PRIVILEGE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10351,7 +10441,7 @@ CREATE TABLE [dbo].[OOCSE1_PRIVILEGE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_REALM]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_REALM]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10373,7 +10463,7 @@ CREATE TABLE [dbo].[OOCSE1_REALM](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_REALM_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_REALM_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10392,7 +10482,7 @@ CREATE TABLE [dbo].[OOCSE1_REALM_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_ROLE]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_ROLE]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10415,7 +10505,7 @@ CREATE TABLE [dbo].[OOCSE1_ROLE](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_ROLE_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_ROLE_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10434,7 +10524,7 @@ CREATE TABLE [dbo].[OOCSE1_ROLE_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_SEGMENT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_SEGMENT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10448,10 +10538,10 @@ CREATE TABLE [dbo].[OOCSE1_SEGMENT](
 (
 	[OBJECT_ID] ASC
 )WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_SEGMENT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_SEGMENT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10468,7 +10558,7 @@ CREATE TABLE [dbo].[OOCSE1_SEGMENT_](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_SUBJECT]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_SUBJECT]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10489,7 +10579,7 @@ CREATE TABLE [dbo].[OOCSE1_SUBJECT](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OOCSE1_SUBJECT_]    Script Date: 02/18/2008 18:48:37 ******/
+/****** Object:  Table [dbo].[OOCSE1_SUBJECT_]    Script Date: 07/08/2008 12:06:25 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10506,7 +10596,6 @@ CREATE TABLE [dbo].[OOCSE1_SUBJECT_](
 	[IDX] ASC
 )WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
 /****** Object:  Table [dbo].[OOM0BASE_AUTHORITY]    Script Date: 02/18/2008 18:48:37 ******/
 SET ANSI_NULLS ON
@@ -10521,7 +10610,6 @@ CREATE TABLE [dbo].[OOM0BASE_AUTHORITY](
 	[AUTHORITY_ID] ASC
 )WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
 /****** Object:  Table [dbo].[OOM0BASE_PROVIDER]    Script Date: 02/18/2008 18:48:37 ******/
 SET ANSI_NULLS ON
@@ -10537,3 +10625,4 @@ CREATE TABLE [dbo].[OOM0BASE_PROVIDER](
 	[PROVIDER_ID] ASC
 )WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO

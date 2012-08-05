@@ -509,72 +509,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Créer une ligne d&apos;offre composée</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Créer une ligne d&apos;offre composée</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Informations</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Informations</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:quantity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Quantité</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Quantité</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:offering" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Offre composée</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Offre composée</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Résultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Résultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionResult:offeringPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ligne</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ligne</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:updateInventory" _operation="create">
                     <_object>
                       <label>
@@ -745,6 +679,9 @@
                       <label>
                         <_item>Script montants de ligne</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Script ligne</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Script montants de ligne</_item>
                       </toolTip>

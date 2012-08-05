@@ -1,17 +1,17 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.43 2008/02/14 15:15:50 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.51 2008/05/30 17:38:53 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.43 $
+   * Revision:    $Revision: 1.51 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2008/02/14 15:15:50 $
+   * Date:        $Date: 2008/05/30 17:38:53 $
    * ====================================================================
    *
    * This software is published under the BSD license
    * as listed below.
    * 
-   * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+   * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
    * All rights reserved.
    * 
    * Redistribution and use in source and binary forms, with or without 
@@ -77,31 +77,23 @@ import org.opencrx.kernel.account1.jmi1.EmailAddress;
 import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
-import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
-import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
-import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.activity1.jmi1.Email;
 import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
-import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
-import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
-import org.opencrx.kernel.activity1.jmi1.SetAssignedToAction;
-import org.opencrx.kernel.activity1.jmi1.WfAction;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Workflows;
+import org.opencrx.kernel.base.jmi1.SendAlertParams;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.workflow.servlet.Utils;
-import org.opencrx.kernel.workflow.servlet.WorkflowControllerServlet;
-import org.opencrx.kernel.workflow1.jmi1.WfProcess;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
-import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.model1.accessor.basic.spi.Model_1;
@@ -151,286 +143,6 @@ public class MailImporterServlet
     }
 
     //-----------------------------------------------------------------------
-    protected void initEmailCreator(
-        PersistenceManager pm,
-        String providerName,
-        String segmentName
-    ) {
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getActivitySegment(
-            pm, 
-            providerName, 
-            segmentName
-        );
-        // Create EMail creators
-        ActivityCreator emailCreator = null;
-        try {
-            emailCreator = activitySegment.getActivityCreator(DEFAULT_EMAIL_CREATOR_ID);
-        }
-        catch(JmiServiceException e) {
-            // Create default inbound email creator
-            if(e.getExceptionCode() != BasicException.Code.NOT_FOUND) {
-                throw e;
-            }
-            try {            
-                UUIDGenerator uuids = UUIDs.getGenerator();
-                // EMailCreator
-                pm.currentTransaction().begin();
-                emailCreator = activityPkg.getActivityCreator().createActivityCreator();
-                emailCreator.setName("Default E-Mail Creator");
-                emailCreator.setPriority((short)0);
-                emailCreator.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                activitySegment.addActivityCreator(
-                    false,
-                    DEFAULT_EMAIL_CREATOR_ID,
-                    emailCreator
-                );
-                pm.currentTransaction().commit();
-                
-                // Create email process
-                pm.currentTransaction().begin();                    
-                ActivityProcess emailProcess = activityPkg.getActivityProcess().createActivityProcess();
-                emailProcess.setName("E-Mail Process");
-                emailProcess.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                activitySegment.addActivityProcess(
-                    false,
-                    uuids.next().toString(),
-                    emailProcess
-                );
-                // State New
-                ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
-                newState.setName("New");
-                newState.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addState(
-                    false,
-                    uuids.next().toString(),
-                    newState
-                );
-                // State Open
-                ActivityProcessState openState = activityPkg.getActivityProcessState().createActivityProcessState();
-                openState.setName("Open");
-                openState.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addState(
-                    false,
-                    uuids.next().toString(),
-                    openState
-                );
-                // State Closed
-                ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
-                closedState.setName("Closed");
-                closedState.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addState(
-                    false,
-                    uuids.next().toString(),
-                    closedState
-                );
-                pm.currentTransaction().commit();                    
-                // Initial State
-                pm.currentTransaction().begin();
-                emailProcess.setStartState(newState);                    
-                // Transition Assign: New->Open
-                ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
-                processTransition.setName("Assign");
-                processTransition.setPrevState(newState);
-                processTransition.setNextState(openState);
-                processTransition.setNewActivityState((short)10);
-                processTransition.setNewPercentComplete(new Short((short)20));
-                processTransition.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addTransition(
-                    false,
-                    uuids.next().toString(),
-                    processTransition
-                );
-                // Create SetAssignedToAction
-                SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
-                setAssignedToAction.setName("Set assignedTo");
-                setAssignedToAction.setDescription("Set assignedTo to current user");
-                setAssignedToAction.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                processTransition.addAction(
-                    false,
-                    uuids.next().toString(),
-                    setAssignedToAction
-                );
-                // Create SetActualStartAction
-                SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
-                setActualStartAction.setName("Set actual start");
-                setActualStartAction.setDescription("Set actual start on activity assignment");
-                setActualStartAction.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                processTransition.addAction(
-                    false,
-                    uuids.next().toString(),
-                    setActualStartAction
-                );
-                // Transition Add Note: Open->Open
-                processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
-                processTransition.setName("Add Note");
-                processTransition.setPrevState(openState);
-                processTransition.setNextState(openState);
-                processTransition.setNewActivityState((short)10);
-                processTransition.setNewPercentComplete(new Short((short)50));
-                processTransition.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addTransition(
-                    false,
-                    uuids.next().toString(),
-                    processTransition
-                );
-                // Transition Export: Open->Open
-                processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
-                processTransition.setName("Export as mail attachment");
-                processTransition.setPrevState(openState);
-                processTransition.setNextState(openState);
-                processTransition.setNewActivityState((short)10);
-                processTransition.setNewPercentComplete(new Short((short)50));
-                processTransition.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addTransition(
-                    false,
-                    uuids.next().toString(),
-                    processTransition
-                );
-                // Create WorkflowAction for ExportMail
-                WfAction wfAction = activityPkg.getWfAction().createWfAction();
-                wfAction.setName("Export Mail");
-                wfAction.setName("Export Mail as attachment to current user");
-                wfAction.setWfProcess(
-                    (WfProcess)pm.getObjectById(
-                        new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName + "/wfProcess/" + WorkflowControllerServlet.WORKFLOW_EXPORT_MAIL).toXri()
-                    )
-                );
-                wfAction.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                processTransition.addAction(
-                    false,
-                    uuids.next().toString(),
-                    wfAction
-                );
-                // Transition Send: Open->Open
-                processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
-                processTransition.setName("Send as mail");
-                processTransition.setPrevState(openState);
-                processTransition.setNextState(openState);
-                processTransition.setNewActivityState((short)10);
-                processTransition.setNewPercentComplete(new Short((short)50));
-                processTransition.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addTransition(
-                    false,
-                    uuids.next().toString(),
-                    processTransition
-                );
-                // Create WorkflowAction for SendMail
-                wfAction = activityPkg.getWfAction().createWfAction();
-                wfAction.setName("Send Mail");
-                wfAction.setName("Send as mail");
-                wfAction.setWfProcess(
-                    (WfProcess)pm.getObjectById(
-                        new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName + "/wfProcess/" + WorkflowControllerServlet.WORKFLOW_SEND_MAIL).toXri()
-                    )
-                );
-                wfAction.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                processTransition.addAction(
-                    false,
-                    uuids.next().toString(),
-                    wfAction
-                );
-                // Transition Close: Open->Closed
-                processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
-                processTransition.setName("Close");
-                processTransition.setPrevState(openState);
-                processTransition.setNextState(closedState);
-                processTransition.setNewActivityState((short)20);
-                processTransition.setNewPercentComplete(new Short((short)100));
-                processTransition.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                emailProcess.addTransition(
-                    false,
-                    uuids.next().toString(),
-                    processTransition
-                );
-                // Create SetActualEndAction
-                SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
-                setActualEndAction.setName("Set actual end");
-                setActualEndAction.setName("Set actual end to current dateTime");
-                setActualEndAction.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                processTransition.addAction(
-                    false,
-                    uuids.next().toString(),
-                    setActualEndAction
-                );
-                // Commit
-                pm.currentTransaction().commit();
-                
-                // Create activity type
-                pm.currentTransaction().begin();
-                ActivityType emailActivityType = activityPkg.getActivityType().createActivityType();
-                emailActivityType.setName("E-Mails");
-                emailActivityType.setActivityClass(Activities.ACTIVITY_CLASS_EMAIL);
-                emailActivityType.setControlledBy(emailProcess);
-                emailActivityType.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                activitySegment.addActivityType(
-                    false,
-                    uuids.next().toString(),
-                    emailActivityType
-                );    
-                pm.currentTransaction().commit();
-                
-                // Create activity group
-                pm.currentTransaction().begin();
-                ActivityTracker emailGroup = activityPkg.getActivityTracker().createActivityTracker();
-                emailGroup.setName("E-Mails");
-                emailGroup.getOwningGroup().addAll(
-                    activitySegment.getOwningGroup()
-                );
-                activitySegment.addActivityTracker(
-                    false,
-                    uuids.next().toString(),
-                    emailGroup
-                );                        
-                pm.currentTransaction().commit();
-                
-                // Complete activity creator
-                pm.currentTransaction().begin();
-                emailCreator.getActivityGroup().add(emailGroup);
-                emailCreator.setActivityType(emailActivityType);                        
-                pm.currentTransaction().commit();
-                
-            }
-            catch(JmiServiceException e0) {
-                AppLog.info("Can not create default configuration", e0.getMessage());
-                throw e0;
-            }
-        }
-    }
-    
-    //-----------------------------------------------------------------------
     private void notifyAdmin(
         PersistenceManager pm,
         String providerName,
@@ -444,18 +156,19 @@ public class MailImporterServlet
             Path adminHomeIdentity = new Path(
                 "xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
             );
-            UserHome userHome = (UserHome)pm.getObjectById(adminHomeIdentity.toXri());
+            UserHome userHome = (UserHome)pm.getObjectById(adminHomeIdentity);
             try {
                 pm.currentTransaction().begin();
                 message = (message == null || message.length() == 0 ? "" : message + ": ") + Arrays.asList(params);
-                userHome.sendAlert(
+                SendAlertParams sendAlertParams = Utils.getBasePackage(pm).createSendAlertParams(
                     message,
                     importance,
                     "Email Importer [" + providerName + "/" + segmentName + "] " + subject,
                     null,
                     null,
                     SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
-                );            
+                );
+                userHome.sendAlert(sendAlertParams);
                 pm.currentTransaction().commit();
             }
             catch(Exception e) {
@@ -514,7 +227,7 @@ public class MailImporterServlet
                             catch(IOException e) {
                                 AppLog.warning("Can not add attachment", e);
                                 new ServiceException(e).log();
-                                AppLog.detail(e.getMessage(), e.getCause(), 1);
+                                AppLog.detail(e.getMessage(), e.getCause());
                             }
                         }
                     }
@@ -533,7 +246,7 @@ public class MailImporterServlet
                     catch(IOException e) {
                         AppLog.warning("Can not add attachment", e);
                         new ServiceException(e).log();
-                        AppLog.detail(e.getMessage(), e.getCause(), 1);
+                        AppLog.detail(e.getMessage(), e.getCause());
                     }
                 }
             }
@@ -594,7 +307,7 @@ public class MailImporterServlet
                 pm.currentTransaction().commit();
       
                 // Update EMail activity
-                Email emailActivity = (Email)pm.getObjectById(newActivityResult.getActivity().refMofId());
+                Email emailActivity = (Email)pm.getObjectById(newActivityResult.getActivity().refGetPath());
                 pm.currentTransaction().begin();
                 String subject = mimeMessage.getSubject();                
                 emailActivity.setMessageSubject(
@@ -705,7 +418,7 @@ public class MailImporterServlet
                 new String[]{}
             );
             AppLog.warning("Can not create email activity", e.getMessage());
-            AppLog.info(e.getMessage(), e.getCause(), 1);
+            AppLog.info(e.getMessage(), e.getCause());
             throw new ServiceException(e);
         }
     }
@@ -751,7 +464,7 @@ public class MailImporterServlet
             }
             // If  not found get default creator for inbound email activities.
             if(emailCreator == null) {
-                emailCreator = activitySegment.getActivityCreator(DEFAULT_EMAIL_CREATOR_ID);
+                emailCreator = activitySegment.getActivityCreator(Activities.DEFAULT_EMAIL_CREATOR_ID);
             }
             return emailCreator;
         }
@@ -793,7 +506,7 @@ public class MailImporterServlet
                         );
                     }
                     catch(Exception e) {
-                        AppLog.info(e.getMessage(), e.getCause(), 1);                        
+                        AppLog.info(e.getMessage(), e.getCause());                        
                         this.notifyAdmin(
                             pm,
                             providerName,
@@ -854,14 +567,38 @@ public class MailImporterServlet
                 UUIDs.getGenerator().next().toString()
             );
             System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
-            WorkflowControllerServlet.initWorkflows(
+            Workflows.initWorkflows(
                 pm,
                 providerName,
                 segmentName
             );
-            this.initEmailCreator(
+            ActivityProcess emailActivityProcess = Activities.initEmailProcess(
                 pm,
                 providerName,
+                segmentName
+            );
+            ActivityType emailActivityType = Activities.initActivityType(
+                org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS,
+                org.opencrx.kernel.backend.Activities.ACTIVITY_CLASS_EMAIL,
+                emailActivityProcess,
+                pm,
+                providerName,
+                segmentName
+            );
+            ActivityGroup emailActivityTracker = Activities.initActivityTracker(
+                org.opencrx.kernel.backend.Activities.ACTIVITY_TRACKER_NAME_EMAILS, 
+                null,
+                pm, 
+                providerName, 
+                segmentName
+            );
+            Activities.initActivityCreator(
+                org.opencrx.kernel.backend.Activities.ACTIVITY_CREATOR_NAME_EMAILS, 
+                emailActivityType,
+                Arrays.asList(emailActivityTracker),
+                null,
+                pm, 
+                providerName, 
                 segmentName
             );
             MailImporterConfig mailImporterConfig = new MailImporterConfig(
@@ -895,7 +632,7 @@ public class MailImporterServlet
                         );
                     }
                     catch(Exception e) {
-                        AppLog.info(e.getMessage(), e.getCause(), 1);
+                        AppLog.info(e.getMessage(), e.getCause());
                         this.notifyAdmin(
                             pm,
                             providerName,
@@ -959,7 +696,7 @@ public class MailImporterServlet
             catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
                 AppLog.warning("Import messages failed", e0.getMessage());
-                AppLog.warning(e0.getMessage(), e0.getCause(), 1);
+                AppLog.warning(e0.getMessage(), e0.getCause());
             }
             finally {
                 this.runningSegments.remove(id);
@@ -1006,7 +743,6 @@ public class MailImporterServlet
     
     private static final String WORKFLOW_NAME = "MailImporter";
     private static final String COMMAND_EXECUTE = "/execute";
-    private static final String DEFAULT_EMAIL_CREATOR_ID = "EMailCreator";
     
     private static final UUIDGenerator uuidGenerator = UUIDs.getGenerator();
 

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:budget" _operation="create">
                     <_object>
                       <label>
-                        <_item>Бюджет</_item>
+                        <_item>Бюджеты</_item>
                       </label>
                       <toolTip>
-                        <_item>Все средства бюджета</_item>
+                        <_item>Все бюджеты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет</_item>
+                        <_item>Учетная запись</_item>
                       </label>
                       <toolTip>
-                        <_item>К выполнению с пом. счета</_item>
+                        <_item>К выполнению с пом. учетной записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:startingFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Действ. с</_item>
+                        <_item>Начало с</_item>
                       </label>
                       <toolTip>
-                        <_item>Действ. с</_item>
+                        <_item>Начало с</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:endingAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Действ. по</_item>
+                        <_item>Окончание в</_item>
                       </label>
                       <toolTip>
-                        <_item>Действ. по</_item>
+                        <_item>Окончание в</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:targetValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Искомое знач-е</_item>
+                        <_item>Целевое значение</_item>
                       </label>
                       <toolTip>
-                        <_item>Искомое знач-е</_item>
+                        <_item>Целевое значение</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Budget:actualValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Действ. знач-е</_item>
+                        <_item>Текущее значение</_item>
                       </label>
                       <toolTip>
-                        <_item>Действ. знач-е</_item>
+                        <_item>Текущее значение</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -149,7 +149,7 @@
                         <_item>Искомое знач-е</_item>
                       </label>
                       <toolTip>
-                        <_item>Искомое знач-е</_item>
+                        <_item>Целевое значение</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:BudgetMilestone:actualValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>Действ. знач-е</_item>
+                        <_item>Текущее значение</_item>
                       </label>
                       <toolTip>
-                        <_item>Действ. знач-е</_item>
+                        <_item>Текущее значение</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Здания/сооруж.</_item>
+                        <_item>Здания/сооружения</_item>
                       </label>
                       <toolTip>
-                        <_item>Здания/сооруж.</_item>
+                        <_item>Здания/сооружения</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,87 +25,245 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="create">
                     <_object>
                       <label>
-                        <_item>Здания/сооруж.</_item>
+                        <_item>Все Здания/сооружения</_item>
                       </label>
                       <toolTip>
-                        <_item>Здания/сооруж.</_item>
+                        <_item>Все Здания/сооружения</_item>
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Здания/сооружения</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Здания/сооружения</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Здания (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Здания (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Комплексы сооруж-ий</_item>
+                        <_item>Все комплексы зданий/сооружений</_item>
                       </label>
                       <toolTip>
-                        <_item>Комплексы сооруж-ий</_item>
+                        <_item>Все комплексы зданий/сооружений</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:buildingUnit" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Комплексы зданий</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Комплексы зданий</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Комплексы зданий (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Комплексы зданий (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Единицы сооруж-ий</_item>
+                        <_item>Все элементы зданий</_item>
                       </label>
                       <toolTip>
-                        <_item>Единицы сооруж-ий</_item>
+                        <_item>Все элементы зданий</_item>
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Элементы зданий</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Элементы зданий</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Элементы зданий (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Элементы зданий (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Все Мощности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все Мощности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Мощности</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Мощности</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Мощности (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Мощности (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Все инвентарные единицы</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все инвентарные единицы</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Инвентарные единицы</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Инвентарные единицы</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Инвентарные единицы (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Инвентарные единицы (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:facility" _operation="create">
                     <_object>
                       <label>
-                        <_item>Оборудование</_item>
+                        <_item>Мощности</_item>
                       </label>
                       <toolTip>
-                        <_item>Оборудование</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Здание</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Здание</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Комплекс зданий</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Комплекс зданий</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ед-ца зданий</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ед-ца зданий</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Оборудование</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Оборудование</_item>
+                        <_item>Мощности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +271,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Название</_item>
+                        <_item>Наименование</_item>
                       </label>
                       <toolTip>
-                        <_item>Название</_item>
+                        <_item>Наименование</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +293,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:sizeInSquareMeter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Площадь, м.кв</_item>
+                        <_item>Площадь, в кв. метрах</_item>
                       </label>
                       <toolTip>
-                        <_item>Площадь, м.кв</_item>
+                        <_item>Площадь, в кв. метрах</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +304,76 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:sizeInCubicMeter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Объем, м.куб</_item>
+                        <_item>Объем, куб. метров</_item>
                       </label>
                       <toolTip>
-                        <_item>Объем, м.куб</_item>
+                        <_item>Объем, куб. метров</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:depot" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Контролируется подразделением</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Контролируется подразделением</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Комплекс зданий</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Комплекс зданий</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Изображение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Изображение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Название/Источник</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Название/Источник</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building:buildingUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Единицы сооружений</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Единицы сооружений</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Building" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Здание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Здание</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -187,6 +411,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Единицы зданий</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Единицы зданий</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:buildingUnitType" _operation="create">
                     <_object>
                       <label>
@@ -201,10 +436,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingUnit:parent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Часть ед-цы здания</_item>
+                        <_item>Часть единицы здания</_item>
                       </label>
                       <toolTip>
-                        <_item>Часть ед-цы здания</_item>
+                        <_item>Часть единицы здания</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -231,13 +466,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:Pane:Attr:Tab:0:Group:10" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility" _operation="create">
                     <_object>
                       <label>
-                        <_item>Изображение</_item>
+                        <_item>Мощность</_item>
                       </label>
                       <toolTip>
-                        <_item>Изображение</_item>
+                        <_item>Мощность</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +480,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Facility:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Название</_item>
+                        <_item>Наименование</_item>
                       </label>
                       <toolTip>
-                        <_item>Название</_item>
+                        <_item>Наименование</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -297,24 +532,241 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:pictureContent" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Изображение</_item>
+                        <_item>Назначение учетных записей</_item>
                       </label>
                       <toolTip>
-                        <_item>Изображение</_item>
+                        <_item>Назначение учетных записей</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:BuildingComplex:picture" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:booking" _operation="create">
                     <_object>
                       <label>
-                        <_item>Название/Источник</_item>
+                        <_item>Портфель заказов</_item>
                       </label>
                       <toolTip>
-                        <_item>Название/Источник</_item>
+                        <_item>Портфель заказов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Элементы инвентаризации</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Элементы инвентаризации</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:InventoryItem:inventoryItemType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AccountAssignmentInventoryItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначение учетной записи</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначение учетной записи</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AccountAssignmentInventoryItem:accountRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Роль</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Роль</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AccountAssignmentInventoryItem:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AccountAssignmentInventoryItem:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItem:itemLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связано с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связано с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItem:itemLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Входящие связи</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Входящие связи</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLink:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Используется с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Используется с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLink:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Используется до</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Используется до</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLink:linkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Тип</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Тип</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkTo" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Связываемый элемент. Связь к</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkTo:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связь к</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связь к</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связываемый элемент. Связь от</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связываемый элемент. Связь от</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связь от</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связь от</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Связь к</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Связь к</_item>
                       </toolTip>
                     </_object>
                     <_content/>

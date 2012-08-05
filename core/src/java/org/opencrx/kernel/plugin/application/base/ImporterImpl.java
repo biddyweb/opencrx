@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImporterImpl.java,v 1.4 2007/12/26 22:41:48 wfro Exp $
+ * Name:        $Id: ImporterImpl.java,v 1.7 2008/05/22 15:38:33 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/26 22:41:48 $
+ * Date:        $Date: 2008/05/22 15:38:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,11 +62,11 @@ import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.VCard;
-import org.opencrx.kernel.backend.Xml;
+import org.opencrx.kernel.backend.Importer;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.openmdx.application.log.AppLog;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 
@@ -90,7 +90,7 @@ public class ImporterImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ImportResult importItem(
         org.opencrx.kernel.base.jmi1.ImportParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             short locale = params.getLocale();
             byte[] item = params.getItem();
@@ -106,6 +106,7 @@ public class ImporterImpl {
                     item,
                     this.current.refGetPath(),
                     locale,
+                    errors,
                     report
                 );
             }
@@ -120,8 +121,8 @@ public class ImporterImpl {
                     report
                 );
             }
-            else if(Xml.MIME_TYPE.equals(itemMimeType)) {
-                importedObject = new Xml(
+            else if(Importer.MIME_TYPE.equals(itemMimeType)) {
+                importedObject = new Importer(
                     this.getBackend(),
                     // self-delegation asserts that processed objects are verified and completed
                     this.getBackend().getLocalRequests(),
@@ -159,7 +160,7 @@ public class ImporterImpl {
             }
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                
     }
     

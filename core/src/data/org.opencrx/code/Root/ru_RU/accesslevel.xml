@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>[1] Индивид.</_item>
+                              <_item>[1] Частный</_item>
                             </shortText>
                             <longText>
-                              <_item>[1] Индивид.</_item>
+                              <_item>[1]Частный</_item>
                             </longText>
                           </_object>
                           <_content/>

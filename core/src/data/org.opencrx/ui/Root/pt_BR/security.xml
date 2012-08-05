@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:identity1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>assuntos de Segurança</_item>
+                        <_item>Assuntos de Segurança</_item>
                       </label>
                       <toolTip>
-                        <_item>assuntos de Segurança</_item>
+                        <_item>Assuntos de Segurança</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -377,10 +377,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:disabled" _operation="create">
                     <_object>
                       <label>
-                        <_item>Desligado</_item>
+                        <_item>Inativo</_item>
                       </label>
                       <toolTip>
-                        <_item>Desligado</_item>
+                        <_item>Inativo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -403,6 +403,17 @@
                       </label>
                       <toolTip>
                         <_item>Membro de Grupos Principal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:authCredential" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Credenciais de Autorização</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Credenciais de Autorização</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -443,10 +454,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grupo do Principal</_item>
+                        <_item>Grupo Principal</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupo do Principal</_item>
+                        <_item>Grupo Principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -454,10 +465,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:subject" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grupo do Usuário</_item>
+                        <_item>Grupo de Usuário</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupo do Usuário</_item>
+                        <_item>Grupo de Usuário</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -520,10 +531,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Role:disabled" _operation="create">
                     <_object>
                       <label>
-                        <_item>Desligado</_item>
+                        <_item>Inativo</_item>
                       </label>
                       <toolTip>
-                        <_item>Desligado</_item>
+                        <_item>Inativo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -938,10 +949,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:locked" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fechado</_item>
+                        <_item>Bloqueado</_item>
                       </label>
                       <toolTip>
-                        <_item>Fechado</_item>
+                        <_item>Bloqueado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -982,10 +993,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:Pane:Op:Tab:change" _operation="create">
                     <_object>
                       <label>
-                        <_item>Troca</_item>
+                        <_item>Trocar</_item>
                       </label>
                       <toolTip>
-                        <_item>Troca</_item>
+                        <_item>Trocar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1026,10 +1037,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:Pane:Op:Tab:set:token" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ficha</_item>
+                        <_item>Token</_item>
                       </label>
                       <toolTip>
-                        <_item>Ficha</_item>
+                        <_item>Token</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -27,7 +27,7 @@
 		<config-property>
 			<config-property-name>ConnectionURL</config-property-name>
 			<config-property-type>java.lang.String</config-property-type>
-			<config-property-value>jdbc:mysql://localhost:3306/CRX_2_0</config-property-value>
+			<config-property-value>jdbc:mysql://127.0.0.1:3306/CRX_2_1</config-property-value>
 		</config-property>
 		<authentication-mechanism>
 			<authentication-mechanism-type>BasicPassword</authentication-mechanism-type>

@@ -1282,18 +1282,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Export XML</_item>
+                        <_item>Export</_item>
                       </label>
                       <toolTip>
-                        <_item>Exportovat XML</_item>
+                        <_item>Export</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Vstup</_item>
@@ -1304,7 +1304,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:referenceFilter" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:referenceFilter" _operation="create">
                     <_object>
                       <label>
                         <_item>Referenční filtr</_item>
@@ -1315,40 +1315,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:attributeFilter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filtr vlastnosti</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Filtr vlastnosti</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Výsledek</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Výsledek</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:item" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Exportovaná položka</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Exportovaná položka</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemMimeType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:itemMimeType" _operation="create">
                     <_object>
                       <label>
                         <_item>MIME typ</_item>
@@ -1359,7 +1326,40 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemName" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledek</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výsledek</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportovaná položka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportovaná položka</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName" _operation="create">
                     <_object>
                       <label>
                         <_item>Pojmenování položky</_item>
@@ -1370,7 +1370,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:status" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status" _operation="create">
                     <_object>
                       <label>
                         <_item>Stav</_item>
@@ -1381,7 +1381,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:statusMessage" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage" _operation="create">
                     <_object>
                       <label>
                         <_item>Stavové hlášení</_item>

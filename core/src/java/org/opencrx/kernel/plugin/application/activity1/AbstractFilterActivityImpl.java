@@ -2,8 +2,8 @@ package org.opencrx.kernel.plugin.application.activity1;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.base.jmi1.BasePackage;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class AbstractFilterActivityImpl {
@@ -25,8 +25,7 @@ public class AbstractFilterActivityImpl {
         
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult countFilteredActivity(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             int count = this.getBackend().getActivities().countFilteredActivity(
                 this.current.refGetPath()
@@ -36,7 +35,7 @@ public class AbstractFilterActivityImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
     

@@ -11,13 +11,13 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtrerade Kunder</_item>
+                        <_item>Kontofilter</_item>
                       </label>
                       <toolTip>
-                        <_item>alla filtrerade kunder</_item>
+                        <_item>Kontofilter</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -29,6 +29,50 @@
                       </label>
                       <toolTip>
                         <_item>alla filteregenskaper</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtrerade Kunder</_item>
+                      </label>
+                      <toolTip>
+                        <_item>alla filtrerade kunder</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Räkna filtrerade konton</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Räkna filtrerade konton</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indata</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indata</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:Pane:Op:Tab:countFilteredAccount:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -95,6 +139,72 @@
                       </label>
                       <toolTip>
                         <_item>Kategorier</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inaktiverad Filteregenskap</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inaktiverad Filteregenskap</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inaktiverad</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inaktiverad</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kontofilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kontofilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Frågefilteregenskap</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Frågefilteregenskap</_item>
                       </toolTip>
                     </_object>
                     <_content/>

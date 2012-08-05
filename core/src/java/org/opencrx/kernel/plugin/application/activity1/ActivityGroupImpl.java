@@ -2,8 +2,8 @@ package org.opencrx.kernel.plugin.application.activity1;
 
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class ActivityGroupImpl {
@@ -25,8 +25,7 @@ public class ActivityGroupImpl {
         
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.CalcActualEffortResult calcActualEffort(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             int[] actualEffort = this.getBackend().getActivities().calcActualEffort(
                 this.current.refGetPath()
@@ -37,7 +36,7 @@ public class ActivityGroupImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
     

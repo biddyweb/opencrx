@@ -278,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Propriedade de Filtro de Fim de Agendamento</_item>
+                        <_item>Propriedade de Filtro de Término Previsto</_item>
                       </label>
                       <toolTip>
-                        <_item>Propriedade de Filtro de Fim de Agendamento</_item>
+                        <_item>Propriedade de Filtro de Término Previsto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty:scheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Agendamento termina</_item>
+                        <_item>Término Previsto</_item>
                       </label>
                       <toolTip>
-                        <_item>Agendamento termina</_item>
+                        <_item>Término Previsto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty:offsetInHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Compensado em horas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Compensado em horas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -315,6 +326,17 @@
                       </label>
                       <toolTip>
                         <_item>Agendamento inicia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty:offsetInHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Compensado em horas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Compensado em horas</_item>
                       </toolTip>
                     </_object>
                     <_content/>

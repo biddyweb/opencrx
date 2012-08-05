@@ -77,6 +77,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktivetetsskapare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktivetetsskapare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:followUp" _operation="create">
                     <_object>
                       <label>
@@ -121,24 +132,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:actualEffortHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:defaultCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>tt (faktisk tidsåtgång)</_item>
+                        <_item>Standardaktivitetsskapare</_item>
                       </label>
                       <toolTip>
-                        <_item>tt (faktisk tidsåtgång)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:actualEffortMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (faktisk tidsåtgång)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (faktisk tidsåtgång)</_item>
+                        <_item>Standardaktivitetsskapare</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -249,6 +249,61 @@
                       </label>
                       <toolTip>
                         <_item>Välkommen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Kalkylera Faktisk Tidsåtgång</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Kalkylera Faktisk Tidsåtgång</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indata</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indata</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>tt (faktisk tidsåtgång) </_item>
+                      </label>
+                      <toolTip>
+                        <_item>tt (faktisk tidsåtgång)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>mm (faktisk tidsåtgång)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>mm (faktisk tidsåtgång)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

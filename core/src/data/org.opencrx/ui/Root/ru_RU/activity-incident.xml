@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident" _operation="create">
                     <_object>
                       <label>
-                        <_item>Событие</_item>
+                        <_item>Происшествие</_item>
                       </label>
                       <toolTip>
-                        <_item>Событие</_item>
+                        <_item>Происшествие</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Управление инцидентом</_item>
+                        <_item>Управление происшествием</_item>
                       </label>
                       <toolTip>
-                        <_item>Управление инцидентом</_item>
+                        <_item>Управление происшествием</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:customerSatisfaction" _operation="create">
                     <_object>
                       <label>
-                        <_item>Удовлетв. заказчика</_item>
+                        <_item>Степень удовлетворенности нужд заказчика</_item>
                       </label>
                       <toolTip>
-                        <_item>Удовлетв. заказчика</_item>
+                        <_item>Степень удовлетворенности нужд заказчика</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:caseType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип события</_item>
+                        <_item>Тип происшествия</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип события</_item>
+                        <_item>Тип происшествия</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:caseOrigin" _operation="create">
                     <_object>
                       <label>
-                        <_item>Первопричина</_item>
+                        <_item>Первопричина происшествия</_item>
                       </label>
                       <toolTip>
-                        <_item>Первопричина</_item>
+                        <_item>Первопричина происшествия</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:reproducibility" _operation="create">
                     <_object>
                       <label>
-                        <_item>Повторяемость</_item>
+                        <_item>Воспроизводимость</_item>
                       </label>
                       <toolTip>
-                        <_item>Повторяемость</_item>
+                        <_item>Воспроизводимость</_item>
                       </toolTip>
                     </_object>
                     <_content/>

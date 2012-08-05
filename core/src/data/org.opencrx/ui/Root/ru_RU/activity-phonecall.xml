@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:phoneCallRecipient" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вызывающие по телефону</_item>
+                        <_item>Вызываемые абоненты</_item>
                       </label>
                       <toolTip>
-                        <_item>Вызывающие по телефону</_item>
+                        <_item>Вызываемые абоненты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:sender" _operation="create">
                     <_object>
                       <label>
-                        <_item>Создание номера</_item>
+                        <_item>Вызывающий номер телефона</_item>
                       </label>
                       <toolTip>
-                        <_item>Создание номера</_item>
+                        <_item>Вызывающий номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCallRecipient" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вызывающий</_item>
+                        <_item>Вызываемый абонент</_item>
                       </label>
                       <toolTip>
-                        <_item>Вызывающий</_item>
+                        <_item>Вызываемый абонент</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCallRecipientGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа вызывающих</_item>
+                        <_item>Группа вызываемых абонентов</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа вызывающих</_item>
+                        <_item>Группа вызываемых абонентов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractPhoneCallRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Телефонный номер(а)</_item>
+                        <_item>Номер(а) телефона</_item>
                       </label>
                       <toolTip>
-                        <_item>Телефонный номер(а)</_item>
+                        <_item>Номер(а) телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>

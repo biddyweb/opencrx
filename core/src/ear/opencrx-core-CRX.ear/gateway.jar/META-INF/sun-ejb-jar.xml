@@ -3,21 +3,17 @@
 <sun-ejb-jar>
 	<enterprise-beans>
 		<ejb>
-			<ejb-name>opencrx_core_CRX_gateway_mandatory</ejb-name>
-			<jndi-name>org/opencrx/core/CRX/local/mandatory/gateway</jndi-name>
-			<ejb-ref>
-				<ejb-ref-name>ejb/dataprovider[0]</ejb-ref-name>
-				<jndi-name>org/opencrx/core/CRX/local/mandatory/kernel</jndi-name>
-			</ejb-ref>
+			<ejb-name>opencrx_core_CRX_EntityManagerFactory</ejb-name>
+			<jndi-name>org/opencrx/core/CRX/EntityManagerFactory</jndi-name>
 			<pass-by-reference>false</pass-by-reference>
 			<is-read-only-bean>false</is-read-only-bean>
 		</ejb>
 		<ejb>
-			<ejb-name>opencrx_core_CRX_gateway_noOrNew</ejb-name>
-			<jndi-name>org/opencrx/core/CRX/noOrNew/gateway</jndi-name>
+			<ejb-name>opencrx_core_CRX_Gateway</ejb-name>
+			<jndi-name>org/opencrx/core/CRX/Gateway</jndi-name>
 			<ejb-ref>
-				<ejb-ref-name>ejb/server</ejb-ref-name>
-				<jndi-name>org/opencrx/core/CRX/local/mandatory/gateway</jndi-name>
+				<ejb-ref-name>ejb/dataprovider[0]</ejb-ref-name>
+				<jndi-name>org/opencrx/core/CRX/EntityManagerFactory</jndi-name>
 			</ejb-ref>
 			<pass-by-reference>false</pass-by-reference>
 			<is-read-only-bean>false</is-read-only-bean>

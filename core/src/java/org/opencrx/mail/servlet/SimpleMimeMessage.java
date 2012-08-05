@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SimpleMimeMessage.java,v 1.20 2007/12/20 19:20:33 wfro Exp $
+ * Name:        $Id: SimpleMimeMessage.java,v 1.21 2008/04/01 12:33:01 wfro Exp $
  * Description: SimpleMimeMessage
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/20 19:20:33 $
+ * Date:        $Date: 2008/04/01 12:33:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

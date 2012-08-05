@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -161,10 +161,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="700" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ассистент</_item>
+                              <_item>Помощник</_item>
                             </shortText>
                             <longText>
-                              <_item>Ассистент</_item>
+                              <_item>Помощник</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -183,10 +183,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Машина</_item>
+                              <_item>Автомобиль</_item>
                             </shortText>
                             <longText>
-                              <_item>Машина</_item>
+                              <_item>Автомобиль</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -205,10 +205,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1900" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Аварийн. устр.</_item>
+                              <_item> Для неотложных вызовов</_item>
                             </shortText>
                             <longText>
-                              <_item>Аварийн. устр.</_item>
+                              <_item>Для неотложных вызовов</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:addressGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grupos de Endereços</_item>
+                        <_item>Grupos de Endereço</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupos de Endereços</_item>
+                        <_item>Grupos de Endereço</_item>
                       </toolTip>
                     </_object>
                     <_content/>

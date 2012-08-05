@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.8 2007/12/26 22:41:46 wfro Exp $
+ * Name:        $Id: Admin.java,v 1.11 2008/05/22 15:38:32 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/26 22:41:46 $
+ * Date:        $Date: 2008/05/22 15:38:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -124,7 +124,7 @@ public class Admin {
 	        }
 	        catch(Exception e0) {
 	            ServiceException e1 = new ServiceException(e0);
-	            AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+	            AppLog.warning(e1.getMessage(), e1.getCause());
 	            errors.add("can not create segment for " + qualifiedModelName);
 	            errors.add("reason is " + e0.getMessage());
 	            return null;
@@ -163,12 +163,12 @@ public class Admin {
                 Arrays.asList(owningGroup)
             );
             try {
-                this.backend.getAccounts().setAccountFullName(newContact, null);
+                this.backend.getAccounts().updateAccount(newContact, null);
                 this.backend.getDelegatingRequests().addCreateRequest(newContact);
             }
             catch(Exception e0) {
                 ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                AppLog.warning(e1.getMessage(), e1.getCause());
                 errors.add("can not create contact");
                 errors.add("reason is " + e0.getMessage());
                 return null;
@@ -203,7 +203,7 @@ public class Admin {
             }
             catch(Exception e0) {
                 ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                AppLog.warning(e1.getMessage(), e1.getCause());
                 errors.add("can not create subject " + subjectName + " in segment " + identitySegment);
                 errors.add("reason is " + e0.getMessage());
                 return null;
@@ -244,7 +244,7 @@ public class Admin {
                 }
                 catch(ServiceException e) {
                     ServiceException e1 = new ServiceException(e);
-                    AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                    AppLog.warning(e1.getMessage(), e1.getCause());
                     errors.add("can not update principal " + principalName + " in realm " + realmIdentity);
                     errors.add("reason is " + e1.getMessage());
                     return null;                    
@@ -257,6 +257,7 @@ public class Admin {
             );
             newPrincipal.values(SystemAttributes.OBJECT_CLASS).add(principalClass);
             newPrincipal.values("description").add(principalIdentity.get(6) + "\\\\" + principalName);
+            newPrincipal.values("disabled").add(Boolean.FALSE);
             newPrincipal.values("isMemberOf").addAll(
                 Arrays.asList(isMemberOf)
             );
@@ -268,7 +269,7 @@ public class Admin {
             }
             catch(Exception e0) {
                 ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                AppLog.warning(e1.getMessage(), e1.getCause());
                 errors.add("can not create principal " + principalName + " in realm " + realmIdentity);
                 errors.add("reason is " + e0.getMessage());
                 return null;
@@ -327,7 +328,7 @@ public class Admin {
             }
             else {
                 ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                AppLog.warning(e1.getMessage(), e1.getCause());
                 errors.add("principal " + principalName + " not found in realm " + loginRealmIdentity);
                 return;
             }
@@ -396,7 +397,7 @@ public class Admin {
             }
             catch(Exception e0) {
                 ServiceException e1 = new ServiceException(e);
-                AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                AppLog.warning(e1.getMessage(), e1.getCause());
                 errors.add("can not create realm " + realmIdentity);
                 errors.add("reason is " + e0.getMessage());
                 return;

@@ -15,6 +15,39 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item> N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>уровень экземпляра</_item>
+                            </shortText>
+                            <longText>
+                              <_item>уровень экземпляра</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>ур. классиф.</_item>
+                            </shortText>
+                            <longText>
+                              <_item>уровень классификатора</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailImporterConfig.java,v 1.11 2008/02/12 19:49:06 wfro Exp $
+ * Name:        $Id: MailImporterConfig.java,v 1.14 2008/04/12 20:20:55 wfro Exp $
  * Description: MailImporterConfig
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:49:06 $
+ * Date:        $Date: 2008/04/12 20:20:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,7 +60,7 @@ import java.util.Iterator;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
-import org.opencrx.kernel.workflow.servlet.Utils;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.compatibility.base.naming.Path;
@@ -86,10 +86,10 @@ public class MailImporterConfig {
         
         try {
             Admin1Package adminPkg = Utils.getAdminPackage(pm);
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getOpenCrxBasePackage(pm);
+            org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getBasePackage(pm);
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root").toXri()
+                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
                 );
             org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
             // Get component configuration

@@ -73,10 +73,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Outro domic쫩o</_item>
+                              <_item>Outro domicílio</_item>
                             </shortText>
                             <longText>
-                              <_item>Outro domic쫩o</_item>
+                              <_item>Outro domicílio</_item>
                             </longText>
                           </_object>
                           <_content/>

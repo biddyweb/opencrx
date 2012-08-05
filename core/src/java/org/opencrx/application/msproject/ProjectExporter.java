@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.10 2007/12/12 12:55:33 wfro Exp $
+ * Name:        $Id: ProjectExporter.java,v 1.11 2008/03/18 20:09:14 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/12 12:55:33 $
+ * Date:        $Date: 2008/03/18 20:09:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -71,6 +71,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.PersistenceManager;
+
 import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
@@ -80,14 +82,11 @@ import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.RuntimeServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
-import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.exception.BasicException.Parameter;
 import org.openmdx.portal.servlet.Action;
-import org.openxri.XRI;
 
 
 public class ProjectExporter {
@@ -252,11 +251,11 @@ public class ProjectExporter {
     public ProjectExporter(
         OutputStream os, 
         ActivityGroup activityGroup, 
-        RefPackage_1_0 rootPkg
+        PersistenceManager pm
     ) {
         this.setOutputStream(os);
         this.setActivityGroup(activityGroup);
-        this.rootPkg = rootPkg;
+        this.pm = pm;
     }
 
     //-------------------------------------------------------------------------
@@ -400,7 +399,7 @@ public class ProjectExporter {
       Activity a = (Activity)i.next();
       //if (!a.getName().startsWith("XTask")) continue;
       //read again to get obj with composite path.
-      a = (Activity)rootPkg.refObject(a.refMofId());
+      a = (Activity)pm.getObjectById(a.refGetPath());
       ActivityMapper am = new ActivityMapper(a);
       activityMappers.put(am.getActivity().getIdentity(),am);
     }
@@ -1120,7 +1119,7 @@ public class ProjectExporter {
   private boolean useActualEffort = false;
   private PrintWriter pw;
   private ActivityGroup activityGroup;
-  private RefPackage_1_0 rootPkg;
+  private PersistenceManager pm;
   private String mspHyperlinkRootAddress = null;
   private boolean exportActivities = true;
   private boolean exportResources = true;

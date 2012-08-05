@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Backend.java,v 1.16 2008/01/09 16:28:51 wfro Exp $
+ * Name:        $Id: Backend.java,v 1.21 2008/05/25 22:02:36 wfro Exp $
  * Description: Backend
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/01/09 16:28:51 $
+ * Date:        $Date: 2008/05/25 22:02:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,6 +68,7 @@ import org.opencrx.kernel.generic.OpenCrxException;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
@@ -280,6 +281,28 @@ public class Backend {
     }
 
     //-------------------------------------------------------------------------
+    public boolean isAccount(
+        DataproviderObject_1_0 object
+    ) throws ServiceException {
+        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
+        return this.getModel().isSubtypeOf(
+            objectClass,
+            "org:opencrx:kernel:account1:Account"
+        );
+    }
+
+    //-------------------------------------------------------------------------
+    public boolean isUnspecifiedAccount(
+        DataproviderObject_1_0 object
+    ) throws ServiceException {
+        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
+        return this.getModel().isSubtypeOf(
+            objectClass,
+            "org:opencrx:kernel:account1:UnspecifiedAccount"
+        );
+    }
+
+    //-------------------------------------------------------------------------
     public boolean isContact(
         DataproviderObject_1_0 object
     ) throws ServiceException {
@@ -290,6 +313,39 @@ public class Backend {
         );
     }
 
+    //-------------------------------------------------------------------------
+    public boolean isPhoneNumberAddressable(
+        DataproviderObject_1_0 object
+    ) throws ServiceException {
+        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
+        return this.getModel().isSubtypeOf(
+            objectClass,
+            "org:opencrx:kernel:address1:PhoneNumberAddressable"
+        );
+    }
+
+    //-------------------------------------------------------------------------
+    public boolean isAccountAddress(
+        DataproviderObject_1_0 object
+    ) throws ServiceException {
+        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
+        return this.getModel().isSubtypeOf(
+            objectClass,
+            "org:opencrx:kernel:account1:AccountAddress"
+        );
+    }
+
+    //-------------------------------------------------------------------------
+    public boolean isAbstractGroup(
+        DataproviderObject_1_0 object
+    ) throws ServiceException {
+        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
+        return this.getModel().isSubtypeOf(
+            objectClass,
+            "org:opencrx:kernel:account1:AbstractGroup"
+        );
+    }
+    
     //-------------------------------------------------------------------------
     public boolean isPropertySetEntry(
         DataproviderObject_1_0 object
@@ -494,7 +550,7 @@ public class Backend {
     //-------------------------------------------------------------------------
     public String getUidAsString(
     ) {
-        return this.uuids.next().toString();        
+        return UUIDConversion.toUID(this.uuids.next());        
     }
     
     //-------------------------------------------------------------------------
@@ -579,7 +635,10 @@ public class Backend {
     public DataproviderObject_1_0 retrieveObject(
         Path identity
     ) throws ServiceException {
-        if(!identity.get(0).startsWith("org:opencrx:kernel")) {
+        if(this.context.modifiedObjects.keySet().contains(identity)) {
+            return (DataproviderObject)this.context.modifiedObjects.get(identity);
+        }
+        else if(!identity.get(0).startsWith("org:opencrx:kernel")) {
             return this.retrieveObjectFromDelegation(
                 identity
             );
@@ -716,7 +775,7 @@ public class Backend {
         }
         catch(ServiceException e) {
             SysLog.info("can not remove objects");
-            SysLog.info(e.getMessage(), e.getCause(), 1);
+            SysLog.info(e.getMessage(), e.getCause());
         }
     }
 
@@ -727,12 +786,12 @@ public class Backend {
         // loop until pre-store does not make dirty any new objects
         int count = 0;
         while(!this.context.modifiedObjects.isEmpty()) {
-            Map modifiedObjects = new HashMap(this.context.modifiedObjects);
+            Map<Path,DataproviderObject> modifiedObjects = new HashMap<Path,DataproviderObject>(this.context.modifiedObjects);
             for(
-                Iterator i = modifiedObjects.values().iterator(); 
+                Iterator<DataproviderObject> i = modifiedObjects.values().iterator(); 
                 i.hasNext(); 
             ) {
-                DataproviderObject object = (DataproviderObject)i.next();
+                DataproviderObject object = i.next();
                 DataproviderObject_1_0 existingObject = this.retrieveObject(
                     object.path()
                 );
@@ -800,10 +859,10 @@ public class Backend {
         ServiceHeader header
     ) throws ServiceException {
         for(
-            Iterator i = this.context.pendingModifications.iterator();
+            Iterator<DataproviderObject> i = this.context.pendingModifications.iterator();
             i.hasNext();
         ) {
-            DataproviderObject modification = (DataproviderObject)i.next();
+            DataproviderObject modification = i.next();
             this.testObjectIsChangeable(modification);            
             DataproviderObject modifiedObject = this.retrieveObjectForModification(
                 modification.path()
@@ -857,12 +916,12 @@ public class Backend {
         DataproviderObject obj,
         DataproviderObject_1_0 oldValues
     ) throws ServiceException {
-        this.getAccounts().setAccountFullName(
-            obj, 
+        this.getAddresses().updateAddress(
+            obj,
             oldValues
         );
-        this.getAddresses().parsePhoneNumber(
-            obj,
+        this.getAccounts().updateAccount(
+            obj, 
             oldValues
         );
         this.getBase().initCharts(
@@ -907,36 +966,6 @@ public class Backend {
                 null
             );
         }
-    }
-    
-    //-------------------------------------------------------------------------
-    public String toFilename(
-        String s
-    ) {
-        s = s.replace(' ', '-');
-        s = s.replace(',', '-');
-        s = s.replace('/', '-');
-        s = s.replace('\\', '-');
-        s = s.replace('=', '-');
-        s = s.replace('%', '-');
-        s = s.replace(':', '-');
-        s = s.replace('*', '-');
-        s = s.replace('?', '-');
-        s = s.replace('+', '-');
-        s = s.replace('(', '-');
-        s = s.replace(')', '-');
-        s = s.replace('<', '-');
-        s = s.replace('>', '-');
-        s = s.replace('|', '-');
-        s = s.replace('"', '-');
-        s = s.replace('\'', '-');
-        s = s.replace('&', '-');
-        s = s.replace('.', '-');
-        s = s.replaceAll("-", "");
-        if(s.length() > 50) {
-            s = s.substring(0, 44) + s.substring(s.length()-5);
-        }
-        return s;
     }
     
     //-------------------------------------------------------------------------
@@ -1007,18 +1036,18 @@ public class Backend {
 
     // Reset by open()
     public BackendContext context = null;
-    private Models models = null;
-    private Admin admin = null;
-    private Accounts accounts = null;
-    private Addresses addresses = null;
-    private Contracts contracts = null;
-    private Cloneable cloneable = null;
-    private Depots depots = null;
-    private Products products = null;
-    private Activities activities = null;
-    private UserHomes userHomes = null;
-    private Workflows workflows = null;
-    private Base base = null;
-    private DerivedReferences derivedReferences = null;
+    protected Models models = null;
+    protected Admin admin = null;
+    protected Accounts accounts = null;
+    protected Addresses addresses = null;
+    protected Contracts contracts = null;
+    protected Cloneable cloneable = null;
+    protected Depots depots = null;
+    protected Products products = null;
+    protected Activities activities = null;
+    protected UserHomes userHomes = null;
+    protected Workflows workflows = null;
+    protected Base base = null;
+    protected DerivedReferences derivedReferences = null;
     
 }

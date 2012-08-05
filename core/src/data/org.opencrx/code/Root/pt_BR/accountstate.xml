@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Não Ativo</_item>
+                              <_item>Inativo</_item>
                             </shortText>
                             <longText>
-                              <_item>Não Ativo</_item>
+                              <_item>Inativo</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -33,6 +33,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>价格列表(已禁用产品)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>价格列表(已禁用产品)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:pricingRule" _operation="create">
                     <_object>
                       <label>
@@ -40,17 +58,6 @@
                       </label>
                       <toolTip>
                         <_item>定价规则</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>价格水平</_item>
-                      </label>
-                      <toolTip>
-                        <_item>价格水平</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,101 +84,31 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品过滤器</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有过滤器属性</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>价格列表(已禁用产品)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>价格列表(已禁用产品)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>产品(已过滤)</_item>
+                        <_item>联系人(手工指定)</_item>
                       </label>
                       <toolTip>
-                        <_item>所有已过滤的产品</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>账户过滤器</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有过滤器属性</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>账户(已过滤)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有已过滤的账户</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:assignedAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>账户(手工指定)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>账户(手工指定)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品过滤器</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有过滤器属性</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品(已过滤)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有已过滤的产品</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>账户过滤器</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有过滤器属性</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>账户(已过滤)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>所有已过滤的账户</_item>
+                        <_item>联系人(手工指定)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +160,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:isFinal" _operation="create">
                     <_object>
                       <label>
-                        <_item>是否终止</_item>
+                        <_item>是否确认</_item>
                       </label>
+                      <shortLabel>
+                        <_item>确认</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>是否终止</_item>
+                        <_item>是否确认</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -234,10 +174,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:validFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>验证起始</_item>
+                        <_item>起始有效</_item>
                       </label>
                       <toolTip>
-                        <_item>验证起始</_item>
+                        <_item>起始有效</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +185,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:validTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>验证结束</_item>
+                        <_item>有效终值</_item>
                       </label>
                       <toolTip>
-                        <_item>验证结束</_item>
+                        <_item>有效终值</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -291,6 +231,9 @@
                       <label>
                         <_item>货币</_item>
                       </label>
+                      <shortLabel>
+                        <_item>货币</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>货币</_item>
                       </toolTip>
@@ -302,6 +245,9 @@
                       <label>
                         <_item>价格用途</_item>
                       </label>
+                      <shortLabel>
+                        <_item>用途</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>价格用途</_item>
                       </toolTip>
@@ -315,6 +261,158 @@
                       </label>
                       <toolTip>
                         <_item>禁用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>价格水平</_item>
+                      </label>
+                      <toolTip>
+                        <_item>价格水平</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品过滤器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有过滤器属性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品(已过滤)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有已过滤的产品</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>账户过滤器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有过滤器属性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>账户(已过滤)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有已过滤的账户</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品分段价格水平</_item>
+                      </label>
+                      <toolTip>
+                        <_item>产品分段价格水平</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品过滤器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有过滤器属性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品(已过滤)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有已过滤的产品</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>账户过滤器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有过滤器属性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>账户(已过滤)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>所有已过滤的账户</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>阶段值</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>阶段值</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>产品阶段值</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:defaultOffsetValidFromHh" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>有效偏移从(小时)</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>从(hh)</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>有效偏移从(小时)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:defaultOffsetValidToHh" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>有效偏移到(小时)</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>到(hh)</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>有效偏移到(小时)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -488,6 +586,14 @@
                       </label>
                       <toolTip>
                         <_item>产品描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:productDisabled" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>已禁用产品</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -767,6 +873,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CreateInitialPricesParams:includeProductsModifiedSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>包括修改过的产品</_item>
+                      </label>
+                      <toolTip>
+                        <_item>包括修改过的产品</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:createInitialPrices:Group:result" _operation="create">
                     <_object>
                       <label>
@@ -877,6 +994,61 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>计算价格</_item>
+                      </label>
+                      <toolTip>
+                        <_item>计算价格</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:processingMode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>处理模式</_item>
+                      </label>
+                      <toolTip>
+                        <_item>处理模式</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:includeProductsModifiedSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>包括修改过的产品</_item>
+                      </label>
+                      <toolTip>
+                        <_item>包括修改过的产品</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel" _operation="create">
                     <_object>
                       <label>
@@ -965,18 +1137,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel" _operation="create">
                     <_object>
                       <label>
-                        <_item>计算价格</_item>
+                        <_item>克隆产品分段价格水平</_item>
                       </label>
                       <toolTip>
-                        <_item>计算价格</_item>
+                        <_item>克隆产品分段价格水平</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>输入</_item>
@@ -987,7 +1159,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:processingMode" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:processingMode" _operation="create">
                     <_object>
                       <label>
                         <_item>处理模式</_item>
@@ -998,7 +1170,40 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品分段值</_item>
+                      </label>
+                      <toolTip>
+                        <_item>产品分段值</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementRegex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称替换表达式</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称替换表达式</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称替换表达式</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称替换表达式</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevelParams:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>结果</_item>

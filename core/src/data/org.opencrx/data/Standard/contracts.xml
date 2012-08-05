@@ -29,45 +29,18 @@ public static org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getCont
     java.math.BigDecimal[] salesCommissions,
     java.lang.Boolean[] salesCommissionIsPercentages
 ) {
-    org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =
-        (org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(
-            org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
-        );
-    java.math.BigDecimal totalBaseAmount = new java.math.BigDecimal(0);
-    java.math.BigDecimal totalDiscountAmount = new java.math.BigDecimal(0);
-    java.math.BigDecimal totalTaxAmount = new java.math.BigDecimal(0);
-    java.math.BigDecimal totalSalesCommission = new java.math.BigDecimal(0);
-    for(int i = 0; i &lt; positionBaseAmounts.length; i++) {
-        java.math.BigDecimal baseAmount = positionBaseAmounts[i] != null
-          ? positionBaseAmounts[i]
-           : new java.math.BigDecimal(0); 
-        totalBaseAmount = totalBaseAmount.add(baseAmount);
-        java.math.BigDecimal discountAmount = positionDiscountAmounts[i] != null
-          ? positionDiscountAmounts[i]
-           : new java.math.BigDecimal(0);
-        totalDiscountAmount = totalDiscountAmount.add(discountAmount);
-        java.math.BigDecimal taxAmount = positionTaxAmounts[i] != null
-          ? positionTaxAmounts[i]
-          : new java.math.BigDecimal(0);
-        totalTaxAmount = totalTaxAmount.add(taxAmount);
-        java.math.BigDecimal salesCommission = salesCommissions[i] != null
-          ? salesCommissions[i]
-          : new java.math.BigDecimal(0);
-        totalSalesCommission = totalSalesCommission.add(
-          (salesCommissionIsPercentages[i] != null) &amp;&amp;
-          (((Boolean)salesCommissionIsPercentages[i]).booleanValue())
-          ? baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP))
-          : salesCommission
-        );
-    }
-    java.math.BigDecimal totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
-    java.math.BigDecimal totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
-    org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = contractPkg.createGetContractAmountsResult(
-        (short)0,
-        null,
-        totalAmount, totalAmountIncludingTax, totalBaseAmount, totalDiscountAmount, totalSalesCommission, totalTaxAmount
-    );
-    return result;
+	return org.opencrx.kernel.backend.Contracts.getContractAmounts(
+		rootPkg,
+		calculationRule,
+		contract,
+		lineItemNumbers,
+		positionBaseAmounts,
+		positionDiscountAmounts,
+		positionTaxAmounts,
+		positionAmounts,
+		salesCommissions,
+		salesCommissionIsPercentages
+	);
 } //&lt;/pre&gt;</getContractAmountsScript>
 											<getPositionAmountsScript>//&lt;pre&gt;
 public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
@@ -78,36 +51,14 @@ public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPosi
     java.math.BigDecimal uomScaleFactor,
     java.math.BigDecimal salesTaxRate
 ) {
-    org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =
-        (org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(
-            org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
-        );
-    java.math.BigDecimal pricePerUnit = position.getPricePerUnit();
-    java.math.BigDecimal baseAmount = minMaxAdjustedQuantity.multiply(pricePerUnit.multiply(uomScaleFactor));
-    // discount
-    Boolean discountIsPercentage = position.isDiscountIsPercentage() != null 
-        ? position.isDiscountIsPercentage()
-        : Boolean.FALSE;
-    java.math.BigDecimal discount = position.getDiscount() != null
-        ? position.getDiscount()
-        : new java.math.BigDecimal(0);
-    // Discount is per piece in case of !discountIsPercentage
-    java.math.BigDecimal discountAmount = discountIsPercentage.booleanValue()
-        ? baseAmount.multiply(discount.divide(new java.math.BigDecimal(100.0), java.math.BigDecimal.ROUND_UP))
-        : minMaxAdjustedQuantity.multiply(discount.multiply(uomScaleFactor));
-    // taxAmount
-    java.math.BigDecimal taxAmount = baseAmount.subtract(discountAmount).multiply(
-        salesTaxRate.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP)
-    );    
-    // amount
-    java.math.BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
-    org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = contractPkg.createGetPositionAmountsResult(
-        amount, baseAmount, discountAmount,
-        (short)0,
-        null,
-        taxAmount
-    );
-    return result;
+	return org.opencrx.kernel.backend.Contracts.getPositionAmounts(
+		rootPkg,
+		calculationRule,
+		position,
+		minMaxAdjustedQuantity,
+		uomScaleFactor,
+		salesTaxRate
+	);
 }  //&lt;/pre&gt;</getPositionAmountsScript>
 										</_object>
 										<_content/>

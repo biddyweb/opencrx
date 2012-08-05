@@ -29,7 +29,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>PR</_item>
+                              <_item>Apresentação</_item>
                             </shortText>
                             <longText>
                               <_item>Apresentação</_item>
@@ -40,7 +40,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>IM</_item>
+                              <_item>Imagem</_item>
                             </shortText>
                             <longText>
                               <_item>Imagem</_item>
@@ -51,7 +51,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>BR</_item>
+                              <_item>Folheto</_item>
                             </shortText>
                             <longText>
                               <_item>Folheto</_item>
@@ -62,7 +62,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>TE</_item>
+                              <_item>Template</_item>
                             </shortText>
                             <longText>
                               <_item>Template</_item>
@@ -73,7 +73,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>AR</_item>
+                              <_item>Artigo</_item>
                             </shortText>
                             <longText>
                               <_item>Artigo</_item>
@@ -84,7 +84,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>FO</_item>
+                              <_item>Formulário</_item>
                             </shortText>
                             <longText>
                               <_item>Formulário</_item>
@@ -95,10 +95,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>TO</_item>
+                              <_item>Ferramenta</_item>
                             </shortText>
                             <longText>
-                              <_item>Tool</_item>
+                              <_item>Ferramenta</_item>
                             </longText>
                           </_object>
                           <_content/>

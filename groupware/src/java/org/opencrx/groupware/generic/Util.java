@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: Util.java,v 1.12 2008/02/12 19:54:22 wfro Exp $
+ * Name:        $Id: Util.java,v 1.14 2008/05/22 23:44:54 wfro Exp $
  * Description: Util
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:54:22 $
+ * Date:        $Date: 2008/05/22 23:44:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,16 +72,16 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.spi.PersistenceManagerFactory_1;
-import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.object.jdo.ConfigurableProperties_2_0;
 import org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
 import org.openmdx.compatibility.base.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
 import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
 import org.openmdx.model1.accessor.basic.cci.Model_1_3;
 import org.openmdx.model1.accessor.basic.spi.Model_1;
 
@@ -116,15 +116,15 @@ public class Util {
             )
         );
         configuration.put(
-            ConfigurableProperties_2_0.FACTORY_CLASS,
+            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
             PersistenceManagerFactory_1.class.getName()
         );
         configuration.put(
-            ConfigurableProperties_2_0.OPTIMISTIC,
+            ConfigurableProperty.Optimistic.qualifiedName(),
             Boolean.TRUE.toString()
         );
         configuration.put(
-            ConfigurableProperties_2_0.BINDING_PACKAGE_SUFFIX,
+            ConfigurableProperty.BindingPackageSuffix.qualifiedName(),
             "jmi1"
         );
         return JDOHelper.getPersistenceManagerFactory(configuration);
@@ -148,28 +148,6 @@ public class Util {
     }
           
     //-----------------------------------------------------------------------
-    public static Admin1Package getAdminPackage(
-        PersistenceManager pm
-    ) {
-        return  
-            (org.opencrx.kernel.admin1.jmi1.Admin1Package)((Authority)pm.getObjectById(
-                Authority.class,
-                org.opencrx.kernel.admin1.jmi1.Admin1Package.AUTHORITY_XRI
-            )).refImmediatePackage();
-    }
-    
-    //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.base.jmi1.BasePackage getOpenCrxBasePackage(
-        PersistenceManager pm
-    ) {
-        return  
-            (org.opencrx.kernel.base.jmi1.BasePackage)((Authority)pm.getObjectById(
-                Authority.class,
-                org.opencrx.kernel.base.jmi1.BasePackage.AUTHORITY_XRI
-            )).refImmediatePackage();
-    }
-    
-    //-----------------------------------------------------------------------
     public static org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
         String configurationId,
         String providerName,
@@ -179,8 +157,8 @@ public class Util {
     ) {
         org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
         try {
-            Admin1Package adminPackage = getAdminPackage(pm);            
-            org.opencrx.kernel.base.jmi1.BasePackage basePackage = getOpenCrxBasePackage(pm); 
+            Admin1Package adminPackage = Utils.getAdminPackage(pm);            
+            org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm); 
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
                     new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root").toXri()

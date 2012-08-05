@@ -5,7 +5,7 @@
 		<!--
 		    MS SQL2000 driver
 		-->
-		<connection-url>jdbc:microsoft:sqlserver://localhost:1433;databaseName=CRX-CRX;selectMethod=cursor</connection-url>
+		<connection-url>jdbc:microsoft:sqlserver://127.0.0.1:1433;databaseName=CRX_2_1;selectMethod=cursor</connection-url>
 		<driver-class>com.microsoft.jdbc.sqlserver.SQLServerDriver</driver-class>
 		<user-name>system</user-name>
 		<password>manager</password>

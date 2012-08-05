@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:addressFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtros de endereço</_item>
+                        <_item>»Filtros de Endereços</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtros de endereço</_item>
+                        <_item>Filtros de Endereços</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +28,7 @@
                         <_item>Propriedades de filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>Propriedades de filtro</_item>
+                        <_item>Todas Propriedades de filtros</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAddress:filteredAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Endereços filtrados</_item>
+                        <_item>Endereços Selecionados</_item>
                       </label>
                       <toolTip>
-                        <_item>Endereços filtrados</_item>
+                        <_item>Todos os Endereços Selecionados</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAddress:Pane:Op:Tab:countFilteredAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contar endereços filtrados</_item>
+                        <_item>Contador de endereços selecionados</_item>
                       </label>
                       <toolTip>
-                        <_item>Contar endereços filtrados</_item>
+                        <_item>Contador de endereços Selecionados</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressDisabledFilterProperty:disabled" _operation="create">
                     <_object>
                       <label>
-                        <_item>Desabilitado</_item>
+                        <_item>Inativo</_item>
                       </label>
                       <toolTip>
-                        <_item>Desabilitado</_item>
+                        <_item>Inativo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressMainFilterProperty:isMain" _operation="create">
                     <_object>
                       <label>
-                        <_item>É o endereço principal</_item>
+                        <_item>Endereço principal</_item>
                       </label>
                       <toolTip>
-                        <_item>É o endereço principal</_item>
+                        <_item>Endereço principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>

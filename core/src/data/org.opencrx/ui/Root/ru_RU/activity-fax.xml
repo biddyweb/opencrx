@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:sendDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Отправлено</_item>
+                        <_item>Отослано</_item>
                       </label>
                       <toolTip>
-                        <_item>Отправлено</_item>
+                        <_item>Отослано</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Телефонный номер</_item>
+                        <_item>Номер телефона</_item>
                       </label>
                       <toolTip>
-                        <_item>Телефонный номер</_item>
+                        <_item>Номер телефона</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipientGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:FaxRecipientGroup:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </label>
                       <toolTip>
-                        <_item>Группа телефонных номеров</_item>
+                        <_item>Группа номеров телефонов</_item>
                       </toolTip>
                     </_object>
                     <_content/>

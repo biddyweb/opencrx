@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.2 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: SegmentImpl.java,v 1.3 2008/04/03 12:24:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/04/03 12:24:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,8 +62,8 @@ import java.util.List;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.naming.Path;
 
@@ -87,7 +87,7 @@ public class SegmentImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.home1.jmi1.CreateUserResult createUser(
         org.opencrx.kernel.home1.jmi1.CreateUserParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         String principalName = params.getPrincipalName();
         Path contactIdentity = params.getContact().refGetPath();
         Path primaryUserGroupIdentity = params.getPrimaryUserGroup().refGetPath();
@@ -127,7 +127,7 @@ public class SegmentImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.home1.jmi1.ImportUsersResult importUsers(
         org.opencrx.kernel.home1.jmi1.ImportUsersParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             String statusMessage = this.getBackend().getUserHomes().importUsers(
                 this.current.refGetPath(),
@@ -138,7 +138,7 @@ public class SegmentImpl {
             );
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                
     }
     

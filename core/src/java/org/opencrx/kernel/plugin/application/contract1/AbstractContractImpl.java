@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractImpl.java,v 1.4 2007/12/26 20:52:32 wfro Exp $
+ * Name:        $Id: AbstractContractImpl.java,v 1.7 2008/07/08 23:11:54 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/26 20:52:32 $
+ * Date:        $Date: 2008/07/08 23:11:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,8 +59,8 @@ import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.ContractPosition;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -83,8 +83,7 @@ public class AbstractContractImpl {
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.UpdateInventoryResult updateInventory(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             CompoundBooking compoundBooking = this.getBackend().getContracts().updateInventory(
                 this.current.refGetPath()
@@ -94,14 +93,13 @@ public class AbstractContractImpl {
             );
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void removePendingInventoryBookings(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             this.getBackend().getContracts().removePendingInventoryBookings(
                 this.current.refGetPath()
@@ -109,14 +107,13 @@ public class AbstractContractImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void reprice(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             this.getBackend().getContracts().repriceContract(
                 this.current.refGetPath()
@@ -124,14 +121,14 @@ public class AbstractContractImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.CreatePositionResult createPosition(
         org.opencrx.kernel.contract1.jmi1.CreatePositionParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         ContractPosition position = this.getBackend().getContracts().createContractPosition(
             this.current.refGetPath(),
             params.getName(),
@@ -140,7 +137,8 @@ public class AbstractContractImpl {
             params.getProduct() == null ? null : params.getProduct().refGetPath(),
             params.getUom() == null ? null : params.getUom().refGetPath(),
             params.getPriceUom() == null ? null : params.getPriceUom().refGetPath(),
-            params.getPricingRule() == null ? null : params.getPricingRule().refGetPath()
+            params.getPricingRule() == null ? null : params.getPricingRule().refGetPath(),
+            false
         );
         return ((Contract1Package)this.current.refOutermostPackage().refPackage(Contract1Package.class.getName())).createCreatePositionResult(
             position

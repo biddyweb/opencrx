@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.2 2007/12/25 17:15:54 wfro Exp $
+ * Name:        $Id: SegmentImpl.java,v 1.3 2008/04/03 12:24:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:54 $
+ * Date:        $Date: 2008/04/03 12:24:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,8 +60,8 @@ import java.util.List;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class SegmentImpl {
@@ -84,7 +84,7 @@ public class SegmentImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.admin1.jmi1.CreateAdministratorResult createAdministrator(
         org.opencrx.kernel.admin1.jmi1.CreateAdministratorParams params
-    ) throws javax.jmi.reflect.RefException{
+    ) {
         String segmentName = params.getSegmentName() != null
             ? params.getSegmentName()
             : "Standard";            
@@ -119,7 +119,7 @@ public class SegmentImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.admin1.jmi1.ImportLoginPrincipalsResult importLoginPrincipals(
         org.opencrx.kernel.admin1.jmi1.ImportLoginPrincipalsParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             String statusMessage = this.getBackend().getAdmin().importLoginPrincipals(
                 this.current.refGetPath(),
@@ -132,7 +132,7 @@ public class SegmentImpl {
             );
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                
     }
     

@@ -128,10 +128,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="-4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>[-4] ESTA_FORA</_item>
+                              <_item>[-4] EXTERNO</_item>
                             </shortText>
                             <longText>
-                              <_item>[-4] ESTA_FORA</_item>
+                              <_item>[-4] EXTERNO</_item>
                             </longText>
                           </_object>
                           <_content/>

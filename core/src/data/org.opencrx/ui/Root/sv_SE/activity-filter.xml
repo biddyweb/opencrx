@@ -88,17 +88,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filtrerade Aktiviteter</_item>
-                      </label>
-                      <toolTip>
-                        <_item>alla filtrerade aktiviteter</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
@@ -110,24 +99,46 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filteregenskaper för Aktivitetsgrupp</_item>
+                        <_item>Filtrerade Aktiviteter</_item>
                       </label>
                       <toolTip>
-                        <_item>Filteregenskaper för Aktivitetsgrupp</_item>
+                        <_item>alla filtrerade aktiviteter</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty:activityGroup" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktivitetsgrupper</_item>
+                        <_item>Räkna filtrerade aktiviteter</_item>
                       </label>
                       <toolTip>
-                        <_item>Aktivitetsgrupper</_item>
+                        <_item>Räkna filtrerade aktiviteter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indata</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indata</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -198,6 +209,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:DisabledFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inaktiverad Filteregenskap</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inaktiverad Filteregenskap</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:DisabledFilterProperty:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Inaktiverad</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Inaktiverad</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
@@ -220,68 +253,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filteregenskap för Resurs</_item>
+                        <_item>Tilldelad till Filteregenskap</_item>
                       </label>
                       <toolTip>
-                        <_item>Filteregenskap för Resurs</_item>
+                        <_item>Tilldelad till Filteregenskap</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty:resource" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Resurser</_item>
+                        <_item>Tilldelad Till</_item>
                       </label>
                       <toolTip>
-                        <_item>Resurser</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filteregenskap för Resursnamn</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Filteregenskap för Resursnamn</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty:resourceName" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resursnamn</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resursnamn</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filteregenskap för Resursroll</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Filteregenskap för Resursroll</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resursroll</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resursroll</_item>
+                        <_item>Tilldelad Till</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -308,6 +297,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty:offsetInHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tidsskillnad i timmar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tidsskillnad i timmar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
                     <_object>
                       <label>
@@ -326,6 +326,28 @@
                       </label>
                       <toolTip>
                         <_item>Planerade starter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty:offsetInHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tidsskillnad i timmar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tidsskillnad i timmar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Frågefilteregenskap</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Frågefilteregenskap</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -84,10 +84,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/Не заключ.</_item>
+                              <_item>Закрыт/Потерян</_item>
                             </shortText>
                             <longText>
-                              <_item>[06] Закрыт/Не заключ.</_item>
+                              <_item>[06] Закрыт/Потерян</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -95,10 +95,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/Ликвидирован</_item>
+                              <_item>Закрыт/Перепродан</_item>
                             </shortText>
                             <longText>
-                              <_item>[07] Закрыт/Ликвидирован</_item>
+                              <_item>[07] Закрыт/Перепродан</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -106,10 +106,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Закрыт/Серт. кач-ва</_item>
+                              <_item>Закрыт/Провал по кач-ву</_item>
                             </shortText>
                             <longText>
-                              <_item>[08] Закрыт/Серт. кач-ва</_item>
+                              <_item>[08] Закрыт/Провал по кач-ву</_item>
                             </longText>
                           </_object>
                           <_content/>

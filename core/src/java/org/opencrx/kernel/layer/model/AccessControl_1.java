@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.66 2008/02/15 15:27:04 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.67 2008/04/03 14:26:39 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.66 $
+ * Revision:    $Revision: 1.67 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/15 15:27:04 $
+ * Date:        $Date: 2008/04/03 14:26:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -199,9 +199,9 @@ public class AccessControl_1
       ServiceHeader header,
       DataproviderObject_1_0 object
     ) throws ServiceException {
-        object.clearValues("owningUser");
-        object.clearValues("owningGroup");
-        if(object.values("owner").size() > 0) {
+        object.attributeNames().remove("owningUser");
+        object.attributeNames().remove("owningGroup");
+        if(!object.values("owner").isEmpty()) {
             if((String)object.values("owner").get(0) == null) {
                 AppLog.error("Values of attribute owner are corrupt. Element at index 0 (owning user) is missing. Fix the database", object);
             }

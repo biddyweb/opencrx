@@ -17,7 +17,7 @@
                       <active>true</active>
                       <changeable>false</changeable>
                       <toolTip>
-                        <_item>all Accounts</_item>
+                        <_item>Accounts</_item>
                       </toolTip>
                       <label>
                         <_item>Accounts</_item>
@@ -36,21 +36,59 @@
                     <_object>
                       <active>true</active>
                       <toolTip>
-                        <_item>all Accounts</_item>
+                        <_item>All Accounts</_item>
                       </toolTip>
                       <label>
-                        <_item>Accounts</_item>
+                        <_item>»All Accounts</_item>
                       </label>
                       <order>
                         <_item>0</_item>
                         <_item>0</_item>
-                        <_item>10</_item>
+                        <_item>500</_item>
                       </order>
                       <maxMember>21</maxMember>
                       <showMaxMember>7</showMaxMember>
                     </_object>
                     <_content>
                       <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Accounts</_item>
+														</toolTip>
+														<label>
+															<_item>Accounts</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>10</_item>
+														</order>
+														<maxMember>23</maxMember>
+														<showMaxMember>6</showMaxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Accounts (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Accounts (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>510</_item>
+														</order>
+														<maxMember>23</maxMember>
+														<showMaxMember>6</showMaxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+
                         <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
                           <_object>
                             <toolTip>
@@ -72,25 +110,81 @@
                       </additionalElementDefinition>
                     </_content>
                   </org.openmdx.ui1.ElementDefinition>
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Account</_item>
+											</toolTip>
+											<label>
+												<_item>Account</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</order>
+											<iconKey>Account</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <!-- Grid -->
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership">
                     <_object>
                       <active>true</active>
                       <changeable>false</changeable>
                       <toolTip>
-                        <_item>Memberships</_item>
+                        <_item>Memberships (deep)</_item>
                       </toolTip>
                       <label>
-                        <_item>Memberships</_item>
+                        <_item>»Memberships (deep)</_item>
                       </label>
                       <order>
-                        <_item>10</_item>
+                        <_item>11</_item>
                         <_item>0</_item>
-                        <_item>20</_item>
+                        <_item>11</_item>
                       </order>
-                      <maxMember>6</maxMember>
+                      <maxMember>10</maxMember>
                     </_object>
-                    <_content/>
+										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Memberships</_item>
+														</toolTip>
+														<label>
+															<_item>Memberships</_item>
+														</label>
+														<order>
+															<_item>11</_item>
+															<_item>0</_item>
+															<_item>10</_item>
+														</order>
+														<maxMember>9</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Memberships (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>Memberships (disabled)</_item>
+														</label>
+														<order>
+															<_item>11</_item>
+															<_item>0</_item>
+															<_item>12</_item>
+														</order>
+														<maxMember>9</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
+										</_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner">
                     <_object>
@@ -159,6 +253,18 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25:Group:20">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item></_item>
+                      </toolTip>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25:Group:30">
                     <_object>
                       <active>true</active>
                       <toolTip>
@@ -363,6 +469,23 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:vcard">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>vCard</_item>
+                      </toolTip>
+                      <label>
+                        <_item>vCard</_item>
+                      </label>
+                      <order>
+                        <_item>25</_item>
+                        <_item>30</_item>
+                        <_item>10</_item>
+                      </order>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <!-- AccountAssignment -->
                   <!--Inspector Definitions-->
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAssignment">
@@ -441,6 +564,7 @@
                   </org.openmdx.ui1.ElementDefinition>
                   <!-- Operations -->
                   <!-- Operation Import Parameters are customized in common.xml -->
+<!--
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importItem">
                     <_object>
                       <active>true</active>
@@ -459,6 +583,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+-->
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createLead">
                     <_object>
                       <active>true</active>
@@ -1051,6 +1176,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Update vCard</_item>
+											</toolTip>
+											<label>
+												<_item>Update vCard</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>250</_item>
+											</order>
+											<iconKey>Account</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:updateVcard:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                 </elementDefinition>
               </_content>
             </org.openmdx.ui1.Segment>

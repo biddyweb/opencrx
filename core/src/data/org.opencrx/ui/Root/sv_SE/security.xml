@@ -407,13 +407,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:authCredential" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Autentiseringsreferens</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Autentiseringsreferens</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:credential" _operation="create">
                     <_object>
                       <label>
-                        <_item>Authentication Credentials</_item>
+                        <_item>Autentiseringsreferens</_item>
                       </label>
                       <toolTip>
-                        <_item>Authentication Credentials</_item>
+                        <_item>Autentiseringsreferens</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -425,6 +436,17 @@
                       </label>
                       <toolTip>
                         <_item>Principal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:Principal:lastLoginAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Senaste inloggning den</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Senaste inloggning den</_item>
                       </toolTip>
                     </_object>
                     <_content/>

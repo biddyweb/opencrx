@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.34 2008/02/14 16:06:16 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.42 2008/05/29 23:12:38 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.42 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/14 16:06:16 $
+ * Date:        $Date: 2008/05/29 23:12:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -69,7 +69,6 @@ import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jmi.reflect.RefException;
 import javax.jmi.reflect.RefObject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -77,6 +76,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.cci2.AuditEntryQuery;
 import org.opencrx.kernel.base.jmi1.AuditEntry;
 import org.opencrx.kernel.base.jmi1.Auditee;
@@ -84,9 +84,11 @@ import org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams;
 import org.opencrx.kernel.base.jmi1.ObjectCreationAuditEntry;
 import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
 import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
+import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByParams;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByResult;
 import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.application.log.AppLog;
@@ -247,11 +249,11 @@ public class SubscriptionHandlerServlet
             if(auditEntry instanceof ObjectModificationAuditEntry) {
                 try {
                     auditee = pm.getObjectById(
-                        auditEntry.getAuditee()
+                        new Path(auditEntry.getAuditee())
                     );
                 }
                 catch(Exception e) {
-                    AppLog.detail(e.getMessage(), e.getCause(), 1);
+                    AppLog.detail(e.getMessage(), e.getCause());
                 }
             }
             else if(auditEntry instanceof ObjectRemovalAuditEntry) {
@@ -260,11 +262,11 @@ public class SubscriptionHandlerServlet
             else if(auditEntry instanceof ObjectCreationAuditEntry) {
                 try {
                     auditee = pm.getObjectById(
-                        auditEntry.getAuditee()
+                        new Path(auditEntry.getAuditee())
                     );
                 }
                 catch(Exception e) {
-                    AppLog.detail(e.getMessage(), e.getCause(), 1);
+                    AppLog.detail(e.getMessage(), e.getCause());
                 }
             }   
             pm.close();
@@ -395,23 +397,24 @@ public class SubscriptionHandlerServlet
         for(String auditEntryXri: auditEntryXris) {
             AuditEntry auditEntry = null;
             try {
-                auditEntry = (AuditEntry)pm.getObjectById(auditEntryXri);
+                auditEntry = (AuditEntry)pm.getObjectById(new Path(auditEntryXri));
             } 
             catch(Exception e) {
                 AppLog.warning("Can not access audit entry", Arrays.asList(new String[]{auditEntryXri, e.getMessage()}));
-                AppLog.detail(e.getMessage(), e.getCause(), 1);
+                AppLog.detail(e.getMessage(), e.getCause());
             }
             if(auditEntry != null) {
                 TestAndSetVisitedByResult markAsVisistedReply = null;
                 try {
-                    markAsVisistedReply = auditEntry.testAndSetVisitedBy(
+                    TestAndSetVisitedByParams params = basePkg.createTestAndSetVisitedByParams(
                         VISITOR_ID
                     );
+                    markAsVisistedReply = auditEntry.testAndSetVisitedBy(params);
                 }
                 catch(Exception e) {
                     AppLog.error("Can not invoke markAsVisited", e.getMessage());
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.error(e0.getMessage(), e0.getCause(), 1);
+                    AppLog.error(e0.getMessage(), e0.getCause());
                 }
                 if(
                     (markAsVisistedReply != null) ||
@@ -428,7 +431,7 @@ public class SubscriptionHandlerServlet
                     if(subscriptions != null) {
                         for(Subscription subscription: subscriptions) {
                             UserHome userHome = (UserHome)pm.getObjectById(
-                                new Path(subscription.refMofId()).getParent().getParent().toXri()
+                                new Path(subscription.refMofId()).getParent().getParent()
                             );
                             org.opencrx.security.realm1.jmi1.User user = userHome.getOwningUser();
                             boolean userIsDisabled = false;
@@ -463,9 +466,9 @@ public class SubscriptionHandlerServlet
                                             userHome.executeWorkflow(params);
                                             pm.currentTransaction().commit();
                                         }
-                                        catch(RefException e) {
+                                        catch(Exception e) {
                                             AppLog.warning("Can not execute workflow", performAction.getName() + "; home=" + userHome.refMofId());
-                                            AppLog.warning(e.getMessage(), e.getCause(), 1);
+                                            AppLog.warning(e.getMessage(), e.getCause());
                                             try {
                                                 pm.currentTransaction().rollback();
                                             } catch(Exception e0) {}
@@ -502,7 +505,7 @@ public class SubscriptionHandlerServlet
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );
-            WorkflowControllerServlet.initWorkflows(
+            Workflows.initWorkflows(
                 pm,
                 providerName,
                 segmentName                
@@ -511,46 +514,46 @@ public class SubscriptionHandlerServlet
             // Get auditees
             List<Auditee> auditSegments = new ArrayList<Auditee>();
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName))
             );
             auditSegments.add(
-                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName).toXri())
+                (Auditee)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
             );
                                 
             // Workflow segment
             org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName).toXri()
+                new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
             );
             // User home segment
             org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-                new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName).toXri()
+                new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
             );                    
             // base package
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getOpenCrxBasePackage(pm);
+            org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getBasePackage(pm);
             org.opencrx.kernel.home1.jmi1.Home1Package homePkg = Utils.getHomePackage(pm);
             
             // Iterate all auditees and check for new audit entries

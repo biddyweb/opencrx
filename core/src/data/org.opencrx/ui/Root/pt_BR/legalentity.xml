@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Entidade Legal</_item>
+                        <_item>Pessoa Jurídica</_item>
                       </label>
                       <toolTip>
-                        <_item>Entidade Legal</_item>
+                        <_item>Pessoa Jurídica</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome Oficial</_item>
+                        <_item>Razão Social</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome da Entidade Legal</_item>
+                        <_item>Nome da Pessoa Jurídica</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -50,7 +50,7 @@
                         <_item>Símbolo do Ticket</_item>
                       </label>
                       <toolTip>
-                        <_item>Símbolo do Ticket da Entidade Legal</_item>
+                        <_item>Símbolo do Ticket da Pessoa Jurídica</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:stockExchange" _operation="create">
                     <_object>
                       <label>
-                        <_item>Câmbio do Estoque</_item>
+                        <_item>Bolsa de Valores</_item>
                       </label>
                       <toolTip>
-                        <_item>Câmbios do estoque onde a entidade legal está listada</_item>
+                        <_item>Bolsa de valores onde a Pessoa Jurídica está listada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -83,7 +83,7 @@
                         <_item>Indústria</_item>
                       </label>
                       <toolTip>
-                        <_item>Indústria da Entidade Legal</_item>
+                        <_item>Atividade da Pessoa Jurídica</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:numberOfEmployeesCategory" _operation="create">
                     <_object>
                       <label>
-                        <_item># de funcionários (código)</_item>
+                        <_item># de empregados (código)</_item>
                       </label>
                       <toolTip>
-                        <_item>número de empregados (categoria)</_item>
+                        <_item>Número de empregados (categoria)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,21 +102,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:numberOfEmployees" _operation="create">
                     <_object>
                       <label>
-                        <_item># de funcionários</_item>
+                        <_item># de empregados</_item>
                       </label>
                       <toolTip>
-                        <_item>número de empregados</_item>
+                        <_item>Número de empregados</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:building" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prédios</_item>
+                        <_item>Importar vCard</_item>
                       </label>
                       <toolTip>
-                        <_item>Prédios</_item>
+                        <_item>Importa vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

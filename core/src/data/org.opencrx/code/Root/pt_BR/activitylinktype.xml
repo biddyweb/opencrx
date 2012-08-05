@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -106,10 +106,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="99" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>é filho de</_item>
+                              <_item>filho de</_item>
                             </shortText>
                             <longText>
-                              <_item>é filho de</_item>
+                              <_item>filho de</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -117,10 +117,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="98" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>é bloqueado por</_item>
+                              <_item>bloqueado por</_item>
                             </shortText>
                             <longText>
-                              <_item>é bloqueado por</_item>
+                              <_item>bloqueado por</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -128,10 +128,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="97" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>é derivado de</_item>
+                              <_item>derivado de</_item>
                             </shortText>
                             <longText>
-                              <_item>é derivado de</_item>
+                              <_item>derivado de</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -139,10 +139,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="96" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>está duplicado por</_item>
+                              <_item>duplicado por</_item>
                             </shortText>
                             <longText>
-                              <_item>é duplicado por</_item>
+                              <_item>duplicado por</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -150,10 +150,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="95" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>é parte de</_item>
+                              <_item>parte de</_item>
                             </shortText>
                             <longText>
-                              <_item>é parte de</_item>
+                              <_item>parte de</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -161,10 +161,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="94" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>está relacionado com</_item>
+                              <_item>relacionado com</_item>
                             </shortText>
                             <longText>
-                              <_item>está relacionado com</_item>
+                              <_item>relacionado com</_item>
                             </longText>
                           </_object>
                           <_content/>

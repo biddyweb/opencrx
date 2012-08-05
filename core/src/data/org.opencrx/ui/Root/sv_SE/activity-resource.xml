@@ -671,6 +671,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Depåväljare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Depåväljare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractWorkRecord:workCb" _operation="create">
                     <_object>
                       <label>
@@ -1008,6 +1019,17 @@
                       </label>
                       <toolTip>
                         <_item>Pristyp</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Depåväljare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Depåväljare</_item>
                       </toolTip>
                     </_object>
                     <_content/>

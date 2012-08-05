@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.7 2008/01/29 15:59:13 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.11 2008/06/06 09:53:27 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/01/29 15:59:13 $
+ * Date:        $Date: 2008/06/06 09:53:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,6 +76,7 @@ import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
+import org.w3c.cci2.Datatypes;
 
 public class Addresses {
 
@@ -91,7 +92,7 @@ public class Addresses {
         Path activityFilterIdentity,
         boolean forCounting
     ) throws ServiceException {
-        List filterProperties = this.backend.getDelegatingRequests().addFindRequest(
+        List<DataproviderObject_1_0> filterProperties = this.backend.getDelegatingRequests().addFindRequest(
             activityFilterIdentity.getChild("addressFilterProperty"),
             null,
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -100,13 +101,13 @@ public class Addresses {
             Integer.MAX_VALUE,
             Directions.ASCENDING
         );
-        List filter = new ArrayList();
+        List<FilterProperty> filter = new ArrayList<FilterProperty>();
         boolean hasQueryFilterClause = false;
         for(
-            Iterator i = filterProperties.iterator();
+            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
             i.hasNext();
         ) {
-            DataproviderObject_1_0 filterProperty = (DataproviderObject_1_0)i.next();
+            DataproviderObject_1_0 filterProperty = i.next();
             String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
 
             Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);            
@@ -135,7 +136,7 @@ public class Addresses {
                         )
                     );
                     // stringParam
-                    List values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+                    List<Object> values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -175,7 +176,15 @@ public class Addresses {
                         )
                     );
                     // dateParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM);
+                    values = new ArrayList<Object>();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(XMLGregorianCalendar.class, j.next())
+                        );
+                    }
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -185,7 +194,15 @@ public class Addresses {
                         )
                     );
                     // dateTimeParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM);
+                    values = new ArrayList<Object>();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(Date.class, j.next())
+                        );
+                    }
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -223,9 +240,9 @@ public class Addresses {
                         );
                     }
                     else if("org:opencrx:kernel:account1:AddressTypeFilterProperty".equals(filterPropertyClass)) {
-                        List addressTypes = new ArrayList();
-                        for(Iterator j = filterProperty.values("addressType").iterator(); j.hasNext(); ) {
-                            int addressType = ((Number)j.next()).intValue();
+                        List<String> addressTypes = new ArrayList<String>();
+                        for(Iterator<Number> j = filterProperty.values("addressType").iterator(); j.hasNext(); ) {
+                            int addressType = j.next().intValue();
                             addressTypes.add(
                                 Addresses.ADDRESS_TYPES[addressType]
                             );
@@ -294,7 +311,7 @@ public class Addresses {
                 )
             );            
         }        
-        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
+        return filter.toArray(new FilterProperty[filter.size()]);
     }
         
     //-------------------------------------------------------------------------
@@ -317,50 +334,66 @@ public class Addresses {
     }
         
     //-------------------------------------------------------------------------
-    public void parsePhoneNumber(
+    public void updatePhoneNumber(
         DataproviderObject object,
         DataproviderObject_1_0 oldValues
     ) throws ServiceException {
-        String objectClass = (String)object.values(SystemAttributes.OBJECT_CLASS).get(0);
-        List phoneNumberFullValues = this.backend.getNewValue("phoneNumberFull", object, oldValues);
-        List automaticParsingValues = this.backend.getNewValue("automaticParsing", object, oldValues);
-        if(
-            this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:address1:PhoneNumberAddressable") &&
-            (automaticParsingValues.size() > 0) && ((Boolean)automaticParsingValues.get(0)).booleanValue() &&
-            (phoneNumberFullValues.size() > 0)
-        ) {
-            // assuming the phone number format +nn (nnn) nnn-nnnn x nnn
-            String phoneNumberFull = (String)phoneNumberFullValues.get(0);
-            List parts = new ArrayList();
-            StringTokenizer tokenizer = new StringTokenizer(phoneNumberFull, "+()x");
-            while(tokenizer.hasMoreTokens()) {
-                parts.add(tokenizer.nextToken());
-            }
-            if(parts.size() >= 3) {
-                String countryCode = parts.get(0).toString().trim();
-                if("1".equals(countryCode)) {
-                    countryCode = "840";
+        if(this.backend.isPhoneNumberAddressable(object)) {
+            List<String> phoneNumberFullValues = this.backend.getNewValue("phoneNumberFull", object, oldValues);
+            List<Boolean> automaticParsingValues = this.backend.getNewValue("automaticParsing", object, oldValues);
+            if(
+                !automaticParsingValues.isEmpty() && ((Boolean)automaticParsingValues.get(0)).booleanValue() &&
+                !phoneNumberFullValues.isEmpty()
+            ) {
+                // assuming the phone number format +nn (nnn) nnn-nnnn x nnn
+                String phoneNumberFull = phoneNumberFullValues.get(0);
+                List<String> parts = new ArrayList<String>();
+                StringTokenizer tokenizer = new StringTokenizer(phoneNumberFull, "+()x");
+                while(tokenizer.hasMoreTokens()) {
+                    parts.add(tokenizer.nextToken());
                 }
-                else {
-                    Map phoneCountryPrefix = this.backend.getCodes().getShortText(
-                        "org:opencrx:kernel:address1:PhoneNumberAddressable:phoneCountryPrefix",
-                        (short)0,
-                        false
-                    );
-                    Short code = (Short)phoneCountryPrefix.get(countryCode);
-                    countryCode = code == null
-                    ? "0"
+                if(parts.size() >= 3) {
+                    String countryCode = parts.get(0).toString().trim();
+                    if("1".equals(countryCode)) {
+                        countryCode = "840";
+                    }
+                    else {
+                        Map<String,Short> phoneCountryPrefix = this.backend.getCodes().getShortText(
+                            "org:opencrx:kernel:address1:PhoneNumberAddressable:phoneCountryPrefix",
+                            (short)0,
+                            false
+                        );
+                        Short code = phoneCountryPrefix.get(countryCode);
+                        countryCode = code == null
+                            ? "0"
                             : code.toString();
+                    }
+                    String areaCode = parts.get(1).toString().trim();
+                    String localNumber = parts.get(2).toString().trim();
+                    String extension = parts.size() >= 4 ? parts.get(3).toString().trim() : "";
+    
+                    object.clearValues("phoneCountryPrefix").add(new Short(countryCode));
+                    object.clearValues("phoneCityArea").add(areaCode);
+                    object.clearValues("phoneLocalNumber").add(localNumber);
+                    object.clearValues("phoneExtension").add(extension);
                 }
-                String areaCode = parts.get(1).toString().trim();
-                String localNumber = parts.get(2).toString().trim();
-                String extension = parts.size() >= 4 ? parts.get(3).toString().trim() : "";
-
-                object.clearValues("phoneCountryPrefix").add(new Short(countryCode));
-                object.clearValues("phoneCityArea").add(areaCode);
-                object.clearValues("phoneLocalNumber").add(localNumber);
-                object.clearValues("phoneExtension").add(extension);
             }
+        }
+    }
+    
+    //-------------------------------------------------------------------------
+    public void updateAddress(
+        DataproviderObject object,
+        DataproviderObject_1_0 oldValues
+    ) throws ServiceException {
+        this.updatePhoneNumber(
+            object, 
+            oldValues
+        );
+        if(this.backend.isAccountAddress(object)) {
+            this.backend.getAccounts().markAccountAsDirty(
+                object.path().getParent().getParent()
+            );
         }
     }
     
@@ -398,6 +431,9 @@ public class Addresses {
     public static final Short USAGE_OTHER = new Short((short)1800);
     public static final Short USAGE_BUSINESS = new Short((short)500);
     public static final Short USAGE_HOME = new Short((short)400);
+    
+    public static final Short USAGE_CONTRACT_INVOICE = 10000;
+    public static final Short USAGE_CONTRACT_DELIVERY = 10200;
     
     protected final Backend backend;
     

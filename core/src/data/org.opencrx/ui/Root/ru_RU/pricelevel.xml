@@ -33,6 +33,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Список цен (заблокированные продукты)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Список цен (заблокированные продукты)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:pricingRule" _operation="create">
                     <_object>
                       <label>
@@ -40,17 +58,6 @@
                       </label>
                       <toolTip>
                         <_item>Правила ценообразования</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Уровень цен</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Уровень цен</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,102 +84,40 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Список цен (заблокированные продукты)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Список цен (заблокированные продукты)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Фильтр продутов</_item>
+                        <_item>Учетные записи (назначенные вручную)</_item>
                       </label>
                       <toolTip>
-                        <_item>все свойства фильтра</_item>
+                        <_item>Учетные записи (назначенные вручную)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:15" _operation="create">
                     <_object>
                       <label>
-                        <_item>Продукты (Отфильтрованные)</_item>
+                        <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>все отфильтрованные продукты</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Фильтр счетов</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все свойства фильтра</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Счета (Отфильтрованные)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все отфильтрованные счета</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:assignedAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Счета (Назначенные вручную)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Счета (Назначенные вручную)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Фильтр продутов</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все свойства фильтра</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Продукты (Отфильтрованные)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все отфильтрованные продукты</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Фильтр счетов</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все свойства фильтра</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Счета (Отфильтрованные)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>все отфильтрованные счета</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -225,6 +170,9 @@
                       <label>
                         <_item>Окончательный</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Окончательный</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Окончательный</_item>
                       </toolTip>
@@ -234,10 +182,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:validFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Правильный от</_item>
+                        <_item>Действителен с</_item>
                       </label>
                       <toolTip>
-                        <_item>Правильный от</_item>
+                        <_item>Действителен с</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +193,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:validTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Правильный к</_item>
+                        <_item>Действителен до</_item>
                       </label>
                       <toolTip>
-                        <_item>Правильный к</_item>
+                        <_item>Действителен до</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +215,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:paymentMethod" _operation="create">
                     <_object>
                       <label>
-                        <_item>Метод платежа</_item>
+                        <_item>Методы платежа</_item>
                       </label>
                       <toolTip>
-                        <_item>Метод платежа</_item>
+                        <_item>Методы платежа</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +226,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:shippingMethod" _operation="create">
                     <_object>
                       <label>
-                        <_item>Метод отгрузки</_item>
+                        <_item>Методы отгрузки</_item>
                       </label>
                       <toolTip>
-                        <_item>Метод отгрузки</_item>
+                        <_item>Методы отгрузки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -291,6 +239,9 @@
                       <label>
                         <_item>Валюта</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Вал.</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Валюта</_item>
                       </toolTip>
@@ -302,8 +253,174 @@
                       <label>
                         <_item>Использование цены</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Исп. цен</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Использование цены</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заблокирован</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Заблокирован</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Уровень цен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Уровень цен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтр продуктов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все свойства фильтра</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Продукты (Отфильтрованные)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Все отфильтрованные продукты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтр счетов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все свойства фильтра</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Счета (Отфильтрованные)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все отфильтрованные счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Уровень ценовой фазы продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Уровень ценовой фазы продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтр продутов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все свойства фильтра</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Продукты (Отфильтрованные)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все отфильтрованные продукты</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фильтр счетов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все свойства фильтра</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Счета (Отфильтрованные)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>все отфильтрованные счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ключ фазы</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Ключ фазы</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Ключ фазы продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:defaultOffsetValidFromHh" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Смещение дествительно от (час)</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Смещ. деств. от (час)</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Смещение дествительно от (час)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:defaultOffsetValidToHh" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Смещение дествительно до (час)</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Смещ. деств. до (час)</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Смещение дествительно от (час)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -344,10 +461,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DiscountPriceModifier" _operation="create">
                     <_object>
                       <label>
-                        <_item>Уменьшить модификатор цены</_item>
+                        <_item>Модификатор скидки цены</_item>
                       </label>
                       <toolTip>
-                        <_item>Уменьшить модификатор цены</_item>
+                        <_item>Модификатор скидки цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -410,10 +527,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:LinearPriceModifier:roundingFactor" _operation="create">
                     <_object>
                       <label>
-                        <_item>Округляющий фактор</_item>
+                        <_item>Фактор округления</_item>
                       </label>
                       <toolTip>
-                        <_item>Округляющий фактор</_item>
+                        <_item>Фактор округления</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -432,10 +549,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Вход в список цен</_item>
+                        <_item>Элемент списка цен</_item>
                       </label>
                       <toolTip>
-                        <_item>Вход в список цен</_item>
+                        <_item>Элемент списка цен</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -481,13 +598,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:productType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:productDisabled" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип продукта</_item>
+                        <_item>Продукт заблокирован</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип продукта</_item>
+                        <_item>Продукт заблокирован</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -506,10 +623,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип налога с оборота</_item>
+                        <_item>Тип налога с продаж</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип налога с оборота</_item>
+                        <_item>Тип налога с продаж</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -528,10 +645,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductPrice:priceLevel" _operation="create">
                     <_object>
                       <label>
-                        <_item>Уровень цен</_item>
+                        <_item>Уровни цен</_item>
                       </label>
                       <toolTip>
-                        <_item>Уровень цен</_item>
+                        <_item>Уровни цен</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -539,10 +656,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductPrice:usage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Употребление</_item>
+                        <_item>Использование</_item>
                       </label>
                       <toolTip>
-                        <_item>Употребление</_item>
+                        <_item>Использование</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -759,10 +876,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CreateInitialPricesParams:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOM (Цена)</_item>
+                        <_item>ед. изм. (Цена)</_item>
                       </label>
                       <toolTip>
-                        <_item>UOM (Цена)</_item>
+                        <_item>ед. изм. (Цена)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CreateInitialPricesParams:includeProductsModifiedSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Включая продукты, измененные от</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Включая продукты, измененные от</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -785,6 +913,17 @@
                       </label>
                       <toolTip>
                         <_item>Число обработанных</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:removePrices" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Удалить цены</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Удалить цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -822,6 +961,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:removePriceLevels" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Удалить уровень цен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Удалить уровень цен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:removePriceLevels:Group:in" _operation="create">
                     <_object>
                       <label>
@@ -855,57 +1005,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ввод</_item>
+                        <_item>Вычислить цены</_item>
                       </label>
                       <toolTip>
-                        <_item>Ввод</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:processingMode" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Метод обработки</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Метод обработки</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:validFrom" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Правильный от</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Правильный от</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:validTo" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Правильный к</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Правильный к</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Результат</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Результат</_item>
+                        <_item>Вычислить цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -932,7 +1038,183 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:includeProductsModifiedSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Включая продукты, измененные от</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Включая продукты, измененные от</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Скопировать уровень цен</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Скопировать уровень цен</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:processingMode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Метод обработки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Метод обработки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действителен с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действителен с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действителен с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действителен с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:nameReplacementRegex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Замещающее выражение</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Замещающее выражение</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ClonePriceLevelParams:nameReplacementValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Значение замещающего выражения</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Значение замещающего выражения</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Копировать уровень фазовой цены продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Копировать уровень фазовой цены продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:processingMode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Режим обработки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Режим обработки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ключ фазы продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ключ фазы продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementRegex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Выражение замещения наименования</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Выражение замещения наименования</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Значение выражения замещения наим.</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Значение выражения замещения наименования</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevelParams:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Результат</_item>
@@ -1001,10 +1283,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:GetPriceLevelParams:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOM (Цена)</_item>
+                        <_item>Ед. изм. (Цена)</_item>
                       </label>
                       <toolTip>
-                        <_item>UOM (Цена)</_item>
+                        <_item>Ед. изм. (Цена</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1045,10 +1327,32 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:GetPriceLevelResult:customer" _operation="create">
                     <_object>
                       <label>
-                        <_item>Счет</_item>
+                        <_item>Клиент</_item>
                       </label>
                       <toolTip>
-                        <_item>Счет</_item>
+                        <_item>Клиент</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:GetPriceLevelResult:customerDiscountIsPercentage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Скидка клиента в %</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Скидка клиента в %</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:GetPriceLevelResult:customerDiscount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Скидка клиента</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Скидка клиента</_item>
                       </toolTip>
                     </_object>
                     <_content/>

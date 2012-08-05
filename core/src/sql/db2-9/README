@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
      
           R E A D M E
-          openCRX Database Scripts for DB2 8
+          openCRX for DB2 9
 
 -------------------------------------------------------------------
 
@@ -27,9 +27,14 @@
    NOTE: the execution of the migrate scripts is optional.
 
 
-2/ Known Problems
-   --------------
-   None.
+2/ Known Issues
+   ------------
+
+   The view OOCKE1_ACCTMEMBERSHIP requires a statement heap of size 4096
+   4KB pages or bigger. You can set the statement heap with
+   
+   set STMTHEAP to 4096
+         
    
 ---
 End of README

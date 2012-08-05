@@ -484,13 +484,48 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:author">
+										<_object>
+											<toolTip>
+												<_item>Autor</_item>
+											</toolTip>
+											<label>
+												<_item>Autor</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:version">
+										<_object>
+											<toolTip>
+												<_item>Version</_item>
+											</toolTip>
+											<label>
+												<_item>Version</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dateiinhalt</_item>
+                        <_item>Datei</_item>
                       </label>
                       <toolTip>
-                        <_item>Dateiinhalt</_item>
+                        <_item>Datei</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -542,10 +577,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Media:content" _operation="create">
                     <_object>
                       <label>
-                        <_item>Inhalt</_item>
+                        <_item>Datei</_item>
                       </label>
                       <toolTip>
-                        <_item>Inhalt</_item>
+                        <_item>Datei</_item>
                       </toolTip>
                     </_object>
                     <_content/>

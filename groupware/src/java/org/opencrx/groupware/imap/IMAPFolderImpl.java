@@ -48,7 +48,7 @@ import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.base.cci2.AuditEntryQuery;
 import org.opencrx.kernel.base.jmi1.AuditEntry;
 import org.opencrx.kernel.generic.jmi1.Media;
-import org.opencrx.kernel.workflow.servlet.Utils;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
@@ -351,7 +351,8 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
             }
             // Get activities which are newer than synchronizedAt
             if(this.activitiesHelper != null) {
-                EmailQuery query = this.activitiesHelper.getActivityPackage().createEmailQuery();
+                PersistenceManager pm = this.activitiesHelper.getPersistenceManager();
+                EmailQuery query = Utils.getActivityPackage(pm).createEmailQuery();
                 query.activityNumber().isNonNull();            
                 query.orderByActivityNumber().ascending();
                 if(lastSynchronizedAt == null) {
@@ -385,6 +386,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                     }
                     catch(Exception e) {
                         AppLog.warning("Unable to map activity to mime message", uid);
+                        new ServiceException(e).log();
                     }
                 }
             }

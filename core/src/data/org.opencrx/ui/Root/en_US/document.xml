@@ -65,7 +65,7 @@
 												<_item>10</_item>
 											</order>
 											<maxMember>20</maxMember>
-											<showMaxMember>7</showMaxMember>
+											<showMaxMember>8</showMaxMember>
 											<iconKey>Document</iconKey>
 										</_object>
 										<_content/>
@@ -120,7 +120,7 @@
 												<_item>10</_item>
 											</order>
 											<maxMember>20</maxMember>
-											<showMaxMember>7</showMaxMember>
+											<showMaxMember>8</showMaxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -227,7 +227,7 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<maxMember>7</maxMember>
+											<maxMember>10</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -428,11 +428,16 @@
 											<label>
 												<_item>Head revision</_item>
 											</label>
-											<order>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>10</_item>
 												<_item>10</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>12</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -804,16 +809,73 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<!-- DocumentRevision-->
+									<!-- Inspector -->
+									<!-- Grid -->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:author">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Author</_item>
+											</toolTip>
+											<label>
+												<_item>Author</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:version">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Version</_item>
+											</toolTip>
+											<label>
+												<_item>Version</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>30</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<!--  Media -->
 									<!-- Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Media Content</_item>
+												<_item>Media</_item>
 											</toolTip>
 											<label>
-												<_item>Media Content</_item>
+												<_item>Media</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -901,10 +963,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Content</_item>
+												<_item>File</_item>
 											</toolTip>
 											<label>
-												<_item>Content</_item>
+												<_item>File</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -1244,7 +1306,7 @@
 											</label>
 											<order>
 												<_item>0</_item>
-												<_item>0</_item>
+												<_item>30</_item>
 												<_item>10</_item>
 											</order>
 										</_object>
@@ -1261,7 +1323,7 @@
 											</label>
 											<order>
 												<_item>0</_item>
-												<_item>0</_item>
+												<_item>30</_item>
 												<_item>20</_item>
 											</order>
 										</_object>
@@ -1270,6 +1332,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:version">
 										<_object>
 											<active>true</active>
+											<columnBreak>true</columnBreak>
 											<toolTip>
 												<_item>Version</_item>
 											</toolTip>
@@ -1278,8 +1341,8 @@
 											</label>
 											<order>
 												<_item>0</_item>
-												<_item>0</_item>
 												<_item>30</_item>
+												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>

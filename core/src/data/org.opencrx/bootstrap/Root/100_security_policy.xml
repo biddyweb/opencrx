@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <org.openmdx.base.Authority name="org:openmdx:security:authorization1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/security/authorization1/xmi/authorization1.xsd">
 	<_object/>
 	<_content>
@@ -10,13 +10,12 @@
 						<org.openmdx.security.authorization1.Segment qualifiedName="Root" _operation="set">
 							<_object/>
 							<_content>
-							  <policy>
+								<policy>
 									<org.openmdx.security.authorization1.Policy id="Default" _operation="create">
 										<_object>
-                      <name>Default</name>
 											<description>Default Security Policy</description>
 										</_object>
-							      <_content>
+										<_content>
 											<role>
 												<org.openmdx.security.realm1.Role name="OpenCrxAdministrator" _operation="create">
 													<_object>
@@ -40,9 +39,9 @@
 													<_content/>
 												</org.openmdx.security.realm1.Role>
 											</role>
-									  </_content>
-						      </org.openmdx.security.authorization1.Policy>
-						    </policy>
+										</_content>
+									</org.openmdx.security.authorization1.Policy>
+								</policy>
 							</_content>
 						</org.openmdx.security.authorization1.Segment>
 					</segment>

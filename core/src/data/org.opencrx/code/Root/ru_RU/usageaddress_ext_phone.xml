@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -282,10 +282,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="700" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ассистент</_item>
+                              <_item>Помощник</_item>
                             </shortText>
                             <longText>
-                              <_item>Ассистент</_item>
+                              <_item>Помощник</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -293,10 +293,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="710" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ассистент факс</_item>
+                              <_item>Помощник факс</_item>
                             </shortText>
                             <longText>
-                              <_item>Ассистент факс</_item>
+                              <_item>Помощник факс</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -304,10 +304,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="720" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Ассистент мобил.</_item>
+                              <_item>Помощник мобил.</_item>
                             </shortText>
                             <longText>
-                              <_item>Ассистент мобил.</_item>
+                              <_item>Помощник мобил.</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -348,10 +348,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Машина</_item>
+                              <_item>Авто</_item>
                             </shortText>
                             <longText>
-                              <_item>Машина</_item>
+                              <_item>Авто</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -403,10 +403,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1400" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Безопасн.</_item>
+                              <_item>Защищенный.</_item>
                             </shortText>
                             <longText>
-                              <_item>Безопасн.</_item>
+                              <_item>Защищенный.</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -414,10 +414,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Шифр</_item>
+                              <_item>Шифрованный</_item>
                             </shortText>
                             <longText>
-                              <_item>Шифр</_item>
+                              <_item>Шифрованный</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -425,10 +425,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1500" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Обр. связь</_item>
+                              <_item>Обр. вызов</_item>
                             </shortText>
                             <longText>
-                              <_item>Обр. связь</_item>
+                              <_item>Обр. вызов</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -491,10 +491,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10000" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Счет-фактур.</_item>
+                              <_item>Для счет-фактур.</_item>
                             </shortText>
                             <longText>
-                              <_item>Счет-фактур.</_item>
+                              <_item>Для счет-фактур.</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -502,10 +502,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10100" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Квота</_item>
+                              <_item>Для котировок</_item>
                             </shortText>
                             <longText>
-                              <_item>Квота</_item>
+                              <_item>Для котировок</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -513,10 +513,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10200" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Доставка</_item>
+                              <_item>По доставке</_item>
                             </shortText>
                             <longText>
-                              <_item>Доставка</_item>
+                              <_item>По доставке</_item>
                             </longText>
                           </_object>
                           <_content/>

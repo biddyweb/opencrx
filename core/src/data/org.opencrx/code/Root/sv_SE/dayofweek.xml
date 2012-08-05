@@ -15,6 +15,94 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item> N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Söndag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[1] Söndag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Måndag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[2] Måndag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Tisdag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[3] Tisdag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Onsdag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[4] Onsdag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Torsdag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[5] Torsdag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Fredag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[6] Fredag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Lördag</_item>
+                            </shortText>
+                            <longText>
+                              <_item>[7] Lördag</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

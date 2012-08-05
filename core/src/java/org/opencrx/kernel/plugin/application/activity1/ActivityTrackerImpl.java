@@ -1,8 +1,8 @@
 package org.opencrx.kernel.plugin.application.activity1;
 
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -25,8 +25,7 @@ public class ActivityTrackerImpl {
         
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void refreshItems(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             this.getBackend().getActivities().refreshItems(
                 this.current.refGetPath()
@@ -34,7 +33,7 @@ public class ActivityTrackerImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
     

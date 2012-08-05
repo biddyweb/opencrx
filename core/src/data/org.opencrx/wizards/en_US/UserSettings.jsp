@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.18 2008/02/25 10:14:26 cmu Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.27 2008/06/26 00:34:34 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/25 10:14:26 $
+ * Date:        $Date: 2008/06/26 00:34:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,7 +91,7 @@ org.openmdx.base.exception.*
 		org.opencrx.kernel.activity1.jmi1.Resource resource = null;
 		try {
 			resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(
-				"xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/resource/" + userHome.refGetPath().getBase()
+				new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/resource/" + userHome.refGetPath().getBase())
 			);
 		}
 		catch(Exception e) {}
@@ -129,18 +129,18 @@ org.openmdx.base.exception.*
 	//-----------------------------------------------------------------------
 	// Init
 	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-	ShowObjectView showView = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-	if(
-		(app == null) ||
-		(showView == null)
-	) {
-		session.setAttribute(WIZARD_NAME, null);
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	if(app == null || objectXri == null) {
 		response.sendRedirect(
-			request.getContextPath() + "/"
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
 		return;
 	}
+	javax.jdo.PersistenceManager pm = app.getPmData();
+	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
+	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
 	Texts_1_0 texts = app.getTexts();
 	org.openmdx.portal.servlet.Codes codes = app.getCodes();
 
@@ -148,43 +148,25 @@ org.openmdx.base.exception.*
 	boolean actionSave = request.getParameter("Save.Button") != null;
 	boolean actionCancel = request.getParameter("Cancel.Button") != null;
 	String command = request.getParameter("command");
-	String objectXri = request.getParameter("xri");
-	if ((objectXri == null) || (objectXri != null && objectXri.length() == 0)) {
-		objectXri = showView.getObjectReference().refMofId();
-	}
-	RefPackage_1_0 dataPkg = app.getDataPackage();
-	RefObject_1_0 obj = (RefObject_1_0)dataPkg.refObject(objectXri);
 
-	javax.jdo.PersistenceManager pm = ((RefPackage_1_1)dataPkg).refPersistenceManager();
-	org.opencrx.kernel.home1.jmi1.Home1Package homePkg =
-		(org.opencrx.kernel.home1.jmi1.Home1Package)((org.openmdx.base.jmi1.Authority)pm.getObjectById(
-			org.openmdx.base.jmi1.Authority.class,
-			org.opencrx.kernel.home1.jmi1.Home1Package.AUTHORITY_XRI
-		)).refImmediatePackage();
-	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg =
-		(org.opencrx.kernel.activity1.jmi1.Activity1Package)((org.openmdx.base.jmi1.Authority)pm.getObjectById(
-			org.openmdx.base.jmi1.Authority.class,
-			org.opencrx.kernel.activity1.jmi1.Activity1Package.AUTHORITY_XRI
-		)).refImmediatePackage();
-	org.opencrx.security.realm1.jmi1.Realm1Package realmPkg =
-		(org.opencrx.security.realm1.jmi1.Realm1Package)((org.openmdx.base.jmi1.Authority)pm.getObjectById(
-			org.openmdx.base.jmi1.Authority.class,
-			org.opencrx.security.realm1.jmi1.Realm1Package.AUTHORITY_XRI
-		)).refImmediatePackage();
+	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+	org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
+	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
+	org.opencrx.security.realm1.jmi1.Realm1Package realmPkg = org.opencrx.kernel.utils.Utils.getRealmPackage(pm);
 	// Get user home segment
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
 	org.opencrx.kernel.home1.jmi1.Segment userHomeSegment =
-	  (org.opencrx.kernel.home1.jmi1.Segment)dataPkg.refObject(
-		"xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName
+	  (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
+		new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
 	   );
 	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-	  (org.opencrx.kernel.activity1.jmi1.Segment)dataPkg.refObject(
-		"xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
+	  (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+		new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
 	   );
 	org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment =
-	  (org.opencrx.kernel.workflow1.jmi1.Segment)dataPkg.refObject(
-		"xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName
+	  (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
+		new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
 	   );
 
 	// Exit
@@ -192,7 +174,7 @@ org.openmdx.base.exception.*
 		session.setAttribute(WIZARD_NAME, null);
 		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
 		response.sendRedirect(
-			request.getContextPath() + "/" + showView.getEncodedHRef(nextAction, false)
+			request.getContextPath() + "/" + nextAction.getEncodedHRef()
 		);
 		return;
 	}
@@ -320,7 +302,7 @@ org.openmdx.base.exception.*
 		if(true) {
 			short locale =  app.getCurrentLocaleAsIndex();
 			String localeAsString = app.getCurrentLocaleAsString();
-			org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)dataPkg.refObject(objectXri);
+			org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(objectXri));
 			boolean currentUserOwnsHome =
 				app.getCurrentUserRole().equals(userHome.refGetPath().getBase() + "@" + segmentName);
 			boolean currentUserIsAdmin =
@@ -409,34 +391,49 @@ org.openmdx.base.exception.*
 					org.opencrx.security.realm1.jmi1.PrincipalGroup privatePrincipalGroup = null;
 					if(currentUserIsAdmin) {
 						// Get principal group with name <principal>.Group. This is the private group of the owner of the user home page
-						try {
-							privatePrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(
-								"xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName + "/principal/" + userHome.refGetPath().getBase() + ".Group"
-							);
-						} catch(Exception e) {}
+						org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getRealm(
+							pm, 
+							providerName, 
+							segmentName
+						);
+						privatePrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
+							userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
+							realm,
+							pm
+						);
 						if(
 							(privatePrincipalGroup == null)
 						) {
-							org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
-								"xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName
-							);
 							privatePrincipalGroup = realmPkg.getPrincipalGroup().createPrincipalGroup();
 							privatePrincipalGroup.refInitialize(false, false);
-							privatePrincipalGroup.setDescription(segmentName + "\\\\" + userHome.refGetPath().getBase() + ".Group");
+							privatePrincipalGroup.setDescription(segmentName + "\\\\" + userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX);
 							realm.addPrincipal(
 								false,
-								userHome.refGetPath().getBase() + ".Group",
+								userHome.refGetPath().getBase() + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
 								privatePrincipalGroup
 							);
 						}
-						// Validate that user is member of <principal>.Group
-						org.opencrx.security.realm1.jmi1.Principal principal = null;
+						// Set UserHome's primary group 
+						userHome.setPrimaryGroup(privatePrincipalGroup);
+						org.openmdx.security.realm1.jmi1.Principal principal = null;
 						try {
-							principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(
-								"xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName + "/principal/" + userHome.refGetPath().getBase()
+							principal = org.opencrx.kernel.backend.SecureObject.findPrincipal(
+								userHome.refGetPath().getBase(),
+								realm,
+								pm
 							);
+							// Validate that user is member of <principal>.Group
 							if(!principal.getIsMemberOf().contains(privatePrincipalGroup)) {
 								principal.getIsMemberOf().add(privatePrincipalGroup);
+							}
+							// Validate that user is member of group 'Public'
+							org.opencrx.security.realm1.jmi1.PrincipalGroup publicGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
+								"Public",
+								realm,
+								pm
+							);
+							if(!principal.getIsMemberOf().contains(publicGroup)) {
+								principal.getIsMemberOf().add(publicGroup);
 							}
 						} catch(Exception e) {}
 						// Validate that subject of <principal>.Group is the same as of <principal>
@@ -449,7 +446,7 @@ org.openmdx.base.exception.*
 					org.opencrx.kernel.activity1.jmi1.ActivityTracker privateTracker = null;
 					try {
 						privateTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
-							"xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase()
+							new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase())
 						);
 					}
 					catch(Exception e) {}
@@ -474,7 +471,7 @@ org.openmdx.base.exception.*
 					org.opencrx.kernel.activity1.jmi1.ActivityCreator privateCreator = null;
 					try {
 						privateCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
-							"xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityCreator/" + userHome.refGetPath().getBase()
+							new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityCreator/" + userHome.refGetPath().getBase())
 						);
 					}
 					catch(Exception e) {}
@@ -485,7 +482,7 @@ org.openmdx.base.exception.*
 						privateCreator.getActivityGroup().add(privateTracker);
 						privateCreator.setActivityType(
 							(org.opencrx.kernel.activity1.jmi1.ActivityType)pm.getObjectById(
-								"xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityType/BugsAndFeaturesType"
+								new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityType/BugsAndFeaturesType")
 							)
 						);
 						if(privatePrincipalGroup != null) {
@@ -598,6 +595,7 @@ org.openmdx.base.exception.*
 		<form method="post" action="<%= WIZARD_NAME %>">
 			<input type="hidden" name="command" value="apply"/>
 			<input type="hidden" name="xri" value="<%= objectXri %>"/>
+			<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 			<div class="col1">
 				<fieldset>
 					<legend>User Home</legend>
@@ -621,6 +619,17 @@ org.openmdx.base.exception.*
 <%
 									}
 								}
+                String[] timezones = java.util.TimeZone.getAvailableIDs();
+                for(int i = 0; i < timezones.length; i++) {
+                  String timezoneID = timezones[i].trim();
+                  String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
+                    ? "selected"
+                    : "";
+%>
+										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
+<%
+                }
+
 %>
 							</select>
 						</td></tr>
@@ -676,7 +685,7 @@ org.openmdx.base.exception.*
 						org.opencrx.kernel.activity1.jmi1.ActivityTracker privateTracker = null;
 						try {
 							privateTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(
-								"xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase()
+								new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "/activityTracker/" + userHome.refGetPath().getBase())
 							);
 						} catch(Exception e) {}
 %>
@@ -737,7 +746,7 @@ org.openmdx.base.exception.*
 				boolean allowApply = currentUserIsAdmin || (currentUserOwnsHome && (privateTracker != null) && (resource != null));
 %>
 				<input <%= allowApply ? "" : "disabled" %> type="submit" value="Apply"  class="button" />
-				<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?command=exit" %>';" class="button" />
+				<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" class="button" />
 				<%= allowApply ? "" : "<h2>Apply not allowed! Non-ownership of user home and first time usage of wizard requires admin permissions.</h2>" %>
 			</div>
 		</form>

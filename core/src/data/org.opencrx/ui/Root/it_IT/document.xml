@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:revision" _operation="create">
                     <_object>
                       <label>
-                        <_item>Versioni</_item>
+                        <_item>Revisioni</_item>
                       </label>
                       <toolTip>
-                        <_item>Versioni</_item>
+                        <_item>Revisioni</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Impostazioni Parametro</_item>
+                        <_item>Impostazioni Parametri</_item>
                       </label>
                       <toolTip>
-                        <_item>Impostazioni Parametro</_item>
+                        <_item>Impostazioni Parametri</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:headRevision" _operation="create">
                     <_object>
                       <label>
-                        <_item>Versione primaria</_item>
+                        <_item>Versione Principale</_item>
                       </label>
                       <toolTip>
-                        <_item>Versione primaria</_item>
+                        <_item>Versione principale</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -484,6 +484,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Autore</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Autore</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Versione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Versione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent" _operation="create">
                     <_object>
                       <label>
@@ -553,10 +586,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference" _operation="create">
                     <_object>
                       <label>
-                        <_item>Correlazione Media</_item>
+                        <_item>Riferimento Media</_item>
                       </label>
                       <toolTip>
-                        <_item>Correlazione del Media</_item>
+                        <_item>Riferimento del Media</_item>
                       </toolTip>
                     </_object>
                     <_content/>

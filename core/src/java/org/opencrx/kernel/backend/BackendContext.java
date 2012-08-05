@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: BackendContext.java,v 1.6 2007/12/26 22:41:47 wfro Exp $
+ * Name:        $Id: BackendContext.java,v 1.7 2008/05/24 23:09:07 wfro Exp $
  * Description: BackendContext
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/26 22:41:47 $
+ * Date:        $Date: 2008/05/24 23:09:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
 import org.openmdx.compatibility.base.dataprovider.cci.Dataprovider_1_0;
 import org.openmdx.compatibility.base.dataprovider.cci.RequestCollection;
 import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
@@ -73,7 +74,7 @@ public class BackendContext {
     public BackendContext(
         Model_1_3 model,
         ServiceHeader header,
-        List pendingModifications,
+        List<DataproviderObject> pendingModifications,
         RequestCollection delegatingRequests,
         RefPackage_1_3 delegatingPkg,
         Layer_1_0 delegatingLayer,
@@ -107,8 +108,8 @@ public class BackendContext {
     //-----------------------------------------------------------------------
     public final Model_1_3 model;
     public final ServiceHeader header;
-    public final List pendingModifications;
-    public final Map modifiedObjects = new HashMap();    
+    public final List<DataproviderObject> pendingModifications;
+    public final Map<Path,DataproviderObject> modifiedObjects = new HashMap<Path,DataproviderObject>();    
     public final RequestCollection delegatingRequests;
     public final RefPackage_1_3 delegatingPkg;
     public final Layer_1_0 delegatingLayer;

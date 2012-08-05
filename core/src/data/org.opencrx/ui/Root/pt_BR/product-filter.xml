@@ -11,13 +11,57 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtros de Produtos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtro de Produtos</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro de Produto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtro de Produto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrição</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrição</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Produtos Filtrados</_item>
+                        <_item>Produtos Selecionados</_item>
                       </label>
                       <toolTip>
-                        <_item>Produtos Filtrados</_item>
+                        <_item>Produtos Selecionados</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +72,7 @@
                         <_item>Propriedades de Filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>propriedades de todos os filtros</_item>
+                        <_item>Propriedades de todos os filtros</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contar produtos filtrados</_item>
+                        <_item>Contador de produtos selecionados</_item>
                       </label>
                       <toolTip>
-                        <_item>Contar produtos filtrados</_item>
+                        <_item>Contador de produtos Selecionados</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -127,7 +171,7 @@
                         <_item>Unidade de Medida (preço)</_item>
                       </label>
                       <toolTip>
-                        <_item>Unidade de medida (Preço)</_item>
+                        <_item>Unidade de Medida (Preço)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Propriedade de Filtro tipo de taxa Default de Vendas</_item>
+                        <_item>Propriedade de Filtro tipo de taxa padrão de Vendas</_item>
                       </label>
                       <toolTip>
-                        <_item>Propriedade de Filtro tipo de taxa Default de Vendas</_item>
+                        <_item>Propriedade de Filtro tipo de taxa padrão de Vendas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DisabledFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Propriedade de filtro desabilitada</_item>
+                        <_item>Propriedade de filtro inativa</_item>
                       </label>
                       <toolTip>
-                        <_item>Propriedade de filtro desabilitada</_item>
+                        <_item>Propriedade de filtro Inativa</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DisabledFilterProperty:disabled" _operation="create">
                     <_object>
                       <label>
-                        <_item>Desabilitado</_item>
+                        <_item>Inativo</_item>
                       </label>
                       <toolTip>
-                        <_item>Desabilitado</_item>
+                        <_item>Inativo</_item>
                       </toolTip>
                     </_object>
                     <_content/>

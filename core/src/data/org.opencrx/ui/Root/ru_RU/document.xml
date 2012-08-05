@@ -135,76 +135,87 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:revision" _operation="create">
                     <_object>
                       <label>
-                        <_item>Исправление</_item>
+                        <_item>Переработки</_item>
                       </label>
                       <toolTip>
-                        <_item>Исправление</_item>
+                        <_item>Переработки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:10" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Содерж-е</_item>
+                        <_item>Наборы свойств</_item>
                       </label>
                       <toolTip>
-                        <_item>Содерж-е</_item>
+                        <_item>Наборы свойств</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:20" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>Дополн. информация</_item>
+                        <_item>Ссылки</_item>
                       </label>
                       <toolTip>
-                        <_item>Дополн. информация</_item>
+                        <_item>Ссылки</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:30" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>Медиа</_item>
+                        <_item>Запреты</_item>
                       </label>
                       <toolTip>
-                        <_item>Медиа</_item>
+                        <_item>Запреты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:attachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Заголовок</_item>
+                        <_item>Медиаданные</_item>
                       </label>
                       <toolTip>
-                        <_item>Заголовок документа</_item>
+                        <_item>Прикрепленные медиаданные</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Автор</_item>
+                        <_item>Наименование</_item>
                       </label>
                       <toolTip>
-                        <_item>Автор документа</_item>
+                        <_item>Наименование</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Резюме</_item>
+                        <_item>Описание</_item>
                       </label>
                       <toolTip>
-                        <_item>Резюме документа</_item>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:parent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создатель</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Создатель</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +256,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:headRevision" _operation="create">
                     <_object>
                       <label>
-                        <_item>Исправление заголовка</_item>
+                        <_item>Основная редакция</_item>
                       </label>
                       <toolTip>
-                        <_item>Исправление заголовка</_item>
+                        <_item>Основная редакция</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,21 +322,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:location" _operation="create">
                     <_object>
                       <label>
-                        <_item>Местонах-е</_item>
+                        <_item>Местонахождение</_item>
                       </label>
                       <toolTip>
-                        <_item>Местонах-е</_item>
+                        <_item>Местонахождение</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:qualifiedName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ключ. слова</_item>
+                        <_item>Наименование прав</_item>
                       </label>
                       <toolTip>
-                        <_item>Ключ. слова</_item>
+                        <_item>Наименование прав</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -333,10 +344,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:searchText" _operation="create">
                     <_object>
                       <label>
-                        <_item>Иск. текст</_item>
+                        <_item>Поиск текста</_item>
                       </label>
                       <toolTip>
-                        <_item>Иск. текст</_item>
+                        <_item>Поиск текста</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -363,13 +374,145 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:media" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
                     <_object>
                       <label>
-                        <_item>Медиа</_item>
+                        <_item>Автор</_item>
                       </label>
                       <toolTip>
-                        <_item>Медиа</_item>
+                        <_item>Автор документа</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Заголовок</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Заголовок документа</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Резюме</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Резюме документа</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ключевые слова</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ключевые слова</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Язык CMS</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Язык CMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsDefaultLanguage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Язык CMS по умолчанию</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Язык CMS по умолчанию</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsTranslation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Перевод CMS</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Перевод CMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Класс CMS</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Класс CMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsTemplate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Шаблон CMS</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Шаблон CMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsMeta" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Метаданные CMS</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Метаданные CMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Автор</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Автор</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Версия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Версия</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -454,10 +597,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>Медиа</_item>
+                        <_item>Медиаданные</_item>
                       </label>
                       <toolTip>
-                        <_item>Медиа</_item>
+                        <_item>Медиаданные</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -480,6 +623,182 @@
                       </label>
                       <toolTip>
                         <_item>URI</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Набор свойств</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Набор свойств</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:PropertySet:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ссылка документа</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ссылка документа</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLink:linkUri" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ссылка URI</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ссылка URI</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Запрет документа</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Запрет документа</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:lockedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Время блокировки</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Время блокировки</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentLock:lockedBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Кем заблокировано</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Кем заблокировано</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Медиаданные</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Медиаданные</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Автор</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Автор</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Версия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Версия</_item>
                       </toolTip>
                     </_object>
                     <_content/>

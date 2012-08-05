@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:tickerSymbol" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ticker symbol</_item>
+                        <_item>Code bourse</_item>
                       </label>
                       <toolTip>
-                        <_item>Ticker symbol</_item>
+                        <_item>Code bourse</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -110,13 +110,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:building" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Immeuble</_item>
+                        <_item>Importer vCard</_item>
                       </label>
                       <toolTip>
-                        <_item>Immeuble</_item>
+                        <_item>Importer vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

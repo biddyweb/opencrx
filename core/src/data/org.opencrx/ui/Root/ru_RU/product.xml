@@ -22,35 +22,71 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:allProduct" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="create">
                     <_object>
                       <label>
-                        <_item>Обзор продукта</_item>
+                        <_item>Вся Продукция</_item>
                       </label>
                       <toolTip>
-                        <_item>Обзор продукта</_item>
+                        <_item>Вся Продукция</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Продукция</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Продукция</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Продукты</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Продукты</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Продукты (заблокированные)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Продукты (заблокированные)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:configurationTypeSet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Типа конфигураций продукта</_item>
+                        <_item>Типы конфигураций продукта</_item>
                       </label>
                       <toolTip>
-                        <_item>Типа конфигураций продукта</_item>
+                        <_item>Типы конфигураций продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productClassification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Классификации продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Классификации продукта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +105,43 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Цена UOMs</_item>
+                        <_item>Ед. изм. цены</_item>
                       </label>
                       <toolTip>
-                        <_item>Цена UOMs</_item>
+                        <_item>Ед. изм. цены</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:classification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Классификации продуктов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Классификации продуктов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:assignedAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначение счетов</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначение счетов</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:Pane:Attr:Tab:0:Group:60" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>&amp;nbsp;</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +226,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип налога с оборота</_item>
+                        <_item>Тип налога с продаж</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип налога с оборота</_item>
+                        <_item>Тип налога с продаж</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +237,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:defaultUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOM по умолч.</_item>
+                        <_item>Единицы измерения</_item>
                       </label>
                       <toolTip>
-                        <_item>UOM по умолч.</_item>
+                        <_item>Единицы измерения</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:alternateProductNumber" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Альтернативный номер продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Альтернативный номер продукта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +270,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProduct:detailedDescription" _operation="create">
                     <_object>
                       <label>
-                        <_item>Описание</_item>
+                        <_item>Детальное описание</_item>
                       </label>
                       <toolTip>
-                        <_item>Описание</_item>
+                        <_item>Детальное описание</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -205,6 +285,17 @@
                       </label>
                       <toolTip>
                         <_item>Продукт</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:productPhase" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фазы продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Фазы продукта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +314,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:isStockItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Доля капитала</_item>
+                        <_item>Является ли продуктом на складе</_item>
                       </label>
                       <toolTip>
-                        <_item>Доля капитала</_item>
+                        <_item>Является ли продуктом на складе</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -256,10 +347,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Product:productDimension" _operation="create">
                     <_object>
                       <label>
-                        <_item>Объем продукта</_item>
+                        <_item>Размеры продукта</_item>
                       </label>
                       <toolTip>
-                        <_item>Объем продукта</_item>
+                        <_item>Размеры продукта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -286,6 +377,94 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Фаза продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Фаза продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Наименование</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Наименование</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ключ фазы продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ключ фазы продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действителен с</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действителен с</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Действителен до</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Действителен до</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhase:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Описание</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Классификация продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Классификация продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassification:relationship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отношения</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отношения</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassification:name" _operation="create">
                     <_object>
                       <label>
@@ -308,6 +487,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отношения классификации продукта</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отношения классификации продукта</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship:name" _operation="create">
                     <_object>
                       <label>
@@ -326,6 +516,17 @@
                       </label>
                       <toolTip>
                         <_item>Описание</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationRelationship:relationshipTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Отношение к</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Отношение к</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -396,6 +597,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignmentProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Назначение счета</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Назначение счета</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AccountAssignmentProduct:accountRole" _operation="create">
                     <_object>
                       <label>
@@ -431,6 +643,9 @@
                       <label>
                         <_item>Тип конфигурации</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Тип конфигурации</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Тип конфигурации</_item>
                       </toolTip>
@@ -440,10 +655,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Установка типа конфигурации продукта</_item>
+                        <_item>Набор типов конфигурации продукта</_item>
                       </label>
                       <toolTip>
-                        <_item>Установка типа конфигурации продукта</_item>
+                        <_item>Набор типов конфигурации продукта</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -506,10 +721,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductConfiguration:validFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Правильная форма</_item>
+                        <_item>Действителен с</_item>
                       </label>
                       <toolTip>
-                        <_item>Правильная форма</_item>
+                        <_item>Действителен с</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -517,10 +732,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductConfiguration:validTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Правильный к</_item>
+                        <_item>Действителен до</_item>
                       </label>
                       <toolTip>
-                        <_item>Правильный к</_item>
+                        <_item>Действителен до</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -571,6 +786,9 @@
                       <label>
                         <_item>Тип конфигурации</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Тип конф.</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Тип конфигурации</_item>
                       </toolTip>
@@ -612,6 +830,9 @@
                       <label>
                         <_item>Текущая конфигурация</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Тек. конфиг. </_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Текущая конфигурация</_item>
                       </toolTip>

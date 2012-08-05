@@ -207,6 +207,7 @@
 										<_object>
 											<active>true</active>
 											<filterable>true</filterable>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Account</_item>
 											</toolTip>

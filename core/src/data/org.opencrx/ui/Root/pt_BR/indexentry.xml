@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Indexed:Pane:Op:Tab:updateIndex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Atualiza índex</_item>
+                        <_item>Atualizar índice</_item>
                       </label>
                       <toolTip>
-                        <_item>Atualiza índex</_item>
+                        <_item>Atualiza índice</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -84,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>Resultado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:UpdateIndexResult:numberOfIndexedObjects" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nr. de objetos indexados</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nr. de objetos indexados</_item>
                       </toolTip>
                     </_object>
                     <_content/>

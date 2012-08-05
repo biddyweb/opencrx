@@ -2,7 +2,7 @@
 <datasources>
 	<local-tx-datasource>
 		<jndi-name>jdbc_opencrx_CRX</jndi-name>
-		<connection-url>jdbc:db2://localhost:50000/CRX_CRX</connection-url>
+		<connection-url>jdbc:db2://127.0.0.1:50000/CRX_2_1</connection-url>
 		<driver-class>com.ibm.db2.jcc.DB2Driver</driver-class>
 		<user-name>system</user-name>
 		<password>manager</password>

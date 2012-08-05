@@ -17,7 +17,7 @@
                         <_item>Páginas do Usuário</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as páginas dos usuários</_item>
+                        <_item>Todas as páginas dos usuários</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -84,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>»Buscador de Objeto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Exportar Perfis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportar Perfis</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -341,10 +352,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:sendMailSubjectPrefix" _operation="create">
                     <_object>
                       <label>
-                        <_item>prefixo do assunto de e-mail</_item>
+                        <_item>Prefixo do assunto de e-mail</_item>
                       </label>
                       <toolTip>
-                        <_item>prefixo do assunto de e-mail</_item>
+                        <_item>Prefixo do assunto de e-mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -374,10 +385,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:storeSettingsOnLogoff" _operation="create">
                     <_object>
                       <label>
-                        <_item>Configurações de armazenamento</_item>
+                        <_item>Configurações de Armazenamento</_item>
                       </label>
                       <toolTip>
-                        <_item>Configurações de armazenamento</_item>
+                        <_item>Configurações de Armazenamento</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -509,7 +520,7 @@
                         <_item>Marcar como &quot;aceito&quot;</_item>
                       </label>
                       <toolTip>
-                        <_item>marca rcomo &quot;aceito</_item>
+                        <_item>Marcar como &quot;aceito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -583,10 +594,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:iconKey" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tecla de ícone</_item>
+                        <_item>Ícone</_item>
                       </label>
                       <toolTip>
-                        <_item>Tecla de ícone</_item>
+                        <_item>Ícone</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -616,10 +627,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionParam" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametros da Ação</_item>
+                        <_item>Parâmetros da Ação</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametros da Ação</_item>
+                        <_item>Parâmetros da Ação</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -627,10 +638,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ãšltimo Acesso</_item>
+                        <_item>Último Acesso</_item>
                       </label>
                       <toolTip>
-                        <_item>Ãšltimo Acesso</_item>
+                        <_item>Último Acesso</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -767,6 +778,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryBuilding" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Imóvel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Imóvel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDepot" _operation="create">
                     <_object>
                       <label>
@@ -825,10 +847,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:withoutWords" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sem as palavras</_item>
+                        <_item>Nenhuma palavra</_item>
                       </label>
                       <toolTip>
-                        <_item>Sem as palavras</_item>
+                        <_item>Nenhuma palavra</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Exportar Perfis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Exportar Perfis</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -836,7 +869,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Importa</_item>
+                        <_item>Importar</_item>
                       </label>
                       <toolTip>
                         <_item>Importar Item</_item>
@@ -1254,10 +1287,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:210" _operation="create">
                     <_object>
                       <label>
-                        <_item>Buscar</_item>
+                        <_item>Procurar</_item>
                       </label>
                       <toolTip>
-                        <_item>Buscar</_item>
+                        <_item>Procurar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1265,10 +1298,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic" _operation="create">
                     <_object>
                       <label>
-                        <_item>Buscar</_item>
+                        <_item>Procurar</_item>
                       </label>
                       <toolTip>
-                        <_item>Buscar</_item>
+                        <_item>Procurar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1298,10 +1331,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchBasicParams:searchExpression" _operation="create">
                     <_object>
                       <label>
-                        <_item>Enncontre isto</_item>
+                        <_item>Encontre isto</_item>
                       </label>
                       <toolTip>
-                        <_item>Enncontre isto</_item>
+                        <_item>Encontre isto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1364,10 +1397,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:withoutWords" _operation="create">
                     <_object>
                       <label>
-                        <_item>Sem as palavras</_item>
+                        <_item>Nenhuma palavra</_item>
                       </label>
                       <toolTip>
-                        <_item>Sem as palavras</_item>
+                        <_item>Nenhuma palavra</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -11,6 +11,50 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktefilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktefilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produktefilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produktefilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Name</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Name</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beschreibung</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beschreibung</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:filteredProduct" _operation="create">
                     <_object>
                       <label>
@@ -33,39 +77,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Filterselektierte Produkte Zählen</_item>
-											</toolTip>
-											<label>
-												<_item>Filterselektierte Produkte Zählen</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:in" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Eingabe</_item>
-											</toolTip>
-											<label>
-												<_item>Eingabe</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:result" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Resultat</_item>
-											</toolTip>
-											<label>
-												<_item>Resultat</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filterselektierte Produkte Zählen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filterselektierte Produkte Zählen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Eingabe</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Eingabe</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationFilterProperty" _operation="create">
                     <_object>
                       <label>
@@ -172,6 +216,17 @@
                       </label>
                       <toolTip>
                         <_item>Deaktiviert</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductQueryFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter Abfrage</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter Abfrage</_item>
                       </toolTip>
                     </_object>
                     <_content/>

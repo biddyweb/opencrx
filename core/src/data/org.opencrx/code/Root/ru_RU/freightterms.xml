@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -32,7 +32,7 @@
                               <_item>01</_item>
                             </shortText>
                             <longText>
-                              <_item>[01] ФОБ Место назн., предоплата фрахта</_item>
+                              <_item>[01] На условиях ФОБ,  фрахт оплачивается продавцом</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -43,7 +43,7 @@
                               <_item>02</_item>
                             </shortText>
                             <longText>
-                              <_item>[02] ФОБ Место назн., получение фрахта</_item>
+                              <_item>[02] На условиях ФОБ,  фрахт оплачивается покупателем</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -54,7 +54,7 @@
                               <_item>03</_item>
                             </shortText>
                             <longText>
-                              <_item>[03] ФОБ Место назн., фрахт получен и разрешен</_item>
+                              <_item>[03] На условиях ФОБ, фрахт и растаможивание лежит на покупателе</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -65,7 +65,7 @@
                               <_item>04</_item>
                             </shortText>
                             <longText>
-                              <_item>[04] ФОБ Исх. пункт, предоплата фрахта</_item>
+                              <_item>[04] На условиях ФОБ, предоплата</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -76,7 +76,7 @@
                               <_item>05</_item>
                             </shortText>
                             <longText>
-                              <_item>[05] ФОБ Исх. пункт, получение фрахта</_item>
+                              <_item>[05] На условиях ФОБ, оплата фрахта покупателем</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -87,7 +87,7 @@
                               <_item>06</_item>
                             </shortText>
                             <longText>
-                              <_item>[06] ФОБ Исх. пункт, фрахт оплачен и разгружен</_item>
+                              <_item>[06] На условиях ФОБ, предоплата и отзыв проводки</_item>
                             </longText>
                           </_object>
                           <_content/>

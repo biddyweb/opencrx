@@ -148,6 +148,9 @@
                       <label>
                         <_item>营销项目 / 合约</_item>
                       </label>
+                      <shortLabel>
+                        <_item>营销</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>营销项目 / 合约</_item>
                       </toolTip>
@@ -748,6 +751,127 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Absence:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ExternalActivity:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Fax:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Incident:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mailing:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Meeting:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mms:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCall:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导入 iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导入 iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
                         <_item>导入 iCal</_item>
@@ -1467,6 +1591,9 @@
                       <label>
                         <_item>预计结束时间</_item>
                       </label>
+                      <shortLabel>
+                        <_item>预计结束时间</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>预计结束时间</_item>
                       </toolTip>

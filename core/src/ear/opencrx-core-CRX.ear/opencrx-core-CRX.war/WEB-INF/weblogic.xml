@@ -15,14 +15,8 @@
 	</security-role-assignment>
 	<reference-descriptor>
 		<ejb-reference-description>
-			<ejb-ref-name>ejb/data</ejb-ref-name>
-			<jndi-name>org.opencrx.core.CRX.local.noOrNew.gateway</jndi-name>
+			<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
+			<jndi-name>org.opencrx.core.CRX.EntityManagerFactory</jndi-name>
 		</ejb-reference-description>
-<!--				
-		<ejb-reference-description>
-			<ejb-ref-name>ejb/data</ejb-ref-name>
-			<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
-		</ejb-reference-description>
--->
 	</reference-descriptor>
 </weblogic-web-app>

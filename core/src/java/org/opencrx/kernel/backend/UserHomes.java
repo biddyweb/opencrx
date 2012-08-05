@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.11 2007/12/27 14:56:52 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.13 2008/07/07 14:02:45 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/27 14:56:52 $
+ * Date:        $Date: 2008/07/07 14:02:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -205,7 +205,7 @@ public class UserHomes {
 	              }
               }
               catch(ServiceException e0) {
-                  AppLog.error(e0.getMessage(), e0.getCause(), 1);
+                  AppLog.error(e0.getMessage(), e0.getCause());
               }
           }
       }
@@ -296,7 +296,7 @@ public class UserHomes {
                 "segment", 
                 "Root", // credentials are stored in Root segment 
                 "credential", 
-                UUIDs.getGenerator().next().toString()
+                this.backend.getUidAsString()
             }
         );
         DataproviderObject passwordCredential = new DataproviderObject(
@@ -310,7 +310,7 @@ public class UserHomes {
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.warning(e0.getMessage(), e0.getCause(), 1);
+            AppLog.warning(e0.getMessage(), e0.getCause());
             errors.add("can not create password credential");
             errors.add("reason is " + e.getMessage());
             return null;
@@ -342,7 +342,7 @@ public class UserHomes {
             runAsRootDelegation.addOperationRequest(changePasswordParams);
         }
         catch(ServiceException e) {
-            AppLog.warning(e.getMessage(), e.getCause(), 1);
+            AppLog.warning(e.getMessage(), e.getCause());
             return CAN_NOT_CHANGE_PASSWORD;
         }
         return CHANGE_PASSWORD_OK;
@@ -386,7 +386,7 @@ public class UserHomes {
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.warning(e0.getMessage(), e0.getCause(), 1);
+            AppLog.warning(e0.getMessage(), e0.getCause());
             return CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL;
         }
 
@@ -481,7 +481,7 @@ public class UserHomes {
         }
         catch(Exception e) {
             ServiceException e1 = new ServiceException(e);
-            AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+            AppLog.warning(e1.getMessage(), e1.getCause());
             errors.add("can not retrieve principal " + principalName + " in realm " + loginRealmIdentity);
             errors.add("reason is " + e.getMessage());
             return null;
@@ -611,7 +611,7 @@ public class UserHomes {
             }
             catch(Exception e0) {
                 ServiceException e1 = new ServiceException(e0);
-                AppLog.warning(e1.getMessage(), e1.getCause(), 1);
+                AppLog.warning(e1.getMessage(), e1.getCause());
                 errors.add("can not create user home");
                 errors.add("reason is " + e.getMessage());
                 return null;

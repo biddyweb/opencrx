@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.44 2008/02/15 16:27:13 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.47 2008/07/09 13:35:51 wfro Exp $
  * = Description: openCRX/Store build.xml
- * = Revision:    $Revision: 1.44 $
- * = Date:        $Date: 2008/02/15 16:27:13 $
- * = Copyright:   (c) 2003-2007 CRIXP AG
+ * = Revision:    $Revision: 1.47 $
+ * = Date:        $Date: 2008/07/09 13:35:51 $
+ * = Copyright:   (c) 2003-2008 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.0.0"/>
+	<property name="openmdx.version" value="2.1.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<path id="project.lib.classpath">
@@ -190,7 +190,7 @@
 				<tokenfilter>
 				    <replaceregex pattern="openCRX 2( \(.*\))? ~ " replace="openCRX 2 (${project.implementation.version}) ~ "/>
 				    <replaceregex pattern="openCRX Thirdparty( \(.*\))? ~ " replace="openCRX Thirdparty (${project.implementation.version}) ~ "/>
-				    <replaceregex pattern="openMDX 1( \(.*\))? ~ " replace="openMDX 1 (${openmdx.version}) ~ "/>
+				    <replaceregex pattern="openMDX 2( \(.*\))? ~ " replace="openMDX 2 (${openmdx.version}) ~ "/>
 				    <replaceregex pattern="openMDX Thirdparty( \(.*\))? ~ " replace="openMDX Thirdparty (${openmdx.version}) ~ "/>
 				</tokenfilter>
 			</openmdx:archivefilterchain>			

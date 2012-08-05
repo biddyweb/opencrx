@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prognóstico</_item>
+                        <_item>Previsão</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os Prognósticos</_item>
+                        <_item>Todos as Previsões</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Segment:forecast" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prognósticos</_item>
+                        <_item>Previsões</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os Prognósticos</_item>
+                        <_item>Todos as Previsões</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prognóstico</_item>
+                        <_item>Previsões</_item>
                       </label>
                       <toolTip>
-                        <_item>Prognóstico</_item>
+                        <_item>Previsões</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:forecastPeriod" _operation="create">
                     <_object>
                       <label>
-                        <_item>Períodos de Prognóstico</_item>
+                        <_item>Períodos de Previsões</_item>
                       </label>
                       <toolTip>
-                        <_item>Período de Prognóstico</_item>
+                        <_item>Período de Previsões</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:Forecast:organizationalUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Unidades Originais</_item>
+                        <_item>Unidades Organizacionais</_item>
                       </label>
                       <toolTip>
-                        <_item>Unidades Originais</_item>
+                        <_item>Unidades Organizacionais</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod" _operation="create">
                     <_object>
                       <label>
-                        <_item>Período de Prognóstico</_item>
+                        <_item>Período de Previsão</_item>
                       </label>
                       <toolTip>
-                        <_item>Período de Prognóstico</_item>
+                        <_item>Período de Previsão</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cotações</_item>
+                        <_item>Ofertas</_item>
                       </label>
                       <toolTip>
-                        <_item>Cotações</_item>
+                        <_item>Ofertas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:forecast1:ForecastPeriod:Pane:Attr:Tab:0:Group:30" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cotações</_item>
+                        <_item>Ofertas</_item>
                       </label>
                       <toolTip>
-                        <_item>Cotações</_item>
+                        <_item>Ofertas</_item>
                       </toolTip>
                     </_object>
                     <_content/>

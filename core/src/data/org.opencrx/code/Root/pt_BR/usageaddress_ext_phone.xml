@@ -315,10 +315,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Suplente</_item>
+                              <_item>Substituto</_item>
                             </shortText>
                             <longText>
-                              <_item>Suplente</_item>
+                              <_item>Substituto</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -326,10 +326,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="810" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Fax Suplente</_item>
+                              <_item>Outro Fax</_item>
                             </shortText>
                             <longText>
-                              <_item>Fax Suplente</_item>
+                              <_item>Outro Fax</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -524,10 +524,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10300" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Receber</_item>
+                              <_item>Recolher</_item>
                             </shortText>
                             <longText>
-                              <_item>Recebimento</_item>
+                              <_item>Recolher</_item>
                             </longText>
                           </_object>
                           <_content/>

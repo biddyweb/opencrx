@@ -25,57 +25,183 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:building" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gebäude</_item>
+                        <_item>»Alle Gebäude</_item>
                       </label>
                       <toolTip>
-                        <_item>Gebäude</_item>
+                        <_item>Alle Gebäude</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Gebäude</_item>
+														</toolTip>
+														<label>
+															<_item>Gebäude</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Gebäude (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>»Gebäude (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gebäudekomplexe</_item>
+                        <_item>»Alle Gebäudekomplexe</_item>
                       </label>
                       <toolTip>
-                        <_item>Gebäudekomplexe</_item>
+                        <_item>Alle Gebäudekomplexe</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Gebäudekomplexe</_item>
+														</toolTip>
+														<label>
+															<_item>Gebäudekomplexe</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Gebäudekomplexe (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>»Gebäudekomplexe (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Gebäudeeinheiten</_item>
+                        <_item>»Alle Gebäudeeinheiten</_item>
                       </label>
                       <toolTip>
-                        <_item>Gebäudeeinheiten</_item>
+                        <_item>Alle Gebäudeeinheiten</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Gebäudeeinheiten</_item>
+														</toolTip>
+														<label>
+															<_item>Gebäudeeinheiten</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Gebäudeeinheiten (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>»Gebäudeeinheiten (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Inventarobjekte</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Inventarobjekte</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Alle Inventarobjekte</_item>
+											</toolTip>
+											<label>
+												<_item>»Alle Inventarobjekte</_item>
+											</label>
+										</_object>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Inventarobjekte</_item>
+														</toolTip>
+														<label>
+															<_item>Inventarobjekte</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Inventarobjekte (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>»Inventarobjekte (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="create">
                     <_object>
                       <label>
-                        <_item>Anlageteile</_item>
+                        <_item>»Alle Anlageteile</_item>
                       </label>
                       <toolTip>
-                        <_item>Anlageteile</_item>
+                        <_item>Alle Anlageteile</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Anlageteile</_item>
+														</toolTip>
+														<label>
+															<_item>Anlageteile</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Anlageteile (deaktiviert)</_item>
+														</toolTip>
+														<label>
+															<_item>»Anlageteile (deaktiviert)</_item>
+														</label>
+													</_object>
+													<_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:facility" _operation="create">
                     <_object>
@@ -579,6 +705,17 @@
                       </label>
                       <toolTip>
                         <_item>Verbindung von</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:LinkableItemLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Verbindung zu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Verbindung zu</_item>
                       </toolTip>
                     </_object>
                     <_content/>

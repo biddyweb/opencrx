@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.22 2008/02/21 23:27:27 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.33 2008/07/08 23:11:53 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.33 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/21 23:27:27 $
+ * Date:        $Date: 2008/07/08 23:11:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,10 +73,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.PersistenceManager;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
+import org.opencrx.kernel.contract1.jmi1.CalculationRule;
+import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.ContractPosition;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
@@ -85,8 +89,10 @@ import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
@@ -96,12 +102,16 @@ import org.openmdx.compatibility.base.dataprovider.cci.Directions;
 import org.openmdx.compatibility.base.dataprovider.cci.Orders;
 import org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader;
 import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
+import org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.compatibility.base.marshalling.Marshaller;
 import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.w3c.cci2.Datatypes;
 
 public class Contracts {
 
@@ -115,6 +125,76 @@ public class Contracts {
         );
     }
 
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.contract1.jmi1.CalculationRule findCalculationRule(
+        String name,
+        org.opencrx.kernel.contract1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = org.opencrx.kernel.utils.Utils.getContractPackage(pm);
+        org.opencrx.kernel.contract1.cci2.CalculationRuleQuery calculationRuleQuery = contractPkg.createCalculationRuleQuery();
+        calculationRuleQuery.name().equalTo(name);
+        List<org.opencrx.kernel.contract1.jmi1.CalculationRule> calculationRules = segment.getCalculationRule(calculationRuleQuery);
+        return calculationRules.isEmpty()
+            ? null
+            : calculationRules.iterator().next();
+    }
+    
+    //-----------------------------------------------------------------------
+    /**
+     * @return Returns the contract segment.
+     */
+    public static org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        return (org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+            "xri:@openmdx:org.opencrx.kernel.contract1/provider/"
+            + providerName + "/segment/" + segmentName
+        );
+    }
+
+    //-----------------------------------------------------------------------
+    public static CalculationRule initCalculationRule(
+        String calculationRuleName,
+        String description,
+        String getPositionAmountsScript,
+        String getContractAmountsScript,
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        UUIDGenerator uuids = UUIDs.getGenerator();
+        Contract1Package contractPkg = Utils.getContractPackage(pm);
+        org.opencrx.kernel.contract1.jmi1.Segment contractSegment = Contracts.getContractSegment(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        CalculationRule calculationRule = null;
+        if((calculationRule = findCalculationRule(calculationRuleName, contractSegment, pm)) != null) {
+            return calculationRule;            
+        }                
+        pm.currentTransaction().begin();
+        calculationRule = contractPkg.getCalculationRule().createCalculationRule();
+        calculationRule.setName(calculationRuleName);
+        calculationRule.setDescription(description);
+        calculationRule.setGetPositionAmountsScript(getPositionAmountsScript);
+        calculationRule.setGetContractAmountsScript(getContractAmountsScript);
+        calculationRule.setDefault(true);
+        calculationRule.getOwningGroup().addAll(
+            contractSegment.getOwningGroup()
+        );
+        contractSegment.addCalculationRule(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            calculationRule
+        );                        
+        pm.currentTransaction().commit();        
+        return calculationRule;
+    }
+        
     //-------------------------------------------------------------------------
     static void copyAbstractContract(
         DataproviderObject_1_0 from,
@@ -1181,7 +1261,8 @@ public class Contracts {
                     salesOrderIdentity.getParent().getParent().getChild("invoice"),
                     objectMarshallers,
                     DEFAULT_REFERENCE_FILTER,
-                    false
+                    false,
+                    AttributeSelectors.ALL_ATTRIBUTES
                 ).path()
             );
         invoice.clearValues("origin").add(salesOrderIdentity);
@@ -1250,7 +1331,8 @@ public class Contracts {
                     quoteIdentity.getParent().getParent().getChild("salesOrder"),
                     objectMarshallers,
                     DEFAULT_REFERENCE_FILTER,
-                    false
+                    false,
+                    AttributeSelectors.ALL_ATTRIBUTES
                 ).path()
            );
         salesOrder.clearValues("origin").add(quoteIdentity);
@@ -1317,7 +1399,8 @@ public class Contracts {
                     opportunityIdentity.getParent().getParent().getChild("quote"),
                     objectMarshallers,
                     DEFAULT_REFERENCE_FILTER,
-                    false
+                    false,
+                    AttributeSelectors.ALL_ATTRIBUTES
             ).path()
         );
         quote.clearValues("origin").add(opportunityIdentity);              
@@ -1367,7 +1450,8 @@ public class Contracts {
                     leadIdentity.getParent().getParent().getChild("opportunity"),
                     objectMarshallers,
                     DEFAULT_REFERENCE_FILTER,
-                    false
+                    false,
+                    AttributeSelectors.ALL_ATTRIBUTES
                 ).path()
             );
         opportunity.clearValues("origin").add(leadIdentity);
@@ -1597,76 +1681,95 @@ public class Contracts {
             );
             BigDecimal listPriceDiscount = (BigDecimal)listPrice.values("discount").get(0);
             Boolean listPriceDiscountIsPercentage = (Boolean)listPrice.values("discountIsPercentage").get(0);
-            BigDecimal totalDiscount = null;
-            Boolean totalDiscountIsPercentage = null;
-
-            // Accumulate list price discount and customer discount
-            if(customerDiscount == null) {
-                totalDiscount = listPriceDiscount;
-                totalDiscountIsPercentage = listPriceDiscountIsPercentage;
+            // Get existing discount
+            BigDecimal discount = null;
+            if(oldValues == null) {
+                discount = (BigDecimal)position.values("discount").get(0);
             }
             else {
-                BigDecimal price = (BigDecimal)listPrice.values("price").get(0);
-                price = price == null
-                    ? new BigDecimal(0.0)
-                    : price;
-                listPriceDiscount = listPriceDiscount == null
-                    ? new BigDecimal(0.0)
-                    : listPriceDiscount;
-                customerDiscount = customerDiscount == null
-                    ? new BigDecimal(0.0)
-                    : customerDiscount;                    
-                if(
-                    (listPriceDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
-                    ((listPriceDiscountIsPercentage != null) &&
-                    listPriceDiscountIsPercentage.booleanValue())
-                ) {
-                    // listPriceDiscountIsPercentage=true, customerDiscountIsPercentage=true
-                    // totalDiscount = 1 - (1-listPriceDiscount) * (1-customerDiscount)
-                    if(
-                        (customerDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
-                        ((customerDiscountIsPercentage != null) &&
-                        customerDiscountIsPercentage.booleanValue())
-                    ) {
-                        totalDiscountIsPercentage = Boolean.TRUE;
-                        totalDiscount =
-                            new BigDecimal(1.0).subtract(
-                                new BigDecimal(1.0).subtract(listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR)).multiply(
-                                    new BigDecimal(1.0).subtract(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
-                                )
-                            ).multiply(new BigDecimal(100.0));
-                    }
-                    // listPriceDiscountIsPercentage=true, customerDiscountIsPercentage=false
-                    // totalDiscount = price*listPriceDiscount + customerDiscount
-                    else {
-                        totalDiscountIsPercentage = Boolean.FALSE;
-                        totalDiscount = price.multiply(
-                            listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_DOWN)
-                        ).add(customerDiscount);
-                    }
+                discount = (position.getValues("discount") != null) && !position.values("discount").isEmpty()
+                    ? (BigDecimal)position.values("discount").get(0)
+                    : (BigDecimal)oldValues.values("discount").get(0);
+            }            
+            // Get existing discountIsPercentage
+            Boolean discountIsPercentage = null;
+            if(oldValues == null) {
+                discountIsPercentage = (Boolean)position.values("discountIsPercentage").get(0);
+            }
+            else {
+                discountIsPercentage = (position.getValues("discountIsPercentage") != null) && !position.values("discountIsPercentage").isEmpty()
+                    ? (Boolean)position.values("discountIsPercentage").get(0)
+                    : (Boolean)oldValues.values("discountIsPercentage").get(0);
+            }            
+            // Recalc discount if not already set on position
+            if(discount == null) {
+                // Accumulate list price discount and customer discount
+                if(customerDiscount == null) {
+                    discount = listPriceDiscount;
+                    discountIsPercentage = listPriceDiscountIsPercentage;
                 }
                 else {
-                    // listPriceDiscountIsPercentage=false, customerDiscountIsPercentage=true
-                    // totalDiscount = listPriceDiscount + (price - listPriceDiscount)*customerDiscount
+                    BigDecimal price = (BigDecimal)listPrice.values("price").get(0);
+                    price = price == null
+                        ? new BigDecimal(0.0)
+                        : price;
+                    listPriceDiscount = listPriceDiscount == null
+                        ? new BigDecimal(0.0)
+                        : listPriceDiscount;
+                    customerDiscount = customerDiscount == null
+                        ? new BigDecimal(0.0)
+                        : customerDiscount;                    
                     if(
-                        (customerDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
-                        (customerDiscountIsPercentage != null) &&
-                        customerDiscountIsPercentage.booleanValue()
+                        (listPriceDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
+                        ((listPriceDiscountIsPercentage != null) &&
+                        listPriceDiscountIsPercentage.booleanValue())
                     ) {
-                        totalDiscountIsPercentage = Boolean.FALSE;
-                        totalDiscount = listPriceDiscount.add(
-                            price.subtract(listPriceDiscount).multiply(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
-                        );
+                        // listPriceDiscountIsPercentage=true, customerDiscountIsPercentage=true
+                        // totalDiscount = 1 - (1-listPriceDiscount) * (1-customerDiscount)
+                        if(
+                            (customerDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
+                            ((customerDiscountIsPercentage != null) &&
+                            customerDiscountIsPercentage.booleanValue())
+                        ) {
+                            discountIsPercentage = Boolean.TRUE;
+                            discount =
+                                new BigDecimal(1.0).subtract(
+                                    new BigDecimal(1.0).subtract(listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR)).multiply(
+                                        new BigDecimal(1.0).subtract(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
+                                    )
+                                ).multiply(new BigDecimal(100.0));
+                        }
+                        // listPriceDiscountIsPercentage=true, customerDiscountIsPercentage=false
+                        // totalDiscount = price*listPriceDiscount + customerDiscount
+                        else {
+                            discountIsPercentage = Boolean.FALSE;
+                            discount = price.multiply(
+                                listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_DOWN)
+                            ).add(customerDiscount);
+                        }
                     }
-                    // listPriceDiscountIsPercentage=false, customerDiscountIsPercentage=false
-                    // totalDiscount = listPriceDiscount + customerDiscount
                     else {
-                        totalDiscountIsPercentage = Boolean.FALSE;
-                        totalDiscount = listPriceDiscount.add(customerDiscount);
+                        // listPriceDiscountIsPercentage=false, customerDiscountIsPercentage=true
+                        // totalDiscount = listPriceDiscount + (price - listPriceDiscount)*customerDiscount
+                        if(
+                            (customerDiscount.compareTo(new BigDecimal(0.0)) == 0) ||
+                            (customerDiscountIsPercentage != null) &&
+                            customerDiscountIsPercentage.booleanValue()
+                        ) {
+                            discountIsPercentage = Boolean.FALSE;
+                            discount = listPriceDiscount.add(
+                                price.subtract(listPriceDiscount).multiply(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
+                            );
+                        }
+                        // listPriceDiscountIsPercentage=false, customerDiscountIsPercentage=false
+                        // totalDiscount = listPriceDiscount + customerDiscount
+                        else {
+                            discountIsPercentage = Boolean.FALSE;
+                            discount = listPriceDiscount.add(customerDiscount);
+                        }
                     }
                 }
-            }
-            
+            }            
             // Position creation
             if(oldValues == null) {
                 AppLog.trace("New position");
@@ -1675,15 +1778,15 @@ public class Contracts {
                         listPrice.values("price")
                     );
                     position.clearValues("discount");
-                    if(totalDiscount != null) {
+                    if(discount != null) {
                         position.clearValues("discount").add(
-                            totalDiscount
+                            discount
                         );
                     }
                     position.clearValues("discountIsPercentage");
-                    if(totalDiscountIsPercentage != null) {
+                    if(discountIsPercentage != null) {
                         position.clearValues("discountIsPercentage").add(
-                            totalDiscountIsPercentage
+                            discountIsPercentage
                         );
                     }
                 }
@@ -1708,15 +1811,15 @@ public class Contracts {
                         listPrice.values("price")
                     );
                     position.clearValues("discount");
-                    if(totalDiscount != null) {
+                    if(discount != null) {
                         position.clearValues("discount").add(
-                            totalDiscount
+                            discount
                         );
                     }
                     position.clearValues("discountIsPercentage");
-                    if(totalDiscountIsPercentage != null) {
+                    if(discountIsPercentage != null) {
                         position.clearValues("discountIsPercentage").add(
-                            totalDiscountIsPercentage
+                            discountIsPercentage
                         );
                     }
                 }
@@ -1934,7 +2037,7 @@ public class Contracts {
             }
         }
         catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause(), 1);
+            AppLog.info(e.getMessage(), e.getCause());
         }
     }
     
@@ -2000,7 +2103,7 @@ public class Contracts {
             }            
         }
         catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause(), 1);
+            AppLog.info(e.getMessage(), e.getCause());
         }
     }
     
@@ -2013,7 +2116,8 @@ public class Contracts {
         Path productIdentity,
         Path uomIdentity,
         Path priceUomIdentity,
-        Path pricingRuleIdentity
+        Path pricingRuleIdentity,
+        boolean cloneProductConfiguration
     ) {
         DataproviderObject position = null;
         try {
@@ -2109,18 +2213,20 @@ public class Contracts {
                 position
             );
             // Clone configurations
-            this.backend.getProducts().cloneProductConfigurationSet(
-                productIdentity,
-                position.path(),
-                false,
-                true
-            );
+            if(cloneProductConfiguration) {
+                this.backend.getProducts().cloneProductConfigurationSet(
+                    productIdentity,
+                    position.path(),
+                    false,
+                    true
+                );
+            }
             this.markContractAsDirty(
                 contract.path()
             );
         }
-	    catch(ServiceException e) {
-	        AppLog.info(e.getMessage(), e.getCause(), 1);
+	    catch(Exception e) {
+	        new ServiceException(e).log();
 	    }
 	    return position == null
 	        ? null
@@ -2199,10 +2305,10 @@ public class Contracts {
         Path chartReference
     ) throws ServiceException {
 
-      DateFormat dateFormat = 
-          DateFormat.getDateInstance(DateFormat.SHORT, new Locale("en_US")); 
-      DateFormat timeFormat = 
-          DateFormat.getTimeInstance(DateFormat.SHORT, new Locale("en_US"));
+      java.text.DateFormat dateFormat = 
+          java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, new Locale("en_US")); 
+      java.text.DateFormat timeFormat = 
+          java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, new Locale("en_US"));
       String createdAt = dateFormat.format(new Date()) + " " + timeFormat.format(new Date());
         
       // try to get full name of contact
@@ -2307,7 +2413,7 @@ public class Contracts {
       );
       charts[0].values("chartMimeType").add("application/vnd.openmdx-chart");
       charts[0].values("chartName").add(
-        this.backend.toFilename(chartTitle + ".txt")
+        Utils.toFilename(chartTitle + ".txt")
       );
       
       /**
@@ -2372,7 +2478,7 @@ public class Contracts {
       );
       charts[1].values("chartMimeType").add("application/vnd.openmdx-chart");
       charts[1].values("chartName").add(
-        this.backend.toFilename(chartTitle + ".txt")
+        Utils.toFilename(chartTitle + ".txt")
       );
 
       return charts;
@@ -2581,7 +2687,8 @@ public class Contracts {
             position.path().getPrefix(position.path().size() - 2).getChild("removedPosition"),
             objectMarshallers,
             DEFAULT_REFERENCE_FILTER,
-            true
+            true,
+            AttributeSelectors.ALL_ATTRIBUTES
         );
         // Update position modifications
         // Replace involved with removed position
@@ -2662,7 +2769,8 @@ public class Contracts {
                     positionIdentity.getChild("depotReference"),
                     null,
                     "",
-                    true
+                    true,
+                    AttributeSelectors.ALL_ATTRIBUTES                    
                 );
             }
             depotUsages.add(depotUsage);
@@ -2970,7 +3078,7 @@ public class Contracts {
                             Quantors.THERE_EXISTS,                        
                             SystemAttributes.CREATED_AT,
                             FilterOperators.IS_GREATER,
-                            new String[]{DateFormat.getInstance().format(positionModificationsSince)}
+                            new String[]{org.openmdx.base.text.format.DateFormat.getInstance().format(positionModificationsSince)}
                         )
                     },
                 AttributeSelectors.ALL_ATTRIBUTES,
@@ -3241,9 +3349,373 @@ public class Contracts {
     }
 
     //-------------------------------------------------------------------------
+    public FilterProperty[] getContractFilterProperties(
+        Path contractFilterIdentity,
+        boolean forCounting
+    ) throws ServiceException {
+        List filterProperties = this.backend.getDelegatingRequests().addFindRequest(
+            contractFilterIdentity.getChild("filterProperty"),
+            null,
+            AttributeSelectors.ALL_ATTRIBUTES,
+            null,
+            0, 
+            Integer.MAX_VALUE,
+            Directions.ASCENDING
+        );
+        List filter = new ArrayList();
+        boolean hasQueryFilterClause = false;
+        for(
+            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
+            i.hasNext();
+        ) {
+            DataproviderObject_1_0 filterProperty = i.next();
+            String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
+
+            Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);            
+            if((isActive != null) && isActive.booleanValue()) {
+                // Query filter
+                if("org:opencrx:kernel:contract1:ContractQueryFilterProperty".equals(filterPropertyClass)) {     
+                    String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
+                    // Clause and class
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+                            FilterOperators.PIGGY_BACK,
+                            new Object[]{
+                                (forCounting ? Database_1_Attributes.HINT_COUNT : "") +
+                                filterProperty.values("clause").get(0)
+                            }
+                        )
+                    );
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
+                            FilterOperators.PIGGY_BACK,
+                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                        )
+                    );
+                    // stringParam
+                    List values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
+                            FilterOperators.PIGGY_BACK,
+                            values.toArray(new String[values.size()])
+                        )
+                    );
+                    // integerParam
+                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
+                            FilterOperators.PIGGY_BACK,
+                            values.toArray(new Integer[values.size()])
+                        )
+                    );
+                    // decimalParam
+                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
+                            FilterOperators.PIGGY_BACK,
+                            values.toArray(new BigDecimal[values.size()])
+                        )
+                    );
+                    // booleanParam
+                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
+                            FilterOperators.PIGGY_BACK,
+                            values.toArray(new Boolean[values.size()])
+                        )
+                    );
+                    // dateParam
+                    values = new ArrayList();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(XMLGregorianCalendar.class, j.next())
+                        );
+                    }
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
+                            FilterOperators.PIGGY_BACK,
+                            values.toArray(new XMLGregorianCalendar[values.size()])
+                        )
+                    );
+                    // dateTimeParam
+                    values = new ArrayList();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(Date.class, j.next())
+                        );
+                    }
+                    filter.add(
+                        new FilterProperty(
+                            Quantors.PIGGY_BACK,
+                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
+                            FilterOperators.PIGGY_BACK,
+                            values.toArray(new Date[values.size()])
+                        )
+                    );
+                    hasQueryFilterClause = true;
+                }
+                // Attribute filter
+                else {
+                    // Get filterOperator, filterQuantor
+                    short filterOperator = filterProperty.values("filterOperator").size() == 0
+                        ? FilterOperators.IS_IN
+                        : ((Number)filterProperty.values("filterOperator").get(0)).shortValue();
+                    filterOperator = filterOperator == 0
+                        ? FilterOperators.IS_IN
+                        : filterOperator;
+                    short filterQuantor = filterProperty.values("filterQuantor").size() == 0
+                        ? Quantors.THERE_EXISTS
+                        : ((Number)filterProperty.values("filterQuantor").get(0)).shortValue();
+                    filterQuantor = filterQuantor == 0
+                        ? Quantors.THERE_EXISTS
+                        : filterQuantor;
+                    
+                    if("org:opencrx:kernel:contract1:ContractTypeFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                SystemAttributes.OBJECT_CLASS,
+                                filterOperator,
+                                filterProperty.values("contractType").toArray()
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:ContractStateFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "contractState",
+                                filterOperator,
+                                filterProperty.values("contractState").toArray()
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:ContractPriorityFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "priority",
+                                filterOperator,
+                                filterProperty.values("priority").toArray()
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:TotalAmountFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "totalAmount",
+                                filterOperator,
+                                filterProperty.values("totalAmount").toArray()
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:CustomerFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "customer",
+                                filterOperator,
+                                filterProperty.values("customer").toArray()                    
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:SupplierFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "supplier",
+                                filterOperator,
+                                filterProperty.values("supplier").toArray()                    
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:SalesRepFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "salesRep",
+                                filterOperator,
+                                filterProperty.values("salesRep").toArray()                    
+                            )
+                        );
+                    }
+                    else if("org:opencrx:kernel:contract1:DisabledFilterProperty".equals(filterPropertyClass)) {
+                        filter.add(
+                            new FilterProperty(
+                                filterQuantor,
+                                "disabled",
+                                filterOperator,
+                                filterProperty.values("disabled").toArray()
+                            )
+                        );
+                    }
+                }
+            }
+        }        
+        if(!hasQueryFilterClause && forCounting) {
+            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.backend.getUidAsString() + ":";
+            // Clause and class
+            filter.add(
+                new FilterProperty(
+                    Quantors.PIGGY_BACK,
+                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+                    FilterOperators.PIGGY_BACK,
+                    new Object[]{
+                        Database_1_Attributes.HINT_COUNT + "(1=1)"
+                    }
+                )
+            );
+            filter.add(
+                new FilterProperty(
+                    Quantors.PIGGY_BACK,
+                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
+                    FilterOperators.PIGGY_BACK,
+                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+                )
+            );            
+        }
+        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
+    }
+    
+    //-------------------------------------------------------------------------
+    public int countFilteredContract(
+        Path contractFilterIdentity
+    ) throws ServiceException {
+        List contracts = this.backend.getDelegatingRequests().addFindRequest(
+            contractFilterIdentity.getChild("filteredContract"),
+            this.getContractFilterProperties(
+                contractFilterIdentity, 
+                true
+            ),
+            AttributeSelectors.NO_ATTRIBUTES,
+            null,
+            0, 
+            1,
+            Directions.ASCENDING
+        );
+        return contracts.size();
+    }
+            
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
+        org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
+        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
+        org.opencrx.kernel.contract1.jmi1.ContractPosition position,
+        java.math.BigDecimal minMaxAdjustedQuantity,
+        java.math.BigDecimal uomScaleFactor,
+        java.math.BigDecimal salesTaxRate
+    ) {
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =
+            (org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(
+                org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
+            );
+        java.math.BigDecimal pricePerUnit = position.getPricePerUnit();
+        java.math.BigDecimal baseAmount = minMaxAdjustedQuantity.multiply(pricePerUnit.multiply(uomScaleFactor));
+        // discount
+        Boolean discountIsPercentage = position.isDiscountIsPercentage() != null 
+            ? position.isDiscountIsPercentage()
+            : Boolean.FALSE;
+        java.math.BigDecimal discount = position.getDiscount() != null
+            ? position.getDiscount()
+            : new java.math.BigDecimal(0);
+        // Discount is per piece in case of !discountIsPercentage
+        java.math.BigDecimal discountAmount = discountIsPercentage.booleanValue()
+            ? baseAmount.multiply(discount.divide(new java.math.BigDecimal(100.0), java.math.BigDecimal.ROUND_UP))
+            : minMaxAdjustedQuantity.multiply(discount.multiply(uomScaleFactor));
+        // taxAmount
+        java.math.BigDecimal taxAmount = baseAmount.subtract(discountAmount).multiply(
+            salesTaxRate.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP)
+        );    
+        // amount
+        java.math.BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
+        org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = contractPkg.createGetPositionAmountsResult(
+            amount, baseAmount, discountAmount,
+            (short)0,
+            null,
+            taxAmount
+        );
+        return result;
+    }
+
+    //-------------------------------------------------------------------------
+    public static org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(
+        org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
+        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
+        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
+        java.lang.Integer[] lineItemNumbers,
+        java.math.BigDecimal[] positionBaseAmounts,
+        java.math.BigDecimal[] positionDiscountAmounts,
+        java.math.BigDecimal[] positionTaxAmounts,
+        java.math.BigDecimal[] positionAmounts,
+        java.math.BigDecimal[] salesCommissions,
+        java.lang.Boolean[] salesCommissionIsPercentages
+    ) {
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =
+            (org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(
+                org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
+            );
+        java.math.BigDecimal totalBaseAmount = new java.math.BigDecimal(0);
+        java.math.BigDecimal totalDiscountAmount = new java.math.BigDecimal(0);
+        java.math.BigDecimal totalTaxAmount = new java.math.BigDecimal(0);
+        java.math.BigDecimal totalSalesCommission = new java.math.BigDecimal(0);
+        for(int i = 0; i < positionBaseAmounts.length; i++) {
+            java.math.BigDecimal baseAmount = positionBaseAmounts[i] != null
+              ? positionBaseAmounts[i]
+               : new java.math.BigDecimal(0); 
+            totalBaseAmount = totalBaseAmount.add(baseAmount);
+            java.math.BigDecimal discountAmount = positionDiscountAmounts[i] != null
+              ? positionDiscountAmounts[i]
+               : new java.math.BigDecimal(0);
+            totalDiscountAmount = totalDiscountAmount.add(discountAmount);
+            java.math.BigDecimal taxAmount = positionTaxAmounts[i] != null
+              ? positionTaxAmounts[i]
+              : new java.math.BigDecimal(0);
+            totalTaxAmount = totalTaxAmount.add(taxAmount);
+            java.math.BigDecimal salesCommission = salesCommissions[i] != null
+              ? salesCommissions[i]
+              : new java.math.BigDecimal(0);
+            totalSalesCommission = totalSalesCommission.add(
+              (salesCommissionIsPercentages[i] != null) &&
+              (((Boolean)salesCommissionIsPercentages[i]).booleanValue())
+              ? baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP))
+              : salesCommission
+            );
+        }
+        java.math.BigDecimal totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
+        java.math.BigDecimal totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
+        org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = contractPkg.createGetContractAmountsResult(
+            (short)0,
+            null,
+            totalAmount, totalAmountIncludingTax, totalBaseAmount, totalDiscountAmount, totalSalesCommission, totalTaxAmount
+        );
+        return result;
+    }
+    
+    //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
-    private static final String DEFAULT_REFERENCE_FILTER = ":*, :*/:*/:*, :*/:*/:*/:*/:*";
+    private static final String DEFAULT_REFERENCE_FILTER = null;
     
     private static final Path CONTRACT_POSITION_CONFIGURATION_PROPERTY = new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/configuration/:*/property/:*");
     
@@ -3270,64 +3742,59 @@ public class Contracts {
     private static final short PRICING_STATE_DIRTY = 10;
     private static final short PRICING_STATE_OK = 20;
     
-    // Selectable item commands
-    private static final String MODIFY_PRODUCT_BUNDLE_POSITION = "MODIFY_BUNDLE";
-    private static final String NEW_PRODUCT_BUNDLE_POSITION = "NEW_BUNDLE";
-    private static final String MODIFY_BUNDLED_PRODUCT_POSITION = "MODIFY_BUNDLED_PRODUCT";
-    private static final String NEW_BUNDLED_PRODUCT_POSITION = "NEW_BUNDLED_PRODUCT";
-    private static final String MODIFY_CONFIGURATION = "MODIFY_CONFIG";
-    private static final String NEW_CONFIGURATION = "NEW_CONFIG";
-    
     // Booking texts
     private static final String BOOKING_TEXT_NAME_RETURN_GOODS = "return goods";
     private static final String BOOKING_TEXT_NAME_DELIVER_GOODS = "deliver goods";
             
-    private static final String DEFAULT_GET_POSITION_AMOUNTS_SCRIPT = 
-        "public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(\n" + 
-            "org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,\n" +
-            "org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,\n" +  
-            "org.opencrx.kernel.contract1.jmi1.ContractPosition position,\n" +
-            "java.math.BigDecimal minMaxAdjustedQuantity,\n" +
-            "java.math.BigDecimal uomScaleFactor,\n" +
-            "java.math.BigDecimal salesTaxRate\n" +
-        ") {\n" +
-            "org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =\n" + 
-                "(org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(\n" +
-                    "org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()\n" +
-                ");\n" +
-            "org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = contractPkg.createGetPositionAmountsResult(\n" +
-                "null, null, null,\n" +
-                "(short)0,\n" +
-                "null,\n" +
-                "null\n" +                
-            ");\n" +
-            "return result;\n" +        
-        "}";
+    public static final String CALCULATION_RULE_NAME_DEFAULT = "Default";
         
-    private static final String DEFAULT_GET_CONTRACT_AMOUNTS_SCRIPT = 
-        "public static org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(\n" + 
-            "org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,\n" +
-            "org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,\n" +  
-            "org.opencrx.kernel.contract1.jmi1.AbstractContract contract,\n" +
-            "Integer[] lineItemNumbers,\n" +
-            "java.math.BigDecimal[] positionBaseAmounts,\n" +
-            "java.math.BigDecimal[] positionDiscountAmounts,\n" +
-            "java.math.BigDecimal[] positionTaxAmounts,\n" +
-            "java.math.BigDecimal[] positionAmounts,\n" +
-            "java.math.BigDecimal[] salesCommissions,\n" +
-            "Boolean[] salesCommissionIsPercentages\n" +
+    public static final String DEFAULT_GET_POSITION_AMOUNTS_SCRIPT = 
+        "//<pre>\n" + 
+        "public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(\n" + 
+        "    org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,\n" +
+        "    org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,\n" +  
+        "    org.opencrx.kernel.contract1.jmi1.ContractPosition position,\n" +
+        "    java.math.BigDecimal minMaxAdjustedQuantity,\n" +
+        "    java.math.BigDecimal uomScaleFactor,\n" +
+        "    java.math.BigDecimal salesTaxRate\n" +
         ") {\n" +
-            "org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =\n" + 
-                "(org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(\n" +
-                    "org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()\n" +
-                ");\n" +
-            "org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = contractPkg.createGetContractAmountsResult(\n" +
-                "(short)0,\n" +
-                "null,\n" +
-                "null, null, null, null, null, null\n" +
-            ");\n" +
-            "return result;\n" +        
-        "}";
+        "    return org.opencrx.kernel.backend.Contracts.getPositionAmounts(\n" + 
+        "        rootPkg,\n" +
+        "        calculationRule,\n" +
+        "        position,\n" +
+        "        minMaxAdjustedQuantity,\n" +
+        "        uomScaleFactor,\n" +
+        "        salesTaxRate\n" +
+        "   );\n" +
+        "}//</pre>";
+        
+    public static final String DEFAULT_GET_CONTRACT_AMOUNTS_SCRIPT = 
+        "//<pre>\n" + 
+        "public static org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(\n" + 
+        "    org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,\n" +
+        "    org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,\n" +  
+        "    org.opencrx.kernel.contract1.jmi1.AbstractContract contract,\n" +
+        "    Integer[] lineItemNumbers,\n" +
+        "    java.math.BigDecimal[] positionBaseAmounts,\n" +
+        "    java.math.BigDecimal[] positionDiscountAmounts,\n" +
+        "    java.math.BigDecimal[] positionTaxAmounts,\n" +
+        "    java.math.BigDecimal[] positionAmounts,\n" +
+        "    java.math.BigDecimal[] salesCommissions,\n" +
+        "    Boolean[] salesCommissionIsPercentages\n" +
+        ") {\n" +
+        "    return org.opencrx.kernel.backend.Contracts.getContractAmounts(\n" +
+        "        rootPkg,\n" +
+        "        calculationRule,\n" +
+        "        contract,\n" +
+        "        lineItemNumbers,\n" +
+        "        positionBaseAmounts,\n" +
+        "        positionDiscountAmounts,\n" +
+        "        positionTaxAmounts,\n" +
+        "        positionAmounts,\n" +
+        "        salesCommissions,\n" +
+        "        salesCommissionIsPercentages\n" +
+        "    );\n" +
+        "}//</pre>";
 
     private final Backend backend;
     protected final Cloneable cloning;

@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Não Especificado</_item>
+                        <_item>Conta não especificada</_item>
                       </label>
                       <toolTip>
                         <_item>Conta não especificada</_item>
@@ -29,6 +29,17 @@
                       </label>
                       <toolTip>
                         <_item>Conta não especificada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Importar vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Importar vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

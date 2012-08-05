@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:parent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pai</_item>
+                        <_item>Acima</_item>
                       </label>
                       <toolTip>
-                        <_item>Pai</_item>
+                        <_item>Acima</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -182,7 +182,7 @@
                         <_item>Formato</_item>
                       </label>
                       <toolTip>
-                        <_item>Formato anexado</_item>
+                        <_item>Mídia anexada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -421,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Linguagem CMS</_item>
+                        <_item>Idioma do CMS</_item>
                       </label>
                       <toolTip>
-                        <_item>Linguagem CMS</_item>
+                        <_item>Idioma do CMS</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -432,10 +432,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsDefaultLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Linguagem padrão de CMS</_item>
+                        <_item>Idioma padrão do CMS</_item>
                       </label>
                       <toolTip>
-                        <_item>Linguagem padrão de CMS</_item>
+                        <_item>Idioma padrão do CMS</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -476,10 +476,43 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:cmsMeta" _operation="create">
                     <_object>
                       <label>
-                        <_item>CMS Meta</_item>
+                        <_item>Meta CMS</_item>
                       </label>
                       <toolTip>
-                        <_item>CMS Meta</_item>
+                        <_item>Meta CMS</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Autor</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Author</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Versão</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Versão</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -487,10 +520,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaContent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Conteúdo de Média</_item>
+                        <_item>Conteúdo da Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Conteúdo de Média</_item>
+                        <_item>Conteúdo da Mídia</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -553,10 +586,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference" _operation="create">
                     <_object>
                       <label>
-                        <_item>Referência de Média</_item>
+                        <_item>Referência da Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Referência de Média</_item>
+                        <_item>Referência da Mídia</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -564,10 +597,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:MediaReference:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>Média</_item>
+                        <_item>Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Média</_item>
+                        <_item>Mídia</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -677,7 +710,7 @@
                         <_item>Bloqueio de documento</_item>
                       </label>
                       <toolTip>
-                        <_item>Bloqueio de documento</_item>
+                        <_item>Bloqueio de Documento</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -729,10 +762,43 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Formato</_item>
+                        <_item>Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Formato</_item>
+                        <_item>Mídia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:author" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Autor</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Autor</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentAttachment:version" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Versão</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Versão</_item>
                       </toolTip>
                     </_object>
                     <_content/>

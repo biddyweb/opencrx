@@ -147,7 +147,7 @@
                         <_item>Objekt</_item>
                       </label>
                       <toolTip>
-                        <_item>grunfält (gamla)</_item>
+                        <_item>grundfält (gamla)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -619,6 +619,9 @@
                       <label>
                         <_item>DatumTid4</_item>
                       </label>
+                      <toolTip>
+                        <_item>DatumTid4</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -776,6 +779,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Egenskaper</_item>
+                      </label>
+                      <toolTip>
+                        <_item>»Egenskaper</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Egenskapsinmatningar</_item>
+                      </label>
+                      <toolTip>
+                        <_item>»Egenskapsinmatningar</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:identity" _operation="create">
                     <_object>
                       <label>
@@ -916,6 +941,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media:contentMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME-typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME-typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media:description" _operation="create">
                     <_object>
                       <label>
@@ -989,6 +1025,292 @@
                       </label>
                       <toolTip>
                         <_item>Omdömesbeskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskaper</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskaper</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySet:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySet:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskapsinmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskapsinmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:propertySetName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskaper namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskaper namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:propertySetDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskaper beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskaper beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:propertyName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskapsnamn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskapsnamn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:propertyDescription" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Egenskapsbeskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Egenskapsbeskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:stringifiedValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry:property" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Baserad på egenskap</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Baserad på egenskap</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:StringPropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Strängegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Strängegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:StringPropertySetEntry:stringValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:IntegerPropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Heltalsegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Heltalsegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:IntegerPropertySetEntry:integerValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:BooleanPropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Booleanegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Booleanegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:BooleanPropertySetEntry:booleanValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DecimalPropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Decimaltalsegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Decimaltalsegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DecimalPropertySetEntry:decimalValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DatePropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Datumegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Datumegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DatePropertySetEntry:dateValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DateTimePropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Datum/Tidsegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Datum/Tidsegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DateTimePropertySetEntry:dateTimeValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>URI-egenskapsinmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>URI-egenskapsinmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry:uriValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:ReferencePropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Referensegenskaps-inmatning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Referensegenskaps-inmatning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:ReferencePropertySetEntry:referenceValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Värde</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1169,6 +1491,193 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AbstractFilterProperty:isActive" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktiv</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktiv</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AttributeFilterProperty:filterOperator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filteroperatör</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filteroperatör</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AttributeFilterProperty:filterQuantor" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filterquantor</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filterquantor</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:clause" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Klausul</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Klausul</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:stringParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Strängparameter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Strängparameter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:integerParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Heltalsparameter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Heltalsparameter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:decimalParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Decimaltalsparameter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Decimaltalsparameter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:booleanParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Booleanparameter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Booleanparameter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:dateParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Datumparameter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Datumparameter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:dateTimeParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Datum/tidparameter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Datum/tidparameter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CountFilteredObjectsResult:count" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Räkna</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Räkna</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Namn</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Namn</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beskrivning</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beskrivning</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Klasser</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Klasser</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Referensfilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Referensfilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:mimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME-typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME-typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mall</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mall</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Importer:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -1279,36 +1788,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Exportera XML</_item>
+                        <_item>Exportera</_item>
                       </label>
                       <toolTip>
-                        <_item>Exportera XML</_item>
+                        <_item>Exportera</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml" _operation="null">
-                    <_object/>
-                    <_content>
-                      <additionalElementDefinition>
-                        <org.openmdx.ui1.AdditionalElementDefinition id="ExportContactToWord" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>Exempelbrev (Word)</_item>
-                            </label>
-                            <toolTip>
-                              <_item>Exempelbrev (Word)</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AdditionalElementDefinition>
-                      </additionalElementDefinition>
-                    </_content>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Indata</_item>
@@ -1319,29 +1810,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:referenceFilter" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter (referenser)</_item>
+                        <_item>Profil</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter (referenser)</_item>
+                        <_item>Profil</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:attributeFilter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Filter (attribut)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Filter (attribut)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Resultat</_item>
@@ -1352,7 +1832,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:item" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item" _operation="create">
                     <_object>
                       <label>
                         <_item>Exporterad objekt</_item>
@@ -1363,7 +1843,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemMimeType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType" _operation="create">
                     <_object>
                       <label>
                         <_item>MIME-typ</_item>
@@ -1374,7 +1854,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemName" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName" _operation="create">
                     <_object>
                       <label>
                         <_item>Objektsnamn</_item>
@@ -1385,7 +1865,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:status" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status" _operation="create">
                     <_object>
                       <label>
                         <_item>Status</_item>
@@ -1396,13 +1876,68 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:statusMessage" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage" _operation="create">
                     <_object>
                       <label>
                         <_item>Statusmeddelande</_item>
                       </label>
                       <toolTip>
                         <_item>Statusmeddelande</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Export Avancerad</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Export Avancerad</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Indata</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Indata</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Referensfilter</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Referensfilter</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME-typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME-typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resultat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resultat</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1502,6 +2037,17 @@
                       </label>
                       <toolTip>
                         <_item>Utlöst av abonnemang</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:triggeredByEventId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Utlöst av händelse-id</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Utlöst av händelse-id</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1649,6 +2195,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AlertSender:Pane:Op:Tab:sendAlert" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Skicka alarm</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Skicka alarm</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AlertSender:Pane:Op:Tab:sendAlert:Group:in" _operation="create">
                     <_object>
                       <label>
@@ -1715,6 +2272,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:resendDelayInSeconds" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Skicka fördröjning [i sekunder] igen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Skicka fördröjning [i sekunder] igen</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:description" _operation="create">
                     <_object>
                       <label>
@@ -1722,138 +2290,6 @@
                       </label>
                       <toolTip>
                         <_item>Beskrivning</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Lägg till abonnemang</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Lägg till abonnemang</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Indata</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Indata</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ta bort abonnemang</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ta bort abonnemang</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Indata</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Indata</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Lägg till abonnemang för överordnat objekt</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Lägg till abonnemang för överordnat objekt</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Indata</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Indata</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultat</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ta bort abonnemang för överordnat objekt</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ta bort abonnemang för överordnat objekt</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Indata</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Indata</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultat</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultat</_item>
                       </toolTip>
                     </_object>
                     <_content/>

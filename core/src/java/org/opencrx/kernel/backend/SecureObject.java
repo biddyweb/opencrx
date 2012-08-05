@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.8 2007/12/26 22:41:47 wfro Exp $
+ * Name:        $Id: SecureObject.java,v 1.9 2008/05/30 17:38:38 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/26 22:41:47 $
+ * Date:        $Date: 2008/05/30 17:38:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,6 +59,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.utils.Utils;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
+import org.opencrx.security.realm1.jmi1.Realm1Package;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
@@ -109,6 +114,62 @@ public class SecureObject {
         this.paramAccessLevelDelete = paramAccessLevelDelete;
     }
     
+    //-------------------------------------------------------------------------
+    public static org.openmdx.security.realm1.jmi1.Principal findPrincipal(
+        String name,
+        org.openmdx.security.realm1.jmi1.Realm realm,
+        javax.jdo.PersistenceManager pm
+    ) {
+        try {
+            return (org.openmdx.security.realm1.jmi1.Principal)pm.getObjectById(
+                realm.refGetPath().getDescendant(new String[]{"principal", name})
+            );
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    public static org.openmdx.security.realm1.jmi1.Realm getRealm(
+        javax.jdo.PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        return (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
+            new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName)
+        );
+    }
+
+    //-----------------------------------------------------------------------
+    public static PrincipalGroup initPrincipalGroup(
+        String groupName,
+        PersistenceManager pm,
+        String providerName,
+        String segmentName
+    ) {
+        Realm1Package realmPkg = Utils.getRealmPackage(pm);
+        org.openmdx.security.realm1.jmi1.Realm realm = SecureObject.getRealm(
+            pm, 
+            providerName, 
+            segmentName
+        );
+        PrincipalGroup principalGroup = null;
+        if((principalGroup = (PrincipalGroup)findPrincipal(groupName, realm, pm)) != null) {
+            return principalGroup;            
+        }        
+        pm.currentTransaction().begin();
+        principalGroup = realmPkg.getPrincipalGroup().createPrincipalGroup();
+        principalGroup.setDescription(segmentName + "\\\\" + groupName);
+        realm.addPrincipal(                
+            false,
+            groupName,
+            principalGroup
+        );                        
+        pm.currentTransaction().commit();
+        return principalGroup;
+    }
+                
     //-------------------------------------------------------------------------
     public DataproviderObject_1_0 getUser(
         String principalName

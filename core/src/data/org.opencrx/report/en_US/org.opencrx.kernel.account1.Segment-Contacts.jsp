@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.9 2007/12/14 15:23:01 wfro Exp $
+ * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.11 2008/04/13 13:43:11 wfro Exp $
  * Description: openCRX Contacts Report
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/14 15:23:01 $
+ * Date:        $Date: 2008/04/13 13:43:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -101,6 +101,7 @@ org.apache.poi.hssf.util.*
 <%
   ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
   ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
+  javax.jdo.PersistenceManager pm = view.getPersistenceManager();
   Texts_1_0 texts = app.getTexts();
   Codes codes = app.getCodes();
 
@@ -122,10 +123,7 @@ org.apache.poi.hssf.util.*
 	HSSFWorkbook wb = new HSSFWorkbook();
 	HSSFSheet contactSheet = wb.createSheet("Contacts");
 	
-	org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = 
-		(org.opencrx.kernel.account1.jmi1.Account1Package)app.getDataPackage().refPackage(
-			org.opencrx.kernel.account1.jmi1.Account1Package.class.getName()
-		);
+	org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 	org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
 		(org.opencrx.kernel.account1.jmi1.Segment)view.getObjectReference().getObject();
 	org.opencrx.kernel.account1.cci2.ContactQuery contactFilter = accountPkg.createContactQuery();

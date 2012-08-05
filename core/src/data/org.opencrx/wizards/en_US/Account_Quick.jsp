@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: Account_Quick.jsp,v 1.7 2008/02/25 10:14:26 cmu Exp $
+ * Name:        $Id: Account_Quick.jsp,v 1.15 2008/06/26 00:34:32 wfro Exp $
  * Description: sample wizard: create account and some address objects
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/25 10:14:26 $
+ * Date:        $Date: 2008/06/26 00:34:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,13 +73,22 @@ org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	if(objectXri == null || app == null || viewsCache.getViews().isEmpty()) {
+		response.sendRedirect(
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+		);
+		return;
+	}
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	ShowObjectView showView = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
+	javax.jdo.PersistenceManager pm = app.getPmData();
 	UUIDGenerator uuids = UUIDs.getGenerator();
 
-  String formName   = "Account_Quick";
+	String formName   = "Account_Quick";
 	String wizardName = formName + ".jsp";
 
   // Classes
@@ -109,15 +118,9 @@ org.openmdx.application.log.*
 	String accountClass     = request.getParameter("accountClass");
 	String errorMsg         = request.getParameter("errorMsg");
 
-  String objectXri = request.getParameter("xri");
-  if ((objectXri == null) || (objectXri != null && objectXri.length() == 0)) {
-    objectXri = showView.getObjectReference().refMofId();
-  }
-
   // Get data package. This is the JMI root package to handle
   // openCRX object requests
-  RefPackage_1_0 dataPkg = app.getDataPackage();
-  RefObject_1_0 obj = (RefObject_1_0)dataPkg.refObject(objectXri);
+  RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
 	if (initialCall) {
 	  if (obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
@@ -137,9 +140,9 @@ org.openmdx.application.log.*
 	  session.setAttribute(wizardName, null);
 		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
 		response.sendRedirect(
-			request.getContextPath() + "/" + showView.getEncodedHRef(nextAction, false)
-  	);
-  	return;
+			request.getContextPath() + "/" + nextAction.getEncodedHRef()
+		);
+		return;
 	}
 
 %><!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
@@ -472,20 +475,20 @@ org.openmdx.application.log.*
 		view = new UserDefinedView(
 			createAccountValues,
 			app,
-			showView
+			(View)viewsCache.getViews().values().iterator().next()
 		);
 
  		// get Contact attributes
-  	try {
-    	salutationCodeAttr = view.addAttribute(
-			  salutationCode_fieldId,
-			  CONTACT_CLASS,
-    		salutationCode_attributeName,
-    		createAccountValues
-    	);
-    } catch (Exception e) {
-      hasAttributeErrors = true;
-      attributeErrors += salutationCode_attributeName + "<br>";
+		try {
+			salutationCodeAttr = view.addAttribute(
+				  salutationCode_fieldId,
+				  CONTACT_CLASS,
+				salutationCode_attributeName,
+				createAccountValues
+			);
+		} catch (Exception e) {
+		hasAttributeErrors = true;
+		attributeErrors += salutationCode_attributeName + "<br>";
     };
   	try {
     	salutationAttr = view.addAttribute(
@@ -752,7 +755,6 @@ org.openmdx.application.log.*
 		request,
 		out
 	);
-	p.setProperty(HtmlPage.PROPERTY_FORM_ID, formName);
 	p.setResourcePathPrefix("../../");
 
 	app.getPortalExtension().updateObject(
@@ -816,7 +818,7 @@ org.openmdx.application.log.*
 			}
 		),
 		app,
-		app.getDataPackage()
+		pm
 	);
 
   // autocompleter attributes
@@ -948,7 +950,7 @@ org.openmdx.application.log.*
 
 <%
 	try {
-    Path objectPath = new Path(showView.getObjectReference().refMofId());
+    Path objectPath = new Path(objectXri);
     String providerName = objectPath.get(2);
     String segmentName = objectPath.get(4);
 		if(
@@ -964,21 +966,18 @@ org.openmdx.application.log.*
 		  ) {
 
         // Get account1 package
-		    org.opencrx.kernel.account1.jmi1.Account1Package accountPkg =
-		    	(org.opencrx.kernel.account1.jmi1.Account1Package)dataPkg.refPackage(
-		    		org.opencrx.kernel.account1.jmi1.Account1Package.class.getName()
-		    	);
+		org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 
         // Get account segment
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-          (org.opencrx.kernel.account1.jmi1.Segment)dataPkg.refObject(
-            "xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName
+          (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
            );
 
         org.opencrx.kernel.account1.jmi1.Account account = null;
 
 		    try {
-			    dataPkg.refBegin();
+			    pm.currentTransaction().begin();
 
           if ((accountClass != null) && (accountClass.compareTo(CONTACT_CLASS) == 0)) {
             // Contact
@@ -1290,7 +1289,7 @@ org.openmdx.application.log.*
 				);
 			}
 
-			    dataPkg.refCommit();
+			    pm.currentTransaction().commit();
     		  session.setAttribute(wizardName, null);
 
 			    // Go to created/edited account
@@ -1303,7 +1302,7 @@ org.openmdx.application.log.*
 		        "", true
 			    );
 			    response.sendRedirect(
-			        request.getContextPath() + "/" + showView.getEncodedHRef(nextAction)
+			        request.getContextPath() + "/" + nextAction.getEncodedHRef()
 			    );
 			    return;
   			}
@@ -1311,7 +1310,7 @@ org.openmdx.application.log.*
   				errorMsg = app.getTexts().getErrorTextCanNotCreateOrEditObject();
   				errorMsg = errorMsg.replaceAll("\\$\\{0\\}", "Security/Permission");
   				try {
-  				    dataPkg.refRollback();
+  				    pm.currentTransaction().rollback();
   				} catch(Exception e0) {}
   				//throw e;
         }
@@ -1351,8 +1350,9 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
 }
 %>
 <form name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= wizardName %>">
-  <input type="hidden" name="xri" value="<%= objectXri %>" />
   <input type="hidden" name="errorMsg" value="<%= errorMsg == null ? "" : errorMsg %>" />
+  <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+  <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
   <table cellspacing="8" class="tableLayout">
     <tr>
       <td class="cellObject">
@@ -1410,7 +1410,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     salutationCode_fieldId,   // field ID
                     salutationCode_label,     // field label
-                    showView.getRefObject(),  // lookup object
+                   obj,  // lookup object
                     1,                        // #columns
                     salutationCode_tabIndex,  // tabIndex
                     "", // rowSpanModifier
@@ -1424,7 +1424,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     jobTitle_fieldId,       // field ID
                     jobTitle_label,         // field label
-                    showView.getRefObject(),// lookup object
+                    obj, // lookup object
                     1,                      // #columns
                     jobTitle_tabIndex,      // tabIndex
                     "", // rowSpanModifier
@@ -1444,7 +1444,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     salutation_fieldId,      // field ID
                     salutation_label,        // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     salutation_tabIndex,     // tabIndex
                     "", // rowSpanModifier
@@ -1458,7 +1458,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     jobRole_fieldId,        // field ID
                     jobRole_label,          // field label
-                    showView.getRefObject(),// lookup object
+                    obj,// lookup object
                     1,                      // #columns
                     jobRole_tabIndex,       // tabIndex
                     "", // rowSpanModifier
@@ -1478,7 +1478,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     firstName_fieldId,       // field ID
                     firstName_label,         // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     firstName_tabIndex,      // tabIndex
                     "", // rowSpanModifier
@@ -1492,7 +1492,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     organization_fieldId,    // field ID
                     organization_label,      // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     organization_tabIndex,   // tabIndex
                     "", // rowSpanModifier
@@ -1512,7 +1512,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     middleName_fieldId,      // field ID
                     middleName_label,        // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     middleName_tabIndex,     // tabIndex
                     "", // rowSpanModifier
@@ -1526,7 +1526,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     department_fieldId,       // field ID
                     department_label,         // field label
-                    showView.getRefObject(),  // lookup object
+                    obj,  // lookup object
                     1,                        // #columns
                     department_tabIndex,      // tabIndex
                     "", // rowSpanModifier
@@ -1546,7 +1546,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     lastName_fieldId,         // field ID
                     lastName_label,           // field label
-                    showView.getRefObject(),  // lookup object
+                    obj,  // lookup object
                     1,                        // #columns
                     lastName_tabIndex,        // tabIndex
                     "", // rowSpanModifier
@@ -1561,7 +1561,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     reportsTo_fieldId,        // field ID
                     reportsTo_label,          // field label
-                    showView.getRefObject(),  // lookup object
+                    obj,  // lookup object
                     1,                        // #columns
                     reportsTo_tabIndex,       // tabIndex
                     "", // rowSpanModifier
@@ -1581,7 +1581,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     aliasName_fieldId,        // field ID
                     aliasName_label,          // field label
-                    showView.getRefObject(),  // lookup object
+                    obj,  // lookup object
                     1,                        // #columns
                     aliasName_tabIndex,       // tabIndex
                     "", // rowSpanModifier
@@ -1596,7 +1596,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     assistant_fieldId,       // field ID
                     assistant_label,         // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     assistant_tabIndex,      // tabIndex
                     "", // rowSpanModifier
@@ -1616,7 +1616,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     prefSLanguage_fieldId,   // field ID
                     prefSLanguage_label,     // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     prefSLanguage_tabIndex,  // tabIndex
                     "", // rowSpanModifier
@@ -1631,7 +1631,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     deputy_fieldId,         // field ID
                     deputy_label,           // field label
-                    showView.getRefObject(),// lookup object
+                    obj,// lookup object
                     1,                      // #columns
                     deputy_tabIndex,        // tabIndex
                     "", // rowSpanModifier
@@ -1651,7 +1651,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     prefWLanguage_fieldId,       // field ID
                     prefWLanguage_label,         // field label
-                    showView.getRefObject(),     // lookup object
+                    obj,     // lookup object
                     1,                           // #columns
                     prefWLanguage_tabIndex,      // tabIndex
                     "", // rowSpanModifier
@@ -1666,7 +1666,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     birthdate_fieldId,       // field ID
                     birthdate_label,         // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     birthdate_tabIndex,      // tabIndex
                     "", // rowSpanModifier
@@ -1690,7 +1690,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     name_fieldId,           // field ID
                     name_label,             // field label
-                    showView.getRefObject(),// lookup object
+                    obj,// lookup object
                     1,                      // #columns
                     name_tabIndex,          // tabIndex
                     "", // rowSpanModifier
@@ -1711,7 +1711,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     aliasName_fieldId,        // field ID
                     aliasName_label,          // field label
-                    showView.getRefObject(),  // lookup object
+                    obj,  // lookup object
                     1,                        // #columns
                     aliasName_tabIndex,       // tabIndex
                     "", // rowSpanModifier
@@ -1725,7 +1725,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     tickerSymbol_fieldId,      // field ID
                     tickerSymbol_label,        // field label
-                    showView.getRefObject(),   // lookup object
+                    obj,   // lookup object
                     1,                         // #columns
                     tickerSymbol_tabIndex,     // tabIndex
                     "", // rowSpanModifier
@@ -1745,7 +1745,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     industry_fieldId,        // field ID
                     industry_label,          // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     industry_tabIndex,       // tabIndex
                     "", // rowSpanModifier
@@ -1759,7 +1759,7 @@ if ((errorMsg != null) && (errorMsg.length() > 0)) {
                     p,
                     stockExchange_fieldId,   // field ID
                     stockExchange_label,     // field label
-                    showView.getRefObject(), // lookup object
+                    obj, // lookup object
                     1,                       // #columns
                     stockExchange_tabIndex,  // tabIndex
                     "", // rowSpanModifier

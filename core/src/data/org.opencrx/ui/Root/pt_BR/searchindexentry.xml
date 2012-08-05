@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:searchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Procurar</_item>
+                        <_item>»Pesquisar Contas/Endereços</_item>
                       </label>
                       <toolTip>
-                        <_item>Procurar</_item>
+                        <_item>Pesquisar Contas/Endereços</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pesquisa endereços</_item>
+                        <_item>»Pesquisar endereços</_item>
                       </label>
                       <toolTip>
-                        <_item>Pesquisa endereços</_item>
+                        <_item>Pesquisar endereços</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Procurar Índice de Entrada</_item>
+                        <_item>Pesquisar Índice de Contas/Endereços</_item>
                       </label>
                       <toolTip>
-                        <_item>Procurar Índice de Entrada</_item>
+                        <_item>Entrada do Índice de Conta/Endereço</_item>
                       </toolTip>
                     </_object>
                     <_content/>

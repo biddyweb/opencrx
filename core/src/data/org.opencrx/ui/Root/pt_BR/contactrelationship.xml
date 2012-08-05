@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:contactRelationship" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Relações do Contato</_item>
+                        <_item>»Relacionamentos do Contato</_item>
                       </label>
                       <toolTip>
-                        <_item>Relações do Contato</_item>
+                        <_item>Relacionamentos do Contato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ContactRelationship" _operation="create">
                     <_object>
                       <label>
-                        <_item>Relações do Contato</_item>
+                        <_item>Relacionamentos do Contato</_item>
                       </label>
                       <toolTip>
-                        <_item>Relações do Contato</_item>
+                        <_item>Relacionamento do Contato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Para contactar</_item>
                       </label>
                       <toolTip>
-                        <_item>contato de relacionametno para contatar</_item>
+                        <_item>Contato de relacionametno para contactar</_item>
                       </toolTip>
                     </_object>
                     <_content/>

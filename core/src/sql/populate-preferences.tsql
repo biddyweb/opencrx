@@ -1670,7 +1670,7 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 181, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 181, 'xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/exportProfile/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -1740,21 +1740,21 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 191, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 191, 'xri:@openmdx::*/provider/:*/segment/:*/:*/:*/propertySetEntry/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 192, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 192, 'xri:@openmdx::*/provider/:*/segment/:*/:*/:*/:*/:*/propertySetEntry/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 193, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 193, 'xri:@openmdx::*/provider/:*/segment/:*/:*/:*/:*/:*/:*/:*/propertySetEntry/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -2111,35 +2111,35 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 244, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 244, 'xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 245, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 245, 'xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filterProperty/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 246, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 246, 'xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filteredContract/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 247, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 247, 'xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 248, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 248, 'xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/productFilterProperty/:*'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -2174,14 +2174,14 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 253, 'xri:@openmdx::*/provider/:*/segment/:*/:*/:*/propertySetEntry/:*'
+    'preference/OOCKE1', 'PERSISTENCE:type', 253, 'spice://dummy'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 254, 'xri:@openmdx::*/provider/:*/segment/:*/:*/:*/:*/:*/propertySetEntry/:*'
+    'preference/OOCKE1', 'PERSISTENCE:type', 254, 'spice://dummy'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -3673,7 +3673,7 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 181, 'dummy181'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 181, 'exportProfile'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -3743,21 +3743,21 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 191, 'dummy191'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 191, 'propertySetEntry1'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 192, 'dummy192'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 192, 'propertySetEntry2'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 193, 'dummy193'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 193, 'propertySetEntry3'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -4114,35 +4114,35 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 244, 'dummy244'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 244, 'contractFilter'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 245, 'dummy245'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 245, 'contractFilterProperty'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 246, 'dummy246'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 246, 'filteredContract'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 247, 'dummy247'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 247, 'productFilter'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 248, 'dummy248'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 248, 'productFilterProperty2'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -4177,14 +4177,14 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 253, 'propertySetEntry1'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 253, 'dummy253'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 254, 'propertySetEntry2'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 254, 'dummy254'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -6824,7 +6824,14 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 181, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 181, 'OOCKE1_EXPORTPROFILE'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 181, 'OOCKE1_EXPORTPROFILE_'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -7538,18 +7545,32 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 244, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 244, 'OOCKE1_FILTER'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 245, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 244, 'OOCKE1_FILTER_'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 245, 'OOCKE1_FILTERPROPERTY'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 245, 'OOCKE1_FILTERPROPERTY_'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
     'preference/OOCKE1', 'PERSISTENCE:dbObject', 246, ''
@@ -7559,14 +7580,28 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 247, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 247, 'OOCKE1_FILTER'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 248, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 247, 'OOCKE1_FILTER_'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 248, 'OOCKE1_FILTERPROPERTY'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 248, 'OOCKE1_FILTERPROPERTY_'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -10333,7 +10368,7 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 053, 'slicedWithIdAsKey'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 053, 'slicedWithParentAndIdAsKey'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -11649,7 +11684,7 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 241, 'slicedWithIdAsKey'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 241, 'slicedWithParentAndIdAsKey'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
@@ -12399,6 +12434,69 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 191, 'OOCKE1_TOBJ_PROPERTYSETENTRY'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 191, 'OOCKE1_TOBJ_PROPERTYSETENTRY_'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 191, 'property'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR  
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 192, 'OOCKE1_TOBJ_PROPERTYSETENTRY'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 192, 'OOCKE1_TOBJ_PROPERTYSETENTRY_'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 192, 'property'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR  
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 193, 'OOCKE1_TOBJ_PROPERTYSETENTRY'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 193, 'OOCKE1_TOBJ_PROPERTYSETENTRY_'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 193, 'property'
+) COMMAND_TERMINATOR 
+COMMAND_SEPARATOR  
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
     'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 149, 'link_to'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR  
@@ -12616,44 +12714,37 @@ COMMAND_SEPARATOR
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 253, 'OOCKE1_TOBJ_PROPERTYSETENTRY'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 246, 'OOCKE1_CONTRACT'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 253, 'OOCKE1_TOBJ_PROPERTYSETENTRY_'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 246, 'OOCKE1_CONTRACT_'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 253, 'property'
-) COMMAND_TERMINATOR 
-COMMAND_SEPARATOR  
-
-INSERT INTO prefs_Preference 
-    (object_rid, object_oid, object_idx, string_value) 
-VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 254, 'OOCKE1_TOBJ_PROPERTYSETENTRY'
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 246, 'OOCKE1_JOIN_FILTERINCLDESCONTR'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 254, 'OOCKE1_TOBJ_PROPERTYSETENTRY_'
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 246, 'contract_filter'
 ) COMMAND_TERMINATOR 
 COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 254, 'property'
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 246, 'filtered_contract'
 ) COMMAND_TERMINATOR 
-COMMAND_SEPARATOR  
+COMMAND_SEPARATOR
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 

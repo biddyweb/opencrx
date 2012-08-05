@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--xtools2_universal_type_manager-->
-<uml:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.ibm.com/xtools/1.5.0/Notation" xmlns:uml="http://www.eclipse.org/uml2/1.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.0/Umlnotation" xmi:id="_4sgZsN8HEdmKapscEl8OLg" name="forecast1" appliedProfile="_2CBwdN8HEdmKapscEl8OLg _2CBwd98HEdmKapscEl8OLg _2CBwet8HEdmKapscEl8OLg _2CBwfd8HEdmKapscEl8OLg _2CBwgN8HEdmKapscEl8OLg _2JGBwN8HEdmKapscEl8OLg">
+<uml:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.ibm.com/xtools/1.5.0/Notation" xmlns:uml="http://www.eclipse.org/uml2/1.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.0/Umlnotation" xmi:id="_4sgZsN8HEdmKapscEl8OLg" name="forecast1" appliedProfile="_ywsxUOxBEdye6OQJADjMAg _ywsxU-xBEdye6OQJADjMAg _ywsxVuxBEdye6OQJADjMAg _ywsxWexBEdye6OQJADjMAg _ywsxXOxBEdye6OQJADjMAg">
   <eAnnotations xmi:id="_4sgZsd8HEdmKapscEl8OLg" source="uml2.diagrams"/>
   <eAnnotations xmi:id="_YqeCSuEYEdmQhoEXouev3w" source="http://www.eclipse.org/emf/2002/Ecore"/>
   <packageImport xmi:type="uml:ProfileApplication" xmi:id="_4sgZtN8HEdmKapscEl8OLg">
@@ -48,6 +48,41 @@
     <importedPackage xmi:type="uml:Profile" href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/openMDX.epx#_O4XmQN64EdmrtKJSXC0_FQ?openMDX"/>
     <importedProfile href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/openMDX.epx#_O4XmQN64EdmrtKJSXC0_FQ?openMDX"/>
   </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_ywsxUOxBEdye6OQJADjMAg">
+    <eAnnotations xmi:id="_ywsxUexBEdye6OQJADjMAg" source="attributes">
+      <details xmi:id="_ywsxUuxBEdye6OQJADjMAg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_ywsxU-xBEdye6OQJADjMAg">
+    <eAnnotations xmi:id="_ywsxVOxBEdye6OQJADjMAg" source="attributes">
+      <details xmi:id="_ywsxVexBEdye6OQJADjMAg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_ywsxVuxBEdye6OQJADjMAg">
+    <eAnnotations xmi:id="_ywsxV-xBEdye6OQJADjMAg" source="attributes">
+      <details xmi:id="_ywsxWOxBEdye6OQJADjMAg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_ywsxWexBEdye6OQJADjMAg">
+    <eAnnotations xmi:id="_ywsxWuxBEdye6OQJADjMAg" source="attributes">
+      <details xmi:id="_ywsxW-xBEdye6OQJADjMAg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+    <importedProfile href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_ywsxXOxBEdye6OQJADjMAg">
+    <eAnnotations xmi:id="_ywsxXexBEdye6OQJADjMAg" source="attributes">
+      <details xmi:id="_ywsxXuxBEdye6OQJADjMAg" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+    <importedProfile href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+  </packageImport>
   <ownedMember xmi:type="uml:Package" xmi:id="_3C7B8A60016D3FEC9C470028" name="forecast1">
     <eAnnotations xmi:id="_IIYTw97NEdmKapscEl8OLg" source="uml2.diagrams" references="_3C7B8A60016D3F3FCEDF00BA">
       <contents xmi:type="notation:Diagram" xmi:id="_3C7B8A60016D3F3FCEDF00BA" type="Class" name="Budget">
@@ -76,7 +111,7 @@
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JLzfk97NEdmKapscEl8OLg" canonical="false"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JLzfht7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" showListStereotype="Text" fillColor="13434879" lineColor="3342489" showStereotype="Image"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JLzfh97NEdmKapscEl8OLg" x="1354" y="13995" width="4868" height="1693"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JLzfh97NEdmKapscEl8OLg" x="1354" y="13995" width="4868" height="2142"/>
         </children>
         <children xmi:id="_JLzflN7NEdmKapscEl8OLg" targetEdges="_JL5mat7NEdmKapscEl8OLg">
           <children xmi:id="_JLzfl97NEdmKapscEl8OLg" type="ImageCompartment">

@@ -6,8 +6,8 @@ import java.util.List;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class DepotEntityImpl {
@@ -30,7 +30,7 @@ public class DepotEntityImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.CreateBookingResult createBookingByPosition(
         org.opencrx.kernel.depot1.jmi1.CreateBookingByPositionParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             CompoundBooking compoundBooking = 
@@ -63,14 +63,14 @@ public class DepotEntityImpl {
             }
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.CreateBookingResult createBookingByPositionName(
         org.opencrx.kernel.depot1.jmi1.CreateBookingByPositionNameParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             CompoundBooking compoundBooking = 
@@ -106,14 +106,14 @@ public class DepotEntityImpl {
             }
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.CreateBookingResult createBookingByProduct(
         org.opencrx.kernel.depot1.jmi1.CreateBookingByProductParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             CompoundBooking compoundBooking = 
@@ -149,7 +149,7 @@ public class DepotEntityImpl {
             }
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     

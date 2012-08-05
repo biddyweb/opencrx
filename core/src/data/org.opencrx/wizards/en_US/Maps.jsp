@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Maps.jsp,v 1.9 2007/12/14 15:23:08 wfro Exp $
+ * Name:        $Id: Maps.jsp,v 1.17 2008/06/26 00:34:33 wfro Exp $
  * Description: prepare calls to mapping services like GoogleMaps
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/14 15:23:08 $
+ * Date:        $Date: 2008/06/26 00:34:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,10 +75,19 @@ org.openmdx.compatibility.base.naming.*,
 org.openmdx.compatibility.base.dataprovider.cci.*,
 org.openmdx.application.log.*
 " %><%
-  request.setCharacterEncoding("UTF-8");
-  ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-  ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  Texts_1_0 texts = app.getTexts();
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+    String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	if(objectXri == null || app == null) {
+		response.sendRedirect(
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+		);
+		return;
+	}
+	Texts_1_0 texts = app.getTexts();
+	javax.jdo.PersistenceManager pm = app.getPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
@@ -125,12 +134,7 @@ org.openmdx.application.log.*
     Codes codes = app.getCodes();
 	  boolean actionCancel = false;
 
- 		RefPackage_1_0 dataPkg = app.getDataPackage();
-    String objectXri = request.getParameter("xri");
-    if (objectXri == null) {
-      objectXri = view.getObjectReference().refMofId();
-    }
-    RefObject_1_0 obj = (RefObject_1_0)dataPkg.refObject(objectXri);
+    RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
     if(
        actionCancel ||
@@ -153,10 +157,7 @@ org.openmdx.application.log.*
       if (obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
         org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)obj;
         // Get account1 package
-        org.opencrx.kernel.account1.jmi1.Account1Package accountPkg =
-        	(org.opencrx.kernel.account1.jmi1.Account1Package)dataPkg.refPackage(
-        		org.opencrx.kernel.account1.jmi1.Account1Package.class.getName()
-        	);
+		org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
         // get Postaladdresses of this account
         org.opencrx.kernel.account1.cci2.PostalAddressQuery addressFilter = accountPkg.createPostalAddressQuery();
 		// TODO: verify
@@ -280,7 +281,7 @@ org.openmdx.application.log.*
     pw.println(e0.getCause());
     out.println("</pre>");
     AppLog.warning("Error calling Google Map", "Wizard GoogleMap.jsp");
-    AppLog.warning(e0.getMessage(), e0.getCause(), 1);
+    AppLog.warning(e0.getMessage(), e0.getCause());
   }
 %>
   </table>

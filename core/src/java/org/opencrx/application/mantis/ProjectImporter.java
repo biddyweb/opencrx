@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProjectImporter.java,v 1.7 2008/02/12 19:49:06 wfro Exp $
+ * Name:        $Id: ProjectImporter.java,v 1.11 2008/04/12 20:21:50 wfro Exp $
  * Description: openCRX Mantis Importer
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:49:06 $
+ * Date:        $Date: 2008/04/12 20:21:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,29 +80,33 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
+import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
 import org.opencrx.kernel.activity1.jmi1.Incident;
+import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
+import org.opencrx.kernel.activity1.jmi1.ReapplyActivityCreatorParams;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.generic.jmi1.Media;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.pattern.StringExpression;
 import org.openmdx.compatibility.base.dataprovider.cci.SystemAttributes;
+import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.kernel.application.cci.Classes;
 
 public class ProjectImporter {
 
     //-----------------------------------------------------------------------
     public ProjectImporter(
-        RefPackage_1_1 rootPkg,
+        PersistenceManager pm,
         String jdbcDriverClass,
         String jdbcConnectionUrl,
         String jdbcUser,
         String jdbcPassword
     ) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        this.rootPkg = rootPkg;
+        this.pm = pm;
         Classes.getKernelClass(jdbcDriverClass).newInstance();
         this.conn = DriverManager.getConnection(
             jdbcConnectionUrl,
@@ -229,22 +233,14 @@ public class ProjectImporter {
             activityStates.put(new Integer(90), new Integer(2110));
             activityStates.put(new Integer(80), new Integer(120));
         
-            PersistenceManager pm = this.rootPkg.refPersistenceManager();
-            
             // get activity segment
-            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-                (org.opencrx.kernel.activity1.jmi1.Activity1Package)rootPkg.refPackage(
-                    org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
-                );            
+            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
-                (org.opencrx.kernel.activity1.jmi1.Segment)this.rootPkg.refObject(
-                    "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
+                (org.opencrx.kernel.activity1.jmi1.Segment)this.pm.getObjectById(
+                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
                 );
             // generic package
-            org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = 
-                (org.opencrx.kernel.generic.jmi1.GenericPackage)rootPkg.refPackage(
-                    org.opencrx.kernel.generic.jmi1.GenericPackage.class.getName()
-                );            
+            org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = Utils.getGenericPackage(pm);
             // Get activity creator
             org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorFilter = 
                 activityPkg.createActivityCreatorQuery();
@@ -359,8 +355,8 @@ public class ProjectImporter {
                     List activities = activitySegment.getActivity(activityFilter);
                     if(activities.isEmpty()) {
                         System.out.println("Creating incident " + activityId);
-                        pm.currentTransaction().begin();
-                        NewActivityResult res = activityCreator.newActivity(
+                        this.pm.currentTransaction().begin();
+                        NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
                             null, 
                             null, 
                             null, 
@@ -370,10 +366,11 @@ public class ProjectImporter {
                             null, 
                             bugDateSubmitted
                         );
-                        pm.currentTransaction().commit();
-                        Incident incident = (Incident)rootPkg.refObject(res.getActivity().refMofId());
+                        NewActivityResult res = activityCreator.newActivity(newActivityParams);
+                        this.pm.currentTransaction().commit();
+                        Incident incident = (Incident)this.pm.getObjectById(res.getActivity().refGetPath());
                         // Update incident
-                        pm.currentTransaction().begin();
+                        this.pm.currentTransaction().begin();
                         incident.setActualStart(bugDateSubmitted);
                         incident.refSetValue(
                             SystemAttributes.MODIFIED_AT, 
@@ -394,7 +391,7 @@ public class ProjectImporter {
                             errors
                         );
                         if(!errors.isEmpty()) {
-                            pm.currentTransaction().rollback();
+                            this.pm.currentTransaction().rollback();
                             return;
                         }
                         
@@ -406,7 +403,7 @@ public class ProjectImporter {
                             errors
                         );
                         if(!errors.isEmpty()) {
-                            pm.currentTransaction().rollback();
+                            this.pm.currentTransaction().rollback();
                             return;
                         }
                         
@@ -444,7 +441,8 @@ public class ProjectImporter {
                         
                         // Reapply creator (set current state according to percent complete)
                         pm.currentTransaction().begin();
-                        incident.reapplyActivityCreator(activityCreator);
+                        ReapplyActivityCreatorParams rapplyAtivityCreatorParams = activityPkg.createReapplyActivityCreatorParams(activityCreator);
+                        incident.reapplyActivityCreator(rapplyAtivityCreatorParams);
                         pm.currentTransaction().commit();
                         
                         // files
@@ -526,12 +524,13 @@ public class ProjectImporter {
                                 pm.currentTransaction().rollback();
                                 return;
                             }
-                            incident.doFollowUp(
+                            ActivityDoFollowUpParams doFollowUpParams = activityPkg.createActivityDoFollowUpParams(
                                 bugNoteReporter,
                                 note,
                                 processTransition.getName() + " by " + bugNoteReporter.getFullName(),
                                 processTransition
                             );
+                            incident.doFollowUp(doFollowUpParams);
                             pm.currentTransaction().commit();
                         }
                         System.out.println();
@@ -546,7 +545,8 @@ public class ProjectImporter {
                         pm.currentTransaction().commit();                        
                         // Reapply creator (set current state according to percent complete)
                         pm.currentTransaction().begin();
-                        incident.reapplyActivityCreator(activityCreator);
+                        ReapplyActivityCreatorParams reapplyActivityCreatorParams = activityPkg.createReapplyActivityCreatorParams(activityCreator);
+                        incident.reapplyActivityCreator(reapplyActivityCreatorParams);
                         pm.currentTransaction().commit();
                         // Remove all assigned resources
                         pm.currentTransaction().begin();
@@ -571,7 +571,7 @@ public class ProjectImporter {
         }        
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.error(e0.getMessage(), e0.getCause(), 1);
+            AppLog.error(e0.getMessage(), e0.getCause());
             errors.add(
                 "Exception while importing (see log for more details): " + e.getMessage()
             );
@@ -579,7 +579,7 @@ public class ProjectImporter {
     }    
 
     //-----------------------------------------------------------------------
-    private final RefPackage_1_1 rootPkg;
+    private final PersistenceManager pm;
     private java.sql.Connection conn;
 }
 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountImpl.java,v 1.2 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: AccountImpl.java,v 1.4 2008/05/22 15:38:33 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/05/22 15:38:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,10 @@ import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
 import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
+import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasePackage;
 
 public class AccountImpl {
 
@@ -84,7 +87,7 @@ public class AccountImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.CreateLeadResult createLead(
         org.opencrx.kernel.account1.jmi1.CreateLeadParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         Lead lead = this.getBackend().getAccounts().createLead(
             this.current.refGetPath(),
             params.getName(),
@@ -100,7 +103,7 @@ public class AccountImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.CreateOpportunityResult createOpportunity(
         org.opencrx.kernel.account1.jmi1.CreateOpportunityParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         Opportunity opportunity = this.getBackend().getAccounts().createOpportunity(
             this.current.refGetPath(),
             params.getName(),
@@ -116,7 +119,7 @@ public class AccountImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.CreateQuoteResult createQuote(
         org.opencrx.kernel.account1.jmi1.CreateQuoteParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         Quote quote = this.getBackend().getAccounts().createQuote(
             this.current.refGetPath(),
             params.getName(),
@@ -132,7 +135,7 @@ public class AccountImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.CreateSalesOrderResult createSalesOrder(
         org.opencrx.kernel.account1.jmi1.CreateSalesOrderParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         SalesOrder salesOrder = this.getBackend().getAccounts().createSalesOrder(
             this.current.refGetPath(),
             params.getName(),
@@ -148,7 +151,7 @@ public class AccountImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.CreateInvoiceResult createInvoice(
         org.opencrx.kernel.account1.jmi1.CreateInvoiceParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         Invoice invoice = this.getBackend().getAccounts().createInvoice(
             this.current.refGetPath(),
             params.getName(),
@@ -159,6 +162,20 @@ public class AccountImpl {
         return ((Account1Package)this.current.refOutermostPackage().refPackage(Account1Package.class.getName())).createCreateInvoiceResult(
             invoice
         );                                        
+    }
+    
+    //-----------------------------------------------------------------------
+    public org.openmdx.base.jmi1.Void updateVcard(
+    ) {
+        try {
+            this.getBackend().getAccounts().updateVcard(
+                this.current.refGetPath()
+            );
+            return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();            
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }                                                    
     }
     
     //-----------------------------------------------------------------------

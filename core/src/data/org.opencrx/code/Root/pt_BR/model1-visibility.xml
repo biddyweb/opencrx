@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>publico</_item>
+                              <_item>público</_item>
                             </shortText>
                             <longText>
-                              <_item>publico</_item>
+                              <_item>público</_item>
                             </longText>
                           </_object>
                           <_content/>

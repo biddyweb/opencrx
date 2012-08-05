@@ -11,6 +11,15 @@
 							<_object></_object>
 							<_content>
 								<elementDefinition>
+
+									<!-- disable operation "Clone" -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms:Pane:Op:Tab:clone">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Sms">
 										<_object>

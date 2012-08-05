@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productApplication" _operation="create">
                     <_object>
                       <label>
-                        <_item>Заказы на продукт</_item>
+                        <_item>Применение продута</_item>
                       </label>
                       <toolTip>
-                        <_item>Заказы на продукт</_item>
+                        <_item>Применение продута</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,134 +77,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductOfferingPosition" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionModification" _operation="create">
                     <_object>
                       <label>
-                        <_item>Позиция предложения продукта</_item>
+                        <_item>»Модификация позиции</_item>
                       </label>
                       <toolTip>
-                        <_item>Позиция предложения продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция предложения продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция предложения продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция предложения продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция предложения продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция предложения продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция предложения продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связывания продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связывания продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связывания продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связывания продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связывания продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связывания продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связывания продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связывания продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связанного продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связанного продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связанного продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связанного продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связанного продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связанного продукта</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Позиция связанного продукта</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Позиция связанного продукта</_item>
+                        <_item>»Модификация позиции</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,7 +179,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Позиция</_item>
+                        <_item>Позиция#</_item>
                       </label>
                       <toolTip>
                         <_item>Номер позиции</_item>
@@ -322,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Единица измерения</_item>
+                        <_item>Единица измерения количества</_item>
                       </label>
                       <toolTip>
-                        <_item>Единица измерения</_item>
+                        <_item>Единица измерения количества</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -366,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>UOM (Цена)</_item>
+                        <_item>Ед. изм. цены</_item>
                       </label>
                       <toolTip>
-                        <_item>UOM (Цена)</_item>
+                        <_item>Ед. изм. цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -403,6 +282,17 @@
                       </label>
                       <toolTip>
                         <_item>Уровень цены</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:calcRule" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Правило калькуляции</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Правило калькуляции</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -465,10 +355,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип налога с оборота</_item>
+                        <_item>Тип налога с продаж</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип налога с оборота</_item>
+                        <_item>Тип налога с продаж</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -531,10 +421,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:amount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сумма</_item>
+                        <_item>Сумма(вкл. налог)</_item>
                       </label>
                       <toolTip>
-                        <_item>Сумма</_item>
+                        <_item>Сумма(вкл. налог)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -605,10 +495,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:30" _operation="create">
                     <_object>
                       <label>
-                        <_item>Доп. информация об единице измерения</_item>
+                        <_item>Доп. информация об единице измерения количества</_item>
                       </label>
                       <toolTip>
-                        <_item>Доп. информация об единице измерения</_item>
+                        <_item>Доп. информация об единице измерения количества</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -624,10 +514,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:40" _operation="create">
                     <_object>
                       <label>
-                        <_item>Доп. информация об единице измерения</_item>
+                        <_item>Доп. информация об единице измерения цены</_item>
                       </label>
                       <toolTip>
-                        <_item>Доп. информация об единице измерения</_item>
+                        <_item>Доп. информация об единице измерения цены</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -643,10 +533,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:50" _operation="create">
                     <_object>
                       <label>
-                        <_item>Доп. информация о налоге с оборота</_item>
+                        <_item>Доп. информация о типе налога с продаж</_item>
                       </label>
                       <toolTip>
-                        <_item>Доп. информация о налоге с оборота</_item>
+                        <_item>Доп. информация о типе налога с продаж</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -732,10 +622,10 @@
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>Единица измерения</_item>
+                              <_item>Единица измерения количества</_item>
                             </label>
                             <toolTip>
-                              <_item>Единица измерения</_item>
+                              <_item>Единица измерения количества</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -772,10 +662,10 @@
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>UOM (цена)</_item>
+                              <_item>Ед. изм. цены</_item>
                             </label>
                             <toolTip>
-                              <_item>UOM (цена)</_item>
+                              <_item>Ед. изм. цены</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -812,10 +702,10 @@
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>Тип налога на оборот</_item>
+                              <_item>Тип налога с продаж</_item>
                             </label>
                             <toolTip>
-                              <_item>Тип налога на оборот</_item>
+                              <_item>Тип налога с продаж</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -984,6 +874,105 @@
                       </label>
                       <toolTip>
                         <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PositionModification:involved" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Включающая в себя позиция</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Включающая в себя позиция</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuantityModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Изменение количества</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Изменение количества</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuantityModification:quantity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Количество до</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Количество до</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ConfigurationModification" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Модификация конфигурации</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Модификация конфигурации</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ConfigurationModification:involvedPty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Включающее в себя свойство</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Включающее в себя свойство</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ConfigurationModification:propertyValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Значение свойства</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Значение свойства</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PositionCreation" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создание позиции</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Создание позиции</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PositionRemoval" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Удаление позиции</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Удаление позиции</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedPosition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Удаленная позиция</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Удаленная позиция</_item>
                       </toolTip>
                     </_object>
                     <_content/>

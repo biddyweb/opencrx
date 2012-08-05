@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AlertSenderImpl.java,v 1.9 2008/02/14 15:15:27 wfro Exp $
+ * Name:        $Id: AlertSenderImpl.java,v 1.10 2008/04/03 12:24:10 wfro Exp $
  * Description: AlertSenderImpl
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/14 15:15:27 $
+ * Date:        $Date: 2008/04/03 12:24:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,8 +56,8 @@
 package org.opencrx.kernel.plugin.application.base;
 
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -81,7 +81,7 @@ public class AlertSenderImpl {
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void sendAlert(
         org.opencrx.kernel.base.jmi1.SendAlertParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             this.getBackend().getBase().sendAlert(
                 this.current.refGetPath(), 
@@ -95,7 +95,7 @@ public class AlertSenderImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }
     }
     

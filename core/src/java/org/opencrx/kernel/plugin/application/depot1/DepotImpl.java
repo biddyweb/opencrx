@@ -6,8 +6,8 @@ import java.util.List;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
 import org.opencrx.kernel.depot1.jmi1.DepotPosition;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -31,7 +31,7 @@ public class DepotImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.CloseDepotResult closeDepot(
         org.opencrx.kernel.depot1.jmi1.CloseDepotParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             this.getBackend().getDepots().closeDepot(
@@ -45,14 +45,14 @@ public class DepotImpl {
             );
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult openDepotPosition(
         org.opencrx.kernel.depot1.jmi1.OpenDepotPositionParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             DepotPosition depotPosition = this.getBackend().getDepots().openDepotPosition(
@@ -81,14 +81,14 @@ public class DepotImpl {
             }
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void assertReports(
         org.opencrx.kernel.depot1.jmi1.AssertReportsParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             this.getBackend().getDepots().assertReports(
                 this.current.refGetPath(),
@@ -97,7 +97,7 @@ public class DepotImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                
     }
     

@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:deliveryReceiptRequested" _operation="create">
                     <_object>
                       <label>
-                        <_item>recibo de Entrega</_item>
+                        <_item>Recibo de Entrega</_item>
                       </label>
                       <toolTip>
-                        <_item>recibo de Entrega</_item>
+                        <_item>Recibo de Entrega</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -121,10 +121,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMailRecipient:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>endereço de E-Mail</_item>
+                        <_item>Endereço de E-Mail</_item>
                       </label>
                       <toolTip>
-                        <_item>endereço de E-Mail</_item>
+                        <_item>Endereço de E-Mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -143,10 +143,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMailRecipientGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>grupo de endereços de E-Mail</_item>
+                        <_item>Grupo de endereços de E-Mail</_item>
                       </label>
                       <toolTip>
-                        <_item>grupo de endereços de E-Mail</_item>
+                        <_item>Grupo de endereços de E-Mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -154,10 +154,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMailRecipientGroup:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>grupo de endereços de E-Mail</_item>
+                        <_item>Grupo de endereços de E-Mail</_item>
                       </label>
                       <toolTip>
-                        <_item>grupo de endereços de E-Mail</_item>
+                        <_item>Grupo de endereços de E-Mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>

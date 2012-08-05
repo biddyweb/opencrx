@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MessageContent.java,v 1.7 2007/08/07 17:30:25 wfro Exp $
+ * Name:        $Id: MessageContent.java,v 1.8 2008/04/01 12:33:01 wfro Exp $
  * Description: MessageContent
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/08/07 17:30:25 $
+ * Date:        $Date: 2008/04/01 12:33:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

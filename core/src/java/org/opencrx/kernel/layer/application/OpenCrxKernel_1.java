@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxKernel_1.java,v 1.267 2008/02/04 01:26:15 wfro Exp $
+ * Name:        $Id: OpenCrxKernel_1.java,v 1.268 2008/05/28 09:34:53 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.267 $
+ * Revision:    $Revision: 1.268 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/04 01:26:15 $
+ * Date:        $Date: 2008/05/28 09:34:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -680,10 +680,14 @@ public class OpenCrxKernel_1
             header,
             request.object()
         );
-        return super.create(
+        DataproviderReply reply = super.create(
             header,
             request
         );
+        this.backend.retrieveObjectForModification(
+            request.path()
+        );
+        return reply;
     }
 
     //-------------------------------------------------------------------------

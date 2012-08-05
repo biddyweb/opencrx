@@ -6,6 +6,49 @@
 
 
 ==============================================================================
+Version 2.1.0                                                       2008-07-10
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10007556
+      VCF servlet. VCardServlet allows clients to GET/PUT files containing 
+      a list of VCARDs. The URL pattern is:
+            
+      http://'host':'port'/opencrx-vcard-CRX/vcard?id='provider name'/'segment name'/filter/'account filter name'&resource=vcf
+      
+      Example:
+      http://localhost:8080/opencrx-vcard-CRX/vcard?id=CRX/Standard/filter/MyAccounts&resource=accounts.vcf
+      
+
+2.    CHANGES  
+     
+2.0.  CHANGED FEATURES
+      
+      CR10007598
+      Deprecate CalDAV servlet and replace by ICalServlet. The ICalServlet
+      now allows to create activities. In order to enable activity creation
+      the calendar must contain an event of the following form:
+      
+      BEGIN:VEVENT
+      UID: qualifier of filter
+      CLASS:PUBLIC
+      DTSTART:19000101T000000Z
+      DTEND:19000101T000000Z
+      LAST-MODIFIED:19000101T000000Z
+      DTSTAMP:19000101T000000Z
+      SUMMARY: 'filterId'
+      END:VEVENT
+      
+      Calendars queried with a GET request always contain this event guard as
+      first event. If the event is missing on POST requests creation of new
+      activities is disabled.
+
+
+2.1.  FIXED BUGS
+      none
+      
+==============================================================================
 Version 2.0.0                                                       2008-02-20
 ==============================================================================
 
@@ -40,7 +83,7 @@ Version 2.0.0                                                       2008-02-20
       adapter replaces the MailImporterServlet. The configuration can be customized 
       by setting the following properties in build.properties:
       
-      * imap.listenPort=143
+      * imap.listenPort=1143
       
       
       CR10006500
@@ -66,8 +109,8 @@ Version 2.0.0                                                       2008-02-20
       
         ldap.baseDN=dc=CRX,dc=opencrx,dc=org
         ldap.rootPassword=changeit
-        ldap.listenPort=389
-        ldap.listenPort.secure=636
+        ldap.listenPort=1389
+        ldap.listenPort.secure=1636
         
       The OpenCrxBackend exposes the login principals and the contacts under
       the following DNs:
@@ -80,7 +123,7 @@ Version 2.0.0                                                       2008-02-20
       A typical client configuration looks like:
       * hostname: localhost
       * baseDN: dc=accounts,dc=Standard,dc=CRX,dc=opencrx,dc=org
-      * portNumber: 389
+      * portNumber: 1389
       * bindDN: dc=<principal name>,dc=users,dc=CRX,dc=opencrx,dc=org
       The LDAP password is the same as the login password for the standard GUI.
       

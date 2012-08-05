@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:searchIndexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Zoeken</_item>
+                        <_item>»Zoeken</_item>
                       </label>
                       <toolTip>
                         <_item>Zoeken</_item>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.13 2008/02/14 15:15:27 wfro Exp $
+ * Name:        $Id: Base.java,v 1.15 2008/06/30 08:13:12 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/14 15:15:27 $
+ * Date:        $Date: 2008/06/30 08:13:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -265,50 +265,58 @@ public class Base {
     public List completePictured(
         DataproviderObject_1_0 object,
         Set fetchSet
-    ) {
-        object.values("pictureContent");
-        object.values("pictureContentName");
-        object.values("pictureContentMimeType");
+    ) throws ServiceException {
         List additionalFetchedObjects = new ArrayList();
         if(
-            (object.getValues("picture") != null) &&
-            (object.values("picture").size() > 0)
+            this.backend.isAccount(object) ||
+            (fetchSet == null) ||
+            fetchSet.contains("pictureContent") ||
+            fetchSet.contains("pictureContentName") ||
+            fetchSet.contains("pictureContentMimeType")
         ) {
-            try {
-                DataproviderObject_1_0 media = this.backend.retrieveObject(
-                    (Path)object.values("picture").get(0)
-                );
-                if(
-                    (media.getValues("content") != null) && 
-                    (media.values("content").size() > 0)
-                ) {
-                    // map media type <<stream>> binary to binary
-                    InputStream is = (InputStream)media.values("content").get(0);
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    int b = 0;
-                    int length = 0;
-                    while((b = is.read()) != -1) {
-                        os.write(b);
-                        length++;
+            object.values("pictureContent");
+            object.values("pictureContentName");
+            object.values("pictureContentMimeType");
+            if(
+                (object.getValues("picture") != null) &&
+                !object.values("picture").isEmpty()
+            ) {
+                try {
+                    DataproviderObject_1_0 media = this.backend.retrieveObject(
+                        (Path)object.values("picture").get(0)
+                    );
+                    if(
+                        (media.getValues("content") != null) && 
+                        !media.values("content").isEmpty()
+                    ) {
+                        // map media type <<stream>> binary to binary
+                        InputStream is = (InputStream)media.values("content").get(0);
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        int b = 0;
+                        int length = 0;
+                        while((b = is.read()) != -1) {
+                            os.write(b);
+                            length++;
+                        }
+                        if(length > 0) {
+                            object.values("pictureContent").add(
+                                os.toByteArray()                  
+                            );
+                            object.values("pictureContentName").addAll(
+                                media.values("contentName")
+                            );
+                            object.values("pictureContentMimeType").addAll(
+                                media.values("contentMimeType")
+                            );
+                            additionalFetchedObjects.add(media);
+                        }                
                     }
-                    if(length > 0) {
-                        object.values("pictureContent").add(
-                            os.toByteArray()                  
-                        );
-                        object.values("pictureContentName").addAll(
-                            media.values("contentName")
-                        );
-                        object.values("pictureContentMimeType").addAll(
-                            media.values("contentMimeType")
-                        );
-                        additionalFetchedObjects.add(media);
-                    }                
                 }
-            }
-            catch(Exception e) {
-                ServiceException e0 = new ServiceException(e);
-                AppLog.detail("can not get picture.", e.getMessage());
-                AppLog.info(e0.getMessage(), e0.getCause(), 1);
+                catch(Exception e) {
+                    ServiceException e0 = new ServiceException(e);
+                    AppLog.detail("can not get picture.", e.getMessage());
+                    AppLog.info(e0.getMessage(), e0.getCause());
+                }
             }
         }
         return additionalFetchedObjects;

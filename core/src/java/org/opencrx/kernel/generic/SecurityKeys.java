@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityKeys.java,v 1.13 2005/12/20 12:24:08 wfro Exp $
+ * Name:        $Id: SecurityKeys.java,v 1.14 2008/05/30 23:38:54 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2005/12/20 12:24:08 $
+ * Date:        $Date: 2008/05/30 23:38:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,7 @@ public class SecurityKeys {
     public static final String ROOT_ROOTS_GROUP = "Root:Roots";
     public static final String PRINCIPAL_GROUP_ADMINISTRATORS = "Administrators";
     public static final String USER_SUFFIX = "User";
+    public static final String GROUP_SUFFIX = "Group";
     
     // Principal types
     public final static String PRINCIPAL_TYPE_GROUP = "org:opencrx:security:realm1:PrincipalGroup";

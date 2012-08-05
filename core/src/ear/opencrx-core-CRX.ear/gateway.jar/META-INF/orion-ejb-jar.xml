@@ -2,7 +2,7 @@
 <!DOCTYPE orion-ejb-jar PUBLIC "-//ORACLE//DTD OC4J Enterprise JavaBeans runtime 9.04//EN" "http://xmlns.oracle.com/ias/dtds/orion-ejb-jar-9_04.dtd">
 <orion-ejb-jar>
 	<enterprise-beans>
-		<session-deployment name="opencrx_core_CRX_gateway_mandatory" max-tx-retries="0" location="org/opencrx/core/CRX/mandatory/gateway">
+		<session-deployment name="opencrx_core_CRX_EntityManagerFactory" max-tx-retries="0" location="org/opencrx/core/CRX/EntityManagerFactory">
 			<ejb-ref-mapping location="org/opencrx/core/CRX/mandatory/kernel" name="ejb/dataprovider[0]"/>
 			<ejb-ref-mapping location="org/opencrx/core/CRX/mandatory/kernel" name="ejb/dataprovider[1]"/>
 			<ejb-ref-mapping location="org/opencrx/core/CRX/mandatory/kernel" name="ejb/dataprovider[2]"/>
@@ -23,8 +23,8 @@
 			<ejb-ref-mapping location="org/opencrx/core/CRX/mandatory/security" name="ejb/dataprovider[17]"/>
 			<ejb-ref-mapping location="org/opencrx/core/CRX/mandatory/security" name="ejb/dataprovider[18]"/>
 		</session-deployment>
-		<session-deployment name="opencrx_core_CRX_gateway_noOrNew" max-tx-retries="0" location="org/opencrx/core/CRX/noOrNew/gateway">
-			<ejb-ref-mapping location="org/opencrx/core/CRX/mandatory/gateway" name="ejb/server"/>
+		<session-deployment name="opencrx_core_CRX_Gateway" max-tx-retries="0" location="org/opencrx/core/CRX/Gateway">
+			<ejb-ref-mapping location="org/opencrx/core/CRX/EntityManagerFactory" name="ejb/dataprovider[0]"/>
 		</session-deployment>
 	</enterprise-beans>
 	<assembly-descriptor>

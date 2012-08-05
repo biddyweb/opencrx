@@ -87,6 +87,7 @@ import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
+import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.portal.servlet.Codes;
 import org.openmdx.security.authentication1.jmi1.Password;
@@ -401,12 +402,13 @@ public class OpenCrxBackend extends Backend {
                 UUIDs.getGenerator().next().toString()
             );
             try {
+                Path codeSegmentIdentity = new Path("xri:@openmdx:org.opencrx.kernel.code1/provider/" + providerName + "/segment/Root");
                 codes = new Codes(
-                    (RefObject_1_0)pm.getObjectById("xri:@openmdx:org.opencrx.kernel.code1/provider/" + providerName + "/segment/Root")
+                    (RefObject_1_0)pm.getObjectById(codeSegmentIdentity)
                 );
             }
             catch(Throwable t) {
-                AppLog.warning(t.getMessage(), t.getCause(), 1);
+                AppLog.warning(t.getMessage(), t.getCause());
             }
         }
         return codes;

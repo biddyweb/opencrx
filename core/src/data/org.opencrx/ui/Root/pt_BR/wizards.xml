@@ -14,10 +14,153 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportToOutlook" _operation="create">
                     <_object>
                       <label>
-                        <_item>Exporta contato para o MS Outlook</_item>
+                        <_item>Exportar contato para o MS Outlook</_item>
                       </label>
                       <toolTip>
-                        <_item>Exporta contato para o MS Outlook</_item>
+                        <_item>Exportar contato para o MS Outlook</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Novo Contato ou Pessoa Jurídica</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Novo Contato ou Pessoa Jurídica</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editar Contato</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editar Contato</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editar Pessoa Jurídica</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editar Pessoa Jurídica</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editar Grupo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editar Grupo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editar Conta não especificada</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editar Conta não especificada</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editar Contato (resumido)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editar Contato (resumido)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editar Pessoa Jurídica (resumido)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editar Pessoa Jurídica (resumido)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Preferências</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Preferências</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Lista de Contatos</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lista de Contatos</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:mailMerge" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mail Merge --&gt; Documento RTF</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +168,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
-                        <_item>Upload de Mídia</_item>
+                        <_item>Enviar Mídia</_item>
                       </label>
                       <toolTip>
-                        <_item>Upload de Mídia</_item>
+                        <_item>Enviar Mídia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enviar Mídia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enviar Mídia</_item>
                       </toolTip>
                     </_object>
                     <_content/>

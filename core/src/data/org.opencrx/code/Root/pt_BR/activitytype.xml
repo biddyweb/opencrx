@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Incidente</_item>
+                              <_item>Ocorrência</_item>
                             </shortText>
                             <longText>
-                              <_item>Incidente</_item>
+                              <_item>Ocorrência</_item>
                             </longText>
                           </_object>
                           <_content/>

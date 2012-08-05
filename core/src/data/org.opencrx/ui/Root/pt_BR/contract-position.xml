@@ -77,182 +77,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de Oferta de Produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de oferta de pacote de produto complexo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de oferta pacote de produto complexo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Cota de posição de pacote de produto complexo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Cota de Posição de pacote de produto complexo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição de ordem de venda de pacote de produto complexo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição de ordem de venda de pacote de produto complexo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Faturamento de Posição de pacote de produto complexo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Faturamento de Posição de pacote de produto complexo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição do Produto Empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionModification" _operation="create">
                     <_object>
                       <label>
@@ -728,10 +552,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:minQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>quantidade mínima</_item>
+                        <_item>Quantidade mínima</_item>
                       </label>
                       <toolTip>
-                        <_item>quantidade mínima</_item>
+                        <_item>Quantidade mínima</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -739,10 +563,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:maxQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>quantidade máxima</_item>
+                        <_item>Quantidade máxima</_item>
                       </label>
                       <toolTip>
-                        <_item>quantidade máxima</_item>
+                        <_item>Quantidade máxima</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -750,10 +574,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:offsetQuantity" _operation="create">
                     <_object>
                       <label>
-                        <_item>quantidade de offset</_item>
+                        <_item>Quantidade de offset</_item>
                       </label>
                       <toolTip>
-                        <_item>quantidade de offset</_item>
+                        <_item>Quantidade de offset</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -798,10 +622,10 @@
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
                           <_object>
                             <label>
-                              <_item>Unidade de Medida (quantidade)</_item>
+                              <_item>Unidade de Medida (qtde)</_item>
                             </label>
                             <toolTip>
-                              <_item>Unidade de Medida (quantidade)</_item>
+                              <_item>Unidade de Medida (qtde)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -1149,50 +973,6 @@
                       </label>
                       <toolTip>
                         <_item>Posição removida</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição removida de produto empacotado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição removida de produto empacotado</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição removida de oferta de produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição removida de oferta de produto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição removida de pacote de produto complexo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição removida de pacote de produto complexo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Posição removida de pacote de produto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Posição removida de pacote de produto</_item>
                       </toolTip>
                     </_object>
                     <_content/>

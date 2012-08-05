@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>[2] THERE_EXISTS</_item>
+                              <_item>[2] EXISTE</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] THERE_EXISTS</_item>
+                              <_item>[2] EXISTE</_item>
                             </longText>
                           </_object>
                           <_content/>

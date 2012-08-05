@@ -213,6 +213,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="10400" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>Proveniente</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Proveniente</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

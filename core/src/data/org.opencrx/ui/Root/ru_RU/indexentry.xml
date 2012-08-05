@@ -11,6 +11,61 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Indexed:indexEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Элементы индекса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Элементы индекса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IndexEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Элемент индекса</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Элемент индекса</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IndexEntry:indexedObject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Индексируемый объект</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Индексируемый объект</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IndexEntry:keywords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ключевые слова</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ключевые слова</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Indexed:Pane:Op:Tab:updateIndex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Обновить индекс</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Обновить индекс</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Indexed:Pane:Op:Tab:updateIndex:Group:in" _operation="create">
                     <_object>
                       <label>
@@ -29,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:UpdateIndexResult:numberOfIndexedObjects" _operation="create">
+                    <_object>
+                      <label>
+                        <_item># индексируемых объектов</_item>
+                      </label>
+                      <toolTip>
+                        <_item># индексируемых объектов</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -137,6 +137,52 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+<!-- Tools -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 <!-- Action -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia">
 										<_object>
@@ -149,6 +195,18 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia">
+										<_object>
+											<toolTip>
+												<_item>Datei hinzufügen</_item>
+											</toolTip>
+											<label>
+												<_item>Datei hinzufügen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 								</elementDefinition>
 
 							</_content>

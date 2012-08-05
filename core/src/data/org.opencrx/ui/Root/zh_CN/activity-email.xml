@@ -50,7 +50,7 @@
                         <_item>&quot;已阅&quot;回执</_item>
                       </label>
                       <toolTip>
-                        <_item>&quot;已阅&quot;回执</_item>
+                        <_item>已阅回执</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sendDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>发送</_item>
+                        <_item>已发送</_item>
                       </label>
                       <toolTip>
-                        <_item>发送</_item>
+                        <_item>已发送</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:deliveryReceiptRequested" _operation="create">
                     <_object>
                       <label>
-                        <_item>发送&quot;送达&quot;回执</_item>
+                        <_item>送达回执</_item>
                       </label>
                       <toolTip>
-                        <_item>发送&quot;送达&quot;回执</_item>
+                        <_item>送达回执</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.25 2008/02/23 16:07:51 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.28 2008/06/19 14:55:13 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/23 16:07:51 $
+ * Date:        $Date: 2008/06/19 14:55:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -90,6 +90,7 @@ import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
 import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.log.SysLog;
 
 /**
  * This plugin creates audit entries for modified objects.
@@ -453,7 +454,7 @@ public class Audit_1
                     DataproviderOperations.ITERATION_START,
                     (FilterProperty[])filterProperties.toArray(new FilterProperty[filterProperties.size()]),
                     0, 
-                    Integer.MAX_VALUE,
+                    500, // get max 500 audit entries
                     Directions.ASCENDING,
                     AttributeSelectors.ALL_ATTRIBUTES,
                     request.attributeSpecifier()
@@ -566,7 +567,7 @@ public class Audit_1
                     // do not create audit entry if modifiedAt is only modified attribute
                     // --> trivial update
                     if(modifiedFeatures.isEmpty()) {
-                        new ServiceException(
+                        ServiceException e = new ServiceException(
                             BasicException.Code.DEFAULT_DOMAIN,
                             BasicException.Code.INVALID_CONFIGURATION, 
                             new BasicException.Parameter[]{
@@ -574,7 +575,8 @@ public class Audit_1
                                 new BasicException.Parameter("existing", existing)
                             },
                             "Replace request leading to empty modified feature set. No audit entry will be created."
-                        ).log();                                
+                        );
+                        SysLog.info(e.getMessage(), e.getCause());
                     }
                     else if(
                         ((modifiedFeatures.size() > 1) ||

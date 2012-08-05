@@ -88,6 +88,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:AbstractEntry:identity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sökväg/värde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sökväg/värde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:AbstractEntry:entryValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Startvärde</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Startvärde</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:AbstractEntry:validFrom" _operation="create">
                     <_object>
                       <label>
@@ -106,6 +128,17 @@
                       </label>
                       <toolTip>
                         <_item>Giltig till</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:SimpleEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Enkel post</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Enkel post</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -161,6 +194,17 @@
                       </label>
                       <toolTip>
                         <_item>Bakgrundsfärg</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:CodeValueEntry:fontWeight" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typsnittsvikt</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typsnittsvikt</_item>
                       </toolTip>
                     </_object>
                     <_content/>

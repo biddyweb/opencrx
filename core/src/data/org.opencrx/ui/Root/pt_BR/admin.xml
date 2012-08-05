@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:ComponentConfiguration" _operation="create">
                     <_object>
                       <label>
-                        <_item>Configuração de componente</_item>
+                        <_item>Configuração de Componente</_item>
                       </label>
                       <toolTip>
-                        <_item>Configuração de componente</_item>
+                        <_item>Configuração de Componente</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:CreateAdministratorParams:adminPrincipalName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nome do Principal Admin</_item>
+                        <_item>Nome do Admin Principal</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome do Principal Admin</_item>
+                        <_item>Nome do Admin Principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:admin1:Segment:Pane:Op:Tab:importLoginPrincipals" _operation="create">
                     <_object>
                       <label>
-                        <_item>Importa Logins de Principal</_item>
+                        <_item>Importar Logins de Principal</_item>
                       </label>
                       <toolTip>
-                        <_item>Importa Logins de Principal</_item>
+                        <_item>Importar Logins de Principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>

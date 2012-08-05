@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>рабочее усилие</_item>
+                              <_item>интенсивность труда</_item>
                             </shortText>
                             <longText>
-                              <_item>[10] рабочее усилие</_item>
+                              <_item>[10] интенсивность труда</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -65,6 +65,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX &
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX
@@ -163,6 +164,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) #s
 #define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX ||
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX
@@ -190,6 +192,104 @@
 #define FORMAT_NUMBER_3_0(column_name) CAST(column_name AS CHARACTER)
 #define FORMAT_NUMBER_2_0(column_name) CAST(column_name AS CHARACTER)
 #define AS_CHAR(n) CHR(n)
+#define STRSUB SUBSTRING
+#define STRLEN LEN
+#define REORG_TABLE(t)
+
+#elif defined(HSQLDB_1)
+-- This software is published under the BSD license                          
+-- as listed below.                                                          
+--                                                                           
+-- Copyright (c) 2004-2008, CRIXP Corp., Switzerland                              
+-- All rights reserved.                                                      
+--                                                                           
+-- Redistribution and use in source and binary forms, with or without        
+-- modification, are permitted provided that the following conditions        
+-- are met:                                                                  
+--                                                                           
+-- * Redistributions of source code must retain the above copyright          
+-- notice, this list of conditions and the following disclaimer.             
+--                                                                           
+-- * Redistributions in binary form must reproduce the above copyright       
+-- notice, this list of conditions and the following disclaimer in           
+-- the documentation and/or other materials provided with the                
+-- distribution.                                                             
+--                                                                           
+-- * Neither the name of CRIXP Corp. nor the names of the contributors       
+-- to openCRX may be used to endorse or promote products derived             
+-- from this software without specific prior written permission              
+--                                                                           
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND                    
+-- CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,               
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF                  
+-- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE                  
+-- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS         
+-- BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,                  
+-- EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED           
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, LOSS OF USE,             
+-- DATA, OR PROFITS, OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON         
+-- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,           
+-- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY            
+-- OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE                   
+-- POSSIBILITY OF SUCH DAMAGE.                                               
+--                                                                           
+-- ------------------                                                        
+--                                                                           
+-- This product includes software developed by the Apache Software           
+-- Foundation (http://www.apache.org/).                                      
+--                                                                           
+-- This product includes software developed by contributors to               
+-- openMDX (http://www.openmdx.org/)                                         
+#define NULLABLE NULL
+#define BIGINT bigint
+#define SMALLINT integer
+#define VARCHAR(n) varchar(n)
+#define DECIMAL(n,m) decimal(n,m)
+#define INTEGER integer
+#define BLOB longvarbinary
+#define RID_TYPE varchar(200)
+#define AUTONUM_RID_TYPE bigint
+#define MAIN_OID_TYPE varchar(200)
+#define OID_TYPE varchar(200)
+#define REF_TYPE varchar(150)
+#define LONG_REF_TYPE varchar(300)
+#define ID_TYPE varchar(300)
+#define QUOTED_COL_ROLE role
+#define QUOTED_COL_NUMBER number
+#define QUOTED_COL_COMMENT comment
+#define QUOTED_COL_FILTER filter
+#define QUOTED_COL_PASSWORD password
+#define QUOTED_COL_ACTION action
+#define QUOTED_COL_DOLLAR(s) #s
+#define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION "position"
+#define STRCAT_INFIX ||
+#define STRCAT_PREFIX
+#define STRCAT_SUFFIX
+#define LONG_TEXT text
+#define LONG_TEXT_ASCII longvarchar
+#define NULL_CHAR CAST(NULL AS char)
+#define PRIMARY_KEY(NAME) PRIMARY KEY
+#define SHORT_TEXT varchar(50)
+#define RENAME_COLUMN(table_name, column_from, column_to, table_and_column_from, new_type) ALTER TABLE table_name ALTER COLUMN column_from RENAME TO column_to
+#define RENAME_TABLE(table_from, table_to) ALTER TABLE table_from RENAME TO table_to
+#define DROP_COLUMN_BEGIN DROP
+#define DROP_COLUMN_NEXT
+#define DROP_COLUMN_END
+#define ADD_COLUMN_BEGIN ADD
+#define ADD_COLUMN_NEXT , ADD
+#define ADD_COLUMN_END
+#define ALTER_COLUMN ALTER
+#define ALTER_TYPE TYPE
+#define REM(s) s */
+#define COMMAND_TERMINATOR ;
+#define DROP_INDEX(table_name, index_name) DROP INDEX index_name
+#define SET_NOT_NULL(column_name, type_name) column_name SET NOT NULL
+#define CREATE_INDEX(table_name, index_name) CREATE INDEX index_name
+#define CREATE_UNIQUE_INDEX(table_name, index_name) CREATE UNIQUE INDEX index_name
+#define FORMAT_NUMBER_3_0(column_name) CAST(column_name AS CHARACTER)
+#define FORMAT_NUMBER_2_0(column_name) CAST(column_name AS CHARACTER)
+#define AS_CHAR(n) CHAR(n)
 #define STRSUB SUBSTRING
 #define STRLEN LEN
 #define REORG_TABLE(t)
@@ -261,6 +361,7 @@
 #define QUOTED_COL_ACTION "action"
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX ||
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX
@@ -359,6 +460,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX +
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX
@@ -457,6 +559,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX ,
 #define STRCAT_PREFIX CONCAT(
 #define STRCAT_SUFFIX )
@@ -555,6 +658,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE "resource"
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX ||
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX
@@ -653,6 +757,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE "resource"
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX ||
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX
@@ -751,6 +856,7 @@
 #define QUOTED_COL_ACTION action
 #define QUOTED_COL_DOLLAR(s) s
 #define QUOTED_COL_RESOURCE resource
+#define QUOTED_COL_POSITION position
 #define STRCAT_INFIX ||
 #define STRCAT_PREFIX
 #define STRCAT_SUFFIX

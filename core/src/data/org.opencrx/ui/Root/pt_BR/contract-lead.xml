@@ -28,7 +28,7 @@
                         <_item>Leads</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os Leads</_item>
+                        <_item>Todos os Leads</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:opportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Oportunidades Relacinoadas</_item>
+                        <_item>Oportunidades Relacionadas</_item>
                       </label>
                       <toolTip>
-                        <_item>Oportunidades Relacinoadas</_item>
+                        <_item>Oportunidades Relacionadas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -50,7 +50,7 @@
                         <_item>Notas</_item>
                       </label>
                       <toolTip>
-                        <_item>notas anexadas</_item>
+                        <_item>Notas Anexadas</_item>
                       </toolTip>
                     </_object>
                     <_content/>

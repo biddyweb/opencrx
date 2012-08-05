@@ -33,17 +33,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IndexEntry:keywords" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Mots clé</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Mots clé</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IndexEntry:indexedObject" _operation="create">
                     <_object>
                       <label>
@@ -51,6 +40,17 @@
                       </label>
                       <toolTip>
                         <_item>Objet indexé</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:IndexEntry:keywords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Mots clé</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Mots clé</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -84,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>Résultat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:UpdateIndexResult:numberOfIndexedObjects" _operation="create">
+                    <_object>
+                      <label>
+                        <_item># objets indexés</_item>
+                      </label>
+                      <toolTip>
+                        <_item># objets indexés</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -18,6 +18,9 @@
 		<field name="product" visibility="cci">
 			<join table="OOCKE1_JOIN_ACCTHASPROD"/>
 		</field>	
+		<field name="vcard" visibility="cci">
+			<column name="VCARD" jdbc-type="CLOB"/>
+		</field>				
 	</class>
   </package>
 </openmdxjdo>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractFilterProductImpl.java,v 1.2 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: AbstractFilterProductImpl.java,v 1.4 2008/04/05 22:53:38 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/04/05 22:53:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,8 +57,8 @@ package org.opencrx.kernel.plugin.application.product1;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.base.jmi1.BasePackage;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class AbstractFilterProductImpl {
@@ -80,8 +80,7 @@ public class AbstractFilterProductImpl {
         
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult countFilteredProduct(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             int count = this.getBackend().getProducts().countFilteredProduct(
                 this.current.refGetPath()
@@ -91,7 +90,7 @@ public class AbstractFilterProductImpl {
             );            
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }            
     }
     

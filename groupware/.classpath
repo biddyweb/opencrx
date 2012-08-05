@@ -5,7 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openMDX Thirdparty ~ Java2 Enterprise (jre-1.5)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openMDX Thirdparty ~ Java2 Extension (jre-1.5)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ iCal4j (jre-1.5)"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Bedework CalDAV (jre-1.5)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Apache Lucene (jre-1.5)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX 2 ~ Core (jre-1.5)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ XWiki (jre-1.5)"/>

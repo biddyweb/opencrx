@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class DepotPositionImpl {
@@ -29,7 +29,7 @@ public class DepotPositionImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.depot1.jmi1.CloseDepotPositionResult closeDepotPosition(
         org.opencrx.kernel.depot1.jmi1.CloseDepotPositionParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             List<String> errors = new ArrayList<String>();
             this.getBackend().getDepots().closeDepotPosition(
@@ -43,7 +43,7 @@ public class DepotPositionImpl {
             );
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     

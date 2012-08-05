@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Meeting" _operation="create">
                     <_object>
                       <label>
-                        <_item>Собрание</_item>
+                        <_item>Встречи</_item>
                       </label>
                       <toolTip>
-                        <_item>Собрание</_item>
+                        <_item>Встречи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Meeting:meetingParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Включенные контакты</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Включенные контакты</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SalesVisit" _operation="create">
                     <_object>
                       <label>
-                        <_item>Торг. визит</_item>
+                        <_item>Встреча по Продажам</_item>
                       </label>
                       <toolTip>
-                        <_item>Торг. визит</_item>
+                        <_item>Встреча по Продажам</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -50,7 +50,7 @@
                         <_item>Конкуренты</_item>
                       </label>
                       <toolTip>
-                        <_item>Все конкуренты</_item>
+                        <_item>Все Конкуренты</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Включенные контакты</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Включенные контакты</_item>
+                        <_item>Вовлеченные учетные записи</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -72,7 +72,7 @@
                         <_item>Контакт</_item>
                       </label>
                       <toolTip>
-                        <_item>Контакт. лицо</_item>
+                        <_item>Контактное лицо</_item>
                       </toolTip>
                     </_object>
                     <_content/>

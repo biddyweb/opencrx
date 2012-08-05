@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.18 2008/02/19 13:38:40 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.20 2008/05/22 15:38:31 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/19 13:38:40 $
+ * Date:        $Date: 2008/05/22 15:38:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,6 +83,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
+import org.openmdx.compatibility.base.collection.SparseList;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
 import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
 import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject_1_0;
@@ -375,34 +376,29 @@ public class ICalendar {
                 else if(line.startsWith("TZID") || line.startsWith("tzid")) {                
                 }                
                 else if(
-                    line.startsWith("BEGIN:VTIMEZONE") || 
-                    line.startsWith("begin:vtimezone") 
+                    line.toUpperCase().startsWith("BEGIN:VTIMEZONE") 
                 ) {
                     isTimezone = true;
                 }
                 else if(
-                    line.startsWith("END:VTIMEZONE") || 
-                    line.startsWith("end:vtimezone") 
+                    line.toUpperCase().startsWith("END:VTIMEZONE")
                 ) {
                     isTimezone = false;
                 }
                 else if(
-                    line.startsWith("BEGIN:VALARM") || 
-                    line.startsWith("begin:valarm") 
+                    line.toUpperCase().startsWith("BEGIN:VALARM")
                 ) {
                     targetIcal.println("BEGIN:VALARM");                    
                     isAlarm = true;
                 }
                 else if(
-                    line.startsWith("END:VALARM") || 
-                    line.startsWith("end:valarm") 
+                    line.toUpperCase().startsWith("END:VALARM")
                 ) {           
                     targetIcal.println("END:VALARM");                    
                     isAlarm = false;                    
                 }
                 else if(
-                    line.startsWith("BEGIN:VEVENT") || 
-                    line.startsWith("begin:vevent") 
+                    line.toUpperCase().startsWith("BEGIN:VEVENT")
                 ) {
                     targetIcal.println("BEGIN:VEVENT");                    
                     isEvent = true;
@@ -417,10 +413,8 @@ public class ICalendar {
                 // Dump updated event fields only for first event
                 else if(
                     (nEvents == 0) &&
-                    line.startsWith("END:VEVENT") || 
-                    line.startsWith("end:vevent") || 
-                    line.startsWith("END:VTODO") || 
-                    line.startsWith("end:vtodo") 
+                    line.toUpperCase().startsWith("END:VEVENT") || 
+                    line.toUpperCase().startsWith("END:VTODO")
                 ) {                    
                     // DTSTART
                     if(dtStart != null) {
@@ -488,8 +482,7 @@ public class ICalendar {
                         targetIcal.println("ORGANIZER:MAILTO:" + organizerEmailAddress);
                     }
                     if(
-                        line.startsWith("END:VEVENT") || 
-                        line.startsWith("end:vevent")
+                        line.toUpperCase().startsWith("END:VEVENT")
                     ) {                        
                         targetIcal.println("END:VEVENT");                    
                         
@@ -508,29 +501,29 @@ public class ICalendar {
                     !isAlarm && 
                     (nEvents == 0)
                 ) {
-                    boolean isUpdatableEventTag = 
-                        tagStart.startsWith("DTSTART") || tagStart.startsWith("dtstart");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("DTEND") || tagStart.startsWith("dtend");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("DUE") || tagStart.startsWith("due");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("LOCATION") || tagStart.startsWith("location");
-                    isUpdatableEventTag |= 
-                        tagStart.startsWith("DTSTAMP") || tagStart.startsWith("dtstamp");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("DESCRIPTION") || tagStart.startsWith("description");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("LAST-MODIFIED") || tagStart.startsWith("last-modified");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("SUMMARY") || tagStart.startsWith("summary");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("PRIORITY") || tagStart.startsWith("priority");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("ATTENDEE") || tagStart.startsWith("attendee");
-                    isUpdatableEventTag |=
-                        tagStart.startsWith("ORGANIZER") || tagStart.startsWith("organizer");
-                    if(!isUpdatableEventTag) {
+                    boolean isUpdatableTag = 
+                        tagStart.toUpperCase().startsWith("DTSTART");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("DTEND");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("DUE");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("LOCATION");
+                    isUpdatableTag |= 
+                        tagStart.toUpperCase().startsWith("DTSTAMP");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("DESCRIPTION");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("LAST-MODIFIED");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("SUMMARY");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("PRIORITY");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("ATTENDEE");
+                    isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("ORGANIZER");
+                    if(!isUpdatableTag) {
                         targetIcal.println(line);
                     }
                 }
@@ -661,7 +654,6 @@ public class ICalendar {
                     }
                 }                 
             }
-            // Do not import URLs
             AppLog.trace("ICalendar", fields);
             return this.importItem(
                 ical.toString(),
@@ -682,12 +674,12 @@ public class ICalendar {
     //-------------------------------------------------------------------------
     private BasicObject getAttendeeAsContact(
         String attendeeAsString,
-        VCard vcardImporter,
+        VCard vcards,
         Path contactSegmentPath,
         short locale,
-        List report
+        List<String> report
     ) {
-        Map vcard = new HashMap();
+        Map<String,String> vcard = new HashMap<String,String>();
         int pos = attendeeAsString.indexOf("MAILTO:");
         if(pos < 0) {
             pos = attendeeAsString.indexOf("mailto:");
@@ -695,12 +687,11 @@ public class ICalendar {
         String emailPrefInternet = attendeeAsString.substring(pos + 7);
         vcard.put("EMAIL;PREF;INTERNET", emailPrefInternet);
         try {
-            return vcardImporter.importItem(
+            return vcards.updateAccount(
                 vcard,
                 contactSegmentPath,
                 locale,
-                report,
-                true
+                report
             );
         }
         catch(Exception e) {
@@ -753,7 +744,7 @@ public class ICalendar {
     ) throws ServiceException {
 
         // Prepare attendees
-        VCard vcardImporter = new VCard(
+        VCard vcards = new VCard(
             this.backend
         );
         List<DataproviderObject_1_0> attendees = new ArrayList<DataproviderObject_1_0>();
@@ -767,7 +758,7 @@ public class ICalendar {
             ) {
                 BasicObject attendee = this.getAttendeeAsContact(
                     attendeeAsString,
-                    vcardImporter,
+                    vcards,
                     accountSegmentIdentity,
                     locale,
                     report
@@ -812,14 +803,14 @@ public class ICalendar {
         DataproviderObject activity = this.backend.retrieveObjectForModification(
             activityIdentity
         );
-        // ICAL:uid
+        // externalLink
         boolean hasIcalUid = false;
-        List<String> externalLinks = (List<String>)activity.values("externalLink");
+        SparseList<Object> externalLinks = activity.values("externalLink");
         String icalUid = fields.get("UID") == null
             ? activity.path().getBase()
             : fields.get("UID");
         for(int i = 0; i < externalLinks.size(); i++) {
-            if(externalLinks.get(i).startsWith(ICAL_SCHEMA)) {
+            if(((String)externalLinks.get(i)).startsWith(ICAL_SCHEMA)) {
                 externalLinks.set(
                     i,
                     ICAL_SCHEMA + icalUid
@@ -917,7 +908,7 @@ public class ICalendar {
                 s.startsWith("MAILTO:") 
                     ?  s 
                     : "MAILTO:" + s,
-                vcardImporter,
+                vcards,
                 accountSegmentIdentity,
                 locale,
                 report

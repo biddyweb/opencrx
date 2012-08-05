@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.12 2008/01/29 14:18:08 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.20 2008/06/06 09:53:27 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/01/29 14:18:08 $
+ * Date:        $Date: 2008/06/06 09:53:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,7 +77,7 @@ import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
 import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
-import org.opencrx.kernel.workflow.servlet.Utils;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.format.DateFormat;
@@ -91,6 +91,7 @@ import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
+import org.w3c.cci2.Datatypes;
 
 public class Accounts {
 
@@ -99,6 +100,9 @@ public class Accounts {
         Backend backend
     ) {
         this.backend = backend;
+        this.vcards = new VCard(
+            this.backend
+        );                
     }
 
     //-------------------------------------------------------------------------
@@ -168,7 +172,7 @@ public class Accounts {
             contact.clearValues("ouMembership").addAll(memberships);
         }
         catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause(), 1);
+            AppLog.info(e.getMessage(), e.getCause());
         }
     }
     
@@ -193,7 +197,8 @@ public class Accounts {
                     contractBase.path().getParent(),
                     null,
                     DEFAULT_REFERENCE_FILTER,
-                    false
+                    false,
+                    AttributeSelectors.ALL_ATTRIBUTES                    
                 ).path();
                 contract = this.backend.retrieveObjectForModification(
                     contractIdentity
@@ -242,7 +247,7 @@ public class Accounts {
             );
         }
         catch(ServiceException e) {
-            AppLog.info(e.getMessage(), e.getCause(), 1);
+            AppLog.info(e.getMessage(), e.getCause());
         }
         return contract == null
             ? null
@@ -380,47 +385,48 @@ public class Accounts {
     }
     
     //-------------------------------------------------------------------------
-    public void setAccountFullName(
-        DataproviderObject obj,
+    public void updateFullName(
+        DataproviderObject object,
         DataproviderObject_1_0 oldValues
     ) throws ServiceException {
-        String objectClass = (String)obj.values(
-            SystemAttributes.OBJECT_CLASS
-        ).get(0);
-
         // org:opencrx:kernel:account1:Contact:fullName
-        if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:account1:Contact")) {
-            List lastName = this.backend.getNewValue("lastName", obj, oldValues);
-            List firstName = this.backend.getNewValue("firstName", obj, oldValues);
-            List middleName = this.backend.getNewValue("middleName", obj, oldValues);
-            obj.clearValues("fullName").add(
-                ( (lastName.size() == 0 ? "" : lastName.get(0)) + ", "
-                  + (firstName.size() == 0 ? "" : firstName.get(0) + " ")
-                  + (middleName.size() == 0 ? "" : middleName.get(0) + "") ).trim()
+        if(this.backend.isContact(object)) {
+            List<Object> lastName = this.backend.getNewValue("lastName", object, oldValues);
+            List<Object> firstName = this.backend.getNewValue("firstName", object, oldValues);
+            List<Object> middleName = this.backend.getNewValue("middleName", object, oldValues);
+            object.clearValues("fullName").add(
+                ( (lastName.isEmpty() ? "" : lastName.get(0)) + ", "
+                  + (firstName.isEmpty() ? "" : firstName.get(0) + " ")
+                  + (middleName.isEmpty() ? "" : middleName.get(0) + "") ).trim()
             );
         }
-
-        // org:opencrx:kernel:account1:LegalEntity:fullName
-        else if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:account1:LegalEntity")) {
-            List name = this.backend.getNewValue("name", obj, oldValues);
-            obj.clearValues("fullName").add(
-                name.size() == 0 ? "" : name.get(0)
+        // org:opencrx:kernel:account1:AbstractGroup
+        else if(this.backend.isAbstractGroup(object)) {
+            List<Object> name = this.backend.getNewValue("name", object, oldValues);
+            object.clearValues("fullName").add(
+                name.isEmpty() ? "" : name.get(0)
             );
         }
-
-        // org:opencrx:kernel:account1:UnspecifiedAccount:fullName
-        else if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:account1:UnspecifiedAccount")) {
-            List name = this.backend.getNewValue("name", obj, oldValues);
-            obj.clearValues("fullName").add(
-                name.size() == 0 ? "" : name.get(0)
+    }
+    
+    //-------------------------------------------------------------------------
+    public void updateAccount(
+        DataproviderObject object,
+        DataproviderObject_1_0 oldValues
+    ) throws ServiceException {
+        if(this.backend.isAccount(object)) {
+            this.updateFullName(
+                object, 
+                oldValues
             );
-        }
-
-        // org:opencrx:kernel:account1:Group:fullName
-        else if(this.backend.getModel().isSubtypeOf(objectClass, "org:opencrx:kernel:account1:Group")) {
-            List name = this.backend.getNewValue("name", obj, oldValues);
-            obj.clearValues("fullName").add(
-                name.size() == 0 ? "" : name.get(0)
+            List<String> statusMessage = new ArrayList<String>();
+            String vcard = this.vcards.mergeVcard(
+                object,
+                (String)object.values("vcard").get(0),
+                statusMessage
+            );
+            object.clearValues("vcard").add(
+                vcard == null ? "" : vcard
             );
         }
     }
@@ -430,7 +436,7 @@ public class Accounts {
         Path accountFilterIdentity,
         boolean forCounting
     ) throws ServiceException {
-        List filterProperties = this.backend.getDelegatingRequests().addFindRequest(
+        List<DataproviderObject_1_0> filterProperties = this.backend.getDelegatingRequests().addFindRequest(
             accountFilterIdentity.getChild("accountFilterProperty"),
             null,
             AttributeSelectors.ALL_ATTRIBUTES,
@@ -439,13 +445,13 @@ public class Accounts {
             Integer.MAX_VALUE,
             Directions.ASCENDING
         );
-        List filter = new ArrayList();
+        List<FilterProperty> filter = new ArrayList<FilterProperty>();
         boolean hasQueryFilterClause = false;
         for(
-            Iterator i = filterProperties.iterator();
+            Iterator<DataproviderObject_1_0> i = filterProperties.iterator();
             i.hasNext();
         ) {
-            DataproviderObject_1_0 filterProperty = (DataproviderObject_1_0)i.next();
+            DataproviderObject_1_0 filterProperty = i.next();
             String filterPropertyClass = (String)filterProperty.values(SystemAttributes.OBJECT_CLASS).get(0);
 
             Boolean isActive = (Boolean)filterProperty.values("isActive").get(0);            
@@ -474,7 +480,7 @@ public class Accounts {
                         )
                     );
                     // stringParam
-                    List values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+                    List<Object> values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -514,7 +520,15 @@ public class Accounts {
                         )
                     );
                     // dateParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM);
+                    values = new ArrayList<Object>();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(XMLGregorianCalendar.class, j.next())
+                        );
+                    }
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -524,7 +538,15 @@ public class Accounts {
                         )
                     );
                     // dateTimeParam
-                    values = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM);
+                    values = new ArrayList<Object>();
+                    for(
+                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        j.hasNext();
+                    ) {
+                        values.add(
+                            Datatypes.create(Date.class, j.next())
+                        );
+                    }
                     filter.add(
                         new FilterProperty(
                             Quantors.PIGGY_BACK,
@@ -616,7 +638,7 @@ public class Accounts {
                 )
             );            
         }
-        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
+        return filter.toArray(new FilterProperty[filter.size()]);
     }
     
     //-------------------------------------------------------------------------
@@ -801,6 +823,42 @@ public class Accounts {
     }
     
     //-------------------------------------------------------------------------
+    public void updateVcard(
+        Path accountIdentity
+    ) throws ServiceException {
+        List<String> messages = new ArrayList<String>();
+        List<String> errors = new ArrayList<String>();
+        List<String> report = new ArrayList<String>();
+        String vcard = this.vcards.mergeVcard(
+            this.backend.retrieveObject(accountIdentity),
+            null, 
+            messages
+        );        
+        byte[] item = null;
+        try {
+            item = vcard.getBytes("UTF-8");
+        } catch(Exception e) {
+            item = vcard.getBytes();    
+        }
+        this.vcards.importItem(
+            item, 
+            accountIdentity, 
+            (short)0, 
+            errors, 
+            report
+        );
+    }
+    
+    //-------------------------------------------------------------------------
+    public void markAccountAsDirty(
+        Path accountIdentity
+    ) throws ServiceException {
+        this.backend.retrieveObjectForModification(
+            accountIdentity
+        );
+    }
+    
+    //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     public static final String DEFAULT_REFERENCE_FILTER = ":*, :*/:*/:*, :*/:*/:*/:*/:*";
@@ -819,6 +877,7 @@ public class Accounts {
     public static final int PHONE_OTHER = 11;
     
     protected final Backend backend;
+    protected final VCard vcards;
     
 }
 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CalculationRuleImpl.java,v 1.2 2007/12/25 17:15:53 wfro Exp $
+ * Name:        $Id: CalculationRuleImpl.java,v 1.3 2008/04/03 12:24:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/25 17:15:53 $
+ * Date:        $Date: 2008/04/03 12:24:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,8 +58,8 @@ package org.opencrx.kernel.plugin.application.contract1;
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult;
 import org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 
 public class CalculationRuleImpl {
@@ -82,7 +82,7 @@ public class CalculationRuleImpl {
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
         org.opencrx.kernel.contract1.jmi1.GetPositionAmountsParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         try {
             GetPositionAmountsResult result = this.getBackend().getContracts().getPositionAmounts(
                 this.current,
@@ -91,14 +91,14 @@ public class CalculationRuleImpl {
             return result;
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }        
     }
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(
         org.opencrx.kernel.contract1.jmi1.GetContractAmountsParams params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {
             GetContractAmountsResult result = this.getBackend().getContracts().getContractAmounts(
                 this.current,
@@ -114,7 +114,7 @@ public class CalculationRuleImpl {
             return result;
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                
     }
     

@@ -31,7 +31,23 @@
                         <_item>Preisliste</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+                    <_content>
+                      <additionalElementDefinition>
+
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Preisliste (deaktivierte Produkte)</_item>
+														</toolTip>
+														<label>
+															<_item>»Preisliste (deaktivierte Produkte)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:pricingRule" _operation="create">
                     <_object>
@@ -75,7 +91,23 @@
                         <_item>Preisliste</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+                    <_content>
+                      <additionalElementDefinition>
+
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Preisliste (deaktivierte Produkte)</_item>
+														</toolTip>
+														<label>
+															<_item>»Preisliste (deaktivierte Produkte)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:assignedAccount" _operation="create">
                     <_object>
@@ -532,6 +564,17 @@
                       </label>
                       <toolTip>
                         <_item>Produktbeschreibung</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:productDisabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Produkt deaktiviert</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Produkt deaktiviert</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -15,6 +15,17 @@
                     <_object/>
                     <_content>
                       <entry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>NA</_item>
+                            </shortText>
+                            <longText>
+                              <_item> N/A</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
@@ -66,6 +77,17 @@
                             </shortText>
                             <longText>
                               <_item>beroende av</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>består av</_item>
+                            </shortText>
+                            <longText>
+                              <_item>består av</_item>
                             </longText>
                           </_object>
                           <_content/>

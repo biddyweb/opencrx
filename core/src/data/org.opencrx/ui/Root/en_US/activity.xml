@@ -1029,6 +1029,24 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastAppliedCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Last applied creator</_item>
+											</toolTip>
+											<label>
+												<_item>Last applied creator</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical">
 										<_object>
 											<active>true</active>
@@ -1041,7 +1059,7 @@
 											</label>
 											<order>
 												<_item>10</_item>
-												<_item>20</_item>
+												<_item>30</_item>
 												<_item>10</_item>
 											</order>
 										</_object>

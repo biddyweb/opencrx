@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ImportMantisProject.jsp,v 1.6 2007/12/14 15:23:08 wfro Exp $
+ * Name:        $Id: ImportMantisProject.jsp,v 1.13 2008/06/26 00:34:33 wfro Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2007/12/14 15:23:08 $
+ * Date:        $Date: 2008/06/26 00:34:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,17 +72,25 @@ org.openmdx.application.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*
 " %><%
-  request.setCharacterEncoding("UTF-8");
-  ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-  ShowObjectView view = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-  Texts_1_0 texts = app.getTexts();
-
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	if(objectXri == null || app == null) {
+		response.sendRedirect(
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+		);
+		return;
+	}
+	Texts_1_0 texts = app.getTexts();
+	javax.jdo.PersistenceManager pm = app.getPmData();
 %>
 <!--[if IE]><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><![endif]-->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
-  <title><%= app.getApplicationName() + " - " + view.getObjectReference().getTitle() + (view.getObjectReference().getTitle().length() == 0 ? "" : " - ") + view.getObjectReference().getLabel() %></title>
+  <title>openCRX - Import Mantis Project</title>
   <meta name="label" content="Import Mantis Project">
   <meta name="toolTip" content="Import Mantis Project">
   <meta name="targetType" content="_self">
@@ -116,9 +124,12 @@ org.openmdx.kernel.id.*
 			boolean actionCancel = request.getParameter("Cancel.Button") != null;
 
 			if(actionCancel) {
-				Action nextAction = view.getObjectReference().getSelectObjectAction();
+				Action nextAction = new ObjectReference(
+					(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+					app
+				).getSelectObjectAction();
 				response.sendRedirect(
-					request.getContextPath() + "/" + view.getEncodedHRef(nextAction)
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
 				);
 			}
 			else if(
@@ -138,7 +149,7 @@ org.openmdx.kernel.id.*
 				try {
 					importer =
 						new org.opencrx.application.mantis.ProjectImporter(
-							app.getDataPackage(),
+							pm,
 							jdbcDriverClass,
 							jdbcConnectionUrl,
 							jdbcUser,
@@ -151,7 +162,7 @@ org.openmdx.kernel.id.*
 					);
 				}
 				if(errors.isEmpty()) {
-					org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)view.getObjectReference().getObject();
+					org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(new Path(objectXri));
 					Path activitySegmentIdentity = new Path(activitySegment.refMofId());
 					importer.importProjects(
 						activitySegmentIdentity.get(2),
@@ -195,7 +206,8 @@ org.openmdx.kernel.id.*
 </div>
 
 <form name="ImportMantisProject" accept-charset="UTF-8" method="POST" action="ImportMantisProject.jsp">
-
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 <table cellspacing="8" class="tableLayout">
   <tr>
     <td class="cellObject">

@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Неуказ. уч. запись</_item>
+                        <_item>Неопределенная учетная запись</_item>
                       </label>
                       <toolTip>
-                        <_item>Неуказ. уч. запись</_item>
+                        <_item>Неопределенная учетная запись</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Наим. уч. записи</_item>
+                        <_item>Наименование учетной записи</_item>
                       </label>
                       <toolTip>
-                        <_item>Наим. неуказ. уч. записи</_item>
+                        <_item>Наим-е неопределенной учетной записи</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Импорт vCard</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Импорт vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

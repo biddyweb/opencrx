@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Permitido: reserva de debito na Entidade 1 / reserva de credito na Entidade 2</_item>
+                              <_item>Permitido: reserva de débito na Entidade 1 / reserva de crédito na Entidade 2</_item>
                             </shortText>
                             <longText>
-                              <_item>Permitido: reserva de debito na Entidade 1 / reserva de credito na Entidade 2</_item>
+                              <_item>Permitido: reserva de débito na Entidade 1 / reserva de crédito na Entidade 2</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Autorizacao: Reserva de credito na Entidade 1 / Reserva de debito na Entidade 2</_item>
+                              <_item>Autorização: Reserva de crédito na Entidade 1 / Reserva de débito na Entidade 2</_item>
                             </shortText>
                             <longText>
-                              <_item>Autorizacao: Reserva de credito na Entidade 1 / Reserva de debito na Entidade 2</_item>
+                              <_item>Autorização: Reserva de crédito na Entidade 1 / Reserva de débito na Entidade 2</_item>
                             </longText>
                           </_object>
                           <_content/>

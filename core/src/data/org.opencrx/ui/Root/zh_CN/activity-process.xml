@@ -264,13 +264,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:errState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>错误状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>错误状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition:newActivityState" _operation="create">
                     <_object>
                       <label>
-                        <_item>新活动说明</_item>
+                        <_item>新活动状态</_item>
                       </label>
                       <toolTip>
-                        <_item>新活动说明</_item>
+                        <_item>新活动状态</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SetAssignedToAction" _operation="create">
                     <_object>
                       <label>
-                        <_item>动作:分配到</_item>
+                        <_item>动作:指定</_item>
                       </label>
                       <toolTip>
-                        <_item>动作:分配到</_item>
+                        <_item>动作:指定</_item>
                       </toolTip>
                     </_object>
                     <_content/>

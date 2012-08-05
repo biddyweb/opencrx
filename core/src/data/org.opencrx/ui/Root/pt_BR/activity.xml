@@ -17,7 +17,7 @@
                         <_item>Atividades</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as Atividades</_item>
+                        <_item>Atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -28,7 +28,7 @@
                         <_item>Criadores da Atividade</_item>
                       </label>
                       <toolTip>
-                        <_item>Criadores de todas as atividades</_item>
+                        <_item>Todos os criadores de atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -39,7 +39,7 @@
                         <_item>Atividades</_item>
                       </label>
                       <toolTip>
-                        <_item>todas as Atividades</_item>
+                        <_item>Todas as Atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipos de Atividade</_item>
+                        <_item>Tipos de Atividades</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipos de todas as atividades</_item>
+                        <_item>Todos os tipos atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkTo" _operation="create">
                     <_object>
                       <label>
-                        <_item>Atividades Ligadas</_item>
+                        <_item>Ligadas a</_item>
                       </label>
                       <toolTip>
-                        <_item>Atividades Ligadas</_item>
+                        <_item>Ligadas a</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Links de Atividade Entrantes</_item>
+                        <_item>Links de Entradas</_item>
                       </label>
                       <toolTip>
-                        <_item>Links de Atividade Entrantes</_item>
+                        <_item>Links de Entradas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:effortEstimate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Estimativas do Esforço</_item>
+                        <_item>Esforço Estimado</_item>
                       </label>
                       <toolTip>
-                        <_item>Estimativas do Esforço</_item>
+                        <_item>Esforço Estimado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -116,7 +116,7 @@
                         <_item>Relatório de Trabalho</_item>
                       </label>
                       <toolTip>
-                        <_item>Relatorio de trabalho</_item>
+                        <_item>Relatório de trabalho</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:followUp" _operation="create">
                     <_object>
                       <label>
-                        <_item>Seguimento</_item>
+                        <_item>Follow Ups</_item>
                       </label>
                       <toolTip>
-                        <_item>Seguimento</_item>
+                        <_item>Follow Ups</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:contract" _operation="create">
                     <_object>
                       <label>
-                        <_item>Contrato</_item>
+                        <_item>Itens de Pipeline/Contratos Envolvidos</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Pipeline</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Contrato</_item>
+                        <_item>Itens de Pipeline/Contratos Envolvidos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +182,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:depotReference" _operation="create">
                     <_object>
                       <label>
-                        <_item>Depositos envolvidos</_item>
+                        <_item>Depósitos envolvidos</_item>
                       </label>
                       <toolTip>
-                        <_item>Depositos envolvidos</_item>
+                        <_item>Depósitos envolvidos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,7 +204,7 @@
                         <_item>Nome</_item>
                       </label>
                       <toolTip>
-                        <_item>Nome</_item>
+                        <_item>Nome da Atividade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -209,13 +212,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>#</_item>
+                        <_item>Nr. da Atividade</_item>
                       </label>
                       <shortLabel>
-                        <_item>Atividade-Número</_item>
+                        <_item>Atividade-Nr.</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Número</_item>
+                        <_item>Atividade Nr.</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -281,7 +284,7 @@
                         <_item>Estado</_item>
                       </label>
                       <shortLabel>
-                        <_item>Estado</_item>
+                        <_item> </_item>
                       </shortLabel>
                       <toolTip>
                         <_item>Estado</_item>
@@ -294,6 +297,9 @@
                       <label>
                         <_item>Prioridade</_item>
                       </label>
+                      <shortLabel>
+                        <_item>!</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Prioridade</_item>
                       </toolTip>
@@ -303,10 +309,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:scheduledStart" _operation="create">
                     <_object>
                       <label>
-                        <_item>Inicio Programado</_item>
+                        <_item>Início planejado</_item>
                       </label>
                       <shortLabel>
-                        <_item>Inicio programado</_item>
+                        <_item>Início planejado</_item>
                       </shortLabel>
                       <toolTip>
                         <_item>Inicio Programado</_item>
@@ -328,10 +334,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:scheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fim Programado</_item>
+                        <_item>Fim planejado</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Fim planejado</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Fim Programado</_item>
+                        <_item>Fim planejado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -339,10 +348,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:originalScheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fim Agendado (original)</_item>
+                        <_item>Fim planejado (original)</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Fim planejado (original)</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Fim Agendado (original)</_item>
+                        <_item>Fim Planejado (original)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -352,6 +364,9 @@
                       <label>
                         <_item>Devido para</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Devido para</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Devido para</_item>
                       </toolTip>
@@ -374,6 +389,9 @@
                       <label>
                         <_item>Última Transição</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Follow up</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Última Transição</_item>
                       </toolTip>
@@ -397,10 +415,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:percentComplete" _operation="create">
                     <_object>
                       <label>
-                        <_item>% Completa</_item>
+                        <_item>% Completada</_item>
                       </label>
+                      <shortLabel>
+                        <_item>%</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>% Completa</_item>
+                        <_item>% Completada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -463,10 +484,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:isAllDayEvent" _operation="create">
                     <_object>
                       <label>
-                        <_item>é um evento  o dia todo</_item>
+                        <_item>é um evento o dia todo</_item>
                       </label>
                       <toolTip>
-                        <_item>é um evento  o dia todo</_item>
+                        <_item>é um evento o dia todo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -485,10 +506,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (esforço atual)</_item>
+                        <_item>hh (esforço real)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (esforço atual)</_item>
+                        <_item>hh (esforço real)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -496,18 +517,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (esforço atual)</_item>
+                        <_item>mm (esforço real)</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (esforço atual)</_item>
+                        <_item>mm (esforço real)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:actualEffortHhMm" _operation="create">
                     <_object>
+                      <label>
+                        <_item>mm (esforço real)</_item>
+                      </label>
                       <toolTip>
-                        <_item>hh mm (esforco atual)</_item>
+                        <_item>hh mm (esforco real)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -515,10 +539,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (estimativa principal)</_item>
+                        <_item>hh (esforço estimado)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (estimativa principal)</_item>
+                        <_item>hh (esforço estimado)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -526,7 +550,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (estimativa principal)</_item>
+                        <_item>mm (esforço estimado)</_item>
                       </label>
                       <toolTip>
                         <_item>mm (esforco estimado)</_item>
@@ -537,10 +561,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:mainEstimateEffortHhMm" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh mm (estimativa principal)</_item>
+                        <_item>hh mm (esforço estimado)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh mm (estimativa principal)</_item>
+                        <_item>hh mm (esforço estimado)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -552,6 +576,28 @@
                       </label>
                       <toolTip>
                         <_item>Total de Votos</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastAppliedCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Último Criador aplicado</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Último Criador aplicado</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -614,10 +660,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Link de Atividade Entrando</_item>
+                        <_item>Link de Atividade Entrante</_item>
                       </label>
                       <toolTip>
-                        <_item>Link de Atividade Entrando</_item>
+                        <_item>Link de Atividade Entrante</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -658,10 +704,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityLinkFrom:linkFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ligada da Atividade</_item>
+                        <_item>Ligada à Atividade</_item>
                       </label>
                       <toolTip>
-                        <_item>Ligada da Atividade</_item>
+                        <_item>Ligada à Atividade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -713,10 +759,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Descricao</_item>
+                        <_item>Descrição</_item>
                       </label>
                       <toolTip>
-                        <_item>Descricao</_item>
+                        <_item>Descrição</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -724,10 +770,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involvedRole" _operation="create">
                     <_object>
                       <label>
-                        <_item>Perfil</_item>
+                        <_item>Regra</_item>
                       </label>
                       <toolTip>
-                        <_item>Perfil</_item>
+                        <_item>Regra</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -864,6 +910,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Task:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Importar iCal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Importar iCal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp" _operation="create">
                     <_object>
                       <label>
@@ -919,6 +976,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Reportado por</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Reportado por</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp:Group:result" _operation="create">
                     <_object>
                       <label>
@@ -930,13 +998,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpResult:followUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Follow up</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Follow up</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>Criador do Reaplicar Atividade</_item>
+                        <_item>Criador do Reaplicador de Atividade</_item>
                       </label>
                       <toolTip>
-                        <_item>Criador do Reaplicar Atividade</_item>
+                        <_item>Criador do Reaplicador de Atividade</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1073,6 +1152,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adicionar Registro de Trabalho</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adicionar Registro de Trabalho</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecordByDuration:Group:in" _operation="create">
                     <_object>
                       <label>
@@ -1109,10 +1199,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:startAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>Iniciou em</_item>
+                        <_item>Iniciado em</_item>
                       </label>
                       <toolTip>
-                        <_item>Iniciou em</_item>
+                        <_item>Iniciado em</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1131,7 +1221,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (duração do trabalho)</_item>
+                        <_item>hh (duração)</_item>
                       </label>
                       <toolTip>
                         <_item>hh (duração do trabalho)</_item>
@@ -1142,10 +1232,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:durationMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (duração do trabalho)</_item>
+                        <_item>mm (duração)</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (duração do trabalho)</_item>
+                        <_item>mm (duração)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1164,10 +1254,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:rateType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Tipo do valor</_item>
+                        <_item>Tipo da tarifa</_item>
                       </label>
                       <toolTip>
-                        <_item>Tipo do valor</_item>
+                        <_item>Tipo da tarifa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:depotSelector" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Selecionador de Depósito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Selecionador de Depósito</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1186,10 +1287,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:updateIcal" _operation="create">
                     <_object>
                       <label>
-                        <_item>Importar iCal</_item>
+                        <_item>Atualizar iCal</_item>
                       </label>
                       <toolTip>
-                        <_item>Importar iCal</_item>
+                        <_item>Atualizar iCal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1293,6 +1394,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:activityClassName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome da Classe da Atividade</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome da classe da Atividade</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityType:description" _operation="create">
                     <_object>
                       <label>
@@ -1329,10 +1441,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:activityGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grupos de Atividade</_item>
+                        <_item>Grupos de Atividades</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupos de todas as Atividades</_item>
+                        <_item>Grupos de Atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1343,7 +1455,7 @@
                         <_item>Recursos</_item>
                       </label>
                       <toolTip>
-                        <_item>todos os recursos</_item>
+                        <_item>Todos os recursos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1406,10 +1518,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:scheduledStart" _operation="create">
                     <_object>
                       <label>
-                        <_item>Inicio Programado</_item>
+                        <_item>Início Planejado</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Início Planejado</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Inicio Programado</_item>
+                        <_item>Início Planejado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1417,10 +1532,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:scheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fim Programado</_item>
+                        <_item>Fim Planejado</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Final Planejado</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Fim Programado</_item>
+                        <_item>Final Planejado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1428,10 +1546,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:originalScheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fim Agendado (original)</_item>
+                        <_item>Final Planejado (original)</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Final Planejado (original)</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Fim Agendado (original)</_item>
+                        <_item>Final Planejado (original)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1505,10 +1626,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:scheduledStart" _operation="create">
                     <_object>
                       <label>
-                        <_item>Inicio Programado</_item>
+                        <_item>Início Planejado</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Início Planejado</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Inicio Programado</_item>
+                        <_item>Início Planejado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1516,10 +1640,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:scheduledEnd" _operation="create">
                     <_object>
                       <label>
-                        <_item>Fim Programado</_item>
+                        <_item>Final Planejado</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Final Planejado</_item>
+                      </shortLabel>
                       <toolTip>
-                        <_item>Fim Programado</_item>
+                        <_item>Final Planejado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1563,7 +1690,7 @@
                         <_item>Grupo de Atividade</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupo de Atividade</_item>
+                        <_item>Grupo de Atividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1582,10 +1709,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:resourceRole" _operation="create">
                     <_object>
                       <label>
-                        <_item>Regra do Recurso</_item>
+                        <_item>Responsabilidades do Recurso</_item>
                       </label>
                       <toolTip>
-                        <_item>Regra do Recurso</_item>
+                        <_item>Responsabilidades do Recurso</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ASynchWorkflow_1_0.java,v 1.2 2007/12/10 22:37:38 wfro Exp $
+ * Name:        $Id: ASynchWorkflow_1_0.java,v 1.4 2008/04/01 12:33:02 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/10 22:37:38 $
+ * Date:        $Date: 2008/04/01 12:33:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,6 +55,8 @@
  */
 package org.opencrx.kernel.workflow;
 
+import javax.jdo.PersistenceManager;
+
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.openmdx.base.exception.ServiceException;
 
@@ -65,7 +67,8 @@ public interface ASynchWorkflow_1_0 {
      * @throws ServiceException
      */
     public void execute(
-        WfProcessInstance wfProcessInstance
+        WfProcessInstance wfProcessInstance,
+        PersistenceManager pm
     ) throws ServiceException;
 
 }

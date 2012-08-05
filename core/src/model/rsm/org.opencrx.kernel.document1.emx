@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--xtools2_universal_type_manager-->
-<uml:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.ibm.com/xtools/1.5.0/Notation" xmlns:uml="http://www.eclipse.org/uml2/1.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.0/Umlnotation" xmi:id="_3ekm8N8HEdmKapscEl8OLg" name="document1" appliedProfile="_2CBwdN8HEdmKapscEl8OLg _2CBwd98HEdmKapscEl8OLg _2CBwet8HEdmKapscEl8OLg _2CBwfd8HEdmKapscEl8OLg _2CBwgN8HEdmKapscEl8OLg _2JGBwN8HEdmKapscEl8OLg">
+<uml:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.ibm.com/xtools/1.5.0/Notation" xmlns:uml="http://www.eclipse.org/uml2/1.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.0/Umlnotation" xmi:id="_3ekm8N8HEdmKapscEl8OLg" name="document1" appliedProfile="_DCTMAEkSEd2SysOvw5HwnA _DCTMA0kSEd2SysOvw5HwnA _DCTMBkkSEd2SysOvw5HwnA _DCTMCUkSEd2SysOvw5HwnA _DCTMDEkSEd2SysOvw5HwnA">
   <eAnnotations xmi:id="_3ekm8d8HEdmKapscEl8OLg" source="uml2.diagrams"/>
   <eAnnotations xmi:id="_YqeCTOEYEdmQhoEXouev3w" source="http://www.eclipse.org/emf/2002/Ecore"/>
   <packageImport xmi:type="uml:ProfileApplication" xmi:id="_3ekm9N8HEdmKapscEl8OLg">
@@ -48,6 +48,41 @@
     <importedPackage xmi:type="uml:Profile" href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/openMDX.epx#_O4XmQN64EdmrtKJSXC0_FQ?openMDX"/>
     <importedProfile href="platform:/resource/openMDX%202%20~%20Core_profiles%20(RSM)/openMDX.epx#_O4XmQN64EdmrtKJSXC0_FQ?openMDX"/>
   </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_DCTMAEkSEd2SysOvw5HwnA">
+    <eAnnotations xmi:id="_DCTMAUkSEd2SysOvw5HwnA" source="attributes">
+      <details xmi:id="_DCTMAkkSEd2SysOvw5HwnA" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Basic.profile.uml2#_6mFRgK86Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_DCTMA0kSEd2SysOvw5HwnA">
+    <eAnnotations xmi:id="_DCTMBEkSEd2SysOvw5HwnA" source="attributes">
+      <details xmi:id="_DCTMBUkSEd2SysOvw5HwnA" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Intermediate.profile.uml2#_Cz7csK87Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_DCTMBkkSEd2SysOvw5HwnA">
+    <eAnnotations xmi:id="_DCTMB0kSEd2SysOvw5HwnA" source="attributes">
+      <details xmi:id="_DCTMCEkSEd2SysOvw5HwnA" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+    <importedProfile href="pathmap://UML2_PROFILES/Complete.profile.uml2#_M7pTkK87Edih9-GG5afQ0g"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_DCTMCUkSEd2SysOvw5HwnA">
+    <eAnnotations xmi:id="_DCTMCkkSEd2SysOvw5HwnA" source="attributes">
+      <details xmi:id="_DCTMC0kSEd2SysOvw5HwnA" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+    <importedProfile href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default"/>
+  </packageImport>
+  <packageImport xmi:type="uml:ProfileApplication" xmi:id="_DCTMDEkSEd2SysOvw5HwnA">
+    <eAnnotations xmi:id="_DCTMDUkSEd2SysOvw5HwnA" source="attributes">
+      <details xmi:id="_DCTMDkkSEd2SysOvw5HwnA" key="version" value="0"/>
+    </eAnnotations>
+    <importedPackage xmi:type="uml:Profile" href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+    <importedProfile href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment"/>
+  </packageImport>
   <ownedMember xmi:type="uml:Package" xmi:id="_3C7B8A60016D3FEC99EB025A" name="document1">
     <eAnnotations xmi:id="_IFILZt7NEdmKapscEl8OLg" source="uml2.diagrams" references="_3C7B8A60016D3F4004BD02C1">
       <contents xmi:type="notation:Diagram" xmi:id="_3C7B8A60016D3F4004BD02C1" type="Class" name="Main">
@@ -90,33 +125,33 @@
         </children>
         <children xmi:id="_JFmJ5N7NEdmKapscEl8OLg" targetEdges="_JFsQw97NEdmKapscEl8OLg">
           <children xmi:id="_JFmJ597NEdmKapscEl8OLg" type="ImageCompartment">
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
             <layoutConstraint xmi:type="notation:Size" xmi:id="_JFmJ6N7NEdmKapscEl8OLg" width="1320" height="1320"/>
           </children>
           <children xmi:id="_JFmJ6d7NEdmKapscEl8OLg" type="Stereotype">
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JFmJ6t7NEdmKapscEl8OLg" type="Name">
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JFmJ697NEdmKapscEl8OLg" visible="false" type="AttributeCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JFmJ7N7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JFmJ7d7NEdmKapscEl8OLg" visible="false" type="OperationCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JFmJ7t7NEdmKapscEl8OLg" collapsed="true"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JFmJ797NEdmKapscEl8OLg" visible="false" type="SignalCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JFmJ8N7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JFmJ8d7NEdmKapscEl8OLg" visible="false" type="StructureCompartment">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JFmJ8t7NEdmKapscEl8OLg" canonical="false"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JFmJ5d7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" italic="true" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
-          <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+          <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JFmJ5t7NEdmKapscEl8OLg" x="37425" y="11656" width="3519" height="1301"/>
         </children>
         <children xmi:id="_JFmJ897NEdmKapscEl8OLg" targetEdges="__8KloOcbEdm9Uq_PGOuigA">
@@ -1320,33 +1355,33 @@
         </children>
         <children xmi:id="_JF4dsN7NEdmKapscEl8OLg" targetEdges="_JF4d197NEdmKapscEl8OLg">
           <children xmi:id="_JF4ds97NEdmKapscEl8OLg" type="ImageCompartment">
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
             <layoutConstraint xmi:type="notation:Size" xmi:id="_JF4dtN7NEdmKapscEl8OLg" width="1320" height="1320"/>
           </children>
           <children xmi:id="_JF4dtd7NEdmKapscEl8OLg" type="Stereotype">
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JF4dtt7NEdmKapscEl8OLg" type="Name">
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JF4dt97NEdmKapscEl8OLg" visible="false" type="AttributeCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JF4duN7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JF4dud7NEdmKapscEl8OLg" visible="false" type="OperationCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JF4dut7NEdmKapscEl8OLg" collapsed="true"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JF4du97NEdmKapscEl8OLg" visible="false" type="SignalCompartment">
             <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_JF4dvN7NEdmKapscEl8OLg"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <children xmi:id="_JF4dvd7NEdmKapscEl8OLg" visible="false" type="StructureCompartment">
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_JF4dvt7NEdmKapscEl8OLg" canonical="false"/>
-            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+            <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_JF4dsd7NEdmKapscEl8OLg" fontName="Arial" fontHeight="11" italic="true" showListStereotype="Text" showListVisibility="Text" fillColor="10337791" lineColor="3342489" showStereotype="Text"/>
-          <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+          <element xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JF4dst7NEdmKapscEl8OLg" x="5612" y="2169" width="3381" height="1532"/>
         </children>
         <children xmi:id="_JF4dv97NEdmKapscEl8OLg" targetEdges="_JF4d4N7NEdmKapscEl8OLg">
@@ -1931,7 +1966,7 @@
         <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D40D03B5F0220?base/base/Importer"/>
       </generalization>
       <generalization xmi:id="_3C7B8A60016D414D7BC70238">
-        <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+        <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
       </generalization>
       <generalization xmi:id="_3C7B8A60016D4155D6F70208">
         <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D4155CD91035D?base/base/SecureObject"/>
@@ -1965,7 +2000,7 @@
         <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D40D03B5F0220?base/base/Importer"/>
       </generalization>
       <generalization xmi:id="_3C7B8A60016D414D7BD00386">
-        <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/XmlExporter"/>
+        <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D414D676C01DB?base/base/Exporter"/>
       </generalization>
       <generalization xmi:id="_3C7B8A60016D4155D7040397">
         <general xmi:type="uml:Class" href="org.opencrx.kernel.base.emx#_3C7B8A60016D4155CD91035D?base/base/SecureObject"/>
@@ -1990,13 +2025,11 @@
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Swg9QHJ6EdylWqtQBgZPMA"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_3C7B8A60016D3F4DC3630259" name="documentState">
-        <ownedComment xmi:id="_IE7-IN7NEdmKapscEl8OLg" body="DS_ACTIVE 0 The account is active. &#xA;DS_INACTIVE 1 The account is inactive. &#xA;&#xA;" annotatedElement="_3C7B8A60016D3F4DC3630259">
-        </ownedComment>
+        <ownedComment xmi:id="_IE7-IN7NEdmKapscEl8OLg" body="DS_ACTIVE 0 The account is active. &#xA;DS_INACTIVE 1 The account is inactive. &#xA;&#xA;" annotatedElement="_3C7B8A60016D3F4DC3630259"/>
         <type xmi:type="uml:Class" href="models.emx#_3C7B8A60016D40747CF6015D?models/org/opencrx/code"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_3C7B8A60016D3F4CA1220267" name="documentType">
-        <ownedComment xmi:id="_IFCEs97NEdmKapscEl8OLg" body="0 - EMail&#xA;1 - CompanyInfo&#xA;2 - ProductInfo&#xA;3 - News&#xA;" annotatedElement="_3C7B8A60016D3F4CA1220267">
-        </ownedComment>
+        <ownedComment xmi:id="_IFCEs97NEdmKapscEl8OLg" body="0 - EMail&#xA;1 - CompanyInfo&#xA;2 - ProductInfo&#xA;3 - News&#xA;" annotatedElement="_3C7B8A60016D3F4CA1220267"/>
         <type xmi:type="uml:Class" href="models.emx#_3C7B8A60016D40747CF6015D?models/org/opencrx/code"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_3C7B8A60016D3F463C2503B2" name="activeOn">
@@ -2246,6 +2279,8 @@
       </ownedAttribute>
       <ownedAttribute xmi:id="_U7ozwOcdEdm9Uq_PGOuigA" name="description">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B62E40010?w3c/w3c/string"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_I6aO4UkSEd2SysOvw5HwnA" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_I6aO4EkSEd2SysOvw5HwnA"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_p32vAucdEdm9Uq_PGOuigA" name="parent" type="_BTE4wOcdEdm9Uq_PGOuigA" association="_p32vAOcdEdm9Uq_PGOuigA">
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_yyZoIecdEdm9Uq_PGOuigA" value="1"/>

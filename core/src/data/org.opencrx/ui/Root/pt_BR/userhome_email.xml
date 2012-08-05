@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:eMailAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>E-Mail</_item>
+                        <_item>e-mail</_item>
                       </label>
                       <toolTip>
-                        <_item>E-Mail</_item>
+                        <_item>e-mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:EMailAccount:replyEMailAddress" _operation="create">
                     <_object>
                       <label>
-                        <_item>Endereço de Retorno</_item>
+                        <_item>Endereço de Reposta</_item>
                       </label>
                       <toolTip>
-                        <_item>Endereço de Retorno</_item>
+                        <_item>Endereço de Reposta</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,13 +69,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:EMailAccount:outgoingMailServiceName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Servico de email de saida</_item>
+                        <_item>Servico de envio de e-mail</_item>
                       </label>
                       <shortLabel>
                         <_item>Saida</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Servico de Email de saida</_item>
+                        <_item>Servico de envio de e-mail</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -83,13 +83,13 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:EMailAccount:incomingMailServiceName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Servico de Email de entrada</_item>
+                        <_item>Servico de e-mail de entrada</_item>
                       </label>
                       <shortLabel>
                         <_item>Entrada</_item>
                       </shortLabel>
                       <toolTip>
-                        <_item>Servico de Email de entrada</_item>
+                        <_item>Servico de e-mail de entrada</_item>
                       </toolTip>
                     </_object>
                     <_content/>

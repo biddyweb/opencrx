@@ -1,16 +1,15 @@
 <project>
     <shortName>opencrxServer</shortName>
     <fullName>openCRX Server</fullName>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-server/README</readmeFile>
     <licenseFile>../../image/opencrx-server/LICENSE</licenseFile>
     <logoImage>../../image/opencrx-server/logo.png</logoImage>
     <splashImage>../../image/opencrx-server/splash.gif</splashImage>
-    <postInstallationScript>${installdir}/bin/postinstallation.sh</postInstallationScript>
     <showPostInstallationScriptResult>1</showPostInstallationScriptResult>
-    <preUninstallationScript>${installdir}/bin/preuninstallation.sh</preUninstallationScript>
     <enableRollback>1</enableRollback>
+    <uninstallerDirectory>${installdir}/opencrx-server</uninstallerDirectory>
     <componentList>
         <component>
             <name>default</name>
@@ -20,40 +19,18 @@
             <show>1</show>
             <desktopShortcutList>
                 <shortcut>
-                    <comment>Start openCRX</comment>
-                    <exec>${installdir}/bin/control.sh START</exec>
-                    <icon>${installdir}/favicon.ico</icon>
-                    <name>Start openCRX</name>
-                    <path>${installdir}/bin</path>
+                    <comment>${product_fullname} HSQLDB Console (${hsqldb_port})</comment>
+                    <exec>${installdir}/data/crx_2_1/startdbmanager.sh</exec>
+                    <icon>${installdir}/opencrx-server/favicon.ico</icon>
+                    <name>${product_fullname} HSQLDB Console (${hsqldb_port})</name>
+                    <path>${installdir}/data/crx_2_1/</path>
                     <platforms>all</platforms>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/bin/control.bat</windowsExec>
-                    <windowsExecArgs>START</windowsExecArgs>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                    <windowsPath>${installdir}/bin</windowsPath>
+                    <windowsExec>${installdir}/data/crx_2_1/startdbmanager.bat</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>${installdir}/opencrx-server/favicon.ico</windowsIcon>
+                    <windowsPath>${installdir}/data/crx_2_1/</windowsPath>
                 </shortcut>
-                <shortcut>
-                    <comment>Stop openCRX</comment>
-                    <exec>${installdir}/bin/control.sh STOP</exec>
-                    <icon>${installdir}/favicon.ico</icon>
-                    <name>Stop openCRX</name>
-                    <path>${installdir}/bin</path>
-                    <platforms>all</platforms>
-                    <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/bin/control.bat</windowsExec>
-                    <windowsExecArgs>STOP</windowsExecArgs>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                    <windowsPath>${installdir}/bin</windowsPath>
-                </shortcut>
-                <linkShortcut>
-                    <comment>Login openCRX Core</comment>
-                    <icon>${installdir}/favicon.ico</icon>
-                    <name>Login Core</name>
-                    <platforms>all</platforms>
-                    <runInTerminal>0</runInTerminal>
-                    <url>http://localhost:${tomcat_port}/opencrx-core-CRX</url>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                </linkShortcut>
             </desktopShortcutList>
             <folderList>
                 <folder>
@@ -63,7 +40,7 @@
                     <platforms>all</platforms>
                     <actionList>
                         <substitute>
-                            <files>*/*.bat; */*.sh</files>
+                            <files>*/*.bat; */*.sh; */*.properties; */ra.xml; */opencrx-core-CRX.xml; */opencrx-ical-CRX.xml; */opencrx-vcard-CRX.xml</files>
                             <type>regexp</type>
                             <substitutionList>
                                 <substitution>
@@ -75,71 +52,12 @@
                                     <value>${java_home}</value>
                                 </substitution>
                                 <substitution>
-                                    <pattern>@@MYSQL_HOME@@</pattern>
-                                    <value>${mysql_home}</value>
-                                </substitution>
-                                <substitution>
                                     <pattern>@@VERSION@@</pattern>
                                     <value>${product_version}</value>
                                 </substitution>
-                            </substitutionList>
-                        </substitute>
-                        <substitute>
-                            <files>*/my.*</files>
-                            <type>regexp</type>
-                            <substitutionList>
                                 <substitution>
-                                    <pattern>@@INSTALLDIR@@</pattern>
-                                    <value>${installdir}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>@@MYSQL_HOME@@</pattern>
-                                    <value>${mysql_home}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>port=3306</pattern>
-                                    <value>port=${mysql_port}</value>
-                                </substitution>
-                                <substitution>
-                                    <pattern>\\</pattern>
-                                    <value>/</value>
-                                </substitution>
-                            </substitutionList>
-                        </substitute>
-                        <substitute>
-                            <files>*/server.xml</files>
-                            <type>regexp</type>
-                            <substitutionList>
-                                <substitution>
-                                    <pattern>port="8080"</pattern>
-                                    <value>port="${tomcat_port}"</value>
-                                </substitution>
-                            </substitutionList>
-                        </substitute>
-                        <substitute>
-                            <files>*/ra.xml; */opencrx-core-CRX.xml</files>
-                            <type>regexp</type>
-                            <substitutionList>
-                                <substitution>
-                                    <pattern>localhost:3306</pattern>
-                                    <value>localhost:${mysql_port}</value>
-                                </substitution>
-                            </substitutionList>
-                        </substitute>
-                        <substitute>
-							<ruleList>
-								<compareText>
-									<text>${platform_name}</text>
-									<logic>equals</logic>
-									<value>windows</value>
-								</compareText>			
-							</ruleList>                        
-                            <files>*/ra.xml; */opencrx-core-CRX.xml</files>
-                            <type>regexp</type>
-                            <substitutionList>
-                                <substitution>
-                                    <pattern>manager99</pattern>
-                                    <value>${mysql_root_password}</value>
+                                    <pattern>@@HSQLDB_PORT@@</pattern>
+                                    <value>${hsqldb_port}</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -153,37 +71,25 @@
                             <origin>../../image/opencrx-server/apache-tomcat-6</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../image/opencrx-server/connectors</origin>
-                        </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>../../image/opencrx-server/mysql-5</origin>
-                        </distributionDirectory>
-                        <distributionFile>
-                            <origin>../../image/opencrx-server/favicon.ico</origin>
-                        </distributionFile>
-                        <distributionDirectory>
                             <origin>../../image/opencrx-server/bin</origin>
                         </distributionDirectory>
-                        <distributionFile>
-                            <origin>../../image/opencrx-server/README</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>../../image/opencrx-server/LICENSE</origin>
-                        </distributionFile>
+                        <distributionDirectory>
+                            <origin>../../image/opencrx-server/data</origin>
+                        </distributionDirectory>
                     </distributionFileList>
                     <shortcutList>
                         <shortcut>
                             <comment>Uninstall</comment>
-                            <exec>${installdir}/${uninstallerName}</exec>
+                            <exec>${installdir}/opencrx-server/${uninstallerName}</exec>
                             <icon></icon>
-                            <name>Uninstall ${product_fullname}</name>
-                            <path>${installdir}</path>
+                            <name>Uninstall ${product_fullname} (${hsqldb_port})</name>
+                            <path>${installdir}/opencrx-server/</path>
                             <platforms>all</platforms>
                             <runInTerminal>0</runInTerminal>
-                            <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                            <windowsExec>${installdir}/opencrx-server/${uninstallerName}.exe</windowsExec>
                             <windowsExecArgs></windowsExecArgs>
                             <windowsIcon></windowsIcon>
-                            <windowsPath>${installdir}</windowsPath>
+                            <windowsPath>${installdir}/opencrx-server/</windowsPath>
                         </shortcut>
                     </shortcutList>
                 </folder>
@@ -217,92 +123,42 @@
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>tomcat-bin</description>
-                    <destination>${installdir}/apache-tomcat-6/bin</destination>
-                    <name>tomcat-bin</name>
+                    <description>opencrx-server</description>
+                    <destination>${installdir}/opencrx-server</destination>
+                    <name>opencrx-server</name>
                     <platforms>all</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>../../../opt/openmdx-2.0.0/jre-1.5/core/lib/tomcat-juli.jar</origin>
-                        </distributionFile>
-                    </distributionFileList>
-                </folder>
-                <folder>
-                    <description>tomcat-lib</description>
-                    <destination>${installdir}/apache-tomcat-6/lib</destination>
-                    <name>tomcat-lib</name>
-                    <platforms>all</platforms>
-                    <distributionFileList>
-                        <distributionFile>
-                            <origin>../../../opt/openmdx-2.0.0/tomcat-6/tomcat/lib/openmdx-tomcat.jar</origin>
+                            <origin>../../image/opencrx-server/favicon.ico</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../../opt/openmdx-2.0.0/tomcat-6/tomcat/lib/catalina.jar</origin>
+                            <origin>../../image/opencrx-server/README</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../../opt/mysql/jre-1.5/mysql-5/lib/mysql-connector-java-bin.jar</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>../../../opt/postgresql/jre-1.5/postgresql-8/lib/postgresql-8.1.jdbc3.jar</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>../../../opt/openmdx-2.0.0/planetj/jre-1.5/compfilter/lib/pjl-comp-filter.jar</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>../../../opt/openmdx-2.0.0/java2/jre-1.5/extension/lib/jcl104-over-slf4j.jar</origin>
+                            <origin>../../image/opencrx-server/LICENSE</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
             </folderList>
             <startMenuShortcutList>
                 <startMenuShortcut>
-                    <comment>Start openCRX</comment>
-                    <name>Start openCRX</name>
+                    <comment>Uninstall ${product_fullname} (${hsqldb_port})</comment>
+                    <name>Uninstall ${product_fullname} (${hsqldb_port})</name>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/bin/control.bat</windowsExec>
-                    <windowsExecArgs>START</windowsExecArgs>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                    <windowsPath>${installdir}/bin</windowsPath>
-                </startMenuShortcut>
-                <startMenuShortcut>
-                    <comment>Uninstall ${product_fullname}</comment>
-                    <name>Uninstall ${product_fullname}</name>
-                    <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                    <windowsExec>${installdir}/opencrx-server/${uninstallerName}.exe</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
                     <windowsIcon></windowsIcon>
-                    <windowsPath>${installdir}/</windowsPath>
+                    <windowsPath>${installdir}/opencrx-server/</windowsPath>
                 </startMenuShortcut>
                 <startMenuShortcut>
-                    <comment>Stop openCRX</comment>
-                    <name>Stop openCRX</name>
+                    <comment>${product_fullname} HSQLDB Console (${hsqldb_port})</comment>
+                    <name>${product_fullname} HSQLDB Console (${hsqldb_port})</name>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/bin/control.bat</windowsExec>
-                    <windowsExecArgs>STOP</windowsExecArgs>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                    <windowsPath>${installdir}/bin</windowsPath>
+                    <windowsExec>${installdir}/data/crx_2_1/startdbmanager.bat</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>${installdir}/opencrx-server/favicon.ico</windowsIcon>
+                    <windowsPath>${installdir}/data/crx_2_1/</windowsPath>
                 </startMenuShortcut>
-                <startMenuLinkShortcut>
-                    <comment>Launch openCRX Core</comment>
-                    <name>Login Core</name>
-                    <runInTerminal>0</runInTerminal>
-                    <url>http://localhost:${tomcat_port}/opencrx-core-CRX</url>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                </startMenuLinkShortcut>
-                <startMenuLinkShortcut>
-                    <comment>Login openCRX Wiki</comment>
-                    <name>Login Wiki</name>
-                    <runInTerminal>0</runInTerminal>
-                    <url>http://localhost:${tomcat_port}/opencrx-wiki-CRX</url>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                </startMenuLinkShortcut>
-                <startMenuLinkShortcut>
-                    <comment>Login openCRX Store</comment>
-                    <name>Login Store</name>
-                    <runInTerminal>0</runInTerminal>
-                    <url>http://localhost:${tomcat_port}/opencrx-store-CRX/Store.jsp</url>
-                    <windowsIcon>${installdir}/favicon.ico</windowsIcon>
-                </startMenuLinkShortcut>
             </startMenuShortcutList>
         </component>
     </componentList>
@@ -312,92 +168,36 @@
             <title>IMPORTANT</title>
             <description></description>
             <explanation>Installation instructions</explanation>
-            <value>This installer creates an openCRX instance running on Tomcat 6 (extended by the openMDX Lightweight EJB Container) and MySQL 5. The installation comes with a preconfigured MySQL database. The installer does NOT include the JDK 1.5 and MySQL 5 Server binaries. Make sure you have these packages installed before continuing.</value>
+            <value>This installer adds openCRX to an existing openMDX Tomcat+LWC installation. The installation comes with a preconfigured HSQLDB database. The installer does NOT include openMDX Tomcat+LWC. Make sure you have this package installed before continuing.</value>
             <default></default>
             <trimMarginNumChars>0</trimMarginNumChars>
         </infoParameter>
         <directoryParameter>
             <name>installdir</name>
-            <description>Installer.Parameter.installdir.description</description>
-            <explanation>Installer.Parameter.installdir.explanation</explanation>
-            <value>${platform_install_prefix}/${product_shortname}-${product_version}</value>
-            <default>${platform_install_prefix}/${product_shortname}-${product_version}</default>
+            <description>Tomcat+LWC directory</description>
+            <explanation>openCRX is added to an existing Tomcat+LWC installation.</explanation>
+            <value></value>
+            <default></default>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
             <cliOptionName>prefix</cliOptionName>
             <mustBeWritable>yes</mustBeWritable>
-            <mustExist>0</mustExist>
-            <width>40</width>
-        </directoryParameter>
-        <directoryParameter>
-            <name>java_home</name>
-            <description>JDK 1.5 home directory</description>
-            <explanation>Select home directory of an existing JDK 1.5, e.g. C:\pgm\Java\jdk1.5.0 on Windows or /usr/lib/jvm/jdk1.5.0 on Linux platforms.</explanation>
-            <value></value>
-            <default></default>
-            <allowEmptyValue>0</allowEmptyValue>
-            <ask>yes</ask>
-            <cliOptionName>prefix</cliOptionName>
-            <mustBeWritable>no</mustBeWritable>
-            <mustExist>1</mustExist>
-            <width>40</width>
-        </directoryParameter>
-        <directoryParameter>
-            <name>mysql_home</name>
-            <description>MySQL 5 home directory</description>
-            <explanation>Select home directory of an existing MySQL 5 Server installation, e.g. C:\pgm\MySQL\MySQL Server 5.0 on Windows or /usr/bin on Linux platforms.</explanation>
-            <value></value>
-            <default>/usr/bin</default>
-            <allowEmptyValue>0</allowEmptyValue>
-            <ask>yes</ask>
-            <cliOptionName>prefix</cliOptionName>
-            <mustBeWritable>no</mustBeWritable>
             <mustExist>1</mustExist>
             <width>40</width>
         </directoryParameter>
         <stringParameter>
-            <name>mysql_port</name>
-            <description>MySQL port</description>
-            <explanation>Please enter the port number for the ${product_shortname}-${product_version}-mysql service.</explanation>
+            <name>hsqldb_port</name>
+            <description>HSQLDB port</description>
+            <explanation>Please enter the port number for the HSQLDB service.</explanation>
             <value></value>
-            <default>3406</default>
-            <allowEmptyValue>0</allowEmptyValue>
-            <width>40</width>
-        </stringParameter>
-        <passwordParameter>
-			<ruleList>
-				<compareText>
-					<text>${platform_name}</text>
-					<logic>equals</logic>
-					<value>windows</value>
-				</compareText>			
-			</ruleList>
-            <name>mysql_root_password</name>
-            <description>MySQL root password</description>
-            <explanation>Please enter the MySQL root password. The password is required to connect to the openCRX database. See README for more information on how to configure database resource descriptors.</explanation>
-            <value></value>
-            <default></default>
-            <allowEmptyValue>0</allowEmptyValue>
-            <ask>yes</ask>
-            <cliOptionName>password</cliOptionName>
-            <descriptionRetype>Retype password</descriptionRetype>
-            <width>40</width>
-        </passwordParameter>    
-        <stringParameter>
-            <name>tomcat_port</name>
-            <description>Tomcat HTTP port</description>
-            <explanation>Please enter the port number for the ${product_shortname}-${product_version}-tomcat-http service.</explanation>
-            <value></value>
-            <default>9080</default>
+            <default>9001</default>
             <allowEmptyValue>0</allowEmptyValue>
             <width>40</width>
         </stringParameter>
     </parameterList>
     <platformOptionsList>
         <platformOptions>
-            <postInstallationScript>${installdir}\bin\postinstallation.bat</postInstallationScript>
             <postInstallationScriptArguments></postInstallationScriptArguments>
-            <preUninstallationScript>${installdir}/bin/preuninstallation.bat</preUninstallationScript>
             <platform>windows</platform>
         </platformOptions>
         <platformOptions>

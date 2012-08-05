@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AlertImpl.java,v 1.3 2007/12/27 14:56:53 wfro Exp $
+ * Name:        $Id: AlertImpl.java,v 1.5 2008/04/05 22:53:39 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/27 14:56:53 $
+ * Date:        $Date: 2008/04/05 22:53:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,8 +56,8 @@
 package org.opencrx.kernel.plugin.application.home1;
 
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -80,8 +80,7 @@ public class AlertImpl {
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void markAsAccepted(
-        org.openmdx.base.jmi1.Void params
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {        
             this.getBackend().getUserHomes().markAsAccepted(
                 this.current.refGetPath()
@@ -89,14 +88,13 @@ public class AlertImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                        
     }
     
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void markAsRead(
-        org.openmdx.base.jmi1.Void params        
-    ) throws javax.jmi.reflect.RefException {
+    ) {
         try {        
             this.getBackend().getUserHomes().markAsRead(
                 this.current.refGetPath()
@@ -104,7 +102,7 @@ public class AlertImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                        
     }
     

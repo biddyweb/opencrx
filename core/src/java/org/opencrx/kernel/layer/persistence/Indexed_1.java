@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.16 2008/02/24 11:33:23 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.19 2008/04/15 18:16:29 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/24 11:33:23 $
+ * Date:        $Date: 2008/04/15 18:16:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -221,7 +221,7 @@ public class Indexed_1
                                      );
                                  }
                                  catch(Exception e) {
-                                     AppLog.warning("Cannot extract text from a RTF document", e);
+                                     AppLog.warning("Cannot extract text from a RTF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                  }
                             }
                             // application/pdf
@@ -235,7 +235,7 @@ public class Indexed_1
                                     );
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from PDF document", e);
+                                    AppLog.warning("Can not extract text from PDF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // application/vnd.ms-excel
@@ -250,7 +250,7 @@ public class Indexed_1
                                     );
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from Excel document", e);
+                                    AppLog.warning("Can not extract text from Excel document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // application/vnd.ms-word
@@ -265,7 +265,7 @@ public class Indexed_1
                                     );
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from Word document", e);
+                                    AppLog.warning("Can not extract text from Word document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // application/vnd.sun.xml.writer
@@ -288,7 +288,7 @@ public class Indexed_1
                                     isXml = true;
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from OpenOffice document", e);
+                                    AppLog.warning("Can not extract text from OpenOffice document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // text/plain
@@ -701,7 +701,7 @@ public class Indexed_1
                             }
                             catch(Exception e) {
                                 AppLog.warning("Can not index", objectsToBeIndexed[i]);
-                                AppLog.info(e.getMessage(), e.getCause(), 1);
+                                AppLog.info(e.getMessage(), e.getCause());
                             }
                         }
                     }

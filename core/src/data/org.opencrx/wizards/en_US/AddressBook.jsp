@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AddressBook.jsp,v 1.30 2008/02/25 10:14:26 cmu Exp $
+ * Name:        $Id: AddressBook.jsp,v 1.40 2008/06/26 00:34:33 wfro Exp $
  * Description: AddressBook
- * Revision:    $Revision: 1.30 $
+ * Revision:    $Revision: 1.40 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/25 10:14:26 $
+ * Date:        $Date: 2008/06/26 00:34:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,18 +80,20 @@ org.openmdx.base.exception.*
 
 	// Init
 	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-	ShowObjectView showView = (ShowObjectView)session.getValue("ObjectInspectorServlet.View");
-	if(
-		(app == null) ||
-		(showView == null)
-	) {
+	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
+	if(objectXri == null || app == null) {
 		session.setAttribute(WIZARD_NAME, null);
 		response.sendRedirect(
-			request.getContextPath() + "/"
+			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
 		return;
 	}
+	javax.jdo.PersistenceManager pm = app.getPmData();
 	Texts_1_0 texts = app.getTexts();
 	org.openmdx.portal.servlet.Codes codes = app.getCodes();
 
@@ -101,31 +103,21 @@ org.openmdx.base.exception.*
 	String startWith = request.getParameter("startWith");
 	String command = request.getParameter("command");
 	String accountXri = request.getParameter("accountXri");
-	String objectXri = request.getParameter("xri");
 	String maxAsString = request.getParameter("max");
 	int max = 10;
 	if((maxAsString != null) && (maxAsString.length() > 0)) {
 		max = Integer.valueOf(maxAsString).intValue();
 	}
-	if ((objectXri == null) || (objectXri != null && objectXri.length() == 0)) {
-		objectXri = showView.getObjectReference().refMofId();
-	}
-	RefPackage_1_1 dataPkg = app.getDataPackage();
-	RefObject_1_0 obj = (RefObject_1_0)dataPkg.refObject(objectXri);
+	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
 	// Get account1 package
-	javax.jdo.PersistenceManager pm = dataPkg.refPersistenceManager();
-	org.opencrx.kernel.account1.jmi1.Account1Package accountPkg =
-		(org.opencrx.kernel.account1.jmi1.Account1Package)((org.openmdx.base.jmi1.Authority)pm.getObjectById(
-			org.openmdx.base.jmi1.Authority.class,
-			org.opencrx.kernel.account1.jmi1.Account1Package.AUTHORITY_XRI
-		)).refImmediatePackage();
+	org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 	// Get account segment
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
 	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-	  (org.opencrx.kernel.account1.jmi1.Segment)dataPkg.refObject(
-		"xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName
+	  (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+		new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
 	   );
 
 	// Exit
@@ -133,7 +125,7 @@ org.openmdx.base.exception.*
 		session.setAttribute(WIZARD_NAME, null);
 		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
 		response.sendRedirect(
-			request.getContextPath() + "/" + showView.getEncodedHRef(nextAction, false)
+			request.getContextPath() + "/" + nextAction.getEncodedHRef()
 		);
 		return;
 	}
@@ -154,11 +146,10 @@ org.openmdx.base.exception.*
 	) {
 		response.setCharacterEncoding("UTF-8");
 		short locale =  app.getCurrentLocaleAsIndex();
-		org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)dataPkg.refObject(accountXri);
+		org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
 		if(account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
 			org.opencrx.kernel.account1.jmi1.Contact contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
-			org.opencrx.kernel.base.jmi1.ExportResult result = contact.exportVcard(locale);
-			byte[] item = result.getItem();
+			byte[] item = contact.getVcard() == null ? null :  contact.getVcard().getBytes("UTF-8");
 			if(item != null) {
 				String location = UUIDs.getGenerator().next().toString();
 				File f = new File(
@@ -170,19 +161,20 @@ org.openmdx.base.exception.*
 				}
 				os.flush();
 				os.close();
+				String filename = org.opencrx.kernel.utils.Utils.toFilename(contact.getFullName()) + ".vcf";
 				Action downloadAction =
 					new Action(
 						Action.EVENT_DOWNLOAD_FROM_LOCATION,
 						new Action.Parameter[]{
 							new Action.Parameter(Action.PARAMETER_LOCATION, location),
-							new Action.Parameter(Action.PARAMETER_NAME, result.getItemName()),
-							new Action.Parameter(Action.PARAMETER_MIME_TYPE, result.getItemMimeType())
+							new Action.Parameter(Action.PARAMETER_NAME, filename),
+							new Action.Parameter(Action.PARAMETER_MIME_TYPE, org.opencrx.kernel.backend.VCard.MIME_TYPE)
 						},
-						app.getTexts().getClickToDownloadText() + " " + result.getItemName(),
+						app.getTexts().getClickToDownloadText() + " " + filename,
 						true
 					);
 				response.sendRedirect(
-					request.getContextPath() + "/" + showView.getEncodedHRef(downloadAction)
+					request.getContextPath() + "/" + downloadAction.getEncodedHRef(requestId)
 				);
 			}
 			else {
@@ -231,8 +223,8 @@ org.openmdx.base.exception.*
 			int nGroups = 0;
 			for(Iterator j = account.getAccountMembership().iterator(); j.hasNext(); ) {
 				org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)j.next();
-				if(membership.getMemberOfAccount() != null) {
-					org.opencrx.kernel.account1.jmi1.Account group = membership.getMemberOfAccount();
+				if(membership.getAccountFrom() != null) {
+					org.opencrx.kernel.account1.jmi1.Account group = membership.getAccountFrom();
 					os.print(group.getFullName() == null ? "" : "\"" + group.getFullName() + "\"");
 					os.print(";");
 					nGroups++;
@@ -317,7 +309,7 @@ org.openmdx.base.exception.*
 				true
 			);
 		response.sendRedirect(
-			request.getContextPath() + "/" + showView.getEncodedHRef(downloadAction)
+			request.getContextPath() + "/" + downloadAction.getEncodedHRef(requestId)
 		);
 	}
 	// Other commands
@@ -460,20 +452,20 @@ org.openmdx.base.exception.*
 			}
 %>
 			<ul class="nav">
-				<li><a href="<%= WIZARD_NAME + "?command=edit&accountXri=newContact" %>">New Contact</a></li>
-				<li><a href="<%= WIZARD_NAME + "?command=edit&accountXri=newLegalEntity" %>">New Legal Entity</a></li>
-				<li><a href="<%= WIZARD_NAME + "?command=edit&accountXri=newGroup" %>">New Group</a></li>
-				<li><a href="<%= WIZARD_NAME + "?command=edit&accountXri=newUnspecifiedAccount" %>">New Unspecified Account</a></li>
-				<li><a href="<%= WIZARD_NAME + "?command=export&startWith=" + URLEncoder.encode(startWith) + "&max=" + max  %>">Export</a></li>
-				<li><a href="<%= WIZARD_NAME + "?command=export*" %>">Export 500</a></li>
-				<li><a href="<%= WIZARD_NAME + "?command=exit"  %>">Exit</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newContact" %>">New Contact</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newLegalEntity" %>">New Legal Entity</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newGroup" %>">New Group</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=newUnspecifiedAccount" %>">New Unspecified Account</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=export&startWith=" + URLEncoder.encode(startWith) + "&max=" + max  %>">Export</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=export*" %>">Export 500</a></li>
+				<li><a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit"  %>">Exit</a></li>
 			</ul>
 			<div class="letterBar">
 <%
 			for(int i = 0; i < 26; i++) {
 				char letter =  (char)('A' + i) ;
 %>
-				<a href="<%= WIZARD_NAME + "?command=search&startWith=" + letter %>" style="font-size:17px;" class="current"><%= "" + letter %></a>
+				<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + letter %>" style="font-size:17px;" class="current"><%= "" + letter %></a>
 <%
 			}
 %>
@@ -484,7 +476,7 @@ org.openmdx.base.exception.*
 			for(int i = 0; i < 26; i++) {
 				char letter =  (char)('A' + i) ;
 %>
-				<a href="<%= WIZARD_NAME + "?command=search&startWith=" + startWith.substring(0,1) + letter %>" style="font-size:11px;" class="current"><%= startWith.substring(0,1) + letter %></a>
+				<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + startWith.substring(0,1) + letter %>" style="font-size:11px;" class="current"><%= startWith.substring(0,1) + letter %></a>
 <%
 			}
 %>
@@ -502,7 +494,7 @@ org.openmdx.base.exception.*
 						<td></td>
 					</tr>
 <%
-					app.refreshDataPkg();
+					app.resetPmData();
 					org.opencrx.kernel.account1.cci2.AccountQuery query = accountPkg.createAccountQuery();
 					short locale =  app.getCurrentLocaleAsIndex();
 					String localeAsString =  app.getCurrentLocaleAsString();
@@ -515,7 +507,7 @@ org.openmdx.base.exception.*
 						String businessEmail = addresses[Accounts.MAIL_BUSINESS] == null ? null : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress();
 						String homeEmail = addresses[Accounts.MAIL_HOME] == null ? null : ((org.opencrx.kernel.address1.jmi1.EmailAddressable)addresses[Accounts.MAIL_HOME]).getEmailAddress();
 %>
-						<tr onclick="javascript:location.href='<%= WIZARD_NAME + "?command=edit&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>';">
+						<tr onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=edit&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>';">
 							<td><%= account.getFullName() %></td>
 							<td><%= addresses[Accounts.POSTAL_BUSINESS] == null ? "-" : app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_BUSINESS], locale, localeAsString, app) %></td>
 							<td><%= addresses[Accounts.POSTAL_HOME] == null ? "-" : app.getPortalExtension().getTitle(addresses[Accounts.POSTAL_HOME], locale, localeAsString, app) %></td>
@@ -525,7 +517,7 @@ org.openmdx.base.exception.*
 <%
                 if(account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
 %>
-							    <a href='<%= WIZARD_NAME + "?command=vcard&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>' onclick='.'><img src='../../images/vcard.gif' alt='VCard' /></a>
+							    <a href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=vcard&accountXri=" + URLEncoder.encode(account.refMofId(), "UTF-8") %>'><img src='../../images/vcard.gif' alt='VCard' /></a>
 <%
                 }
 %>
@@ -539,10 +531,10 @@ org.openmdx.base.exception.*
 					<tr>
 						<td colspan="6">
 							<div class="letterBar">
-								<a href="<%= WIZARD_NAME + "?command=search&startWith=" + URLEncoder.encode(startWith) + "&max=50"  %>">50</a>
-								<a href="<%= WIZARD_NAME + "?command=search&startWith=" + URLEncoder.encode(startWith) + "&max=100"  %>">100</a>
-								<a href="<%= WIZARD_NAME + "?command=search&startWith=" + URLEncoder.encode(startWith) + "&max=200"  %>">200</a>
-								<a href="<%= WIZARD_NAME + "?command=search&startWith=" + URLEncoder.encode(startWith) + "&max=500"  %>">500</a>&nbsp;&nbsp;&nbsp;
+								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=50"  %>">50</a>
+								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=100"  %>">100</a>
+								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=200"  %>">200</a>
+								<a href="<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=search&startWith=" + URLEncoder.encode(startWith) + "&max=500"  %>">500</a>&nbsp;&nbsp;&nbsp;
 							</div>
 						</td>
 					</tr>
@@ -557,7 +549,7 @@ org.openmdx.base.exception.*
 			org.opencrx.kernel.account1.jmi1.Account account = null;
 			org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = new org.opencrx.kernel.account1.jmi1.AccountAddress[12];
 			if(!accountXri.startsWith("new")) {
-				account = (org.opencrx.kernel.account1.jmi1.Account)dataPkg.refObject(accountXri);
+				account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
 				addresses = Accounts.getMainAddresses(account);
 			}
 			String fSalutation = request.getParameter("salutation");
@@ -620,7 +612,7 @@ org.openmdx.base.exception.*
 							} catch(Exception e0) {}
 						}
 						accountXri = account.refMofId();
-						account = (org.opencrx.kernel.account1.jmi1.Account)dataPkg.refObject(accountXri);
+						account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
 					}
 					pm.currentTransaction().begin();
 					if(account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
@@ -926,7 +918,7 @@ org.openmdx.base.exception.*
 						pm.currentTransaction().rollback();
 					} catch(Exception e0) {}
 				}
-				account = (org.opencrx.kernel.account1.jmi1.Account)dataPkg.refObject(accountXri);
+				account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
 				addresses = Accounts.getMainAddresses(account);
 			}
 %>
@@ -935,6 +927,8 @@ org.openmdx.base.exception.*
 		<form method="post" action="<%= WIZARD_NAME %>">
 			<input type="hidden" name="command" value="apply"/>
 			<input type="hidden" name="accountXri" value="<%= accountXri %>"/>
+			<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+			<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 			<div class="col1">
 				<fieldset>
 <%
@@ -1114,7 +1108,7 @@ org.openmdx.base.exception.*
 <%
 				String lastQuery = (String)session.getAttribute(this.getClass().getName() + ".lastQuery");
 %>
-				<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + (lastQuery == null ? "command=exit" : lastQuery) %>';" class="button" />
+				<input type="button" value="Cancel" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&" + (lastQuery == null ? "command=exit" : lastQuery) %>';" class="button" />
 			</div>
 		</form>
 <%

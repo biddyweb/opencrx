@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailStore.java,v 1.7 2007/08/07 17:30:25 wfro Exp $
+ * Name:        $Id: MailStore.java,v 1.9 2008/04/01 12:33:01 wfro Exp $
  * Description: MailStore
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/08/07 17:30:25 $
+ * Date:        $Date: 2008/04/01 12:33:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -96,7 +96,7 @@ public class MailStore {
         catch (Exception e) {
             AppLog.error("Could not get mail session", this.config.getMailServiceName());
             ServiceException e0 = new ServiceException(e);
-            AppLog.error(e0.getMessage(), e0.getCause(), 1);
+            AppLog.error(e0.getMessage(), e0.getCause());
             throw e0;
         }
     }
@@ -122,13 +122,13 @@ public class MailStore {
       catch(FolderNotFoundException e) {
           AppLog.error("Could not open the specified folder '" + name + "'");
           ServiceException e0 = new ServiceException(e);
-          AppLog.error(e0.getMessage(), e0.getCause(), 1);
+          AppLog.error(e0.getMessage(), e0.getCause());
           throw e0;
       } 
       catch(MessagingException e) {
           AppLog.error("Exception while opening folder '" + name + "'");
           ServiceException e0 = new ServiceException(e);
-          AppLog.error(e0.getMessage(), e0.getCause(), 1);
+          AppLog.error(e0.getMessage(), e0.getCause());
           throw e0;          
       }
     }

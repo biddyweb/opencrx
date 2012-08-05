@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: DerivedReferences.java,v 1.8 2008/01/21 00:29:27 wfro Exp $
+ * Name:        $Id: DerivedReferences.java,v 1.9 2008/06/05 16:38:57 wfro Exp $
  * Description: DerivedReferences
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/01/21 00:29:27 $
+ * Date:        $Date: 2008/06/05 16:38:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -212,6 +212,38 @@ public class DerivedReferences {
                     request,
                     request.path().getPrefix(5).getChild("activity"),
                     (FilterProperty[])filterProperties.toArray(new FilterProperty[filterProperties.size()])
+                )
+            );
+        }
+        // GlobalFilterIncludesContract
+        if(
+            request.path().isLike(GLOBAL_FILTER_INCLUDES_CONTRACT)
+        ) {
+            reply = this.backend.getDelegatingLayer().find(
+                header,
+                this.remapFindRequest(
+                    request,
+                    request.path(),
+                    this.backend.getContracts().getContractFilterProperties(
+                        request.path().getPrefix(request.path().size() - 1),
+                        false
+                    )
+                )
+            );
+        } 
+        // GlobalFilterIncludesProduct
+        if(
+            request.path().isLike(GLOBAL_FILTER_INCLUDES_PRODUCT)
+        ) {
+            reply = this.backend.getDelegatingLayer().find(
+                header,
+                this.remapFindRequest(
+                    request,
+                    request.path().getPrefix(5).getChild("product"),
+                    this.backend.getProducts().getProductFilterProperties(
+                        request.path().getPrefix(request.path().size() - 1),
+                        false
+                    )
                 )
             );
         }
@@ -701,6 +733,8 @@ public class DerivedReferences {
     public static final Path GLOBAL_FILTER_INCLUDES_ACTIVITY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityFilter/:*/filteredActivity");
     public static final Path GLOBAL_FILTER_INCLUDES_ACCOUNT = new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/accountFilter/:*/filteredAccount");
     public static final Path GLOBAL_FILTER_INCLUDES_ADDRESS = new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/addressFilter/:*/filteredAddress");
+    public static final Path GLOBAL_FILTER_INCLUDES_CONTRACT = new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filteredContract");
+    public static final Path GLOBAL_FILTER_INCLUDES_PRODUCT = new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/filteredProduct");
     public static final Path ACTIVITY_GROUP_FILTER_INCLUDES_ACTIVITY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
     public static final Path RESOURCE_CONTAINS_WORKREPORT_ENTRY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/resource/:*/workReportEntry");
     public static final Path ACTIVITY_CONTAINS_WORKREPORT_ENTRY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activity/:*/workReportEntry");

@@ -33,6 +33,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Listino (prodotti disabilitati)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Listino (prodotti disabilitati)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:pricingRule" _operation="create">
                     <_object>
                       <label>
@@ -40,17 +58,6 @@
                       </label>
                       <toolTip>
                         <_item>Metodi Tariffazione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Livello Tariffario</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Livello Tariffario</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,112 +84,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:priceListEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Listino (prodotti disabilitati)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Listino (prodotti disabilitati)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:assignedAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettore Prodotto</_item>
+                        <_item>Soggetti (manualmente assegnati)</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i parametri del Selettore</_item>
+                        <_item>Soggetti (manualmente assegnati)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:15" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prodotti (selezionati)</_item>
+                        <_item>&amp;nbsp;</_item>
                       </label>
-                      <toolTip>
-                        <_item>tutti i prodotti selezionati</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Selettore Soggetto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tutti i parametri del Selettore</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Soggetti (selezionati)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>tutti i Soggetti (Selezionati)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:assignedAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Soggetti (Assegnati Manualmente)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Soggetti (Assegnati Manualmente)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Selettore Prodotto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>tutti i parametri del Selettore</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Prodotti (selezionati)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>tutti i prodotti selezionati</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Selettore Soggetto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tutti i parametri del Selettore</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Soggetti (selezionati)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>tutti i Soggetti (Selezionati)</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettori Contratto</_item>
+                        <_item>Filtri Contratto</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettori Contratto</_item>
+                        <_item>Filtri Contratto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:30" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettori Prezzo</_item>
+                        <_item>Filtri Prezzo</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettori Prezzo</_item>
+                        <_item>Filtri Prezzo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -328,6 +273,158 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Livello Tariffario</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Livello Tariffario</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro Prodotto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i parametri del Filtro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prodotti (filtrati)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i prodotti filtrati</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro Soggetto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tutti i parametri del filtro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Soggetti (filtratii)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i Soggetti (filtrati)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Livello tariffario fase prodotto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Livello tariffario fase prodotto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro Prodotto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i parametri del Filtro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prodotti (filtratii)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i prodotti filtrati</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro Soggetto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tutti i parametri del Filtro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Soggetti (filtrati)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i Soggetti (filtrati)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Chiave Fase</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Chiave Fase</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Chiave fase prodotto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:defaultOffsetValidFromHh" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Formato valido da in hh</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Da hh</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Formato valido da in hh</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:defaultOffsetValidToHh" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Formato valido al in hh</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>A (hh)</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Formato valido a in hh</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceModifier:description" _operation="create">
                     <_object>
                       <label>
@@ -419,10 +516,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:LinearPriceModifier:priceOffset" _operation="create">
                     <_object>
                       <label>
-                        <_item>Compensazione Prezzo</_item>
+                        <_item>Formato Prezzo</_item>
                       </label>
                       <toolTip>
-                        <_item>Compensazione del Prezzo</_item>
+                        <_item>Formato del Prezzo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -497,6 +594,17 @@
                       </label>
                       <toolTip>
                         <_item>Descrizione Prodotto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceListEntry:productDisabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prodotto disabilitato</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prodotto disabilitato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -776,6 +884,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CreateInitialPricesParams:includeProductsModifiedSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Incl. prodotti modificati dal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Incl. prodotti modificati dal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:createInitialPrices:Group:result" _operation="create">
                     <_object>
                       <label>
@@ -886,6 +1005,61 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Calcolare Prezzi</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Calcolare Prezzi</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Invio</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Invio</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:processingMode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Metodo Elaborazione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Metodo Elaborazione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:includeProductsModifiedSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Incl. prodotti modificati dal</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Incl. prodotti modificati dal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Esito</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Esito</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:Pane:Op:Tab:clonePriceLevel" _operation="create">
                     <_object>
                       <label>
@@ -974,18 +1148,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel" _operation="create">
                     <_object>
                       <label>
-                        <_item>Calcolare Prezzi</_item>
+                        <_item>Duplica livello tariffario fase Prodotto</_item>
                       </label>
                       <toolTip>
-                        <_item>Calcolare Prezzi</_item>
+                        <_item>Duplica livello tariffario di fase Prodotto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevel:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>Invio</_item>
@@ -996,18 +1170,51 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CalculatePricesParams:processingMode" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:processingMode" _operation="create">
                     <_object>
                       <label>
-                        <_item>Metodo Elaborazione</_item>
+                        <_item>Modo di elaborazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Metodo Elaborazione</_item>
+                        <_item>Modo di elaborazione</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Op:Tab:calculatePrices:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:productPhaseKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Chiave Fase Prodotto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Chiave Fase Prodotto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementRegex" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Espressione di sostituzione del nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Espressione di sostituzione del nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CloneProductPhasePriceLevelParams:nameReplacementValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Valore di sostituzione nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Valore di sostituzione nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:Pane:Op:Tab:cloneProductPhasePriceLevelParams:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>Esito</_item>

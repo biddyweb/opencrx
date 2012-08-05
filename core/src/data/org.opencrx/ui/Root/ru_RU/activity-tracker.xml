@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityTracker" _operation="create">
                     <_object>
                       <label>
-                        <_item>Охотники деятельности</_item>
+                        <_item>Слежение за деятельностью</_item>
                       </label>
                       <toolTip>
-                        <_item>Охотники деятельности</_item>
+                        <_item>Слежение за деятельностью</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityMilestone" _operation="create">
                     <_object>
                       <label>
-                        <_item>Промежуточные отчеты</_item>
+                        <_item>Этапы</_item>
                       </label>
                       <toolTip>
-                        <_item>Промежуточные отчеты</_item>
+                        <_item>Этапы</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:filteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Деятельность</_item>
+                        <_item>Деятельности</_item>
                       </label>
                       <toolTip>
-                        <_item>Все виды деят.</_item>
+                        <_item>Деятельности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -73,6 +73,17 @@
                       </label>
                       <toolTip>
                         <_item>Заметки деятельности</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Создатели деятельности</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Создатели деятельности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -121,24 +132,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:actualEffortHours" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:defaultCreator" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (действительное усилие)</_item>
+                        <_item>Создатель деятельности по умолчанию</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (действительное усилие)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:actualEffortMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (действительное усилие)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (действительное усилие)</_item>
+                        <_item>Создатель деятельности по умолчанию</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone" _operation="create">
                     <_object>
                       <label>
-                        <_item>Промежуточный отчет деятельности</_item>
+                        <_item>Этап деятельности</_item>
                       </label>
                       <toolTip>
-                        <_item>Промежуточный отчет деятельности</_item>
+                        <_item>Этап деятельности</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone:scheduledDate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Назначенные даты</_item>
+                        <_item>Назначенная дата</_item>
                       </label>
                       <toolTip>
-                        <_item>Назначенные даты</_item>
+                        <_item>Назначенная дата</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker" _operation="create">
                     <_object>
                       <label>
-                        <_item>Охотник деятельности</_item>
+                        <_item>Слежение за деятельностью</_item>
                       </label>
                       <toolTip>
-                        <_item>Охотник деятельности</_item>
+                        <_item>Слежение за деятельностью</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +190,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:estimateEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (предполагаемое усилие)</_item>
+                        <_item>чч (предполагаемое усилие)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (предполагаемое усилие)</_item>
+                        <_item>чч (предполагаемое усилие)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:estimateEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (предполагаемое усилие)</_item>
+                        <_item>мм (предполагаемое усилие)</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (предполагаемое усилие)</_item>
+                        <_item>мм (предполагаемое усилие)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -215,7 +215,7 @@
                         <_item>Макс. отклонение в %</_item>
                       </label>
                       <toolTip>
-                        <_item>Макс. отклонение в %</_item>
+                        <_item>Максимальное отклонение в %</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:sumEstimateEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>Σ hh (предполагаемое усилие)</_item>
+                        <_item>Σ чч (предполагаемое усилие)</_item>
                       </label>
                       <toolTip>
-                        <_item>Σ hh (предполагаемое усилие)</_item>
+                        <_item>Σ чч (предполагаемое усилие)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -234,10 +234,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:sumEstimateEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>Σ mm (предполагаемое усилие)</_item>
+                        <_item>Σ мм (предполагаемое усилие)</_item>
                       </label>
                       <toolTip>
-                        <_item>Σ mm (предполагаемое усилие)</_item>
+                        <_item>Σ мм (предполагаемое усилие)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -249,6 +249,61 @@
                       </label>
                       <toolTip>
                         <_item>Добро пожаловать</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Подсчитать действительные усилия</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Подсчитать действительные усилия</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ввод</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ввод</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcActualEffort:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Результат</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Результат</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortHours" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>чч (действительные затраты)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>чч (действительные затраты)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:CalcActualEffortResult:actualEffortMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>мм (действительные затраты)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>мм (действительные затраты)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

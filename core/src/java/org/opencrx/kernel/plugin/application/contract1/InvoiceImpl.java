@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: InvoiceImpl.java,v 1.3 2007/12/27 14:56:52 wfro Exp $
+ * Name:        $Id: InvoiceImpl.java,v 1.4 2008/04/03 12:24:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/27 14:56:52 $
+ * Date:        $Date: 2008/04/03 12:24:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,8 +56,8 @@
 package org.opencrx.kernel.plugin.application.contract1;
 
 import org.opencrx.kernel.backend.Backend;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.accessor.jmi.spi.RefException_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasePackage;
 
@@ -81,7 +81,7 @@ public class InvoiceImpl {
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void markAsClosed(
         org.opencrx.kernel.contract1.jmi1.InvoiceMarkAsClosedParams params
-    ) throws javax.jmi.reflect.RefException  {
+    ) {
         try {        
             this.getBackend().getContracts().markAsClosed(
                 this.current.refGetPath(),
@@ -90,7 +90,7 @@ public class InvoiceImpl {
             return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
         }
         catch(ServiceException e) {
-            throw new RefException_1(e);
+            throw new JmiServiceException(e);
         }                    
     }
     

@@ -11,13 +11,57 @@
               <_object/>
               <_content>
                 <elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:productFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtri Prodotto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>tutti i filtri prodotto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filtro Prodotto</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filtro Prodotto</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nome</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nome</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductFilterGlobal:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descrizione</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descrizione</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prodotti Selezionati</_item>
+                        <_item>Prodotti filtrati</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i prodotti selezionati</_item>
+                        <_item>tutti i prodotti filtrati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:productFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametri Selettore</_item>
+                        <_item>Parametri Filtro</_item>
                       </label>
                       <toolTip>
-                        <_item>tutti i parametri del Selettore</_item>
+                        <_item>tutti i parametri del Filtro</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractFilterProduct:Pane:Op:Tab:countFilteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Conteggio Prodotti Selezionati</_item>
+                        <_item>Conteggio Prodotti Filtrati</_item>
                       </label>
                       <toolTip>
-                        <_item>Conteggio Prodotti Selezionati</_item>
+                        <_item>Conteggio Prodotti Filtrati</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductClassificationFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettore per Classificazione Prodotto</_item>
+                        <_item>Parametro Filtro Classificazione Prodotto</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettore per Classificazione del Prodotto</_item>
+                        <_item>Parametro filtro Classificazione del Prodotto</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettore per Categoria</_item>
+                        <_item>Parametro Filtro per Categoria</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettore per Categoria</_item>
+                        <_item>Parametro Filtro per Categoria</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceUomFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettore per UdM (prezzo)</_item>
+                        <_item>Parametro filtro per UdM (prezzo)</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettore per Unita&apos; di Misura (prezzo)</_item>
+                        <_item>Parametro filtro per Unita&apos; di Misura (prezzo)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Selettore per tipo tassa vendite predefinita</_item>
+                        <_item>Parametro filtro per tipo predefinito tassa vendite</_item>
                       </label>
                       <toolTip>
-                        <_item>Selettore per Tipo tassa vendite predefinita</_item>
+                        <_item>Parametro filtro per Tipo predefinito tassa vendite</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:DisabledFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Disabilita parametro Selettore</_item>
+                        <_item>Parametro Filtro disabilitato</_item>
                       </label>
                       <toolTip>
-                        <_item>Disabilita parametro Selettore</_item>
+                        <_item>Parametro filtro disabilitato</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductQueryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Parametro Selettore per Interrogazione</_item>
+                        <_item>PArametro filtro per Interrogazione</_item>
                       </label>
                       <toolTip>
-                        <_item>Parametro Selettore per Interrogazione</_item>
+                        <_item>Parametro filtro per Interrogazione</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -297,6 +297,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:900100:Group:99" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>DEPRECATO</_item>
+                      </label>
+                      <toolTip>
+                        <_item>DEPRECATO</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
                     <_object>
                       <label>
@@ -374,6 +385,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:religion" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Religioni</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Religioni</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education" _operation="create">
                     <_object>
                       <label>
@@ -440,6 +462,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:citizenship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cittadinanza</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cittadinanza</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
                     <_object>
                       <label>
@@ -449,6 +482,10 @@
                         <_item>Foto</_item>
                       </toolTip>
                     </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="null">
+                    <_object/>
                     <_content>
                       <alternateElementDefinition>
                         <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
@@ -476,46 +513,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>Esporta come vCard</_item>
+                        <_item>Importa vCard</_item>
                       </label>
                       <toolTip>
-                        <_item>Esporta come vCard</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Invio</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Invio</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Lingua</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Lingua</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Esito</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Esito</_item>
+                        <_item>Importa vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导出档案</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导出档案</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
                     <_object>
                       <label>
@@ -569,6 +580,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:iconKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>图标值</_item>
+                      </label>
+                      <toolTip>
+                        <_item>图标值</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>操作类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>操作类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>操作名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>操作名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>操作参数</_item>
+                      </label>
+                      <toolTip>
+                        <_item>操作参数</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory" _operation="create">
                     <_object>
                       <label>
@@ -642,6 +697,160 @@
                       </label>
                       <toolTip>
                         <_item>图形</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>对象查找器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>对象查找器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>联系人管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>联系人管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>活动管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>活动管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>营销管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>营销管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>产品管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>产品管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDocument" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文档管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文档管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryBuilding" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>物业管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>物业管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDepot" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>库存管理</_item>
+                      </label>
+                      <toolTip>
+                        <_item>库存管理</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:allWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>全部匹配</_item>
+                      </label>
+                      <toolTip>
+                        <_item>全部匹配</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:atLeastOneOfTheWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>其中之一</_item>
+                      </label>
+                      <toolTip>
+                        <_item>其中之一</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:withoutWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>全部没有</_item>
+                      </label>
+                      <toolTip>
+                        <_item>全部没有</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>导出档案</_item>
+                      </label>
+                      <toolTip>
+                        <_item>导出档案</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1060,6 +1269,138 @@
                       </label>
                       <toolTip>
                         <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:210" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>查找</_item>
+                      </label>
+                      <toolTip>
+                        <_item>查找</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>查找</_item>
+                      </label>
+                      <toolTip>
+                        <_item>查找</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchBasicParams:searchExpression" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>查找这个</_item>
+                      </label>
+                      <toolTip>
+                        <_item>查找这个</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>高级查找</_item>
+                      </label>
+                      <toolTip>
+                        <_item>高级查找</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:allWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>全部匹配</_item>
+                      </label>
+                      <toolTip>
+                        <_item>全部匹配</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:atLeastOneOfTheWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>其中之一</_item>
+                      </label>
+                      <toolTip>
+                        <_item>其中之一</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:withoutWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>全部没有</_item>
+                      </label>
+                      <toolTip>
+                        <_item>全部没有</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchResult:objectFinder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>对象查找器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>对象查找器</_item>
                       </toolTip>
                     </_object>
                     <_content/>

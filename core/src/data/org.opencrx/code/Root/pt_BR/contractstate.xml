@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -32,7 +32,7 @@
                               <_item>novo</_item>
                             </shortText>
                             <longText>
-                              <_item>[01] Aberto / novo</_item>
+                              <_item>[01] Aberto/novo</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -43,7 +43,7 @@
                               <_item>preliminar</_item>
                             </shortText>
                             <longText>
-                              <_item>[02] Aberto / preliminar</_item>
+                              <_item>[02] Aberto/preliminar</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -164,7 +164,7 @@
                               <_item>Projeto Postergado</_item>
                             </shortText>
                             <longText>
-                              <_item>[08] Aberto / Projeto Postergado</_item>
+                              <_item>[08] Aberto / Projeto Adiado</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -480,7 +480,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Venceu ou próximo estágio</_item>
+                              <_item>Vencido ou próximo estágio</_item>
                             </shortText>
                             <longText>
                               <_item>[05] Fechado / Venceu ou próximo estágio</_item>

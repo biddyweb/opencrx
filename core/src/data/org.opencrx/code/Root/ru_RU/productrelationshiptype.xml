@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
                           <_object>
                             <shortText>
-                              <_item> NA</_item>
+                              <_item>NA</_item>
                             </shortText>
                             <longText>
                               <_item> N/A</_item>
@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>дополнения</_item>
+                              <_item>дополняет</_item>
                             </shortText>
                             <longText>
-                              <_item>дополнения</_item>
+                              <_item>дополняет</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>Замены</_item>
+                              <_item>Заменяет</_item>
                             </shortText>
                             <longText>
-                              <_item>Замены</_item>
+                              <_item>Заменяет</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
                           <_object>
                             <shortText>
-                              <_item>аналогичные</_item>
+                              <_item>походит</_item>
                             </shortText>
                             <longText>
-                              <_item>аналогичные</_item>
+                              <_item>походит</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -77,6 +77,17 @@
                             </shortText>
                             <longText>
                               <_item>зависит от</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+                          <_object>
+                            <shortText>
+                              <_item>состоит из</_item>
+                            </shortText>
+                            <longText>
+                              <_item>состоит из</_item>
                             </longText>
                           </_object>
                           <_content/>

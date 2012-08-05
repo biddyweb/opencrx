@@ -20,7 +20,7 @@
 												<_item>Search Accounts/Addresses</_item>
 											</toolTip>
 											<label>
-												<_item>Search Accounts/Addresses</_item>
+												<_item>»Search Accounts/Addresses</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -39,12 +39,12 @@
 												<_item>Search Addresses</_item>
 											</toolTip>
 											<label>
-												<_item>Search Addresses</_item>
+												<_item>»Search Addresses</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>50</_item>
+												<_item>60</_item>
 											</order>
 											<maxMember>19</maxMember>
 											<showMaxMember>10</showMaxMember>

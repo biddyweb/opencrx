@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: XmlForWordExportValue.java,v 1.1 2007/11/17 15:51:44 wfro Exp $
+ * Name:        $Id: XmlForWordExportValue.java,v 1.2 2008/03/26 10:55:24 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/11/17 15:51:44 $
+ * Date:        $Date: 2008/03/26 10:55:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -151,7 +151,7 @@ public class XmlForWordExportValue
                 this.getBinaryValue(os);
             }
             catch(ServiceException e) {
-                AppLog.warning(e.getMessage(), e.getCause(), 1);
+                AppLog.warning(e.getMessage(), e.getCause());
             }
             ZipInputStream zip = new ZipInputStream(
                 new ByteArrayInputStream(os.toByteArray())

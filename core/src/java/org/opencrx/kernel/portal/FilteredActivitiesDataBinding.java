@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.6 2007/12/13 00:50:41 wfro Exp $
+ * Name:        $Id: FilteredActivitiesDataBinding.java,v 1.7 2008/04/12 20:20:30 wfro Exp $
  * Description: FilteredActivitiesDataBinding
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/12/13 00:50:41 $
+ * Date:        $Date: 2008/04/12 20:20:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,9 +69,9 @@ import org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_1;
-import org.openmdx.base.jmi1.Authority;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 
 public class FilteredActivitiesDataBinding extends DefaultDataBinding {
@@ -97,11 +97,7 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
             String providerName = ((RefObject_1_0)object).refGetPath().get(2);
             String segmentName = ((RefObject_1_0)object).refGetPath().get(4);
             PersistenceManager pm = ((RefPackage_1_1)object.refOutermostPackage()).refPersistenceManager();
-            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-                (org.opencrx.kernel.activity1.jmi1.Activity1Package)((Authority)pm.getObjectById(
-                    Authority.class,
-                    org.opencrx.kernel.activity1.jmi1.Activity1Package.AUTHORITY_XRI
-                )).refImmediatePackage();
+            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
                     "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
