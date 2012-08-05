@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ContactT.java,v 1.6 2010/03/10 15:20:51 wfro Exp $
+ * Name:        $Id: ContactT.java,v 1.7 2010/06/16 11:43:37 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/10 15:20:51 $
+ * Date:        $Date: 2010/06/16 11:43:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -108,7 +108,6 @@ public class ContactT implements IData {
 	private String officeLocation;
 	private String radioPhoneNumber;
 	private String picture;
-	private String data;
 	private String body;
 	private Date anniversary;
 	private Date birthday;
@@ -633,14 +632,6 @@ public class ContactT implements IData {
 
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
-	}
-	
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
 	}
 	
 	public String getBody() {

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Apps, http://www.opencrx.org/
- * Name:        $Id: UserManager.java,v 1.6 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: UserManager.java,v 1.7 2010/08/30 15:35:40 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@ package org.opencrx.apps.store.manager;
 
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.PrimaryKey;
@@ -79,17 +80,19 @@ public final class UserManager
     public final boolean create(
         final User newValue
     ) {
+    	PersistenceManager pm = null;
     	Transaction tx = null;
         try {
-            tx = this.context.getPersistenceManager().currentTransaction();       
+        	pm = this.context.newPersistenceManager();
+            tx = pm.currentTransaction();       
             tx.begin();
-            Contact contact = this.context.getPersistenceManager().newInstance(Contact.class);
+            Contact contact = pm.newInstance(Contact.class);
             contact.refInitialize(false, false);
             newValue.update(
                 contact, 
                 this.context
             );
-            this.context.getAccountSegment().addAccount(
+            this.context.getAccountSegment(pm).addAccount(
                 false,
                 newValue.getKey().getUuid(),
                 contact
@@ -107,17 +110,24 @@ public final class UserManager
             new ServiceException(e).log();
             return false;
         }
+        finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
+        }
     }
 
     //-----------------------------------------------------------------------
     public final void delete(
         final PrimaryKey key
     ) {
+    	PersistenceManager pm = null;
     	Transaction tx = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
+    		pm = this.context.newPersistenceManager();
+	        tx = pm.currentTransaction();       
 	        tx.begin();
-	        Contact contact = (Contact)this.context.getAccountSegment().getAccount(key.getUuid());
+	        Contact contact = (Contact)this.context.getAccountSegment(pm).getAccount(key.getUuid());
 	        contact.refDelete();
 	        tx.commit();
     	}
@@ -130,38 +140,63 @@ public final class UserManager
         	}
             new ServiceException(e).log();    		
     	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final User get(
         final PrimaryKey key
     ) {
-        if(key.toString().length() > 0) {
-            Contact contact = (Contact)this.context.getAccountSegment().getAccount(key.getUuid());
-            return new User(contact);
-        }
-        else {
-            return null;
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        if(key.toString().length() > 0) {
+	            Contact contact = (Contact)this.context.getAccountSegment(pm).getAccount(key.getUuid());
+	            return new User(contact);
+	        }
+	        else {
+	            return null;
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final User get(
         final String key
     ) {
-        Contact contact = (Contact)this.context.getAccountSegment().getAccount(key);
-        return new User(contact);
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        Contact contact = (Contact)this.context.getAccountSegment(pm).getAccount(key);
+	        return new User(contact);
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final User update(
         final User newValue
     ) {
+    	PersistenceManager pm = null;
     	Transaction tx = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
+    		pm = this.context.newPersistenceManager();
+	        tx = pm.currentTransaction();       
 	        tx.begin();
-	        Contact contact = (Contact)this.context.getAccountSegment().getAccount(newValue.getKey().getUuid());
+	        Contact contact = (Contact)this.context.getAccountSegment(pm).getAccount(newValue.getKey().getUuid());
 	        newValue.update(
 	            contact,
 	            this.context
@@ -178,6 +213,11 @@ public final class UserManager
         	}
             new ServiceException(e).log();
             return null;
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
     	}
     }
 
@@ -204,17 +244,26 @@ public final class UserManager
     public final User getUserByName(
         final String name
     ) {
-        ContactQuery query = (ContactQuery)this.context.getPersistenceManager().newQuery(Contact.class);
-        query.thereExistsAliasName().like(name);
-        List<Contact> contacts = this.context.getAccountSegment().getAccount(query);
-        if(!contacts.isEmpty()) {
-            return new User(
-                contacts.iterator().next()
-            );
-        }
-        else {
-            return null;
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        ContactQuery query = (ContactQuery)pm.newQuery(Contact.class);
+	        query.thereExistsAliasName().like(name);
+	        List<Contact> contacts = this.context.getAccountSegment(pm).getAccount(query);
+	        if(!contacts.isEmpty()) {
+	            return new User(
+	                contacts.iterator().next()
+	            );
+	        }
+	        else {
+	            return null;
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
     
     //-----------------------------------------------------------------------

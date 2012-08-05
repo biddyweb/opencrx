@@ -628,17 +628,14 @@
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4241A9320008" name="WorkAndExpenseRecord">
-            <generalization xmi:id="_3C7B8A60016D4242C53C0017">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
-            <generalization xmi:id="_3C7B8A60016D424D8591004F">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
             <generalization xmi:id="_VQUrEHyeEdqOSfMsBXkuWw">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.depot1.uml#_3C7B8A60016D42964FD10360"/>
             </generalization>
             <generalization xmi:id="_3C7B8A60016D424D5E3201B5">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D40EC62F30068"/>
+            </generalization>
+            <generalization xmi:id="_MO28gKCHEd-sfamC1W0IlA">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
             <ownedAttribute xmi:id="_3C7B8A60016D42429463026F" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>

@@ -1,33 +1,35 @@
 /*
  * ====================================================================
- * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: ServletPort.java,v 1.8 2010/03/19 17:24:28 wfro Exp $
- * Description: ServletPort 
- * Revision:    $Revision: 1.8 $
- * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2010/03/19 17:24:28 $
+ * Project:     openCRX/Test Core, http://www.opencrx.org/
+ * Name:        $Id: ServletPort.java,v 1.10 2010/05/26 14:13:04 wfro Exp $
+ * Description: ServletPort
+ * Revision:    $Revision: 1.10 $
+ * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
+ * Date:        $Date: 2010/05/26 14:13:04 $
  * ====================================================================
  *
- * This software is published under the BSD license as listed below.
+ * This software is published under the BSD license
+ * as listed below.
  * 
- * Copyright (c) 2010, OMEX AG, Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or
- * without modification, are permitted provided that the following
- * conditions are met:
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions 
+ * are met:
  * 
  * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
+ * notice, this list of conditions and the following disclaimer.
  * 
  * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in
- *   the documentation and/or other materials provided with the
- *   distribution.
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
  * 
- * * Neither the name of the openMDX team nor the names of its
- *   contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ * 
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -45,10 +47,12 @@
  * 
  * ------------------
  * 
- * This product includes software developed by other organizations as
- * listed in the NOTICE file.
+ * This product includes software developed by the Apache Software
+ * Foundation (http://www.apache.org/).
+ * 
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
  */
-
 package test.org.opencrx.generic;
 
 import java.io.BufferedReader;
@@ -62,7 +66,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URI;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -100,6 +103,7 @@ import org.openmdx.base.resource.spi.Port;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.spi.RestFormat;
 import org.openmdx.base.rest.spi.RestFormat.Target;
+import org.openmdx.base.text.conversion.URITransformation;
 import org.openmdx.kernel.id.UUIDs;
 import org.w3c.cci2.CharacterLargeObjects;
 import org.xml.sax.InputSource;
@@ -194,7 +198,8 @@ public class ServletPort
 
         protected final EmbeddedSession session = new EmbeddedSession();
         protected final String remoteUser = System.getProperty("user.name", "ServletPort");
-
+        protected static final String CONTEXT_PATH = "/ServletPort";
+        
         /**
          * Constructor 
          *
@@ -207,7 +212,7 @@ public class ServletPort
         ) throws ResourceException {
             super(
                 connection, 
-                "http://test.openmdx.org/ServletPort/"
+                "http://test.openmdx.org" + CONTEXT_PATH
             );
         }
 
@@ -391,10 +396,12 @@ public class ServletPort
             /**
              * Constructor 
              *
-             * @param uri
+             * @param contextURL
              */
-            protected ServletTarget(String uri) {
-                super(uri);
+            protected ServletTarget(
+                String contextURL
+            ) {
+                super(contextURL);
             }
 
             /**
@@ -435,14 +442,14 @@ public class ServletPort
             ){
                 this.interactionSpec = interactionSpec;
                 String servletPath = xri.toXRI();
-                this.servletPath = servletPath.substring(
+                this.servletPath = '/' + servletPath.substring(
                     servletPath.charAt(14) == '!' ? 14 : 15
                 );
             }
             
             protected final RestInteractionSpec interactionSpec;
             protected final String servletPath;
-            protected final ServletTarget outputTarget = new ServletTarget(ServletInteraction.this.uri);
+            protected final ServletTarget outputTarget = new ServletTarget(ServletInteraction.this.contextURL);
             private final EmbeddedRequest request = new EmbeddedRequest();
             private final EmbeddedResponse response = new EmbeddedResponse();
             /* (non-Javadoc)
@@ -453,7 +460,7 @@ public class ServletPort
                 try {
                     setRequestField("Content-Type", MIME_TYPE + ";charset=UTF-8"); 
                     setRequestField("Accept", MIME_TYPE); 
-                    setRequestField("Accept", MIME_TYPE); 
+                    setRequestField("Accept-Charset", "UTF-8"); 
                     setRequestField("interaction-verb", Integer.toString(this.interactionSpec.getInteractionVerb()));
                     this.outputTarget.close();
                     ServletPort.this.servlet.service(this.request, this.response);
@@ -484,9 +491,10 @@ public class ServletPort
             ) throws ServiceException {
                 InputSource source = this.response.body.getInputSource(); 
                 return new RestFormat.Source(
-                    ServletInteraction.this.uri,
+                    ServletInteraction.this.contextURL,
                     source,
-                    MIME_TYPE
+                    MIME_TYPE, 
+                    null
                 );
             }
 
@@ -508,7 +516,6 @@ public class ServletPort
             class EmbeddedRequest implements HttpServletRequest {
                 
                 private final Map<String,String> headers = new HashMap<String,String>();
-                private URI uri = null;
                 private final Map<String,String[]> parameters = new HashMap<String,String[]>();
                 
                 @Override
@@ -518,7 +525,7 @@ public class ServletPort
 
                 @Override
                 public String getContextPath() {
-                    throw new UnsupportedOperationException();
+                   return CONTEXT_PATH;
                 }
 
                 @Override
@@ -578,7 +585,7 @@ public class ServletPort
 
                 @Override
                 public String getPathInfo() {
-                    throw new UnsupportedOperationException();
+                    return null;
                 }
 
                 @Override
@@ -598,18 +605,15 @@ public class ServletPort
 
                 @Override
                 public String getRequestURI() {
-                    if(this.uri == null) {
-                        this.uri = URI.create(ServletInteraction.this.uri); 
-                    }
-                    return this.uri.getPath();
+                    return getContextPath() + URITransformation.encode(ServletMessage.this.servletPath);
                 }
 
                 @Override
                 public StringBuffer getRequestURL() {
                     return new StringBuffer(
-                        ServletInteraction.this.uri
+                        ServletInteraction.this.contextURL
                     ).append(
-                        ServletMessage.this.servletPath
+                        URITransformation.encode(ServletMessage.this.servletPath)
                     );
                 }
 
@@ -620,7 +624,7 @@ public class ServletPort
 
                 @Override
                 public String getServletPath() {
-                    return '/' + ServletMessage.this.servletPath;
+                    return ServletMessage.this.servletPath;
                 }
 
                 @Override

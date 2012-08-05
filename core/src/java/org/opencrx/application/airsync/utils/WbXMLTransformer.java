@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: WbXMLTransformer.java,v 1.5 2010/03/01 14:00:59 wfro Exp $
+ * Name:        $Id: WbXMLTransformer.java,v 1.6 2010/05/18 13:48:13 wfro Exp $
  * Description: ActiveSync
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/01 14:00:59 $
+ * Date:        $Date: 2010/05/18 13:48:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -135,7 +135,15 @@ public class WbXMLTransformer {
 
 	}
 
-	private static XMLOutputFactory xmlOutputFactory = XMLOutputFactories.newInstance("application/vnd.ms-sync.wbxml");
+	private static XMLOutputFactory xmlOutputFactory; 
 	private static TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	
+	static {
+		try {
+			xmlOutputFactory = XMLOutputFactories.newInstance("application/vnd.ms-sync.wbxml");
+		} catch(Exception e) {
+			new ServiceException(e).log();
+		}
+	}
 	
 }

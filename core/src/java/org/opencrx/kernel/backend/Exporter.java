@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.50 2010/04/07 12:16:27 wfro Exp $
+ * Name:        $Id: Exporter.java,v 1.53 2010/09/06 14:06:16 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.50 $
+ * Revision:    $Revision: 1.53 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/07 12:16:27 $
+ * Date:        $Date: 2010/09/06 14:06:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -370,7 +370,7 @@ public class Exporter extends AbstractImpl {
 					);
 					objectExporter.export(
 						startPoint, 
-						startPoint.getObject().refGetPath().getParent().getBase(), "xri://+resource/" + namespace.replace(':', '/') + "/" + modelName + "/xmi/" + modelName + ".xsd"
+						startPoint.getObject().refGetPath().getParent().getBase(), "xri://+resource/" + namespace.replace(':', '/') + "/" + modelName + "/xmi1/" + modelName + ".xsd"
 					);
 					// Update referenced and exported objects
 					for (TraversedObject o : objectExporter.getReferencedObjects()) {
@@ -1255,7 +1255,7 @@ public class Exporter extends AbstractImpl {
 		}
 
 		// ---------------------------------------------------------------------
-		final Set<String> NOT_EXPORTED_ATTRIBUTES = new HashSet<String>(Arrays.asList(SystemAttributes.OBJECT_INSTANCE_OF, SystemAttributes.CONTEXT_CAPABLE_CONTEXT));
+		final Set<String> NOT_EXPORTED_ATTRIBUTES = new HashSet<String>(Arrays.asList(SystemAttributes.OBJECT_INSTANCE_OF));
 
 		final List<TraversedObject> referencedObjects;
 

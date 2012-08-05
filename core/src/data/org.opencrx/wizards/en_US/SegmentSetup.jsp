@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.72 2010/04/29 15:02:44 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.75 2010/05/30 22:06:13 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.72 $
+ * Revision:    $Revision: 1.75 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/29 15:02:44 $
+ * Date:        $Date: 2010/05/30 22:06:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1016,8 +1016,8 @@ org.openmdx.base.text.conversion.*
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Lead");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Lead");
 			org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty contractQueryFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty .class);
 			contractQueryFilterProperty.refInitialize(false, false);
@@ -1040,15 +1040,15 @@ org.openmdx.base.text.conversion.*
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Lead");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Lead");
 			org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty contractStateFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty.class);
 			contractStateFilterProperty.refInitialize(false, false);
 			contractStateFilterProperty.setName("Won");
 			contractStateFilterProperty.setActive(new Boolean (true));
-			contractStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractStateFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractStateFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractStateFilterProperty.getContractState().add(new Short((short)1110));
 			initContractFilter(
 				CONTRACT_FILTER_NAME_WON_LEADS,
@@ -1066,8 +1066,8 @@ org.openmdx.base.text.conversion.*
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Opportunity");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Opportunity");
 			contractQueryFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty .class);
 			contractQueryFilterProperty.refInitialize(false, false);
@@ -1090,15 +1090,15 @@ org.openmdx.base.text.conversion.*
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Opportunity");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Opportunity");
 			contractStateFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty.class);
 			contractStateFilterProperty.refInitialize(false, false);
 			contractStateFilterProperty.setName("Won");
 			contractStateFilterProperty.setActive(new Boolean (true));
-			contractStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractStateFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractStateFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractStateFilterProperty.getContractState().add(new Short((short)1210));
 			initContractFilter(
 				CONTRACT_FILTER_NAME_WON_OPPORTUNITIES,
@@ -1116,8 +1116,8 @@ org.openmdx.base.text.conversion.*
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Quote");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Quote");
 			contractQueryFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty .class);
 			contractQueryFilterProperty.refInitialize(false, false);
@@ -1140,15 +1140,15 @@ org.openmdx.base.text.conversion.*
 			contractTypeFilterProperty.refInitialize(false, false);
 			contractTypeFilterProperty.setName("Quote");
 			contractTypeFilterProperty.setActive(new Boolean (true));
-			contractTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractTypeFilterProperty.getContractType().add("org:opencrx:kernel:contract1:Quote");
 			contractStateFilterProperty = pm.newInstance(org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty.class);
 			contractStateFilterProperty.refInitialize(false, false);
 			contractStateFilterProperty.setName("Won");
 			contractStateFilterProperty.setActive(new Boolean (true));
-			contractStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			contractStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			contractStateFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			contractStateFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			contractStateFilterProperty.getContractState().add(new Short((short)1310));
 			initContractFilter(
 				CONTRACT_FILTER_NAME_WON_QUOTES,
@@ -1168,8 +1168,8 @@ org.openmdx.base.text.conversion.*
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("Phone Calls");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			activityTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			activityTypeFilterProperty.getActivityType().add(phoneCallsType);
 			initActivityFilter(
 				ACTIVITY_FILTER_NAME_PHONE_CALLS,
@@ -1186,8 +1186,8 @@ org.openmdx.base.text.conversion.*
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("Meetings");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			activityTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			activityTypeFilterProperty.getActivityType().add(meetingsType);
 			initActivityFilter(
 				ACTIVITY_FILTER_NAME_MEETINGS,
@@ -1204,16 +1204,16 @@ org.openmdx.base.text.conversion.*
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("All Types");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			activityTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			activityTypeFilterProperty.getActivityType().add(bugsAndFeaturesType);
 			activityTypeFilterProperty.getActivityType().add(meetingsType);
 			activityTypeFilterProperty.getActivityType().add(emailsType);
 			activityTypeFilterProperty.getActivityType().add(phoneCallsType);
 			org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty activityProcessStateFilterProperty = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty.class);
 			activityProcessStateFilterProperty.refInitialize(false, false);
-			activityProcessStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			activityProcessStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			activityProcessStateFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			activityProcessStateFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			activityProcessStateFilterProperty.getProcessState().add(bugAndFeatureTrackingProcessStateNew);
 			activityProcessStateFilterProperty.getProcessState().add(emailProcessStateNew);
 			initActivityFilter(
@@ -1232,8 +1232,8 @@ org.openmdx.base.text.conversion.*
 			activityTypeFilterProperty.refInitialize(false, false);
 			activityTypeFilterProperty.setName("All Types");
 			activityTypeFilterProperty.setActive(new Boolean (true));
-			activityTypeFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			activityTypeFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			activityTypeFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			activityTypeFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			activityTypeFilterProperty.getActivityType().add(bugsAndFeaturesType);
 			activityTypeFilterProperty.getActivityType().add(meetingsType);
 			activityTypeFilterProperty.getActivityType().add(emailsType);
@@ -1242,8 +1242,8 @@ org.openmdx.base.text.conversion.*
 			activityProcessStateFilterProperty.refInitialize(false, false);
 			activityProcessStateFilterProperty.setName("Open");
 			activityProcessStateFilterProperty.setActive(new Boolean (true));
-			activityProcessStateFilterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
-			activityProcessStateFilterProperty.setFilterOperator(FilterOperators.IS_IN);
+			activityProcessStateFilterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
+			activityProcessStateFilterProperty.setFilterOperator(ConditionType.IS_IN.code());
 			activityProcessStateFilterProperty.getProcessState().add(bugAndFeatureTrackingProcessStateInProgress);
 			activityProcessStateFilterProperty.getProcessState().add(emailProcessStateOpen);
 			initActivityFilter(
@@ -1318,7 +1318,7 @@ org.openmdx.base.text.conversion.*
 			);
 			initDocument(
 				CONTRACT_TEMPLATE_SALESORDER,
-				getServletContext().getResource("/documentsTemplate_SalesOrder.rtf"),
+				getServletContext().getResource("/documents/Template_SalesOrder.rtf"),
 				"text/rtf",
 				CONTRACT_TEMPLATE_SALESORDER,
 				templateFolderSalesOrder,

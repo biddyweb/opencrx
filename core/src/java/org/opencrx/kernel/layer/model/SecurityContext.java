@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.43 2010/04/16 13:51:22 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.47 2010/06/14 14:57:04 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.47 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/16 13:51:22 $
+ * Date:        $Date: 2010/06/14 14:57:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -134,34 +134,36 @@ public class SecurityContext {
         if(!this.isActive) {
             System.out.println("WARNING: AccessControl_1 is not active. Activate with system property " + SecurityKeys.ENABLE_SECURITY_PROPERTY + "=true. Default is true.");
         }
+        if(System.getProperty(SecurityKeys.REALM_REFRESH_RATE_MILLIS) != null) {
+        	this.realmRefreshRateMillis = Long.valueOf(System.getProperty(SecurityKeys.REALM_REFRESH_RATE_MILLIS));
+        }
     }
     
     //-------------------------------------------------------------------------
     private Set<String> getAllSubgroups(
-        PrincipalGroup groupOf,
-        Map<Path,PrincipalGroup> groups
+        PrincipalGroup group,
+        Map<Path,Set<PrincipalGroup>> directSubgroups
     ) throws ServiceException {
+    	Path groupIdentity = group.refGetPath();
         Set<String> subgroups = new HashSet<String>();
         subgroups.add(
-            this.plugin.getQualifiedPrincipalName(groupOf.refGetPath())
+            this.plugin.getQualifiedPrincipalName(groupIdentity)
         );
-        for(Iterator<PrincipalGroup> i = groups.values().iterator(); i.hasNext(); ) {
-        	PrincipalGroup group = i.next();
-            if(group.getIsMemberOf().contains(groupOf)) {
+        if(directSubgroups.get(groupIdentity) != null) {
+	        for(PrincipalGroup subgroup: directSubgroups.get(groupIdentity)) {
                 subgroups.addAll(
-                    this.getAllSubgroups(group, groups)
+           			this.getAllSubgroups(subgroup, directSubgroups)
                 );
-                subgroups.add(
-                    this.plugin.getQualifiedPrincipalName(group.refGetPath())
-                );
-            }
+                subgroups.add(this.plugin.getQualifiedPrincipalName(subgroup.refGetPath()));
+	        }
         }
         return subgroups;
     }
     
     //-------------------------------------------------------------------------
     private Set<String> getAllSupergroups(
-        PrincipalGroup groupOf
+        PrincipalGroup groupOf,
+        Map<String,Set<String>> allSupergroups
     ) throws ServiceException {
         Set<String> supergroups = new HashSet<String>();
         supergroups.add(
@@ -170,8 +172,11 @@ public class SecurityContext {
         List<org.openmdx.security.realm1.jmi1.Group> groups = groupOf.getIsMemberOf();
         for(org.openmdx.security.realm1.jmi1.Group group: groups) {
         	if(group instanceof PrincipalGroup) {
+            	String groupId = this.plugin.getQualifiedPrincipalName(group.refGetPath());
                 supergroups.addAll(
-                    this.getAllSupergroups((PrincipalGroup)group)
+                	allSupergroups.containsKey(groupId) ?
+                		allSupergroups.get(groupId) :
+                			this.getAllSupergroups((PrincipalGroup)group, allSupergroups)
                 );
         	}
         }
@@ -211,44 +216,61 @@ public class SecurityContext {
             // Cache principal groups
         	PrincipalGroupQuery principalGroupQuery = (PrincipalGroupQuery)pm.newQuery(PrincipalGroup.class);
             List<PrincipalGroup> principalGroups = realm.getPrincipal(principalGroupQuery);
-            Map<Path,PrincipalGroup> groups = new HashMap<Path,PrincipalGroup>();
+            Map<Path,PrincipalGroup> allGroups = new HashMap<Path,PrincipalGroup>();
             for(
                 Iterator<PrincipalGroup> i = principalGroups.iterator(); 
                 i.hasNext(); 
             ) {
             	PrincipalGroup principalGroup = i.next();
-                groups.put(
+                allGroups.put(
                     principalGroup.refGetPath(),
                     principalGroup
                 );
             }            
-            // Update group hierarchy
-            Map<String,Set<String>> subgroups = new HashMap<String,Set<String>>();
-            Map<String,Set<String>> supergroups = new HashMap<String,Set<String>>();
-            for(Iterator<Map.Entry<Path,PrincipalGroup>> i = groups.entrySet().iterator(); i.hasNext(); ) {
+            // Update group hierarchy            
+
+            // Prepare groups membership
+            Map<Path,Set<PrincipalGroup>> directSubgroups = new HashMap<Path,Set<PrincipalGroup>>();
+            for(PrincipalGroup group: allGroups.values()) {
+                List<PrincipalGroup> supergroups = group.getIsMemberOf();
+                for(PrincipalGroup supergroup: supergroups) {
+                	Path supergroupIdentity = supergroup.refGetPath();
+                	Set<PrincipalGroup> subgroups = directSubgroups.get(supergroupIdentity);
+                	if(subgroups == null) {
+                		directSubgroups.put(
+                			supergroupIdentity,
+                			subgroups = new HashSet<PrincipalGroup>()
+                		);
+                	}
+                	subgroups.add(group);
+                }
+            }
+            Map<String,Set<String>> allSupergroups = new HashMap<String,Set<String>>();
+            Map<String,Set<String>> allSubgroups = new HashMap<String,Set<String>>();
+            for(Iterator<Map.Entry<Path,PrincipalGroup>> i = allGroups.entrySet().iterator(); i.hasNext(); ) {
             	Map.Entry<Path,PrincipalGroup> e = i.next();
                 Path groupIdentity = e.getKey();
                 PrincipalGroup group = e.getValue();
-                supergroups.put(
+                allSupergroups.put(
                     this.plugin.getQualifiedPrincipalName(groupIdentity),
-                    this.getAllSupergroups(group)
+                    this.getAllSupergroups(group, allSupergroups)
                 );
                 // Do not calculate subgroups for final groups
             	if(Boolean.TRUE.equals(group.isFinal())) {
-	                subgroups.put(
+	                allSubgroups.put(
 	                    this.plugin.getQualifiedPrincipalName(groupIdentity),
 	                    Collections.EMPTY_SET
 	                );
             	}
             	else {
-	                subgroups.put(
+	                allSubgroups.put(
 	                    this.plugin.getQualifiedPrincipalName(groupIdentity),
-	                    this.getAllSubgroups(group, groups)
+	                    this.getAllSubgroups(group, directSubgroups)
 	                );            		
             	}
             }
-            this.supergroups = supergroups;
-            this.subgroups = subgroups;
+            this.supergroups = allSupergroups;
+            this.subgroups = allSubgroups;
         }
         pm.close();
     }
@@ -263,19 +285,31 @@ public class SecurityContext {
         // Refresh subjects
         if( 
             (principal == null) ||
-            (System.currentTimeMillis() > this.securityRealmCheckAt)
-        ) {         
-            PersistenceManager pm = this.plugin.getDelegatingPersistenceManager();
-            org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(this.realmIdentity);
-            Date securityRealmModifiedAt = realm.getModifiedAt();
-            this.assertPrincipals(               
-                principalName,
-                this.securityRealmModifiedAt == null || securityRealmModifiedAt.compareTo(this.securityRealmModifiedAt) != 0
-            );
-            this.securityRealmModifiedAt = securityRealmModifiedAt; 
-            this.securityRealmCheckAt = System.currentTimeMillis() + SECURITY_REALM_CHECK_RATE;
-            pm.close();
-        }        
+            (System.currentTimeMillis() > this.realmRefreshAt)
+        ) {   
+        	if(!this.isRefreshing) {
+        		try {
+        			// Must not be 100% thread-safe. We only want to safe CPU in 
+        			// case multiple threads refresh the cache at the same time.
+        			this.isRefreshing = true;
+		            PersistenceManager pm = this.plugin.getDelegatingPersistenceManager();
+		            org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(this.realmIdentity);
+		            Date securityRealmModifiedAt = realm.getModifiedAt();
+		            this.assertPrincipals(               
+		                principalName,
+		                this.realmModifiedAt == null || securityRealmModifiedAt.compareTo(this.realmModifiedAt) != 0
+		            );
+		            this.realmModifiedAt = securityRealmModifiedAt; 
+		            this.realmRefreshAt = System.currentTimeMillis() + this.realmRefreshRateMillis;
+		            pm.close();
+        		} finally {
+        			this.isRefreshing = false;
+        		}
+        	}
+        }
+        // Principal not found in current state of cache. Either the principal does not 
+        // exist or it exists but will only visible after refreshing the cache. 
+        // Throw a NOT_FOUND now and retry at a later time.
 	    if(principal == null) {
             principal = this.principals.get(principalName);
             if(principal == null) {
@@ -416,19 +450,19 @@ public class SecurityContext {
         
     //-----------------------------------------------------------------------
     // Variables
-    //-----------------------------------------------------------------------
-    private static final int SECURITY_REALM_CHECK_RATE = 10000;
-    
+    //-----------------------------------------------------------------------    
     private final AccessControl_1 plugin;
     private final Path realmIdentity;
     
     private Map<String,CachedPrincipal> principals = new HashMap<String,CachedPrincipal>();
     private boolean isActive = true;
-    private long securityRealmCheckAt = 0;
-    private Date securityRealmModifiedAt = null;
+    private long realmRefreshRateMillis = 10000;
+    private long realmRefreshAt = 0;
+    private Date realmModifiedAt = null;
     
     // Cache for group membership with qualified group name as key
     // and list of subgroups as values.
+    private boolean isRefreshing = false;
     private Map<String,Set<String>> subgroups = null;
     private Map<String,Set<String>> supergroups = null;
     

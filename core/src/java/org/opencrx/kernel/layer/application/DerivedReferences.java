@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DerivedReferences.java,v 1.67 2010/04/30 16:23:08 wfro Exp $
+ * Name:        $Id: DerivedReferences.java,v 1.72 2010/06/01 23:49:28 wfro Exp $
  * Description: DerivedReferences
- * Revision:    $Revision: 1.67 $
+ * Revision:    $Revision: 1.72 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/30 16:23:08 $
+ * Date:        $Date: 2010/06/01 23:49:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,16 +76,16 @@ import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.Directions;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.w3c.format.DateTimeFormat;
@@ -144,7 +144,6 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("activity"),
 	                DerivedReferences.getActivityFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
-	                    false,
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
 	            );
@@ -164,7 +163,6 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("account"),
 	                DerivedReferences.getAccountFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
-	                    false,
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
 	            );        	
@@ -184,7 +182,6 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("address"),
 	                DerivedReferences.getAddressFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
-	                    false,
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
 	            );
@@ -204,7 +201,6 @@ public class DerivedReferences {
 	                Arrays.asList(
 	                    DerivedReferences.getActivityFilterProperties(
 	                        request.path().getPrefix(request.path().size() - 1),
-	                        false,
 	                        this.requestHelper.getDelegatingInteraction()
 	                    )
 	                )
@@ -231,7 +227,6 @@ public class DerivedReferences {
 	                request.path(),
 	                DerivedReferences.getContractFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
-	                    false,
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
 	            );
@@ -271,7 +266,6 @@ public class DerivedReferences {
 	                Arrays.asList(
 	                    DerivedReferences.getAccountFilterProperties(
 	                        request.path().getPrefix(request.path().size() - 1),
-	                        false,
 	                        this.requestHelper.getDelegatingInteraction()
 	                    )
 	                )
@@ -325,9 +319,9 @@ public class DerivedReferences {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.add(
 	                new FilterProperty(
-	                    Quantors.THERE_EXISTS,
+	                    Quantifier.THERE_EXISTS.code(),
 	                    "priceLevel",
-	                    FilterOperators.IS_IN,
+	                    ConditionType.IS_IN.code(),
 	                    new Object[]{request.path().getPrefix(7)}
 	                    
 	                )
@@ -353,9 +347,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("booking"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "cb",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getPrefix(7)}
 	                    )                        
 	                }
@@ -374,9 +368,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("booking"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "position",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getPrefix(13)}
 	                    )                        
 	                }
@@ -395,9 +389,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("simpleBooking"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "position",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getPrefix(13)}
 	                    )                        
 	                }
@@ -416,9 +410,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("element"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "type",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getPrefix(7)}
 	                    )                        
 	                }
@@ -439,9 +433,9 @@ public class DerivedReferences {
 	                    request.path().getPrefix(request.path().size()-3).getChild("itemBooking"),
 	                    new FilterProperty[]{
 	                        new FilterProperty(
-	                            Quantors.THERE_EXISTS,
+	                            Quantifier.THERE_EXISTS.code(),
 	                            "position",
-	                            FilterOperators.IS_IN,
+	                            ConditionType.IS_IN.code(),
 	                            new Object[]{Object_2Facade.newInstance(itemPosition).attributeValue("position")}
 	                        )                        
 	                    }
@@ -464,15 +458,15 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("extent"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "depotGroup",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getParent()}
 	                    ),                        
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        SystemAttributes.OBJECT_IDENTITY,
-	                        FilterOperators.IS_LIKE,
+	                        ConditionType.IS_LIKE.code(),
 	                        new Object[]{request.path().getPrefix(7).getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
 	                    )                        
 	                }
@@ -491,9 +485,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(request.path().size()-2),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "parent",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getParent()}
 	                    )                        
 	                }
@@ -512,9 +506,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("extent"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        SystemAttributes.OBJECT_IDENTITY,
-	                        FilterOperators.IS_LIKE,
+	                        ConditionType.IS_LIKE.code(),
 	                        new Object[]{request.path().getParent().getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
 	                    )                        
 	                }
@@ -533,9 +527,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("folder"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "parent",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getParent()}
 	                    )                        
 	                }
@@ -701,9 +695,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(5).getChild("element"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "container",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getPrefix(7)}
 	                    )                        
 	                }
@@ -725,9 +719,9 @@ public class DerivedReferences {
 	                request.path().getPrefix(7).getChild("positionModification"),
 	                new FilterProperty[]{
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        "involved",
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        new Object[]{request.path().getPrefix(9)}
 	                    )                        
 	                }
@@ -768,9 +762,9 @@ public class DerivedReferences {
             for(int i = 0; i < words.length; i++) {
                 filter.add(
                     new FilterProperty(
-                        Quantors.THERE_EXISTS,
+                        Quantifier.THERE_EXISTS.code(),
                         "keywords",
-                        FilterOperators.IS_LIKE,
+                        ConditionType.IS_LIKE.code(),
                         ".*" + words[i] + ".*"
                     )
                 );
@@ -782,9 +776,9 @@ public class DerivedReferences {
             for(int i = 0; i < words.length; i++) {
                 filter.add(
                     new FilterProperty(
-                        Quantors.THERE_EXISTS,
+                        Quantifier.THERE_EXISTS.code(),
                         "keywords",
-                        FilterOperators.IS_UNLIKE,
+                        ConditionType.IS_UNLIKE.code(),
                         ".*" + words[i] + ".*"
                     )
                 );
@@ -798,9 +792,9 @@ public class DerivedReferences {
             }
             filter.add(
                 new FilterProperty(
-                    Quantors.THERE_EXISTS,
+                    Quantifier.THERE_EXISTS.code(),
                     "keywords",
-                    FilterOperators.IS_LIKE,
+                    ConditionType.IS_LIKE.code(),
                     (Object[])words
                 )
             );
@@ -821,7 +815,7 @@ public class DerivedReferences {
 	            null,
 	            0, 
 	            Integer.MAX_VALUE,
-	            Directions.ASCENDING,
+	            SortOrder.ASCENDING.code(),
 	            AttributeSelectors.ALL_ATTRIBUTES,
 	            null
 	    	);
@@ -851,17 +845,17 @@ public class DerivedReferences {
 	                    // Clause and class
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause")
 	                        )
 	                    );
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
 	                        )
 	                    );
@@ -869,9 +863,9 @@ public class DerivedReferences {
 	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -879,9 +873,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -889,9 +883,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -899,9 +893,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -917,9 +911,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -935,9 +929,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -947,16 +941,16 @@ public class DerivedReferences {
 	                else {
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
 	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
 	                    
 	                    if("org:opencrx:kernel:product1:ProductClassificationFilterProperty".equals(filterPropertyClass)) {
@@ -1017,9 +1011,9 @@ public class DerivedReferences {
 	            // Clause and class
 	            filter.add(
 	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
+	                    Quantifier.codeOf(null),
 	                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                    FilterOperators.PIGGY_BACK,
+	                    ConditionType.codeOf(null),
 	                    new Object[]{
 	                        Database_1_Attributes.HINT_COUNT + "(1=1)"
 	                    }
@@ -1027,9 +1021,9 @@ public class DerivedReferences {
 	            );
 	            filter.add(
 	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
+	                    Quantifier.codeOf(null),
 	                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                    FilterOperators.PIGGY_BACK,
+	                    ConditionType.codeOf(null),
 	                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
 	                )
 	            );            
@@ -1044,7 +1038,6 @@ public class DerivedReferences {
     @SuppressWarnings("unchecked")
     public static FilterProperty[] getContractFilterProperties(
         Path contractFilterIdentity,
-        boolean forCounting,
         LayerInteraction delegatingInteraction
     ) throws ServiceException {
     	try {
@@ -1054,7 +1047,7 @@ public class DerivedReferences {
 	            null,
 	            0, 
 	            Integer.MAX_VALUE,
-	            Directions.ASCENDING,
+	            SortOrder.ASCENDING.code(),
 	            AttributeSelectors.ALL_ATTRIBUTES,
 	            null
 	    	);
@@ -1066,7 +1059,6 @@ public class DerivedReferences {
 	    	);
 	        MappedRecord[] filterProperties = findReply.getObjects();
 	        List filter = new ArrayList();
-	        boolean hasQueryFilterClause = false;
 	        for(MappedRecord filterProperty: filterProperties) {
 	        	Object_2Facade filterPropertyFacade;
 	            try {
@@ -1084,17 +1076,17 @@ public class DerivedReferences {
 	                    // Clause and class
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                            FilterOperators.PIGGY_BACK,
-	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause")
+	                            ConditionType.codeOf(null),
+	                            filterPropertyFacade.attributeValue("clause")
 	                        )
 	                    );
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            Database_1_Attributes.QUERY_FILTER_CLASS
 	                        )
 	                    );
@@ -1102,9 +1094,9 @@ public class DerivedReferences {
 	                    List values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1112,9 +1104,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1122,9 +1114,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1132,9 +1124,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1150,9 +1142,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1168,28 +1160,27 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
-	                    hasQueryFilterClause = true;
 	                }
 	                // Attribute filter
 	                else {
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
 	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
 	                    
 	                    if("org:opencrx:kernel:contract1:ContractTypeFilterProperty".equals(filterPropertyClass)) {
@@ -1275,26 +1266,6 @@ public class DerivedReferences {
 	                }
 	            }
 	        }        
-	        if(!hasQueryFilterClause && forCounting) {
-	            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + Contracts.getInstance().getUidAsString() + ":";
-	            // Clause and class
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-	                )
-	            );
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.QUERY_FILTER_CLASS
-	                )
-	            );            
-	        }
 	        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
@@ -1304,7 +1275,6 @@ public class DerivedReferences {
 	//-------------------------------------------------------------------------
     public static FilterProperty[] getActivityFilterProperties(
         Path activityFilterIdentity,
-        boolean forCounting,
         LayerInteraction delegatingInteraction
     ) throws ServiceException {
     	try {
@@ -1314,7 +1284,7 @@ public class DerivedReferences {
 	            null,
 	            0, 
 	            Integer.MAX_VALUE,
-	            Directions.ASCENDING,
+	            SortOrder.ASCENDING.code(),
 	            AttributeSelectors.ALL_ATTRIBUTES,
 	            null
 	    	);
@@ -1344,17 +1314,17 @@ public class DerivedReferences {
 	                    // Clause and class
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                            FilterOperators.PIGGY_BACK,
-	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause")
+	                            ConditionType.codeOf(null),
+	                            filterPropertyFacade.attributeValue("clause")
 	                        )
 	                    );
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            Database_1_Attributes.QUERY_FILTER_CLASS
 	                        )
 	                    );
@@ -1362,9 +1332,9 @@ public class DerivedReferences {
 	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1372,9 +1342,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1382,9 +1352,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1392,9 +1362,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1410,9 +1380,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1428,9 +1398,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1440,16 +1410,16 @@ public class DerivedReferences {
 	                else {
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
 	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
 	                    
 	                    if("org:opencrx:kernel:activity1:ActivityStateFilterProperty".equals(filterPropertyClass)) {
@@ -1579,26 +1549,6 @@ public class DerivedReferences {
 	                }
 	            }
 	        }
-	        if(!hasQueryFilterClause && forCounting) {
-	            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + Activities.getInstance().getUidAsString() + ":";
-	            // Clause and class
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-	                )
-	            );
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.QUERY_FILTER_CLASS
-	                )
-	            );            
-	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
@@ -1608,7 +1558,6 @@ public class DerivedReferences {
 	//-------------------------------------------------------------------------
     public static FilterProperty[] getAddressFilterProperties(
         Path activityFilterIdentity,
-        boolean forCounting,
         LayerInteraction delegatingInteraction
     ) throws ServiceException {    	
     	try {
@@ -1618,7 +1567,7 @@ public class DerivedReferences {
 	            null,
 	            0, 
 	            Integer.MAX_VALUE,
-	            Directions.ASCENDING,
+	            SortOrder.ASCENDING.code(),
 	            AttributeSelectors.ALL_ATTRIBUTES,
 	            null
 	    	);
@@ -1648,17 +1597,17 @@ public class DerivedReferences {
 	                    // Clause and class
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                            FilterOperators.PIGGY_BACK,
-	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause")
+	                            ConditionType.codeOf(null),
+	                            filterPropertyFacade.attributeValue("clause")
 	                        )
 	                    );
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            Database_1_Attributes.QUERY_FILTER_CLASS
 	                        )
 	                    );
@@ -1666,9 +1615,9 @@ public class DerivedReferences {
 	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1676,9 +1625,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1686,9 +1635,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1696,9 +1645,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1714,9 +1663,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1732,9 +1681,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1744,16 +1693,16 @@ public class DerivedReferences {
 	                else {
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
 	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValuesAsList("filterQuantor").get(0)).shortValue();
 	                    filterQuantor = filterQuantor == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
 	                    
 	                    if("org:opencrx:kernel:account1:AddressCategoryFilterProperty".equals(filterPropertyClass)) {
@@ -1816,26 +1765,6 @@ public class DerivedReferences {
 	                }
 	            }
 	        }        
-	        if(!hasQueryFilterClause && forCounting) {
-	            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + Accounts.getInstance().getUidAsString() + ":";
-	            // Clause and class
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-	                )
-	            );
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.QUERY_FILTER_CLASS
-	                )
-	            );            
-	        }        
 	        return filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
@@ -1845,7 +1774,6 @@ public class DerivedReferences {
 	//-------------------------------------------------------------------------
     public static FilterProperty[] getAccountFilterProperties(
         Path accountFilterIdentity,
-        boolean forCounting,
         LayerInteraction delegatingInteraction        
     ) throws ServiceException {
     	try {
@@ -1855,7 +1783,7 @@ public class DerivedReferences {
 	            null,
 	            0, 
 	            Integer.MAX_VALUE,
-	            Directions.ASCENDING,
+	            SortOrder.ASCENDING.code(),
 	            AttributeSelectors.ALL_ATTRIBUTES,
 	            null
 	    	);
@@ -1885,17 +1813,17 @@ public class DerivedReferences {
 	                    // Clause and class
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                            FilterOperators.PIGGY_BACK,
-	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause")
+	                            ConditionType.codeOf(null),
+	                            filterPropertyFacade.attributeValue("clause")
 	                        )
 	                    );
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            Database_1_Attributes.QUERY_FILTER_CLASS
 	                        )
 	                    );
@@ -1903,9 +1831,9 @@ public class DerivedReferences {
 	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1913,9 +1841,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1923,9 +1851,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1933,9 +1861,9 @@ public class DerivedReferences {
 	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1951,9 +1879,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1969,9 +1897,9 @@ public class DerivedReferences {
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
-	                            Quantors.PIGGY_BACK,
+	                            Quantifier.codeOf(null),
 	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
-	                            FilterOperators.PIGGY_BACK,
+	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
@@ -1981,16 +1909,16 @@ public class DerivedReferences {
 	                else {
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
-	                        ? FilterOperators.IS_IN
+	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
 	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
-	                        ? Quantors.THERE_EXISTS
+	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
 	                    
 	                    if("org:opencrx:kernel:account1:AccountTypeFilterProperty".equals(filterPropertyClass)) {
@@ -2036,26 +1964,6 @@ public class DerivedReferences {
 	                }
 	            }
 	        }        
-	        if(!hasQueryFilterClause && forCounting) {
-	            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + Accounts.getInstance().getUidAsString() + ":";
-	            // Clause and class
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.HINT_COUNT + "(1=1)"
-	                )
-	            );
-	            filter.add(
-	                new FilterProperty(
-	                    Quantors.PIGGY_BACK,
-	                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-	                    FilterOperators.PIGGY_BACK,
-	                    Database_1_Attributes.QUERY_FILTER_CLASS
-	                )
-	            );            
-	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
@@ -2064,34 +1972,34 @@ public class DerivedReferences {
 
 	//-------------------------------------------------------------------------
     // Patterns for derived find requests
-    private static final Path COMPOUND_BOOKING_HAS_BOOKINGS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/cb/:*/booking");
-    private static final Path DEPOT_POSITION_HAS_BOOKINGS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/position/:*/booking");
-    private static final Path DEPOT_POSITION_HAS_SIMPLE_BOOKINGS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/position/:*/simpleBooking");
-    private static final Path CLASSIFIER_CLASSIFIES_TYPED_ELEMENT = new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/:*/segment/:*/element/:*/typedElement");
-    private static final Path DEPOT_REPORT_ITEM_HAS_BOOKING_ITEMS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/report/:*/itemPosition/:*/itemBooking");
-    private static final Path DEPOT_GROUP_CONTAINS_DEPOTS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depot");
-    private static final Path DEPOT_GROUP_CONTAINS_DEPOT_GROUPS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depotGroup");
-    private static final Path DEPOT_ENTITY_CONTAINS_DEPOTS = new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depot");
-    private static final Path FOLDER_CONTAINS_FOLDERS = new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/:*/segment/:*/folder/:*/folder");
-    private static final Path MODEL_NAMESPACE_CONTAINS_ELEMENTS = new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/:*/segment/:*/element/:*/content");
-    private static final Path GLOBAL_FILTER_INCLUDES_ACTIVITY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/activityFilter/:*/filteredActivity");
-    private static final Path GLOBAL_FILTER_INCLUDES_ACCOUNT = new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/accountFilter/:*/filteredAccount");
-    private static final Path GLOBAL_FILTER_INCLUDES_ADDRESS = new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/addressFilter/:*/filteredAddress");
-    private static final Path GLOBAL_FILTER_INCLUDES_CONTRACT = new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filteredContract");
-    private static final Path GLOBAL_FILTER_INCLUDES_PRODUCT = new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/filteredProduct");
-    private static final Path ACTIVITY_GROUP_FILTER_INCLUDES_ACTIVITY = new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
-    private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT = new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredAccount");
-    private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_PRODUCT = new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredProduct");
-    private static final Path PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY = new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/priceListEntry");
-    private static final Path CONTRACT_POSITION_HAS_MODIFICATION = new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/positionModification");
-    private static final Path REMOVED_CONTRACT_POSITION_HAS_MODIFICATION = new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/removedPosition/:*/positionModification");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryActivity");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACCOUNT = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryAccount");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_CONTRACT = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryContract");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_PRODUCT = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryProduct");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDocument");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryBuilding");
-    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT = new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDepot");
+    private static final Path COMPOUND_BOOKING_HAS_BOOKINGS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/cb/:*/booking");
+    private static final Path DEPOT_POSITION_HAS_BOOKINGS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/position/:*/booking");
+    private static final Path DEPOT_POSITION_HAS_SIMPLE_BOOKINGS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/position/:*/simpleBooking");
+    private static final Path CLASSIFIER_CLASSIFIES_TYPED_ELEMENT = new Path("xri://@openmdx*org.opencrx.kernel.model1/provider/:*/segment/:*/element/:*/typedElement");
+    private static final Path DEPOT_REPORT_ITEM_HAS_BOOKING_ITEMS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/report/:*/itemPosition/:*/itemBooking");
+    private static final Path DEPOT_GROUP_CONTAINS_DEPOTS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depot");
+    private static final Path DEPOT_GROUP_CONTAINS_DEPOT_GROUPS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotGroup/:*/depotGroup");
+    private static final Path DEPOT_ENTITY_CONTAINS_DEPOTS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depot");
+    private static final Path FOLDER_CONTAINS_FOLDERS = new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/:*/segment/:*/folder/:*/folder");
+    private static final Path MODEL_NAMESPACE_CONTAINS_ELEMENTS = new Path("xri://@openmdx*org.opencrx.kernel.model1/provider/:*/segment/:*/element/:*/content");
+    private static final Path GLOBAL_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/activityFilter/:*/filteredActivity");
+    private static final Path GLOBAL_FILTER_INCLUDES_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/:*/segment/:*/accountFilter/:*/filteredAccount");
+    private static final Path GLOBAL_FILTER_INCLUDES_ADDRESS = new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/:*/segment/:*/addressFilter/:*/filteredAddress");
+    private static final Path GLOBAL_FILTER_INCLUDES_CONTRACT = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filteredContract");
+    private static final Path GLOBAL_FILTER_INCLUDES_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/filteredProduct");
+    private static final Path ACTIVITY_GROUP_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
+    private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredAccount");
+    private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredProduct");
+    private static final Path PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/priceListEntry");
+    private static final Path CONTRACT_POSITION_HAS_MODIFICATION = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/positionModification");
+    private static final Path REMOVED_CONTRACT_POSITION_HAS_MODIFICATION = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/removedPosition/:*/positionModification");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryActivity");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryAccount");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_CONTRACT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryContract");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryProduct");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDocument");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryBuilding");
+    private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDepot");
     
     private final RequestHelper requestHelper;
 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.31 2010/02/24 14:01:49 wfro Exp $
+ * Name:        $Id: Admin.java,v 1.32 2010/08/27 16:33:55 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/24 14:01:49 $
+ * Date:        $Date: 2010/08/27 16:33:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -286,7 +286,7 @@ public class Admin extends AbstractImpl {
             // Create segment administrator if it does not exist
         	org.opencrx.security.identity1.jmi1.Segment identitySegment = 
         		(org.opencrx.security.identity1.jmi1.Segment)pm.getObjectById(
-        			new Path("xri:@openmdx:org.opencrx.security.identity1/provider/" + loginRealmIdentity.get(2) + "/segment/Root")
+        			new Path("xri://@openmdx*org.opencrx.security.identity1/provider/" + loginRealmIdentity.get(2) + "/segment/Root")
         		);
             // Create segment administrator's subject
         	segmentAdminSubject = this.createSubject(
@@ -411,7 +411,7 @@ public class Admin extends AbstractImpl {
         );
         // Create segments        
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.account1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -419,7 +419,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.home1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -427,7 +427,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.activity1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -435,7 +435,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.contract1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -443,7 +443,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.product1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -451,7 +451,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.document1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -459,7 +459,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.building1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.building1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -467,7 +467,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.uom1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.uom1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -475,7 +475,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.forecast1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.forecast1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -483,7 +483,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.workflow1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.workflow1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -491,7 +491,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.depot1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -499,7 +499,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.model1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.model1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 
@@ -507,7 +507,7 @@ public class Admin extends AbstractImpl {
         	errors
         );
         this.createSegment(
-        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.code1/provider/" + providerName)), 
+        	(org.openmdx.base.jmi1.Provider)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.code1/provider/" + providerName)), 
         	pm.newInstance(org.opencrx.kernel.code1.jmi1.Segment.class), 
         	segmentName,
         	adminUser, 

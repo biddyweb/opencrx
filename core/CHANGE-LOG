@@ -5,6 +5,84 @@
                     =====================================
 
 ==============================================================================
+Version 2.7.0                                                       2010-08-20
+==============================================================================
+
+1.    NEW FEATURES
+
+      CR10009455
+      Contracts.updateContractState(). Add method updateContractState() to 
+      Contracts. This allows a user-specific backend to override this method.
+      
+      CR10009412
+      AirSync Client supported added. A user can create 0..n AirSyncClientProfiles.
+      An AirSyncClientProfile allows to specify host url, email, user and password 
+      of an AirSync-compliant server (e.g. MS Exchange). The Wizard 'Synchronize Folders' 
+      performs a FolderSync and creates SyncFeeds for each of the retrieved folders. 
+      Supported are folders of type Contact, Calendar, Tasks and Email. The wizard
+      must be invoked each time a folder is added on the server. The user can then 
+      assign activity groups and contact groups to SyncFeeds and then invoke the 
+      wizard 'Synchronize Items'. The wizard performs a Sync, i.e. synchronizes items 
+      stored on on the server with items stored in openCRX. WizardLauncher combined 
+      with a tool such as curl allows to automate the sync process.   
+      
+      CR10009406
+      Configurable user-agent for mobiles. The option mobileUserAgents for
+      ObjectInspectorServlet in web.xml allows to configure a comma or 
+      semi-colon separated list user agent patterns. The GUI will be launched 
+      in mobile mode if the user-agent header contains (indexOf() >= 0) one of 
+      the configured user agent patterns.  
+
+      CR10009384
+      EditDocument Wizard. Wizard which allows to edit the head revision of a 
+      text document (contentMimeType.startsWith("text/")) and stores the updated 
+      text as new head revision.
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10009472
+      WorkAndExpenseRecord is a CrxObject. WorkAndExpenseRecord inherits 
+      from CrxObject.
+
+
+2.1.  FIXED BUGS
+
+      SF3060307
+      Error due to old xsi:noNamespaceSchemaLocation. An export through the 
+      file->export advanced...->xml uses an old namespace schema location 
+      xri://+resource/org/opencrx/kernel/activity1/xmi/activity1.xsd. If I 
+      use xsi:noNamespaceSchemaLocation=
+      "xri://+resource/org/opencrx/kernel/activity1/xmi1/activity1.xsd"
+      it works okay.
+      
+      CR10009486
+      SF3047805: MultivaluedFeaturePredicate's throw Exception when used.
+      ActivityQuery.contract() should return MultivaluedFeaturePredicate. However, 
+      from the model, an Activity's contract has a multiplicity of 1..0 somehow. Hence 
+      Jmi1QueryInvocationHandler actually returns an OptionalFeaturePredicate via by 
+      RefQuery_1.refGetPredicate(). This conflict results in a ClassCastException, see below.
+      I've tried and debugged this with a couple more MultivaluedFeaturePredicate constraints, 
+      but got the same result.
+      
+	  CR1000947
+	  References / Lookups. Populating references with the GUI should be possible 
+	  by entering an XRI into the appropriate field
+	        
+      CR10009463
+      Turning off unneeded locales leads to NA's. Grid column labels are set 
+      to NA if only one locale (locale[0]) is enabled in web.xml.
+      
+      CR10009400: Depots.refreshReport()
+      Queries on shared associations DepotReportItemHasSimpleBooking and 
+      DepotReportItemHasSingleBooking are not allowed while creating the report.
+      
+
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
 Version 2.6.0                                                       2010-05-01
 ==============================================================================
 

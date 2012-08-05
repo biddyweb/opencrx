@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: LogConfiguration.jsp,v 1.10 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: LogConfiguration.jsp,v 1.11 2010/06/08 09:50:49 wfro Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2010/06/08 09:50:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -132,9 +132,11 @@ org.openmdx.kernel.id.*
 				String loggerName = parameterName.substring(7);
 				java.util.logging.Level logLevel = java.util.logging.Level.parse(request.getParameter(parameterName));
 				java.util.logging.Logger logger = logManager.getLogger(loggerName);
-				logger.setLevel(logLevel);
-				for(java.util.logging.Handler handler: logger.getHandlers()) {
-					handler.setLevel(logLevel);
+				if(logger != null) {
+					logger.setLevel(logLevel);
+					for(java.util.logging.Handler handler: logger.getHandlers()) {
+						handler.setLevel(logLevel);
+					}
 				}
 				// Set level for all loggers registered by openMDX logger factory
 				if(org.openmdx.kernel.log.LoggerFactory.STANDARD_LOGGER_NAME.equals(loggerName)) {
@@ -225,23 +227,25 @@ org.openmdx.kernel.id.*
 								int ii = 0;
 								for(String loggerName: sortedLoggerNames) {
 									java.util.logging.Logger logger = logManager.getLogger(loggerName);
-									jsBuffer += "$('Logger." + loggerName + "').selectedIndex = level-1;";
+									if(logger != null) {
+										jsBuffer += "$('Logger." + loggerName + "').selectedIndex = level-1;";
 %>
-									<tr>
-										<td <%= ii % 2 == 0 ? "style='background-color:#E6FEE6;'" : "" %> style="vertical-align:middle;"><%= loggerName.length() == 0 ? "*" : loggerName %></td>
-										<td <%= ii % 2 == 0 ? "style='background-color:#E6FEE6;'" : "" %> width="120px;">
-											<select name="Logger.<%= loggerName %>" id="Logger.<%= loggerName %>" onchange="javascript:$('OK.Button').click();">
-												<option <%= logger.getLevel() == java.util.logging.Level.SEVERE  ? "SELECTED" : "" %> value="<%= java.util.logging.Level.SEVERE.intValue()   %>">SEVERE</option>
-												<option <%= logger.getLevel() == java.util.logging.Level.WARNING ? "SELECTED" : "" %> value="<%= java.util.logging.Level.WARNING.intValue()  %>">WARNING</option>
-												<option <%= logger.getLevel() == java.util.logging.Level.INFO    ? "SELECTED" : "" %>>INFO</option>
-												<option <%= logger.getLevel() == java.util.logging.Level.FINE    ? "SELECTED" : "" %>>FINE</option>
-												<option <%= logger.getLevel() == java.util.logging.Level.FINER   ? "SELECTED" : "" %>>FINER</option>
-												<option <%= logger.getLevel() == java.util.logging.Level.FINEST  ? "SELECTED" : "" %>>FINEST</option>
-											</select>
-										</td>
-							        </tr>
+										<tr>
+											<td <%= ii % 2 == 0 ? "style='background-color:#E6FEE6;'" : "" %> style="vertical-align:middle;"><%= loggerName.length() == 0 ? "*" : loggerName %></td>
+											<td <%= ii % 2 == 0 ? "style='background-color:#E6FEE6;'" : "" %> width="120px;">
+												<select name="Logger.<%= loggerName %>" id="Logger.<%= loggerName %>" onchange="javascript:$('OK.Button').click();">
+													<option <%= logger.getLevel() == java.util.logging.Level.SEVERE  ? "SELECTED" : "" %> value="<%= java.util.logging.Level.SEVERE.intValue()   %>">SEVERE</option>
+													<option <%= logger.getLevel() == java.util.logging.Level.WARNING ? "SELECTED" : "" %> value="<%= java.util.logging.Level.WARNING.intValue()  %>">WARNING</option>
+													<option <%= logger.getLevel() == java.util.logging.Level.INFO    ? "SELECTED" : "" %>>INFO</option>
+													<option <%= logger.getLevel() == java.util.logging.Level.FINE    ? "SELECTED" : "" %>>FINE</option>
+													<option <%= logger.getLevel() == java.util.logging.Level.FINER   ? "SELECTED" : "" %>>FINER</option>
+													<option <%= logger.getLevel() == java.util.logging.Level.FINEST  ? "SELECTED" : "" %>>FINEST</option>
+												</select>
+											</td>
+								        </tr>
 <%
-									ii++;
+										ii++;
+									}
 								}
 %>
 							</table>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EventTXmlFormat.java,v 1.23 2010/03/10 19:15:16 wfro Exp $
+ * Name:        $Id: EventTXmlFormat.java,v 1.31 2010/06/18 12:31:22 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.31 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/10 19:15:16 $
+ * Date:        $Date: 2010/06/18 12:31:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,16 +75,19 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 		IData data,
 		double protocolVersion
 	) {
-		DateTimeFormat utcf = this.getUtcFormatNoMillis();
-		// BASIC_UTC_FORMAT;
+		// According to [MS-ASDTYPE] 
+		// Dates and times in calendar items MUST NOT include punctuation separators. 
+		// For example: <A:StartTime>20021126T160000Z</A:StartTime>
+		DateTimeFormat utcf = this.getUtcFormat(false);
 		EventT eventT = (EventT) data;
 		
+		createElement(eData, "Calendar:", "Timezone", eventT.getTimezone());
 		if(eventT.getAllDayEvent() != null) {
 			createElement(eData, "Calendar:", "AllDayEvent", (eventT.getAllDayEvent() ? "1" : "0"));
 		} else {
 			createElement(eData, "Calendar:", "AllDayEvent", "0");
 		}
-		createElement(eData, "Calendar:", "Body", eventT.getBody());		
+		createElement(eData, "Calendar:", "Body", eventT.getBody());
 		createElement(eData, "Calendar:", "BusyStatus", Integer.toString(eventT.getBusyStatus().getValue()));
 		createElement(eData, "Calendar:", "Organizer_Name", eventT.getOrganizerName());
 		createElement(eData, "Calendar:", "Organizer_Email", eventT.getOrganizerEmail());
@@ -111,8 +114,12 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 				Element eAttendee = DOMUtils.createElement(eAttendees, "Calendar:", "Attendee");
 				createElement(eAttendee, "Calendar:", "Attendee_Email", attendeeT.getEmail());
 				createElement(eAttendee, "Calendar:", "Attendee_Name", attendeeT.getName());
-				createElement(eAttendee, "Calendar:", "Attendee_Status", Integer.toString(attendeeT.getAttendeeStatus().getValue()));
-				createElement(eAttendee, "Calendar:", "Attendee_Type", Integer.toString(attendeeT.getAttendeeType().getValue()));
+				if(attendeeT.getAttendeeStatus() != null) {
+					createElement(eAttendee, "Calendar:", "Attendee_Status", Integer.toString(attendeeT.getAttendeeStatus().getValue()));
+				}
+				if(attendeeT.getAttendeeType() != null) {
+					createElement(eAttendee, "Calendar:", "Attendee_Type", Integer.toString(attendeeT.getAttendeeType().getValue()));
+				}
 			}
 		}
 		if(eventT.getCategories() != null && !eventT.getCategories().isEmpty()) {
@@ -122,9 +129,9 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 			}
 		}
 		if(eventT.getRecurrence() != null) {
-			this.formatRecurrence(eData, eventT);
+			this.formatRecurrence(eData, eventT, protocolVersion);
 		}
-		if(eventT.getExceptions() != null) {
+		if(eventT.getExceptions() != null && !eventT.getExceptions().isEmpty()) {
 			this.formatExceptions(eData, eventT.getExceptions(), protocolVersion);
 		}
 	}
@@ -134,7 +141,7 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 		List<EventT> exceptionsT,
 		double protocolVersion
 	) {
-		DateTimeFormat utcf = this.getUtcFormatNoMillis();
+		DateTimeFormat utcf = this.getUtcFormat(false);
 		Element es = DOMUtils.createElement(eData, "Calendar:", "Exceptions");
 		for(EventT exceptionT: exceptionsT) {
 			Element eException = DOMUtils.createElement(es, "Calendar:", "Exception");
@@ -177,9 +184,10 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 
 	private void formatRecurrence(
 		Element eData, 
-		EventT ev
+		EventT ev,
+		double protocolVersion
 	) {
-		DateTimeFormat utcf = this.getUtcFormatNoMillis();
+		DateTimeFormat utcf = this.getUtcFormat(false);
 		RecurrenceT recurrenceT = ev.getRecurrence();
 		if(recurrenceT == null || recurrenceT.getType() == null) return;
 		Element eRecurrence = DOMUtils.createElement(eData, "Calendar:", "Recurrence");
@@ -210,6 +218,7 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 	) {
 		EventT eventT = new EventT();
 
+		eventT.setTimezone(parseDOMString(DOMUtils.getUniqueElement(eData, "Calendar:", "Timezone")));
 		eventT.setOrganizerName(parseDOMString(DOMUtils.getUniqueElement(eData, "Calendar:", "Organizer_Name")));
 		eventT.setOrganizerEmail(parseDOMString(DOMUtils.getUniqueElement(eData, "Calendar:", "Organizer_Email")));
 		eventT.setUID(parseDOMString(DOMUtils.getUniqueElement(eData, "Calendar:", "UID")));

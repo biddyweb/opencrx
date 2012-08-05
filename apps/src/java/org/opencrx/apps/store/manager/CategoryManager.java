@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: CategoryManager.java,v 1.8 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: CategoryManager.java,v 1.9 2010/08/30 15:35:40 wfro Exp $
  * Description: CategoryManager
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.apps.store.manager;
 import java.util.Collection;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.ObjectCollection;
@@ -92,12 +93,15 @@ public final class CategoryManager
         final Category newValue
     ) {
     	Transaction tx = null;
+    	PersistenceManager pm = null;
         try {
+        	pm = this.context.newPersistenceManager();
             UUIDGenerator uuids = UUIDs.getGenerator();
-            tx = this.context.getPersistenceManager().currentTransaction();       
+            tx = pm.currentTransaction();       
             tx.begin();
+            org.opencrx.kernel.product1.jmi1.Segment productSegment = this.context.getProductSegment(pm);
             org.opencrx.kernel.product1.jmi1.ProductClassification classification = 
-                this.context.getPersistenceManager().newInstance(org.opencrx.kernel.product1.jmi1.ProductClassification.class);
+                pm.newInstance(org.opencrx.kernel.product1.jmi1.ProductClassification.class);
             classification.refInitialize(false, true);
             newValue.update(
                 classification, 
@@ -106,7 +110,7 @@ public final class CategoryManager
             classification.setName(
                 Keys.STORE_SCHEMA + newValue.getTitle()
             );
-            this.context.getProductSegment().addProductClassification(
+            productSegment.addProductClassification(
                 false,
                 newValue.getKey().getUuid(),
                 classification
@@ -118,25 +122,24 @@ public final class CategoryManager
                 (newValue.getParentID() != null) &&
                 (newValue.getParentID().getUuid().length() > 0)
             ) {
-                parent = 
-                    context.getProductSegment().getProductClassification(newValue.getParentID().getUuid());
+                parent = productSegment.getProductClassification(newValue.getParentID().getUuid());
             }
             // OpenCrxContext.SCHEMA_STORE + CATEGORY_NAME_PRODUCTS as default root classification 
             else {
-                ProductClassificationQuery query = (ProductClassificationQuery)this.context.getPersistenceManager().newQuery(ProductClassification.class);                
+                ProductClassificationQuery query = (ProductClassificationQuery)pm.newQuery(ProductClassification.class);                
                 query.name().equalTo(Keys.STORE_SCHEMA + Category.CATEGORY_NAME_PRODUCTS);
-                Collection<ProductClassification> classifications = this.context.getProductSegment().getProductClassification(query);
+                Collection<ProductClassification> classifications = productSegment.getProductClassification(query);
                 if(!classifications.isEmpty()) {
                     parent = classifications.iterator().next();
                 }
                 // Create root classification on demand
                 else {
                     tx.begin();
-                    parent = this.context.getPersistenceManager().newInstance(ProductClassification.class);
+                    parent = pm.newInstance(ProductClassification.class);
                     parent.refInitialize(false, true);
                     parent.setName(Keys.STORE_SCHEMA + Category.CATEGORY_NAME_PRODUCTS);
                     parent.setDescription(Category.CATEGORY_NAME_PRODUCTS);
-                    this.context.getProductSegment().addProductClassification(
+                    productSegment.addProductClassification(
                         false,
                         uuids.next().toString(),
                         parent
@@ -146,7 +149,7 @@ public final class CategoryManager
             }
             // Add relationship to parent
             tx.begin();
-            ProductClassificationRelationship relationship = this.context.getPersistenceManager().newInstance(ProductClassificationRelationship.class);
+            ProductClassificationRelationship relationship = pm.newInstance(ProductClassificationRelationship.class);
             relationship.refInitialize(false, true);
             relationship.setName(parent.getName());
             relationship.setRelationshipType((short)0);
@@ -168,19 +171,26 @@ public final class CategoryManager
         	}
             new ServiceException(e).log();
             return false;
-        }        
+        }
+        finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
+        }
     }
 
     //-----------------------------------------------------------------------
     public final void delete(
         final PrimaryKey key
     ) {
+    	PersistenceManager pm = null;
     	Transaction tx = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
+    		pm = this.context.newPersistenceManager();
+	        tx = pm.currentTransaction();       
 	        tx.begin();
 	        org.opencrx.kernel.product1.jmi1.ProductClassification classification = 
-	            this.context.getProductSegment().getProductClassification(key.getUuid());
+	            this.context.getProductSegment(pm).getProductClassification(key.getUuid());
 	        classification.refDelete();
 	        tx.commit();
     	}
@@ -192,57 +202,81 @@ public final class CategoryManager
         		catch(Exception e0) {}
         	}
             new ServiceException(e).log();
-        }            	
+        }   
+        finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
+        }
     }
 
     //-----------------------------------------------------------------------
     public final Category get(
         final PrimaryKey key
     ) {
-        if(key.toString().length() > 0) {
-            org.opencrx.kernel.product1.jmi1.ProductClassification classification = 
-                this.context.getProductSegment().getProductClassification(key.getUuid());
-            return new Category(classification);
-        }
-        else {
-            return null;
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        if(key.toString().length() > 0) {
+	            org.opencrx.kernel.product1.jmi1.ProductClassification classification = 
+	                this.context.getProductSegment(pm).getProductClassification(key.getUuid());
+	            return new Category(classification);
+	        }
+	        else {
+	            return null;
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final ObjectCollection getChildren(
         final PrimaryKey categoryID
     ) {
-        ObjectCollection children = new ObjectCollection();
-        org.opencrx.kernel.product1.jmi1.ProductClassification parent = null;
-        if(categoryID.toString().length() == 0) {
-            ProductClassificationQuery query = (ProductClassificationQuery)this.context.getPersistenceManager().newQuery(org.opencrx.kernel.product1.jmi1.ProductClassification.class);
-            query.name().equalTo(Keys.STORE_SCHEMA + Category.CATEGORY_NAME_PRODUCTS);
-            Collection<ProductClassification> classifications = this.context.getProductSegment().getProductClassification(query);
-            if(!classifications.isEmpty()) {
-                parent = classifications.iterator().next();
-            }
-        }
-        else {
-            parent = this.context.getProductSegment().getProductClassification(categoryID.getUuid());
-        }
-        if(parent != null) {
-            ProductClassificationRelationshipQuery query = (ProductClassificationRelationshipQuery)this.context.getPersistenceManager().newQuery(ProductClassificationRelationship.class);
-            query.thereExistsRelationshipTo().equalTo(parent);
-            query.identity().like(
-            	this.context.getProductSegment().refGetPath().getDescendant("productClassification", ":*", "relationship", ":*").toXRI()
-            );
-            List<ProductClassificationRelationship> relationships = this.context.getProductSegment().getExtent(query);
-            for(ProductClassificationRelationship relationship: relationships) {
-                ProductClassification classification = relationship.getClassification();
-                Category category = new Category(classification);
-                children.put(
-                    category.getKey().toString(), 
-                    category
-                );
-            }
-        }
-        return children;
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+            org.opencrx.kernel.product1.jmi1.Segment productSegment = this.context.getProductSegment(pm);    		
+	        ObjectCollection children = new ObjectCollection();
+	        org.opencrx.kernel.product1.jmi1.ProductClassification parent = null;
+	        if(categoryID.toString().length() == 0) {
+	            ProductClassificationQuery query = (ProductClassificationQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.ProductClassification.class);
+	            query.name().equalTo(Keys.STORE_SCHEMA + Category.CATEGORY_NAME_PRODUCTS);
+	            Collection<ProductClassification> classifications = productSegment.getProductClassification(query);
+	            if(!classifications.isEmpty()) {
+	                parent = classifications.iterator().next();
+	            }
+	        }
+	        else {
+	            parent = productSegment.getProductClassification(categoryID.getUuid());
+	        }
+	        if(parent != null) {
+	            ProductClassificationRelationshipQuery query = (ProductClassificationRelationshipQuery)pm.newQuery(ProductClassificationRelationship.class);
+	            query.thereExistsRelationshipTo().equalTo(parent);
+	            query.identity().like(
+	            		productSegment.refGetPath().getDescendant("productClassification", ":*", "relationship", ":*").toXRI()
+	            );
+	            List<ProductClassificationRelationship> relationships = productSegment.getExtent(query);
+	            for(ProductClassificationRelationship relationship: relationships) {
+	                ProductClassification classification = relationship.getClassification();
+	                Category category = new Category(classification);
+	                children.put(
+	                    category.getKey().toString(), 
+	                    category
+	                );
+	            }
+	        }
+	        return children;
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
@@ -250,11 +284,13 @@ public final class CategoryManager
         final Category newValue
     ) {
     	Transaction tx = null;
+    	PersistenceManager pm = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
+    		pm = this.context.newPersistenceManager();
+	        tx = pm.currentTransaction();       
 	        tx.begin();
 	        org.opencrx.kernel.product1.jmi1.ProductClassification classification = 
-	            this.context.getProductSegment().getProductClassification(newValue.getKey().getUuid());
+	            this.context.getProductSegment(pm).getProductClassification(newValue.getKey().getUuid());
 	        newValue.update(
 	            classification,
 	            this.context
@@ -271,7 +307,12 @@ public final class CategoryManager
         	}
             new ServiceException(e).log();
             return null;
-        }            	
+        }    
+        finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
+        }
     }
 
     //-----------------------------------------------------------------------

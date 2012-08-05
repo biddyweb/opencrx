@@ -823,7 +823,7 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 060, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 060, 'xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/syncProfile/:*/feed/:*/syncData/:*'
 ) ; 
 
 
@@ -1810,7 +1810,7 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 201, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 201, 'xri:@openmdx::*/provider/:*/segment/:*/:*/:*/:*/:*/:*/:*/:*/:*/property/:*'
 ) ; 
 
 
@@ -2931,7 +2931,7 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 060, 'dummy60'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 060, 'syncData'
 ) ; 
 
 
@@ -3918,7 +3918,7 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 201, 'dummy201'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 201, 'p4'
 ) ; 
 
 
@@ -5389,7 +5389,14 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 060, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 060, 'OOCKE1_NOTE'
+) ; 
+
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 060, 'OOCKE1_NOTE_'
 ) ; 
 
 
@@ -7251,7 +7258,14 @@ VALUES(
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 201, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 201, 'OOCKE1_PROPERTY'
+) ; 
+
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 201, 'OOCKE1_PROPERTY_'
 ) ; 
 
 

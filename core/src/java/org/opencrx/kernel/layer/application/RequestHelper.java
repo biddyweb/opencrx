@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RequestHelper.java,v 1.12 2009/12/17 14:42:44 wfro Exp $
+ * Name:        $Id: RequestHelper.java,v 1.13 2010/05/26 15:20:39 wfro Exp $
  * Description: RequestHelper
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/17 14:42:44 $
+ * Date:        $Date: 2010/05/26 15:20:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,6 +62,7 @@ import javax.resource.cci.MappedRecord;
 
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
@@ -71,7 +72,6 @@ import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.AttributeSpecifier;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.base.text.conversion.UUIDConversion;

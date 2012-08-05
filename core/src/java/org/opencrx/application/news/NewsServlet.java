@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: NewsServlet.java,v 1.13 2010/04/23 13:25:00 wfro Exp $
+ * Name:        $Id: NewsServlet.java,v 1.14 2010/06/16 11:05:02 wfro Exp $
  * Description: NewsServlet
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/23 13:25:00 $
+ * Date:        $Date: 2010/06/16 11:05:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -261,7 +261,7 @@ public class NewsServlet extends HttpServlet {
 	                            "      <link>" + XMLEncoder.encode(linkReferencedObject) + "</link>\n" +
 	                            "      <guid>" + XMLEncoder.encode(linkAlert) + "</guid>\n" +
 	                            "      <category>Alerts</category>\n" +
-	                            "      <pubDate>" + dateTimeFormat.format(alert.getModifiedAt()) + "</pubDate>\n" +
+	                            "      <pubDate>" + dateTimeFormat.format(alert.getCreatedAt()) + "</pubDate>\n" +
 	                            "      <description>" + XMLEncoder.encode(text.replace("\n", "<br />")) + "</description>\n" +
 	                            "    </item>\n"
 	                        );

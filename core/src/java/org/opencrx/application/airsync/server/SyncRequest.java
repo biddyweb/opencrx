@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncRequest.java,v 1.16 2010/04/01 09:10:21 wfro Exp $
+ * Name:        $Id: SyncRequest.java,v 1.22 2010/06/22 13:27:39 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/01 09:10:21 $
+ * Date:        $Date: 2010/06/22 13:27:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,67 +59,81 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.resource.ResourceException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.opencrx.application.airsync.backend.cci.SyncBackend;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.resource.Records;
+import org.openmdx.kernel.log.SysLog;
 
 public class SyncRequest {
 
-	private final HttpServletRequest httpServletRequest;	
+	private final HttpServletRequest context;	
 	private double protocolVersion;
 	private final String cmd;
 	private final String attachmentName;
 	private final String deviceId;
+	private final String userId;
 	
 	public SyncRequest(
 	) {
-		this.httpServletRequest = null;
+		this.context = null;
 		this.cmd = null;
 		this.attachmentName = null;
 		this.deviceId = null;
+		this.userId = null;
+	}
+	
+	public SyncRequest(
+		String cmd,
+		String userId,
+		String deviceId
+	) {
+		this.cmd = cmd;
+		this.deviceId = deviceId;
+		this.userId = userId;
+		this.context = null;
+		this.attachmentName = null;
 	}
 	
 	public SyncRequest(
 		HttpServletRequest httpServletRequest
 	) {
-		this.httpServletRequest = httpServletRequest;
+		this.context = httpServletRequest;
 		List<String> params = new ArrayList<String>();
 		for(Object parameter: httpServletRequest.getParameterMap().keySet()) {
 			if(parameter instanceof String) {
 				params.add(parameter + "=" + httpServletRequest.getParameter((String)parameter));
 			}
 		}
-		System.out.println("SyncRequest: " + params);
+		System.out.println(new Date() + "  SyncRequest: " + params);
+		SysLog.warning("SyncRequest", params);
 		this.cmd = httpServletRequest.getParameter("Cmd");
 		this.attachmentName = httpServletRequest.getParameter("AttachmentName");
 		this.deviceId = httpServletRequest.getParameter("DeviceId");
+		String userId = httpServletRequest.getUserPrincipal() == null ? null : httpServletRequest.getUserPrincipal().getName();
+		if(userId.indexOf(SyncBackend.DOMAIN_SEPARATOR) < 0) {
+			userId = DEFAULT_SEGMENT_NAME + SyncBackend.DOMAIN_SEPARATOR + userId; 
+		}
+		this.userId = userId;
 	}
 
-	public Object getSessionAttribute(
-		String name
-	) {
-		return this.httpServletRequest.getSession().getAttribute(name);
-	}
-	
-	public void setSessionAttribute(
-		String name,
-		Object value
-	) {
-		this.httpServletRequest.getSession().setAttribute(name, value);
-	}
-	
 	public File getTempDir(
 	) throws ServiceException {
 		if(System.getProperty("org.opencrx.airsyncdir") != null) {
 			return new File(System.getProperty("org.opencrx.airsyncdir"));
 		} else {
-			return (File)this.httpServletRequest.getSession().getServletContext().getAttribute("javax.servlet.context.tempdir");
+			return (File)this.context.getSession().getServletContext().getAttribute("javax.servlet.context.tempdir");
 		}
+	}
+	
+	public Object getContext(
+	) {
+		return this.context;
 	}
 	
 	public double getProtocolVersion(
@@ -129,7 +143,7 @@ public class SyncRequest {
 	
 	public InputStream getInputStream(
 	) throws IOException {
-		return this.httpServletRequest.getInputStream();
+		return this.context.getInputStream();
 	}
 
 	public String getCmd() {
@@ -144,22 +158,26 @@ public class SyncRequest {
     	return deviceId;
     }
 
+	public String getUserId() {
+	    return userId;
+    }
+
 	@Override
     public String toString(
     ) {
         try {
             return Records.getRecordFactory().asMappedRecord(
-                DataproviderRequest.class.getName(),
+                SyncRequest.class.getName(),
                 null,
                 new String[]{
                 	"cmd",
-                	"user",
+                	"userId",
                 	"deviceId",
                 	"protocolVersion"
                 },
                 new Object[]{
                     this.cmd,
-                    this.httpServletRequest == null || this.httpServletRequest.getUserPrincipal() == null ? "NA" : this.httpServletRequest.getUserPrincipal().getName(),
+                    this.userId,
                     this.deviceId,
                     this.protocolVersion
                 }
@@ -170,4 +188,9 @@ public class SyncRequest {
         }
     }
 
+	//-----------------------------------------------------------------------
+	// Members
+	//-----------------------------------------------------------------------
+	public static final String DEFAULT_SEGMENT_NAME = "Standard";
+	
 }

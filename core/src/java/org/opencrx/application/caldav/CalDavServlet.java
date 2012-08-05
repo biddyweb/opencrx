@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: CalDavServlet.java,v 1.35 2010/03/24 13:06:07 wfro Exp $
+ * Name:        $Id: CalDavServlet.java,v 1.40 2010/07/22 23:17:12 wfro Exp $
  * Description: CalDavServlet
- * Revision:    $Revision: 1.35 $
+ * Revision:    $Revision: 1.40 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/24 13:06:07 $
+ * Date:        $Date: 2010/07/22 23:17:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -85,6 +85,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.CalendarProfileQuery;
@@ -99,7 +100,6 @@ import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
@@ -208,92 +208,6 @@ public class CalDavServlet extends HttpServlet  {
         return activitiesHelper;
     }
     
-//    //-----------------------------------------------------------------------
-//    static class CaldavRequest extends HttpPost {
-//    
-//    	public CaldavRequest(
-//    		String method,
-//    		String url
-//    	) {
-//    		super(url);
-//    		this.method = method;
-//    	}
-//
-//		@Override
-//        public String getMethod(
-//        ) {
-//			return this.method;
-//        }
-//		
-//		private final String method;
-//    	
-//    }
-//    
-//    //-----------------------------------------------------------------------
-//    private void delegateRequest(
-//    	String content,
-//    	HttpServletRequest req,
-//        HttpServletResponse resp
-//    ) throws IOException {
-//    	DefaultHttpClient httpClient = new DefaultHttpClient();
-//    	CaldavRequest caldavRequest = new CaldavRequest(
-//    		req.getMethod(),
-//    		"https://www.google.com:443/calendar" + req.getServletPath()
-//    	);
-//    	Enumeration<String> headerNames = req.getHeaderNames();
-//    	while(headerNames.hasMoreElements()) {
-//    		String headerName = headerNames.nextElement();
-//    		if(
-//    			(headerName != null) &&
-//    			!"content-length".equalsIgnoreCase(headerName)
-//    		) {
-//	    		Enumeration<String> headerValues = req.getHeaders(headerName);
-//	    		while(headerValues.hasMoreElements()) {
-//	    			String headerValue = headerValues.nextElement();    			
-//	    			caldavRequest.addHeader(headerName, headerValue);
-//	    		}
-//    		}
-//    	}
-//    	String userPassword = "user:password";
-//    	caldavRequest.setHeader("Authorization", "Basic " + Base64.encode (userPassword.getBytes()));
-//    	HttpEntity requestEntity = new ByteArrayEntity(content.getBytes());
-//    	caldavRequest.setEntity(requestEntity);
-//    	HttpResponse response = httpClient.execute(caldavRequest);    	    	
-//        resp.setStatus(response.getStatusLine().getStatusCode());
-//        HttpEntity responseEntity = response.getEntity();
-//        if(responseEntity != null) {
-//	        if(responseEntity.getContentEncoding() != null) {
-//	        	resp.setCharacterEncoding(responseEntity.getContentEncoding().getValue());
-//	        }
-//	        if(responseEntity.getContentType() != null) {
-//	        	resp.setContentType(responseEntity.getContentType().getValue());
-//	        }
-//	        Header[] responseHeaders = response.getAllHeaders();
-//	        for(Header header: responseHeaders) {
-//	        	for(HeaderElement element: header.getElements()) {
-//		        	resp.addHeader(
-//		        		header.getName(), 
-//		        		element.getValue()
-//		        	);
-//	        	}
-//	        }
-//	    	InputStream in = responseEntity.getContent();
-//	    	OutputStream out = resp.getOutputStream();
-//	    	ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//	    	int b;
-//	    	while((b = in.read()) != -1) {
-//	    		bytes.write(b);
-//	    		out.write(b);
-//	    	}
-//	    	bytes.close();
-//	    	String responseContent = bytes.toString("ISO-8859-1");
-//	    	SysLog.warning("Response", responseContent);
-//        }
-//        else {
-//	    	SysLog.warning("Response", "NA");        	
-//        }
-//    }
-    
     //-----------------------------------------------------------------------
     protected String getUid(
     	String event
@@ -315,7 +229,8 @@ public class CalDavServlet extends HttpServlet  {
     	ActivitiesFilterHelper activitiesHelper,
     	PrintWriter p,
     	HttpServletRequest req,
-    	int index
+    	int index,
+    	boolean noCDATA
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
     	String ical = activity.getIcal();
@@ -337,7 +252,7 @@ public class CalDavServlet extends HttpServlet  {
     	}
 		String userAgent = req.getHeader("user-agent");
         boolean iPhone = userAgent != null && userAgent.indexOf("iPhone") > 0;
-    	p.println("<![CDATA[BEGIN:VCALENDAR");
+    	p.println((noCDATA ? "" : "<![CDATA[") + "BEGIN:VCALENDAR");
         p.println("PRODID:" + ICalendar.PROD_ID);
         p.println("VERSION:2.0");
         p.println("CALSCALE:GREGORIAN");
@@ -372,20 +287,19 @@ public class CalDavServlet extends HttpServlet  {
 		        			if(end > start) {
 		        				vevent = 
 		        					vevent.substring(0, end) + 
-		        					ICalendar.LINE_COMMENT_INDICATOR + " " + url + " " +
+		        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
 		        					vevent.substring(end);    					        					
 		        			}
 		        		}
 		        		else {
-		        			vevent += "DESCRIPTION:" + ICalendar.LINE_COMMENT_INDICATOR + " " + url + "\n";
+		        			vevent += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
 		        		}
 		        	}
-		        	String encVevent = XMLEncoder.encode(vevent); 
-		            p.print(encVevent);            
+		            p.print(vevent);            
 		            SysLog.detail("VEVENT #", index);
-		            SysLog.detail(encVevent);
+		            SysLog.detail(vevent);
 		            if(vevent.indexOf("URL:") < 0) {
-		                p.println("URL:" + XMLEncoder.encode(url));
+		                p.println("URL:" + url);
 		            }
 		            p.println("END:VEVENT");
 		        }
@@ -401,20 +315,19 @@ public class CalDavServlet extends HttpServlet  {
 		        			if(end > start) {
 		        				vtodo = 
 		        					vtodo.substring(0, end) + 
-		        					ICalendar.LINE_COMMENT_INDICATOR + " " + url + " " +
+		        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
 		        					vtodo.substring(end);        					        					
 		        			}
 		        		}            	
 			    		else {
-			    			vtodo += "DESCRIPTION:" + ICalendar.LINE_COMMENT_INDICATOR + " " + url + "\n";
+			    			vtodo += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
 			    		}
 		            }
-		            String encVTodo = XMLEncoder.encode(vtodo); 
-		            p.print(encVTodo);
+		            p.print(vtodo);
 		            SysLog.detail("VTODO #", index);
-		            SysLog.detail(encVTodo);
+		            SysLog.detail(vtodo);
 		            if(vtodo.indexOf("URL:") < 0) {
-		                p.println("URL:" + XMLEncoder.encode(url));
+		                p.println("URL:" + url);
 		            }
 		            p.println("END:VTODO");                        
 		        }
@@ -432,7 +345,7 @@ public class CalDavServlet extends HttpServlet  {
 	        	e.log();
 	        }
     	}
-        p.print("END:VCALENDAR]]>");
+        p.print("END:VCALENDAR" + (noCDATA ? "" : "]]>"));
     }
     
     //-----------------------------------------------------------------------
@@ -902,7 +815,8 @@ public class CalDavServlet extends HttpServlet  {
 	    	        		activitiesHelper,
 	    	        		p, 
 	    	        		req, 
-	    	        		n
+	    	        		n, // event#
+	    	        		false // noDATA
 	    	        	);
 	                    p.println("</C:calendar-data>");
 	    	        	p.println("      </D:prop>");
@@ -942,7 +856,8 @@ public class CalDavServlet extends HttpServlet  {
     	        		activitiesHelper,
     	        		p, 
     	        		req, 
-    	        		0
+    	        		0, // event#
+    	        		true // noCDATA
     	        	);
     	        	p.println();
     	        	p.flush();

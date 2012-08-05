@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EventT.java,v 1.6 2010/03/03 14:51:28 wfro Exp $
+ * Name:        $Id: EventT.java,v 1.7 2010/06/04 11:58:35 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/03 14:51:28 $
+ * Date:        $Date: 2010/06/04 11:58:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,6 +81,15 @@ public class EventT implements IData {
 	private List<EventT> exceptions;
 	private Date exceptionStartTime;
 	private boolean deletedException;
+	private String timezone;
+
+	public String getTimezone() {
+    	return timezone;
+    }
+
+	public void setTimezone(String timezone) {
+    	this.timezone = timezone;
+    }
 
 	public String getOrganizerName(
 	) {

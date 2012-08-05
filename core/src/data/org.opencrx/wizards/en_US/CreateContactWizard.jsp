@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: CreateContactWizard.jsp,v 1.29 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: CreateContactWizard.jsp,v 1.30 2010/06/01 17:16:44 wfro Exp $
  * Description: CreateContact wizard
- * Revision:    $Revision: 1.29 $
+ * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2010/06/01 17:16:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -288,11 +288,9 @@ org.openmdx.base.naming.*
 	        stringParams.add(wildcard + emailBusiness + wildcard);
 	    }
 	    if(queryFilterClause != null) {
-		    org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilter =
-	        	pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
+	    	org.openmdx.base.query.Extension queryFilter = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(contactQuery);
 		    queryFilter.setClause(queryFilterClause);
-		    queryFilter.setStringParam(stringParams);
-		    contactQuery.thereExistsContext().equalTo(queryFilter);
+		    queryFilter.getStringParam().addAll(stringParams);
 	    }
 	    matchingContacts = hasQueryProperty ?
 	        accountSegment.getAccount(contactQuery) :

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestBackend.java,v 1.8 2010/03/29 10:42:44 wfro Exp $
+ * Name:        $Id: TestBackend.java,v 1.14 2010/06/18 18:02:10 wfro Exp $
  * Description: TestBackend
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/29 10:42:44 $
+ * Date:        $Date: 2010/06/18 18:02:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
 import javax.naming.spi.NamingManager;
@@ -72,20 +71,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.opencrx.application.airsync.backend.cci.SyncBackend;
+import org.opencrx.application.airsync.backend.impl.DatatypeMapper;
+import org.opencrx.application.airsync.backend.impl.OpenCrxSyncBackend;
+import org.opencrx.application.airsync.server.FolderSyncHandler;
+import org.opencrx.application.airsync.server.GetItemEstimateHandler;
+import org.opencrx.application.airsync.server.MoveItemsHandler;
+import org.opencrx.application.airsync.server.PingHandler;
+import org.opencrx.application.airsync.server.SyncHandler;
 import org.opencrx.application.airsync.server.SyncRequest;
-import org.opencrx.application.airsync.server.handler.FolderSyncHandler;
-import org.opencrx.application.airsync.server.handler.GetItemEstimateHandler;
-import org.opencrx.application.airsync.server.handler.MoveItemsHandler;
-import org.opencrx.application.airsync.server.handler.PingHandler;
-import org.opencrx.application.airsync.server.handler.SyncHandler;
-import org.opencrx.application.airsync.server.impl.SyncBackend;
-import org.opencrx.application.airsync.server.spi.ISyncBackend;
 import org.opencrx.application.airsync.utils.DOMUtils;
 import org.opencrx.application.airsync.utils.WbXMLTransformer;
-import org.opencrx.kernel.backend.UserHomes;
-import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 import org.openmdx.kernel.loading.Classes;
 import org.w3c.dom.Document;
@@ -105,17 +102,17 @@ public class TestBackend {
 	protected static class TestSyncRequest extends SyncRequest {
 
 		public TestSyncRequest(
-			UserHome userHome
+			String userId
 		) {
 			super();
-			this.userHome = userHome;
+			this.userId = userId;
 		}
 
 		@Override
 		public File getTempDir(
 		) throws ServiceException {
 			try {
-				return File.createTempFile(TestHandlers.class.getName(), ".tmp").getParentFile();
+				return File.createTempFile(TestServerHandlers.class.getName(), ".tmp").getParentFile();
 			} catch (IOException e) {
 				throw new ServiceException(e);
 			}
@@ -127,18 +124,14 @@ public class TestBackend {
 			return "mypda";
 		}
 
+		
 		@Override
-		public Object getSessionAttribute(
-			String name
+		public String getUserId(
 		) {
-			if(UserHome.class.getName().equals(name)) {
-				return this.userHome;
-			} else {
-				return super.getSessionAttribute(name);
-			}
-		}		
-	
-		private final UserHome userHome;
+			return this.userId;
+		}
+
+		private final String userId;
 		
 	}
 	
@@ -150,7 +143,11 @@ public class TestBackend {
             NonManagedInitialContextFactoryBuilder.install(null);
         }
         entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
-        syncBackend = new SyncBackend();
+        syncBackend = new OpenCrxSyncBackend(
+        	entityManagerFactory,
+        	PROVIDER_NAME,
+        	new DatatypeMapper()
+        );
     }
     
     //-----------------------------------------------------------------------
@@ -174,15 +171,8 @@ public class TestBackend {
         protected void testFolderSyncHandler(
         ) throws ServiceException {
         	try {        		
-	        	FolderSyncHandler handler = new FolderSyncHandler(syncBackend);
-	        	PersistenceManager pm = entityManagerFactory.getPersistenceManager(USER_ID, null);
-	        	SyncRequest request = new TestSyncRequest(
-	        		UserHomes.getInstance().getUserHome(
-	        			USER_ID, 
-	        			HOME_SEGMENT_IDENTITY, 
-	        			pm
-	        		)
-	        	);
+	        	FolderSyncHandler handler = new FolderSyncHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
+	        	SyncRequest request = new TestSyncRequest(USER_ID);
 	    		URL url = Classes.getApplicationResource(
 	    			"test/org/opencrx/application/airsync/FolderHierarchyRequest.xml"
 	    		);
@@ -210,15 +200,8 @@ public class TestBackend {
 	    protected void testGetItemEstimateHandler(
 	    ) throws ServiceException {
 	    	try {
-		    	GetItemEstimateHandler handler = new GetItemEstimateHandler(syncBackend);
-	        	PersistenceManager pm = entityManagerFactory.getPersistenceManager(USER_ID, null);
-	        	SyncRequest request = new TestSyncRequest(
-	        		UserHomes.getInstance().getUserHome(
-	        			USER_ID, 
-	        			HOME_SEGMENT_IDENTITY, 
-	        			pm
-	        		)
-	        	);
+		    	GetItemEstimateHandler handler = new GetItemEstimateHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
+	        	SyncRequest request = new TestSyncRequest(USER_ID);
 	    		URL url = Classes.getApplicationResource(
 	    			"test/org/opencrx/application/airsync/GetItemEstimateRequest.xml"
 	    		);
@@ -246,15 +229,8 @@ public class TestBackend {
 	    protected void testMoveItemsHandler(
 	    ) throws ServiceException {
 	    	try {
-		    	MoveItemsHandler handler = new MoveItemsHandler(syncBackend);
-	        	PersistenceManager pm = entityManagerFactory.getPersistenceManager(USER_ID, null);
-	        	SyncRequest request = new TestSyncRequest(
-	        		UserHomes.getInstance().getUserHome(
-	        			USER_ID, 
-	        			HOME_SEGMENT_IDENTITY, 
-	        			pm
-	        		)
-	        	);
+		    	MoveItemsHandler handler = new MoveItemsHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
+	        	SyncRequest request = new TestSyncRequest(USER_ID);
 	    		URL url = Classes.getApplicationResource(
 	    			"test/org/opencrx/application/airsync/MoveItemsRequest.xml"
 	    		);
@@ -282,15 +258,8 @@ public class TestBackend {
 	    protected void testPingHandler(
 	    ) throws ServiceException {
 	    	try {
-		    	PingHandler handler = new PingHandler(syncBackend);
-	        	PersistenceManager pm = entityManagerFactory.getPersistenceManager(USER_ID, null);
-	        	SyncRequest request = new TestSyncRequest(
-	        		UserHomes.getInstance().getUserHome(
-	        			USER_ID, 
-	        			HOME_SEGMENT_IDENTITY, 
-	        			pm
-	        		)
-	        	);
+		    	PingHandler handler = new PingHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
+	        	SyncRequest request = new TestSyncRequest(USER_ID);
 	        	// PingRequest1
 	    		URL url = Classes.getApplicationResource(
 	    			"test/org/opencrx/application/airsync/PingRequest1.xml"
@@ -339,15 +308,8 @@ public class TestBackend {
 	    protected void testSyncHandler(
 	    ) throws ServiceException {
 	    	try {
-		    	SyncHandler handler = new SyncHandler(syncBackend);
-	        	PersistenceManager pm = entityManagerFactory.getPersistenceManager(USER_ID, null);
-	        	SyncRequest request = new TestSyncRequest(
-	        		UserHomes.getInstance().getUserHome(
-	        			USER_ID, 
-	        			HOME_SEGMENT_IDENTITY, 
-	        			pm
-	        		)
-	        	);
+		    	SyncHandler handler = new SyncHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
+	        	SyncRequest request = new TestSyncRequest(USER_ID);
 	        	// SyncRequest-GetAll.xml
 	    		URL url = Classes.getApplicationResource(
 	    			"test/org/opencrx/application/airsync/SyncRequest-GetAll.xml"
@@ -398,11 +360,12 @@ public class TestBackend {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static PersistenceManagerFactory entityManagerFactory = null;
-	protected static String PROVIDER_NAME = "CRX";
-	protected static String SEGMENT_NAME = "Standard";
-	protected static Path HOME_SEGMENT_IDENTITY = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + PROVIDER_NAME + "/segment/" + SEGMENT_NAME);
-	protected static String USER_ID = "guest";
-	protected static ISyncBackend syncBackend;
+	protected static final String PROVIDER_NAME = "CRX";
+	protected static final String SEGMENT_NAME = "Standard";
+	protected static final String USER_ID = SEGMENT_NAME + SyncBackend.DOMAIN_SEPARATOR + "guest";
+	protected static final String DEFAULT_PROFILE_PREFIX = "AirSync~";
+
+	protected static PersistenceManagerFactory entityManagerFactory = null;
+	protected static SyncBackend syncBackend;
 	
 }

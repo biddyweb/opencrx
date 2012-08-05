@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceImpl.java,v 1.42 2010/04/29 13:06:13 wfro Exp $
+ * Name:        $Id: ShopServiceImpl.java,v 1.48 2010/06/30 11:43:55 wfro Exp $
  * Description: ShopServiceImpl
- * Revision:    $Revision: 1.42 $
+ * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/29 13:06:13 $
+ * Date:        $Date: 2010/06/30 11:43:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -168,8 +168,9 @@ import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -296,12 +297,6 @@ public class ShopServiceImpl
     protected Product1Package getProductPackage(
     ) {
         return Utils.getProductPackage(this.pm); 
-    }
-    
-    //-----------------------------------------------------------------------
-    protected org.openmdx.compatibility.datastore1.jmi1.Datastore1Package getDatastorePackage(
-    ) {
-        return Utils.getDatastorePackage(this.pm); 
     }
     
     //-----------------------------------------------------------------------
@@ -447,8 +442,7 @@ public class ShopServiceImpl
             // Match restrictToProduct
             positionQuery.thereExistsProduct().equalTo(restrictToProduct);
             // Must be part of invoice with matching customer 
-            org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilter =
-                this.getDatastorePackage().getQueryFilter().createQueryFilter();
+            org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(positionQuery);
             String clause = "EXISTS (SELECT 0 FROM OOCKE1_CONTRACT c INNER JOIN OOCKE1_ACCOUNT a ON c.customer = a.object_id WHERE v.p$$parent = c.object_id AND a.alias_name = ?s0";
             queryFilter.setStringParam(this.datatypeMappers.getAccountFieldMapper().getAccountNumber(customer));
             clause += " AND c.is_gift = ?b0";
@@ -459,7 +453,6 @@ public class ShopServiceImpl
             queryFilter.setIntegerParam(invoiceStatusThreshold);
             clause += ")";
             queryFilter.setClause(clause);
-            positionQuery.thereExistsContext().equalTo(queryFilter);
             Collection<AbstractInvoicePosition> positions = contractSegment.getExtent(positionQuery);
             for(AbstractInvoicePosition position: positions) {
                 if(position instanceof InvoicePosition) {
@@ -1012,8 +1005,6 @@ public class ShopServiceImpl
         SetConfigurationTypeParams setConfigurationTypeParams = 
             this.getProductPackage().createSetConfigurationTypeParams(configurationType);
         product.setConfigurationType(setConfigurationTypeParams);
-        this.pm.currentTransaction().commit();
-        this.pm.currentTransaction().begin();
         // Configuration properties
         Collection<ProductConfiguration> configurations = product.getConfiguration();
         Collection<ProductConfiguration> configurationsToBeDeleted = new ArrayList<ProductConfiguration>();
@@ -1278,8 +1269,8 @@ public class ShopServiceImpl
         		filterProperty.refInitialize(false, false);
         		filterProperty.setName("Classifications");
         		filterProperty.setActive(Boolean.TRUE);
-        		filterProperty.setFilterOperator(FilterOperators.IS_IN);
-        		filterProperty.setFilterQuantor(Quantors.THERE_EXISTS);
+        		filterProperty.setFilterOperator(ConditionType.IS_IN.code());
+        		filterProperty.setFilterQuantor(Quantifier.THERE_EXISTS.code());
                 filterProperty.getOwningGroup().addAll(
                     bundleFilter.getOwningGroup()
                 );
@@ -3620,11 +3611,14 @@ public class ShopServiceImpl
                 for(AccountAddress address: addresses) {
                     Account account = (Account)this.pm.getObjectById(address.refGetPath().getParent().getParent());
                     String customerNumber = this.datatypeMappers.getAccountFieldMapper().getAccountNumber(account);
-                    if(!customerNumbers.contains(customerNumber)) {
+                    if(customerNumber == null) {
+                    	SysLog.warning("Customer number is null. Skipping customer", account.refGetPath());
+                    }
+                    else if(!customerNumbers.contains(customerNumber)) {
                         customerNumbers.add(customerNumber);
                     }
                 }
-            }            
+            }
             result.add(
                 Datatypes.member(
                     GetCustomersByQueryResult.Member.customerNumber,
@@ -6295,8 +6289,16 @@ public class ShopServiceImpl
             result
         );
     }
-                                                                                                                
+
 	//-----------------------------------------------------------------------
+    public void close(
+    ) {
+    	if(this.pm != null) {
+    		this.pm.close();
+    	}
+    }
+
+    //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
     protected final PersistenceManager pm;

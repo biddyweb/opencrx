@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.161 2010/04/29 13:06:13 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.169 2010/06/25 14:26:57 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.161 $
+ * Revision:    $Revision: 1.169 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/29 13:06:13 $
+ * Date:        $Date: 2010/06/25 14:26:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -115,37 +115,27 @@ import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
 import org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
-import org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreationAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
-import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
-import org.opencrx.kernel.activity1.jmi1.ActivityFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
 import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
-import org.opencrx.kernel.activity1.jmi1.ActivityNumberFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessAction;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
-import org.opencrx.kernel.activity1.jmi1.ActivityProcessStateFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
-import org.opencrx.kernel.activity1.jmi1.ActivityQueryFilterProperty;
-import org.opencrx.kernel.activity1.jmi1.ActivityStateFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
-import org.opencrx.kernel.activity1.jmi1.ActivityTypeFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.ActivityVote;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.AddressGroup;
 import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
-import org.opencrx.kernel.activity1.jmi1.AssignedToFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.Calendar;
-import org.opencrx.kernel.activity1.jmi1.DisabledFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup;
@@ -155,15 +145,12 @@ import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
-import org.opencrx.kernel.activity1.jmi1.ScheduledEndFilterProperty;
-import org.opencrx.kernel.activity1.jmi1.ScheduledStartFilterProperty;
 import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
 import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
 import org.opencrx.kernel.activity1.jmi1.SetAssignedToAction;
 import org.opencrx.kernel.activity1.jmi1.WeekDay;
 import org.opencrx.kernel.activity1.jmi1.WfAction;
 import org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord;
-import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.depot1.jmi1.Depot;
 import org.opencrx.kernel.depot1.jmi1.DepotEntity;
@@ -185,11 +172,9 @@ import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_At
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
@@ -297,11 +282,23 @@ public class Activities extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */
     public org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
+    	return this.findActivityTracker(name, segment);
+    }
+
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.ActivityTracker findActivityTracker(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery activityTrackerQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(ActivityTracker.class);
         activityTrackerQuery.name().equalTo(name);
@@ -312,11 +309,23 @@ public class Activities extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated 
+     */
     public org.opencrx.kernel.activity1.jmi1.ActivityCategory findActivityCategory(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
+    	return this.findActivityCategory(name, segment);
+    }
+
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.ActivityCategory findActivityCategory(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);    	
         org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery activityCategoryQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(ActivityCategory.class);
         activityCategoryQuery.name().equalTo(name);
@@ -327,11 +336,23 @@ public class Activities extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */
     public org.opencrx.kernel.activity1.jmi1.Calendar findCalendar(
         String name,
         org.opencrx.kernel.activity1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
+    	return this.findCalendar(name, segment);
+    }
+    
+    //-------------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.Calendar findCalendar(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);    	
         org.opencrx.kernel.activity1.cci2.CalendarQuery calendarQuery = 
         	(org.opencrx.kernel.activity1.cci2.CalendarQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Calendar.class);
         calendarQuery.name().equalTo(name);
@@ -1928,19 +1949,36 @@ public class Activities extends AbstractImpl {
     ) throws ServiceException {
         Collection<Activity> activities = activityGroup.getFilteredActivity();
         // Don't allow removal if activity group has assigned activities
-        if(!activities.isEmpty()) {
-            throw new ServiceException(
-                OpenCrxException.DOMAIN,
-                OpenCrxException.ACTIVITY_GROUP_HAS_ASSIGNED_ACTIVITIES, 
-                "Activity group has assigned activities. Can not remove.",
-                new BasicException.Parameter("param0", activityGroup.refGetPath())
-            );
+        for (Activity activity: activities) {
+        	if (!JDOHelper.isDeleted(activity)){        
+	            throw new ServiceException(
+	                OpenCrxException.DOMAIN,
+	                OpenCrxException.ACTIVITY_GROUP_HAS_ASSIGNED_ACTIVITIES, 
+	                "Activity group has assigned activities. Can not remove.",
+	                new BasicException.Parameter("param0", activityGroup.refGetPath())
+	            );
+        	}
         }
         if(!preDelete) {
         	activityGroup.refDelete();
         }
     }
     
+    //-----------------------------------------------------------------------
+    protected String getICalUid(
+    	String event
+    ) {
+    	String uid = null;
+    	if(event.indexOf("UID:") > 0) {
+    		int start = event.indexOf("UID:");
+    		int end = event.indexOf("\n", start);
+    		if(end > start) {
+    			uid = event.substring(start + 4, end).trim();
+    		}
+    	}    	
+    	return uid;
+    }
+        
     //-------------------------------------------------------------------------
     public void updateActivity(
         Activity activity
@@ -1965,6 +2003,27 @@ public class Activities extends AbstractImpl {
         activity.setIcal(
             ical == null ? "" : ical
         );
+        // Assertion externalLink().contains(ical uid)
+        String uid = this.getICalUid(ical);
+        boolean externalLinkMatchesUid = false;
+        for(String externalLink: activity.getExternalLink()) {
+        	if(externalLink.startsWith(ICalendar.ICAL_SCHEMA) && externalLink.endsWith(uid)) {
+        		externalLinkMatchesUid = true;
+        		break;
+        	}
+        }
+        if(!externalLinkMatchesUid) {
+        	// Should never happen. Log warning.
+        	ServiceException e = new ServiceException(
+        		BasicException.Code.DEFAULT_DOMAIN,
+        		BasicException.Code.ASSERTION_FAILURE,
+        		"Activity's external link does not contain ical UID",
+        		new BasicException.Parameter("activity", activity),
+        		new BasicException.Parameter("externalLink", activity.getExternalLink()),
+        		new BasicException.Parameter("ical", ical)        		
+        	);
+        	e.log();
+        }
     }
         
     //-------------------------------------------------------------------------
@@ -2211,442 +2270,6 @@ public class Activities extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
-    public ActivityQuery getFilteredActivityQuery(
-        AbstractFilterActivity activityFilter,
-        ActivityQuery query,
-        boolean forCounting,
-        PersistenceManager pm
-    ) throws ServiceException {
-        Collection<ActivityFilterProperty> filterProperties = activityFilter.getFilterProperty();
-        boolean hasQueryFilterClause = false;
-        for(ActivityFilterProperty filterProperty: filterProperties) {
-            Boolean isActive = filterProperty.isActive();            
-            if((isActive != null) && isActive.booleanValue()) {
-                // Query filter
-                if(filterProperty instanceof ActivityQueryFilterProperty) {
-                	ActivityQueryFilterProperty p = (ActivityQueryFilterProperty)filterProperty;
-                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
-                	queryFilter.setClause(
-                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
-                	);
-                    queryFilter.setStringParam(
-                    	p.getStringParam()
-                    );
-                    queryFilter.setIntegerParam(
-                    	p.getIntegerParam()
-                    );
-                    queryFilter.setDecimalParam(
-                    	p.getDecimalParam()
-                    );
-                    queryFilter.setBooleanParam(
-                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
-                    );
-                    queryFilter.setDateParam(
-                    	p.getDateParam()
-                    );
-                    queryFilter.setDateTimeParam(
-                    	p.getDateTimeParam()
-                    );
-                    query.thereExistsContext().equalTo(
-                    	queryFilter
-                    );
-                    hasQueryFilterClause = true;
-                }
-                // Attribute filter
-                else if(filterProperty instanceof AttributeFilterProperty) {
-                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
-                    // Get filterOperator, filterQuantor
-                    short operator = attributeFilterProperty.getFilterOperator();
-                    operator = operator == 0 ? 
-                    	FilterOperators.IS_IN : 
-                    	operator;
-                    short quantor = attributeFilterProperty.getFilterQuantor();
-                    quantor = quantor == 0 ? 
-                    	Quantors.THERE_EXISTS : 
-                    	quantor;                    
-                    if(filterProperty instanceof ActivityStateFilterProperty) {
-                    	ActivityStateFilterProperty p = (ActivityStateFilterProperty)filterProperty;
-                    	switch(quantor) {
-                    		default:
-                    			switch(operator) {
-                    				case FilterOperators.IS_IN: 
-                    					query.activityState().elementOf(p.getActivityState()); 
-                    					break;
-                    				case FilterOperators.IS_GREATER:
-                    					query.activityState().greaterThan(p.getActivityState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_GREATER_OR_EQUAL:
-                    					query.activityState().greaterThanOrEqualTo(p.getActivityState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS:
-                    					query.activityState().lessThan(p.getActivityState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS_OR_EQUAL:
-                    					query.activityState().lessThanOrEqualTo(p.getActivityState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_NOT_IN:
-                    					query.activityState().notAnElementOf(p.getActivityState()); 
-                    					break;
-                    				default:
-                    					query.activityState().elementOf(p.getActivityState()); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof ScheduledStartFilterProperty) {
-                    	ScheduledStartFilterProperty p = (ScheduledStartFilterProperty)filterProperty;
-                    	List<Date> scheduledStart = new ArrayList<Date>();
-                        if(p.getScheduledStart().isEmpty()) {
-                            scheduledStart.add(new Date());
-                        }
-                        if(p.getOffsetInHours() != null) {
-                            int offsetInHours = p.getOffsetInHours().intValue();
-                            for(int j = 0; j < scheduledStart.size(); j++) {
-                                try {
-                                    GregorianCalendar date = new GregorianCalendar();
-                                    date.setTime(
-                                        scheduledStart.get(j)
-                                    );
-                                    date.add(GregorianCalendar.HOUR_OF_DAY, offsetInHours);
-                                    scheduledStart.set(
-                                        j, 
-                                        date.getTime()
-                                    );
-                                } 
-                                catch(Exception e) {}
-                            }
-                        }
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllScheduledStart().elementOf(scheduledStart); 
-	                					break;
-	                				case FilterOperators.IS_GREATER:
-	                					query.forAllScheduledStart().greaterThan(scheduledStart.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_GREATER_OR_EQUAL:
-	                					query.forAllScheduledStart().greaterThanOrEqualTo(scheduledStart.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS:
-	                					query.forAllScheduledStart().lessThan(scheduledStart.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS_OR_EQUAL:
-	                					query.forAllScheduledStart().lessThanOrEqualTo(scheduledStart.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllScheduledStart().notAnElementOf(scheduledStart); 
-	                					break;
-	                				default:
-	                					query.forAllScheduledStart().elementOf(scheduledStart); 
-	                					break;
-	                			}
-	                			break;
-                    		default:
-                    			switch(operator) {
-                    				case FilterOperators.IS_IN: 
-                    					query.thereExistsScheduledStart().elementOf(scheduledStart); 
-                    					break;
-                    				case FilterOperators.IS_GREATER:
-                    					query.thereExistsScheduledStart().greaterThan(scheduledStart.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_GREATER_OR_EQUAL:
-                    					query.thereExistsScheduledStart().greaterThanOrEqualTo(scheduledStart.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS:
-                    					query.thereExistsScheduledStart().lessThan(scheduledStart.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS_OR_EQUAL:
-                    					query.thereExistsScheduledStart().lessThanOrEqualTo(scheduledStart.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_NOT_IN:
-                    					query.thereExistsScheduledStart().notAnElementOf(scheduledStart); 
-                    					break;
-                    				default:
-                    					query.thereExistsScheduledStart().elementOf(scheduledStart); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof ScheduledEndFilterProperty) {
-                    	ScheduledEndFilterProperty p = (ScheduledEndFilterProperty)filterProperty;
-                    	List<Date> scheduledEnd = new ArrayList<Date>();
-                        if(p.getScheduledEnd().isEmpty()) {
-                            scheduledEnd.add(new Date());
-                        }
-                        if(p.getOffsetInHours() != null) {
-                            int offsetInHours = p.getOffsetInHours().intValue();
-                            for(int j = 0; j < scheduledEnd.size(); j++) {
-                                try {
-                                    GregorianCalendar date = new GregorianCalendar();
-                                    date.setTime(
-                                        scheduledEnd.get(j)
-                                    );
-                                    date.add(GregorianCalendar.HOUR_OF_DAY, offsetInHours);
-                                    scheduledEnd.set(
-                                        j, 
-                                        date.getTime()
-                                    );
-                                } 
-                                catch(Exception e) {}
-                            }
-                        }
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllScheduledEnd().elementOf(scheduledEnd); 
-	                					break;
-	                				case FilterOperators.IS_GREATER:
-	                					query.forAllScheduledEnd().greaterThan(scheduledEnd.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_GREATER_OR_EQUAL:
-	                					query.forAllScheduledEnd().greaterThanOrEqualTo(scheduledEnd.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS:
-	                					query.forAllScheduledEnd().lessThan(scheduledEnd.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS_OR_EQUAL:
-	                					query.forAllScheduledEnd().lessThanOrEqualTo(scheduledEnd.get(0)); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllScheduledEnd().notAnElementOf(scheduledEnd); 
-	                					break;
-	                				default:
-	                					query.forAllScheduledEnd().elementOf(scheduledEnd); 
-	                					break;
-	                			}
-	                			break;
-                    		default:
-                    			switch(operator) {
-                    				case FilterOperators.IS_IN: 
-                    					query.thereExistsScheduledEnd().elementOf(scheduledEnd); 
-                    					break;
-                    				case FilterOperators.IS_GREATER:
-                    					query.thereExistsScheduledEnd().greaterThan(scheduledEnd.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_GREATER_OR_EQUAL:
-                    					query.thereExistsScheduledEnd().greaterThanOrEqualTo(scheduledEnd.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS:
-                    					query.thereExistsScheduledEnd().lessThan(scheduledEnd.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS_OR_EQUAL:
-                    					query.thereExistsScheduledEnd().lessThanOrEqualTo(scheduledEnd.get(0)); 
-                    					break;
-                    				case FilterOperators.IS_NOT_IN:
-                    					query.thereExistsScheduledEnd().notAnElementOf(scheduledEnd); 
-                    					break;
-                    				default:
-                    					query.thereExistsScheduledEnd().elementOf(scheduledEnd); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof ActivityProcessStateFilterProperty) {
-                    	ActivityProcessStateFilterProperty p = (ActivityProcessStateFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllProcessState().elementOf(p.getProcessState()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllProcessState().notAnElementOf(p.getProcessState()); 
-	                					break;
-	                				default:
-	                					query.forAllProcessState().elementOf(p.getProcessState()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsProcessState().elementOf(p.getProcessState()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsScheduledEnd().notAnElementOf(p.getProcessState()); 
-	                					break;
-	                				default:
-	                					query.thereExistsScheduledEnd().elementOf(p.getProcessState()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof ActivityTypeFilterProperty) {
-                    	ActivityTypeFilterProperty p = (ActivityTypeFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllActivityType().elementOf(p.getActivityType()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllActivityType().notAnElementOf(p.getActivityType()); 
-	                					break;
-	                				default:
-	                					query.forAllActivityType().elementOf(p.getActivityType()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsActivityType().elementOf(p.getActivityType()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsActivityType().notAnElementOf(p.getActivityType()); 
-	                					break;
-	                				default:
-	                					query.thereExistsActivityType().elementOf(p.getActivityType()); 
-	                					break;
-	                			}
-	                			break;
-                    	}                    	
-                    }
-                    else if(filterProperty instanceof AssignedToFilterProperty) {
-                    	AssignedToFilterProperty p = (AssignedToFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllAssignedTo().elementOf(p.getContact()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllAssignedTo().notAnElementOf(p.getContact()); 
-	                					break;
-	                				default:
-	                					query.forAllAssignedTo().elementOf(p.getContact()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsAssignedTo().elementOf(p.getContact()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsAssignedTo().notAnElementOf(p.getContact()); 
-	                					break;
-	                				default:
-	                					query.thereExistsAssignedTo().elementOf(p.getContact()); 
-	                					break;
-	                			}
-	                			break;
-                    	}                    	
-                    }
-                    else if(filterProperty instanceof ActivityNumberFilterProperty) {
-                    	ActivityNumberFilterProperty p = (ActivityNumberFilterProperty)filterProperty;                    	
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllActivityNumber().elementOf(p.getActivityNumber()); 
-	                					break;
-	                				case FilterOperators.IS_LIKE: 
-	                					query.forAllActivityNumber().like(p.getActivityNumber()); 
-	                					break;
-	                				case FilterOperators.IS_GREATER:
-	                					query.forAllActivityNumber().greaterThan(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_GREATER_OR_EQUAL:
-	                					query.forAllActivityNumber().greaterThanOrEqualTo(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS:
-	                					query.forAllActivityNumber().lessThan(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS_OR_EQUAL:
-	                					query.forAllActivityNumber().lessThanOrEqualTo(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllActivityNumber().notAnElementOf(p.getActivityNumber()); 
-	                					break;
-	                				case FilterOperators.IS_UNLIKE:
-	                					query.forAllActivityNumber().unlike(p.getActivityNumber()); 
-	                					break;
-	                				default:
-	                					query.forAllActivityNumber().elementOf(p.getActivityNumber()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsActivityNumber().elementOf(p.getActivityNumber()); 
-	                					break;
-	                				case FilterOperators.IS_LIKE: 
-	                					query.thereExistsActivityNumber().like(p.getActivityNumber()); 
-	                					break;
-	                				case FilterOperators.IS_GREATER:
-	                					query.thereExistsActivityNumber().greaterThan(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_GREATER_OR_EQUAL:
-	                					query.thereExistsActivityNumber().greaterThanOrEqualTo(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS:
-	                					query.thereExistsActivityNumber().lessThan(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS_OR_EQUAL:
-	                					query.thereExistsActivityNumber().lessThanOrEqualTo(p.getActivityNumber().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsActivityNumber().notAnElementOf(p.getActivityNumber()); 
-	                					break;
-	                				case FilterOperators.IS_UNLIKE:
-	                					query.thereExistsActivityNumber().unlike(p.getActivityNumber()); 
-	                					break;
-	                				default:
-	                					query.thereExistsActivityNumber().elementOf(p.getActivityNumber()); 
-	                					break;
-	                			}
-	                			break;
-	                	}
-                    }
-                    else if(filterProperty instanceof DisabledFilterProperty) {
-                    	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllDisabled().equalTo(p.isDisabled()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN: 
-	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN: 
-	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                	}
-                }
-            }
-        }
-        if(!hasQueryFilterClause && forCounting) {
-        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
-        	queryFilter.setClause(
-        		Database_1_Attributes.HINT_COUNT + "(1=1)"
-        	);
-        	query.thereExistsContext().equalTo(
-        		queryFilter
-        	);
-        }
-        return query;
-    }
-    
-    //-------------------------------------------------------------------------
     public void assignTo(
         Activity activity,
         Resource resource
@@ -2867,15 +2490,7 @@ public class Activities extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activityFilter);    	
     	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
-        this.getFilteredActivityQuery(
-        	activityFilter, 
-        	query, 
-        	false, 
-        	pm
-        );
-    	List<Activity> activities = activityFilter instanceof ActivityFilterGlobal ?
-    		((org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(activityFilter.refGetPath().getPrefix(5))).getActivity(query) :
-    		((org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(activityFilter.refGetPath().getPrefix(7))).getFilteredActivity(query);
+    	List<Activity> activities = activityFilter.getFilteredActivity(query);
         for(Activity activity: activities) {
         	WorkAndExpenseRecordQuery workReportQuery = (WorkAndExpenseRecordQuery)pm.newQuery(WorkAndExpenseRecord.class);
         	workReportQuery.recordType().equalTo(recordType);
@@ -2929,15 +2544,11 @@ public class Activities extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activityFilter);
     	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
-    	this.getFilteredActivityQuery(
-    		activityFilter, 
-    		query, 
-    		true, 
-    		pm
+    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	queryExtension.setClause(
+    		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);
-    	List<Activity> activities = activityFilter instanceof ActivityFilterGlobal ?
-    		((org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(activityFilter.refGetPath().getPrefix(5))).getActivity(query) :
-    		((org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(activityFilter.refGetPath().getPrefix(7))).getFilteredActivity(query);
+    	List<Activity> activities = activityFilter.getFilteredActivity(query);
         return activities.size();
     }
     
@@ -3930,7 +3541,7 @@ public class Activities extends AbstractImpl {
         if(activities.isEmpty()) {
             pm.currentTransaction().begin();                            
             Activity1Package activityPkg = Utils.getActivityPackage(pm);
-            NewActivityParams newActParam = activityPkg.createNewActivityParams(
+            NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
                 null, // description
                 null, // detailedDescription
                 null, // dueBy
@@ -3942,7 +3553,7 @@ public class Activities extends AbstractImpl {
                 null  // scheduledStart
             );
             NewActivityResult newActivityResult = emailCreator.newActivity(
-                newActParam
+                newActivityParams
             );
             pm.currentTransaction().commit();                  
             emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
@@ -3954,9 +3565,24 @@ public class Activities extends AbstractImpl {
             );
             emailActivity.getExternalLink().clear();
             if(mimeMessage.getMessageID() != null) {
+            	String messageId = mimeMessage.getMessageID(); 
+                emailActivity.getExternalLink().add(messageId);
+                // Update ICALs UID
                 emailActivity.getExternalLink().add(
-                    mimeMessage.getMessageID()
+                    ICalendar.ICAL_SCHEMA + messageId
                 );
+                if(emailActivity.getIcal() != null) {
+                	String ical = emailActivity.getIcal();
+                	int pos1 = ical.indexOf("UID:");
+                	int pos2 = ical.indexOf("\n", pos1);
+                	if(pos2 > pos1) {
+                		ical = 
+                			ical.substring(0, pos1) + 
+                			"UID:" + messageId +
+                			ical.substring(pos2);
+                		emailActivity.setIcal(ical);
+                	}
+                }
             }
             pm.currentTransaction().commit();
             // Update activity step 2
@@ -4049,6 +3675,7 @@ public class Activities extends AbstractImpl {
         if(!addresses.isEmpty()) {
             from = addresses.iterator().next();
             pm.currentTransaction().begin();
+            pm.refresh(emailActivity);
             emailActivity.setSender(from);
             pm.currentTransaction().commit();
         } 

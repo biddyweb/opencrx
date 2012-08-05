@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: ProductManager.java,v 1.7 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: ProductManager.java,v 1.8 2010/08/30 15:35:40 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@ package org.opencrx.apps.store.manager;
 
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.ObjectCollection;
@@ -85,17 +86,19 @@ public final class ProductManager
     public final boolean create(
         final Product newValue
     ) {
+    	PersistenceManager pm = null;
     	Transaction tx = null;
         try {
-            tx = this.context.getPersistenceManager().currentTransaction();       
+        	pm = this.context.newPersistenceManager();
+            tx = pm.currentTransaction();       
             tx.begin();
-            org.opencrx.kernel.product1.jmi1.Product product = this.context.getPersistenceManager().newInstance(org.opencrx.kernel.product1.jmi1.Product.class);
+            org.opencrx.kernel.product1.jmi1.Product product = pm.newInstance(org.opencrx.kernel.product1.jmi1.Product.class);
             product.refInitialize(false, false);
             newValue.update(
                 product, 
                 this.context
             );
-            this.context.getProductSegment().addProduct(
+            this.context.getProductSegment(pm).addProduct(
                 false,
                 newValue.getKey().getUuid(),
                 product
@@ -112,6 +115,11 @@ public final class ProductManager
         	}
             new ServiceException(e).log();
             return false;
+        }
+        finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
         }
     }
 
@@ -144,51 +152,71 @@ public final class ProductManager
     public final Product get(
         final PrimaryKey key
     ) {
-        if(key.toString().length() > 0) {
-            org.opencrx.kernel.product1.jmi1.Product product = 
-                this.context.getProductSegment().getProduct(key.getUuid());
-            return new Product(
-                product, 
-                this.context
-            );
-        }
-        else {
-            return null;
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        if(key.toString().length() > 0) {
+	            org.opencrx.kernel.product1.jmi1.Product product = 
+	                this.context.getProductSegment(pm).getProduct(key.getUuid());
+	            return new Product(
+	                product, 
+	                this.context
+	            );
+	        }
+	        else {
+	            return null;
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final ObjectCollection getInCategory(
         final PrimaryKey categoryID
     ) {
-        ObjectCollection productsInCategory = new ObjectCollection();
-        if(categoryID.toString().length() > 0) {
-            ProductClassification classification = this.context.getProductSegment().getProductClassification(categoryID.getUuid());
-            if(classification != null) {
-                ProductQuery query =  (ProductQuery)this.context.getPersistenceManager().newQuery(org.opencrx.kernel.product1.jmi1.Product.class);
-                query.thereExistsClassification().equalTo(classification);
-                List<org.opencrx.kernel.product1.jmi1.Product> products = this.context.getProductSegment().getProduct(query);
-                for(org.opencrx.kernel.product1.jmi1.Product product: products) {
-                    Product prod = new Product(product, this.context);
-                    productsInCategory.put(
-                        prod.getKey().toString(),
-                        prod
-                    );
-                }
-            }
-        }
-        return productsInCategory;
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        ObjectCollection productsInCategory = new ObjectCollection();
+	        if(categoryID.toString().length() > 0) {
+	            ProductClassification classification = this.context.getProductSegment(pm).getProductClassification(categoryID.getUuid());
+	            if(classification != null) {
+	                ProductQuery query =  (ProductQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.Product.class);
+	                query.thereExistsClassification().equalTo(classification);
+	                List<org.opencrx.kernel.product1.jmi1.Product> products = this.context.getProductSegment(pm).getProduct(query);
+	                for(org.opencrx.kernel.product1.jmi1.Product product: products) {
+	                    Product prod = new Product(product, this.context);
+	                    productsInCategory.put(
+	                        prod.getKey().toString(),
+	                        prod
+	                    );
+	                }
+	            }
+	        }
+	        return productsInCategory;
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final Product update(
         final Product newValue
     ) {
+    	PersistenceManager pm = null;
     	Transaction tx = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
+    		pm = this.context.newPersistenceManager();
+	        tx = pm.currentTransaction();       
 	        tx.begin();
-	        org.opencrx.kernel.product1.jmi1.Product product = this.context.getProductSegment().getProduct(newValue.getKey().getUuid());
+	        org.opencrx.kernel.product1.jmi1.Product product = this.context.getProductSegment(pm).getProduct(newValue.getKey().getUuid());
 	        newValue.update(
 	            product,
 	            this.context
@@ -205,6 +233,11 @@ public final class ProductManager
         	}
             new ServiceException(e).log();
             return null;
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
     	}
     }
 

@@ -91,7 +91,7 @@
                                 <_object>
                                   <forClass>org:opencrx:kernel:activity1:Activity</forClass>
                                   <featureName>description</featureName>
-                                  <spanRow>1</spanRow>
+                                  <spanRow>3</spanRow>
                                   <order>210</order>
                                 </_object>
                                 <_content/>

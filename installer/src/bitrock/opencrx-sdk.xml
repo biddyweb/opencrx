@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxSdk</shortName>
     <fullName>openCRX SDK</fullName>
-    <version>2.6.0</version>
+    <version>2.7.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-sdk/README</readmeFile>
     <licenseFile>../../image/opencrx-sdk/LICENSE</licenseFile>
@@ -46,7 +46,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.6.0</value>
+                                    <value>2.7.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>

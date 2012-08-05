@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderItemManager.java,v 1.12 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: OrderItemManager.java,v 1.13 2010/08/30 15:35:40 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.apps.store.manager;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
 import org.opencrx.apps.store.common.ObjectCollection;
@@ -88,61 +89,79 @@ public final class OrderItemManager
     public final OrderItem get(
         final PrimaryKey orderItemID
     ) {
-        if(orderItemID.toString().length() > 0 && orderItemID.toString().indexOf("*") > 0) {
-        	String orderItemId = orderItemID.toString();
-            SalesOrderPosition position = null;
-            try {
-            	position = (SalesOrderPosition)this.context.getPersistenceManager().getObjectById(
-            		this.context.getContractSegment().refGetPath().getDescendant(
-            			"salesOrder", 
-            			orderItemId.substring(0, orderItemId.indexOf("*")), 
-            			"position", 
-            			orderItemId.substring(orderItemId.indexOf("*") + 1)
-            		)            			
-            	);
-            }
-            catch(Exception e) {}
-            return position == null ?
-                null :
-                new OrderItem(position);
-        }
-        else {
-            return null;
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        if(orderItemID.toString().length() > 0 && orderItemID.toString().indexOf("*") > 0) {
+	        	String orderItemId = orderItemID.toString();
+	            SalesOrderPosition position = null;
+	            try {
+	            	position = (SalesOrderPosition)pm.getObjectById(
+	            		this.context.getContractSegment(pm).refGetPath().getDescendant(
+	            			"salesOrder", 
+	            			orderItemId.substring(0, orderItemId.indexOf("*")), 
+	            			"position", 
+	            			orderItemId.substring(orderItemId.indexOf("*") + 1)
+	            		)            			
+	            	);
+	            }
+	            catch(Exception e) {}
+	            return position == null ?
+	                null :
+	                new OrderItem(position);
+	        }
+	        else {
+	            return null;
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final void update(
         final OrderItem newValue
     ) {
-        SalesOrderPosition position = null;
-    	String orderItemId = newValue.getKey().toString();
-    	position = (SalesOrderPosition)this.context.getPersistenceManager().getObjectById(
-    		this.context.getContractSegment().refGetPath().getDescendant(
-    			"salesOrder", 
-    			orderItemId.substring(0, orderItemId.indexOf("*")), 
-    			"position", 
-    			orderItemId.substring(orderItemId.indexOf("*") + 1)
-    		)            			
-    	);
-    	Transaction tx = null;
+    	PersistenceManager pm = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
-            tx.begin();
-            newValue.update(
-                position,
-                this.context
-            );
-            tx.commit();
+    		pm = this.context.newPersistenceManager();
+	        SalesOrderPosition position = null;
+	    	String orderItemId = newValue.getKey().toString();
+	    	position = (SalesOrderPosition)pm.getObjectById(
+	    		this.context.getContractSegment(pm).refGetPath().getDescendant(
+	    			"salesOrder", 
+	    			orderItemId.substring(0, orderItemId.indexOf("*")), 
+	    			"position", 
+	    			orderItemId.substring(orderItemId.indexOf("*") + 1)
+	    		)            			
+	    	);
+	    	Transaction tx = null;
+	    	try {
+		        tx = pm.currentTransaction();       
+	            tx.begin();
+	            newValue.update(
+	                position,
+	                this.context
+	            );
+	            tx.commit();
+	    	}
+	    	catch(Exception e) {
+	        	if(tx != null) {
+	        		try {
+	        			tx.rollback();
+	        		}
+	        		catch(Exception e0) {}
+	        	}
+	            new ServiceException(e).log();    		
+	    	}
     	}
-    	catch(Exception e) {
-        	if(tx != null) {
-        		try {
-        			tx.rollback();
-        		}
-        		catch(Exception e0) {}
-        	}
-            new ServiceException(e).log();    		
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
     	}
     }
 
@@ -151,30 +170,40 @@ public final class OrderItemManager
         final PrimaryKey orderID, 
         final PrimaryKey productID
     ) {
-        org.opencrx.kernel.product1.jmi1.Product product = 
-            this.context.getProductSegment().getProduct(productID.getUuid());
-        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-            this.context.getContractSegment().getSalesOrder(orderID.getUuid());
-        Collection<SalesOrderPosition> positions = salesOrder.getPosition();
-        for(SalesOrderPosition position: positions) {
-            if(position.getProduct().equals(product)) {
-                return new OrderItem(
-                    position
-                );                    
-            }
-        }
-        return null;
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        org.opencrx.kernel.product1.jmi1.Product product = 
+	            this.context.getProductSegment(pm).getProduct(productID.getUuid());
+	        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
+	            this.context.getContractSegment(pm).getSalesOrder(orderID.getUuid());
+	        Collection<SalesOrderPosition> positions = salesOrder.getPosition();
+	        for(SalesOrderPosition position: positions) {
+	            if(position.getProduct().equals(product)) {
+	                return new OrderItem(
+	                    position
+	                );                    
+	            }
+	        }
+	        return null;
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     private org.opencrx.kernel.product1.jmi1.SalesTaxType getSalesTaxType(
+    	PersistenceManager pm
     ) {
-        SalesTaxTypeQuery query = (SalesTaxTypeQuery)this.context.getPersistenceManager().newQuery(SalesTaxType.class);
+        SalesTaxTypeQuery query = (SalesTaxTypeQuery)pm.newQuery(SalesTaxType.class);
         query.name().equalTo(this.context.getConfiguredSalesTaxTypeName());
-        Collection<SalesTaxType> salesTaxTypes = this.context.getProductSegment().getSalesTaxType(query);
+        Collection<SalesTaxType> salesTaxTypes = this.context.getProductSegment(pm).getSalesTaxType(query);
         return salesTaxTypes.isEmpty() ? 
         	null : 
-        	salesTaxTypes.iterator().next();        
+        	salesTaxTypes.iterator().next();
     }
     
     //-----------------------------------------------------------------------
@@ -182,88 +211,106 @@ public final class OrderItemManager
         final PrimaryKey orderID, 
         final PrimaryKey productID 
     ) {
-        final OrderItem existingItem = this.getOrderedProduct(
-            orderID, 
-            productID
-        );
-        if(null != existingItem) {
-            existingItem.setQuantity( existingItem.getQuantity() + 1 );
-            this.update( existingItem );
-            return existingItem;
-        }
-        else {
-        	Transaction tx = null;
-            try {
-                org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-                    this.context.getContractSegment().getSalesOrder(orderID.getUuid());
-                org.opencrx.kernel.product1.jmi1.Product product = 
-                this.context.getProductSegment().getProduct(productID.getUuid());            
-                tx = this.context.getPersistenceManager().currentTransaction();       
-                tx.begin();
-                org.opencrx.kernel.contract1.jmi1.CreatePositionParams params = Utils.getContractPackage(this.context.getPersistenceManager()).createCreatePositionParams(
-                    null,
-                    product.getName(), 
-                    null, 
-                    null, // pricing date 
-                    null, // pricing rule 
-                    product, 
-                    new BigDecimal(1),  // quantity 
-                    null // uom
-                ); 
-                org.opencrx.kernel.contract1.jmi1.CreatePositionResult result = salesOrder.createPosition(
-                    params
-                );
-                tx.commit();
-                org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = 
-                    (org.opencrx.kernel.contract1.jmi1.AbstractContractPosition)this.context.getPersistenceManager().getObjectById(
-                        result.getPosition().refGetPath()
-                    ); 
-                org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = this.getSalesTaxType();                
-                if(salesTaxType != null) {
-                    tx.begin();
-                    position.setSalesTaxType(salesTaxType);                    
-                    tx.commit();
-                }
-                return this.get(
-                    new PrimaryKey(
-                    	salesOrder.refGetPath().getBase() + "$" + position.refGetPath().getBase(), 
-                    	false
-                    )
-                );
-            }
-            catch(Exception e) {
-            	if(tx != null) {
-            		try {
-            			tx.rollback();
-            		}
-            		catch(Exception e0) {}
-            	}
-                new ServiceException(e).log();
-                return null;
-            }            
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        final OrderItem existingItem = this.getOrderedProduct(
+	            orderID, 
+	            productID
+	        );
+	        if(null != existingItem) {
+	            existingItem.setQuantity( existingItem.getQuantity() + 1 );
+	            this.update( existingItem );
+	            return existingItem;
+	        }
+	        else {
+	        	Transaction tx = null;
+	            try {
+	                org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
+	                    this.context.getContractSegment(pm).getSalesOrder(orderID.getUuid());
+	                org.opencrx.kernel.product1.jmi1.Product product = 
+	                this.context.getProductSegment(pm).getProduct(productID.getUuid());            
+	                tx = pm.currentTransaction();       
+	                tx.begin();
+	                org.opencrx.kernel.contract1.jmi1.CreatePositionParams params = Utils.getContractPackage(pm).createCreatePositionParams(
+	                    null,
+	                    product.getName(), 
+	                    null, 
+	                    null, // pricing date 
+	                    null, // pricing rule 
+	                    product, 
+	                    new BigDecimal(1),  // quantity 
+	                    null // uom
+	                ); 
+	                org.opencrx.kernel.contract1.jmi1.CreatePositionResult result = salesOrder.createPosition(
+	                    params
+	                );
+	                tx.commit();
+	                org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = 
+	                    (org.opencrx.kernel.contract1.jmi1.AbstractContractPosition)pm.getObjectById(
+	                        result.getPosition().refGetPath()
+	                    ); 
+	                org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = this.getSalesTaxType(pm);                
+	                if(salesTaxType != null) {
+	                    tx.begin();
+	                    position.setSalesTaxType(salesTaxType);                    
+	                    tx.commit();
+	                }
+	                return this.get(
+	                    new PrimaryKey(
+	                    	salesOrder.refGetPath().getBase() + "$" + position.refGetPath().getBase(), 
+	                    	false
+	                    )
+	                );
+	            }
+	            catch(Exception e) {
+	            	if(tx != null) {
+	            		try {
+	            			tx.rollback();
+	            		}
+	            		catch(Exception e0) {}
+	            	}
+	                new ServiceException(e).log();
+	                return null;
+	            }            
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final ObjectCollection getItemsInOrder(
         final PrimaryKey orderID
     ) {
-        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-            this.context.getContractSegment().getSalesOrder(orderID.getUuid());
-        ObjectCollection orderItems = new ObjectCollection();
-        Collection<AbstractSalesOrderPosition> positions = salesOrder.getPosition();
-        for(AbstractSalesOrderPosition position: positions) {
-            if(position instanceof org.opencrx.kernel.contract1.jmi1.SalesOrderPosition) {
-                OrderItem orderItem = new OrderItem(
-                    (org.opencrx.kernel.contract1.jmi1.SalesOrderPosition)position
-                );
-                orderItems.put(
-                    orderItem.getKey().toString(), 
-                    orderItem
-                );
-            }
-        }
-        return orderItems;
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
+	            this.context.getContractSegment(pm).getSalesOrder(orderID.getUuid());
+	        ObjectCollection orderItems = new ObjectCollection();
+	        Collection<AbstractSalesOrderPosition> positions = salesOrder.getPosition();
+	        for(AbstractSalesOrderPosition position: positions) {
+	            if(position instanceof org.opencrx.kernel.contract1.jmi1.SalesOrderPosition) {
+	                OrderItem orderItem = new OrderItem(
+	                    (org.opencrx.kernel.contract1.jmi1.SalesOrderPosition)position
+	                );
+	                orderItems.put(
+	                    orderItem.getKey().toString(), 
+	                    orderItem
+	                );
+	            }
+	        }
+	        return orderItems;
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
@@ -271,11 +318,13 @@ public final class OrderItemManager
         final PrimaryKey orderID
     ) {
     	Transaction tx = null;
+    	PersistenceManager pm = null;
     	try {
-	        tx = this.context.getPersistenceManager().currentTransaction();       
+    		pm = this.context.newPersistenceManager();
+	        tx = pm.currentTransaction();       
 	        tx.begin();
 	        org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
-	            this.context.getContractSegment().getSalesOrder(orderID.getUuid());
+	            this.context.getContractSegment(pm).getSalesOrder(orderID.getUuid());
 	        Collection<AbstractSalesOrderPosition> positions = salesOrder.getPosition();        
 	        for(AbstractSalesOrderPosition position: positions) {
 	            position.refDelete();
@@ -290,41 +339,55 @@ public final class OrderItemManager
 	    		catch(Exception e0) {}
 	    	}
 	        new ServiceException(e).log();
-    	}    	
+    	}   
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------
     public final void delete(
         final PrimaryKey orderItemID
     ) {
-        if(orderItemID.toString().length() > 0 && orderItemID.toString().indexOf("*") > 0) {
-        	String orderItemId = orderItemID.toString();
-            SalesOrderPosition position = null;
-        	position = (SalesOrderPosition)this.context.getPersistenceManager().getObjectById(
-        		this.context.getContractSegment().refGetPath().getDescendant(
-        			"salesOrder", 
-        			orderItemId.substring(0, orderItemId.indexOf("*")), 
-        			"position", 
-        			orderItemId.substring(orderItemId.indexOf("*") + 1)
-        		)            			
-        	);
-            Transaction tx = null;
-            try {
-	            tx = this.context.getPersistenceManager().currentTransaction();
-	            tx.begin();
-	            position.refDelete();
-	            tx.commit();
-            }
-            catch(Exception e) {
-            	if(tx != null) {
-            		try {
-            			tx.rollback();
-            		}
-            		catch(Exception e0) {}
-            	}
-                new ServiceException(e).log();            	
-            }
-        }
+    	PersistenceManager pm = null;
+    	try {
+    		pm = this.context.newPersistenceManager();
+	        if(orderItemID.toString().length() > 0 && orderItemID.toString().indexOf("*") > 0) {
+	        	String orderItemId = orderItemID.toString();
+	            SalesOrderPosition position = null;
+	        	position = (SalesOrderPosition)pm.getObjectById(
+	        		this.context.getContractSegment(pm).refGetPath().getDescendant(
+	        			"salesOrder", 
+	        			orderItemId.substring(0, orderItemId.indexOf("*")), 
+	        			"position", 
+	        			orderItemId.substring(orderItemId.indexOf("*") + 1)
+	        		)            			
+	        	);
+	            Transaction tx = null;
+	            try {
+		            tx = pm.currentTransaction();
+		            tx.begin();
+		            position.refDelete();
+		            tx.commit();
+	            }
+	            catch(Exception e) {
+	            	if(tx != null) {
+	            		try {
+	            			tx.rollback();
+	            		}
+	            		catch(Exception e0) {}
+	            	}
+	                new ServiceException(e).log();            	
+	            }
+	        }
+    	}
+    	finally {
+    		if(pm != null) {
+    			pm.close();
+    		}
+    	}
     }
 
     //-----------------------------------------------------------------------

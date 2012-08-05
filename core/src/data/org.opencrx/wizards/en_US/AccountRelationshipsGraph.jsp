@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.17 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.18 2010/06/01 10:49:34 wfro Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2010/06/01 10:49:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -336,31 +336,28 @@ org.openmdx.base.query.*
 			int maxCount = maxCounts[level];
 
  			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
-      org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilter =
-          (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
-      Collection memberships = null;
+ 			org.openmdx.base.query.Extension queryFilter = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
+			Collection memberships = null;
  			int count = 0;
-
 			// acountFrom=account [ignore mebers if account is disabled!!!]
 			if ((account.isDisabled() == null) || (!account.isDisabled().booleanValue())) {
-  			membershipQuery.forAllDisabled().isFalse();
-  			membershipQuery.distance().greaterThanOrEqualTo(new Integer(-1));
-  			membershipQuery.distance().lessThanOrEqualTo(new Integer(1));
-  			membershipQuery.thereExistsAccountFrom().equalTo(account);
-  			// HINT_DBOBJECT allows to qualify the DbObject to use.
-  			// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
-        queryFilter.setClause(
-          "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
-          "( " +
-          "v.member IN ( " +
-          "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
-          "  where " +
-          "   ((m.disabled is null) or (m.disabled = false)) and " +
-          "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
-          "  ) " +
-          ") "
-        );
-  			membershipQuery.thereExistsContext().equalTo(queryFilter);
+	  			membershipQuery.forAllDisabled().isFalse();
+	  			membershipQuery.distance().greaterThanOrEqualTo(new Integer(-1));
+	  			membershipQuery.distance().lessThanOrEqualTo(new Integer(1));
+	  			membershipQuery.thereExistsAccountFrom().equalTo(account);
+				// HINT_DBOBJECT allows to qualify the DbObject to use.
+				// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
+		        queryFilter.setClause(
+		          "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+		          "( " +
+		          "v.member IN ( " +
+		          "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
+		          "  where " +
+		          "   ((m.disabled is null) or (m.disabled = false)) and " +
+		          "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
+		          "  ) " +
+		          ") "
+		        );
   			memberships = account.getAccountMembership(membershipQuery);
   			for(Iterator i = memberships.iterator(); i.hasNext(); ) {
   				org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)i.next();
@@ -400,7 +397,6 @@ org.openmdx.base.query.*
             queryFilter.setClause(
                 org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
             );
-			membershipQuery.thereExistsContext().equalTo(queryFilter);
 			memberships = account.getAccountMembership(membershipQuery);
 			count = 0;
 			for(Iterator i = memberships.iterator(); i.hasNext(); ) {

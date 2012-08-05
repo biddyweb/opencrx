@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractPositionImpl.java,v 1.2 2010/04/22 12:50:04 wfro Exp $
+ * Name:        $Id: AbstractContractPositionImpl.java,v 1.3 2010/07/09 10:22:33 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/22 12:50:04 $
+ * Date:        $Date: 2010/07/09 10:22:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -223,7 +223,7 @@ public class AbstractContractPositionImpl
         java.math.BigDecimal pricePerUnit
     ) {
         try {
-            Contracts.getInstance().setPricingState(
+            Contracts.getInstance().updatePricingState(
                 this.sameObject(),
                 Contracts.PRICING_STATE_DIRTY
             );
@@ -239,7 +239,7 @@ public class AbstractContractPositionImpl
         java.util.Date pricingDate
     ) {
         try {
-            Contracts.getInstance().setPricingState(
+            Contracts.getInstance().updatePricingState(
                 this.sameObject(),
                 Contracts.PRICING_STATE_DIRTY
             );

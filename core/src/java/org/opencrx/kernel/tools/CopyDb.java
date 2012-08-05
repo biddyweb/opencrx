@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.43 2009/12/31 02:15:25 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.44 2010/09/06 12:14:38 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.44 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/31 02:15:25 $
+ * Date:        $Date: 2010/09/06 12:14:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -117,7 +117,7 @@ public class CopyDb {
         String databaseProductName = conn.getMetaData().getDatabaseProductName();
         if("HSQL Database Engine".equals(databaseProductName)) {
             String mappedColumnName = columnName.toUpperCase();
-            if("POSITION".equals(mappedColumnName)) {
+            if("POSITION".equals(mappedColumnName) || mappedColumnName.indexOf("$") > 0) {
                 return "\"" + mappedColumnName + "\"";
             }
             else {

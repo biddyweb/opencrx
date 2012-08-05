@@ -9,7 +9,7 @@
 			<property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO" />
 			<property name="openjpa.jdbc.MappingDefaults" value="IndexLogicalForeignKeys=false,IndexDiscriminator=false"/>
 			<property name="openjpa.jdbc.DBDictionary" value="sqlserver(CharacterColumnSize=256)"/>											
-			<property name="openjpa.ConnectionURL" value="jdbc:sqlserver://127.0.0.1:1433;DatabaseName=CRX_2_6;selectMethod=cursor"/>
+			<property name="openjpa.ConnectionURL" value="jdbc:sqlserver://127.0.0.1:1433;DatabaseName=CRX_2_7;selectMethod=cursor"/>
 			<property name="openjpa.ConnectionDriverName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
 			<property name="openjpa.ConnectionUserName" value="system"/>
 			<property name="openjpa.ConnectionPassword" value="manager"/>

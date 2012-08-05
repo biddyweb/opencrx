@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: IObject.java,v 1.1 2009/02/14 17:22:42 wfro Exp $
+ * Name:        $Id: IObject.java,v 1.2 2010/08/30 15:35:41 wfro Exp $
  * Description: IObject
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/14 17:22:42 $
+ * Date:        $Date: 2010/08/30 15:35:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,6 +61,7 @@ package org.opencrx.apps.store.common;
  * @author OAZM (initial implementation)
  * @author WFRO (port to openCRX)
  */
+@SuppressWarnings("unchecked")
 public interface IObject extends java.io.Serializable, Cloneable, Comparable
 {
 }

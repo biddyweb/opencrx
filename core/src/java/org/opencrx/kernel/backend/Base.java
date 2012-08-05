@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.37 2009/06/08 09:21:19 wfro Exp $
+ * Name:        $Id: Base.java,v 1.39 2010/06/28 17:27:38 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.39 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/08 09:21:19 $
+ * Date:        $Date: 2010/06/28 17:27:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -243,6 +243,9 @@ public class Base extends AbstractImpl {
     public static final short IMPORT_EXPORT_MISSING_DATA = 3;
     
     public static final String MIME_TYPE_ZIP = "application/zip";
+
+	public static final String COMMENT_SEPARATOR_BOT = "//"; // at beginning of text
+	public static final String COMMENT_SEPARATOR_EOT = " //"; // at end of text
     
 }
 

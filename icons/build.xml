@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.8 2010/03/24 16:34:53 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.10 2010/06/08 19:25:20 wfro Exp $
  * = Description: openCRX/icons build.xml
- * = Revision:    $Revision: 1.8 $
- * = Date:        $Date: 2010/03/24 16:34:53 $
+ * = Revision:    $Revision: 1.10 $
+ * = Date:        $Date: 2010/06/08 19:25:20 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,7 +62,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.5.4+"/>
+	<property name="openmdx.version" value="2.6.0+"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<mkdir dir="src/java"/>
@@ -145,6 +145,7 @@
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/AddressUsageFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Administration.gif" tofile="${build.dir}/data/images/lib1/Administration.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AirSyncProfile.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AirSyncClientProfile.gif"/>
 	  <copy file="src/data/images/lib1/Alert.gif" tofile="${build.dir}/data/images/lib1/Alert.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AliasType.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ArtifactContext.gif"/>
@@ -425,6 +426,7 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Subject.gif"/>
 	  <copy file="src/data/images/lib1/Subscription.gif" tofile="${build.dir}/data/images/lib1/Subscription.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/SupplierFilterProperty.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/SyncData.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Tag.gif"/>
 	  <copy file="src/data/images/lib1/Tasks.gif" tofile="${build.dir}/data/images/lib1/Task.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/TestDiagram.gif"/>
@@ -528,7 +530,8 @@
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/AddressTypeFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/AddressUsageFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Administration.gif" tofile="${build.dir}/data/images/lib2/Administration.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AirSyncProfile.gif"/>
+	  <copy file="src/data/images/lib2/Subscription.gif" tofile="${build.dir}/data/images/lib2/AirSyncProfile.gif"/>
+	  <copy file="src/data/images/lib2/URL.gif" tofile="${build.dir}/data/images/lib2/AirSyncClientProfile.gif"/>
 	  <copy file="src/data/images/lib2/Alert.gif" tofile="${build.dir}/data/images/lib2/Alert.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AliasType.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ArtifactContext.gif"/>
@@ -561,7 +564,7 @@
 	  <copy file="src/data/images/lib2/Calculator.gif" tofile="${build.dir}/data/images/lib2/CalculationRule.gif"/>
 	  <copy file="src/data/images/lib2/Calendar.gif" tofile="${build.dir}/data/images/lib2/Calendar.gif"/>
 	  <copy file="src/data/images/lib2/ProjectDay.gif" tofile="${build.dir}/data/images/lib2/CalendarDay.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/CalendarProfile.gif"/>
+	  <copy file="src/data/images/lib2/Date.gif" tofile="${build.dir}/data/images/lib2/CalendarProfile.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/CategoryFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Cell.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Certificate.gif"/>
@@ -809,6 +812,7 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Subject.gif"/>
 	  <copy file="src/data/images/lib2/Subscription.gif" tofile="${build.dir}/data/images/lib2/Subscription.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/SupplierFilterProperty.gif"/>
+	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/SyncData.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Tag.gif"/>
 	  <copy file="src/data/images/lib2/Tasks.gif" tofile="${build.dir}/data/images/lib2/Task.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/TestDiagram.gif"/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.78 2010/04/07 12:16:27 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.87 2010/08/25 12:31:03 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.78 $
+ * Revision:    $Revision: 1.87 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/07 12:16:27 $
+ * Date:        $Date: 2010/08/25 12:31:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,9 +66,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.jdo.JDOHelper;
@@ -158,23 +161,47 @@ public class UserHomes extends AbstractImpl {
     ) throws ServiceException {
         if(userHome.getContact() != null) {
         	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
-        	// Set old alerts which reference same object to ACCEPTED 
+        	// Collect non-expired alerts
+        	final Date NOW_MINUS_1M = new Date(System.currentTimeMillis() - 30L * 86400L * 1000L);
+        	final Date NOW_MINUS_3M = new Date(System.currentTimeMillis() - 90L * 86400L * 1000L);
             AlertQuery alertQuery = (AlertQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Alert.class);
-            alertQuery.alertState().equalTo(ALERT_STATE_NEW);
+            alertQuery.alertState().lessThan(ALERT_STATE_EXPIRED);
             alertQuery.orderByCreatedAt().descending();
-            List<ContextCapable> references = new ArrayList<ContextCapable>();
+            List<Path> alertIdentities = new ArrayList<Path>();
             List<org.opencrx.kernel.home1.jmi1.Alert> alerts = userHome.getAlert(alertQuery);
+            int n = 0;
             for(org.opencrx.kernel.home1.jmi1.Alert alert: alerts) {
+        		alertIdentities.add(alert.refGetPath());
+        		n++;            	
+        		if(n > 25) break;
+            }
+            // Update state
+            Set<ContextCapable> references = new HashSet<ContextCapable>();
+            for(Path alertIdentity: alertIdentities) {
+            	org.opencrx.kernel.home1.jmi1.Alert alert = (org.opencrx.kernel.home1.jmi1.Alert)pm.getObjectById(alertIdentity);
             	ContextCapable reference = null;
             	try {
             		reference = alert.getReference();
+            	} catch(Exception e) {}
+            	// Set state to expired if 
+            	// * if it is accepted and older than three months
+            	if(
+            		(alert.getAlertState() == ALERT_STATE_ACCEPTED && alert.getCreatedAt().compareTo(NOW_MINUS_3M) < 0)
+            	) {
+                	alert.setAlertState(ALERT_STATE_EXPIRED);
             	}
-            	catch(Exception e) {}
-            	if((reference == null) || references.contains(reference) || references.size() > 50) {
-            		alert.setAlertState(ALERT_STATE_ACCEPTED);
+            	// Set state to accepted if 
+            	// * its reference is not valid or duplicate or
+            	// * alert is older than one month
+            	else if(
+            		(reference == null) || 
+            		references.contains(reference) || 
+            		(alert.getAlertState() < ALERT_STATE_ACCEPTED && alert.getCreatedAt().compareTo(NOW_MINUS_1M) < 0)
+            	) {
+                	alert.setAlertState(ALERT_STATE_ACCEPTED);
             	}
-            	else {
-            		references.add(alert.getReference());
+            	if(reference != null) {
+            		references.add(reference);
             	}
             }
         }
@@ -564,19 +591,7 @@ public class UserHomes extends AbstractImpl {
             	principalName,
             	userHome
             );
-            Properties userSettings = new Properties();
-            if(userHome.getSettings() != null) {
-	            try {            	
-					userSettings.load(
-						new ByteArrayInputStream(
-							userHome.getSettings().getBytes("UTF-8")
-						)
-					);
-	            }
-	            catch(IOException e) {
-	            	throw new ServiceException(e);
-	            }
-            }
+            Properties userSettings = this.getSettings(userHome);
             this.applyUserSettings(
             	userHome, 
             	userSettings, 
@@ -851,7 +866,7 @@ public class UserHomes extends AbstractImpl {
     			new Path("xri://@openmdx*org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
     		);    	
     	if(fTimezone != null) {
-    		userSettings.setProperty("TimeZone.Name", fTimezone);
+    		userSettings.setProperty(PROPERTY_TIMEZONE, fTimezone);
     	}
 		userHome.setStoreSettingsOnLogoff(
 			Boolean.valueOf(fStoreSettingsOnLogoff == null ? "false" :"true")
@@ -1027,6 +1042,9 @@ public class UserHomes extends AbstractImpl {
 				privateIncidentsCreator
 			);
 		}
+		if(privateIncidentsCreator.getIcalType() == ICalendar.ICAL_TYPE_NA) {
+			privateIncidentsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);			
+		}
 		// Private E-Mails creator
 		org.opencrx.kernel.activity1.jmi1.ActivityCreator privateEMailsCreator = null;
 		try {
@@ -1056,6 +1074,9 @@ public class UserHomes extends AbstractImpl {
 				principalName + "~E-Mails",
 				privateEMailsCreator
 			);
+		}
+		if(privateEMailsCreator.getIcalType() == ICalendar.ICAL_TYPE_NA) {
+			privateEMailsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);			
 		}
 		// Private Tasks creator
 		org.opencrx.kernel.activity1.jmi1.ActivityCreator privateTasksCreator = null;
@@ -1087,6 +1108,9 @@ public class UserHomes extends AbstractImpl {
 				privateTasksCreator
 			);
 		}
+		if(privateTasksCreator.getIcalType() == ICalendar.ICAL_TYPE_NA) {
+			privateTasksCreator.setIcalType(ICalendar.ICAL_TYPE_VTODO);			
+		}
 		// Private Meetings creator
 		org.opencrx.kernel.activity1.jmi1.ActivityCreator privateMeetingsCreator = null;
 		try {
@@ -1116,6 +1140,9 @@ public class UserHomes extends AbstractImpl {
 				principalName + "~Meetings",
 				privateMeetingsCreator
 			);
+		}
+		if(privateMeetingsCreator.getIcalType() == ICalendar.ICAL_TYPE_NA) {
+			privateMeetingsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);			
 		}
 		// Set default creator on tracker
 		privateTracker.setDefaultCreator(privateIncidentsCreator);
@@ -1179,20 +1206,24 @@ public class UserHomes extends AbstractImpl {
 			);
 			ActivityGroupCalendarFeed calendarFeed = pm.newInstance(ActivityGroupCalendarFeed.class);
 			calendarFeed.refInitialize(false, false);
-			calendarFeed.setName(principalName);
+			calendarFeed.setName(principalName + "~Private");
 			calendarFeed.setDescription("Calendar Feed");
 			calendarFeed.setActivityGroup(privateTracker);
 			calendarFeed.setActive(true);
+			calendarFeed.setAllowAddDelete(true);
+			calendarFeed.setAllowChange(true);
 			airSyncProfile.addFeed(
 				this.getUidAsString(), 
 				calendarFeed
 			);
 			ContactsFeed contactsFeed = pm.newInstance(ContactsFeed.class);
 			contactsFeed.refInitialize(false, false);
-			contactsFeed.setName(principalName);
+			contactsFeed.setName(principalName + "~Private");
 			contactsFeed.setDescription("Contacts Feed");
 			contactsFeed.setAccountGroup(privateAccountGroup);
 			contactsFeed.setActive(true);
+			contactsFeed.setAllowAddDelete(true);
+			contactsFeed.setAllowChange(true);
 			airSyncProfile.addFeed(
 				this.getUidAsString(), 
 				contactsFeed
@@ -1264,8 +1295,37 @@ public class UserHomes extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    public Properties getSettings(
+    	UserHome userHome
+    ) throws ServiceException {
+        Properties settings = new Properties();
+        if(userHome.getSettings() != null) {
+            try {            	
+				settings.load(
+					new ByteArrayInputStream(
+						userHome.getSettings().getBytes("UTF-8")
+					)
+				);
+            }
+            catch(IOException e) {
+            	throw new ServiceException(e);
+            }
+        }
+        return settings;
+    }
+    
+    //-------------------------------------------------------------------------
+    public String getUserTimezone(
+    	Properties settings
+    ) throws ServiceException {
+    	return settings.getProperty(PROPERTY_TIMEZONE);
+    }
+    
+    //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
+    public static final String PROPERTY_TIMEZONE = "TimeZone.Name";
+    
     public static final short CHANGE_PASSWORD_OK = 0;
     public static final short MISSING_NEW_PASSWORD = 1;
     public static final short MISSING_NEW_PASSWORD_VERIFICATION = 2;
@@ -1279,6 +1339,7 @@ public class UserHomes extends AbstractImpl {
     public static final short ALERT_STATE_NEW = 1;
     public static final short ALERT_STATE_READ = 2;
     public static final short ALERT_STATE_ACCEPTED = 3;
+    public static final short ALERT_STATE_EXPIRED = 4;
     
 }
 

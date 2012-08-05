@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivitiesFilterHelper.java,v 1.2 2010/01/24 22:33:07 wfro Exp $
+ * Name:        $Id: ActivitiesFilterHelper.java,v 1.5 2010/08/26 14:21:31 wfro Exp $
  * Description: ActivitiesFilterHelper
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/24 22:33:07 $
+ * Date:        $Date: 2010/08/26 14:21:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -78,6 +78,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.home1.cci2.UserHomeQuery;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.naming.Path;
 import org.w3c.format.DateTimeFormat;
@@ -124,7 +125,11 @@ public class ActivitiesFilterHelper {
             this.activityPackage = Utils.getActivityPackage(this.pm); 
             this.activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+                    new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+                );
+            this.userHomeSegment = 
+                (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
+                    new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
                 );
             this.activityGroup = null;
             this.userHome = null;
@@ -173,9 +178,20 @@ public class ActivitiesFilterHelper {
                 this.activityFilter = globalFilters.iterator().next();
             }
             else if("userhome".equals(calendarType)) {
-                this.userHome = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + this.calendarName)
-                );
+            	// Lookup by user's email address
+            	if(this.calendarName.indexOf("@") > 0) {
+            		UserHomeQuery query = (UserHomeQuery)this.pm.newQuery(UserHome.class);
+            		query.thereExistsEMailAccount().thereExistsEMailAddress().equalTo(this.calendarName);
+            		List<UserHome> userHomes = this.userHomeSegment.getUserHome(query);
+            		if(!userHomes.isEmpty()) {
+            			this.userHome = userHomes.iterator().next();
+            		}
+            	}
+            	else {
+	                this.userHome = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
+	                    new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + this.calendarName)
+	                );
+            	}
             }
             else if("resource".equals(calendarType)) {
                 ResourceQuery query = this.activityPackage.createResourceQuery();
@@ -362,6 +378,7 @@ public class ActivitiesFilterHelper {
     protected AbstractFilterActivity activityFilter = null;
     protected Activity1Package activityPackage = null;    
     protected org.opencrx.kernel.activity1.jmi1.Segment activitySegment = null;
+    protected org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = null;
     protected String calendarName = null;
     protected String filterName = null;
     protected boolean isDisabledFilter;

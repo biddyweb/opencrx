@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EmailTXmlFormat.java,v 1.19 2010/03/16 17:49:22 wfro Exp $
+ * Name:        $Id: EmailTXmlFormat.java,v 1.20 2010/06/22 17:08:24 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/16 17:49:22 $
+ * Date:        $Date: 2010/06/22 17:08:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,7 +57,6 @@ package org.opencrx.application.airsync.datatypes;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.opencrx.application.airsync.utils.DOMUtils;
 import org.openmdx.base.text.conversion.Base64;
@@ -65,8 +64,6 @@ import org.w3c.dom.Element;
 import org.w3c.format.DateTimeFormat;
 
 public class EmailTXmlFormat extends AbstractXmlFormat {
-
-	protected Logger logger = Logger.getLogger(getClass().getName());
 
 	public EmailTXmlFormat(
 	) {

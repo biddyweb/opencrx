@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.419 2010/04/30 13:12:20 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.421 2010/08/18 14:02:01 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.419 $
- * = Date:        $Date: 2010/04/30 13:12:20 $
+ * = Revision:    $Revision: 1.421 $
+ * = Date:        $Date: 2010/08/18 14:02:01 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.6.0"/>
+	<property name="openmdx.version" value="2.7.0"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>

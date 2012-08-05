@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractTest.java,v 1.1 2010/01/07 17:08:04 wfro Exp $
+ * Name:        $Id: AbstractTest.java,v 1.4 2010/08/10 13:29:19 wfro Exp $
  * Description: AbstractTest
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/07 17:08:04 $
+ * Date:        $Date: 2010/08/10 13:29:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,29 +81,31 @@ public abstract class AbstractTest extends Assert {
     @Before
     public  void setUp(
     ){
-        this.entityManager = entityManagerFactory.getPersistenceManager();
+        this.pm = entityManagerFactory == null ? null : entityManagerFactory.getPersistenceManager();
     }
 
     @After
     public  void tearDown(
     ){
-        this.entityManager.close();
-        this.entityManager = null;
+    	if(this.pm != null) {
+    		this.pm.close();
+    	}
+        this.pm = null;
     }
 
     protected void begin(
     ){
-        this.entityManager.currentTransaction().begin();
+        this.pm.currentTransaction().begin();
     }
 
     protected void commit(
     ){
-        this.entityManager.currentTransaction().commit();
+        this.pm.currentTransaction().commit();
     }
 
     protected void rollback(
     ){
-        this.entityManager.currentTransaction().rollback();
+        this.pm.currentTransaction().rollback();
     }
 
     protected Date getStart(
@@ -115,7 +117,7 @@ public abstract class AbstractTest extends Assert {
     // Members
     //-----------------------------------------------------------------------
     protected final PersistenceManagerFactory entityManagerFactory;
-    protected PersistenceManager entityManager;
+    protected PersistenceManager pm;
     private final Date start = new Date();
     
 }

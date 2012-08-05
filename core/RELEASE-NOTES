@@ -1,5 +1,5 @@
-Release Name: openCRX/Core 2.6.0
-Release Date: 2009-05-01
+Release Name: openCRX/Core 2.7.0
+Release Date: 2010-08-20
 
 ---------------------------------------------------------------------
 Notes:
@@ -51,190 +51,81 @@ openMDX (http://www.openmdx.org/)
 ---------------------------------------------------------------------
 
 0.    SUMMARY
-      * AirSync adapter
-      * Shop adapter
-      * SSL support for IMAP and LDAP adapters
+      * AirSync client and server support
       * Bug fixes
-      * UML models migrated to Eclipse/EMF UML2 Tools
+      * Clean up
       * Performance improvements
             
-      For more information see below and http://www.opencrx.org/opencrx/2.6/new.htm
+      For more information see below and http://www.opencrx.org/opencrx/2.7/new.htm
 
 ==============================================================================
-Version 2.6.0                                                       2010-06-01
+Version 2.7.0                                                       2010-08-20
 ==============================================================================
 
 1.    NEW FEATURES
-      
-      CR10008982
-      Shop Adapter. The shop API (org:opencrx:application:shop1) gives a service-
-      oriented access to a subset of the openCRX API. The API allows to manage
-      customers, contracts, products, prices and activities. Application clients
-      (GUIs, XML-RPC servlets, JSPs, EJBs, ...) can instantiate the shop adapter
-      with new org.opencrsx.application.shop1.service.ShopServiceImpl() and then
-      use its public methods. The adapter itself delegates to the openCRX API.          
-      
-      CR10009335 
-      SSL support for IMAP and LDAP. IMAPServlet and LDAPServlet are configured 
-      for SSL support as follows:
-      		
-      * Create cert and key with OpenSSL (e.g. server.key, server.crt)
-      * Convert cert and key to PEM format using OpenSSL:
-        o Key: openssl rsa -in server.key -out server-key.pem -outform PEM
-        o Cert: openssl x509 -in server.crt -out server-cert.pem -outform PEM
-      * Use a Java Keytool which allows you to a) create a keystore, 
-        b) import a certificate, c) import a private key. 
-        KeyTool IUI (http://yellowcat1.free.fr/keytool_iui.html) is a good 
-        choice. See attached screenshots.
-      * Add init-param to web.xml of IMAPServlet and LDAPServlet as follows: 
-		
-		<init-param>
-		  <param-name>sslKeystoreFile</param-name>
-		  <param-value>/var/ssl/keystore.jks</param-value>
-		</init-param>	
-		<init-param>
-		  <param-name>sslKeystoreType</param-name>
-		  <param-value>JKS</param-value>
-		</init-param>	
-		<init-param>
-		  <param-name>sslKeystorePass</param-name>
-		  <param-value>changeit</param-value>
-		</init-param>	
-		<init-param>
-		  <param-name>sslKeyPass</param-name>
-		  <param-value>changeit</param-value>
-		</init-param>
-		
-      * For IMAPServlet the port should be changed from 1143 to 1443: 
-		
-		<init-param>
-		  <param-name>port</param-name>
-		  <param-value>imap:1443</param-value>
-		</init-param>
-		
-      * For LDAPServlet the port should be changed from 1389 to 1689. 
-		
-		<init-param>
-		  <param-name>port</param-name>
-		  <param-value>ldap:1689</param-value>
-		</init-param>
-      
-      
-      CR10009206
-      The AirSync servlet (org.opencrx.application.airsync.server.impl.SyncServlet)
-      allows AirSync-capable clients to synchronize with openCRX. The UserSettings
-      wizard creates the SyncProfile 'AirSync' which is used by the SyncServlet.
-      The SyncServlet synchronizes contacts (Accounts), activities 
-      (Meeting, Task, EMail) and alerts (EMails). 
 
-      CR10009196
-      LDAP Server. LDAP server added in org.opencrx.application.ldap. The 
-      server allows to access contact information using LDAP clients. Below
-      is a sample query using ldapsearch:      
+      CR10009455
+      Contracts.updateContractState(). Add method updateContractState() to 
+      Contracts. This allows a user-specific backend to override this method.
       
-      ldapsearch -D "guest@Standard" -w guest -h localhost -p 1389 -b "ou=filter/All Accounts,ou=Persons" -l 100 -z 100 -P 3 ""
-       
-       
-      CR10008978
-      Captcha Servlet. Add servlet which allows to generate Captchas 
-      (see http://jcaptcha.sourceforge.net/). The GetCaptchaServlet allows to 
-      get captchas which can be used in JSPs offering openCRX functionality 
-      for anonymous and non-authenticated users. E.g. AnonymousCreateActivity.jsp 
-      accepts posts which create activities. 
+      CR10009412
+      AirSync Client supported added. A user can create 0..n AirSyncClientProfiles.
+      An AirSyncClientProfile allows to specify host url, email, user and password 
+      of an AirSync-compliant server (e.g. MS Exchange). The Wizard 'Synchronize Folders' 
+      performs a FolderSync and creates SyncFeeds for each of the retrieved folders. 
+      Supported are folders of type Contact, Calendar, Tasks and Email. The wizard
+      must be invoked each time a folder is added on the server. The user can then 
+      assign activity groups and contact groups to SyncFeeds and then invoke the 
+      wizard 'Synchronize Items'. The wizard performs a Sync, i.e. synchronizes items 
+      stored on on the server with items stored in openCRX. WizardLauncher combined 
+      with a tool such as curl allows to automate the sync process.   
       
-      CR10008958
-      Tomcat Connectors: pause / resume. Tomcat extension which allows to start 
-      multiple Tomcat instances with the same configuration and allow to stop / 
-      start the connectors of these instances individually.
-      
-      The class org.openmdx.catalina.core.ExtendedService allows to handle the 
-      requested scenario. Adapt the server.xml as follows:
+      CR10009406
+      Configurable user-agent for mobiles. The option mobileUserAgents for
+      ObjectInspectorServlet in web.xml allows to configure a comma or 
+      semi-colon separated list user agent patterns. The GUI will be launched 
+      in mobile mode if the user-agent header contains (indexOf() >= 0) one of 
+      the configured user agent patterns.  
 
-      <Server port="${tomcat.server.port}" shutdown="SHUTDOWN">
-      ...
-      <Service name="Catalina" port="${tomcat.service.port}" className="org.openmdx.catalina.core.ExtendedService">
-      ...
+      CR10009384
+      EditDocument Wizard. Wizard which allows to edit the head revision of a 
+      text document (contentMimeType.startsWith("text/")) and stores the updated 
+      text as new head revision.
 
-      The system properties are set per Tomcat instance, e.g.
-
-      Instance A:
-      * -Dtomcat.server.port=8005
-      * -Dtomcat.service.port=8006
-
-      Instance B:
-      * -Dtomcat.server.port=8105
-      * -Dtomcat.service.port=8106
-
-      If instance A and instance B have to run with different versions of EARs/WARs 
-      create a Tomcat directory for each instance.
-
-      Start instance A. The connectors are started. 
-      Start instance B. The connectors can not be started because of port conflicts.
-
-      Switch from instance A to B as follows:
-      * telnet localhost 8006. Enter command stopConnectors.
-      * telnet localhost 8106. Enter command startConnectors.
-      
-      If the property org.openmdx.catalina.core.ExtendedService.autostartConnectors is unset 
-      or the property is set to true then the connectors will be started at startup of Tomcat. 
-      Otherwise the connectors are not started.      
-      
-      CR10008960
-      IMAPServer: pause / resume. The IMAPServlet (opencrx-imap-CRX/IMAPServlet) provides a 
-      simple GUI which allows to pause and resume the IMAPServer. The Wizard IMAPServer.jsp 
-      available as admin-Root redirects to the IMAPServlet. The IMAPServlet accepts the 
-      system property org.openmdx.catalina.core.ExtendedService.autostartConnectors. 
-      If unset or set to true, the IMAPServer is started at startup. If set to false, the 
-      IMAPServer has to be started manually. 
-      
-      CR10008961
-      WorkflowController: pause / resume. The WorkflowControllerServlet accepts the new 
-      commands pause and resume. Pause stops pinging the controlled WorkflowServlets. 
-      The new commands are available via the GUI. The WorkflowControllerServlet accepts 
-      the system property org.openmdx.catalina.core.ExtendedService.autostartConnectors. 
-      If it is unset or set to true the WorkflowController is activated on startup. If 
-      set to false the WorkflowController has to be resumed manually.  
-      
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
+      
+      CR10009472
+      WorkAndExpenseRecord is a CrxObject. WorkAndExpenseRecord inherits 
+      from CrxObject.
 
-      CR10009315
-      SubscriptionHandlerServlet. SubscriptionHandlerServlet must use a persistence 
-      manager which is specific for the subscribing user. 
-      
-      CR10009198
-      PortalExtension: getDataBinding(). The signature of getDataBinding() has changed. 
-      The parameter ApplicationContext app is removed because data bindings must not 
-      depend on the application context. The new interface DataBinding_2_0 has been 
-      added to support data bindings where the application context is passed as 
-      parameter for setValue(), getValue(). 
-      
-      CR20018907
-      Portal: Ajax-based login.
-      Login.jsp now first invokes the protected ./jsp/GetPath.jsp. The session 
-      is not authenticated if GetPath returns the redirect URL to the Login page. 
-      In this case the Login form is displayed. If GetPath returns the non-redirected 
-      URL, Login.jsp forwards to the ObjectInspectorServlet without displaying 
-      the login form. As a consequence /jsp/* must be protected in web.xml. 
-             
+
 2.1.  FIXED BUGS
       
-      CR10009299
-      Rendering contracts as RTF (cyrillic text).
-      Error: workstr.append("\\'" + Integer.toHexString(ch))
-      You are encoding UTF character as «\'hh» (h — hexadecimal digit). But in
-      RTF format UTF characters are encoded as «\udddd?» (d — decimal digit,
-      dddd — shift from beginning of UTF-8 table).
-      So, I think that correct version of this statemnet must be:
-      workstr.append("\\u" + String.format("%04d", (int)ch) + "?");       
+      CR10009486
+      SF3047805: MultivaluedFeaturePredicate's throw Exception when used.
+      ActivityQuery.contract() should return MultivaluedFeaturePredicate. However, 
+      from the model, an Activity's contract has a multiplicity of 1..0 somehow. Hence 
+      Jmi1QueryInvocationHandler actually returns an OptionalFeaturePredicate via by 
+      RefQuery_1.refGetPredicate(). This conflict results in a ClassCastException, see below.
+      I've tried and debugged this with a couple more MultivaluedFeaturePredicate constraints, 
+      but got the same result.
+
+	  CR1000947
+	  References / Lookups. Populating references with the GUI should be possible 
+	  by entering an XRI into the appropriate field
+	        
+      CR10009463
+      Turning off unneeded locales leads to NA's. Grid column labels are set 
+      to NA if only one locale (locale[0]) is enabled in web.xml.
       
-      CR10009177
-      ICAL: ATTENDEE not updated. ICALs ATTENDEEs are not updated in activity parties 
-      are added or removed. 
+      CR10009400: Depots.refreshReport()
+      Queries on shared associations DepotReportItemHasSimpleBooking and 
+      DepotReportItemHasSingleBooking are not allowed while creating the report.
       
+
 2.2   REMOVED FEATURES
       none
-      
       
 ---

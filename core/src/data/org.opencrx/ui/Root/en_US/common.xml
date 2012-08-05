@@ -539,6 +539,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:category">
 										<_object>
 											<active>true</active>
+											<spanRow>3</spanRow>
 											<toolTip>
 												<_item>Categories</_item>
 											</toolTip>
@@ -557,6 +558,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<spanRow>3</spanRow>
 											<toolTip>
 												<_item>External links</_item>
 											</toolTip>

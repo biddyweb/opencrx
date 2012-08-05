@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Order.java,v 1.7 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: Order.java,v 1.8 2010/08/30 15:35:40 wfro Exp $
  * Description: Order
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +63,7 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 
 import org.opencrx.apps.store.common.PrimaryKey;
 import org.opencrx.apps.store.common.util.ApplicationContext;
@@ -138,6 +139,7 @@ public final class Order
         org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder,
         ApplicationContext context
     ) {        
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(salesOrder);
         UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddress = null;
         // Find existing postal address
@@ -152,7 +154,7 @@ public final class Order
         }
         // Create
         if(postalAddress == null) {
-            postalAddress = context.getPersistenceManager().newInstance(org.opencrx.kernel.contract1.jmi1.PostalAddress.class);
+            postalAddress = pm.newInstance(org.opencrx.kernel.contract1.jmi1.PostalAddress.class);
             postalAddress.refInitialize(false, false);
             salesOrder.addAddress(
                 false,
@@ -170,7 +172,7 @@ public final class Order
             ii++;
         }
         // Customer
-        Account customer = context.getAccountSegment().getAccount(this.getUserID().toString());
+        Account customer = context.getAccountSegment(pm).getAccount(this.getUserID().toString());
         salesOrder.setCustomer(
             customer
         );

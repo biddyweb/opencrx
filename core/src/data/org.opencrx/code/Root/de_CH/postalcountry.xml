@@ -1159,6 +1159,14 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="499" _operation="set">
+													<_object>
+														<longText>
+															<_item>Montenegro [ME]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
                           <_object>
                             <longText>
@@ -1815,6 +1823,14 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="833" _operation="set">
+													<_object>
+														<longText>
+															<_item>Insel Man [IM]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="840" _operation="set">
                           <_object>
                             <longText>

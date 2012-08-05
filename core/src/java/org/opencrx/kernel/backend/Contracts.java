@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.101 2010/04/23 13:56:16 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.108 2010/08/12 08:47:49 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.101 $
+ * Revision:    $Revision: 1.108 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/23 13:56:16 $
+ * Date:        $Date: 2010/08/12 08:47:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,18 +75,11 @@ import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
-import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
 import org.opencrx.kernel.contract1.cci2.AbstractContractQuery;
 import org.opencrx.kernel.contract1.cci2.CalculationRuleQuery;
-import org.opencrx.kernel.contract1.cci2.InvoiceQuery;
-import org.opencrx.kernel.contract1.cci2.LeadQuery;
-import org.opencrx.kernel.contract1.cci2.OpportunityQuery;
 import org.opencrx.kernel.contract1.cci2.PositionModificationQuery;
-import org.opencrx.kernel.contract1.cci2.QuoteQuery;
-import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
 import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
-import org.opencrx.kernel.contract1.jmi1.AbstractFilterContract;
 import org.opencrx.kernel.contract1.jmi1.AbstractInvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractOpportunityPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractQuotePosition;
@@ -94,14 +87,7 @@ import org.opencrx.kernel.contract1.jmi1.AbstractRemovedPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.CalculationRule;
 import org.opencrx.kernel.contract1.jmi1.Contract1Package;
-import org.opencrx.kernel.contract1.jmi1.ContractFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.ContractPriorityFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.ContractQueryFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.ContractStateFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.ContractTypeFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.CustomerFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.DeliveryInformation;
-import org.opencrx.kernel.contract1.jmi1.DisabledFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult;
 import org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
@@ -118,9 +104,6 @@ import org.opencrx.kernel.contract1.jmi1.QuotePosition;
 import org.opencrx.kernel.contract1.jmi1.RemovedPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
-import org.opencrx.kernel.contract1.jmi1.SalesRepFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.SupplierFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.TotalAmountFilterProperty;
 import org.opencrx.kernel.depot1.jmi1.BookingOrigin;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.depot1.jmi1.Depot;
@@ -145,10 +128,8 @@ import org.openmdx.base.exception.RuntimeServiceException;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
@@ -1774,25 +1755,27 @@ public class Contracts extends AbstractImpl {
                 contract.getCalcRule()
             );            
             // Update position
-            this.updateContractPosition(
-                contract,
-                position,
-                product,
-                true
-            );
-            if(position instanceof ConfiguredProduct) {
-            	((ConfiguredProduct)position).setProduct(product);
-            }
-            // Clone configurations
-            if((isIgnoreProductConfiguration == null) || !isIgnoreProductConfiguration.booleanValue()) {
-                Products.getInstance().cloneProductConfigurationSet(
-                    product,
-                    position,
-                    false,
-                    true,
-                    JDOHelper.isNew(contract) ? null : contract.getOwningUser(),
-                    JDOHelper.isNew(contract) ? null : contract.getOwningGroup()
-                );
+            if(product != null) {
+	            this.updateContractPosition(
+	                contract,
+	                position,
+	                product,
+	                true
+	            );
+	            if(position instanceof ConfiguredProduct) {
+	            	((ConfiguredProduct)position).setProduct(product);
+	            }
+	            // Clone configurations
+	            if((isIgnoreProductConfiguration == null) || !isIgnoreProductConfiguration.booleanValue()) {
+	                Products.getInstance().cloneProductConfigurationSet(
+	                    product,
+	                    position,
+	                    false,
+	                    true,
+	                    JDOHelper.isNew(contract) ? null : contract.getOwningUser(),
+	                    JDOHelper.isNew(contract) ? null : contract.getOwningGroup()
+	                );
+	            }
             }
             // Touch contract --> jdoPreStore will be invoked
             this.markContractAsDirty(
@@ -2170,7 +2153,7 @@ public class Contracts extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    public void setPricingState(
+    public void updatePricingState(
     	AbstractContractPosition position,
     	short pricingState
     ) {
@@ -2180,7 +2163,7 @@ public class Contracts extends AbstractImpl {
 	        	(AbstractContract)pm.getObjectById(
 	            position.refGetPath().getParent().getParent()
 	        );
-	        this.setPricingState(
+	        this.updatePricingState(
 	        	contract, 
 	        	pricingState
 	        );
@@ -2191,13 +2174,20 @@ public class Contracts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
-    public void setPricingState(
+    public void updatePricingState(
     	AbstractContract contract,
     	short pricingState
     ) {
         contract.setPricingState(
             PRICING_STATE_DIRTY
         );    	
+    }
+    
+    //-------------------------------------------------------------------------
+    public void updateContractState(
+    	AbstractContract contract,
+    	short contractState
+    ) {
     }
     
     //-------------------------------------------------------------------------
@@ -2287,320 +2277,19 @@ public class Contracts extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    public AbstractContractQuery getFilteredContractQuery(
-        AbstractFilterContract contractFilter,
-        boolean forCounting
-    ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(contractFilter);
-        Collection<ContractFilterProperty> filterProperties = contractFilter.getFilterProperty();
-        AbstractContractQuery query = (AbstractContractQuery)pm.newQuery(AbstractContract.class);
-        for(ContractFilterProperty filterProperty: filterProperties) {
-            Boolean isActive = filterProperty.isActive();            
-            if((isActive != null) && isActive.booleanValue()) {
-            	if(filterProperty instanceof ContractTypeFilterProperty) {
-            		ContractTypeFilterProperty p = (ContractTypeFilterProperty)filterProperty;
-            		if(!p.getContractType().isEmpty()) {
-	            		if(p.getContractType().get(0).indexOf("Lead") > 0) {
-	            			query = (LeadQuery)pm.newQuery(Lead.class);            		
-	            		}
-	            		else if(p.getContractType().get(0).indexOf("Opportunity") > 0) {
-	            			query = (OpportunityQuery)pm.newQuery(Opportunity.class);            		
-	            		}
-	            		else if(p.getContractType().get(0).indexOf("Quote") > 0) {
-	            			query = (QuoteQuery)pm.newQuery(Quote.class);            		
-	            		}
-	            		else if(p.getContractType().get(0).indexOf("SalesOrder") > 0) {
-	            			query = (SalesOrderQuery)pm.newQuery(SalesOrder.class);            		
-	            		}
-	            		else if(p.getContractType().get(0).indexOf("Invoice") > 0) {
-	            			query = (InvoiceQuery)pm.newQuery(Invoice.class);            		
-	            		}
-            		}
-            	}
-            }
-        }        
-        boolean hasQueryFilterClause = false;
-        for(ContractFilterProperty filterProperty: filterProperties) {
-            Boolean isActive = filterProperty.isActive();            
-            if((isActive != null) && isActive.booleanValue()) {
-                // Query filter
-                if(filterProperty instanceof ContractQueryFilterProperty) {
-                	ContractQueryFilterProperty p = (ContractQueryFilterProperty)filterProperty;
-                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
-                	queryFilter.setClause(
-                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
-                	);
-                    queryFilter.setStringParam(
-                    	p.getStringParam()
-                    );
-                    queryFilter.setIntegerParam(
-                    	p.getIntegerParam()
-                    );
-                    queryFilter.setDecimalParam(
-                    	p.getDecimalParam()
-                    );
-                    queryFilter.setBooleanParam(
-                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
-                    );
-                    queryFilter.setDateParam(
-                    	p.getDateParam()
-                    );
-                    queryFilter.setDateTimeParam(
-                    	p.getDateTimeParam()
-                    );
-                    query.thereExistsContext().equalTo(
-                    	queryFilter
-                    );
-                    hasQueryFilterClause = true;
-                }
-                // Attribute filter
-                else if(filterProperty instanceof AttributeFilterProperty) {
-                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
-                    // Get filterOperator, filterQuantor
-                    short operator = attributeFilterProperty.getFilterOperator();
-                    operator = operator == 0 ? 
-                    	FilterOperators.IS_IN : 
-                    	operator;
-                    short quantor = attributeFilterProperty.getFilterQuantor();
-                    quantor = quantor == 0 ? 
-                    	Quantors.THERE_EXISTS : 
-                    	quantor;                    
-                    if(filterProperty instanceof ContractStateFilterProperty) {
-                    	ContractStateFilterProperty p = (ContractStateFilterProperty)filterProperty;
-                    	switch(quantor) {
-                    		default:
-                    			switch(operator) {
-                    				case FilterOperators.IS_IN: 
-                    					query.contractState().elementOf(p.getContractState()); 
-                    					break;
-                    				case FilterOperators.IS_GREATER:
-                    					query.contractState().greaterThan(p.getContractState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_GREATER_OR_EQUAL:
-                    					query.contractState().greaterThanOrEqualTo(p.getContractState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS:
-                    					query.contractState().lessThan(p.getContractState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS_OR_EQUAL:
-                    					query.contractState().lessThanOrEqualTo(p.getContractState().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_NOT_IN:
-                    					query.contractState().notAnElementOf(p.getContractState()); 
-                    					break;
-                    				default:
-                    					query.contractState().elementOf(p.getContractState()); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof ContractPriorityFilterProperty) {
-                    	ContractPriorityFilterProperty p = (ContractPriorityFilterProperty)filterProperty;
-                    	switch(quantor) {
-                    		default:
-                    			switch(operator) {
-                    				case FilterOperators.IS_IN: 
-                    					query.priority().elementOf(p.getPriority()); 
-                    					break;
-                    				case FilterOperators.IS_GREATER:
-                    					query.priority().greaterThan(p.getPriority().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_GREATER_OR_EQUAL:
-                    					query.priority().greaterThanOrEqualTo(p.getPriority().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS:
-                    					query.priority().lessThan(p.getPriority().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_LESS_OR_EQUAL:
-                    					query.priority().lessThanOrEqualTo(p.getPriority().get(0)); 
-                    					break;
-                    				case FilterOperators.IS_NOT_IN:
-                    					query.priority().notAnElementOf(p.getPriority()); 
-                    					break;
-                    				default:
-                    					query.priority().elementOf(p.getPriority()); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof TotalAmountFilterProperty) {
-                    	TotalAmountFilterProperty p = (TotalAmountFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.totalAmount().elementOf(p.getTotalAmount()); 
-	                					break;
-	                				case FilterOperators.IS_GREATER:
-	                					query.totalAmount().greaterThan(p.getTotalAmount().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_GREATER_OR_EQUAL:
-	                					query.totalAmount().greaterThanOrEqualTo(p.getTotalAmount().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS:
-	                					query.totalAmount().lessThan(p.getTotalAmount().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_LESS_OR_EQUAL:
-	                					query.totalAmount().lessThanOrEqualTo(p.getTotalAmount().get(0)); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.totalAmount().notAnElementOf(p.getTotalAmount()); 
-	                					break;
-	                				default:
-	                					query.totalAmount().elementOf(p.getTotalAmount()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof CustomerFilterProperty) {
-                    	CustomerFilterProperty p = (CustomerFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllCustomer().elementOf(p.getCustomer()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllCustomer().notAnElementOf(p.getCustomer()); 
-	                					break;
-	                				default:
-	                					query.forAllCustomer().elementOf(p.getCustomer()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsCustomer().elementOf(p.getCustomer()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsCustomer().notAnElementOf(p.getCustomer()); 
-	                					break;
-	                				default:
-	                					query.thereExistsCustomer().elementOf(p.getCustomer()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof SupplierFilterProperty) {
-                    	SupplierFilterProperty p = (SupplierFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllSupplier().elementOf(p.getSupplier()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllSupplier().notAnElementOf(p.getSupplier()); 
-	                					break;
-	                				default:
-	                					query.forAllSupplier().elementOf(p.getSupplier()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsSupplier().elementOf(p.getSupplier()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsSupplier().notAnElementOf(p.getSupplier()); 
-	                					break;
-	                				default:
-	                					query.thereExistsSupplier().elementOf(p.getSupplier()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof SalesRepFilterProperty) {
-                    	SalesRepFilterProperty p = (SalesRepFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllSalesRep().elementOf(p.getSalesRep()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.forAllSalesRep().notAnElementOf(p.getSalesRep()); 
-	                					break;
-	                				default:
-	                					query.forAllSalesRep().elementOf(p.getSalesRep()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsSalesRep().elementOf(p.getSalesRep()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN:
-	                					query.thereExistsSalesRep().notAnElementOf(p.getSalesRep()); 
-	                					break;
-	                				default:
-	                					query.thereExistsSalesRep().elementOf(p.getSalesRep()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof DisabledFilterProperty) {
-                    	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.forAllDisabled().equalTo(p.isDisabled()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN: 
-	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
-	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
-	                					break;
-	                				case FilterOperators.IS_NOT_IN: 
-	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                	}
-                }
-            }
-        }
-        if(!hasQueryFilterClause && forCounting) {
-        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
-        	queryFilter.setClause(
-        		Database_1_Attributes.HINT_COUNT + "(1=1)"
-        	);
-        	query.thereExistsContext().equalTo(
-        		queryFilter
-        	);
-        }
-        return query;
-    }
-        
-    //-------------------------------------------------------------------------
     public int countFilteredContract(
         org.opencrx.kernel.contract1.jmi1.AbstractFilterContract contractFilter
     ) throws ServiceException {
-    	AbstractContractQuery contractQuery = this.getFilteredContractQuery(
-    		contractFilter, 
-    		true
-    	);
-        List<AbstractContract> contracts = contractFilter.getFilteredContract(contractQuery);
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contractFilter);
+        AbstractContractQuery query = (AbstractContractQuery)pm.newQuery(AbstractContract.class);
+    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	queryExtension.setClause(
+    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+    	);    	
+        List<AbstractContract> contracts = contractFilter.getFilteredContract(query);
         return contracts.size();
     }
-            
-    
+
     //-------------------------------------------------------------------------
     public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
         org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
@@ -2632,10 +2321,9 @@ public class Contracts extends AbstractImpl {
         java.math.BigDecimal salesTaxRate
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm);
         java.math.BigDecimal pricePerUnit = position.getPricePerUnit() == null ?
             java.math.BigDecimal.ZERO :
-            position.getPricePerUnit();
+            	position.getPricePerUnit();
         java.math.BigDecimal baseAmount = minMaxAdjustedQuantity.multiply(pricePerUnit.multiply(uomScaleFactor));
         // discount
         Boolean discountIsPercentage = position.isDiscountIsPercentage() != null ? 
@@ -2643,7 +2331,7 @@ public class Contracts extends AbstractImpl {
             Boolean.FALSE;
         java.math.BigDecimal discount = position.getDiscount() != null ? 
             position.getDiscount() : 
-            java.math.BigDecimal.ZERO;
+            	java.math.BigDecimal.ZERO;
         // Discount is per piece in case of !discountIsPercentage
         java.math.BigDecimal discountAmount = discountIsPercentage.booleanValue() ? 
             baseAmount.multiply(discount.divide(new java.math.BigDecimal(100.0), java.math.BigDecimal.ROUND_UP)) : 
@@ -2654,7 +2342,7 @@ public class Contracts extends AbstractImpl {
         );    
         // amount
         java.math.BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
-        org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = contractPkg.createGetPositionAmountsResult(
+        org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = Utils.getContractPackage(pm).createGetPositionAmountsResult(
             amount, baseAmount, discountAmount,
             (short)0,
             null,
@@ -2676,43 +2364,44 @@ public class Contracts extends AbstractImpl {
         java.math.BigDecimal[] salesCommissions,
         java.lang.Boolean[] salesCommissionIsPercentages
     ) {
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg =
-            (org.opencrx.kernel.contract1.jmi1.Contract1Package)rootPkg.refPackage(
-                org.opencrx.kernel.contract1.jmi1.Contract1Package.class.getName()
-            );
-        java.math.BigDecimal totalBaseAmount = new java.math.BigDecimal(0);
-        java.math.BigDecimal totalDiscountAmount = new java.math.BigDecimal(0);
-        java.math.BigDecimal totalTaxAmount = new java.math.BigDecimal(0);
-        java.math.BigDecimal totalSalesCommission = new java.math.BigDecimal(0);
+    	javax.jdo.PersistenceManager pm = javax.jdo.JDOHelper.getPersistenceManager(contract);
+        java.math.BigDecimal totalBaseAmount = java.math.BigDecimal.ZERO;
+        java.math.BigDecimal totalDiscountAmount = java.math.BigDecimal.ZERO;
+        java.math.BigDecimal totalTaxAmount = java.math.BigDecimal.ZERO;
+        java.math.BigDecimal totalSalesCommission = java.math.BigDecimal.ZERO;
         for(int i = 0; i < positionBaseAmounts.length; i++) {
-            java.math.BigDecimal baseAmount = positionBaseAmounts[i] != null
-              ? positionBaseAmounts[i]
-               : new java.math.BigDecimal(0); 
+            java.math.BigDecimal baseAmount = positionBaseAmounts[i] != null ? 
+            	positionBaseAmounts[i] : 
+            		java.math.BigDecimal.ZERO; 
             totalBaseAmount = totalBaseAmount.add(baseAmount);
-            java.math.BigDecimal discountAmount = positionDiscountAmounts[i] != null
-              ? positionDiscountAmounts[i]
-               : new java.math.BigDecimal(0);
+            java.math.BigDecimal discountAmount = positionDiscountAmounts[i] != null ? 
+            	positionDiscountAmounts[i] : 
+            		 java.math.BigDecimal.ZERO;
             totalDiscountAmount = totalDiscountAmount.add(discountAmount);
-            java.math.BigDecimal taxAmount = positionTaxAmounts[i] != null
-              ? positionTaxAmounts[i]
-              : new java.math.BigDecimal(0);
+            java.math.BigDecimal taxAmount = positionTaxAmounts[i] != null ? 
+            	positionTaxAmounts[i] : 
+            		 java.math.BigDecimal.ZERO;
             totalTaxAmount = totalTaxAmount.add(taxAmount);
-            java.math.BigDecimal salesCommission = salesCommissions[i] != null
-              ? salesCommissions[i]
-              : new java.math.BigDecimal(0);
+            java.math.BigDecimal salesCommission = salesCommissions[i] != null ? 
+            	salesCommissions[i] : 
+            		java.math.BigDecimal.ZERO;
             totalSalesCommission = totalSalesCommission.add(
-              (salesCommissionIsPercentages[i] != null) &&
-              (salesCommissionIsPercentages[i].booleanValue())
-              ? baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP))
-              : salesCommission
+              (salesCommissionIsPercentages[i] != null) && (salesCommissionIsPercentages[i].booleanValue()) ? 
+            	  baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP)) : 
+            		  salesCommission
             );
         }
         java.math.BigDecimal totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
         java.math.BigDecimal totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
-        org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = contractPkg.createGetContractAmountsResult(
+        org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = org.opencrx.kernel.utils.Utils.getContractPackage(pm).createGetContractAmountsResult(
             (short)0,
             null,
-            totalAmount, totalAmountIncludingTax, totalBaseAmount, totalDiscountAmount, totalSalesCommission, totalTaxAmount
+            totalAmount, 
+            totalAmountIncludingTax, 
+            totalBaseAmount, 
+            totalDiscountAmount, 
+            totalSalesCommission, 
+            totalTaxAmount
         );
         return result;
     }

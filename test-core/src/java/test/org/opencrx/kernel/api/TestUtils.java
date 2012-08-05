@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestUtils.java,v 1.1 2010/03/22 21:45:25 wfro Exp $
+ * Name:        $Id: TestUtils.java,v 1.2 2010/06/25 15:04:57 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/22 21:45:25 $
+ * Date:        $Date: 2010/06/25 15:04:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -118,7 +118,7 @@ public class TestUtils {
 	    ) throws ServiceException{
 	        try {
 	        	org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
-	        		(org.opencrx.kernel.contract1.jmi1.Segment)this.entityManager.getObjectById(
+	        		(org.opencrx.kernel.contract1.jmi1.Segment)this.pm.getObjectById(
 		        		new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName)
 		        	);
 	        	Collection<SalesOrder> salesOrders = contractSegment.getSalesOrder();

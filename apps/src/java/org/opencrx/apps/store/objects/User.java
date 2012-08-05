@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: User.java,v 1.6 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: User.java,v 1.7 2010/08/30 15:35:40 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,6 +62,7 @@ import java.util.Collection;
 import java.util.StringTokenizer;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 
 import org.opencrx.apps.store.common.IStandardObject;
 import org.opencrx.apps.store.common.PrimaryKey;
@@ -137,6 +138,7 @@ public final class User implements IStandardObject
         org.opencrx.kernel.account1.jmi1.Contact contact,
         ApplicationContext context
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contact);
         UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.account1.jmi1.PostalAddress postalAddress = null;
         // Find existing postal address
@@ -151,7 +153,7 @@ public final class User implements IStandardObject
         }
         // Create
         if(postalAddress == null) {
-            postalAddress = context.getPersistenceManager().newInstance(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
+            postalAddress = pm.newInstance(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
             postalAddress.refInitialize(false, false);
             contact.addAddress(
                 false,
@@ -179,7 +181,7 @@ public final class User implements IStandardObject
             Keys.STORE_SCHEMA + "Properties"
         );
         if(propertySet == null) {
-            propertySet = context.getPersistenceManager().newInstance(org.opencrx.kernel.generic.jmi1.PropertySet.class);
+            propertySet = pm.newInstance(org.opencrx.kernel.generic.jmi1.PropertySet.class);
             propertySet.refInitialize(false, false);
             propertySet.setName(Keys.STORE_SCHEMA + "Properties");
             contact.addPropertySet(
@@ -192,7 +194,7 @@ public final class User implements IStandardObject
         org.opencrx.kernel.base.jmi1.StringProperty passwordProperty = 
             (org.opencrx.kernel.base.jmi1.StringProperty)this.getProperty(propertySet, "Password");
         if(passwordProperty == null) {
-            passwordProperty = context.getPersistenceManager().newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
+            passwordProperty = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
             passwordProperty.refInitialize(false, false);
             passwordProperty.setName("Password");
             propertySet.addProperty(
@@ -206,7 +208,7 @@ public final class User implements IStandardObject
         org.opencrx.kernel.base.jmi1.StringProperty userTypeProperty = 
             (org.opencrx.kernel.base.jmi1.StringProperty)this.getProperty(propertySet, "UserType");
         if(userTypeProperty == null) {
-            userTypeProperty = context.getPersistenceManager().newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
+            userTypeProperty = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
             userTypeProperty.refInitialize(false, false);
             userTypeProperty.setName("UserType");
             propertySet.addProperty(

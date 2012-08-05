@@ -100,6 +100,8 @@ DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY ;
 
 DROP VIEW OOMSE2_TOBJ_USERS ;
 
+DROP VIEW OOMSE2_TOBJ_USERS_ALL ;
+
 DROP VIEW OOMSE2_TOBJ_ROLES ;
 
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK ;
@@ -1228,9 +1230,9 @@ SELECT DISTINCT
     ass0.p$$parent AS account_from_id,
     ass0.account AS account_to,
     ass0.account AS account_to_id,
-    ass0.created_at,
+    ass0.modified_at AS created_at,
     ass0.created_by_,
-    ass0.modified_at,
+    CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
 
@@ -1257,6 +1259,10 @@ SELECT DISTINCT
     1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_ACCOUNT acct
+ON
+    ass0.account = acct.object_id
 WHERE
     (ass0.dtype = 'org:opencrx:kernel:account1:Member')
 
@@ -1276,9 +1282,9 @@ SELECT DISTINCT
     ass0.p$$parent AS account_from_id,
     ass0.account AS account_to,
     ass0.account AS account_to_id,
-    ass0.created_at,
+    ass0.modified_at AS created_at,
     ass0.created_by_,
-    ass0.modified_at,
+    CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
 
@@ -1305,6 +1311,10 @@ SELECT DISTINCT
     -1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_ACCOUNT acct
+ON
+   ass0.account = acct.object_id
 WHERE
     (ass0.dtype = 'org:opencrx:kernel:account1:Member') ;
 
@@ -2001,8 +2011,7 @@ SELECT
     act.access_level_delete,
     act.owner_,
    
-        CASE WHEN act.last_name IS NULL THEN '-' ELSE act.last_name END || ', ' ||
-        CASE WHEN act.first_name IS NULL THEN '-' ELSE act.first_name END AS account_address_index,
+        CASE WHEN act.full_name IS NULL THEN '-' ELSE act.full_name END AS account_address_index,
     act.object_id AS account
 FROM
     OOCKE1_ACCOUNT act
@@ -2033,12 +2042,12 @@ SELECT
     act.access_level_delete,
     act.owner_,
    
-        CASE WHEN act.last_name IS NULL THEN '-' ELSE act.last_name END || ', ' ||
-        CASE WHEN act.first_name IS NULL THEN '-' ELSE act.first_name END || ', ' ||
+        CASE WHEN act.full_name IS NULL THEN '-' ELSE act.full_name END || ', ' ||
         CASE WHEN adr.email_address IS NULL THEN '-' ELSE adr.email_address END || ', ' ||
         CASE WHEN adr.phone_number_full IS NULL THEN '-' ELSE adr.phone_number_full END || ', ' ||
         CASE WHEN adr.room_number IS NULL THEN '-' ELSE adr.room_number END || ', ' ||
         CASE WHEN adr.postal_street_0 IS NULL THEN '-' ELSE adr.postal_street_0 END || ', ' ||
+        CASE WHEN adr.postal_code IS NULL THEN '-' ELSE adr.postal_code END || ', ' ||
         CASE WHEN adr.postal_city IS NULL THEN '-' ELSE adr.postal_city END AS account_address_index,
     act.object_id AS account
 FROM
@@ -2061,32 +2070,47 @@ FROM
     OOCKE1_ACCOUNT_ ;
 
 
+CREATE VIEW OOMSE2_TOBJ_USERS_ALL AS
+SELECT
+    CASE
+        WHEN r.name = 'Default' THEN p.name
+        ELSE r.name ||
+
+E'\\'
+
+
+
+        || p.name
+    END AS principal_name,
+    (SELECT c1.passwd FROM OOMSE2_PRINCIPAL p1 INNER JOIN OOMSE2_REALM r1 ON p1.p$$parent = r1.object_id INNER JOIN OOMSE2_CREDENTIAL c1 ON (p1.credential = c1.object_id) WHERE r1.name = 'Default' AND p.name = p1.name) AS passwd
+FROM
+    OOMSE2_REALM r
+INNER JOIN
+    OOMSE2_PRINCIPAL p
+ON
+    p.p$$parent = r.object_id
+WHERE
+    r.name <> 'Root' ;
+
+
 CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT * FROM
-  (SELECT
-      CASE
-        WHEN r.name = 'Default' THEN p.name
-        ELSE r.name || E'\\' || p.name
-      END AS principal_name,
-      (SELECT c1.passwd FROM OOMSE2_PRINCIPAL p1 INNER JOIN OOMSE2_REALM r1 ON p1.p$$parent = r1.object_id INNER JOIN OOMSE2_CREDENTIAL c1 ON (p1.credential = c1.object_id) WHERE r1.name = 'Default' AND p.name = p1.name) AS passwd
-  FROM
-      OOMSE2_REALM r
-  INNER JOIN
-      OOMSE2_PRINCIPAL p
-  ON
-      p.p$$parent = r.object_id
-  WHERE
-      r.name <> 'Root'
-  ) u
+    OOMSE2_TOBJ_USERS_ALL
 WHERE
-    u.passwd IS NOT NULL ;
+    passwd IS NOT NULL ;
 
 
 CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
     CASE
         WHEN realm.name = 'Default' THEN p.name
-        ELSE realm.name || E'\\' || p.name
+        ELSE realm.name ||
+
+E'\\'
+
+
+
+        || p.name
     END AS principal_name,
     r.name AS role_name
 FROM

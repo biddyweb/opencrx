@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.17 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.19 2010/06/01 10:47:16 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2010/06/01 10:47:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -423,27 +423,25 @@ org.openmdx.base.naming.*
               new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName + "/account/" + accountQualifier)
              );
 
-          // get inbound memberships (i.e. distance == -1)
-      		org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
-          membershipQuery.forAllDisabled().isFalse();
-      		membershipQuery.distance().equalTo(new Short((short)-1));
-      		membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
+			// get inbound memberships (i.e. distance == -1)
+			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
+			membershipQuery.forAllDisabled().isFalse();
+			membershipQuery.distance().equalTo(new Short((short)-1));
+			membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
+			org.openmdx.base.query.Extension queryFilterDM1 = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
     			// HINT_DBOBJECT allows to qualify the DbObject to use.
     			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
-          org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilterDM1 =
-              (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
-          queryFilterDM1.setClause(
-            "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
-            "( " +
-            "v.member IN ( " +
-            "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
-            "  where " +
-            "   ((m.disabled is null) or (m.disabled = false)) and " +
-            "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
-            "  ) " +
-            ") "
-          );
-    			membershipQuery.thereExistsContext().equalTo(queryFilterDM1);
+			queryFilterDM1.setClause(
+	            "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+	            "( " +
+	            "v.member IN ( " +
+	            "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
+	            "  where " +
+	            "   ((m.disabled is null) or (m.disabled = false)) and " +
+	            "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
+	            "  ) " +
+	            ") "
+			);
       		Collection memberships = currentAccount.getAccountMembership(membershipQuery);
       		for(Iterator m = memberships.iterator(); m.hasNext(); ) {
       			org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)m.next();
@@ -469,20 +467,18 @@ org.openmdx.base.naming.*
             }
           }
 
-          // get outbound memberships (i.e. distance == 1)
-      		membershipQuery = accountPkg.createAccountMembershipQuery();
-          membershipQuery.forAllDisabled().isFalse();
+			// get outbound memberships (i.e. distance == 1)
+			membershipQuery = accountPkg.createAccountMembershipQuery();
+			membershipQuery.forAllDisabled().isFalse();
       		membershipQuery.distance().equalTo(new Short((short)1));
       		membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
       		memberships = currentAccount.getAccountMembership(membershipQuery);
-    			// HINT_DBOBJECT allows to qualify the DbObject to use.
-    			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
-                org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilterD1 =
-                    (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
-                queryFilterD1.setClause(
-                    org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
-                );
-    			membershipQuery.thereExistsContext().equalTo(queryFilterD1);
+			// HINT_DBOBJECT allows to qualify the DbObject to use.
+			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
+			org.openmdx.base.query.Extension queryFilterD1 = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
+			queryFilterD1.setClause(
+				org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+			);
       		for(Iterator m = memberships.iterator(); m.hasNext(); ) {
       			org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)m.next();
       			int distance = membership.getDistance();

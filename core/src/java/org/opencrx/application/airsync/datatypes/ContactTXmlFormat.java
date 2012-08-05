@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ContactTXmlFormat.java,v 1.16 2010/03/10 15:20:51 wfro Exp $
+ * Name:        $Id: ContactTXmlFormat.java,v 1.19 2010/07/08 12:43:46 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/10 15:20:51 $
+ * Date:        $Date: 2010/07/08 12:43:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,6 +74,7 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 		ContactT contactT = (ContactT) data;
 		DateTimeFormat eutcf = DateTimeFormat.EXTENDED_UTC_FORMAT;
 
+		this.createElement(eParent, "Contacts:", "Alias", contactT.getAlias());		
 		if(contactT.getAnniversary() != null) {
 			this.createElement(eParent, "Contacts:", "Anniversary", eutcf.format(contactT.getAnniversary()));
 		}
@@ -138,6 +139,8 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 			}
 		}
 		this.createElement(eParent, "Contacts:", "Body", contactT.getBody());
+		// Contacts2
+		this.createElement(eParent, "Contacts2:", "CustomerId", contactT.getCustomerId());
 		this.createElement(eParent, "Contacts2:", "IMAddress", contactT.getIMAddress());
 		this.createElement(eParent, "Contacts2:", "IMAddress2", contactT.getIMAddress2());
 		this.createElement(eParent, "Contacts2:", "IMAddress3", contactT.getIMAddress3());
@@ -151,6 +154,7 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 	) {
 		ContactT contactT = new ContactT();
 		
+		contactT.setAlias(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "Alias")));
 		contactT.setAnniversary(parseDOMDate(DOMUtils.getUniqueElement(syncData, "Contacts:", "Anniversary")));
 		contactT.setAssistantName(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "AssistantName")));
 		contactT.setAssistantPhoneNumber(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "AssistantTelephoneNumber")));
@@ -213,7 +217,6 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 		contactT.setAccountName(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts2:", "AccountName")));
 		contactT.setNickName(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts2:", "NickName")));
 		contactT.setMMS(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts2:", "MMS")));		
-		contactT.setData(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts2:", "Data")));
 		
 		return contactT;
 	}

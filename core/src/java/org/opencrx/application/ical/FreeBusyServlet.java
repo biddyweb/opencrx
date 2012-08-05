@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.13 2009/11/20 22:31:08 wfro Exp $
+ * Name:        $Id: FreeBusyServlet.java,v 1.17 2010/08/27 08:56:46 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/20 22:31:08 $
+ * Date:        $Date: 2010/08/27 08:56:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -57,6 +57,7 @@ package org.opencrx.application.ical;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -70,20 +71,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
+import org.opencrx.kernel.activity1.jmi1.Absence;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.ExternalActivity;
+import org.opencrx.kernel.activity1.jmi1.Meeting;
+import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.kernel.id.UUIDs;
+import org.w3c.format.DateTimeFormat;
 
 public class FreeBusyServlet extends HttpServlet {
 
     //-----------------------------------------------------------------------
     protected static class RRule {
     
+        //-------------------------------------------------------------------------
+        protected Date getUtcDate(
+            String dateTime
+        ) throws ParseException {
+            Date date = null;
+            if(dateTime.endsWith("Z")) {
+                if(dateTime.length() == 16) {
+                    date = DateTimeFormat.BASIC_UTC_FORMAT.parse(dateTime.substring(0, 15) + ".000Z");
+                }
+                else {
+                    date = DateTimeFormat.BASIC_UTC_FORMAT.parse(dateTime);
+                }
+            }
+            else if(dateTime.length() == 8) {
+                date = DateTimeFormat.BASIC_UTC_FORMAT.parse(dateTime + "T000000.000Z");
+            }
+            return date;
+        }
+                	
         public void parse(
             String rrule
         ) {
@@ -102,6 +128,11 @@ public class FreeBusyServlet extends HttpServlet {
                     }
                     else if(attrs[i].startsWith("INTERVAL=")) {          
                         this.interval = Integer.valueOf(attrs[i].substring(9));                        
+                    }
+                    else if(attrs[i].startsWith("UNTIL=")) {
+                    	try {
+                    		this.until = getUtcDate(attrs[i].substring(6));
+                    	} catch(Exception e) {}
                     }
                 }
             }
@@ -122,9 +153,15 @@ public class FreeBusyServlet extends HttpServlet {
             return this.interval;            
         }
         
+        public Date getUntil(
+        ) {
+        	return this.until;
+        }
+        
         private String freq = "DAILY";
         private int count = 1;
         private int interval = 1;
+        private Date until = null;
     }
     
     //-----------------------------------------------------------------------
@@ -157,16 +194,6 @@ public class FreeBusyServlet extends HttpServlet {
         }            
     }
     
-    //-----------------------------------------------------------------------
-    protected PersistenceManager getPersistenceManager(
-        HttpServletRequest req
-    ) {
-        return this.persistenceManagerFactory.getPersistenceManager(
-            "guest",
-            UUIDs.getGenerator().next().toString()
-        );
-    }
-
     //-----------------------------------------------------------------------
     protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
         String providerName
@@ -210,11 +237,10 @@ public class FreeBusyServlet extends HttpServlet {
         HttpServletRequest req, 
         HttpServletResponse resp
     ) throws ServletException, IOException {
-        PersistenceManager pm = this.getPersistenceManager(req);
-        if(pm == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
+        PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+            "guest",
+            null
+        );
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
         ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
@@ -222,18 +248,32 @@ public class FreeBusyServlet extends HttpServlet {
             filterId,
             isDisabledFilter
         );
+        if(activitiesHelper.getUserHome() != null) {
+        	// Switch to user home's principal
+        	pm = this.persistenceManagerFactory.getPersistenceManager(
+        		activitiesHelper.getUserHome().refGetPath().getBase(),
+        		null
+        	);
+        	activitiesHelper = this.getActivitiesHelper(
+                pm, 
+                filterId,
+                isDisabledFilter
+            );        	
+        }
         // Return all activities in FreeBusy format
         if((req.getRequestURI().endsWith("/freebusy"))) {        	            
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setCharacterEncoding("UTF-8");                
+            resp.setCharacterEncoding("UTF-8");    
+            resp.setContentType("text/plain");
             PrintWriter p = resp.getWriter();
             p.write("BEGIN:VCALENDAR\n");
-            p.write("VERSION:2.0\n");
             p.write("PRODID:-" + ICalendar.PROD_ID + "\n");
+            p.write("VERSION:1.1\n");
             p.write("METHOD:PUBLISH\n");
             p.write("BEGIN:VFREEBUSY\n");
-            p.write("DTSTAMP:" + ActivitiesFilterHelper.formatDate(ActivitiesFilterHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
-            ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
+            p.write("ORGANIZER:" + activitiesHelper.getCalendarName() + "\n");
+            ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+            PersistenceHelper.setClasses(activityQuery, Meeting.class, PhoneCall.class, Absence.class, ExternalActivity.class);
             Date dtStart = new Date(System.currentTimeMillis() - 7*86400000L);
             Date dtEnd = new Date(System.currentTimeMillis() + 60*86400000L);
             if(activitiesHelper.isDisabledFilter()) {
@@ -243,50 +283,45 @@ public class FreeBusyServlet extends HttpServlet {
                 activityQuery.forAllDisabled().isFalse();                    
             }
             activityQuery.ical().isNonNull();
-            activityQuery.orderByScheduledStart();
+            activityQuery.thereExistsScheduledStart().lessThanOrEqualTo(dtEnd);
+            activityQuery.thereExistsScheduledEnd().greaterThanOrEqualTo(dtStart);
+            activityQuery.orderByScheduledStart().ascending();       
+            p.write("DTSTAMP:" + ActivitiesFilterHelper.formatDate(ActivitiesFilterHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
             p.write("DTSTART:" + ActivitiesFilterHelper.formatDate(dtStart) + "\n");
             p.write("DTEND:" + ActivitiesFilterHelper.formatDate(dtEnd) + "\n");
             for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
-                if((activity.getScheduledStart() != null) && (activity.getScheduledEnd() != null)) {
-                    if(
-                        (activity.getScheduledEnd().compareTo(dtStart) >= 0) && 
-                        (activity.getScheduledStart().compareTo(dtEnd) <= 0)
-                    ) {
-                        String ical = activity.getIcal();
-                        RRule rrule = new RRule();
-                        if((ical != null) && (ical.indexOf("RRULE:") > 0)) {
-                            rrule.parse(ical.substring(ical.indexOf("RRULE:")));
-                        }
-                        GregorianCalendar scheduledStart = new GregorianCalendar();
-                        scheduledStart.setTime(activity.getScheduledStart());
-                        GregorianCalendar scheduledEnd = new GregorianCalendar();
-                        scheduledEnd.setTime(activity.getScheduledEnd());
-                        int i = 0;
-                        while(
-                            (i < rrule.getCount()) &&
-                            (scheduledEnd.getTime().compareTo(dtStart) >= 0) &&
-                            (scheduledStart.getTime().compareTo(dtEnd) <= 0)                            
-                        ) {
-                            p.write("FREEBUSY:" + ActivitiesFilterHelper.formatDate(scheduledStart.getTime()) + "/" + ActivitiesFilterHelper.formatDate(scheduledEnd.getTime()) + "\n");
-                            if("DAILY".equals(rrule.getFreq())) {
-                                scheduledStart.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
-                                scheduledEnd.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
-                            }
-                            else if("WEEKLY".equals(rrule.getFreq())) {
-                                scheduledStart.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());
-                                scheduledEnd.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());                                    
-                            }
-                            else if("MONTHLY".equals(rrule.getFreq())) {
-                                scheduledStart.add(GregorianCalendar.MONTH, rrule.getInterval());
-                                scheduledEnd.add(GregorianCalendar.MONTH, rrule.getInterval());                                                                        
-                            }
-                            else if("YEARLY".equals(rrule.getFreq())) {
-                                scheduledStart.add(GregorianCalendar.YEAR, rrule.getInterval());
-                                scheduledEnd.add(GregorianCalendar.YEAR, rrule.getInterval());                                                                                                            
-                            }
-                            i++;
-                        }
+                String ical = activity.getIcal();
+                RRule rrule = new RRule();
+                if((ical != null) && (ical.indexOf("RRULE:") > 0)) {
+                    rrule.parse(ical.substring(ical.indexOf("RRULE:")));
+                }
+                GregorianCalendar scheduledStart = new GregorianCalendar();
+                scheduledStart.setTime(activity.getScheduledStart());
+                GregorianCalendar scheduledEnd = new GregorianCalendar();
+                scheduledEnd.setTime(activity.getScheduledEnd());
+                int i = 0;
+                while(
+                	(rrule.getUntil() != null && scheduledStart.getTime().compareTo(rrule.getUntil()) <= 0) ||
+                    (i < rrule.getCount())
+                ) {
+                    p.write("FREEBUSY:" + ActivitiesFilterHelper.formatDate(scheduledStart.getTime()) + "/" + ActivitiesFilterHelper.formatDate(scheduledEnd.getTime()) + "\n");
+                    if("DAILY".equals(rrule.getFreq())) {
+                        scheduledStart.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
+                        scheduledEnd.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
                     }
+                    else if("WEEKLY".equals(rrule.getFreq())) {
+                        scheduledStart.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());
+                        scheduledEnd.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());                                    
+                    }
+                    else if("MONTHLY".equals(rrule.getFreq())) {
+                        scheduledStart.add(GregorianCalendar.MONTH, rrule.getInterval());
+                        scheduledEnd.add(GregorianCalendar.MONTH, rrule.getInterval());                                                                        
+                    }
+                    else if("YEARLY".equals(rrule.getFreq())) {
+                        scheduledStart.add(GregorianCalendar.YEAR, rrule.getInterval());
+                        scheduledEnd.add(GregorianCalendar.YEAR, rrule.getInterval());                                                                                                            
+                    }
+                    i++;
                 }
             }
             p.write("END:VFREEBUSY\n");
@@ -315,7 +350,7 @@ public class FreeBusyServlet extends HttpServlet {
     protected final static String PARAMETER_NAME_TYPE = "type";
     protected final static String PARAMETER_NAME_RESOURCE = "resource";
     protected final static String PARAMETER_NAME_HEIGHT = "height";
-    
+
     protected PersistenceManagerFactory persistenceManagerFactory = null;
     protected PersistenceManager rootPm = null;
     protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;    

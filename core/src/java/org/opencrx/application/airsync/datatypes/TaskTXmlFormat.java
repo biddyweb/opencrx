@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: TaskTXmlFormat.java,v 1.15 2010/03/10 15:20:50 wfro Exp $
+ * Name:        $Id: TaskTXmlFormat.java,v 1.19 2010/06/18 12:32:02 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/10 15:20:50 $
+ * Date:        $Date: 2010/06/18 12:32:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,10 +67,10 @@ public class TaskTXmlFormat extends AbstractXmlFormat {
 		IData data,
 		double protocolVersion
 	) {
-		DateTimeFormat eutcf = DateTimeFormat.EXTENDED_UTC_FORMAT;
+		DateTimeFormat eutcf = this.getUtcFormat(true);
 		TaskT taskT = (TaskT) data;
 		
-		this.formatBody(eData, taskT, protocolVersion);
+		createElement(eData, "Tasks:", "Body", taskT.getBody());
 		createElement(eData, "Tasks:", "Subject", taskT.getSubject());
 		createElement(eData, "Tasks:", "Importance", Integer.toString(taskT.getImportance().getValue()));
 		if(taskT.getUtcstartdate() != null) {
@@ -92,7 +92,7 @@ public class TaskTXmlFormat extends AbstractXmlFormat {
 			}
 		}
 		if(taskT.getRecurrence() != null) {
-			this.formatRecurrence(eData, taskT);
+			this.formatRecurrence(eData, taskT, protocolVersion);
 		}
 		createElement(eData, "Tasks:", "Complete", Boolean.TRUE.equals(taskT.getComplete()) ? "1" : "0");
 		if(taskT.getDatecompleted() != null) {
@@ -103,24 +103,12 @@ public class TaskTXmlFormat extends AbstractXmlFormat {
 		}
 	}
 
-	private void formatBody(
-		Element eData,
-		TaskT taskT,
-		double protocolVersion
-	) {
-		Element d = DOMUtils.createElement(eData, "AirSyncBase:", "Body");
-		createElement(d, "AirSyncBase:", "Type", Integer.toString(MimeType.PlainText.getValue()));
-		DOMUtils.createElementAndText(d, "AirSyncBase:", "EstimatedDataSize", taskT.getBody() != null ? "" + taskT.getBody().length() : "0");
-		if(taskT.getBody() != null && taskT.getBody().length() > 0) {
-			DOMUtils.createElementAndText(d, "AirSyncBase:", "Data", taskT.getBody());
-		}
-	}
-
 	private void formatRecurrence(
 		Element eData, 
-		TaskT ev
+		TaskT ev,
+		double protocolVersion
 	) {
-		DateTimeFormat eutcf = DateTimeFormat.EXTENDED_UTC_FORMAT;
+		DateTimeFormat eutcf = this.getUtcFormat(true);
 		RecurrenceT recurrenceT = ev.getRecurrence();
 		if(recurrenceT == null || recurrenceT.getType() == null) return;
 		Element eRecurrence = DOMUtils.createElement(eData, "Tasks:", "Recurrence");

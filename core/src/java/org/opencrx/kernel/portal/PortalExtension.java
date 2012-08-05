@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.97 2010/04/27 12:17:30 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.100 2010/07/08 12:47:40 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.97 $
+ * Revision:    $Revision: 1.100 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:17:30 $
+ * Date:        $Date: 2010/07/08 12:47:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,7 +91,6 @@ import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
@@ -100,11 +99,11 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.spi.QueryExtension;
 import org.openmdx.base.query.Condition;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.PiggyBackCondition;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.query.Extension;
+import org.openmdx.base.query.IsInCondition;
+import org.openmdx.base.query.Quantifier;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
@@ -142,12 +141,12 @@ public class PortalExtension
     //-------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     @Override
-    public List<FilterProperty> getFindObjectsBaseFilter(
+    public List<Condition> getFindObjectsBaseFilter(
         ApplicationContext application,
         RefObject_1_0 context, 
         String referenceName
     ) {
-        List<FilterProperty> baseFilter = super.getFindObjectsBaseFilter(
+        List<Condition> baseFilter = super.getFindObjectsBaseFilter(
             application, 
             context, 
             referenceName
@@ -167,12 +166,12 @@ public class PortalExtension
         catch(Exception e) {}
         if(excludeDisabled) {
             baseFilter.add(
-                new FilterProperty(
-                    Quantors.FOR_ALL,
+                new IsInCondition(
+                    Quantifier.FOR_ALL,
                     "disabled",
-                    FilterOperators.IS_IN,
+                    true,
                     Boolean.FALSE
-                )                    
+                )             
             );
         }
         return baseFilter;
@@ -617,40 +616,24 @@ public class PortalExtension
     }
     
     //-------------------------------------------------------------------------
-    protected  List<Condition> getQueryConditions(
+    protected org.openmdx.base.query.Filter getQueryConditions(
     	String clause,
-    	String queryFilterContext,
     	List<String> stringParams,
     	ApplicationContext app
     ) {
-        List<Condition> conditions = new ArrayList<Condition>();
-        conditions.add(
-            new PiggyBackCondition(
-                queryFilterContext + SystemAttributes.OBJECT_CLASS, 
-                Database_1_Attributes.QUERY_FILTER_CLASS
-            )                          
-        );
-        conditions.add(
-            new PiggyBackCondition(
-                queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE, 
-                clause
-            )                          
-        );
-        conditions.add(
-            new PiggyBackCondition(
-                queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM, 
-                (Object[])stringParams.toArray(new String[stringParams.size()])
-            )                          
-        );    	
-        return conditions;
+    	org.openmdx.base.query.Filter filter = new org.openmdx.base.query.Filter();
+    	Extension queryExtension = new QueryExtension();
+    	queryExtension.setClause(clause);
+    	queryExtension.setStringParam(stringParams.toArray(new String[stringParams.size()]));    	
+    	filter.setExtension(queryExtension);
+    	return filter;
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public List<Condition> getQuery(
+    public org.openmdx.base.query.Filter getQuery(
     	org.openmdx.ui1.jmi1.ValuedField field,
     	String filterValue,
-    	String queryFilterContext,
     	int queryFilterStringParamCount,
     	ApplicationContext app
     ) {
@@ -747,14 +730,12 @@ public class PortalExtension
             return super.getQuery(
             	field, 
             	filterValue, 
-            	queryFilterContext,
             	queryFilterStringParamCount,
             	app
             );
 	    }
         return this.getQueryConditions(
         	clause, 
-        	queryFilterContext, 
         	stringParams, 
         	app
         );
@@ -1291,7 +1272,8 @@ public class PortalExtension
         if(result instanceof org.opencrx.kernel.home1.jmi1.SearchResult) {
             org.opencrx.kernel.home1.jmi1.SearchResult searchResult = (org.opencrx.kernel.home1.jmi1.SearchResult)result;
             if(searchResult.getObjectFinder() != null) {
-                RefObject_1_0 objectFinder = (RefObject_1_0)((RefPackage_1_0)target.refOutermostPackage()).refObject(
+            	PersistenceManager pm = JDOHelper.getPersistenceManager(target);
+                RefObject_1_0 objectFinder = (RefObject_1_0)pm.getObjectById(
                     searchResult.getObjectFinder().refGetPath()
                 );
                 return objectFinder;

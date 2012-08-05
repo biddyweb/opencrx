@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Apps, http://www.opencrx.org/
- * Name:        $Id: ApplicationContext.java,v 1.1 2009/11/27 18:23:05 wfro Exp $
- * Description: Store application context
- * Revision:    $Revision: 1.1 $
+ * Name:        $Id: ApplicationContext.java,v 1.2 2010/08/30 15:35:41 wfro Exp $
+ * Description: Application context
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -58,44 +58,37 @@ package org.opencrx.apps.store.common.util;
 import java.util.Locale;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 
+import org.opencrx.kernel.generic.SecurityKeys;
 import org.openmdx.base.naming.Path;
 
 public class ApplicationContext {
 
     //-----------------------------------------------------------------------
     public ApplicationContext(
-        PersistenceManager pm,
+        PersistenceManagerFactory pmf,
         String providerName,
         String segmentName,
         Short configuredCurrencyCode,
         Locale configuredLocale,
         String configuredSalesTaxTypeName         
     ) {
-        this.pm = pm;
+        this.pmf = pmf;
         this.providerName = providerName;
         this.segmentName = segmentName;
         this.configuredCurrencyCode = configuredCurrencyCode;
         this.configuredLocale = configuredLocale;
         this.configuredSalesTaxTypeName = configuredSalesTaxTypeName;
-        this.accountSegment = 
-            (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-                new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + this.providerName + "/segment/" + this.segmentName)
-            );
-        this.contractSegment = 
-            (org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-                new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + this.providerName + "/segment/" + this.segmentName)
-            );
-        this.productSegment = 
-            (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
-                new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + this.providerName + "/segment/" + this.segmentName)
-            );        
     }
     
     //-----------------------------------------------------------------------
-    public PersistenceManager getPersistenceManager(
+    public PersistenceManager newPersistenceManager(
     ) {
-        return this.pm;
+        return this.pmf.getPersistenceManager(
+            SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName, 
+            null
+        );
     }
     
     //-----------------------------------------------------------------------
@@ -112,20 +105,29 @@ public class ApplicationContext {
     
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
+    	PersistenceManager pm
     ) {
-        return this.accountSegment;
+        return (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + this.providerName + "/segment/" + this.segmentName)
+        );
     }
 
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
+    	PersistenceManager pm
     ) {
-        return this.contractSegment;
+        return (org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + this.providerName + "/segment/" + this.segmentName)
+        );
     }
 
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.product1.jmi1.Segment getProductSegment(
+    	PersistenceManager pm
     ) {
-        return this.productSegment;
+        return (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
+            new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + this.providerName + "/segment/" + this.segmentName)
+        );
     }
     
     //-----------------------------------------------------------------------
@@ -155,11 +157,8 @@ public class ApplicationContext {
     private final Locale configuredLocale;
     private final String configuredSalesTaxTypeName; 
     
-    private final PersistenceManager pm;
+    private final PersistenceManagerFactory pmf;
     private final String providerName;
     private final String segmentName;
-    private final org.opencrx.kernel.account1.jmi1.Segment accountSegment;
-    private final org.opencrx.kernel.contract1.jmi1.Segment contractSegment;
-    private final org.opencrx.kernel.product1.jmi1.Segment productSegment;
     
 }

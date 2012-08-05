@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.24 2010/04/28 08:24:08 cmu Exp $
+ * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.27 2010/05/12 10:28:24 cmu Exp $
  * Description: import accounts from Excel Sheet
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.27 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/28 08:24:08 $
+ * Date:        $Date: 2010/05/12 10:28:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -385,6 +385,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
     final String ATTR_ALIASNAME = "AliasName";
     final String ATTR_COMPANY = "Company";
     final String ATTR_DTYPE = "Dtype";
+    final String ATTR_XRI = "xri";
 
     final String ATTR_MEMBEROF = "MemberOf";
     final String ATTR_MEMBERROLE = "MemberRole";
@@ -709,6 +710,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                       int idxAliasName = -1;
                       int idxCompany = -1;
                       int idxDtype = -1;
+                      int idxXri = -1;
                       Set explicitlyMappedAttributes = new HashSet(); // contains (capitalized) feature names mapped explicitely
 
                       explicitlyMappedAttributes.add(ATTR_EXTSTRING0.toUpperCase());
@@ -717,6 +719,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                       explicitlyMappedAttributes.add(ATTR_ALIASNAME.toUpperCase());
                       explicitlyMappedAttributes.add(ATTR_COMPANY.toUpperCase());
                       explicitlyMappedAttributes.add(ATTR_DTYPE.toUpperCase());
+                      explicitlyMappedAttributes.add(ATTR_XRI.toUpperCase());
 
                       explicitlyMappedAttributes.add(ATTR_MEMBEROF.toUpperCase());
                       explicitlyMappedAttributes.add(ATTR_MEMBERROLE.toUpperCase());
@@ -858,6 +861,9 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               isSearchAttribute = true;
                                                           } else if (ATTR_DTYPE.compareToIgnoreCase(cellValue) == 0) {
                                                               idxDtype = nCell;
+                                                          } else if (ATTR_XRI.compareToIgnoreCase(cellValue) == 0) {
+                                                              idxXri = nCell;
+                                                              isSearchAttribute = true;
                                                           }
 %>
                                                           <td <%= isSearchAttribute ? "class='searchAttr' title='attribute used for matching'" : "" %>>Col-<%= formatter.format(nCell) + EOL_HTML + cellValue %></td>
@@ -892,7 +898,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       org.opencrx.kernel.account1.jmi1.LegalEntity legalEntity = null;
                                       org.opencrx.kernel.account1.jmi1.Group group = null;
                                       org.opencrx.kernel.account1.jmi1.UnspecifiedAccount unspecifiedAccount = null;
-                                      boolean dtypeExplicitelySet = false;
+                                      boolean dtypeExplicitlySet = false;
+                                      boolean xriExplicitlySet = false;
                                       boolean isDtypeContact = true; // default
                                       boolean isDtypeGroup = false;
                                       boolean isDtypeLegalEntity = false;
@@ -905,6 +912,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       String lastName = null;
                                       String aliasName = null;
                                       String company = null;
+                                      String xri = null;
 
                                       String cellId = null;
                                       String multiMatchList = "";
@@ -940,22 +948,22 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                           valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
                                                           if (nCell == idxDtype) {
                                                               if (DTYPE_GROUP.compareToIgnoreCase(cellValue) == 0) {
-                                                                  dtypeExplicitelySet = true;
+                                                                  dtypeExplicitlySet = true;
                                                                   isDtypeGroup = true;
                                                                   isDtypeContact = false;
                                                                   className = DTYPE_GROUP;
                                                               } else if (DTYPE_LEGALENTITY.compareToIgnoreCase(cellValue) == 0) {
-                                                                  dtypeExplicitelySet = true;
+                                                                  dtypeExplicitlySet = true;
                                                                   isDtypeLegalEntity = true;
                                                                   isDtypeContact = false;
                                                                   className = DTYPE_LEGALENTITY;
                                                               } else if (DTYPE_UNSPECIFIEDACCOUNT.compareToIgnoreCase(cellValue) == 0) {
-                                                                  dtypeExplicitelySet = true;
+                                                                  dtypeExplicitlySet = true;
                                                                   isDtypeUnspecifiedAccount = true;
                                                                   isDtypeContact = false;
                                                                   className = DTYPE_UNSPECIFIEDACCOUNT;
                                                               } else if (DTYPE_CONTACT.compareToIgnoreCase(cellValue) == 0) {
-                                                                  dtypeExplicitelySet = true;
+                                                                  dtypeExplicitlySet = true;
                                                                   className = DTYPE_UNSPECIFIEDACCOUNT;
                                                               }
                                                           } else if (nCell == idxExtString0) {
@@ -968,6 +976,9 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               aliasName = cellValue;
                                                           } else if (nCell == idxCompany) {
                                                               company = cellValue;
+                                                          } else if (nCell == idxXri) {
+                                                              xriExplicitlySet = true;
+                                                              xri = cellValue;
                                                           }
 %>
                                                           <td <%= cellId %>><%= cellValue != null ? (cellValue.replace("\r\n", EOL_HTML)).replace("\n", EOL_HTML) : "" %></td>
@@ -1019,7 +1030,40 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                           String accountHref = "";
                                           org.opencrx.kernel.account1.jmi1.Account account = null;
 
-                                          if (!dtypeExplicitelySet) {
+                                          if (xriExplicitlySet) {
+                                              // try to find existing account with provided xri
+                                              try {
+                                                  account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(xri));
+                                              } catch (Exception e) {
+                                                  new ServiceException(e).log();
+                                              }
+                                              if (account != null) {
+                                                  dtypeExplicitlySet = true;
+                                                  isDtypeContact = false;
+                                                  isDtypeGroup = false;
+                                                  isDtypeLegalEntity = false;
+                                                  isDtypeUnspecifiedAccount = false;
+                                                  if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+                                                      isDtypeContact = true;
+                                                      matchingContacts = new ArrayList();
+                                                      matchingContacts.add((org.opencrx.kernel.account1.jmi1.Contact)account);
+                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.Group) {
+                                                      isDtypeGroup = true;
+                                                      matchingAbstractGroups = new ArrayList();
+                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
+                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
+                                                      isDtypeLegalEntity = true;
+                                                      matchingAbstractGroups = new ArrayList();
+                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
+                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
+                                                      isDtypeUnspecifiedAccount = true;
+                                                      matchingAbstractGroups = new ArrayList();
+                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
+                                                  }
+                                              }
+                                          }
+
+                                          if (!dtypeExplicitlySet) {
                                               // try to find existing account to determine dtype
                                               matchingContacts = findContact(
                                                   firstName,
@@ -1041,7 +1085,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                   );
                                               }
                                               if (matchingContacts != null) {
-                                                  dtypeExplicitelySet = true;
+                                                  dtypeExplicitlySet = true;
                                               } else {
                                                   matchingAbstractGroups = findAbstractGroup(
                                                       company,
@@ -1056,17 +1100,17 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                   if (matchingAbstractGroups != null) {
                                                       org.opencrx.kernel.account1.jmi1.AbstractGroup matchingAbstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)(matchingAbstractGroups.iterator().next());
                                                       if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.Group) {
-                                                          dtypeExplicitelySet = true;
+                                                          dtypeExplicitlySet = true;
                                                           isDtypeGroup = true;
                                                           isDtypeContact = false;
                                                           className = DTYPE_GROUP;
                                                       } else if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
-                                                          dtypeExplicitelySet = true;
+                                                          dtypeExplicitlySet = true;
                                                           isDtypeLegalEntity = true;
                                                           isDtypeContact = false;
                                                           className = DTYPE_LEGALENTITY;
                                                       } else if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
-                                                          dtypeExplicitelySet = true;
+                                                          dtypeExplicitlySet = true;
                                                           isDtypeUnspecifiedAccount = true;
                                                           isDtypeContact = false;
                                                           className = DTYPE_UNSPECIFIEDACCOUNT;
@@ -1643,9 +1687,12 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                       isOk = false;
                                                       isNok = false;
                                                       try {
-                                                          DataBinding_1_0 postalBusinesDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
+                                                          DataBinding_1_0 postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
 
-                                                          if (key.equalsIgnoreCase(ATTR_EXTSTRING0)) {
+                                                          if (key.equalsIgnoreCase(ATTR_XRI)) {
+                                                              // set isOk to true
+                                                              isOk = true;
+                                                          } else if (key.equalsIgnoreCase(ATTR_EXTSTRING0)) {
                                                               // verify, but do NOT set extString0 (may only be set during creation of new contact!!!)
                                                               isOk = (valueMap.get(key) != null) && (account.getExtString0() != null) && (valueMap.get(key).toString().compareTo(account.getExtString0()) == 0);
                                                           } else if (key.equalsIgnoreCase(ATTR_BUSINESSTYPE)) {
@@ -1744,7 +1791,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                                   while(tokenizer.hasMoreTokens()) {
                                                                       postalAddressLines.add(tokenizer.nextToken());
                                                                   }
-                                                                  postalBusinesDataBinding.setValue(
+                                                                  postalBusinessDataBinding.setValue(
                                                                       account,
                                                                       "org:opencrx:kernel:account1:Account:address*Business!postalAddressLine",
                                                                       postalAddressLines
@@ -1759,7 +1806,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                                   while(tokenizer.hasMoreTokens()) {
                                                                       postalStreetLines.add(tokenizer.nextToken());
                                                                   }
-                                                                  postalBusinesDataBinding.setValue(
+                                                                  postalBusinessDataBinding.setValue(
                                                                       account,
                                                                       "org:opencrx:kernel:account1:Account:address*Business!postalStreet",
                                                                       postalStreetLines
@@ -1768,7 +1815,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               isOk = true;
                                                           } else if (key.equalsIgnoreCase(ATTR_BUSINESSCITY)) {
                                                               // Postal Address Business / postalCity
-                                                              postalBusinesDataBinding.setValue(
+                                                              postalBusinessDataBinding.setValue(
                                                                       account,
                                                                   "org:opencrx:kernel:account1:Account:address*Business!postalCity",
                                                                   (String)valueMap.get(key)
@@ -1776,7 +1823,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               isOk = true;
                                                           } else if (key.equalsIgnoreCase(ATTR_BUSINESSPOSTALCODE)) {
                                                               // Postal Address Business / postalCode
-                                                              postalBusinesDataBinding.setValue(
+                                                              postalBusinessDataBinding.setValue(
                                                                   account,
                                                                   "org:opencrx:kernel:account1:Account:address*Business!postalCode",
                                                                   (String)valueMap.get(key)
@@ -1784,7 +1831,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               isOk = true;
                                                           } else if (key.equalsIgnoreCase(ATTR_BUSINESSSTATE)) {
                                                               // Postal Address Business / postalState
-                                                              postalBusinesDataBinding.setValue(
+                                                              postalBusinessDataBinding.setValue(
                                                                       account,
                                                                   "org:opencrx:kernel:account1:Account:address*Business!postalState",
                                                                   (String)valueMap.get(key)
@@ -1796,7 +1843,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                                   (String)valueMap.get(key),
                                                                   FEATURE_POSTALCOUNTRY_CODE
                                                               );
-                                                              postalBusinesDataBinding.setValue(
+                                                              postalBusinessDataBinding.setValue(
                                                                   account,
                                                                   "org:opencrx:kernel:account1:Account:address*Business!postalCountry",
                                                                   postalCountry

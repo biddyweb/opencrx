@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityImpl.java,v 1.32 2010/03/10 19:15:31 wfro Exp $
+ * Name:        $Id: ActivityImpl.java,v 1.34 2010/08/23 17:12:16 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/10 19:15:31 $
+ * Date:        $Date: 2010/08/23 17:12:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,9 +57,6 @@ package org.opencrx.kernel.activity1.aop2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.jdo.JDOUserException;
@@ -282,7 +279,7 @@ public class ActivityImpl
     	String scheduledStart = this.sameObject().getScheduledStart() == null ?
     		"" : 
     			utcf.format(this.sameObject().getScheduledStart());
-    	String scheduledEnd = this.sameObject().getScheduledStart() == null ?
+    	String scheduledEnd = this.sameObject().getScheduledEnd() == null ?
     		"" : 
     			utcf.format(this.sameObject().getScheduledEnd());
     	return scheduledStart.endsWith("T000000.000Z") && scheduledEnd.endsWith("T000000.000Z"); 

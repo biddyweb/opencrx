@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Product.java,v 1.6 2009/11/27 18:23:05 wfro Exp $
+ * Name:        $Id: Product.java,v 1.7 2010/08/30 15:35:40 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:23:05 $
+ * Date:        $Date: 2010/08/30 15:35:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,6 +62,9 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+
 import org.opencrx.apps.store.common.IStandardObject;
 import org.opencrx.apps.store.common.PrimaryKey;
 import org.opencrx.apps.store.common.util.ApplicationContext;
@@ -95,6 +98,7 @@ public final class Product implements IStandardObject
         org.opencrx.kernel.product1.jmi1.Product product,
         ApplicationContext context
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(product);
         this.Key = new PrimaryKey(product.refGetPath().getBase(), false);
         this.CategoryID = null;
         if(!product.getClassification().isEmpty()) {
@@ -106,7 +110,7 @@ public final class Product implements IStandardObject
         this.Details = product.getDetailedDescription();        
         this.PictureFile = product.getDescription();
         // UnitPrice
-        org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = this.findPriceLevel(context);
+        org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = this.findPriceLevel(pm, context);
         if(priceLevel != null) {
             org.opencrx.kernel.product1.jmi1.ProductBasePrice basePrice = this.findBasePrice(
                 product, 
@@ -121,11 +125,12 @@ public final class Product implements IStandardObject
 
     //-----------------------------------------------------------------------
     private org.opencrx.kernel.product1.jmi1.PriceLevel findPriceLevel(
-        ApplicationContext context
+    	PersistenceManager pm,
+        ApplicationContext context    	
     ) {
-        PriceLevelQuery priceLevelQuery = (PriceLevelQuery)context.getPersistenceManager().newQuery(org.opencrx.kernel.product1.jmi1.PriceLevel.class);
+        PriceLevelQuery priceLevelQuery = (PriceLevelQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.PriceLevel.class);
         priceLevelQuery.name().equalTo(Keys.STORE_SCHEMA + Product.PRICE_LEVEL_NAME + " [" + DecimalFormat.getCurrencyInstance(context.getConfiguredLocale()).getCurrency().getSymbol() + "]");
-        Collection<PriceLevel> priceLevels = context.getProductSegment().getPriceLevel(priceLevelQuery);
+        Collection<PriceLevel> priceLevels = context.getProductSegment(pm).getPriceLevel(priceLevelQuery);
         return priceLevels.isEmpty() ? 
         	null : 
         	priceLevels.iterator().next();
@@ -153,12 +158,13 @@ public final class Product implements IStandardObject
         org.opencrx.kernel.product1.jmi1.Product product,
         ApplicationContext context
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(product);
         UUIDGenerator uuids = UUIDs.getGenerator();
         
         // classification
         product.getClassification().clear();
         product.getClassification().add(
-            context.getProductSegment().getProductClassification(this.getCategoryID().getUuid())
+            context.getProductSegment(pm).getProductClassification(this.getCategoryID().getUuid())
         );
         // name
         product.setName(
@@ -174,21 +180,21 @@ public final class Product implements IStandardObject
         );
         // Uom
         product.setDefaultUom(
-            (org.opencrx.kernel.uom1.jmi1.Uom)context.getPersistenceManager().getObjectById("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + context.getProviderName() + "/segment/Root/uom/Unit")
+            (org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + context.getProviderName() + "/segment/Root/uom/Unit")
         );
         
         // Update / Create price
-        org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = this.findPriceLevel(context);
+        org.opencrx.kernel.product1.jmi1.PriceLevel priceLevel = this.findPriceLevel(pm, context);
         if(priceLevel == null) {
             String name =
                 Keys.STORE_SCHEMA + Product.PRICE_LEVEL_NAME + " [" + DecimalFormat.getCurrencyInstance(context.getConfiguredLocale()).getCurrency().getSymbol() + "]";
-            priceLevel = context.getPersistenceManager().newInstance(org.opencrx.kernel.product1.jmi1.PriceLevel.class);
+            priceLevel = pm.newInstance(org.opencrx.kernel.product1.jmi1.PriceLevel.class);
             priceLevel.refInitialize(false, false);
             priceLevel.setName(name);
             priceLevel.setDescription(name);
             priceLevel.setPriceCurrency(context.getConfiguredCurrencyCode());
             priceLevel.getPriceUsage().add(new Short(Keys.PRICE_USAGE_CONSUMER));
-            context.getProductSegment().addPriceLevel(
+            context.getProductSegment(pm).addPriceLevel(
                 false,
                 uuids.next().toString(),
                 priceLevel
@@ -200,13 +206,13 @@ public final class Product implements IStandardObject
             context
         );
         if(basePrice == null) {
-            basePrice = context.getPersistenceManager().newInstance(org.opencrx.kernel.product1.jmi1.ProductBasePrice.class);
+            basePrice = pm.newInstance(org.opencrx.kernel.product1.jmi1.ProductBasePrice.class);
             basePrice.refInitialize(false, false);
             basePrice.setPriceCurrency(context.getConfiguredCurrencyCode());
             basePrice.getUsage().add(new Short(Keys.PRICE_USAGE_CONSUMER));
             basePrice.getPriceLevel().add(priceLevel);
             basePrice.setUom(
-                (org.opencrx.kernel.uom1.jmi1.Uom)context.getPersistenceManager().getObjectById("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + context.getProviderName() + "/segment/Root/uom/Unit")
+                (org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + context.getProviderName() + "/segment/Root/uom/Unit")
             );
             product.addBasePrice(
                 false,

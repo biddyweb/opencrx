@@ -1,22 +1,22 @@
 /*
  * ====================================================================
- * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: FastResultSet.java,v 1.3 2009/04/23 22:19:07 wfro Exp $
- * Description: 
- * Revision:    $Revision: 1.3 $
- * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2009/04/23 22:19:07 $
+ * Project:     openCRX/Application, http://www.opencrx.org/
+ * Name:        $Id: FastResultSet.java,v 1.4 2010/07/01 15:06:54 wfro Exp $
+ * Description: FastResultSet
+ * Revision:    $Revision: 1.4 $
+ * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
+ * Date:        $Date: 2010/07/01 15:06:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004, OMEX AG, Switzerland
+ * Copyright (c) 2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or
- * without modification, are permitted provided that the following
- * conditions are met:
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions 
+ * are met:
  * 
  * * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
@@ -26,9 +26,10 @@
  * the documentation and/or other materials provided with the
  * distribution.
  * 
- * * Neither the name of the openMDX team nor the names of its
- * contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ * 
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -48,6 +49,9 @@
  * 
  * This product includes software developed by the Apache Software
  * Foundation (http://www.apache.org/).
+ * 
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
  */
 package org.opencrx.kernel.tools;
 

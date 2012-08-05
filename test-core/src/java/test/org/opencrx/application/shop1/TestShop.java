@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestShop.java,v 1.6 2010/04/28 13:59:42 wfro Exp $
+ * Name:        $Id: TestShop.java,v 1.10 2010/08/10 13:29:19 wfro Exp $
  * Description: TestShop
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/28 13:59:42 $
+ * Date:        $Date: 2010/08/10 13:29:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,10 +79,11 @@ import org.opencrx.application.shop1.test.TestShopService;
 import org.openmdx.application.rest.spi.EntityManagerProxyFactory_2;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.persistence.cci.ConfigurableProperty;
+import org.openmdx.base.resource.spi.Port;
 import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
-import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
 
 import test.org.opencrx.generic.AbstractTest;
 import test.org.opencrx.generic.ServletPort;
@@ -110,20 +111,21 @@ public class TestShop {
 	        // Configure a proxy entity manager factory. The proxy acts as a
 	        // REST/Http client which delegates to the in-process servlet (ServletPort) 
 	        // which itself delegates to the entity manager specified by entity-manager-factory-name.
-	        ConnectionFactory inboundConnectionFactory = new ConnectionFactoryAdapter(
-	            new ServletPort(
-	                Collections.singletonMap(
+	        Port port =  new ServletPort(
+	            Collections.singletonMap(
 	                    "entity-manager-factory-name",
 	                    "EntityManagerFactory"
 	                )
-	            ),
+	            );
+	        ConnectionFactory connectionFactory = new ConnectionFactoryAdapter(
+	        	port,
 	            true, // supportsLocalTransactionDemarcation
 	            TransactionAttributeType.NEVER
 	        );
 	        Map<String,Object> dataManagerProxyConfiguration = new HashMap<String,Object>();
 	        dataManagerProxyConfiguration.put(
 	            ConfigurableProperty.ConnectionFactory.qualifiedName(),
-	            inboundConnectionFactory
+	            connectionFactory
 	        );
 	        dataManagerProxyConfiguration.put(
 	            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
@@ -162,9 +164,11 @@ public class TestShop {
         @Test
         public void run(
         ) throws ServiceException, IOException, ParseException{
+        	// Initialize Configuration
+        	new org.opencrx.kernel.aop2.Configuration();        	
             org.opencrx.application.shop1.cci2.ShopService shopService =
 		        new ShopServiceImpl(
-		    		entityManager,
+		    		pm,
 		    		providerName,
 		    		segmentName,
 		    		"TestShop",

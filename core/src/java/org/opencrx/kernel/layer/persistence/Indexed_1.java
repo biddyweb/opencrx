@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.46 2010/03/06 01:32:04 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.50 2010/08/27 18:07:11 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.46 $
+ * Revision:    $Revision: 1.50 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/06 01:32:04 $
+ * Date:        $Date: 2010/08/27 18:07:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,9 +82,11 @@ import org.opencrx.kernel.text.RTFToText;
 import org.opencrx.kernel.text.WordToText;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.AbstractDatabase_1;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
@@ -95,11 +97,9 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.AttributeSpecifier;
-import org.openmdx.base.query.Directions;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
@@ -513,16 +513,17 @@ public class Indexed_1 extends Database_1 {
 		        		Query_2Facade.newInstance(getRequest.path()), 
 		        		getReply.getResult()
 		        	);
-		        	MappedRecord indexEntry = getReply.getObject();            
-		        	MappedRecord mappedIndexEntry = Object_2Facade.newInstance(
-		                request.path()
-		            ).getDelegate();
-		            Object_2Facade.getValue(mappedIndexEntry).putAll(
-		                Object_2Facade.getValue(indexEntry)
+		        	Object_2Facade indexEntryFacade = Object_2Facade.newInstance(getReply.getObject());
+		        	Object_2Facade mappedIndexEntryFacade = Object_2Facade.newInstance(
+		                request.path(),
+		                indexEntryFacade.getObjectClass()
+		            );
+		            mappedIndexEntryFacade.getValue().putAll(
+		                indexEntryFacade.getValue()
 		            );
 		            if(reply.getResult() != null) {
 		            	reply.getResult().add(
-		            		mappedIndexEntry
+		            		mappedIndexEntryFacade.getDelegate()
 		            	);
 		            }
 		            return true;
@@ -556,9 +557,9 @@ public class Indexed_1 extends Database_1 {
 		        	new ArrayList<FilterProperty>(Arrays.asList(attributeFilter));
 		        filterProperties.add(
 		            new FilterProperty(
-		                Quantors.THERE_EXISTS,
+		                Quantifier.THERE_EXISTS.code(),
 		                "indexedObject",
-		                FilterOperators.IS_IN,
+		                ConditionType.IS_IN.code(),
 		                objectIdentity
 		            )
 		        );
@@ -570,7 +571,7 @@ public class Indexed_1 extends Database_1 {
 	               filterProperties.toArray(new FilterProperty[filterProperties.size()]),
 	               0, 
 	               Integer.MAX_VALUE,
-	               Directions.ASCENDING,
+	               SortOrder.ASCENDING.code(),
 	               AttributeSelectors.ALL_ATTRIBUTES,
 	               attributeSpecifier
 		        );
@@ -741,32 +742,32 @@ public class Indexed_1 extends Database_1 {
 		                            DataproviderOperations.ITERATION_START,
 		                            new FilterProperty[]{
 		                                new FilterProperty(
-		                                    Quantors.THERE_EXISTS,
+		                                    Quantifier.THERE_EXISTS.code(),
 		                                    SystemAttributes.OBJECT_IDENTITY,
-		                                    FilterOperators.IS_LIKE,
+		                                    ConditionType.IS_LIKE.code(),
 		                                    new Object[]{
 		                                        concreteType.toUri()
 		                                    }
 		                                ),
 		                                // All objects which do not have an up-to-date index entry
 		                                new FilterProperty(
-		                                    Quantors.PIGGY_BACK,
+		                                    Quantifier.codeOf(null),
 		                                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
-		                                    FilterOperators.PIGGY_BACK,
+		                                    ConditionType.codeOf(null),
 		                                    new Object[]{
 		                                    	Database_1_Attributes.HINT_COLUMN_SELECTOR + " v.object_id, v.dtype */ NOT EXISTS (SELECT 0 FROM OOCKE1_INDEXENTRY e WHERE v.object_id = e.indexed_object AND v.modified_at <= e.created_at)"
 		                                    }
 		                                ),
 		                                new FilterProperty(
-		                                    Quantors.PIGGY_BACK,
+		                                    Quantifier.codeOf(null),
 		                                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
-		                                    FilterOperators.PIGGY_BACK,
+		                                    ConditionType.codeOf(null),
 		                                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
 		                                )
 		                            },
 		                            0,
 		                            BATCH_SIZE,
-		                            Directions.ASCENDING,
+		                            SortOrder.ASCENDING.code(),
 		                            AttributeSelectors.NO_ATTRIBUTES,
 		                            null
 		                        );

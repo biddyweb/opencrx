@@ -182,6 +182,11 @@
 			<param-name>mimeTypeClass[0]</param-name>
 			<param-value>org.openmdx.portal.servlet.attribute.FlashBinaryValue</param-value>
 		</init-param>
+		<!-- mobile user agents -->
+		<init-param>
+			<param-name>mobileUserAgents</param-name>
+			<param-value>Android,iPhone</param-value>
+		</init-param>		
 		<!-- exception domain -->
 		<init-param>
 			<param-name>exceptionDomain</param-name>

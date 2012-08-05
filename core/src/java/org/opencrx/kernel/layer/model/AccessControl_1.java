@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.136 2010/04/17 22:58:04 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.139 2010/08/10 14:05:47 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.136 $
+ * Revision:    $Revision: 1.139 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/17 22:58:04 $
+ * Date:        $Date: 2010/08/10 14:05:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,9 +81,11 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.layer.model.SecurityContext.CachedPrincipal;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
 import org.openmdx.application.dataprovider.layer.model.Standard_1;
@@ -96,10 +98,9 @@ import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.AttributeSpecifier;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.persistence.cci.ConfigurableProperty;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.cci.MessageRecord;
 import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
@@ -107,7 +108,6 @@ import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
-import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
 
 /**
  * openCRX access control plugin. Implements the openCRX access control logic.
@@ -239,9 +239,9 @@ public class AccessControl_1 extends Standard_1 {
         if(memberships != null) {
             request.addAttributeFilterProperty(
                 new FilterProperty(
-                    Quantors.THERE_EXISTS,
+                    Quantifier.THERE_EXISTS.code(),
                     "owner",
-                    FilterOperators.IS_IN,
+                    ConditionType.IS_IN.code(),
                     memberships.toArray()
                 )
             );

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AbstractXmlFormat.java,v 1.9 2010/03/10 19:15:16 wfro Exp $
+ * Name:        $Id: AbstractXmlFormat.java,v 1.14 2010/06/22 17:08:24 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/10 19:15:16 $
+ * Date:        $Date: 2010/06/22 17:08:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,11 +67,16 @@ import org.w3c.spi2.Datatypes;
 
 public abstract class AbstractXmlFormat implements IDataFormat {
 
-	protected Logger logger = Logger.getLogger(getClass().getName());
+	protected Logger logger = Logger.getLogger(AbstractXmlFormat.class.getPackage().getName());
 
-	protected DateTimeFormat getUtcFormatNoMillis(
+	protected DateTimeFormat getUtcFormat(
+		boolean utc
 	) {
-		return DateTimeFormat.getInstance("yyyyMMdd'T'HHmmss'Z'");
+		if(utc) {
+			 return DateTimeFormat.EXTENDED_UTC_FORMAT;			
+		} else {		
+			return DateTimeFormat.getInstance("yyyyMMdd'T'HHmmss'Z'");
+		}
 	}
 		
 	public String parseDOMString(Element elt, String default_value) {
@@ -99,7 +104,7 @@ public abstract class AbstractXmlFormat implements IDataFormat {
 		String name, 
 		String val
 	) {
-		if (val != null && val.length() > 0) {
+		if (val != null && val.trim().length() > 0) {
 			DOMUtils.createElementAndText(p, prefix, name, val);
 		}
 	}

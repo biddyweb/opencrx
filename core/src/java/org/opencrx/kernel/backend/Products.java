@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.84 2010/01/26 17:24:23 wfro Exp $
+ * Name:        $Id: Products.java,v 1.88 2010/06/01 23:49:52 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.84 $
+ * Revision:    $Revision: 1.88 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/26 17:24:23 $
+ * Date:        $Date: 2010/06/01 23:49:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,6 +74,8 @@ import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
+import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
 import org.opencrx.kernel.generic.OpenCrxException;
@@ -108,10 +110,9 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
@@ -460,30 +461,27 @@ public class Products extends AbstractImpl {
                 // Query filter
                 if(filterProperty instanceof ProductQueryFilterProperty) {
                 	ProductQueryFilterProperty p = (ProductQueryFilterProperty)filterProperty;
-                	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+                	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(query);
                 	queryFilter.setClause(
                 		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
                 	);
-                    queryFilter.setStringParam(
+                    queryFilter.getStringParam().addAll(
                     	p.getStringParam()
                     );
-                    queryFilter.setIntegerParam(
+                    queryFilter.getIntegerParam().addAll(
                     	p.getIntegerParam()
                     );
-                    queryFilter.setDecimalParam(
+                    queryFilter.getDecimalParam().addAll(
                     	p.getDecimalParam()
                     );
                     queryFilter.setBooleanParam(
                     	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
                     );
-                    queryFilter.setDateParam(
+                    queryFilter.getDateParam().addAll(
                     	p.getDateParam()
                     );
-                    queryFilter.setDateTimeParam(
+                    queryFilter.getDateTimeParam().addAll(
                     	p.getDateTimeParam()
-                    );
-                    query.thereExistsContext().equalTo(
-                    	queryFilter
                     );
                     hasQueryFilterClause = true;
                 }
@@ -493,22 +491,22 @@ public class Products extends AbstractImpl {
                     // Get filterOperator, filterQuantor
                     short operator = attributeFilterProperty.getFilterOperator();
                     operator = operator == 0 ? 
-                    	FilterOperators.IS_IN : 
+                    	ConditionType.IS_IN.code() : 
                     	operator;
                     short quantor = attributeFilterProperty.getFilterQuantor();
                     quantor = quantor == 0 ? 
-                    	Quantors.THERE_EXISTS : 
+                    	Quantifier.THERE_EXISTS.code() : 
                     	quantor;   
                     
                     if(filterProperty instanceof PriceUomFilterProperty) {
                     	PriceUomFilterProperty p = (PriceUomFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+                    	switch(Quantifier.valueOf(quantor)) {
+	                		case FOR_ALL:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.forAllPriceUom().elementOf(p.getPriceUom()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.forAllPriceUom().notAnElementOf(p.getPriceUom()); 
 	                					break;
 	                				default:
@@ -517,11 +515,11 @@ public class Products extends AbstractImpl {
 	                			}
 	                			break;
 	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.thereExistsPriceUom().elementOf(p.getPriceUom()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.thereExistsPriceUom().notAnElementOf(p.getPriceUom()); 
 	                					break;
 	                				default:
@@ -533,31 +531,31 @@ public class Products extends AbstractImpl {
                 	}
                     else if(filterProperty instanceof CategoryFilterProperty) {
                     	CategoryFilterProperty p = (CategoryFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+                    	switch(Quantifier.valueOf(quantor)) {
+	                		case FOR_ALL:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.forAllCategory().elementOf(p.getCategory()); 
 	                					break;
-	                				case FilterOperators.IS_LIKE:
+	                				case IS_LIKE:
 	                					query.forAllCategory().like(p.getCategory()); 
 	                					break;
-	                				case FilterOperators.IS_GREATER:
+	                				case IS_GREATER:
 	                					query.forAllCategory().greaterThan(p.getCategory().get(0)); 
 	                					break;
-	                				case FilterOperators.IS_GREATER_OR_EQUAL:
+	                				case IS_GREATER_OR_EQUAL:
 	                					query.forAllCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
 	                					break;
-	                				case FilterOperators.IS_LESS:
+	                				case IS_LESS:
 	                					query.forAllCategory().lessThan(p.getCategory().get(0)); 
 	                					break;
-	                				case FilterOperators.IS_LESS_OR_EQUAL:
+	                				case IS_LESS_OR_EQUAL:
 	                					query.forAllCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.forAllCategory().notAnElementOf(p.getCategory()); 
 	                					break;
-	                				case FilterOperators.IS_UNLIKE:
+	                				case IS_UNLIKE:
 	                					query.forAllCategory().unlike(p.getCategory()); 
 	                					break;
 	                				default:
@@ -566,29 +564,29 @@ public class Products extends AbstractImpl {
 	                			}
 	                			break;
                     		default:
-                    			switch(operator) {
-                    				case FilterOperators.IS_IN: 
+                    			switch(ConditionType.valueOf(operator)) {
+                    				case IS_IN: 
                     					query.thereExistsCategory().elementOf(p.getCategory()); 
                     					break;
-                    				case FilterOperators.IS_LIKE: 
+                    				case IS_LIKE: 
                     					query.thereExistsCategory().like(p.getCategory()); 
                     					break;
-                    				case FilterOperators.IS_GREATER:
+                    				case IS_GREATER:
                     					query.thereExistsCategory().greaterThan(p.getCategory().get(0)); 
                     					break;
-                    				case FilterOperators.IS_GREATER_OR_EQUAL:
+                    				case IS_GREATER_OR_EQUAL:
                     					query.thereExistsCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
                     					break;
-                    				case FilterOperators.IS_LESS:
+                    				case IS_LESS:
                     					query.thereExistsCategory().lessThan(p.getCategory().get(0)); 
                     					break;
-                    				case FilterOperators.IS_LESS_OR_EQUAL:
+                    				case IS_LESS_OR_EQUAL:
                     					query.thereExistsCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
                     					break;
-                    				case FilterOperators.IS_NOT_IN:
+                    				case IS_NOT_IN:
                     					query.thereExistsCategory().notAnElementOf(p.getCategory()); 
                     					break;
-                    				case FilterOperators.IS_UNLIKE: 
+                    				case IS_UNLIKE: 
                     					query.thereExistsCategory().unlike(p.getCategory()); 
                     					break;
                     				default:
@@ -600,13 +598,13 @@ public class Products extends AbstractImpl {
                     }
                     else if(filterProperty instanceof ProductClassificationFilterProperty) {
                     	ProductClassificationFilterProperty p = (ProductClassificationFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+                    	switch(Quantifier.valueOf(quantor)) {
+	                		case FOR_ALL:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.forAllClassification().elementOf(p.getClassification()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.forAllClassification().notAnElementOf(p.getClassification()); 
 	                					break;
 	                				default:
@@ -615,11 +613,11 @@ public class Products extends AbstractImpl {
 	                			}
 	                			break;
 	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.thereExistsClassification().elementOf(p.getClassification()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.thereExistsClassification().notAnElementOf(p.getClassification()); 
 	                					break;
 	                				default:
@@ -631,13 +629,13 @@ public class Products extends AbstractImpl {
                     }
                     else if(filterProperty instanceof DefaultSalesTaxTypeFilterProperty) {
                     	DefaultSalesTaxTypeFilterProperty p = (DefaultSalesTaxTypeFilterProperty)filterProperty;
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+                    	switch(Quantifier.valueOf(quantor)) {
+	                		case FOR_ALL:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.forAllSalesTaxType().elementOf(p.getSalesTaxType()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.forAllSalesTaxType().notAnElementOf(p.getSalesTaxType()); 
 	                					break;
 	                				default:
@@ -646,11 +644,11 @@ public class Products extends AbstractImpl {
 	                			}
 	                			break;
 	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.thereExistsSalesTaxType().elementOf(p.getSalesTaxType()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN:
+	                				case IS_NOT_IN:
 	                					query.thereExistsSalesTaxType().notAnElementOf(p.getSalesTaxType()); 
 	                					break;
 	                				default:
@@ -662,23 +660,23 @@ public class Products extends AbstractImpl {
                     }
                     else if(filterProperty instanceof DisabledFilterProperty) {
                     	DisabledFilterProperty p = (DisabledFilterProperty)filterProperty;                    	
-                    	switch(quantor) {
-	                		case Quantors.FOR_ALL:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+                    	switch(Quantifier.valueOf(quantor)) {
+	                		case FOR_ALL:
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.forAllDisabled().equalTo(p.isDisabled()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN: 
+	                				case IS_NOT_IN: 
 	                					query.forAllDisabled().equalTo(!p.isDisabled());	                						
 	                					break;
 	                			}
 	                			break;
 	                		default:
-	                			switch(operator) {
-	                				case FilterOperators.IS_IN: 
+	                			switch(ConditionType.valueOf(operator)) {
+	                				case IS_IN: 
 	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
 	                					break;
-	                				case FilterOperators.IS_NOT_IN: 
+	                				case IS_NOT_IN: 
 	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
 	                					break;
 	                			}
@@ -689,12 +687,9 @@ public class Products extends AbstractImpl {
             }
         }
         if(!hasQueryFilterClause && forCounting) {
-        	QueryFilter queryFilter = pm.newInstance(QueryFilter.class);
+        	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(query);
         	queryFilter.setClause(
         		Database_1_Attributes.HINT_COUNT + "(1=1)"
-        	);
-        	query.thereExistsContext().equalTo(
-        		queryFilter
         	);
         }
         return query;
@@ -1489,17 +1484,12 @@ public class Products extends AbstractImpl {
         org.opencrx.kernel.product1.jmi1.AbstractFilterProduct productFilter
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(productFilter);
-    	org.opencrx.kernel.product1.jmi1.Segment productSegment =
-    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
-    			productFilter.refGetPath().getPrefix(5)
-    		);    	    	
-    	ProductQuery productQuery = (ProductQuery)pm.newQuery(Product.class);
-    	productQuery = this.getFilteredProductQuery(
-    		productFilter,
-    		productQuery,
-    		true
-    	);
-        List<Product> products = productSegment.getProduct(productQuery);
+    	ProductQuery query = (ProductQuery)pm.newQuery(Product.class);
+    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	queryExtension.setClause(
+    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+    	);    	
+        List<Product> products = productFilter.getFilteredProduct(query);
         return products.size();
     }
         

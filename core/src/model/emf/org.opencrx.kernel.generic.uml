@@ -70,6 +70,8 @@
                 <details xmi:id="_IFUYpN7NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_edKXUHroEd-CesyqCNh2vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ddzzIHroEd-CesyqCNh2vg"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D40C6D3C1013D" name="userBoolean0">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
@@ -122,6 +124,8 @@
                 <details xmi:id="_IFUYwt7NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B631E003C"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_oC3GQHroEd-CesyqCNh2vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ngbuoHroEd-CesyqCNh2vg"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D40C6D41201EE" name="userString0">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
@@ -148,6 +152,8 @@
                 <details xmi:id="_IFUY0d7NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hKv-8HroEd-CesyqCNh2vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_glCp0HroEd-CesyqCNh2vg"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D40C6D43303C2" name="userDateTime0">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
@@ -174,6 +180,8 @@
                 <details xmi:id="_IFafON7NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_h_q0wHroEd-CesyqCNh2vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ieh7AHroEd-CesyqCNh2vg"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D40C6D45D02F0" name="userDate0">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63230061"/>
@@ -200,6 +208,8 @@
                 <details xmi:id="_IFafR97NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63230061"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_katT0HroEd-CesyqCNh2vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_j47ccHroEd-CesyqCNh2vg"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D40C6D480035E" name="userCode0">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
@@ -226,6 +236,8 @@
                 <details xmi:id="_IFafVt7NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_lH0RcHroEd-CesyqCNh2vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lsXI8HroEd-CesyqCNh2vg"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D3FECB4F8030C" name="additionalExternalLink" type="_3C7B8A60016D3FECB47402E5" isUnique="false" aggregation="composite" association="_3C7B8A60016D3FECB4F800C8">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IHhYCN7NEdmKapscEl8OLg" value="1"/>

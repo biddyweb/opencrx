@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestWBXML.java,v 1.8 2010/03/04 18:22:27 wfro Exp $
+ * Name:        $Id: TestWBXML.java,v 1.9 2010/07/15 13:53:29 wfro Exp $
  * Description: TestWBXML
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/04 18:22:27 $
+ * Date:        $Date: 2010/07/15 13:53:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,7 +62,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 
-import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
 import javax.naming.spi.NamingManager;
 import javax.xml.transform.stream.StreamResult;
@@ -97,7 +96,6 @@ public class TestWBXML {
         if(!NamingManager.hasInitialContextFactoryBuilder()) {
             NonManagedInitialContextFactoryBuilder.install(null);
         }
-        entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
     }
     
     //-----------------------------------------------------------------------
@@ -105,7 +103,7 @@ public class TestWBXML {
     	
 		public TestAll(
 		) {
-			super(TestWBXML.entityManagerFactory);
+			super(null);
 		}
 	
         @Test
@@ -201,8 +199,6 @@ public class TestWBXML {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static PersistenceManagerFactory entityManagerFactory = null;
-	
 	protected static String[] WBXML_RESOURCES = {
 		"test/org/opencrx/application/airsync/contact_sync_wm61.wbxml",
 		"test/org/opencrx/application/airsync/ex2k7provResp1.wbxml",

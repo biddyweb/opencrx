@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.42 2010/01/24 22:30:55 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.43 2010/05/19 16:07:53 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.42 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/24 22:30:55 $
+ * Date:        $Date: 2010/05/19 16:07:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -841,7 +841,7 @@ public class Depots extends AbstractImpl {
                 // Get simple bookings for this position item
                 SimpleBookingQuery simpleBookingQuery = (SimpleBookingQuery)pm.newQuery(SimpleBooking.class);
                 simpleBookingQuery.thereExistsPosition().equalTo(position);
-                List<SimpleBooking> simpleBookings = itemPosition.getSimpleBooking(simpleBookingQuery);
+                List<SimpleBooking> simpleBookings = depotSegment.getSimpleBooking(simpleBookingQuery);
                 // Sum up simple bookings
                 for(SimpleBooking simpleBooking: simpleBookings) {
                     BigDecimal quantity = simpleBooking.getQuantity();

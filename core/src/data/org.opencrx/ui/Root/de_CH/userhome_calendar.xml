@@ -66,6 +66,28 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncProfile">
+										<_object>
+											<toolTip>
+												<_item>Air Sync Profil</_item>
+											</toolTip>
+											<label>
+												<_item>Air Sync Profil</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile">
+										<_object>
+											<toolTip>
+												<_item>Air Sync Client Profil</_item>
+											</toolTip>
+											<label>
+												<_item>Air Sync Client Profil</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile">
 										<_object>
 											<toolTip>
@@ -73,6 +95,72 @@
 											</toolTip>
 											<label>
 												<_item>Kalenderprofil</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:serverUrl">
+										<_object>
+											<toolTip>
+												<_item>Server URL</_item>
+											</toolTip>
+											<label>
+												<_item>Server URL</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:username">
+										<_object>
+											<toolTip>
+												<_item>Benutzername</_item>
+											</toolTip>
+											<label>
+												<_item>Benutzername</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:password">
+										<_object>
+											<toolTip>
+												<_item>Passwort</_item>
+											</toolTip>
+											<label>
+												<_item>Passwort</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:domain">
+										<_object>
+											<toolTip>
+												<_item>Domäne</_item>
+											</toolTip>
+											<label>
+												<_item>Domäne</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:syncData">
+										<_object>
+											<toolTip>
+												<_item>Sync Informationen</_item>
+											</toolTip>
+											<label>
+												<_item>Sync Informationen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:isActive">
+										<_object>
+											<toolTip>
+												<_item>Aktiv</_item>
+											</toolTip>
+											<label>
+												<_item>Aktiv</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -88,6 +176,28 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:allowAddDelete">
+										<_object>
+											<toolTip>
+												<_item>Erstellen / Löschen erlaubt</_item>
+											</toolTip>
+											<label>
+												<_item>Erstellen / Löschen erlaubt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:allowChange">
+										<_object>
+											<toolTip>
+												<_item>Ändern erlaubt</_item>
+											</toolTip>
+											<label>
+												<_item>Ändern erlaubt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:description">
 										<_object>
 											<toolTip>
@@ -95,17 +205,6 @@
 											</toolTip>
 											<label>
 												<_item>Beschreibung</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:isActive">
-										<_object>
-											<toolTip>
-												<_item>Aktiv</_item>
-											</toolTip>
-											<label>
-												<_item>Aktiv</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -201,6 +300,51 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData">
+										<_object>
+											<toolTip>
+												<_item>Sync Information</_item>
+											</toolTip>
+											<label>
+												<_item>Sync Information</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData:modifiedAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Modifiziert am</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Datum und Zeit der letzten Objektmodifikation</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData:text" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Text</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Text</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
 
 								</elementDefinition>
 							</_content>

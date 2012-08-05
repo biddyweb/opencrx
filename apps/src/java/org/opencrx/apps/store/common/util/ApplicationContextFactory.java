@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencCRX/Apps, http://www.opencrx.org/
- * Name:        $Id: ApplicationContextFactory.java,v 1.2 2009/11/27 18:33:52 wfro Exp $
+ * Name:        $Id: ApplicationContextFactory.java,v 1.3 2010/08/30 15:35:41 wfro Exp $
  * Description: openCRX Context Factory
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/27 18:33:52 $
+ * Date:        $Date: 2010/08/30 15:35:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,7 +60,6 @@ import java.util.Locale;
 import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.http.HttpSession;
 
-import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
@@ -97,10 +96,7 @@ public class ApplicationContextFactory {
         String providerName = rootPath.get(2);
         String segmentName = rootPath.get(4);
         return new ApplicationContext(
-            ApplicationContextFactory.pmf.getPersistenceManager(
-                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName, 
-                session.getId()
-            ),
+            ApplicationContextFactory.pmf,
             providerName,
             segmentName,
             currencyCode,

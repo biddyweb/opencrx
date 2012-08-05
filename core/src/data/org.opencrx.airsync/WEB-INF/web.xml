@@ -4,7 +4,7 @@
 	<display-name>openCRX AirSync Service</display-name>
 	<servlet>
 		<servlet-name>AirSyncServlet</servlet-name>
-		<servlet-class>org.opencrx.application.airsync.server.impl.SyncServlet</servlet-class>
+		<servlet-class>org.opencrx.application.airsync.server.SyncServlet</servlet-class>
 		<init-param>
 		  <param-name>provider</param-name>
 		  <param-value>provider/CRX</param-value>

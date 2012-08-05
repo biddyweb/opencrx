@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.83 2010/04/07 12:16:27 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.85 2010/06/28 17:27:55 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.83 $
+ * Revision:    $Revision: 1.85 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/07 12:16:27 $
+ * Date:        $Date: 2010/06/28 17:27:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -247,7 +247,7 @@ public class ICalendar extends AbstractImpl {
             activity.getName();
         summary += activity.getActivityNumber() == null ? 
             "" : 
-            LINE_COMMENT_INDICATOR + " #" + activity.getActivityNumber();            
+            	Base.COMMENT_SEPARATOR_EOT + " #" + activity.getActivityNumber();            
         // DESCRIPTION
         String description = activity.getDescription() == null ? 
             "" : 
@@ -1071,7 +1071,7 @@ public class ICalendar extends AbstractImpl {
         }
         s = fields.get("SUMMARY");
         if((s != null) && (s.length() > 0)) {
-            int posComment = s.indexOf(LINE_COMMENT_INDICATOR);
+            int posComment = s.startsWith(Base.COMMENT_SEPARATOR_BOT) ? 0 : s.lastIndexOf(Base.COMMENT_SEPARATOR_EOT);
             String name =  posComment >= 0 ? 
                 s.substring(0, posComment) : 
                 s;
@@ -1084,7 +1084,7 @@ public class ICalendar extends AbstractImpl {
         }
         s = fields.get("DESCRIPTION");
         if((s != null) && (s.length() > 0)) {
-            int posComment = s.indexOf(LINE_COMMENT_INDICATOR);
+            int posComment = s.startsWith(Base.COMMENT_SEPARATOR_BOT) ? 0 : s.lastIndexOf(Base.COMMENT_SEPARATOR_EOT);
             s =  posComment >= 0 ? 
                 s.substring(0, posComment) : 
                 s;        	
@@ -1517,7 +1517,6 @@ public class ICalendar extends AbstractImpl {
     public final static String ICAL_SCHEMA = "ICAL:";    
     public final static String ICAL_RECURRENCE_ID_SCHEMA = "ICAL-RECURRENCE-ID:";    
     public static final Short USAGE_EMAIL_PRIMARY = new Short((short)300);
-    public static final String LINE_COMMENT_INDICATOR = " //";
     public static final int PARTY_TYPE_NA = 0;
     public static final int PARTY_TYPE_REQUIRED = 410;
     public static final int PARTY_TYPE_OPTIONAL = 420;

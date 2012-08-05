@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.61 2010/01/03 15:07:29 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.64 2010/05/27 21:48:04 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.61 $
+ * Revision:    $Revision: 1.64 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/03 15:07:29 $
+ * Date:        $Date: 2010/05/27 21:48:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,15 +79,15 @@ import org.openmdx.application.dataprovider.cci.AttributeSelectors;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
+import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.Directions;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
@@ -298,13 +298,11 @@ public class Audit_1 extends Indexed_1 {
 		        		Query_2Facade.newInstance(getRequest.path()),
 		        		getReply.getResult()
 		        	);
-		        	MappedRecord auditEntry = getReply.getObject();            
-		        	MappedRecord mappedAuditEntry = Object_2Facade.newInstance(
-		                request.path()
-		            ).getDelegate();
-		            Object_2Facade.getValue(mappedAuditEntry).putAll(
-		                Object_2Facade.getValue(auditEntry)
-		            );
+		        	MappedRecord auditEntry = getReply.getObject(); 
+	            	MappedRecord mappedAuditEntry = Object_2Facade.cloneObject(auditEntry);
+	            	Object_2Facade.newInstance(mappedAuditEntry).setPath(
+	                    request.path()
+	                );		        	
 		            if(reply.getResult() != null) {
 		            	reply.getResult().add(
 		            		mappedAuditEntry
@@ -349,9 +347,9 @@ public class Audit_1 extends Indexed_1 {
 		            	new ArrayList<FilterProperty>(Arrays.asList(request.attributeFilter()));
 		            filterProperties.add(
 		                new FilterProperty(
-		                    Quantors.THERE_EXISTS,
+		                    Quantifier.THERE_EXISTS.code(),
 		                    "auditee",
-		                    FilterOperators.IS_IN,
+		                    ConditionType.IS_IN.code(),
 		                    request.path().getParent().toXri()
 		                )
 		            );
@@ -363,7 +361,7 @@ public class Audit_1 extends Indexed_1 {
 	                    filterProperties.toArray(new FilterProperty[filterProperties.size()]),
 	                    0, 
 	                    500, // get max 500 audit entries
-	                    Directions.ASCENDING,
+	                    SortOrder.ASCENDING.code(),
 	                    AttributeSelectors.ALL_ATTRIBUTES,
 	                    request.attributeSpecifier()
 	                );

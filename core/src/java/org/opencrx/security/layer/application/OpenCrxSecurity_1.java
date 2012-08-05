@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.55 2010/03/23 17:32:08 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.57 2010/05/27 21:48:02 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.55 $
+ * Revision:    $Revision: 1.57 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/23 17:32:08 $
+ * Date:        $Date: 2010/05/27 21:48:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,20 +67,20 @@ import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.DataproviderRequestProcessor;
+import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.application.Standard_1;
 import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.base.query.AttributeSpecifier;
-import org.openmdx.base.query.FilterOperators;
-import org.openmdx.base.query.FilterProperty;
-import org.openmdx.base.query.Quantors;
+import org.openmdx.base.query.ConditionType;
+import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.cci.MessageRecord;
 import org.openmdx.base.rest.spi.Object_2Facade;
@@ -521,7 +521,6 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	    }
 	
 	    //-------------------------------------------------------------------------
-	    @SuppressWarnings("unchecked")
 	    @Override
 	    public boolean invoke(
             RestInteractionSpec ispec, 
@@ -610,9 +609,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            ) {
 	                request.addAttributeFilterProperty(
 	                    new FilterProperty(
-	                        Quantors.THERE_EXISTS,
+	                        Quantifier.THERE_EXISTS.code(),
 	                        SystemAttributes.OBJECT_CLASS,
-	                        FilterOperators.IS_IN,
+	                        ConditionType.IS_IN.code(),
 	                        "org:opencrx:security:realm1:PrincipalGroup",   
 	                        "org:opencrx:security:realm1:User"   
 	                    )
@@ -625,9 +624,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            if(!"Root".equals(realmName)) {
 	                request.addAttributeFilterProperty(
 	                    new FilterProperty(
-	                        Quantors.FOR_ALL,
+	                        Quantifier.FOR_ALL.code(),
 	                        SystemAttributes.OBJECT_CLASS,
-	                        FilterOperators.IS_IN
+	                        ConditionType.IS_IN.code()
 	                    )
 	                );
 	            }

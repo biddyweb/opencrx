@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.46 2010/03/22 19:19:17 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.48 2010/08/10 14:05:20 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.46 $
+ * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/22 19:19:17 $
+ * Date:        $Date: 2010/08/10 14:05:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -98,10 +98,10 @@ import org.openmdx.base.mof.cci.AggregationKind;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
+import org.openmdx.base.persistence.cci.ConfigurableProperty;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.openmdx.kernel.persistence.cci.ConfigurableProperty;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.attribute.DateValue;
 
@@ -248,16 +248,6 @@ public class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
-    public static org.openmdx.compatibility.datastore1.jmi1.Datastore1Package getDatastorePackage(
-        PersistenceManager pm
-    ) {
-        return (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)getJmiPackage(
-        	pm,
-        	org.openmdx.compatibility.datastore1.jmi1.Datastore1Package.AUTHORITY_XRI
-        );                    
-    }
-    
     //-----------------------------------------------------------------------
     public static Building1Package getBuildingPackage(
         PersistenceManager pm

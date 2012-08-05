@@ -934,8 +934,17 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gW2ZQXAkEd2t-9pmPiWf3g" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_gW2ZQHAkEd2t-9pmPiWf3g"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_sHNcgH4JEd-3I59IxnUUaQ" name="allowAddDelete" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_vLja0H5XEd-3I59IxnUUaQ" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_vLkB4H5XEd-3I59IxnUUaQ"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_-qQk4H6hEd-3I59IxnUUaQ" name="allowChange" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_BKaNcH6iEd-3I59IxnUUaQ"/>
+            </ownedAttribute>
           </packagedElement>
-          <packagedElement xmi:type="uml:Association" xmi:id="_k4Ho0G_TEd2k1trwDO0y0g" name="CalendarProfileContainsSyncFeed" memberEnd="_k4Ho0W_TEd2k1trwDO0y0g _k4Ho0m_TEd2k1trwDO0y0g">
+          <packagedElement xmi:type="uml:Association" xmi:id="_k4Ho0G_TEd2k1trwDO0y0g" name="SyncProfileContainsSyncFeed" memberEnd="_k4Ho0W_TEd2k1trwDO0y0g _k4Ho0m_TEd2k1trwDO0y0g">
             <ownedEnd xmi:id="_k4Ho0m_TEd2k1trwDO0y0g" name="syncProfile" visibility="public" type="_p5gUgG_SEd2k1trwDO0y0g" association="_k4Ho0G_TEd2k1trwDO0y0g"/>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_s7_YoG_TEd2k1trwDO0y0g" name="ContactsFeed">
@@ -1024,6 +1033,49 @@
                 <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_FHC8EGmvEd-tXbcVi1IDkg" name="AirSyncClientProfile">
+            <generalization xmi:id="_sva0cGmvEd-tXbcVi1IDkg" general="_p5gUgG_SEd2k1trwDO0y0g"/>
+            <ownedAttribute xmi:id="_TkTP0GmvEd-tXbcVi1IDkg" name="serverUrl" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_GV44UGmwEd-tXbcVi1IDkg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_XZlfUGmvEd-tXbcVi1IDkg" name="username" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_TCu-YGmwEd-tXbcVi1IDkg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_ZASXYGmvEd-tXbcVi1IDkg" name="password" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_UEq8gGmwEd-tXbcVi1IDkg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_0GdTcGmvEd-tXbcVi1IDkg" name="domain" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VBE6YGmwEd-tXbcVi1IDkg"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_FyX7gGp0Ed-tXbcVi1IDkg" name="SyncFeedHasData" memberEnd="_Fybl4Gp0Ed-tXbcVi1IDkg _FycM8mp0Ed-tXbcVi1IDkg" navigableOwnedEnd="_FycM8mp0Ed-tXbcVi1IDkg">
+            <ownedEnd xmi:id="_Fybl4Gp0Ed-tXbcVi1IDkg" name="syncFeed" type="_ejjTcG_TEd2k1trwDO0y0g" association="_FyX7gGp0Ed-tXbcVi1IDkg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FycM8Wp0Ed-tXbcVi1IDkg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FycM8Gp0Ed-tXbcVi1IDkg" value="1"/>
+            </ownedEnd>
+            <ownedEnd xmi:id="_FycM8mp0Ed-tXbcVi1IDkg" name="syncData" type="_7MT7wGpzEd-tXbcVi1IDkg" aggregation="composite" association="_FyX7gGp0Ed-tXbcVi1IDkg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6VEe4GwtEd-LoruR0ghPDQ" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6VFF8GwtEd-LoruR0ghPDQ"/>
+              <qualifier xmi:id="_kbT-QGp1Ed-LoruR0ghPDQ" name="id">
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              </qualifier>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_7MT7wGpzEd-tXbcVi1IDkg" name="SyncData">
+            <generalization xmi:id="_3D44YGp0Ed-LoruR0ghPDQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D425406780098"/>
+            </generalization>
+            <generalization xmi:id="_5Kn7YGp0Ed-LoruR0ghPDQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            </generalization>
+            <generalization xmi:id="_aCQqUGp2Ed-LoruR0ghPDQ">
+              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            </generalization>
           </packagedElement>
         </packagedElement>
       </packagedElement>

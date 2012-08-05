@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: ObjectCollection.java,v 1.1 2009/02/14 17:22:42 wfro Exp $
+ * Name:        $Id: ObjectCollection.java,v 1.2 2010/08/30 15:35:41 wfro Exp $
  * Description: ObjectCollection
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/14 17:22:42 $
+ * Date:        $Date: 2010/08/30 15:35:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,12 +66,13 @@ import java.util.List;
  * @author OAZM (initial implementation)
  * @author WFRO (port to openCRX)
  */
+@SuppressWarnings("unchecked")
 public final class ObjectCollection implements IObject
 {
     private static final long serialVersionUID = -299190041086447015L;
     
-    private final ArrayList keys;
-    private final ArrayList objects;
+	private final ArrayList keys;
+	private final ArrayList objects;
 
     public ObjectCollection()
     {

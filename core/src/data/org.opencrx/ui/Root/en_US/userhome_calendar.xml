@@ -61,7 +61,8 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<maxMember>6</maxMember>
+											<inPlace>true</inPlace>
+											<maxMember>8</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -87,6 +88,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:description">
 										<_object>
 											<active>true</active>
+											<spanRow>7</spanRow>
 											<toolTip>
 												<_item>Description</_item>
 											</toolTip>
@@ -103,19 +105,6 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!--Inspector Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Calendar Profile</_item>
-											</toolTip>
-											<label>
-												<_item>Calendar Profile</_item>
-											</label>
-											<iconKey>CalendarProfile</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncProfile">
 										<_object>
 											<active>true</active>
@@ -125,14 +114,165 @@
 											<label>
 												<_item>Air Sync Profile</_item>
 											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
 											<iconKey>AirSyncProfile</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Air Sync Client Profile</_item>
+											</toolTip>
+											<label>
+												<_item>Air Sync Client Profile</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>AirSyncClientProfile</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CalendarProfile">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Calendar Profile</_item>
+											</toolTip>
+											<label>
+												<_item>Calendar Profile</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+											<iconKey>CalendarProfile</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
-									<!-- CalendarFeed -->
+									<!-- AirSyncClientProfile -->
                   <!--FieldGroups in General Tab-->
 									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:serverUrl">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Server URL</_item>
+											</toolTip>
+											<label>
+												<_item>Server URL</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:username">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Username</_item>
+											</toolTip>
+											<label>
+												<_item>Username</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:password">
+										<_object>
+											<active>true</active>
+											<isPassword>true</isPassword>
+											<toolTip>
+												<_item>Password</_item>
+											</toolTip>
+											<label>
+												<_item>Password</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AirSyncClientProfile:domain">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Domain</_item>
+											</toolTip>
+											<label>
+												<_item>Domain</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- SyncFeed -->
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:syncData">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Sync Data</_item>
+											</toolTip>
+											<label>
+												<_item>Sync Data</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>SyncData</iconKey>
+											<maxMember>3</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <!--FieldGroups in General Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:isActive">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Active</_item>
+											</toolTip>
+											<label>
+												<_item>Active</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:name">
 										<_object>
 											<active>true</active>
@@ -145,7 +285,42 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:allowAddDelete">
+										<_object>
+                      <columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Allow add / delete</_item>
+											</toolTip>
+											<label>
+												<_item>Allow add / delete</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:allowChange">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Allow change</_item>
+											</toolTip>
+											<label>
+												<_item>Allow change</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -153,6 +328,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:description">
 										<_object>
 											<active>true</active>
+											<spanRow>7</spanRow>
 											<toolTip>
 												<_item>Description</_item>
 											</toolTip>
@@ -161,32 +337,15 @@
 											</label>
 											<order>
 												<_item>0</_item>
-												<_item>0</_item>
-												<_item>20</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:isActive">
-										<_object>
-                      <columnBreak>true</columnBreak>
-											<active>true</active>
-											<toolTip>
-												<_item>Active</_item>
-											</toolTip>
-											<label>
-												<_item>Active</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>80</_item>
+												<_item>10</_item>
+												<_item>10</_item>
 											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:color">
 										<_object>
+											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Color font</_item>
@@ -194,17 +353,19 @@
 											<label>
 												<_item>Color font</_item>
 											</label>
+											<shortLabel>
+												<_item>Color</_item>
+											</shortLabel>
 											<order>
 												<_item>0</_item>
-												<_item>10</_item>
-												<_item>10</_item>
+												<_item>20</_item>
+												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncFeed:backColor">
 										<_object>
-											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Color background</_item>
@@ -212,10 +373,13 @@
 											<label>
 												<_item>Color background</_item>
 											</label>
+											<shortLabel>
+												<_item>Background</_item>
+											</shortLabel>
 											<order>
 												<_item>0</_item>
-												<_item>10</_item>
-												<_item>80</_item>
+												<_item>20</_item>
+												<_item>90</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -235,7 +399,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>10</_item>
 											</order>
 											<iconKey>ContactsFeed</iconKey>
 										</_object>
@@ -272,10 +436,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Group Calendar Feed</_item>
+												<_item>Activity Group Feed</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Group Calendar Feed</_item>
+												<_item>Activity Group Feed</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -317,10 +481,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Filter Calendar Feed</_item>
+												<_item>Activity Filter Feed</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Filter Calendar Feed</_item>
+												<_item>Activity Filter Feed</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -352,6 +516,94 @@
                         <_item>0</_item>
                         <_item>220</_item>
                       </orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- SyncData -->
+                  <!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Sync Data</_item>
+											</toolTip>
+											<label>
+												<_item>Sync Data</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<iconKey>SyncData</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <!--FieldGroups in General Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData:title">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Title</_item>
+											</toolTip>
+											<label>
+												<_item>Title</_item>
+											</label>
+<!--
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>99</_item>
+												<_item>0</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+-->
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData:modifiedAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Modified at</_item>
+											</toolTip>
+											<label>
+												<_item>Modified at</_item>
+											</label>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>19</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncData:text">
+										<_object>
+											<active>true</active>
+											<sortable>false</sortable>
+											<spanRow>25</spanRow>
+											<toolTip>
+												<_item>text</_item>
+											</toolTip>
+											<label>
+												<_item>Text</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

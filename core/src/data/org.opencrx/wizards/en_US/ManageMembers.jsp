@@ -10,6 +10,7 @@ javax.naming.Context,
 javax.naming.InitialContext,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
+org.opencrx.kernel.portal.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
@@ -21,8 +22,636 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.kernel.log.*
-" %><%
+org.openmdx.kernel.log.*,
+org.apache.poi.hssf.usermodel.*,
+org.apache.poi.hssf.util.*
+" %>
+<%!
+	private static HSSFSheet addSheet(
+    HSSFWorkbook wb,
+    String sheetName,
+    boolean isLandscape,
+    HSSFCellStyle headerStyle
+	) {
+    HSSFSheet sheet = wb.createSheet(sheetName);
+    sheet.setMargin(HSSFSheet.TopMargin,    0.5);
+    sheet.setMargin(HSSFSheet.RightMargin,  0.3);
+    sheet.setMargin(HSSFSheet.BottomMargin, 0.6);
+    sheet.setMargin(HSSFSheet.LeftMargin,   0.5);
+    sheet.setAutobreaks(true);
+
+    HSSFPrintSetup ps = sheet.getPrintSetup();
+    /*
+    ps.setFitHeight((short)100);
+    ps.setFitWidth((short)1);
+    */
+    ps.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
+    ps.setLandscape(isLandscape);
+    ps.setFooterMargin(0.3);
+
+    HSSFFooter footer = sheet.getFooter();
+    footer.setRight(HSSFFooter.page() + " / " + HSSFFooter.numPages());
+
+		String[] labels = new String[] {
+		   "FullName",
+		   "Title",
+		   "FirstName",
+		   "MiddleName",
+		   "LastName",
+		   "AliasName",
+		   "NickName",
+		   "Notes",
+		   "HomeAddressLine",
+		   "HomeStreet",
+		   "HomeCity",
+		   "HomePostalCode",
+		   "HomeCountryRegion",
+		   "HomeState",
+		   "HomeFax",
+		   "HomePhone",
+		   "HomePhone2",
+		   "MobilePhone",
+		   "Birthday",
+		   "EmailAddress",
+		   "Email2Address",
+		   "Email3Address",
+		   "WebPage",
+		   "Company",
+		   "JobTitle",
+		   "BusinessAddressLine",
+		   "BusinessStreet",
+		   "BusinessCity",
+		   "BusinessPostalCode",
+		   "BusinessCountryRegion",
+		   "BusinessState",
+		   "BusinessFax",
+		   "BusinessPhone",
+		   "BusinessPhone2",
+		   "MemberOf",
+		   "MemberRole",
+		   /*
+		   "AssistantsName",
+		   "AssistantsNameRole",
+		   "ManagersName",
+		   "ManagersRole",
+		   */
+		   "Categories",
+		   "Dtype",
+		   "XRI"
+		};
+
+    HSSFRow row = null;
+    HSSFCell cell = null;
+    short nRow = 0;
+    short nCell = 0;
+    row = sheet.createRow(nRow++);
+    for (int i=0; i<labels.length; i++) {
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(headerStyle);
+        cell.setCellValue(labels[i]);
+    }
+    sheet.setColumnWidth((short)7, (short)8000);
+    sheet.setColumnWidth((short)8, (short)8000);
+    sheet.setColumnWidth((short)24, (short)8000);
+    sheet.setColumnWidth((short)25, (short)8000);
+    return sheet;
+  }
+
+	private static short addAccount(
+    HSSFSheet sheet,
+    org.opencrx.kernel.account1.jmi1.Account account,
+    short rowNumber,
+    HSSFCellStyle wrappedStyle,
+    HSSFCellStyle topAlignedStyle,
+    SimpleDateFormat exceldate,
+    ApplicationContext app,
+    org.openmdx.portal.servlet.Codes codes,
+    org.opencrx.kernel.account1.jmi1.Account1Package accountPkg
+	) {
+
+	  org.opencrx.kernel.account1.jmi1.Contact contact = null;
+	  org.opencrx.kernel.account1.jmi1.LegalEntity legalEntity = null;
+	  org.opencrx.kernel.account1.jmi1.UnspecifiedAccount unspecifiedAccount = null;
+	  org.opencrx.kernel.account1.jmi1.Group group = null;
+
+    if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+        contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
+    } else if (account instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
+        legalEntity = (org.opencrx.kernel.account1.jmi1.LegalEntity)account;
+    } else if (account instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
+        unspecifiedAccount = (org.opencrx.kernel.account1.jmi1.UnspecifiedAccount)account;
+    } else if (account instanceof org.opencrx.kernel.account1.jmi1.Group) {
+        group = (org.opencrx.kernel.account1.jmi1.Group)account;
+    }
+
+    DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
+    DataBinding_1_0 faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
+    DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
+    DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
+    DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
+    DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
+    DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
+    DataBinding_1_0 mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
+    org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageBusinessDataBinding =
+        new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500");
+    DataBinding_1_0 postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
+    DataBinding_1_0 faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
+    DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
+
+    HSSFRow row = null;
+    HSSFCell cell = null;
+    short nRow = rowNumber;
+    short nCell = 0;
+    row = sheet.createRow(nRow++);
+
+    //FullName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getFullName() != null) {cell.setCellValue(account.getFullName());}
+
+    //Title
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getSalutationCode() != 0) {cell.setCellValue((String)(codes.getShortText("org:opencrx:kernel:account1:Contact:salutationCode", app.getCurrentLocaleAsIndex(), true, true).get(contact.getSalutationCode())));}
+    }
+
+    //FirstName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getFirstName() != null) {cell.setCellValue(contact.getFirstName());}
+    }
+
+    //MiddleName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getMiddleName() != null) {cell.setCellValue(contact.getMiddleName());}
+    }
+
+    //LastName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getLastName() != null) {cell.setCellValue(contact.getLastName());}
+    }
+
+    //AliasName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getAliasName() != null) {cell.setCellValue(account.getAliasName());}
+
+    //NickName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getNickName() != null) {cell.setCellValue(contact.getNickName());}
+    }
+
+    //Notes
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getDescription() != null) {cell.setCellValue(account.getDescription());}
+
+    if (contact != null) {
+        //HomeAddressLine
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(wrappedStyle);
+        List<String> addressLines = (java.util.List)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalAddressLine");
+        if (addressLines != null) {
+            String s = "";
+            boolean isFirstLine = true;
+            for(Iterator m = ((java.util.List)addressLines).iterator(); m.hasNext(); ) {
+                String line = (m.next().toString()).trim();
+                if (line != null && line.length() > 0) {
+                    s += (isFirstLine ? "" : "\r\n") + line;
+                    isFirstLine = false;
+                }
+            }
+            cell.setCellValue(s);
+        }
+
+        //HomeStreet
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(wrappedStyle);
+        addressLines = (java.util.List)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalStreet");
+        if (addressLines != null) {
+            String s = "";
+            boolean isFirstLine = true;
+            for(Iterator m = ((java.util.List)addressLines).iterator(); m.hasNext(); ) {
+                String line = (m.next().toString()).trim();
+                if (line != null && line.length() > 0) {
+                    s += (isFirstLine ? "" : "\r\n") + line;
+                    isFirstLine = false;
+                }
+            }
+            cell.setCellValue(s);
+        }
+
+        //HomeCity
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        String value = (String)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalCity");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+
+        //HomePostalCode
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        value = (String)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalCode");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+
+        //HomeCountryRegion
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        Short svalue = (Short)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalCountry");
+        if (svalue != null && ((short)svalue) != 0) {
+            value = (String)(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
+            if (value != null && (value.split("\\[").length>0)) {
+                cell.setCellValue((value.split("\\[")[0]).trim());
+            }
+        }
+
+        //HomeState
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        value = (String)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalState");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+
+        //HomeFax
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        value = (String)faxHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+
+        //HomePhone
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        value = (String)phoneHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!phoneNumberFull");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+
+        //HomePhone2
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        value = (String)phoneOtherDataBinding.getValue(contact, "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+    } else {
+        for (int i = 0; i <= 8; i++) {
+            cell = row.createCell(nCell++);
+        }
+    }
+
+    //MobilePhone
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    String value = (String)phoneMobileDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //Birthday
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getBirthdate() != null) {cell.setCellValue(exceldate.format(contact.getBirthdate()));}
+    }
+
+    //EmailAddress
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)mailBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!emailAddress");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //Email2Address
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        value = (String)mailHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Account:address*Business!emailAddress");
+        if (value != null) {
+            cell.setCellValue(value);
+        }
+    }
+
+    //Email3Address
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)mailOtherDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Other!emailAddress");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //WebPage
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)webPageBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:LegalEntity:address!webUrl");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //Company
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact == null && account != null) {
+        if (((org.opencrx.kernel.account1.jmi1.AbstractGroup)account).getName() != null) {cell.setCellValue(((org.opencrx.kernel.account1.jmi1.AbstractGroup)account).getName());}
+    }
+
+    //JobTitle
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (contact != null) {
+        if (contact.getJobTitle() != null) {cell.setCellValue(contact.getJobTitle());}
+    }
+
+    //BusinessAddressLine
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(wrappedStyle);
+    List<String> addressLines = (java.util.List)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalAddressLine");
+    if (addressLines != null) {
+        String s = "";
+        boolean isFirstLine = true;
+        for(Iterator m = ((java.util.List)addressLines).iterator(); m.hasNext(); ) {
+            String line = (m.next().toString()).trim();
+            if (line != null && line.length() > 0) {
+                s += (isFirstLine ? "" : "\r\n") + line;
+                isFirstLine = false;
+            }
+        }
+        cell.setCellValue(s);
+    }
+
+    //BusinessStreet
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(wrappedStyle);
+    addressLines = (java.util.List)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalStreet");
+    if (addressLines != null) {
+        String s = "";
+        boolean isFirstLine = true;
+        for(Iterator m = ((java.util.List)addressLines).iterator(); m.hasNext(); ) {
+            String line = (m.next().toString()).trim();
+            if (line != null && line.length() > 0) {
+                s += (isFirstLine ? "" : "\r\n") + line;
+                isFirstLine = false;
+            }
+        }
+        cell.setCellValue(s);
+    }
+
+    //BusinessCity
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalCity");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //BusinessPostalCode
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalCode");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //BusinessCountryRegion
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    Short svalue = (Short)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalCountry");
+    if (svalue != null && ((short)svalue) != 0) {
+        value = (String)(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
+        if (value != null && (value.split("\\[").length>0)) {
+            cell.setCellValue((value.split("\\[")[0]).trim());
+        }
+    }
+
+    //BusinessState
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalState");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //BusinessFax
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)faxBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //BusinessPhone
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)phoneBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    //BusinessPhone2
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    value = (String)phoneOtherDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull");
+    if (value != null) {
+        cell.setCellValue(value);
+    }
+
+    List memberOfList = new ArrayList();
+    List memberRoleList = new ArrayList();
+
+    try {
+      org.opencrx.kernel.account1.cci2.AccountMembershipQuery accountMembershipFilter = accountPkg.createAccountMembershipQuery();
+      accountMembershipFilter.distance().equalTo(
+        new Short((short)-1) // only direct/immediate memberships are of interest
+      );
+      accountMembershipFilter.forAllDisabled().isFalse();
+    	for(
+    		Iterator am = account.getAccountMembership(accountMembershipFilter).iterator();
+    		am.hasNext();
+    	) {
+    	  org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
+    	    (org.opencrx.kernel.account1.jmi1.AccountMembership)am.next();
+    	  try {
+    	      org.opencrx.kernel.account1.jmi1.Member member = accountMembership.getMember();
+    	      org.opencrx.kernel.account1.jmi1.Account accountFrom = accountMembership.getAccountFrom();
+    	      memberOfList.add(accountFrom.getFullName());
+    	      String rolesText = "";
+            for(Iterator roles = accountMembership.getMemberRole().iterator(); roles.hasNext(); ) {
+                if (rolesText.length() > 0) {
+                    rolesText += ";";
+                }
+                rolesText += (String)codes.getLongText("org:opencrx:kernel:account1:Member:memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short(((Short)roles.next()).shortValue()));
+    	      }
+    	      memberRoleList.add(rolesText);
+        }
+        catch(Exception em) {
+          new ServiceException(em).log();
+        }
+    	}
+    }
+    catch(Exception e) {
+      new ServiceException(e).log();
+    }
+
+    //MemberOf
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (memberOfList.size() > 0) {
+        cell.setCellValue((String)memberOfList.get(0));
+    }
+
+    //MemberRole
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (memberRoleList.size() > 0) {
+        cell.setCellValue((String)memberRoleList.get(0));
+    }
+
+    /*
+    //AssistantsName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+
+    //AssistantsNameRole
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+
+    //ManagersName
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+
+    //ManagersRole
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    */
+
+    //Categories
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    List<String> categories = (java.util.List)account.getCategory();
+    if (categories != null) {
+        String s = "";
+        boolean isFirstLine = true;
+        for(Iterator m = ((java.util.List)categories).iterator(); m.hasNext(); ) {
+            s += (isFirstLine ? "" : ";") + (m.next()).toString();
+            isFirstLine = false;
+        }
+        cell.setCellValue(s);
+    }
+
+    //Dtype
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+        cell.setCellValue("Contact");
+    } else if (account instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
+        cell.setCellValue("LegalEntity");
+    } else if (account instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
+        cell.setCellValue("UnspecifiedAccount");
+    } else if (account instanceof org.opencrx.kernel.account1.jmi1.Group) {
+        cell.setCellValue("Group");
+    } else {
+        cell.setCellValue("unknown");
+    }
+
+    //XRI
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    cell.setCellValue(account.refMofId());
+
+
+    for(int i = 1; i < memberOfList.size(); i++) {
+        // create additional rows to list all memberOf accounts
+        nCell = 0;
+        row = sheet.createRow(nRow++);
+
+        //FullName
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        if (account.getFullName() != null) {cell.setCellValue(account.getFullName());}
+
+        //Title
+        cell = row.createCell(nCell++);
+
+        //FirstName
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        if (contact != null) {
+            if (contact.getFirstName() != null) {cell.setCellValue(contact.getFirstName());}
+        }
+
+        //MiddleName
+        cell = row.createCell(nCell++);
+
+        //LastName
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        if (contact != null) {
+            if (contact.getLastName() != null) {cell.setCellValue(contact.getLastName());}
+        }
+
+        //AliasName
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        if (account.getAliasName() != null) {cell.setCellValue(account.getAliasName());}
+
+        for (int j = 0; j < 17; j++) {
+            cell = row.createCell(nCell++);
+        }
+
+        //Company
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        if (contact == null && account != null) {
+            if (((org.opencrx.kernel.account1.jmi1.AbstractGroup)account).getName() != null) {cell.setCellValue(((org.opencrx.kernel.account1.jmi1.AbstractGroup)account).getName());}
+        }
+
+        for (int j = 0; j < 10; j++) {
+            cell = row.createCell(nCell++);
+        }
+
+        //MemberOf
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        cell.setCellValue((String)memberOfList.get(i));
+
+        //MemberRole
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        cell.setCellValue((String)memberRoleList.get(i));
+
+        //Categories
+        cell = row.createCell(nCell++);
+
+        //Dtype
+        cell = row.createCell(nCell++);
+
+        //XRI
+        cell = row.createCell(nCell++);
+        cell.setCellStyle(topAlignedStyle);
+        cell.setCellValue(account.refMofId());
+
+    }
+
+    //return sheet;
+    return nRow;
+  }
+
+%>
+<%
   final String WIZARD_NAME = "ManageMembers";
   final String FORMACTION   = WIZARD_NAME + ".jsp";
   request.setCharacterEncoding("UTF-8");
@@ -101,6 +730,11 @@ org.openmdx.kernel.log.*
     TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
     SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());
     timeFormat.setTimeZone(timezone);
+  	SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", app.getCurrentLocale());
+  	timestamp.setTimeZone(timezone);
+  	SimpleDateFormat exceldate = new SimpleDateFormat("dd-MM-yyyy");
+  	exceldate.setTimeZone(timezone);
+
 
     final String MEMBER_CLASS = "org:opencrx:kernel:account1:Member";
     final String MEMBERSHIP_CLASS = "org:opencrx:kernel:account1:AccountMembership";
@@ -123,6 +757,23 @@ org.openmdx.kernel.log.*
     final String colorMemberDisabled = "#F2F2F2";
 
     final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
+    final String SPREADSHEET = "<img border='0' alt=''  height='32px' src='../../images/spreadsheet.png' />";
+    final String sheetName = "Accounts_(openCRX)_" + timestamp.format(new java.util.Date());
+    final String location = UUIDs.getGenerator().next().toString();
+    File f = null;
+    FileOutputStream os = null;
+    HSSFWorkbook wb = null;
+    Action downloadAction =	null;
+    HSSFSheet sheetAccounts = null;
+    HSSFFont headerfont = null;
+    HSSFCellStyle headerStyle = null;
+    HSSFCellStyle wrappedStyle = null;
+    HSSFCellStyle topAlignedStyle = null;
+
+    HSSFRow row = null;
+    HSSFCell cell = null;
+    short nRow = 0;
+    short nCell = 0;
 
     String errorMsg = "";
 
@@ -200,6 +851,8 @@ org.openmdx.kernel.log.*
               accountSelectorType = 2;
           } catch (Exception e) {}
       }
+      boolean duplicatesOnly = ((request.getParameter("duplicatesOnly") != null) && (request.getParameter("duplicatesOnly").length() > 0));
+      if (duplicatesOnly) {accountSelectorType = 1;}
       boolean membersOnly = accountSelectorType == 1;
       boolean detectDuplicates = ((request.getParameter("detectDuplicates") != null) && (request.getParameter("detectDuplicates").length() > 0));
       boolean selectAccount = false;
@@ -301,6 +954,20 @@ org.openmdx.kernel.log.*
           }
       }
 
+      if (request.getParameter("previousSheet") != null) {
+    		  // delete previous temp file if it exists
+    		  try {
+    			  	File previousFile = new File(
+    						app.getTempFileName(request.getParameter("previousSheet"), "")
+    					);
+    			  	if (previousFile.exists()) {
+    			  			previousFile.delete();
+    			  			//System.out.println("deleted previous temp file " + request.getParameter("previousSheet"));
+    			  	}
+    		  } catch (Exception e){
+    			  	new ServiceException(e).log();
+    		  }
+      }
       if (request.getParameter("ACTION.create") != null) {
           //System.out.println("CREATE: " + request.getParameter("ACTION.create"));
           if (accountSource != null) {
@@ -383,7 +1050,52 @@ org.openmdx.kernel.log.*
                   pm.currentTransaction().rollback();
               } catch (Exception er) {}
           }
+      } else if (request.getParameter("ACTION.exportXLS") != null) {
+          //System.out.println("Export_XLS: " + request.getParameter("ACTION.exportXLS"));
+          try {
+            	f = new File(
+            		app.getTempFileName(location, "")
+            	);
+            	os = new FileOutputStream(f);
+            	wb = new HSSFWorkbook();
+
+              // Header Style (black background, orange/bold font)
+              headerfont = wb.createFont();
+              headerfont.setFontHeightInPoints((short)10);
+              headerfont.setFontName("Tahoma");
+              headerfont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+              headerfont.setColor(HSSFColor.ORANGE.index);
+              // Fonts are set into a style so create a new one to use.
+              headerStyle = wb.createCellStyle();
+              headerStyle.setFillForegroundColor(HSSFColor.BLACK.index);
+              headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+              headerStyle.setFont(headerfont);
+
+              // Wrapped Style
+              wrappedStyle = wb.createCellStyle();
+              wrappedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+              wrappedStyle.setWrapText(true);
+
+              // TopAligned Style
+              topAlignedStyle = wb.createCellStyle();
+              topAlignedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+
+              downloadAction =	new Action(
+                  Action.EVENT_DOWNLOAD_FROM_LOCATION,
+                  new Action.Parameter[]{
+                      new Action.Parameter(Action.PARAMETER_LOCATION, location),
+                      new Action.Parameter(Action.PARAMETER_NAME, sheetName),
+                      new Action.Parameter(Action.PARAMETER_MIME_TYPE, "application/vnd.ms-excel")
+                  },
+                  app.getTexts().getClickToDownloadText() + " " + sheetName,
+                  true
+              );
+							sheetAccounts = addSheet(wb, "Accounts", true, headerStyle);
+          } catch (Exception e) {
+              new ServiceException(e).log();
+          }
       }
+
 %>
       <div id="etitle" style="height:20px;">
          Manage Members of "<%= accountTitle %>"
@@ -391,10 +1103,20 @@ org.openmdx.kernel.log.*
       <form name="ManageMembers" accept-charset="UTF-8" method="POST" action="<%= FORMACTION %>">
         <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
         <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+        <input type="hidden" name="previousSheet" id="previousSheet" value="<%= location %>" />
         <input type="checkbox" style="display:none;" name="isFirstCall" checked />
         <input type="checkbox" style="display:none;" name="isSelectionChange" id="isSelectionChange" />
         <br />
 
+<%
+        if (downloadAction != null) {
+%>
+				    <div style="position:absolute;padding-top:70px;">
+				      <a href="<%= request.getContextPath() %>/<%= downloadAction.getEncodedHRef(requestId) %>"><%= SPREADSHEET %></a>
+				    </div>
+<%
+        }
+%>
         <table class="fieldGroup">
           <tr>
             <td id="submitButtons" style="font-weight:bold;">
@@ -426,26 +1148,29 @@ org.openmdx.kernel.log.*
                 }
 %>
               </div>
-                <br />
-                <a href="#" onclick="javascript:try{($('displayStart').value)--}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
-                <span id="displayStartSelector">...</span>
-                <a href="#" onclick="javascript:try{($('displayStart').value)++}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
-                &nbsp;&nbsp;&nbsp;
-                <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
-                  <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
-                  <option <%= pageSize ==  20 ? "selected" : "" %> value="20">20&nbsp;</option>
-                  <option <%= pageSize ==  50 ? "selected" : "" %> value="50">50&nbsp;</option>
-                  <option <%= pageSize == 100 ? "selected" : "" %> value="100">100&nbsp;</option>
-                  <option <%= pageSize == 500 ? "selected" : "" %> value="500">500&nbsp;</option>
-                </select>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
-                &nbsp;&nbsp;
-                <INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
-                <!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
-                <INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-                <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
-
+              <br>
+              <a href="#" onclick="javascript:try{($('displayStart').value)--}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
+              <span id="displayStartSelector">...</span>
+              <a href="#" onclick="javascript:try{($('displayStart').value)++}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
+              &nbsp;&nbsp;&nbsp;
+              <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+                <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
+                <option <%= pageSize ==  20 ? "selected" : "" %> value="20">20&nbsp;</option>
+                <option <%= pageSize ==  50 ? "selected" : "" %> value="50">50&nbsp;</option>
+                <option <%= pageSize == 100 ? "selected" : "" %> value="100">100&nbsp;</option>
+                <option <%= pageSize == 500 ? "selected" : "" %> value="500">500&nbsp;</option>
+              </select>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
+              &nbsp;&nbsp;
+              <input type="checkbox" name="duplicatesOnly" id="duplicatesOnly" <%= duplicatesOnly ? "checked" : "" %> /> Duplicates Only
+              &nbsp;&nbsp;
+              <INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+              <!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
+              <INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+              <INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+              <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
+              <br>
             </td>
             <td id="waitMsg" style="display:none;">
               <div style="padding-left:5px; padding-bottom: 48px;">
@@ -491,6 +1216,7 @@ org.openmdx.kernel.log.*
           </tr>
 <%
           if (accounts != null) {
+              short spreadSheetRow = 1;
               for(
                 Iterator i = accounts;
                 i.hasNext() && (counter <= (displayStart+1)*pageSize);
@@ -505,6 +1231,37 @@ org.openmdx.kernel.log.*
                           continue;
                       }
                   }
+
+                  String accountHref = "";
+                  Action action = new ObjectReference(
+                      account,
+                      app
+                  ).getSelectObjectAction();
+                  accountHref = "../../" + action.getEncodedHRef();
+
+                  int memberCounter = 0;
+                  String memberHref = "";
+                  org.opencrx.kernel.account1.jmi1.Member member = null;
+                  org.opencrx.kernel.account1.cci2.MemberQuery isMemberFilter = accountPkg.createMemberQuery();
+                  isMemberFilter.thereExistsAccount().equalTo(account);
+                  for(Iterator m = accountSource.getMember(isMemberFilter).iterator(); m.hasNext(); ) {
+                      try {
+                          memberCounter++;
+                          org.opencrx.kernel.account1.jmi1.Member currentMember = (org.opencrx.kernel.account1.jmi1.Member)m.next();
+                          if (member == null || currentMember.isDisabled() == null || !currentMember.isDisabled().booleanValue()) {
+                              member = currentMember;
+                              action = new ObjectReference(
+                                  currentMember,
+                                  app
+                              ).getSelectObjectAction();
+                              memberHref = "../../" + action.getEncodedHRef();
+                          }
+                      } catch (Exception e) {}
+                  }
+                  if (duplicatesOnly && memberCounter <= 1) {
+                      continue;
+                  }
+
                   if (!i.hasNext()) {
                       highAccountIsKnown = true;
                       highAccount = counter+1;
@@ -514,12 +1271,10 @@ org.openmdx.kernel.log.*
                     continue;
                   }
 
-                  String accountHref = "";
-                  Action action = new ObjectReference(
-                      account,
-                      app
-                  ).getSelectObjectAction();
-                  accountHref = "../../" + action.getEncodedHRef();
+                  if (downloadAction != null && sheetAccounts != null) {
+                      spreadSheetRow = addAccount(sheetAccounts, account, spreadSheetRow, wrappedStyle, topAlignedStyle, exceldate, app, codes, accountPkg);
+                      //spreadSheetRow++;
+                  }
 
                   String image = "Contact.gif";
                   String label = app.getLabel("org:opencrx:kernel:account1:Contact");
@@ -587,25 +1342,6 @@ org.openmdx.kernel.log.*
                     if (infoAddr.getPostalCity() != null) {addressInfo += infoAddr.getPostalCity();}
                   }
 
-                  int memberCounter = 0;
-                  String memberHref = "";
-                  org.opencrx.kernel.account1.jmi1.Member member = null;
-                  org.opencrx.kernel.account1.cci2.MemberQuery isMemberFilter = accountPkg.createMemberQuery();
-                  isMemberFilter.thereExistsAccount().equalTo(account);
-                  for(Iterator m = accountSource.getMember(isMemberFilter).iterator(); m.hasNext(); ) {
-                      try {
-                          memberCounter++;
-                          org.opencrx.kernel.account1.jmi1.Member currentMember = (org.opencrx.kernel.account1.jmi1.Member)m.next();
-                          if (member == null || currentMember.isDisabled() == null || !currentMember.isDisabled().booleanValue()) {
-                              member = currentMember;
-                              action = new ObjectReference(
-                                  currentMember,
-                                  app
-                              ).getSelectObjectAction();
-                              memberHref = "../../" + action.getEncodedHRef();
-                          }
-                      } catch (Exception e) {}
-                  }
                   if (member == null && request.getParameter("ACTION.addvisible") != null) {
                       // create new member
                       if (accountSource != null) {
@@ -980,6 +1716,12 @@ org.openmdx.kernel.log.*
       <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
       <br />&nbsp;
 <%
+      if (downloadAction != null) {
+          wb.write(os);
+          os.flush();
+          os.close();
+      }
+
     }
     catch (Exception e) {
       out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");

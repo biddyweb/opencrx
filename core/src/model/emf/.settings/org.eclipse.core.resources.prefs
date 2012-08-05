@@ -1,4 +1,4 @@
-#Wed Apr 21 11:01:24 CEST 2010
+#Tue May 18 13:15:58 CEST 2010
 eclipse.preferences.version=1
 encoding//diagrams/account1/Account.umlclass=UTF-8
 encoding//diagrams/account1/AccountAssignment.umlclass=UTF-8
@@ -140,9 +140,9 @@ encoding//diagrams/ras1/Main.umlclass=UTF-8
 encoding//diagrams/realm1/Main.umlclass=UTF-8
 encoding//diagrams/reservation1/Bookings.umlclass=UTF-8
 encoding//diagrams/reservation1/Segment.umlclass=UTF-8
-encoding//diagrams/shop1/org.opencrx.application.shop1-Datatypes.umlclass=UTF-8
-encoding//diagrams/shop1/org.opencrx.application.shop1-Parameters.umlclass=UTF-8
-encoding//diagrams/shop1/org.opencrx.application.shop1-Service.umlclass=UTF-8
+encoding//diagrams/shop1/Datatypes.umlclass=UTF-8
+encoding//diagrams/shop1/Parameters.umlclass=UTF-8
+encoding//diagrams/shop1/Service.umlclass=UTF-8
 encoding//diagrams/uom1/Main.umlclass=UTF-8
 encoding//diagrams/uom1/Segment.umlclass=UTF-8
 encoding//diagrams/workflow1/Main.umlclass=UTF-8

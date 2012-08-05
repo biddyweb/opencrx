@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityKeys.java,v 1.16 2010/02/24 14:07:27 wfro Exp $
+ * Name:        $Id: SecurityKeys.java,v 1.18 2010/06/14 15:05:09 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/24 14:07:27 $
+ * Date:        $Date: 2010/06/14 15:05:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,10 +79,11 @@ public class SecurityKeys {
     public final static String PRINCIPAL_TYPE_PRINCIPAL = "org:opencrx:security:realm1:Principal";
             
     // System Properties
-    public static final String ENABLE_SECURITY_PROPERTY = "org.opencrx.kernel.layer.model.SecurityContext.enable";
-    public static final String ID_SEPARATOR_PROPERTY = "org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR";
+    public static final String ENABLE_SECURITY_PROPERTY = "org.opencrx.security.enable";
+    public static final String REALM_REFRESH_RATE_MILLIS = "org.opencrx.security.realmRefreshRateMillis";
+    public static final String ID_SEPARATOR_PROPERTY = "org.opencrx.SecurityKeys.ID_SEPARATOR";
     public static final String ID_SEPARATOR = System.getProperty(ID_SEPARATOR_PROPERTY) == null ? "-" : System.getProperty(SecurityKeys.ID_SEPARATOR_PROPERTY);
-    
+
     // Encodings
     public static final String PASSWORD_ENCODING_SCHEME = "Base64:";
     

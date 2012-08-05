@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.14 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.15 2010/06/01 10:39:31 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2010/06/01 10:39:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -253,17 +253,9 @@ org.openmdx.base.query.*
 			    <td>&nbsp;<%= modifiedAtAttr  == null ? "Modified at" : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":modifiedAt" ).getLabel() %> <img src='../../images/arrow_down.gif' alt='' /></td>
 			  </tr>
 <%
-        //org.openmdx.compatibility.datastore1.jmi1.Datastore1Package datastorePkg = org.opencrx.kernel.utils.Utils.getDatastorePackage(pm);
         org.opencrx.kernel.building1.cci2.AccountAssignmentInventoryItemQuery
           accountAssignmentInventoryItemQuery =
           buildingPkg.createAccountAssignmentInventoryItemQuery();
-        //org.openmdx.compatibility.datastore1.jmi1.QueryFilter context =
-        //  datastorePkg.getQueryFilter().createQueryFilter();
-        //context.setClause(
-        //    "(product IN (SELECT object_id FROM OOCKE1_PRODUCT p WHERE p.product_number = '" + Integer.toString(valProductNumber) + "')) AND " +
-        //    "(p$$parent IN (SELECT p$$parent FROM OOCKE1_ADDRESS WHERE postal_code >= '" + Integer.toString(valPlzFrom) + "' AND postal_code <= '" + Integer.toString(valPlzTo) + "'))"
-        //);
-        //accountAssignmentInventoryItemQuery.thereExistsContext().equalTo(context);
         if (
              (obj instanceof org.opencrx.kernel.account1.jmi1.Contact) ||
              (obj instanceof org.opencrx.kernel.account1.jmi1.Group) ||

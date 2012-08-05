@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.59 2010/04/07 12:16:27 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.60 2010/08/12 16:03:15 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.59 $
+ * Revision:    $Revision: 1.60 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/07 12:16:27 $
+ * Date:        $Date: 2010/08/12 16:03:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -637,6 +637,7 @@ public class VCard extends AbstractImpl {
         short locale,
         org.opencrx.kernel.code1.jmi1.Segment codeSegment
     ) throws ServiceException {
+    	boolean modified = false;
         if((newValue != null) && (newValue.length() > 0)) {
             String[] tokens = new String[]{"", "", "", "", "", "", ""};
             // Unescape semicolons
@@ -677,23 +678,35 @@ public class VCard extends AbstractImpl {
             address.getPostalStreet().clear();
             for(int i = nPostalAddressLines; i < street.size(); i++) {
                 address.getPostalStreet().add(street.get(i));
+                modified = true;
             }
-            address.setPostalCity(tokens[3]);
-            address.setPostalState(tokens[4]);
-            address.setPostalCode(tokens[5]);
-            address.setPostalCountry(new Short((short)0));
+            // Only touch if changed
+            if(!tokens[3].equals(address.getPostalCity())) {
+            	address.setPostalCity(tokens[3]);
+            	modified = true;
+            }
+            if(!tokens[4].equals(address.getPostalState())) {
+            	address.setPostalState(tokens[4]);
+            	modified = true;
+            }
+            if(!tokens[5].equals(address.getPostalCode())) {
+            	address.setPostalCode(tokens[5]);
+            	modified = true;
+            }
             // Lookup country
             SysLog.trace("lookup country", tokens[6]);
-            address.setPostalCountry(
-            	Addresses.getInstance().mapToPostalCountryCode(
-            		tokens[6],
-                   	codeSegment
-                )
+            short postalCountry = Addresses.getInstance().mapToPostalCountryCode(
+        		tokens[6],
+               	codeSegment
             );
+            if(postalCountry != address.getPostalCountry()) {
+            	address.setPostalCountry(postalCountry);
+            	modified = true;
+            }
             SysLog.trace("updated address", address);
             return true;
         }
-        return false;
+        return modified;
     }
 
     //-------------------------------------------------------------------------
